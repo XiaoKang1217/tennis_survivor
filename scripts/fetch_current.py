@@ -131,11 +131,19 @@ def calc_instant(details_html, new_score, gender, ev_name):
         return sum(s for _,s in gs) + sum(s for _,s in ye[:1]) + sum(s for _,s in nt) + sum(s for _,s in ct) + sum(s for _,s in ot[:rem])
 
 def fetch_rank_data(session, csrf, gender_idx):
-    """获取年度排名数据"""
+    """获取年度排名数据（使用 /zh/survivor/rank/{gender_idx}/year 接口）"""
     all_rows = []
     start = 0
     while True:
-        d = post_api(session, csrf, gender_idx, 'year', start=start, length=1000)
+        # 注意：排名API路径是 /zh/survivor/rank/{idx}/year
+        r = session.post(
+            f'{BASE_URL}/zh/survivor/rank/{gender_idx}/year',
+            headers={'X-CSRF-TOKEN': csrf, 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest'},
+            data=f'draw=1&start={start}&length=1000&device=0',
+            timeout=30
+        )
+        r.raise_for_status()
+        d = r.json()
         rows = d.get('data', [])
         all_rows.extend(rows)
         total = d.get('recordsTotal', 0)
