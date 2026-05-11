@@ -97,7 +97,7 @@ def get_event_name(session, event_id, year, gender):
         if len(parts) >= 2: return parts[1]
     return event_id
 
-def compute_preference(all_score_data, gender_key):
+def compute_preference(all_score_data, gender_key, ir_dict=None):
     """计算用户偏好统计（包含完整逻辑）"""
     eo_list = EVENT_ORDER_MS if gender_key == 'MS' else EVENT_ORDER_WS
     eo = {n: i for i, n in enumerate(eo_list)}
@@ -198,6 +198,7 @@ def compute_preference(all_score_data, gender_key):
             'best_player_name': bn, 'best_player_count': bc,
             'champion_players': '；'.join([f"{p}({c}次)" for p,c in champ_cnt.most_common()]) if champ_cnt else '—',
             'final_players': '；'.join([f"{p}({c}次)" for p,c in final_cnt.most_common()]) if final_cnt else '—',
+            'instant_rank': (ir_dict or {}).get(uid),
             # 明细（展开用）
             'detail_participated': stats['participated'],
             'detail_eliminated': stats['eliminated'],
@@ -208,6 +209,20 @@ def compute_preference(all_score_data, gender_key):
             'detail_final': {p:v for p,v in stats['final_p'].items()},
         })
     return result
+
+
+def load_current_instant_rank():
+    """从 data/current.json 合并实时 sheet 里的即时排名，用于偏好页排序和展示。"""
+    try:
+        with open('data/current.json', 'r', encoding='utf-8') as f:
+            cur = json.load(f)
+        ms_ir = {str(r.get('user_id')): r.get('instant_rank') for r in cur.get('ms', {}).get('rows', []) if r.get('instant_rank')}
+        ws_ir = {str(r.get('user_id')): r.get('instant_rank') for r in cur.get('ws', {}).get('rows', []) if r.get('instant_rank')}
+        print(f"加载即时排名：ATP {len(ms_ir)} 人，WTA {len(ws_ir)} 人")
+        return ms_ir, ws_ir
+    except Exception as e:
+        print(f"读取 data/current.json 失败，偏好页即时排名将为空：{e}")
+        return {}, {}
 
 def main():
     print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 开始更新用户偏好数据...")
@@ -265,8 +280,12 @@ def main():
             print(f"  ERR {ev_name} {gender}: {e}")
     
     print("计算用户偏好...")
-    ms_pref = compute_preference(ms_score_all, 'MS')
-    ws_pref = compute_preference(ws_score_all, 'WS')
+    ms_ir, ws_ir = load_current_instant_rank()
+    ms_pref = compute_preference(ms_score_all, 'MS', ms_ir)
+    ws_pref = compute_preference(ws_score_all, 'WS', ws_ir)
+    # 默认按即时排名升序；没有即时排名的排最后
+    ms_pref.sort(key=lambda x: (x.get('instant_rank') is None, x.get('instant_rank') or 9999, -x.get('events_participated', 0)))
+    ws_pref.sort(key=lambda x: (x.get('instant_rank') is None, x.get('instant_rank') or 9999, -x.get('events_participated', 0)))
     
     tz_cn = timezone(timedelta(hours=8))
     now_str = datetime.now(tz_cn).strftime('%Y-%m-%d %H:%M:%S')
