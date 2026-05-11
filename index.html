@@ -286,7 +286,7 @@ function getBadge(fs,status,sc){
 // ===== 渲染偏好 =====
 function renderPref(g, pdata){
   const cont=document.getElementById('content-'+g+'-p');
-  const loading=document.getElementById('loading-'+g+'sp');
+  const loading=document.getElementById(g==='ms' ? 'loading-msp' : 'loading-wsp');
   if(loading) loading.style.display='none';
   const order=pdata[g+'_order']||[];
   const dict=pdata[g]||{};
