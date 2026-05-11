@@ -176,23 +176,33 @@ const SS={};const FS={};
 
 // ===== 数据加载 =====
 async function loadData(){
+  const t=Date.now();
+  // 先加载必要的实时数据（current.json）
   try{
-    const t=Date.now();
-    const [cur,pref]=await Promise.all([
-      fetch('data/current.json?t='+t).then(r=>r.json()),
-      fetch('data/preference.json?t='+t).then(r=>r.json()),
-    ]);
-    GDATA=cur; PDATA=pref;
-    MSPOOL=cur.ms.today_pool||[];
-    WSPOOL=cur.ws.today_pool||[];
-    document.getElementById('upd-time').textContent='⏱ '+cur.updated_at;
-    document.getElementById('tab-ms-s').textContent='🎾 ATP '+cur.ms.event_name+' Day'+cur.ms.today_day;
-    document.getElementById('tab-ws-s').textContent='🎾 WTA '+cur.ws.event_name+' Day'+cur.ws.today_day;
-    renderScore('ms', cur.ms);
-    renderScore('ws', cur.ws);
+    const cur=await fetch('data/current.json?t='+t).then(r=>r.json());
+    GDATA=cur;
+    MSPOOL=(cur.ms&&cur.ms.today_pool)||[];
+    WSPOOL=(cur.ws&&cur.ws.today_pool)||[];
+    document.getElementById('upd-time').textContent='⏱ '+(cur.updated_at||'');
+    if(cur.ms){document.getElementById('tab-ms-s').textContent='🎾 ATP '+(cur.ms.event_name||'')+(cur.ms.today_day?' Day'+cur.ms.today_day:'');renderScore('ms', cur.ms);}
+    if(cur.ws){document.getElementById('tab-ws-s').textContent='🎾 WTA '+(cur.ws.event_name||'')+(cur.ws.today_day?' Day'+cur.ws.today_day:'');renderScore('ws', cur.ws);}
+  }catch(e){
+    console.error('实时数据加载失败',e);
+    document.getElementById('upd-time').textContent='⚠️ 实时数据加载失败，请刷新';
+    document.getElementById('loading-ms').textContent='⚠️ 数据加载失败，请刷新页面';
+    document.getElementById('loading-ws').textContent='⚠️ 数据加载失败，请刷新页面';
+  }
+  // 偏好数据单独加载（失败不影响主页面）
+  try{
+    const pref=await fetch('data/preference.json?t='+t).then(r=>r.json());
+    PDATA=pref;
     renderPref('ms', pref);
     renderPref('ws', pref);
-  }catch(e){console.error('加载失败',e);document.getElementById('upd-time').textContent='⚠️ 数据加载失败，请刷新';}
+  }catch(e){
+    console.warn('偏好数据加载失败（非致命）',e);
+    document.getElementById('loading-msp').textContent='⚠️ 偏好数据暂时不可用';
+    document.getElementById('loading-wsp').textContent='⚠️ 偏好数据暂时不可用';
+  }
 }
 
 async function refreshCurrentOnly(){
