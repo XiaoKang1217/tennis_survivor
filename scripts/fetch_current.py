@@ -86,11 +86,56 @@ def get_event_name(session, event_id, gender):
     return event_id
 
 def get_today_players_from_page(session, event_id, gender):
+    """备用：从幸存者/my页取球员（不再作为主来源）"""
     url = f'{BASE_URL}/zh/survivor/event/{event_id}/2026/{gender}/my'
     r = session.get(url, timeout=15)
     names = set(re.findall(r'<pname>([^<]+)</pname>', r.text))
     names.update(re.findall(r'data-name="([^"]+)"', r.text))
     return sorted(p for p in names if p and p != '轮空')
+
+
+def get_today_players_from_result(session, ms_event_id, ws_event_id):
+    """从当天赛程页提取当前签表幸存者赛事的所有单打正赛球员。
+    规则：只看当前开启赛事（例如罗马）的男单/女单；排除双打、资格赛/含Q轮次。
+    """
+    tz_cn = timezone(timedelta(hours=8))
+    today = datetime.now(tz_cn).strftime('%Y-%m-%d')
+    url = f'{BASE_URL}/zh/result/{today}'
+    html = session.get(url, timeout=30).text
+
+    # 只取罗马/当前赛事块，避免抓到挑战赛/ITF等其它赛事
+    start = html.find('id="iResultRome"')
+    if start == -1:
+        start = 0
+    next_tour = html.find('<div class="cResultTour ', start + 20)
+    seg = html[start: next_tour if next_tour != -1 else len(html)]
+
+    result = {'MS': set(), 'WS': set()}
+    # open_stat参数里最后两个就是两名球员中文短名
+    for m in re.finditer(r'open_stat\((.*?)\)', seg):
+        args = re.findall(r'&quot;([^&]*)&quot;', m.group(1))
+        if len(args) < 8:
+            continue
+        eid, tour, match_id, year, p1id, p2id, p1, p2 = args[:8]
+        # 限定当前签表幸存者开启赛事
+        if eid not in {str(ms_event_id), str(ws_event_id)}:
+            continue
+        pre = seg[max(0, m.start()-2500):m.start()]
+        # 必须是单打
+        if 'is-double="1"' in pre:
+            continue
+        gm = re.search(r'<div class=cResultMatchGender>([^<]+)</div>', pre)
+        rm = re.search(r'<div class=cResultMatchRound>([^<]+)</div>', pre)
+        gender_txt = gm.group(1).strip() if gm else ''
+        round_txt = rm.group(1).strip() if rm else ''
+        if 'Q' in round_txt or '资格' in round_txt:
+            continue
+        if gender_txt == '男单':
+            result['MS'].update([p1, p2])
+        elif gender_txt == '女单':
+            result['WS'].update([p1, p2])
+
+    return {k: sorted(v) for k, v in result.items()}
 
 def parse_all_scores(details_html):
     if not details_html: return {}, {}
@@ -135,7 +180,7 @@ def fetch_rank_data(session, csrf, gender_idx):
     all_rows = []
     start = 0
     while True:
-        # 注意：排名API路径是 /zh/survivor/rank/{idx}/year
+        # 注意：排名API的路径是 /zh/survivor/rank/{idx}/year，不是 event
         r = session.post(
             f'{BASE_URL}/zh/survivor/rank/{gender_idx}/year',
             headers={'X-CSRF-TOKEN': csrf, 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest'},
@@ -279,24 +324,12 @@ def main():
     print("获取WTA实时数据...")
     ws_data = fetch_event_data(session, csrf_ws, ws_iid, 'WS', ws_name, ws_rank)
     
-    # 6. 今日球员池
-    print("获取今日参赛球员...")
-    ms_players = get_today_players_from_page(session, ms_eid, 'MS')
-    ws_players = get_today_players_from_page(session, ws_eid, 'WS')
-    # 补充 detail 里的球员
-    ms_extra = set(
-        r['today_player'] for r in ms_data['rows'] if r.get('has_today') and r.get('today_player') and r['today_player'] != '轮空'
-    ) | set(
-        r['today_player_alt'] for r in ms_data['rows'] if r.get('has_today') and r.get('today_player_alt') and r['today_player_alt'] != '轮空'
-    )
-    ws_extra = set(
-        r['today_player'] for r in ws_data['rows'] if r.get('has_today') and r.get('today_player') and r['today_player'] != '轮空'
-    ) | set(
-        r['today_player_alt'] for r in ws_data['rows'] if r.get('has_today') and r.get('today_player_alt') and r['today_player_alt'] != '轮空'
-    )
-    ms_players = sorted(set(ms_players) | ms_extra)
-    ws_players = sorted(set(ws_players) | ws_extra)
-    print(f"  ATP今日球员: {len(ms_players)}, WTA今日球员: {len(ws_players)}")
+    # 6. 今日球员池：从当天赛程页抓实际有比赛的罗马男单/女单正赛球员
+    print("获取今日参赛球员（赛程页）...")
+    pools = get_today_players_from_result(session, ms_eid, ws_eid)
+    ms_players = pools.get('MS', [])
+    ws_players = pools.get('WS', [])
+    print(f"  ATP今日赛程球员: {len(ms_players)}, WTA今日赛程球员: {len(ws_players)}")
     
     # 7. 输出
     now_str = datetime.now(tz_cn).strftime('%Y-%m-%d %H:%M:%S')
