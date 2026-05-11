@@ -321,6 +321,8 @@ function normalizePrefData(g, pdata){
       };
       order.push([uid, dict[uid].ir]);
     }
+    // 关键：把转换后的 dict 写回 PDATA，供 toggleExpDyn 展开明细使用
+    if (pdata) pdata[g] = dict;
   } else {
     // 新格式字典
     dict = raw;
