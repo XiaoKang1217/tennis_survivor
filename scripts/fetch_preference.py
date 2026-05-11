@@ -137,7 +137,7 @@ def compute_preference(all_score_data, gender_key):
                     if day < len(players) and players[day] and players[day] != '轮空' and players[day] != '':
                         k = players[day]
                         us[uid]['elim_p'][k][0] += 1
-                        us[uid]['elim_p'][k][1] = min(us[uid]['elim_p'][k][1], ev_idx)
+                        us[uid]['elim_p'][k][1] = min(us[uid]['elim_p'][k][1], day * 100 + ev_idx)
                         us[uid]['elim_p'][k][2].append(ev_name)
                 if day == real_md - 1 and real_md > 1:
                     idx = real_md - 2
