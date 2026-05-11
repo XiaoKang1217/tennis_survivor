@@ -284,28 +284,84 @@ function getBadge(fs,status,sc){
 }
 
 // ===== 渲染偏好 =====
+function normalizePrefData(g, pdata){
+  // 兼容两种 preference.json 格式：
+  // 1) 新格式：{ms:{uid:{...}}, ms_order:[[uid,ir],...]}
+  // 2) 老格式：{ms:[{user_id, username, ...}], ws:[...]}
+  const raw = pdata[g] || (g==='ms' ? pdata.ms : pdata.ws) || {};
+  let dict = {};
+  let order = [];
+
+  if (Array.isArray(raw)) {
+    // 老格式数组 -> 转成前端需要的字典格式
+    for (const item of raw) {
+      const uid = String(item.user_id || '');
+      if (!uid) continue;
+      dict[uid] = {
+        u: item.username || '',
+        ep: item.events_participated || 0,
+        ee: item.events_eliminated || 0,
+        ec: item.events_champion || 0,
+        wn: item.worst_player_name || '',
+        wc: item.worst_player_count || 0,
+        bn: item.best_player_name || '',
+        bc: item.best_player_count || 0,
+        cp: item.champion_players || '—',
+        fp: item.final_players || '—',
+        ir: item.instant_rank || null,
+        d: item.d || {
+          p: item.detail_participated || item.dp || [],
+          e: item.detail_eliminated || item.de || [],
+          c: item.detail_championed || item.dc || [],
+          el: item.detail_elim || item.del || {},
+          ad: item.detail_adv || item.dad || {},
+          ch: item.detail_champ || item.dch || {},
+          fi: item.detail_final || item.dfi || {}
+        }
+      };
+      order.push([uid, dict[uid].ir]);
+    }
+  } else {
+    // 新格式字典
+    dict = raw;
+    order = pdata[g + '_order'] || Object.keys(dict).map(uid => [uid, dict[uid].ir || null]);
+  }
+
+  // 默认按即时排名升序；无即时排名排最后
+  order.sort((a,b)=>{
+    const ia = a[1] || (dict[a[0]] && dict[a[0]].ir) || 9999;
+    const ib = b[1] || (dict[b[0]] && dict[b[0]].ir) || 9999;
+    return ia - ib;
+  });
+
+  return {dict, order};
+}
+
 function renderPref(g, pdata){
   const cont=document.getElementById('content-'+g+'-p');
   const loading=document.getElementById(g==='ms' ? 'loading-msp' : 'loading-wsp');
   if(loading) loading.style.display='none';
-  const order=pdata[g+'_order']||[];
-  const dict=pdata[g]||{};
+
+  const normalized = normalizePrefData(g, pdata);
+  const order = normalized.order;
+  const dict = normalized.dict;
   const tab=g+'-p';
   
   let rowsHtml='';
   for(const [uid,ir] of order){
     const p=dict[uid];
     if(!p) continue;
-    const ir_d=ir?ir:'—';
+    const irVal = ir || p.ir || null;
+    const ir_d=irVal?irVal:'—';
     const wn=p.wn||''; const wc=p.wc||0;
     const bn=p.bn||''; const bc=p.bc||0;
-    rowsHtml+=`<tr class="pref-row" data-ds="${g=='ms'?'MSD':'WSD'}" data-uid="${uid}" onclick="toggleExpDyn(this)" data-u="${esc(p.u)}" data-ep="${p.ep}" data-ee="${p.ee}" data-ec="${p.ec}" data-wc="${wc}" data-bc="${bc}" data-ir="${ir||9999}"><td class="tn ir">${ir_d}</td><td class="tu">${p.u}</td><td class="tn">${p.ep}</td><td class="tn r">${p.ee}</td><td class="tn g">${p.ec}</td><td class="tw">${wn?wn+'（'+wc+'次）':'—'}</td><td class="tw g">${bn?bn+'（'+bc+'次）':'—'}</td><td class="tp">${p.cp||'—'}</td><td class="tp">${p.fp||'—'}</td></tr>`;
+    rowsHtml+=`<tr class="pref-row" data-ds="${g=='ms'?'MSD':'WSD'}" data-uid="${uid}" onclick="toggleExpDyn(this)" data-u="${esc(p.u)}" data-ep="${p.ep||0}" data-ee="${p.ee||0}" data-ec="${p.ec||0}" data-wc="${wc}" data-bc="${bc}" data-ir="${irVal||9999}"><td class="tn ir">${ir_d}</td><td class="tu">${p.u}</td><td class="tn">${p.ep||0}</td><td class="tn r">${p.ee||0}</td><td class="tn g">${p.ec||0}</td><td class="tw">${wn?wn+'（'+wc+'次）':'—'}</td><td class="tw g">${bn?bn+'（'+bc+'次）':'—'}</td><td class="tp">${p.cp||'—'}</td><td class="tp">${p.fp||'—'}</td></tr>`;
   }
   
   function mth(col,key,t,cls=''){return `<th${cls?' class="'+cls+'"':''} onclick="srt('${tab}',${col},'${key}')">${t}</th>`;}
   const hdrHtml=`<thead><tr>${mth(0,'ir','即时排名','sd')}${mth(1,'user','用户名')}${mth(2,'ep','参加站数')}${mth(3,'ee','淘汰站数')}${mth(4,'ec','夺冠站数')}${mth(5,'wc','克星球员')}${mth(6,'bc','福星球员')}${mth(7,'champ','带用户夺冠')}${mth(8,'final','带用户进决赛')}</tr></thead>`;
   
-  const champCnt=Object.values(dict).filter(p=>p&&p.ec>0).length;
+  const champCnt=Object.values(dict).filter(p=>p&&(p.ec||0)>0).length;
   cont.innerHTML=`<div class="kpi"><div class="kc"><div class="kn nt">${order.length}</div><div class="kl">参与用户</div></div><div class="kc"><div class="kn na">${champCnt}</div><div class="kl">有夺冠经历</div></div></div><p style="font-size:12px;color:#9a7a40;margin-bottom:8px">💡 点击任意行展开该用户详细数据，再点一次收起</p><div class="toolbar"><input id="q-${tab}" placeholder="🔍 搜索..." oninput="doFilter('${tab}')"></div><div class="tbl-wrap"><table id="tbl-${tab}">${hdrHtml}<tbody id="tb-${tab}">${rowsHtml}</tbody></table></div>`;
   cont.style.display='block';
 }
