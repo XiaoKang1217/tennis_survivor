@@ -249,8 +249,11 @@ function renderScore(g, data){
   for(const r of rows){
     const sc=getStatusClass(r.fill_status,r.status);
     const badge=getBadge(r.fill_status,r.status,sc);
-    const td=r.has_today?(r.today_player&&r.today_player!='轮空'?`<span class="pn">${r.today_player}</span>`+(r.today_player_alt?`<span class="pa">备：${r.today_player_alt}</span>`:'')):
-      '<span class="nf">未填写</span>';
+    const td = r.has_today
+      ? ((r.today_player && r.today_player !== '轮空')
+          ? `<span class="pn">${r.today_player}</span>` + (r.today_player_alt ? `<span class="pa">备：${r.today_player_alt}</span>` : '')
+          : '<span class="nf">未填写</span>')
+      : '<span class="nf">未填写</span>';
     const chg=r.rank_change;
     const ch=chg===null?'<span class="cn">—</span>':chg>0?`<span class="cu">▲${chg}</span>`:chg<0?`<span class="cd">▼${Math.abs(chg)}</span>`:'<span class="cz">→0</span>';
     const cr=r.current_rank||9999; const ir=r.instant_rank||9999;
