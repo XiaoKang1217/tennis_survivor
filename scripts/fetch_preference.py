@@ -46,12 +46,37 @@ def clean_username(html):
     return re.sub(r'<[^>]+>', '', str(html)).strip()
 
 def get_all_2026_events(session):
-    """从赛历页面获取2026年所有比赛"""
-    resp = session.get(f'{BASE_URL}/zh/survivor/calendar/2026', timeout=10)
-    html = resp.text
-    matches = re.findall(r'href="https://www\.live-tennis\.cn/zh/survivor/event/([^/]+)/2026/([A-Z]+)/my"', html)
-    events = list(dict.fromkeys(matches))  # 去重保序
-    return events
+    """2026赛季所有签表幸存者比赛（硬编码，避免 GitHub Actions 环境下赛历页解析不全导致只统计当前站）"""
+    return [
+        ('20336','MS'),   # ATP 香港
+        ('30800','WS'),   # WTA 布里斯班
+        ('28998','MS'),   # ATP 阿德莱德
+        ('31050','WS'),   # WTA 霍巴特
+        ('AO','MS'),      # ATP 澳网
+        ('AO','WS'),      # WTA 澳网
+        ('20375','MS'),   # ATP 蒙彼利埃
+        ('32088','WS'),   # WTA 阿布扎比
+        ('20407','MS'),   # ATP 鹿特丹
+        ('31003','WS'),   # WTA 多哈
+        ('20451','MS'),   # ATP 多哈
+        ('30718','WS'),   # WTA 迪拜
+        ('20807','MS'),   # ATP 阿卡普尔科
+        ('32085','WS'),   # WTA 梅里达
+        ('20404','MS'),   # ATP 印第安维尔斯
+        ('30609','WS'),   # WTA 印第安维尔斯
+        ('20403','MS'),   # ATP 迈阿密
+        ('30902','WS'),   # WTA 迈阿密
+        ('20717','MS'),   # ATP 休斯顿
+        ('30804','WS'),   # WTA 查尔斯顿
+        ('20410','MS'),   # ATP 蒙特卡洛
+        ('30528','WS'),   # WTA 林茨
+        ('20308','MS'),   # ATP 慕尼黑
+        ('31051','WS'),   # WTA 斯图加特
+        ('21536','MS'),   # ATP 马德里
+        ('31038','WS'),   # WTA 马德里
+        ('20416','MS'),   # ATP 罗马
+        ('30709','WS'),   # WTA 罗马
+    ]
 
 def get_internal_id(session, event_id, year, gender):
     url = f'{BASE_URL}/zh/survivor/event/{event_id}/{year}/{gender}/score'
@@ -137,7 +162,7 @@ def compute_preference(all_score_data, gender_key):
                     if day < len(players) and players[day] and players[day] != '轮空' and players[day] != '':
                         k = players[day]
                         us[uid]['elim_p'][k][0] += 1
-                        us[uid]['elim_p'][k][1] = min(us[uid]['elim_p'][k][1], ev_idx)
+                        us[uid]['elim_p'][k][1] = min(us[uid]['elim_p'][k][1], day * 100 + ev_idx)
                         us[uid]['elim_p'][k][2].append(ev_name)
                 if day == real_md - 1 and real_md > 1:
                     idx = real_md - 2
