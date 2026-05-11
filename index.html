@@ -385,13 +385,13 @@ function toggleExpDyn(row){
   function mkTags(arr,cls=''){return (arr||[]).map(n=>`<span class="exp-tag ${cls}">${n}</span>`).join('');}
   function mkSubs(obj,cls=''){return Object.entries(obj||{}).sort((a,b)=>b[1].length-a[1].length).map(([pl,evs])=>`<div class="exp-sub"><div class="exp-sub-t">${pl}（${evs.length}次）</div><div>${evs.map(e=>`<span class="exp-tag ${cls}">${e}</span>`).join('')}</div></div>`).join('');}
   let secs=[];
-  if(d.p) secs.push(`<div class="exp-sec"><h5>参加了哪些站</h5><div class="exp-tags">${mkTags(d.p)}</div></div>`);
-  if(d.e) secs.push(`<div class="exp-sec"><h5>哪些站淘汰</h5><div class="exp-tags">${mkTags(d.e,'r')}</div></div>`);
-  if(d.c) secs.push(`<div class="exp-sec"><h5>哪些站夺冠🏆</h5><div class="exp-tags">${mkTags(d.c,'g')}</div></div>`);
-  if(d.el) secs.push(`<div class="exp-sec"><h5>克星球员⚔️</h5>${mkSubs(d.el,'r')}</div>`);
-  if(d.ad) secs.push(`<div class="exp-sec"><h5>福星球员🍀(Top5)</h5>${mkSubs(d.ad,'g')}</div>`);
-  if(d.ch) secs.push(`<div class="exp-sec"><h5>夺冠球员🏆</h5>${mkSubs(d.ch,'g')}</div>`);
-  if(d.fi) secs.push(`<div class="exp-sec"><h5>进决赛球员🎯</h5>${mkSubs(d.fi)}</div>`);
+  if(d.p && d.p.length) secs.push(`<div class="exp-sec"><h5>参加了哪些站</h5><div class="exp-tags">${mkTags(d.p)}</div></div>`);
+  if(d.e && d.e.length) secs.push(`<div class="exp-sec"><h5>哪些站淘汰</h5><div class="exp-tags">${mkTags(d.e,'r')}</div></div>`);
+  if(d.c && d.c.length) secs.push(`<div class="exp-sec"><h5>哪些站夺冠🏆</h5><div class="exp-tags">${mkTags(d.c,'g')}</div></div>`);
+  if(d.el && Object.keys(d.el).length) secs.push(`<div class="exp-sec"><h5>克星球员⚔️</h5>${mkSubs(d.el,'r')}</div>`);
+  if(d.ad && Object.keys(d.ad).length) secs.push(`<div class="exp-sec"><h5>福星球员🍀(Top5)</h5>${mkSubs(d.ad,'g')}</div>`);
+  if(d.ch && Object.keys(d.ch).length) secs.push(`<div class="exp-sec"><h5>夺冠球员🏆</h5>${mkSubs(d.ch,'g')}</div>`);
+  if(d.fi && Object.keys(d.fi).length) secs.push(`<div class="exp-sec"><h5>进决赛球员🎯</h5>${mkSubs(d.fi)}</div>`);
   er.querySelector('td').innerHTML=`<div class="exp-inner"><div class="exp-grid">${secs.join('')}</div></div>`;
   er.classList.add('open');
 }
