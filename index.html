@@ -101,25 +101,51 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 .refresh-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .loading{text-align:center;padding:40px;color:#9a7a40;font-size:16px}
+.dev{color:rgba(255,255,255,.86);font-size:11px;margin-left:10px}.upd-wrap{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.select-mini{padding:5px 12px;border-radius:20px;border:2px solid #fde68a;background:#fff;color:#9a7a40;font-size:12px;font-weight:700}.yearbar,.flight-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}.flight-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}.flight-card{background:#fff;border:1px solid #fde68a;border-radius:12px;padding:12px;box-shadow:0 2px 10px rgba(245,158,11,.1)}.flight-day{font-size:18px;font-weight:900;color:#d97706}.flight-pill{background:#fef3c7;border:1px solid #fcd34d;border-radius:12px;padding:2px 8px;font-size:12px;color:#78450a;font-weight:700;display:inline-block;margin:2px}.flight-pill.r{background:#fee2e2;border-color:#fca5a5;color:#dc2626}.fattr{font-size:13px;font-weight:900;color:#d97706;background:#fef3c7;border:1px solid #fcd34d;border-radius:14px;padding:3px 12px}.fortune-yi{font-size:12px;color:#9a7a40;line-height:1.8}.fortune-text{max-width:460px}.dev-note{font-size:11px;color:#9a7a40}
+
+@media(max-width:768px){
+  body{font-size:13px}
+  #hdr{padding:10px 12px}
+  #hdr h1{font-size:1.05em}
+  .hdt{align-items:flex-start}
+  .tabs{gap:5px;overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px}
+  .tab{white-space:nowrap;padding:6px 10px;font-size:12px}
+  .main{padding:10px}
+  .kpi{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  .kc{min-width:0;padding:8px}
+  .kn{font-size:1.35em}
+  .toolbar{position:sticky;top:88px;background:#fff7e6cc;z-index:20;padding:6px;border-radius:10px;backdrop-filter:blur(6px)}
+  .toolbar input{width:130px;flex:1}
+  .tbl-wrap{max-height:none;border-radius:8px}
+  table{font-size:12px;min-width:820px}
+  th,td{padding:7px 8px}
+  .tu{max-width:120px}
+  .fortune-wrap{padding:8px 0}
+  .fortune-card{padding:18px;min-height:210px}
+  .fortune-player{font-size:1.55em}
+  .fortune-text{font-size:12px}
+  .flight-grid{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 <div id="hdr">
   <div class="hdt">
     <h1>🎾 签表幸存者之炉网</h1>
-    <span class="upd" id="upd-time">加载中...</span>
+    <div class="upd-wrap"><span class="upd" id="upd-time">加载中...</span><span class="dev">开发者：Candice·卢布列娃</span></div>
   </div>
   <div class="refresh-bar">
     <div class="refresh-dot" id="rdot"></div>
-    <span id="refresh-info">选人数据每5分钟自动更新</span>
+    <span id="refresh-info">选人数据每30分钟自动更新；其他模块每天11:00更新</span>
   </div>
   <div class="tabs">
     <button class="tab on" onclick="switchTab('ms-s',this)" id="tab-ms-s">🎾 ATP 男单</button>
     <button class="tab" onclick="switchTab('ws-s',this)" id="tab-ws-s">🎾 WTA 女单</button>
     <button class="tab" onclick="switchTab('ms-p',this)">📊 ATP 用户偏好</button>
     <button class="tab" onclick="switchTab('ws-p',this)">📊 WTA 用户偏好</button>
-    <button class="tab" onclick="switchTab('ms-t',this)">💀 2026 ATP 惨案</button>
-    <button class="tab" onclick="switchTab('ws-t',this)">💔 2026 WTA 惨案</button>
+    <button class="tab" onclick="switchTab('ms-t',this)">💀 历史上的惨案-ATP</button>
+    <button class="tab" onclick="switchTab('ws-t',this)">💔 历史上的惨案-WTA</button>
+    <button class="tab" onclick="switchTab('flight',this)">✈️ 每日航班</button>
     <button class="tab" onclick="switchTab('fortune',this)">🔮 每日运势</button>
   </div>
 </div>
@@ -141,33 +167,14 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
   <div class="loading" id="loading-wsp">⏳ 加载WTA偏好数据中...</div>
   <div id="content-ws-p" style="display:none"></div>
 </div>
-<div id="p-ms-t" class="panel">
-<div style="font-size:15px;font-weight:800;color:#dc2626;margin-bottom:10px">💀 2026赛季 ATP 惨案排行 · 带走用户最多 Top10</div>
-<p style="font-size:12px;color:#9a7a40;margin-bottom:14px">统计范围：香港→罗马共14站 · 仅统计「球员输球」</p>
-<div class="tbl-wrap"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr><th style="padding:10px;color:#78450a;font-size:11px;text-transform:uppercase;border-bottom:2px solid #fcd34d;background:linear-gradient(135deg,#fef3c7,#fde68a)">#</th><th style="padding:10px;color:#78450a;font-size:11px;text-transform:uppercase;border-bottom:2px solid #fcd34d;background:linear-gradient(135deg,#fef3c7,#fde68a)">刽子手</th><th style="padding:10px;color:#78450a;font-size:11px;text-transform:uppercase;border-bottom:2px solid #fcd34d;background:linear-gradient(135deg,#fef3c7,#fde68a)">赛站</th><th style="padding:10px;color:#78450a;font-size:11px;text-transform:uppercase;border-bottom:2px solid #fcd34d;background:linear-gradient(135deg,#fef3c7,#fde68a)">轮次</th><th style="padding:10px;color:#78450a;font-size:11px;text-transform:uppercase;border-bottom:2px solid #fcd34d;background:linear-gradient(135deg,#fef3c7,#fde68a)">受害人数</th><th style="padding:10px;color:#78450a;font-size:11px;text-transform:uppercase;border-bottom:2px solid #fcd34d;background:linear-gradient(135deg,#fef3c7,#fde68a)">辣评</th></tr></thead><tbody><tr><td class="tn" style="color:#9a7a40;font-size:12px">#1</td><td style="font-weight:800;color:#dc2626;font-size:14px">富乔维奇</td><td><span class="exp-tag r">鹿特丹</span></td><td class="tn" style="color:#9a7a40">Day3</td><td class="tn" style="font-weight:800;color:#f97316;font-size:15px">127人</td><td style="font-size:12px;color:#78450a;line-height:1.6;max-width:320px">锦鲤变黑鱼！富乔维奇在室内场对战…鹿特丹第二天就把127个人的梦想一并带走，外卡闯入半决赛，顺带血洗幸存者，史诗级大屠杀。</td></tr><tr><td class="tn" style="color:#9a7a40;font-size:12px">#2</td><td style="font-weight:800;color:#dc2626;font-size:14px">巴埃斯</td><td><span class="exp-tag r">马德里</span></td><td class="tn" style="color:#9a7a40">Day2</td><td class="tn" style="font-weight:800;color:#f97316;font-size:15px">123人</td><td style="font-size:12px;color:#78450a;line-height:1.6;max-width:320px">巴埃斯Day2就带走123人！这还让不让人参加比赛了？选了他的人：我只是想赌个冷门…巴埃斯：让我康康谁选我。</td></tr><tr><td class="tn" style="color:#9a7a40;font-size:12px">#3</td><td style="font-weight:800;color:#dc2626;font-size:14px">达尔德里</td><td><span class="exp-tag r">慕尼黑</span></td><td class="tn" style="color:#9a7a40">Day3</td><td class="tn" style="font-weight:800;color:#f97316;font-size:15px">111人</td><td style="font-size:12px;color:#78450a;line-height:1.6;max-width:320px">达尔德里在慕尼黑第二天送走111人，大家怎么都在选这个名字！就因为跟德约科维奇同名？那叫什么名字的你们都选？</td></tr><tr><td class="tn" style="color:#9a7a40;font-size:12px">#4</td><td style="font-weight:800;color:#dc2626;font-size:14px">莱赫奇卡</td><td><span class="exp-tag r">多哈</span></td><td class="tn" style="color:#9a7a40">Day4</td><td class="tn" style="font-weight:800;color:#f97316;font-size:15px">99人</td><td style="font-size:12px;color:#78450a;line-height:1.6;max-width:320px">多哈Day4，莱赫奇卡精准带走99人。波兰人在沙漠里开了个屠宰场，选他的99位同学请排好队领教训。</td></tr><tr><td class="tn" style="color:#9a7a40;font-size:12px">#5</td><td style="font-weight:800;color:#dc2626;font-size:14px">迪亚洛</td><td><span class="exp-tag r">香港</span></td><td class="tn" style="color:#9a7a40">Day3</td><td class="tn" style="font-weight:800;color:#f97316;font-size:15px">84人</td><td style="font-size:12px;color:#78450a;line-height:1.6;max-width:320px">香港Day3，迪亚洛送走84人！作为一个连自己名字都不太容易记的选手，他这次记忆感拉满，把84个人刻在了耻辱柱上。</td></tr><tr><td class="tn" style="color:#9a7a40;font-size:12px">#6</td><td style="font-weight:800;color:#dc2626;font-size:14px">门希克</td><td><span class="exp-tag r">罗马</span></td><td class="tn" style="color:#9a7a40">Day4</td><td class="tn" style="font-weight:800;color:#f97316;font-size:15px">84人</td><td style="font-size:12px;color:#78450a;line-height:1.6;max-width:320px">罗马Day4，门希克带走84人！好好好，来意大利旅游的都被他送回家了，永久记忆：永远不要在红土选门希克。</td></tr><tr><td class="tn" style="color:#9a7a40;font-size:12px">#7</td><td style="font-weight:800;color:#dc2626;font-size:14px">兰达卢塞</td><td><span class="exp-tag r">马德里</span></td><td class="tn" style="color:#9a7a40">Day2</td><td class="tn" style="font-weight:800;color:#f97316;font-size:15px">74人</td><td style="font-size:12px;color:#78450a;line-height:1.6;max-width:320px">兰达卢塞Day1跟巴埃斯组成双杀阵，马德里Day2两个人联手带走了197个人！下次选马德里Day2记得买好机票先退回去。</td></tr><tr><td class="tn" style="color:#9a7a40;font-size:12px">#8</td><td style="font-weight:800;color:#dc2626;font-size:14px">胡尔卡奇</td><td><span class="exp-tag r">蒙彼利埃</span></td><td class="tn" style="color:#9a7a40">Day2</td><td class="tn" style="font-weight:800;color:#f97316;font-size:15px">73人</td><td style="font-size:12px;color:#78450a;line-height:1.6;max-width:320px">蒙彼利埃第一天！第一天！胡尔卡奇就送走73个人，大家连第一轮都没混过去，这叫输在起跑线上。</td></tr><tr><td class="tn" style="color:#9a7a40;font-size:12px">#9</td><td style="font-weight:800;color:#dc2626;font-size:14px">哈恰诺夫</td><td><span class="exp-tag r">香港</span></td><td class="tn" style="color:#9a7a40">Day4</td><td class="tn" style="font-weight:800;color:#f97316;font-size:15px">65人</td><td style="font-size:12px;color:#78450a;line-height:1.6;max-width:320px">香港Day4，哈恰诺夫带走65人。好不容易熬过了前两天迪亚洛的屠杀，结果遇上哈恰诺夫，这就是命啊。</td></tr><tr><td class="tn" style="color:#9a7a40;font-size:12px">#10</td><td style="font-weight:800;color:#dc2626;font-size:14px">布勃利克</td><td><span class="exp-tag r">印第安维尔斯</span></td><td class="tn" style="color:#9a7a40">Day6</td><td class="tn" style="font-weight:800;color:#f97316;font-size:15px">65人</td><td style="font-size:12px;color:#78450a;line-height:1.6;max-width:320px">印第安维尔斯Day6，布勃利克送走65人。千里跋涉，过五关斩六将，结果在Day5被布勃利克出了个大鬼，心碎一地。</td></tr></tbody></table></div>
-</div>
-<div id="p-ws-t" class="panel">
-<div style="font-size:15px;font-weight:800;color:#dc2626;margin-bottom:10px">💔 2026赛季 WTA 惨案排行 · 带走用户最多 Top10</div>
-<p style="font-size:12px;color:#9a7a40;margin-bottom:14px">统计范围：布里斯班→罗马共14站 · 仅统计「球员输球」</p>
-<div class="tbl-wrap"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr><th style="padding:10px;color:#78450a;font-size:11px;text-transform:uppercase;border-bottom:2px solid #fcd34d;background:linear-gradient(135deg,#fef3c7,#fde68a)">#</th><th style="padding:10px;color:#78450a;font-size:11px;text-transform:uppercase;border-bottom:2px solid #fcd34d;background:linear-gradient(135deg,#fef3c7,#fde68a)">刽子手</th><th style="padding:10px;color:#78450a;font-size:11px;text-transform:uppercase;border-bottom:2px solid #fcd34d;background:linear-gradient(135deg,#fef3c7,#fde68a)">赛站</th><th style="padding:10px;color:#78450a;font-size:11px;text-transform:uppercase;border-bottom:2px solid #fcd34d;background:linear-gradient(135deg,#fef3c7,#fde68a)">轮次</th><th style="padding:10px;color:#78450a;font-size:11px;text-transform:uppercase;border-bottom:2px solid #fcd34d;background:linear-gradient(135deg,#fef3c7,#fde68a)">受害人数</th><th style="padding:10px;color:#78450a;font-size:11px;text-transform:uppercase;border-bottom:2px solid #fcd34d;background:linear-gradient(135deg,#fef3c7,#fde68a)">辣评</th></tr></thead><tbody><tr><td class="tn" style="color:#9a7a40;font-size:12px">#1</td><td style="font-weight:800;color:#dc2626;font-size:14px">弗雷希</td><td><span class="exp-tag r">印第安维尔斯</span></td><td class="tn" style="color:#9a7a40">Day2</td><td class="tn" style="font-weight:800;color:#f97316;font-size:15px">91人</td><td style="font-size:12px;color:#78450a;line-height:1.6;max-width:320px">印第安维尔斯Day2！弗雷希Day2就带走了91人，91个人的印第安梦碎在第一天。这位选手：对不起我只是在比赛。大家：???</td></tr><tr><td class="tn" style="color:#9a7a40;font-size:12px">#2</td><td style="font-weight:800;color:#dc2626;font-size:14px">斯维托丽娜</td><td><span class="exp-tag r">迈阿密</span></td><td class="tn" style="color:#9a7a40">Day6</td><td class="tn" style="font-weight:800;color:#f97316;font-size:15px">91人</td><td style="font-size:12px;color:#78450a;line-height:1.6;max-width:320px">迈阿密Day6，斯维托丽娜带走91人。熬过了前四天的大浪，以为快到决赛了，斯维托丽娜：朋友，终点到了，请下车。</td></tr><tr><td class="tn" style="color:#9a7a40;font-size:12px">#3</td><td style="font-weight:800;color:#dc2626;font-size:14px">凯斯勒</td><td><span class="exp-tag r">查尔斯顿</span></td><td class="tn" style="color:#9a7a40">Day5</td><td class="tn" style="font-weight:800;color:#f97316;font-size:15px">84人</td><td style="font-size:12px;color:#78450a;line-height:1.6;max-width:320px">查尔斯顿Day5，凯斯勒带走84人！草地杀手转战红土，继续杀人不偿命，84位选手：被凯斯勒带走，死而无憾（才怪）。</td></tr><tr><td class="tn" style="color:#9a7a40;font-size:12px">#4</td><td style="font-weight:800;color:#dc2626;font-size:14px">高芙</td><td><span class="exp-tag r">斯图加特</span></td><td class="tn" style="color:#9a7a40">Day5</td><td class="tn" style="font-weight:800;color:#f97316;font-size:15px">82人</td><td style="font-size:12px;color:#78450a;line-height:1.6;max-width:320px">斯图加特Day5，高芙送走82人！大家都知道高芙怕小球、怕红土、怕…等等，为什么还有82个人选她？迷信打破是需要学费的。</td></tr><tr><td class="tn" style="color:#9a7a40;font-size:12px">#5</td><td style="font-weight:800;color:#dc2626;font-size:14px">高芙</td><td><span class="exp-tag r">迪拜</span></td><td class="tn" style="color:#9a7a40">Day6</td><td class="tn" style="font-weight:800;color:#f97316;font-size:15px">77人</td><td style="font-size:12px;color:#78450a;line-height:1.6;max-width:320px">迪拜Day6，高芙带走77人！一个赛季送走159人，高芙正式成为2026年WTA幸存者最佳'刺客'，她的每一分都刺穿选她的心。</td></tr><tr><td class="tn" style="color:#9a7a40;font-size:12px">#6</td><td style="font-weight:800;color:#dc2626;font-size:14px">保利尼</td><td><span class="exp-tag r">斯图加特</span></td><td class="tn" style="color:#9a7a40">Day3</td><td class="tn" style="font-weight:800;color:#f97316;font-size:15px">68人</td><td style="font-size:12px;color:#78450a;line-height:1.6;max-width:320px">斯图加特Day3，保利尼带走68人。她说：我本来只是来比赛的。大家说：那你比赛能不能别赢！意大利人在德国土地上制造了最大惨案。</td></tr><tr><td class="tn" style="color:#9a7a40;font-size:12px">#7</td><td style="font-weight:800;color:#dc2626;font-size:14px">卡萨特金娜</td><td><span class="exp-tag r">阿布扎比</span></td><td class="tn" style="color:#9a7a40">Day2</td><td class="tn" style="font-weight:800;color:#f97316;font-size:15px">65人</td><td style="font-size:12px;color:#78450a;line-height:1.6;max-width:320px">阿布扎比Day2！卡萨特金娜直接干掉65个人的开门红！大家连热个身都没机会，直接被打包寄回家，沙漠的风带走了你的梦想。</td></tr><tr><td class="tn" style="color:#9a7a40;font-size:12px">#8</td><td style="font-weight:800;color:#dc2626;font-size:14px">里纳特</td><td><span class="exp-tag r">罗马</span></td><td class="tn" style="color:#9a7a40">Day2</td><td class="tn" style="font-weight:800;color:#f97316;font-size:15px">64人</td><td style="font-size:12px;color:#78450a;line-height:1.6;max-width:320px">罗马Day2，里纳特带走64人。永恒之城罗马，你的第一天居然被里纳特终结？这个开头，神仙也救不了你们了。</td></tr><tr><td class="tn" style="color:#9a7a40;font-size:12px">#9</td><td style="font-weight:800;color:#dc2626;font-size:14px">巴多萨</td><td><span class="exp-tag r">阿布扎比</span></td><td class="tn" style="color:#9a7a40">Day2</td><td class="tn" style="font-weight:800;color:#f97316;font-size:15px">55人</td><td style="font-size:12px;color:#78450a;line-height:1.6;max-width:320px">阿布扎比Day2，巴多萨带走55人。跟卡萨特金娜一起承包了阿布扎比Day2，两人合力在沙漠造成120人的'双杀'，这签真的选啥啥错。</td></tr><tr><td class="tn" style="color:#9a7a40;font-size:12px">#10</td><td style="font-weight:800;color:#dc2626;font-size:14px">希维昂泰克</td><td><span class="exp-tag r">马德里</span></td><td class="tn" style="color:#9a7a40">Day5</td><td class="tn" style="font-weight:800;color:#f97316;font-size:15px">54人</td><td style="font-size:12px;color:#78450a;line-height:1.6;max-width:320px">马德里Day5，希维昂泰克带走54人。世界第一来了就是不一样，专业屠杀幸存者选手，一出手就告诉你：贵族运动嘛，淘汰得这么流畅。</td></tr></tbody></table></div>
-</div>
-<div id="p-fortune" class="panel">
-<div class="fortune-wrap">
-  <div class="fortune-title">🔮 今日运势抽签</div>
-  <div class="fortune-sub">每天选球员愁破头？让神明帮你做选择！</div>
-  <div class="fortune-tabs"><button class="ftab on" onclick="setFortune('atp',this)">⚡ ATP 男单</button><button class="ftab" onclick="setFortune('wta',this)">🌸 WTA 女单</button></div>
-  <div class="fortune-card" id="fortune-card">
-    <div class="fortune-hint">✨ 今日可选球员已入签筒 ✨</div>
-    <div class="fortune-player" id="fortune-player">？？？</div>
-    <div class="fortune-text" id="fortune-text">点击下方按钮，开始今日运势抽签</div>
-  </div>
-  <br><button class="fortune-btn" onclick="drawFortune()">🎋 摇签</button>
-  <br><br><div class="fortune-hint">签文仅供娱乐，后果自负 😄</div>
-</div>
-</div>
-</div>
+<div id="p-ms-t" class="panel"><div id="content-ms-t"></div></div>
+<div id="p-ws-t" class="panel"><div id="content-ws-t"></div></div>
+<div id="p-flight" class="panel"><div class="flight-toolbar"><div style="font-size:15px;font-weight:800;color:#d97706">✈️ 每日航班</div><select class="select-mini" id="flight-year" onchange="initFlightSelect()"><option selected>2026</option><option>2025</option><option>2024</option></select><select class="select-mini" id="flight-select" onchange="renderFlights()"></select></div><div id="flight-box" class="flight-grid"></div></div>
+<div id="p-fortune" class="panel"><div class="fortune-wrap"><div class="fortune-title">🔮 今日运势抽签</div><div class="fortune-sub">每天选球员愁破头？让神明帮你做选择！</div><div class="fortune-tabs"><button class="ftab on" onclick="setFortune('atp',this)">⚡ ATP 男单</button><button class="ftab" onclick="setFortune('wta',this)">🌸 WTA 女单</button></div><div class="fortune-card" id="fortune-card"><div class="fortune-hint">✨ 今日可选球员已入签筒 ✨</div><div class="fortune-player" id="fortune-player">？？？</div><div class="fattr" id="fortune-attr">未摇签</div><div class="fortune-text" id="fortune-text">点击下方按钮，开始今日运势抽签</div><div class="fortune-yi" id="fortune-yi"></div></div><br><button class="fortune-btn" onclick="drawFortune()">🎋 摇签</button><br><br><div class="fortune-hint">签文仅供娱乐，后果自负 😄</div></div></div></div>>
 
 <script>
+let HIST_DATA=null;
+const PREVIEW_MODE=false;
 const FTEXTS=["此签大吉！天罡星照命，今日所选之人，剑气冲天，胜势已定，必能全身而退。", "上上签。月将入命，此球员今日如龙腾浅水，旺你旺到底，闭眼选，稳了。", "神托：紫微入局，福缘深厚，跟此人必有斩获，今日运势爆棚，大胆选之。", "贵人相助签。鹤立鸡群，此球员今日状态如满月之辉，旺场绝了，跟上不送。", "平安签。无大吉亦无大凶，今日平稳为上，此球员带你安渡难关，别太贪心。", "静待时机签。月相未圆，但此球员蓄势待发，有缘无缘看你运气，备选别忘了填。", "此乃心诚则灵签。你诚心选之，上天可能回应，但也可能不，反正备好备选。", "中签。今日运势平稳，此球员有一战之力，但敌人也不弱，认真填好备选。", "大凶签！！太岁相冲，凶星入命，今日选此球员十有八九凉凉，请务必填好备选！", "此签主破财损运，今日选此球员极易凉场，若不信，则自求多福，备选必须填！", "赔钱签！星盘显示今日此球员水逆严重，历史上凡选此人今日的，无一生还。请谨慎。", "阴煞缠身签。今日此球员与鬼门关有约，你若跟随，怕是要同去，建议另选。", "噩签。此球员今日如掉入深渊，选TA即相当于主动寄出出局通知。后悔药没有卖的。", "签曰：你选了这个人，跟本签一点关系都没有，全凭你的命。反正签就是个乐子。", "提前告知：此球员今日输了你别骂我，我只是个随机签，我也不想的。", "今日天意：此球员赢了，你运气好；输了，签文说了但你不信，总之我无责任。", "星座配对：你今天做任何选择都是错的。但还是得选，这就是幸存者的宿命。", "本日运势：已无可救药。此球员即将带你体验什么叫做「我以为我稳了」。", "意外之喜签（也可能是意外之悲）：50%赢50%输，全看命，填好备选才是王道。", "大凶且附赠嘲讽：你明知凶签还摇，这份精神感天动地，但成绩嘛…不保证。"];
 let GDATA=null; let PDATA=null;
 let MSPOOL=[]; let WSPOOL=[];
@@ -183,7 +190,7 @@ async function loadData(){
     GDATA=cur;
     MSPOOL=(cur.ms&&cur.ms.today_pool)||[];
     WSPOOL=(cur.ws&&cur.ws.today_pool)||[];
-    document.getElementById('upd-time').textContent='⏱ '+(cur.updated_at||'');
+    document.getElementById('upd-time').textContent='⏱ '+(cur.updated_at||'')+'｜每30分钟更新';
     if(cur.ms){document.getElementById('tab-ms-s').textContent='🎾 ATP '+(cur.ms.event_name||'')+(cur.ms.today_day?' Day'+cur.ms.today_day:'');renderScore('ms', cur.ms);}
     if(cur.ws){document.getElementById('tab-ws-s').textContent='🎾 WTA '+(cur.ws.event_name||'')+(cur.ws.today_day?' Day'+cur.ws.today_day:'');renderScore('ws', cur.ws);}
   }catch(e){
@@ -194,10 +201,14 @@ async function loadData(){
   }
   // 偏好数据单独加载（失败不影响主页面）
   try{
-    const pref=await fetch('data/preference.json?t='+t).then(r=>r.json());
+    HIST_DATA=await fetch('data/history.json?t='+t).then(r=>r.json());
+    const pref={updated_at:HIST_DATA.updated_at||'', ms:HIST_DATA.preference_by_year['2026'].ms, ws:HIST_DATA.preference_by_year['2026'].ws};
     PDATA=pref;
     renderPref('ms', pref);
     renderPref('ws', pref);
+    renderDisaster('ms');
+    renderDisaster('ws');
+    initFlightSelect();
   }catch(e){
     console.warn('偏好数据加载失败（非致命）',e);
     document.getElementById('loading-msp').textContent='⚠️ 偏好数据暂时不可用';
@@ -211,7 +222,7 @@ async function refreshCurrentOnly(){
     GDATA=cur;
     MSPOOL=cur.ms.today_pool||[];
     WSPOOL=cur.ws.today_pool||[];
-    document.getElementById('upd-time').textContent='⏱ '+cur.updated_at;
+    document.getElementById('upd-time').textContent='⏱ '+cur.updated_at+'｜每30分钟更新';
     document.getElementById('tab-ms-s').textContent='🎾 ATP '+cur.ms.event_name+' Day'+cur.ms.today_day;
     document.getElementById('tab-ws-s').textContent='🎾 WTA '+cur.ws.event_name+' Day'+cur.ws.today_day;
     renderScore('ms', cur.ms);
@@ -221,7 +232,7 @@ async function refreshCurrentOnly(){
   }catch(e){document.getElementById('rdot').style.background='#f87171';}
 }
 
-setInterval(refreshCurrentOnly, 5*60*1000);
+setInterval(refreshCurrentOnly, 30*60*1000);
 
 // ===== 渲染实时得分 =====
 function renderScore(g, data){
@@ -229,9 +240,13 @@ function renderScore(g, data){
   const loading=document.getElementById('loading-'+(g=='ms'?'ms':'ws'));
   if(loading) loading.style.display='none';
   const rows=data.rows||[];
-  const alive=data.alive_count||0;
-  const filled=data.filled_count||0;
-  const total=data.total_count||rows.length;
+  const totalUsers=rows.length;
+  const siteRows=rows.filter(r=>r.fill_status!=='未参赛' && !r.not_participated);
+  const siteTotal=siteRows.length;
+  const alive=siteRows.filter(r=>r.fill_status==='存活'||r.status===2).length;
+  const filled=data.filled_count||siteRows.filter(r=>r.has_today&&r.today_player&&r.today_player!=='轮空').length;
+  const suicide=siteRows.filter(r=>String(r.fill_status||'').includes('自杀')).length;
+  const total=siteTotal;
   const stats=data.player_stats||[];
   
   // 今日选人统计
@@ -239,7 +254,7 @@ function renderScore(g, data){
   const statsHtml=stats.length?`<div class="sc"><div class="sch"><span>📊 今日选人统计—${g=='ms'?'ATP男单':'WTA女单'}Day${data.today_day}</span><span class="scs">填写${filled}人·存活${alive}人</span></div><table class="st"><thead><tr><th></th><th>选手</th><th>人数</th><th>占比</th><th>分布</th></tr></thead><tbody>${stats.map((it,i)=>`<tr><td class="psr">#${i+1}</td><td class="psp">${it[0]}</td><td class="psc">${it[1]}人</td><td class="psp2">${(it[1]/filled*100).toFixed(1)}%</td><td class="psb"><div class="bbar" style="width:${(it[1]/filled*100).toFixed(1)}%;background:${ccArr[i%6]}"></div></td></tr>`).join('')}</tbody></table></div><hr class="divider">`:'' ;
   
   // KPI
-  const kpi=`<div class="kpi"><div class="kc"><div class="kn nt">${total}</div><div class="kl">总参赛</div></div><div class="kc"><div class="kn na">${alive}</div><div class="kl">🟢存活</div></div><div class="kc"><div class="kn nd">${total-alive}</div><div class="kl">❌出局</div></div><div class="kc"><div class="kn" style="color:#7c3aed">${filled}</div><div class="kl">今日已填</div></div></div>`;
+  const kpi=`<div class="kpi"><div class="kc"><div class="kn nt">${totalUsers}</div><div class="kl">总人数</div></div><div class="kc"><div class="kn nt">${siteTotal}</div><div class="kl">本站参赛</div></div><div class="kc"><div class="kn na">${alive}</div><div class="kl">🟢存活</div></div><div class="kc"><div class="kn nd">${siteTotal-alive}</div><div class="kl">❌出局</div></div><div class="kc"><div class="kn" style="color:#7c3aed">${filled}</div><div class="kl">今日已填</div></div><div class="kc"><div class="kn nd">${suicide}</div><div class="kl">自杀</div></div></div>`;
   
   // 表格行
   const tb_id='tb-'+g+'-s';
@@ -280,7 +295,7 @@ function getStatusClass(fs,status){
 }
 function getBadge(fs,status,sc){
   const m={alive:'<span class="badge ba">🟢 存活</span>',suicide:`<span class="badge bs">⊘ ${fs}</span>`,'player-loss':`<span class="badge bl">❌ ${fs}</span>`,'player-wd':`<span class="badge bw">⚪ ${fs}</span>`};
-  return m[sc]||`<span class="badge bl">❌ ${fs||''}</span>`;
+  if(fs==='未参赛')return '<span class="badge bs">— 未参赛</span>';return m[sc]||`<span class="badge bl">❌ ${fs||''}</span>`;
 }
 
 // ===== 渲染偏好 =====
@@ -361,10 +376,10 @@ function renderPref(g, pdata){
   }
   
   function mth(col,key,t,cls=''){return `<th${cls?' class="'+cls+'"':''} onclick="srt('${tab}',${col},'${key}')">${t}</th>`;}
-  const hdrHtml=`<thead><tr>${mth(0,'ir','即时排名','sd')}${mth(1,'user','用户名')}${mth(2,'ep','参加站数')}${mth(3,'ee','淘汰站数')}${mth(4,'ec','夺冠站数')}${mth(5,'wc','克星球员')}${mth(6,'bc','福星球员')}${mth(7,'champ','带用户夺冠')}${mth(8,'final','带用户进决赛')}</tr></thead>`;
+  const hdrHtml=`<thead><tr>${mth(0,'ir','即时排名','sd')}${mth(1,'user','用户名')}${mth(2,'ep','参加站数')}${mth(3,'ee','淘汰站数')}${mth(4,'ec','夺冠站数')}${mth(5,'wc','克星球员')}${mth(6,'bc','福星球员')}${mth(7,'champ','带用户夺冠')}${mth(8,'final','带用户夺亚')}</tr></thead>`;
   
   const champCnt=Object.values(dict).filter(p=>p&&(p.ec||0)>0).length;
-  cont.innerHTML=`<div class="kpi"><div class="kc"><div class="kn nt">${order.length}</div><div class="kl">参与用户</div></div><div class="kc"><div class="kn na">${champCnt}</div><div class="kl">有夺冠经历</div></div></div><p style="font-size:12px;color:#9a7a40;margin-bottom:8px">💡 点击任意行展开该用户详细数据，再点一次收起</p><div class="toolbar"><input id="q-${tab}" placeholder="🔍 搜索..." oninput="doFilter('${tab}')"></div><div class="tbl-wrap"><table id="tbl-${tab}">${hdrHtml}<tbody id="tb-${tab}">${rowsHtml}</tbody></table></div>`;
+  cont.innerHTML=`<div class="yearbar"><span class="dev-note">统计范围</span><select class="select-mini" id="year-${tab}" onchange="renderPrefYear('${g}',this.value)"><option selected>2026</option><option>2025</option><option>2024</option><option>全部</option></select></div><div class="kpi"><div class="kc"><div class="kn nt">${order.length}</div><div class="kl">参与用户</div></div><div class="kc"><div class="kn na">${champCnt}</div><div class="kl">有夺冠经历</div></div></div><p style="font-size:12px;color:#9a7a40;margin-bottom:8px">💡 点击任意行展开该用户详细数据，再点一次收起</p><div class="toolbar"><input id="q-${tab}" placeholder="🔍 搜索..." oninput="doFilter('${tab}')"></div><div class="tbl-wrap"><table id="tbl-${tab}">${hdrHtml}<tbody id="tb-${tab}">${rowsHtml}</tbody></table></div>`;
   cont.style.display='block';
 }
 
@@ -391,7 +406,7 @@ function toggleExpDyn(row){
   if(d.el && Object.keys(d.el).length) secs.push(`<div class="exp-sec"><h5>克星球员⚔️</h5>${mkSubs(d.el,'r')}</div>`);
   if(d.ad && Object.keys(d.ad).length) secs.push(`<div class="exp-sec"><h5>福星球员🍀(Top5)</h5>${mkSubs(d.ad,'g')}</div>`);
   if(d.ch && Object.keys(d.ch).length) secs.push(`<div class="exp-sec"><h5>夺冠球员🏆</h5>${mkSubs(d.ch,'g')}</div>`);
-  if(d.fi && Object.keys(d.fi).length) secs.push(`<div class="exp-sec"><h5>进决赛球员🎯</h5>${mkSubs(d.fi)}</div>`);
+  if(d.fi && Object.keys(d.fi).length) secs.push(`<div class="exp-sec"><h5>夺亚球员🎯</h5>${mkSubs(d.fi)}</div>`);
   er.querySelector('td').innerHTML=`<div class="exp-inner"><div class="exp-grid">${secs.join('')}</div></div>`;
   er.classList.add('open');
 }
@@ -404,8 +419,14 @@ function doFilter(tab){const q=(document.getElementById('q-'+tab)||{value:''}).v
 function srt(tab,col,key){const k=tab+'_'+col;if(!SS[k])SS[k]=0;SS[k]=(SS[k]+1)%3;const dir=SS[k];const ths=document.querySelectorAll('#tbl-'+tab+' thead th');ths.forEach(t=>t.classList.remove('sa','sd'));const tb=document.getElementById('tb-'+tab);const pairs=[];const allRows=Array.from(tb.rows);for(let i=0;i<allRows.length;i++){const r=allRows[i];if(r.classList.contains('pref-row')||r.dataset.status){const exp=allRows[i+1]&&allRows[i+1].classList.contains('exp-row')?allRows[i+1]:null;pairs.push({row:r,exp});}}const nk=['cr','ir','this','deduct','instant','chg','day','ep','ee','ec','wc','bc'];if(dir===0){pairs.sort((a,b)=>parseInt(a.row.dataset.ir||9999)-parseInt(b.row.dataset.ir||9999));if(ths[1])ths[1].classList.add('sd');}else{ths[col].classList.add(dir===1?'sa':'sd');const desc=(dir===1);pairs.sort((a,b)=>{if(nk.includes(key))return desc?(parseFloat(b.row.dataset[key]||0)-parseFloat(a.row.dataset[key]||0)):(parseFloat(a.row.dataset[key]||0)-parseFloat(b.row.dataset[key]||0));const va=(a.row.dataset.user||a.row.dataset.u||'').toLowerCase();const vb=(b.row.dataset.user||b.row.dataset.u||'').toLowerCase();return desc?vb.localeCompare(va):va.localeCompare(vb);})}pairs.forEach(pair=>{tb.appendChild(pair.row);if(pair.exp)tb.appendChild(pair.exp);});doFilter(tab);}
 
 // 运势
-function setFortune(g,btn){fGender=g;document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');document.getElementById('fortune-player').textContent='？？？';document.getElementById('fortune-text').textContent='点击下方按钮，开始今日运势抽签';}
-function drawFortune(){const pool=fGender==='atp'?MSPOOL:WSPOOL;if(!pool||!pool.length){document.getElementById('fortune-player').textContent='暂无数据';return;}const player=pool[Math.floor(Math.random()*pool.length)];const text=FTEXTS[Math.floor(Math.random()*FTEXTS.length)];const card=document.getElementById('fortune-card');card.classList.remove('shake');void card.offsetWidth;card.classList.add('shake');document.getElementById('fortune-player').textContent=player;document.getElementById('fortune-text').textContent=text;}
+
+function renderPrefYear(g,year){const pack=HIST_DATA.preference_by_year[year]||HIST_DATA.preference_by_year['2026']; const obj={updated_at:PREVIEW_PREF_DATA.updated_at, ms:pack.ms, ws:pack.ws}; PDATA=obj; renderPref(g,obj); setTimeout(()=>{const y=document.getElementById('year-'+g+'-p'); if(y)y.value=year;},0);}
+function renderDisaster(g,year='2026'){const list=(HIST_DATA.disasters[year]&&HIST_DATA.disasters[year][g])||[]; const cont=document.getElementById('content-'+g+'-t'); const title=g==='ms'?'历史上的惨案-ATP':'历史上的惨案-WTA'; cont.innerHTML=`<div class="yearbar"><div style="font-size:15px;font-weight:800;color:#dc2626">${title}</div><select class="select-mini" onchange="renderDisaster('${g}',this.value)"><option ${year==='2026'?'selected':''}>2026</option><option ${year==='2025'?'selected':''}>2025</option><option ${year==='2024'?'selected':''}>2024</option></select></div><div class="tbl-wrap"><table><thead><tr><th>#</th><th>刽子手</th><th>赛站</th><th>轮次</th><th>受害人数</th><th>辣评</th></tr></thead><tbody>${list.slice(0,50).map(x=>`<tr><td class="tn">#${x.rank}</td><td style="font-weight:800;color:#dc2626">${x.player}</td><td><span class="exp-tag r">${x.event}</span></td><td class="tn">Day${Number(x.day)+1}</td><td class="tn y">${x.count}人</td><td style="font-size:12px;color:#78450a;line-height:1.6">${x.comment}</td></tr>`).join('')}</tbody></table></div>`;}
+function initFlightSelect(){const y=document.getElementById('flight-year').value; const sel=document.getElementById('flight-select'); sel.innerHTML=''; if(y==='2026') sel.add(new Option('2026 罗马 ATP/WTA','__current_rome__',true,true)); Object.keys(HIST_DATA.flights[y]||{}).forEach((k,i)=>sel.add(new Option(k,k,y!=='2026'&&i===0,y!=='2026'&&i===0))); renderFlights();}
+function renderFlights(){const y=document.getElementById('flight-year').value; const k=document.getElementById('flight-select').value; let arr=[]; if(k==='__current_rome__'){arr=[...((HIST_DATA.flights[y]||{})['2026 罗马 ATP']||[]),...((HIST_DATA.flights[y]||{})['2026 罗马 WTA']||[])].sort((a,b)=>(a.day-b.day)||(a.g>b.g?1:-1));}else{arr=(HIST_DATA.flights[y]||{})[k]||[];} document.getElementById('flight-box').innerHTML=arr.map(x=>`<div class="flight-card"><div class="flight-day">Day ${Number(x.day)+1}</div><div style="font-size:12px;color:#9a7a40;font-weight:700;margin-bottom:6px">${x.g} 航线</div><span class="flight-pill">${x.alive}存活</span><span class="flight-pill r">${x.out}淘汰</span><span class="flight-pill">${x.suicide}自杀</span><span class="flight-pill">${x.retired}退赛</span><div style="font-size:12px;color:#78450a;margin-top:7px"><b>主要航班：</b>${x.top}</div></div>`).join('');}
+
+function setFortune(g,btn){fGender=g;document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');document.getElementById('fortune-player').textContent='？？？';document.getElementById('fortune-attr').textContent='未摇签';document.getElementById('fortune-text').textContent='点击下方按钮，开始今日运势抽签';document.getElementById('fortune-yi').innerHTML='';}
+function drawFortune(){const key='fortune_'+fGender;const today=new Date().toISOString().slice(0,10);let rec=JSON.parse(localStorage.getItem(key)||'{}');if(rec.date!==today)rec={date:today,count:0};if(rec.count>=3){document.getElementById('fortune-player').textContent='命运是测不准的';document.getElementById('fortune-attr').textContent='明日再问';document.getElementById('fortune-text').textContent='命运是测不准的。明天再来吧';document.getElementById('fortune-yi').innerHTML='';return;}rec.count++;localStorage.setItem(key,JSON.stringify(rec));const pool=fGender==='atp'?MSPOOL:WSPOOL;if(!pool||!pool.length){document.getElementById('fortune-player').textContent='暂无数据';return;}const player=pool[Math.floor(Math.random()*pool.length)];const f=HIST_DATA.fortunes[Math.floor(Math.random()*HIST_DATA.fortunes.length)];const card=document.getElementById('fortune-card');card.classList.remove('shake');void card.offsetWidth;card.classList.add('shake');document.getElementById('fortune-player').textContent=player;document.getElementById('fortune-attr').textContent=f.attr+'（今日还可抽'+(3-rec.count)+'次）';document.getElementById('fortune-text').textContent=f.text;document.getElementById('fortune-yi').innerHTML=`宜：${f.yi}<br>忌：${f.ji}`;}
 
 // 启动加载
 loadData();
