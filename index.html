@@ -420,7 +420,17 @@ function srt(tab,col,key){const k=tab+'_'+col;if(!SS[k])SS[k]=0;SS[k]=(SS[k]+1)%
 
 // 运势
 
-function renderPrefYear(g,year){const pack=HIST_DATA.preference_by_year[year]||HIST_DATA.preference_by_year['2026']; const obj={updated_at:PREVIEW_PREF_DATA.updated_at, ms:pack.ms, ws:pack.ws}; PDATA=obj; renderPref(g,obj); setTimeout(()=>{const y=document.getElementById('year-'+g+'-p'); if(y)y.value=year;},0);}
+function renderPrefYear(g, year){
+  if(!HIST_DATA || !HIST_DATA.preference_by_year || !HIST_DATA.preference_by_year[year]) return;
+  const pack = HIST_DATA.preference_by_year[year];
+  const obj = {updated_at: HIST_DATA.updated_at || '', ms: pack.ms || [], ws: pack.ws || []};
+  PDATA = obj;
+  renderPref(g, obj);
+  setTimeout(()=>{
+    const y = document.getElementById('year-' + g + '-p');
+    if(y) y.value = year;
+  }, 0);
+}
 function renderDisaster(g,year='2026'){const list=(HIST_DATA.disasters[year]&&HIST_DATA.disasters[year][g])||[]; const cont=document.getElementById('content-'+g+'-t'); const title=g==='ms'?'历史上的惨案-ATP':'历史上的惨案-WTA'; cont.innerHTML=`<div class="yearbar"><div style="font-size:15px;font-weight:800;color:#dc2626">${title}</div><select class="select-mini" onchange="renderDisaster('${g}',this.value)"><option ${year==='2026'?'selected':''}>2026</option><option ${year==='2025'?'selected':''}>2025</option><option ${year==='2024'?'selected':''}>2024</option></select></div><div class="tbl-wrap"><table><thead><tr><th>#</th><th>刽子手</th><th>赛站</th><th>轮次</th><th>受害人数</th><th>辣评</th></tr></thead><tbody>${list.slice(0,50).map(x=>`<tr><td class="tn">#${x.rank}</td><td style="font-weight:800;color:#dc2626">${x.player}</td><td><span class="exp-tag r">${x.event}</span></td><td class="tn">Day${Number(x.day)+1}</td><td class="tn y">${x.count}人</td><td style="font-size:12px;color:#78450a;line-height:1.6">${x.comment}</td></tr>`).join('')}</tbody></table></div>`;}
 function initFlightSelect(){const y=document.getElementById('flight-year').value; const sel=document.getElementById('flight-select'); sel.innerHTML=''; if(y==='2026') sel.add(new Option('2026 罗马 ATP/WTA','__current_rome__',true,true)); Object.keys(HIST_DATA.flights[y]||{}).forEach((k,i)=>sel.add(new Option(k,k,y!=='2026'&&i===0,y!=='2026'&&i===0))); renderFlights();}
 function renderFlights(){const y=document.getElementById('flight-year').value; const k=document.getElementById('flight-select').value; let arr=[]; if(k==='__current_rome__'){arr=[...((HIST_DATA.flights[y]||{})['2026 罗马 ATP']||[]),...((HIST_DATA.flights[y]||{})['2026 罗马 WTA']||[])].sort((a,b)=>(a.day-b.day)||(a.g>b.g?1:-1));}else{arr=(HIST_DATA.flights[y]||{})[k]||[];} document.getElementById('flight-box').innerHTML=arr.map(x=>`<div class="flight-card"><div class="flight-day">Day ${Number(x.day)+1}</div><div style="font-size:12px;color:#9a7a40;font-weight:700;margin-bottom:6px">${x.g} 航线</div><span class="flight-pill">${x.alive}存活</span><span class="flight-pill r">${x.out}淘汰</span><span class="flight-pill">${x.suicide}自杀</span><span class="flight-pill">${x.retired}退赛</span><div style="font-size:12px;color:#78450a;margin-top:7px"><b>主要航班：</b>${x.top}</div></div>`).join('');}
