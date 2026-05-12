@@ -126,6 +126,44 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
   .fortune-text{font-size:12px}
   .flight-grid{grid-template-columns:1fr}
 }
+
+/* mobile live score table optimization */
+@media(max-width:768px){
+  #p-ms-s .tbl-wrap,#p-ws-s .tbl-wrap{
+    border:0;box-shadow:none;max-height:none;overflow:visible;background:transparent;
+  }
+  #p-ms-s table,#p-ws-s table,#p-ms-s thead,#p-ws-s thead,#p-ms-s tbody,#p-ws-s tbody,#p-ms-s tr,#p-ws-s tr,#p-ms-s td,#p-ws-s td{
+    display:block;width:100%;box-sizing:border-box;
+  }
+  #p-ms-s thead,#p-ws-s thead{display:none}
+  #p-ms-s tr[data-status],#p-ws-s tr[data-status]{
+    margin:8px 0;padding:10px 10px 8px;border:1px solid #fde68a;border-radius:12px;background:#fffdf7!important;box-shadow:0 2px 8px rgba(245,158,11,.10);
+  }
+  #p-ms-s tr[data-status].ra,#p-ws-s tr[data-status].ra{background:#f7fff9!important;border-color:#bbf7d0}
+  #p-ms-s tr[data-status].rd,#p-ws-s tr[data-status].rd{background:#fffafa!important}
+  #p-ms-s tr[data-status] td,#p-ws-s tr[data-status] td{
+    border:0;padding:3px 0;text-align:left!important;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;font-size:12px;line-height:1.45;
+  }
+  #p-ms-s tr[data-status] td::before,#p-ws-s tr[data-status] td::before{
+    content:attr(data-label);flex:0 0 68px;color:#9a7a40;font-size:11px;font-weight:700;
+  }
+  #p-ms-s tr[data-status] td:nth-child(1),#p-ws-s tr[data-status] td:nth-child(1),
+  #p-ms-s tr[data-status] td:nth-child(2),#p-ws-s tr[data-status] td:nth-child(2){display:none}
+  #p-ms-s tr[data-status] td:nth-child(3),#p-ws-s tr[data-status] td:nth-child(3){
+    display:block;font-size:14px;font-weight:800;color:#78450a;margin-bottom:4px;white-space:normal;overflow:visible;text-overflow:clip;max-width:none;
+  }
+  #p-ms-s tr[data-status] td:nth-child(3)::before,#p-ws-s tr[data-status] td:nth-child(3)::before{
+    content:attr(data-rank);display:block;color:#7c3aed;font-size:11px;font-weight:700;margin-bottom:2px;
+  }
+  #p-ms-s tr[data-status] td:nth-child(4),#p-ws-s tr[data-status] td:nth-child(4){
+    background:#fff7ed;border-radius:8px;padding:7px 8px;margin:2px 0 4px;
+  }
+  #p-ms-s .nf,#p-ws-s .nf{color:#b45309;font-weight:700;font-style:normal}
+  #p-ms-s .tt .pn,#p-ws-s .tt .pn{font-size:13px}
+  #p-ms-s .tt .pa,#p-ws-s .tt .pa{color:#7c2d12}
+  #p-ms-s .badge,#p-ws-s .badge{font-size:11px;padding:2px 7px}
+}
+
 </style>
 </head>
 <body>
@@ -272,7 +310,7 @@ function renderScore(g, data){
     const chg=r.rank_change;
     const ch=chg===null?'<span class="cn">—</span>':chg>0?`<span class="cu">▲${chg}</span>`:chg<0?`<span class="cd">▼${Math.abs(chg)}</span>`:'<span class="cz">→0</span>';
     const cr=r.current_rank||9999; const ir=r.instant_rank||9999;
-    rowsHtml+=`<tr class="${sc==='alive'?'ra':'rd'}" data-status="${sc}" data-filled="${r.has_today?'1':'0'}" data-cr="${cr}" data-ir="${ir}" data-cur="${r.current_score||0}" data-deduct="${r.deduct_score||0}" data-this="${r.this_event_score||0}" data-instant="${r.instant_score||0}" data-day="${r.day||0}" data-chg="${r.rank_change||0}" data-user="${esc(r.username)}" data-today="${esc(r.today_player||'')}" data-alive="${sc==='alive'?1:0}"><td class="tn">${cr==9999?'—':cr}</td><td class="tn ir">${ir==9999?'—':ir}</td><td class="tu">${r.username}</td><td class="tt">${td}</td><td>${badge}</td><td class="tn g">${r.this_event_score||0}</td><td class="tn r">${r.deduct_score>0?'-'+r.deduct_score:'0'}</td><td class="tn y">${r.instant_score||0}</td><td class="tc">${ch}</td><td class="tn s">${r.day||0}</td></tr>`;
+    rowsHtml+=`<tr class="${sc==='alive'?'ra':'rd'}" data-status="${sc}" data-filled="${r.has_today?'1':'0'}" data-cr="${cr}" data-ir="${ir}" data-cur="${r.current_score||0}" data-deduct="${r.deduct_score||0}" data-this="${r.this_event_score||0}" data-instant="${r.instant_score||0}" data-day="${r.day||0}" data-chg="${r.rank_change||0}" data-user="${esc(r.username)}" data-today="${esc(r.today_player||'')}" data-alive="${sc==='alive'?1:0}"><td class="tn" data-label="当前排名">${cr==9999?'—':cr}</td><td class="tn ir" data-label="即时排名">${ir==9999?'—':ir}</td><td class="tu" data-label="用户名" data-rank="当前#${cr==9999?'—':cr} · 即时#${ir==9999?'—':ir}">${r.username}</td><td class="tt" data-label="今日选择">${td}</td><td data-label="状态">${badge}</td><td class="tn g" data-label="本站得分">${r.this_event_score||0}</td><td class="tn r" data-label="扣除积分">${r.deduct_score>0?'-'+r.deduct_score:'0'}</td><td class="tn y" data-label="即时积分">${r.instant_score||0}</td><td class="tc" data-label="排名变化">${ch}</td><td class="tn s" data-label="存活天数">${r.day||0}</td></tr>`;
   }
   
   function mth(col,key,t,cls=''){return `<th${cls?' class="'+cls+'"':''} onclick="srt('${tab}',${col},'${key}')">${t}</th>`;}
