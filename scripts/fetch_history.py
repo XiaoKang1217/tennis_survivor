@@ -47,10 +47,7 @@ def survivor_calendar_status(years=(2024,2025,2026)):
     return out
 
 def fetch_survivor_schedule_day(ev):
-    """Objective survivor schedule from the event fill page.
-    Return (final_day, runner_day), where final_day is the day index whose round is F.
-    This does NOT depend on user survival results.
-    """
+    """Objective survivor schedule from event fill page. F round data-id is objective final day."""
     key=(ev['year'],ev['eid'],ev['gender'])
     sched=globals().setdefault('SCHEDULE_DAY_CACHE',{})
     if key in sched: return sched[key]
@@ -59,12 +56,8 @@ def fetch_survivor_schedule_day(ev):
     html=sess.get(url,timeout=30).text
     pairs=re.findall(r'<div\s+data-id="(\d+)"\s+class="cSurvivorDayPickInfo">.*?当前轮次：\s*([^&<\s]+)', html, re.S)
     final_days=[int(day) for day,rnd in pairs if rnd.strip()=='F']
-    if final_days:
-        final_day=max(final_days)
-    else:
-        # fallback only if page structure changes; normally every completed/ongoing event has an F day on fill page
-        all_days=[int(day) for day,rnd in pairs]
-        final_day=max(all_days) if all_days else ev.get('max_day',0)
+    all_days=[int(day) for day,rnd in pairs]
+    final_day=max(final_days) if final_days else (max(all_days) if all_days else ev.get('max_day',0))
     sched[key]=(final_day, max(0, final_day-1))
     return sched[key]
 
@@ -113,18 +106,19 @@ def compute_pref(events,gender,years,ir):
     us=defaultdict(lambda:{'username':'','elim_p':defaultdict(lambda:[0,9999,[]]),'adv_p':defaultdict(lambda:[0,-1,[]]),'champ_p':defaultdict(list),'runner_p':defaultdict(list),'participated':[],'eliminated':[],'championed':[],'ev_participated':0,'ev_eliminated':0,'ev_champion':0})
     filt=[e for e in events if e['gender']==gender and e['year'] in years]
     for idx,e in enumerate(filt):
-        # 赛事是否已结束取官方幸存者赛历：/score=已结束，/my=进行中。
+        # 赛事是否已结束：官方幸存者赛历 /score=已结束，/my=进行中。
         title_closed=(calendar_status.get((e.get('year'),e.get('eid'),e.get('gender')))=='score')
-        # 冠亚军 day 取客观幸存者填写页赛程：当前轮次 F 对应赛程最后一天。
+        # 客观赛程：幸存者填写页中 当前轮次:F 的 data-id 是 F day。
         final_day, runner_day = fetch_survivor_schedule_day(e)
         for uid,u in e['users'].items():
             if not u['username']: continue
             st=us[uid]; st['username']=st['username'] or u['username']; st['ev_participated']+=1; st['participated'].append(f"{e['year']}{e['name']}")
             day=u['day']; fs=u['fill_status']; ps=u['players']
-            # 夺冠：已结束赛事，用户在客观赛程最后一天依然存活。
+            # 夺冠：已结束赛事，客观 F day 用户依然存活。
             champ=(title_closed and fs=='存活' and day>=final_day)
-            # 夺亚：已结束赛事，用户存活到客观赛程倒数第二天，且最后一天没存活。
-            runner=(title_closed and (not champ) and day==runner_day)
+            # 夺亚：已结束赛事，F day-1 存活，且 F day 不存活。
+            # 数据表现为用户走到了 F day 但最终不是存活；夺亚球员取 F day-1 的选人。
+            runner=(title_closed and (not champ) and fs!='存活' and day>=final_day)
             if champ:
                 st['ev_champion']+=1; st['championed'].append(f"{e['year']}{e['name']}")
             else:
@@ -134,10 +128,10 @@ def compute_pref(events,gender,years,ir):
             if fs=='球员输球' and day<len(ps) and ps[day] and ps[day]!='轮空':
                 k=ps[day]; st['elim_p'][k][0]+=1; st['elim_p'][k][1]=min(st['elim_p'][k][1],day*100+idx); st['elim_p'][k][2].append(f"{e['year']}{e['name']}")
             if champ:
-                j=min(day-1,len(ps)-1)
+                j=min(final_day,len(ps)-1)
                 if j>=0 and ps[j] and ps[j]!='轮空': st['champ_p'][ps[j]].append(f"{e['year']}{e['name']}")
             elif runner:
-                j=min(day-1,len(ps)-1)
+                j=min(runner_day,len(ps)-1)
                 if j>=0 and ps[j] and ps[j]!='轮空': st['runner_p'][ps[j]].append(f"{e['year']}{e['name']}")
     res=[]
     for uid,st in us.items():
