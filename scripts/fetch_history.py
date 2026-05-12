@@ -36,6 +36,38 @@ def calendar(year):
             seen.add(key); out.append({'year':year,'eid':eid,'gender':g,'name':name})
     return out
 
+def survivor_calendar_status(years=(2024,2025,2026)):
+    """Official survivor calendar status. /score = finished, /my = ongoing."""
+    out={}
+    sess=make_session()
+    for year in years:
+        html=sess.get(f'{BASE_URL}/zh/survivor/calendar/{year}',timeout=30).text
+        for eid,g,mode in re.findall(r'https://www\.live-tennis\.cn/zh/survivor/event/([^/]+)/'+str(year)+r'/(MS|WS)/(score|my)',html):
+            out[(year,eid,g)] = mode
+    return out
+
+def fetch_survivor_schedule_day(ev):
+    """Objective survivor schedule from the event fill page.
+    Return (final_day, runner_day), where final_day is the day index whose round is F.
+    This does NOT depend on user survival results.
+    """
+    key=(ev['year'],ev['eid'],ev['gender'])
+    sched=globals().setdefault('SCHEDULE_DAY_CACHE',{})
+    if key in sched: return sched[key]
+    sess=make_session()
+    url=f"{BASE_URL}/zh/survivor/event/{ev['eid']}/{ev['year']}/{ev['gender']}/my"
+    html=sess.get(url,timeout=30).text
+    pairs=re.findall(r'<div\s+data-id="(\d+)"\s+class="cSurvivorDayPickInfo">.*?当前轮次：\s*([^&<\s]+)', html, re.S)
+    final_days=[int(day) for day,rnd in pairs if rnd.strip()=='F']
+    if final_days:
+        final_day=max(final_days)
+    else:
+        # fallback only if page structure changes; normally every completed/ongoing event has an F day on fill page
+        all_days=[int(day) for day,rnd in pairs]
+        final_day=max(all_days) if all_days else ev.get('max_day',0)
+    sched[key]=(final_day, max(0, final_day-1))
+    return sched[key]
+
 def fetch_one(ev):
     safe=f"{ev['year']}_{ev['gender']}_{ev['eid']}_{ev['name']}".replace('/','_')
     fn=CACHE/(safe+'.json')
@@ -77,15 +109,22 @@ def current_ir():
     except Exception: return {},{}
 
 def compute_pref(events,gender,years,ir):
+    calendar_status=globals().get('SURVIVOR_CALENDAR_STATUS') or {(e.get('year'),e.get('eid'),e.get('gender')):'score' for e in events}
     us=defaultdict(lambda:{'username':'','elim_p':defaultdict(lambda:[0,9999,[]]),'adv_p':defaultdict(lambda:[0,-1,[]]),'champ_p':defaultdict(list),'runner_p':defaultdict(list),'participated':[],'eliminated':[],'championed':[],'ev_participated':0,'ev_eliminated':0,'ev_champion':0})
     filt=[e for e in events if e['gender']==gender and e['year'] in years]
     for idx,e in enumerate(filt):
-        md=e.get('max_day',0); final_threshold=max(0,md-1); is_current=(e['year']==2026 and e['name']=='罗马')
+        # 赛事是否已结束取官方幸存者赛历：/score=已结束，/my=进行中。
+        title_closed=(calendar_status.get((e.get('year'),e.get('eid'),e.get('gender')))=='score')
+        # 冠亚军 day 取客观幸存者填写页赛程：当前轮次 F 对应赛程最后一天。
+        final_day, runner_day = fetch_survivor_schedule_day(e)
         for uid,u in e['users'].items():
             if not u['username']: continue
             st=us[uid]; st['username']=st['username'] or u['username']; st['ev_participated']+=1; st['participated'].append(f"{e['year']}{e['name']}")
             day=u['day']; fs=u['fill_status']; ps=u['players']
-            champ=(fs=='存活' and day>=md and not is_current)
+            # 夺冠：已结束赛事，用户在客观赛程最后一天依然存活。
+            champ=(title_closed and fs=='存活' and day>=final_day)
+            # 夺亚：已结束赛事，用户存活到客观赛程倒数第二天，且最后一天没存活。
+            runner=(title_closed and (not champ) and day==runner_day)
             if champ:
                 st['ev_champion']+=1; st['championed'].append(f"{e['year']}{e['name']}")
             else:
@@ -97,7 +136,7 @@ def compute_pref(events,gender,years,ir):
             if champ:
                 j=min(day-1,len(ps)-1)
                 if j>=0 and ps[j] and ps[j]!='轮空': st['champ_p'][ps[j]].append(f"{e['year']}{e['name']}")
-            elif day>=final_threshold:
+            elif runner:
                 j=min(day-1,len(ps)-1)
                 if j>=0 and ps[j] and ps[j]!='轮空': st['runner_p'][ps[j]].append(f"{e['year']}{e['name']}")
     res=[]
@@ -164,7 +203,8 @@ def fortunes():
     return arr
 
 def main():
-    tz=timezone(timedelta(hours=8)); events=fetch_events(); msir,wsir=current_ir()
+    global SURVIVOR_CALENDAR_STATUS
+    tz=timezone(timedelta(hours=8)); SURVIVOR_CALENDAR_STATUS=survivor_calendar_status(); events=fetch_events(); msir,wsir=current_ir()
     hist={'updated_at':datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S'),'preference_by_year':{},'disasters':{},'flights':{},'fortunes':fortunes()}
     for lab,yrs in [('2024',[2024]),('2025',[2025]),('2026',[2026]),('全部',[2024,2025,2026])]: hist['preference_by_year'][lab]={'ms':compute_pref(events,'MS',yrs,msir),'ws':compute_pref(events,'WS',yrs,wsir)}
     for y in [2024,2025,2026]: hist['disasters'][str(y)]={'ms':disasters(events,'MS',y),'ws':disasters(events,'WS',y)}; hist['flights'][str(y)]=flights(events,y)
