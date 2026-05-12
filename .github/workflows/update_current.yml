@@ -2,7 +2,7 @@ name: Update Current Data
 
 on:
   schedule:
-    - cron: '12,42 * * * *'
+    - cron: '*/30 * * * *'
   workflow_dispatch:
 
 jobs:
@@ -10,13 +10,18 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
       - run: pip install -r scripts/requirements.txt
+
       - run: python scripts/fetch_current.py
+
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Auto update current data"
