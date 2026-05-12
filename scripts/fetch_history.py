@@ -147,10 +147,74 @@ def compute_pref(events,gender,years,ir):
     res.sort(key=lambda x:(x.get('instant_rank') is None,x.get('instant_rank') or 9999,-x['events_participated']))
     return res
 
-def roast(player,event,day,count,rank):
-    day+=1
-    tpl=[f'{event} Day{day}，{player}一脚油门把{count}个人送进候机厅。选TA的人不是没做功课，是功课做反了。',f'{player}这班航班满载{count}人起飞，塔台都沉默了：怎么又是你们这群自信的人。',f'{event}惨案现场，{player}精准收割{count}颗心。热门不是护身符，今天更像退票凭证。',f'{count}个人把命交给{player}，{player}转手交给命运。扎心但礼貌：下次别这么相信爱情。',f'{player}今日营业：比赛可以输，幸存者必须带走。{count}人集体返乡，堪称年度反向贵人。']
-    return tpl[(rank-1)%len(tpl)]
+
+def roast(player, event, day, count, rank):
+    """Generate unique, spicy roast comment for each disaster entry.
+    Uses a large pool of templates varied by event, day, count, and rank
+    so Top30 entries will all have distinct, flavourful comments.
+    """
+    day += 1
+    # Characteristics for variation
+    is_day1 = (day == 1)
+    is_late = (day >= 6)
+    is_upset = (count >= 80)
+    seed = (hash(player + event) & 0x7fffffff) % 100
+
+    # Large pool of templates split by context
+    day1_pool = [
+        f"Day1就送走了{count}人，{player}的签表教育课从不拖堂。{event}选手刚搭上去，就被他们礼貌请了下来。",
+        f"{event} Day1首秀，{player}用一场比赛帮{count}人重新认识了自己的选手判断力。结论：再打磨一下。",
+        f"{count}个人Day1就上了{player}的船，{player}Day1就凿了个洞。这场幸存者游轮没有救生圈。",
+        f"{event}开场日，{player}替{count}人交了一份签表学费。学费不退，但经验留下了。",
+        f"Day1{player}退场，{count}人的期望随之化作{event}的地面灰尘。热情换不来胜利，这是第一课。",
+        f"{player}在{event} Day1完成了一次教科书级闪退，{count}人目送他走向更广阔的休息室。",
+        f"Day1，{event}天气不错，{player}心情也不错，就是比赛输了，顺带把{count}个人的心情带走了。",
+        f"{count}人信了{player}能撑过Day1，{player}表示：连Day1我都不想撑。{event}就此多了一段传说。",
+    ]
+    late_pool = [
+        f"{event} Day{day}爆冷，{player}在{count}人的见证下选择了最意外的谢幕方式：悄悄地走，不留下任何理由。",
+        f"{count}人陪{player}走到了Day{day}，然后他们在{event}的大门口发现：里面没有他们的位置了。",
+        f"Day{day}，{event}签表只差临门一脚，{player}却原地刹车。{count}人站在外面看着他离开，沉默是最好的悼词。",
+        f"{player}在{event} Day{day}的表现让{count}人深刻体会了什么叫\"希望越大失望越大\"，而且这是可量化的。",
+        f"{count}人把{player}送进了{event} Day{day}，然后发现他们买的是单程票。幸好他们有备选——对吧？",
+        f"Day{day}，{event}夜幕下，{player}安静地终结了{count}个人的幸存之路。比爆冷更可怕的是：有点意料之中。",
+    ]
+    big_upset_pool = [
+        f"{event}本届最大惊雷之一：{player}把{count}个相信他的人一起炸翻。此役过后，{player}的名字将被写进幸存者黑名单。",
+        f"{player}在{event}贡献了当年最知名的惨案之一，{count}人同时落地，场面壮观，史书留名。",
+        f"{count}这个数字在{event}意味着什么？意味着{player}用一场比赛让整个签表群都沉默了三秒钟。",
+        f"{event}因为{player}而拥有了一段幸存者史诗般的记忆：那天有{count}颗心碎得一模一样。",
+    ]
+    mid_pool = [
+        f"{player}在{event} Day{day}带走了{count}人，用行动诠释了签表幸存者的核心精髓：你以为稳，其实不稳。",
+        f"{count}个信了{player}的人，在{event} Day{day}统一领到了一张回程单。下次看清楚赔率再出发。",
+        f"{event}赛场上，{player}完成了他Day{day}份内的工作——把{count}人礼送出境，效率极高。",
+        f"{player}今日在{event}展示了幸存者的反向价值：帮{count}人提前结束了这场心理拉锯战，算是功德一件。",
+        f"Day{day}，{player}在{event}主动交出了{count}个人押注的信任。他不欠大家解释，但大家欠自己一个反思。",
+        f"{count}人把{player}列为{event} Day{day}的主力担当，他表示感谢，然后转身输了。感谢是真的，赢是假的。",
+        f"{player}在{event}的Day{day}表现堪称本届\"安静型炸弹\"：引爆前没有预警，{count}人来不及反应就被带走了。",
+        f"选{player}去{event}的{count}个人，在Day{day}学到了人生宝贵一课：球场上没有\"应该赢\"这回事。",
+        f"{event} Day{day}，{player}让{count}人的签表本周作业直接清零。不是他不努力，是今天就是那种日子。",
+        f"Day{day}，{player}在{event}宣告：我的任务已完成。{count}个跟着他的人表示：你的任务和我们的不一样。",
+        f"{player}本次{event}之行目的明确：帮{count}人体验了一次\"从满怀希望到快速落地\"的完整情绪旅程。",
+        f"{event} Day{day}，{count}人集体见证了{player}的提前退场。遗憾是有的，下次手更稳一点就好。",
+        f"幸存者经典桥段在{event}重演：{player} Day{day}翻车，{count}人同步翻车，无一幸免，各自走好。",
+        f"{player}在{event}的签表寿命是{day}天。{count}个人押注的{day}天就此到期，没有延期，没有退款。",
+        f"Day{day}之后，{event}里{player}的传奇故事只有一个版本：{count}个人说他行，他选择了另一个方向证明。",
+    ]
+
+    # Pick by context and seed
+    if is_day1 and seed < 70:
+        pool = day1_pool
+    elif is_late:
+        pool = late_pool
+    elif is_upset:
+        pool = big_upset_pool
+    else:
+        pool = mid_pool
+
+    # deterministic pick using seed for reproducibility
+    return pool[seed % len(pool)]
 
 def disasters(events,gender,year):
     c=Counter()
