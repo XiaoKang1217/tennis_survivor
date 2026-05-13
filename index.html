@@ -271,17 +271,25 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
   .bd-exp-grid{flex-wrap:wrap}
   .bd-card-type,.bd-card-surf{width:100%!important}
   .bd-card-expiry{flex:unset!important;width:100%!important;min-width:0!important}
+  /* 手机饼图区：横向排列，图例紧凑 */
   .bd-chart-area{flex-direction:row;align-items:flex-start;gap:8px}
-  .bd-chart-wrap{width:90px!important;height:90px!important;flex-shrink:0}
-  .bd-chart-wrap canvas{width:90px!important;height:90px!important}
-  .bd-chart-total{font-size:11px!important}
+  .bd-chart-wrap{width:80px!important;height:80px!important;flex-shrink:0}
+  .bd-chart-wrap canvas{width:80px!important;height:80px!important}
+  .bd-chart-total{font-size:10px!important}
   .bd-chart-sub{font-size:8px!important}
   .bd-chart-legend{flex:1;min-width:0}
-  .bd-legend-item{margin-bottom:2px}
+  /* 饼图旁边的图例（前几个） */
+  .bd-legend-item{margin-bottom:1px}
   .bd-legend-dot{width:6px!important;height:6px!important}
-  .bd-legend-name{font-size:10px!important}
+  .bd-legend-name{font-size:10px!important;white-space:normal!important}
   .bd-legend-val{font-size:10px!important}
   .bd-legend-pct{font-size:9px!important}
+  /* 场地条形图行（后面的条形图图例，统一大小） */
+  .bd-surf-row{margin-bottom:3px}
+  .bd-surf-lbl{font-size:10px!important;width:60px!important;white-space:normal!important}
+  .bd-surf-val{font-size:10px!important;width:28px!important}
+  .bd-surf-pct{font-size:9px!important;width:28px!important}
+  .bd-surf-track{height:11px!important}
   .bd-tbl{min-width:440px!important}
 }
 </style>
@@ -353,12 +361,12 @@ const SS={};const FS={};
 // ===== 数据加载 =====
 async function loadData(){
   const t=Date.now();
-  // ── 并行发起两个请求，不互相阻塞 ──────────────────────
+  // ── 并行发起全部3个请求，不互相阻塞 ─────────────────────
   const curPromise=fetch('data/current.json?t='+t).then(r=>r.json());
-  // history.json 同时开始下载（后台进行，不阻塞current渲染）
   window.__histPromise=fetch('data/history.json?t='+t).then(r=>r.json());
+  window.__bdPromise=fetch('data/breakdown.json?t='+t).then(r=>r.json());
 
-  // current 先到先渲染
+  // ① current 先到先渲染（最小，最快）
   try{
     const cur=await curPromise;
     GDATA=cur;
@@ -374,7 +382,7 @@ async function loadData(){
     document.getElementById('loading-ws').textContent='⚠️ 数据加载失败，请刷新页面';
   }
 
-  // history 后台加载完成后自动渲染（用户不需要做任何操作）
+  // ② history 后台加载完自动渲染
   window.__histPromise.then(function(hist){
     HIST_DATA=hist;
     const pref={updated_at:hist.updated_at||'',ms:hist.preference_by_year['2026'].ms,ws:hist.preference_by_year['2026'].ws};
@@ -387,16 +395,26 @@ async function loadData(){
     document.getElementById('loading-msp').textContent='⚠️ 历史数据加载失败，请刷新';
     document.getElementById('loading-wsp').textContent='⚠️ 历史数据加载失败，请刷新';
   });
+
+  // ③ breakdown 后台加载完，若用户已切到积分构成tab则自动渲染
+  window.__bdPromise.then(function(d){
+    BD_DATA=d;
+    // 如果用户已经切到积分构成tab，立刻渲染
+    if(document.getElementById('p-ms-bd')?.classList.contains('on')||
+       document.getElementById('p-ws-bd')?.classList.contains('on')){
+      renderBreakdownPanel('ms',d.ms||[]);
+      renderBreakdownPanel('ws',d.ws||[]);
+    }
+  }).catch(function(e){console.warn('积分构成数据加载失败',e);});
 }
 
-// 统一获取历史数据入口（复用已发起的请求，避免重复下载）
+// 统一获取历史数据入口（复用已发起的请求）
 function loadHistData(cb){
   if(HIST_DATA){if(cb)cb(HIST_DATA);return;}
   const p=window.__histPromise;
   if(p){p.then(function(d){if(cb)cb(d);}).catch(function(){});return;}
-  // 兜底：重新发起请求
   window.__histPromise=fetch('data/history.json?t='+Date.now()).then(r=>r.json());
-  window.__histPromise.then(function(d){HIST_DATA=d;if(cb)cb(d);}).catch(function(e){console.error(e);});
+  window.__histPromise.then(function(d){HIST_DATA=d;if(cb)cb(d);});
 }
 
 async function refreshCurrentOnly(){
@@ -469,14 +487,12 @@ function renderScore(g, data){
   // 按即时排名排序
   const tb=document.getElementById(tb_id);
   if(tb){
-    const allTr=Array.from(tb.rows);
-    const pairs=[];
+    const allTr=Array.from(tb.rows);const pairs=[];
     for(let i=0;i<allTr.length;i++){
       const r=allTr[i];
       if(r.dataset.ir!==undefined||r.dataset.status!==undefined){
         const sdr=(allTr[i+1]&&allTr[i+1].classList.contains('sdr-row'))?allTr[i+1]:null;
-        pairs.push({main:r,sdr});
-        if(sdr)i++;
+        pairs.push({main:r,sdr});if(sdr)i++;
       }
     }
     pairs.sort((a,b)=>parseInt(a.main.dataset.ir||9999)-parseInt(b.main.dataset.ir||9999));
@@ -615,11 +631,12 @@ function switchTab(t,btn){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
   document.getElementById('p-'+t).classList.add('on');btn.classList.add('on');
-  // 积分构成懒加载
-  if((t==='ms-bd'||t==='ws-bd')&&!BD_DATA){
-    loadBreakdown(function(d){if(!d)return;renderBreakdownPanel('ms',d.ms||[]);renderBreakdownPanel('ws',d.ws||[]);});
+  // 积分构成：复用已发起的请求，如果还没加载完就等待
+  if(t==='ms-bd'||t==='ws-bd'){
+    if(BD_DATA){renderBreakdownPanel('ms',BD_DATA.ms||[]);renderBreakdownPanel('ws',BD_DATA.ws||[]);}
+    else{loadBreakdown(function(d){if(!d)return;renderBreakdownPanel('ms',d.ms||[]);renderBreakdownPanel('ws',d.ws||[]);});}
   }
-  // 以下tab在 history 还没加载完时点击，等待后自动渲染
+  // 历史相关tab：history还没加载完时等待
   if((t==='ms-p'||t==='ws-p')&&!HIST_DATA){
     loadHistData(function(d){
       var yr=document.getElementById('year-ms-p')?.value||'2026';
@@ -627,12 +644,8 @@ function switchTab(t,btn){
       PDATA=pref;renderPref('ms',pref);renderPref('ws',pref);
     });
   }
-  if((t==='ms-t'||t==='ws-t')&&!HIST_DATA){
-    loadHistData(function(){renderDisaster('ms');renderDisaster('ws');});
-  }
-  if(t==='flight'&&!HIST_DATA){
-    loadHistData(function(){initFlightSelect();});
-  }
+  if((t==='ms-t'||t==='ws-t')&&!HIST_DATA){loadHistData(function(){renderDisaster('ms');renderDisaster('ws');});}
+  if(t==='flight'&&!HIST_DATA){loadHistData(function(){initFlightSelect();});}
 }
 function setF(tab,f,btn){FS[tab]=f;btn.closest('.toolbar').querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');doFilter(tab);}
 function doFilter(tab){const q=(document.getElementById('q-'+tab)||{value:''}).value.toLowerCase();const f=FS[tab]||'all';document.querySelectorAll('#tb-'+tab+' tr.pref-row,#tb-'+tab+' tr[data-status]').forEach(r=>{const u=(r.dataset.u||r.dataset.user||'').toLowerCase();let ok=u.includes(q);if(f==='alive'&&r.dataset.status!=='alive')ok=false;if(f==='filled'&&r.dataset.filled!=='1')ok=false;r.style.display=ok?'':'none';const er=r.nextElementSibling;if(er&&er.classList.contains('exp-row')){if(!ok){er.style.display='none';er.classList.remove('open')}else er.style.display='';} });}
@@ -656,16 +669,12 @@ function initFlightSelect(){const y=document.getElementById('flight-year').value
 function renderFlights(){const y=document.getElementById('flight-year').value; const k=document.getElementById('flight-select').value; let arr=[]; if(k==='__current_rome__'){arr=[...((HIST_DATA.flights[y]||{})['2026 罗马 ATP']||[]),...((HIST_DATA.flights[y]||{})['2026 罗马 WTA']||[])].sort((a,b)=>(a.day-b.day)||(a.g>b.g?1:-1));}else{arr=(HIST_DATA.flights[y]||{})[k]||[];} document.getElementById('flight-box').innerHTML=arr.map(x=>`<div class="flight-card"><div class="flight-day">Day ${Number(x.day)+1}</div><div style="font-size:12px;color:#9a7a40;font-weight:700;margin-bottom:6px">${x.g} 航线</div><span class="flight-pill">${x.alive}存活</span><span class="flight-pill r">${x.out}淘汰</span><span class="flight-pill">${x.suicide}自杀</span><span class="flight-pill">${x.retired}退赛</span><div style="font-size:12px;color:#78450a;margin-top:7px"><b>主要航班：</b>${x.top}</div></div>`).join('');}
 
 function setFortune(g,btn){fGender=g;document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');document.getElementById('fortune-player').textContent='？？？';document.getElementById('fortune-attr').textContent='未摇签';document.getElementById('fortune-text').textContent='点击下方按钮，开始今日运势抽签';document.getElementById('fortune-yi').innerHTML='';}
-function drawFortune(){
-  if(!HIST_DATA){loadHistData(function(){drawFortune();});
-    document.getElementById('fortune-text').textContent='⏳ 数据加载中...';return;}
-  const key='fortune_'+fGender;const today=new Date().toISOString().slice(0,10);let rec=JSON.parse(localStorage.getItem(key)||'{}');if(rec.date!==today)rec={date:today,count:0};if(rec.count>=3){document.getElementById('fortune-player').textContent='命运是测不准的';document.getElementById('fortune-attr').textContent='明日再问';document.getElementById('fortune-text').textContent='命运是测不准的。明天再来吧';document.getElementById('fortune-yi').innerHTML='';return;}rec.count++;localStorage.setItem(key,JSON.stringify(rec));const pool=fGender==='atp'?MSPOOL:WSPOOL;if(!pool||!pool.length){document.getElementById('fortune-player').textContent='暂无数据';return;}const player=pool[Math.floor(Math.random()*pool.length)];const f=HIST_DATA.fortunes[Math.floor(Math.random()*HIST_DATA.fortunes.length)];const card=document.getElementById('fortune-card');card.classList.remove('shake');void card.offsetWidth;card.classList.add('shake');document.getElementById('fortune-player').textContent=player;document.getElementById('fortune-attr').textContent=f.attr+'（今日还可抽'+(3-rec.count)+'次）';document.getElementById('fortune-text').textContent=f.text;document.getElementById('fortune-yi').innerHTML=`宜：${f.yi}<br>忌：${f.ji}`;}
+function drawFortune(){if(!HIST_DATA){loadHistData(function(){drawFortune();});document.getElementById('fortune-text').textContent='⏳ 数据加载中...';return;}const key='fortune_'+fGender;const today=new Date().toISOString().slice(0,10);let rec=JSON.parse(localStorage.getItem(key)||'{}');if(rec.date!==today)rec={date:today,count:0};if(rec.count>=3){document.getElementById('fortune-player').textContent='命运是测不准的';document.getElementById('fortune-attr').textContent='明日再问';document.getElementById('fortune-text').textContent='命运是测不准的。明天再来吧';document.getElementById('fortune-yi').innerHTML='';return;}rec.count++;localStorage.setItem(key,JSON.stringify(rec));const pool=fGender==='atp'?MSPOOL:WSPOOL;if(!pool||!pool.length){document.getElementById('fortune-player').textContent='暂无数据';return;}const player=pool[Math.floor(Math.random()*pool.length)];const f=HIST_DATA.fortunes[Math.floor(Math.random()*HIST_DATA.fortunes.length)];const card=document.getElementById('fortune-card');card.classList.remove('shake');void card.offsetWidth;card.classList.add('shake');document.getElementById('fortune-player').textContent=player;document.getElementById('fortune-attr').textContent=f.attr+'（今日还可抽'+(3-rec.count)+'次）';document.getElementById('fortune-text').textContent=f.text;document.getElementById('fortune-yi').innerHTML=`宜：${f.yi}<br>忌：${f.ji}`;}
 
 // 启动加载
 
 // ===== 实时选人：每日选人明细展开 =====
 function toggleSdr(tr){
-  // 直接取 nextElementSibling（排序后配对，sdr-row 就在用户行正下方）
   var sdr=tr.nextElementSibling;
   if(!sdr||!sdr.classList.contains('sdr-row')){
     var g=(tr.closest('tbody')?.id||'').replace('tb-','').replace('-s','');
@@ -677,20 +686,13 @@ function toggleSdr(tr){
   var isAlive=tr.dataset.status==='alive';
   var html='<div class="day-list">';
   if(!players.length){
-    html+='<span style="color:#9a7a40;font-size:12px">暂无选人记录（请等待数据更新）</span>';
+    html+='<span style="color:#9a7a40;font-size:12px">暂无选人记录（等待数据更新）</span>';
   }else{
     players.forEach(function(p,i){
-      // 正确逻辑：最后一个选择 = 出局那天（用 index，不用 day 字段）
       var isLastPlayer=(i===players.length-1);
       var icon,cls;
-      if(isAlive){
-        // 存活中：所有天✅，最后一天🟢
-        icon=isLastPlayer?'🟢':'✅'; cls='day-alive';
-      }else{
-        // 出局：最后一天❌，其他天✅
-        icon=isLastPlayer?'❌':'✅';
-        cls=isLastPlayer?'day-dead':'day-alive';
-      }
+      if(isAlive){icon=isLastPlayer?'🟢':'✅';cls='day-alive';}
+      else{icon=isLastPlayer?'❌':'✅';cls=isLastPlayer?'day-dead':'day-alive';}
       if(p==='轮空'){icon='✅';cls='day-alive';}
       html+='<span class="day-item '+cls+'"><span class="day-num">Day'+(i+1)+'</span>'+icon+' '+p+'</span>';
     });
@@ -727,14 +729,14 @@ function bdEsc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').re
 
 function loadBreakdown(cb){
   if(BD_DATA){cb(BD_DATA);return;}
-  fetch('data/breakdown.json?t='+Date.now())
-    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
-    .then(function(d){BD_DATA=d;cb(d);})
-    .catch(function(e){
-      console.error('积分构成加载失败',e);
-      document.getElementById('bd-loading-ms').textContent='⚠️ 积分构成数据加载失败，请刷新';
-      document.getElementById('bd-loading-ws').textContent='⚠️ 积分构成数据加载失败，请刷新';
-    });
+  // 复用 loadData 里已发起的请求，避免重复下载
+  const p=window.__bdPromise||fetch('data/breakdown.json?t='+Date.now()).then(r=>r.json());
+  if(!window.__bdPromise)window.__bdPromise=p;
+  p.then(function(d){BD_DATA=d;cb(d);}).catch(function(e){
+    console.error('积分构成加载失败',e);
+    document.getElementById('bd-loading-ms')&&(document.getElementById('bd-loading-ms').textContent='⚠️ 积分构成数据加载失败，请刷新');
+    document.getElementById('bd-loading-ws')&&(document.getElementById('bd-loading-ws').textContent='⚠️ 积分构成数据加载失败，请刷新');
+  });
 }
 
 function bdTypeBarHtml(u){
