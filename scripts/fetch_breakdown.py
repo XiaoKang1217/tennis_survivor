@@ -303,6 +303,13 @@ def build_users(rows, gender, ir_map, cur_map, event_name, cal_cache, dynamic_mo
         this_ev=ci.get('this_event_score',0)
         evs=parse_details(det,gender,cal_cache,dynamic_months,cur_month,cur_year)
         included=[e for e in evs if e['inc']]
+
+        # 当前赛事进行中时，rank details 里可能仍包含上一年同名赛事积分。
+        # 例如 2026 罗马进行中，details 里还会有 2025 罗马；如果直接 append 2026 罗马，
+        # 前端就会看到两个「罗马」。正确逻辑是：先移除旧同名赛事，再加入今年本站得分。
+        if event_name:
+            included=[e for e in included if e.get('n') != event_name]
+
         if this_ev>0 and event_name:
             meta=get_meta(event_name,gender,cal_cache,dynamic_months,cur_month,cur_year)
             ey,em=expiry_ym(meta)
