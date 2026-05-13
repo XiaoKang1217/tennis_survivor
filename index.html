@@ -399,12 +399,9 @@ async function loadData(){
   // ③ breakdown 后台加载完，若用户已切到积分构成tab则自动渲染
   window.__bdPromise.then(function(d){
     BD_DATA=d;
-    // 如果用户已经切到积分构成tab，立刻渲染
-    if(document.getElementById('p-ms-bd')?.classList.contains('on')||
-       document.getElementById('p-ws-bd')?.classList.contains('on')){
-      renderBreakdownPanel('ms',d.ms||[]);
-      renderBreakdownPanel('ws',d.ws||[]);
-    }
+    // 下载完直接预渲染两个panel，无论用户在哪个tab，切过去秒出
+    renderBreakdownPanel('ms',d.ms||[]);
+    renderBreakdownPanel('ws',d.ws||[]);
   }).catch(function(e){console.warn('积分构成数据加载失败',e);});
 }
 
