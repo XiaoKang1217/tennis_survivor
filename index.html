@@ -271,24 +271,24 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
   .bd-exp-grid{flex-wrap:wrap}
   .bd-card-type,.bd-card-surf{width:100%!important}
   .bd-card-expiry{flex:unset!important;width:100%!important;min-width:0!important}
-  /* 手机饼图区：横向排列，图例紧凑 */
-  .bd-chart-area{flex-direction:row;align-items:flex-start;gap:8px}
+  /* 手机饼图：小饼图 + 图例横排 */
+  .bd-chart-area{flex-direction:row;align-items:flex-start;gap:10px}
   .bd-chart-wrap{width:80px!important;height:80px!important;flex-shrink:0}
   .bd-chart-wrap canvas{width:80px!important;height:80px!important}
   .bd-chart-total{font-size:10px!important}
   .bd-chart-sub{font-size:8px!important}
   .bd-chart-legend{flex:1;min-width:0}
-  /* 饼图旁边的图例（前几个） */
-  .bd-legend-item{margin-bottom:1px}
-  .bd-legend-dot{width:6px!important;height:6px!important}
-  .bd-legend-name{font-size:10px!important;white-space:normal!important}
-  .bd-legend-val{font-size:10px!important}
-  .bd-legend-pct{font-size:9px!important}
-  /* 场地条形图行（后面的条形图图例，统一大小） */
-  .bd-surf-row{margin-bottom:3px}
-  .bd-surf-lbl{font-size:10px!important;width:60px!important;white-space:normal!important}
-  .bd-surf-val{font-size:10px!important;width:28px!important}
-  .bd-surf-pct{font-size:9px!important;width:28px!important}
+  /* 饼图旁图例：统一 10px，不换行，行距紧凑 */
+  .bd-legend-item{margin-bottom:2px;flex-wrap:nowrap}
+  .bd-legend-dot{width:7px!important;height:7px!important;flex-shrink:0}
+  .bd-legend-name{font-size:10px!important;white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  .bd-legend-val{font-size:10px!important;flex-shrink:0}
+  .bd-legend-pct{font-size:10px!important;flex-shrink:0}
+  /* 场地条形图图例：统一 10px，与饼图图例一致 */
+  .bd-surf-row{margin-bottom:3px;gap:4px}
+  .bd-surf-lbl{font-size:10px!important;width:64px!important;white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis}
+  .bd-surf-val{font-size:10px!important;width:30px!important}
+  .bd-surf-pct{font-size:10px!important;width:30px!important}
   .bd-surf-track{height:11px!important}
   .bd-tbl{min-width:440px!important}
 }
@@ -675,6 +675,7 @@ function drawFortune(){if(!HIST_DATA){loadHistData(function(){drawFortune();});d
 
 // ===== 实时选人：每日选人明细展开 =====
 function toggleSdr(tr){
+  // 直接找下面紧邻的 sdr-row（排序已保证配对）
   var sdr=tr.nextElementSibling;
   if(!sdr||!sdr.classList.contains('sdr-row')){
     var g=(tr.closest('tbody')?.id||'').replace('tb-','').replace('-s','');
@@ -684,18 +685,33 @@ function toggleSdr(tr){
   if(sdr.classList.contains('open')){sdr.classList.remove('open');return;}
   var players=[];try{players=JSON.parse(decodeURIComponent(tr.dataset.pl||'[]'));}catch(e){}
   var isAlive=tr.dataset.status==='alive';
+  var todayPlayer=tr.dataset.today||'';   // 今天已填但未结算
+  var hasFilled=tr.dataset.filled==='1';  // 是否今天已填
   var html='<div class="day-list">';
-  if(!players.length){
-    html+='<span style="color:#9a7a40;font-size:12px">暂无选人记录（等待数据更新）</span>';
+  if(!players.length&&!hasFilled){
+    html+='<span style="color:#9a7a40;font-size:12px">暂无选人记录（请等待数据更新）</span>';
   }else{
+    // players = 已结算历史（Day1 ~ 最近一次结算），全部已出结果
     players.forEach(function(p,i){
-      var isLastPlayer=(i===players.length-1);
       var icon,cls;
-      if(isAlive){icon=isLastPlayer?'🟢':'✅';cls='day-alive';}
-      else{icon=isLastPlayer?'❌':'✅';cls=isLastPlayer?'day-dead':'day-alive';}
+      if(isAlive){
+        // 存活用户：历史所有天已结算且存活 → ✅（轮空也✅）
+        icon='✅'; cls='day-alive';
+      }else{
+        // 出局用户：最后一天是出局天❌，之前全✅
+        var isLastSettled=(i===players.length-1);
+        icon=isLastSettled?'❌':'✅';
+        cls=isLastSettled?'day-dead':'day-alive';
+      }
       if(p==='轮空'){icon='✅';cls='day-alive';}
       html+='<span class="day-item '+cls+'"><span class="day-num">Day'+(i+1)+'</span>'+icon+' '+p+'</span>';
     });
+    // 存活 + 今天已填 → 追加今天未结算的选择（🟢）
+    if(isAlive&&hasFilled&&todayPlayer){
+      var tIcon=todayPlayer==='轮空'?'✅':'🟢';
+      var tNote=todayPlayer==='轮空'?'':' <span style="font-size:9px;color:#9a7a40">未结算</span>';
+      html+='<span class="day-item day-alive day-today"><span class="day-num">Day'+(players.length+1)+'</span>'+tIcon+' '+todayPlayer+tNote+'</span>';
+    }
   }
   html+='</div>';
   sdr.querySelector('.sdr-cell').innerHTML=html;
