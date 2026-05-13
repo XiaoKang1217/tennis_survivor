@@ -261,6 +261,7 @@ def fetch_event_data(session, csrf, iid, gender, event_name, rank_dict):
             'today_player': tr.get('player', ''),
             'today_player_alt': tr.get('player_alt', ''),
             'has_today': uid in today_map,
+            'players': parse_players(r.get('players', '')),
         })
     
     # 合并年度排名中未参加本站的用户，保证即时排名完整
@@ -299,7 +300,9 @@ def fetch_event_data(session, csrf, iid, gender, event_name, rank_dict):
     
     # 统计
     today_filled = [r for r in rows_out if r.get('has_today') and r.get('today_player') and r['today_player'] != '轮空']
-    player_stats = Counter(r['today_player'] for r in today_filled)
+    # 只统计当日仍存活用户的选人
+    today_filled_alive = [r for r in today_filled if r.get('fill_status') == '存活' or r.get('status') == 2]
+    player_stats = Counter(r['today_player'] for r in today_filled_alive)
     site_rows = [r for r in rows_out if r.get('fill_status') != '未参赛' and not r.get('not_participated')]
     alive_count = sum(1 for r in site_rows if r.get('fill_status') == '存活' or r.get('status') == 2)
     suicide_count = sum(1 for r in site_rows if '自杀' in str(r.get('fill_status', '')))
