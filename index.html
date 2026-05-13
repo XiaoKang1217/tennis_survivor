@@ -186,7 +186,97 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
   }
 }
 
+
+/* ===== 积分构成 ===== */
+.bd-loading{text-align:center;padding:40px;color:#9a7a40;font-size:15px}
+.bd-stat-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.bd-sbadge{background:#fff;border:1px solid #fde68a;border-radius:8px;padding:5px 12px;font-size:12px;color:#9a7a40}
+.bd-sbadge b{color:#f97316;font-size:14px}
+.bd-toolbar{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.bd-toolbar input{padding:6px 12px;border-radius:18px;border:2px solid #fde68a;background:#fffbf0;color:#44321c;font-size:13px;flex:1;max-width:220px;outline:none}
+.bd-toolbar input:focus{border-color:#f59e0b}
+.bd-tbl-wrap{overflow-x:auto;border-radius:10px;border:1px solid #fde68a;box-shadow:0 2px 10px rgba(245,158,11,.08)}
+.bd-tbl{width:100%;border-collapse:collapse;font-size:12px;min-width:560px}
+.bd-tbl thead{position:sticky;top:0;z-index:5;background:linear-gradient(135deg,#fef3c7,#fde68a)}
+.bd-tbl th{padding:9px 8px;text-align:left;color:#78450a;font-weight:700;font-size:10px;border-bottom:2px solid #fcd34d;white-space:nowrap}
+.bd-tbl td{padding:7px 8px;border-bottom:1px solid #fef9f0;vertical-align:middle}
+.bd-main-row:hover td{background:rgba(245,158,11,.06)!important;cursor:pointer}
+.bd-ir{font-weight:800;color:#7c3aed;text-align:center}
+.bd-name{font-weight:700;color:#78450a;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bd-score{font-weight:800;color:#f97316;text-align:right;white-space:nowrap}
+.bd-type-bar{display:flex;height:6px;border-radius:3px;overflow:hidden;width:80px;gap:1px}
+.bd-type-seg{height:100%;min-width:2px}
+.bd-num{text-align:right;white-space:nowrap;font-size:12px;font-weight:600}
+.bd-badge{display:inline-block;padding:2px 7px;border-radius:9px;font-size:10px;font-weight:700;color:#fff;white-space:nowrap}
+.bd-exp-row{display:none;background:#fffdf8!important}
+.bd-exp-row.open{display:table-row}
+.bd-exp-cell{padding:0!important}
+.bd-exp-inner{padding:12px;border-top:2px dashed #fde68a}
+.bd-exp-title{font-size:13px;font-weight:800;color:#78450a;margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.bd-exp-grid{display:flex;flex-wrap:nowrap;gap:10px;align-items:flex-start;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.bd-card{background:#fff;border:1px solid #fde68a;border-radius:10px;padding:11px;overflow:hidden;flex-shrink:0}
+.bd-card-type{width:400px}.bd-card-surf{width:400px}.bd-card-expiry{flex:1;min-width:240px}
+.bd-card-hdr{display:flex;align-items:center;gap:5px;font-size:11px;color:#9a7a40;font-weight:700;text-transform:uppercase;margin-bottom:7px;border-bottom:1px solid #fde68a;padding-bottom:4px;cursor:pointer;user-select:none}
+.bd-toggle{font-size:11px;transition:transform .2s;display:inline-block}
+.bd-card-hdr.collapsed .bd-toggle{transform:rotate(-90deg)}
+.bd-chart-area{display:flex;align-items:flex-start;gap:12px}
+.bd-chart-wrap{position:relative;flex-shrink:0;width:120px;height:120px}
+.bd-chart-wrap canvas{display:block}
+.bd-chart-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none}
+.bd-chart-total{font-size:14px;font-weight:800;color:#78450a;line-height:1.1}
+.bd-chart-sub{font-size:9px;color:#9a7a40}
+.bd-chart-legend{flex:1;min-width:0}
+.bd-legend-item{display:flex;align-items:center;gap:5px;margin-bottom:3px}
+.bd-legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.bd-legend-name{color:#78450a;flex:1;min-width:60px;font-size:11px;white-space:nowrap}
+.bd-legend-val{color:#f97316;font-weight:700;white-space:nowrap;font-size:11px}
+.bd-legend-pct{color:#9a7a40;font-size:10px;white-space:nowrap}
+.bd-ev-group{margin-bottom:7px}
+.bd-ev-group-hdr{display:flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:#78450a;margin-bottom:2px}
+.bd-ev-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.bd-ev-item{display:flex;align-items:center;gap:3px;padding:2px 4px;border-radius:4px;font-size:11px;flex-wrap:wrap}
+.bd-ev-item:hover{background:rgba(245,158,11,.08)}
+.bd-ev-name{color:#44321c}.bd-ev-score{font-weight:700;color:#f97316;white-space:nowrap}
+.bd-ev-expiry{color:#9a7a40;font-size:10px;white-space:nowrap;background:#fef9f0;border-radius:4px;padding:1px 4px}
+.bd-forced{background:#fef3c7;color:#d97706;border:1px solid #fcd34d;border-radius:5px;padding:1px 3px;font-size:9px;flex-shrink:0}
+.bd-surf-tag{font-size:9px;padding:1px 3px;border-radius:5px;white-space:nowrap;flex-shrink:0}
+.bd-surf-hard_out{background:#dbeafe;color:#1d4ed8}.bd-surf-hard_in{background:#ede9fe;color:#5b21b6}
+.bd-surf-clay{background:#fee2e2;color:#991b1b}.bd-surf-grass{background:#dcfce7;color:#15803d}
+.bd-bar-row{display:flex;align-items:center;gap:5px;margin-bottom:3px;min-width:0}
+.bd-bar-row-zero{height:18px}
+.bd-bar-month{font-size:10px;color:#9a7a40;width:48px;flex-shrink:0;text-align:right}
+.bd-bar-track{width:90px;flex-shrink:0;background:#fef9f0;border-radius:3px;height:15px;overflow:hidden;position:relative}
+.bd-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#f59e0b,#f97316);display:flex;align-items:center;padding:0 3px;min-width:2px}
+.bd-bar-fill-txt{font-size:9px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden}
+.bd-bar-score-out{font-size:10px;font-weight:700;color:#f97316;flex-shrink:0;width:28px}
+.bd-bar-events{font-size:10px;color:#9a7a40;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px;cursor:default}
+.bd-bar-zero{font-size:10px;color:#d1b896}
+.bd-surf-row{display:flex;align-items:center;gap:5px;margin-bottom:4px}
+.bd-surf-lbl{color:#78450a;width:76px;flex-shrink:0;font-size:10px;white-space:nowrap}
+.bd-surf-track{flex:1;background:#fef9f0;border-radius:3px;height:13px;overflow:hidden;min-width:20px}
+.bd-surf-fill{height:100%;border-radius:3px;min-width:2px}
+.bd-surf-val{font-size:10px;font-weight:700;color:#78450a;flex-shrink:0;width:34px}
+.bd-surf-pct{font-size:10px;color:#9a7a40;flex-shrink:0;width:32px}
+/* 实时选人每日明细 */
+.sdr-row{display:none;background:#fffdf0}
+.sdr-row.open{display:table-row}
+.sdr-cell{padding:8px 12px!important;border-bottom:1px solid #fde68a}
+.day-list{display:flex;flex-wrap:wrap;gap:4px}
+.day-item{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:10px;font-size:11px;background:#fff;border:1px solid #fde68a}
+.day-item.day-alive{border-color:#86efac;background:#f0fdf4;color:#15803d}
+.day-item.day-dead{border-color:#fca5a5;background:#fef2f2;color:#dc2626}
+.day-num{color:#9a7a40;font-size:10px;margin-right:2px}
+/* 手机端适配 */
+@media(max-width:700px){
+  .bd-exp-grid{flex-wrap:wrap}
+  .bd-card-type,.bd-card-surf{width:100%!important}
+  .bd-card-expiry{flex:unset!important;width:100%!important;min-width:0!important}
+  .bd-chart-area{flex-direction:column;align-items:center}
+  .bd-chart-legend{width:100%}
+  .bd-tbl{min-width:440px!important}
+}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
 <div id="hdr">
@@ -201,6 +291,8 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
   <div class="tabs">
     <button class="tab on" onclick="switchTab('ms-s',this)" id="tab-ms-s">🎾 ATP 男单</button>
     <button class="tab" onclick="switchTab('ws-s',this)" id="tab-ws-s">🎾 WTA 女单</button>
+    <button class="tab" onclick="switchTab('ms-bd',this)" id="tab-ms-bd">💹 ATP 积分构成</button>
+    <button class="tab" onclick="switchTab('ws-bd',this)" id="tab-ws-bd">💹 WTA 积分构成</button>
     <button class="tab" onclick="switchTab('ms-p',this)">📊 ATP 用户偏好</button>
     <button class="tab" onclick="switchTab('ws-p',this)">📊 WTA 用户偏好</button>
     <button class="tab" onclick="switchTab('ms-t',this)">💀 历史上的惨案-ATP</button>
@@ -218,6 +310,14 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 <div id="p-ws-s" class="panel">
   <div class="loading" id="loading-ws">⏳ 加载WTA数据中...</div>
   <div id="content-ws-s" style="display:none"></div>
+</div>
+<div id="p-ms-bd" class="panel">
+  <div class="bd-loading" id="bd-loading-ms">⏳ 加载ATP积分构成数据中...</div>
+  <div id="bd-content-ms" style="display:none"></div>
+</div>
+<div id="p-ws-bd" class="panel">
+  <div class="bd-loading" id="bd-loading-ws">⏳ 加载WTA积分构成数据中...</div>
+  <div id="bd-content-ws" style="display:none"></div>
 </div>
 <div id="p-ms-p" class="panel">
   <div class="loading" id="loading-msp">⏳ 加载ATP偏好数据中...</div>
@@ -311,7 +411,8 @@ function renderScore(g, data){
   
   // 今日选人统计
   const ccArr=['#f59e0b','#f97316','#ef4444','#8b5cf6','#10b981','#3b82f6'];
-  const statsHtml=stats.length?`<div class="sc"><div class="sch"><span>📊 今日选人统计—${g=='ms'?'ATP男单':'WTA女单'}Day${data.today_day}</span><span class="scs">填写${filled}人·存活${alive}人</span></div><table class="st"><thead><tr><th></th><th>选手</th><th>人数</th><th>占比</th><th>分布</th></tr></thead><tbody>${stats.map((it,i)=>`<tr><td class="psr">#${i+1}</td><td class="psp">${it[0]}</td><td class="psc">${it[1]}人</td><td class="psp2">${(it[1]/filled*100).toFixed(1)}%</td><td class="psb"><div class="bbar" style="width:${(it[1]/filled*100).toFixed(1)}%;background:${ccArr[i%6]}"></div></td></tr>`).join('')}</tbody></table></div><hr class="divider">`:'' ;
+  const aliveFilled=stats.reduce((s,it)=>s+it[1],0)||1;
+  const statsHtml=stats.length?`<div class="sc"><div class="sch"><span>📊 今日选人统计（仅存活）—${g=='ms'?'ATP男单':'WTA女单'}Day${data.today_day}</span><span class="scs">存活${alive}人·今日已填${aliveFilled}人</span></div><table class="st"><thead><tr><th></th><th>选手</th><th>人数</th><th>占比</th><th>分布</th></tr></thead><tbody>${stats.map((it,i)=>`<tr><td class="psr">#${i+1}</td><td class="psp">${it[0]}</td><td class="psc">${it[1]}人</td><td class="psp2">${(it[1]/aliveFilled*100).toFixed(1)}%</td><td class="psb"><div class="bbar" style="width:${(it[1]/aliveFilled*100).toFixed(1)}%;background:${ccArr[i%6]}"></div></td></tr>`).join('')}</tbody></table></div><hr class="divider">`:'' ;
   
   // KPI
   const kpi=`<div class="kpi"><div class="kc"><div class="kn nt">${totalUsers}</div><div class="kl">总人数</div></div><div class="kc"><div class="kn nt">${siteTotal}</div><div class="kl">本站参赛</div></div><div class="kc"><div class="kn na">${alive}</div><div class="kl">🟢存活</div></div><div class="kc"><div class="kn nd">${siteTotal-alive}</div><div class="kl">❌出局</div></div><div class="kc"><div class="kn" style="color:#7c3aed">${filled}</div><div class="kl">今日已填</div></div><div class="kc"><div class="kn nd">${suicide}</div><div class="kl">自杀</div></div></div>`;
@@ -332,7 +433,8 @@ function renderScore(g, data){
     const chg=r.rank_change;
     const ch=chg===null?'<span class="cn">—</span>':chg>0?`<span class="cu">▲${chg}</span>`:chg<0?`<span class="cd">▼${Math.abs(chg)}</span>`:'<span class="cz">→0</span>';
     const cr=r.current_rank||9999; const ir=r.instant_rank||9999;
-    rowsHtml+=`<tr class="${sc==='alive'?'ra':'rd'}" data-status="${sc}" data-filled="${r.has_today?'1':'0'}" data-cr="${cr}" data-ir="${ir}" data-cur="${r.current_score||0}" data-deduct="${r.deduct_score||0}" data-this="${r.this_event_score||0}" data-instant="${r.instant_score||0}" data-day="${r.day||0}" data-chg="${r.rank_change||0}" data-user="${esc(r.username)}" data-today="${esc(r.today_player||'')}" data-alive="${sc==='alive'?1:0}"><td class="tn" data-label="当前排名">${cr==9999?'—':cr}</td><td class="tn ir" data-label="即时排名">${ir==9999?'—':ir}</td><td class="tu" data-label="用户名" data-rank="当前#${cr==9999?'—':cr} · 即时#${ir==9999?'—':ir}">${r.username}</td><td class="tt" data-label="今日选择">${td}</td><td data-label="状态">${badge}</td><td class="tn g" data-label="本站得分">${r.this_event_score||0}</td><td class="tn r" data-label="扣除积分">${r.deduct_score>0?'-'+r.deduct_score:'0'}</td><td class="tn y" data-label="即时积分">${r.instant_score||0}</td><td class="tc" data-label="排名变化">${ch}</td><td class="tn s" data-label="存活天数">${r.day||0}</td></tr>`;
+    const plEnc=encodeURIComponent(JSON.stringify(r.players||[]));rowsHtml+=`<tr class="${sc==='alive'?'ra':'rd'}" data-status="${sc}" data-filled="${r.has_today?'1':'0'}" data-cr="${cr}" data-ir="${ir}" data-cur="${r.current_score||0}" data-deduct="${r.deduct_score||0}" data-this="${r.this_event_score||0}" data-instant="${r.instant_score||0}" data-day="${r.day||0}" data-chg="${r.rank_change||0}" data-user="${esc(r.username)}" data-today="${esc(r.today_player||'')}" data-alive="${sc==='alive'?1:0}" data-pl="${plEnc}" onclick="toggleSdr(this)" style="cursor:pointer"><td class="tn" data-label="当前排名">${cr==9999?'—':cr}</td><td class="tn ir" data-label="即时排名">${ir==9999?'—':ir}</td><td class="tu" data-label="用户名" data-rank="当前#${cr==9999?'—':cr} · 即时#${ir==9999?'—':ir}">${r.username}</td><td class="tt" data-label="今日选择">${td}</td><td data-label="状态">${badge}</td><td class="tn g" data-label="本站得分">${r.this_event_score||0}</td><td class="tn r" data-label="扣除积分">${r.deduct_score>0?'-'+r.deduct_score:'0'}</td><td class="tn y" data-label="即时积分">${r.instant_score||0}</td><td class="tc" data-label="排名变化">${ch}</td><td class="tn s" data-label="存活天数">${r.day||0}</td></tr>`;
+    rowsHtml+=`<tr class="sdr-row" id="sdr-${g}-${esc(r.username)}"><td class="sdr-cell" colspan="10"><div class="day-list"></div></td></tr>`;
   }
   
   function mth(col,key,t,cls=''){return `<th${cls?' class="'+cls+'"':''} onclick="srt('${tab}',${col},'${key}')">${t}</th>`;}
@@ -473,7 +575,18 @@ function toggleExpDyn(row){
 
 // ===== 通用功能 =====
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
-function switchTab(t,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));document.getElementById('p-'+t).classList.add('on');btn.classList.add('on');}
+function switchTab(t,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('p-'+t).classList.add('on');btn.classList.add('on');
+  if((t==='ms-bd'||t==='ws-bd')&&!BD_DATA){
+    loadBreakdown(function(d){
+      if(!d)return;
+      renderBreakdownPanel('ms',d.ms||[]);
+      renderBreakdownPanel('ws',d.ws||[]);
+    });
+  }
+}
 function setF(tab,f,btn){FS[tab]=f;btn.closest('.toolbar').querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');doFilter(tab);}
 function doFilter(tab){const q=(document.getElementById('q-'+tab)||{value:''}).value.toLowerCase();const f=FS[tab]||'all';document.querySelectorAll('#tb-'+tab+' tr.pref-row,#tb-'+tab+' tr[data-status]').forEach(r=>{const u=(r.dataset.u||r.dataset.user||'').toLowerCase();let ok=u.includes(q);if(f==='alive'&&r.dataset.status!=='alive')ok=false;if(f==='filled'&&r.dataset.filled!=='1')ok=false;r.style.display=ok?'':'none';const er=r.nextElementSibling;if(er&&er.classList.contains('exp-row')){if(!ok){er.style.display='none';er.classList.remove('open')}else er.style.display='';} });}
 function srt(tab,col,key){const k=tab+'_'+col;if(!SS[k])SS[k]=0;SS[k]=(SS[k]+1)%3;const dir=SS[k];const ths=document.querySelectorAll('#tbl-'+tab+' thead th');ths.forEach(t=>t.classList.remove('sa','sd'));const tb=document.getElementById('tb-'+tab);const pairs=[];const allRows=Array.from(tb.rows);for(let i=0;i<allRows.length;i++){const r=allRows[i];if(r.classList.contains('pref-row')||r.dataset.status){const exp=allRows[i+1]&&allRows[i+1].classList.contains('exp-row')?allRows[i+1]:null;pairs.push({row:r,exp});}}const nk=['cr','ir','this','deduct','instant','chg','day','ep','ee','ec','wc','bc'];if(dir===0){pairs.sort((a,b)=>parseInt(a.row.dataset.ir||9999)-parseInt(b.row.dataset.ir||9999));if(ths[1])ths[1].classList.add('sd');}else{ths[col].classList.add(dir===1?'sa':'sd');const desc=(dir===1);pairs.sort((a,b)=>{if(nk.includes(key))return desc?(parseFloat(b.row.dataset[key]||0)-parseFloat(a.row.dataset[key]||0)):(parseFloat(a.row.dataset[key]||0)-parseFloat(b.row.dataset[key]||0));const va=(a.row.dataset.user||a.row.dataset.u||'').toLowerCase();const vb=(b.row.dataset.user||b.row.dataset.u||'').toLowerCase();return desc?vb.localeCompare(va):va.localeCompare(vb);})}pairs.forEach(pair=>{tb.appendChild(pair.row);if(pair.exp)tb.appendChild(pair.exp);});doFilter(tab);}
@@ -499,6 +612,231 @@ function setFortune(g,btn){fGender=g;document.querySelectorAll('.ftab').forEach(
 function drawFortune(){const key='fortune_'+fGender;const today=new Date().toISOString().slice(0,10);let rec=JSON.parse(localStorage.getItem(key)||'{}');if(rec.date!==today)rec={date:today,count:0};if(rec.count>=3){document.getElementById('fortune-player').textContent='命运是测不准的';document.getElementById('fortune-attr').textContent='明日再问';document.getElementById('fortune-text').textContent='命运是测不准的。明天再来吧';document.getElementById('fortune-yi').innerHTML='';return;}rec.count++;localStorage.setItem(key,JSON.stringify(rec));const pool=fGender==='atp'?MSPOOL:WSPOOL;if(!pool||!pool.length){document.getElementById('fortune-player').textContent='暂无数据';return;}const player=pool[Math.floor(Math.random()*pool.length)];const f=HIST_DATA.fortunes[Math.floor(Math.random()*HIST_DATA.fortunes.length)];const card=document.getElementById('fortune-card');card.classList.remove('shake');void card.offsetWidth;card.classList.add('shake');document.getElementById('fortune-player').textContent=player;document.getElementById('fortune-attr').textContent=f.attr+'（今日还可抽'+(3-rec.count)+'次）';document.getElementById('fortune-text').textContent=f.text;document.getElementById('fortune-yi').innerHTML=`宜：${f.yi}<br>忌：${f.ji}`;}
 
 // 启动加载
+
+// ===== 实时选人：每日选人明细展开 =====
+function toggleSdr(tr){
+  var sdrId='sdr-'+tr.closest('tbody').id.replace('tb-','').replace('-s','')+'-'+tr.dataset.user;
+  var sdr=document.getElementById(sdrId);
+  if(!sdr){var next=tr.nextElementSibling;if(next&&next.classList.contains('sdr-row'))sdr=next;}
+  if(!sdr)return;
+  if(sdr.classList.contains('open')){sdr.classList.remove('open');return;}
+  var players=[];try{players=JSON.parse(decodeURIComponent(tr.dataset.pl||'[]'));}catch(e){}
+  var day=parseInt(tr.dataset.day)||0;
+  var isAlive=tr.dataset.status==='alive';
+  var html='<div class="day-list">';
+  if(!players.length){html+='<span style="color:#9a7a40;font-size:12px">暂无选人记录</span>';}
+  else{players.forEach(function(p,i){
+    var d=i+1;
+    var isLast=(d===day)&&!isAlive;
+    var cls=isLast?'day-dead':d<day?'day-alive':'';
+    var icon=isLast?'❌':(d===day&&isAlive?'🟢':'✅');
+    html+='<span class="day-item '+cls+'"><span class="day-num">Day'+d+'</span>'+icon+' '+p+'</span>';
+  });}
+  html+='</div>';
+  sdr.querySelector('.sdr-cell').innerHTML=html;
+  sdr.classList.add('open');
+}
+
+// ===== 积分构成 =====
+var BD_DATA=null;
+var BD_CHARTS={};
+var BD_TYPE_LABELS={GS:'大满贯',YE:'年终',M1000:'1000赛',A500:'500赛',A250:'250赛'};
+var BD_TYPE_COLORS={GS:'#f59e0b',YE:'#8b5cf6',M1000:'#ef4444',A500:'#3b82f6',A250:'#22c55e'};
+var BD_TYPE_ORDER=['GS','YE','M1000','A500','A250'];
+var BD_SURF_LABELS={hard_out:'硬地(室外)',hard_in:'硬地(室内)',clay:'红土',grass:'草地'};
+var BD_SURF_COLORS={hard_out:'#3b82f6',hard_in:'#6366f1',clay:'#ef4444',grass:'#22c55e'};
+var BD_MONTH_DISPLAY=['26年6月','26年7月','26年8月','26年9月','26年10月','26年11月','26年12月','27年1月','27年2月','27年3月','27年4月','27年5月'];
+var BD_LABEL_GROUPS=[
+  ['\uD83E\uDD47 世界第一'],
+  ['\uD83C\uDFC6 年终称霸','\uD83C\uDF19 年终强手'],
+  ['\uD83C\uDF3F 草地传说','\uD83C\uDF43 草地大赢家','\uD83C\uDF31 草地好手','\uD83C\uDF31 草地追梦者'],
+  ['\uD83D\uDC51 大满贯神话','\uD83D\uDC51 大满贯传奇','\uD83C\uDFBE 大满贯收割机','\uD83D\uDCAA 大满贯实力派','\uD83C\uDFC5 大赛主力','\uD83C\uDFC5 大满贯主力','\uD83C\uDFAF 大满贯好手','\uD83C\uDFAF 大满贯追梦者','\uD83C\uDFAF 大满贯新秀'],
+  ['\u26A1 1000赛霸主','\u26A1 1000赛达人','\u26A1 1000赛精英','\uD83D\uDCAB 1000赛好手','\uD83D\uDCAB 1000赛常客','\uD83D\uDCAB 1000赛新人'],
+  ['\uD83C\uDF1F 顶尖全能王','\uD83C\uDFAA 精英综合体','\uD83C\uDFA8 大赛全才','\uD83C\uDFAA 大赛综合派','\uD83E\uDDE9 均衡好手','\uD83E\uDDE9 均衡探索者'],
+  ['\uD83E\uDDF1 红土之王','\uD83C\uDFBA 红土大师','\uD83C\uDFBA 红土达人','\uD83E\uDEB4 红土好手','\uD83E\uDEB4 红土爱好者'],
+  ['\uD83D\uDC8E 硬地霸主','\uD83D\uDD37 硬地之王','\uD83D\uDD37 硬地稳健王','\uD83D\uDD39 硬地好手','\uD83D\uDD39 硬地常客'],
+  ['\uD83C\uDF06 500赛小王子','\uD83C\uDFD9\uFE0F 500赛精英','\uD83C\uDFD8\uFE0F 500赛常客'],
+  ['\uD83D\uDC11 小赛探险家','\uD83C\uDF3E 小赛爱好者'],
+  ['\uD83E\uDDE9 全面稳健型','\uD83E\uDDE9 全面均衡型','\uD83C\uDF00 积分探索者','\uD83C\uDF31 初出茅庐'],
+];
+
+function bdEsc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function loadBreakdown(cb){
+  if(BD_DATA){cb(BD_DATA);return;}
+  fetch('data/breakdown.json?t='+Date.now())
+    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+    .then(function(d){BD_DATA=d;cb(d);})
+    .catch(function(e){
+      console.error('积分构成加载失败',e);
+      document.getElementById('bd-loading-ms').textContent='⚠️ 积分构成数据加载失败，请刷新';
+      document.getElementById('bd-loading-ws').textContent='⚠️ 积分构成数据加载失败，请刷新';
+    });
+}
+
+function bdTypeBarHtml(u){
+  var total=u.s||1;
+  var vals={GS:u.gs||0,YE:u.ye||0,M1000:u.m1||0,A500:u.a5||0,A250:u.a2||0};
+  var segs='';
+  BD_TYPE_ORDER.forEach(function(t){var v=vals[t];if(v>0){var pct=(v/total*100).toFixed(1);segs+='<div class="bd-type-seg" style="background:'+BD_TYPE_COLORS[t]+';flex:0 0 '+pct+'%;max-width:'+pct+'%" title="'+BD_TYPE_LABELS[t]+':'+v+'"></div>';}});
+  return '<div class="bd-type-bar">'+segs+'</div>';
+}
+
+function renderBreakdownPanel(g,data){
+  var cont=document.getElementById('bd-content-'+g);
+  var loading=document.getElementById('bd-loading-'+g);
+  if(loading)loading.style.display='none';
+  var labelCounts={},colorMap={};
+  data.forEach(function(u){labelCounts[u.label]=(labelCounts[u.label]||0)+1;colorMap[u.label]=u.label_color;});
+  var feat=[];
+  BD_LABEL_GROUPS.forEach(function(group){
+    for(var i=0;i<group.length;i++){var lb=group[i];if(labelCounts[lb]){feat.push([lb,labelCounts[lb],colorMap[lb]||'#9ca3af']);break;}}
+  });
+  var badgesHtml=feat.map(function(x){return '<div class="bd-sbadge"><span class="bd-badge" style="background:'+x[2]+'">'+x[0]+'</span> <b>'+x[1]+'</b>人</div>';}).join('');
+  var rows='';
+  data.forEach(function(u,i){
+    rows+='<tr class="bd-main-row" data-bdi="'+i+'" data-bdg="'+g+'" onclick="toggleBdExp(this)">'+
+      '<td class="bd-ir">'+(u.ir||'—')+'</td>'+
+      '<td class="bd-name" title="'+bdEsc(u.n)+'">'+u.n+'</td>'+
+      '<td class="bd-score">'+(u.s||0).toLocaleString()+'</td>'+
+      '<td>'+bdTypeBarHtml(u)+'</td>'+
+      '<td class="bd-num" style="color:#f59e0b">'+(u.gs||'—')+'</td>'+
+      '<td class="bd-num" style="color:#ef4444">'+(u.m1||'—')+'</td>'+
+      '<td class="bd-num" style="color:#3b82f6">'+(u.a5||'—')+'</td>'+
+      '<td class="bd-num" style="color:#22c55e">'+(u.a2||'—')+'</td>'+
+      '<td class="bd-num" style="color:#8b5cf6">'+(u.ye||'—')+'</td>'+
+      '<td><span class="bd-badge" style="background:'+u.label_color+'">'+u.label+'</span></td>'+
+    '</tr>'+
+    '<tr class="bd-exp-row" id="bdexp-'+g+'-'+i+'"><td class="bd-exp-cell" colspan="10"></td></tr>';
+  });
+  cont.innerHTML=
+    '<div class="bd-stat-row"><div class="bd-sbadge">参与用户 <b>'+data.length+'</b></div>'+badgesHtml+'</div>'+
+    '<div class="bd-toolbar"><input id="bdq-'+g+'" placeholder="🔍 搜索用户名..." oninput="bdSearch(\''+g+'\')"></div>'+
+    '<div class="bd-tbl-wrap"><table class="bd-tbl"><thead><tr>'+
+    '<th>排名</th><th>用户名</th><th style="text-align:right">即时积分</th>'+
+    '<th>类型分布</th>'+
+    '<th style="text-align:right;color:#f59e0b">大满贯</th>'+
+    '<th style="text-align:right;color:#ef4444">1000赛</th>'+
+    '<th style="text-align:right;color:#3b82f6">500赛</th>'+
+    '<th style="text-align:right;color:#22c55e">250赛</th>'+
+    '<th style="text-align:right;color:#8b5cf6">年终</th>'+
+    '<th>积分评价</th></tr></thead>'+
+    '<tbody id="bdtb-'+g+'">'+rows+'</tbody></table></div>';
+  cont.style.display='block';
+}
+
+function toggleBdExp(row){
+  var idx=parseInt(row.dataset.bdi),g=row.dataset.bdg;
+  var er=document.getElementById('bdexp-'+g+'-'+idx);
+  if(!er)return;
+  if(er.classList.contains('open')){er.classList.remove('open');return;}
+  if(!BD_DATA){return;}
+  var u=BD_DATA[g][idx];
+  if(!u){er.classList.add('open');return;}
+  er.querySelector('.bd-exp-cell').innerHTML=buildBdExpHtml(u,'bd-'+g+'-'+idx);
+  er.classList.add('open');
+  setTimeout(function(){renderBdPies(u,'bd-'+g+'-'+idx);},60);
+}
+
+function buildBdExpHtml(u,id){
+  var total=u.s||1;
+  var typeEvs=u.type_evs||{};
+  var typeHtml='';
+  BD_TYPE_ORDER.forEach(function(t){
+    var evs=typeEvs[t];if(!evs||!evs.length)return;
+    var tTotal=evs.reduce(function(s,e){return s+e.s;},0);
+    var evItems='';
+    evs.forEach(function(ev){
+      var sf=ev.surf?'<span class="bd-surf-tag bd-surf-'+ev.surf+'">'+(ev.surf==='hard_out'?'硬外':ev.surf==='hard_in'?'硬内':ev.surf==='clay'?'红土':'草地')+'</span>':'';
+      var fc=ev.forced?'<span class="bd-forced">强制</span>':'';
+      var exp=ev.expiry?'<span class="bd-ev-expiry">'+ev.expiry+'失效</span>':'';
+      evItems+='<div class="bd-ev-item">'+fc+sf+'<span class="bd-ev-name">'+ev.n+'</span><span class="bd-ev-score">'+ev.s+'</span>'+exp+'</div>';
+    });
+    typeHtml+='<div class="bd-ev-group"><div class="bd-ev-group-hdr"><div class="bd-ev-dot" style="background:'+BD_TYPE_COLORS[t]+'"></div>'+BD_TYPE_LABELS[t]+' · '+tTotal+'分</div>'+evItems+'</div>';
+  });
+  var typeLegend='';
+  var typeVals={GS:u.gs||0,YE:u.ye||0,M1000:u.m1||0,A500:u.a5||0,A250:u.a2||0};
+  BD_TYPE_ORDER.forEach(function(t){var v=typeVals[t];if(!v)return;typeLegend+='<div class="bd-legend-item"><div class="bd-legend-dot" style="background:'+BD_TYPE_COLORS[t]+'"></div><span class="bd-legend-name">'+BD_TYPE_LABELS[t]+'</span><span class="bd-legend-val">'+v+'</span><span class="bd-legend-pct">('+(v/total*100).toFixed(1)+'%)</span></div>';});
+  var ss=u.surf_scores||{};
+  var surfOrder=['hard_out','hard_in','clay','grass'];
+  var surfTotal=surfOrder.reduce(function(s,k){return s+(ss[k]||0);},0)||1;
+  var maxSurf=Math.max.apply(null,surfOrder.map(function(k){return ss[k]||0;}));
+  var surfLegend='',surfBars='';
+  surfOrder.forEach(function(sk){
+    var v=ss[sk]||0;if(!v)return;
+    var pct=(v/surfTotal*100).toFixed(1);
+    surfLegend+='<div class="bd-legend-item"><div class="bd-legend-dot" style="background:'+BD_SURF_COLORS[sk]+'"></div><span class="bd-legend-name">'+BD_SURF_LABELS[sk]+'</span><span class="bd-legend-val">'+v+'</span><span class="bd-legend-pct">('+pct+'%)</span></div>';
+    var bp=maxSurf>0?(v/maxSurf*100).toFixed(1):0;
+    surfBars+='<div class="bd-surf-row"><div class="bd-surf-lbl">'+BD_SURF_LABELS[sk]+'</div><div class="bd-surf-track"><div class="bd-surf-fill" style="width:'+bp+'%;background:'+BD_SURF_COLORS[sk]+'"></div></div><div class="bd-surf-val">'+v+'</div><div class="bd-surf-pct">'+pct+'%</div></div>';
+  });
+  var expList=u.exp_list||[];
+  var maxExp=Math.max.apply(null,expList.map(function(e){return e.total;}).concat([1]));
+  var barRows='';
+  expList.forEach(function(ed,i){
+    if(ed.total>0){
+      var fp=Math.max((ed.total/maxExp*100),3).toFixed(1);
+      var sib=parseFloat(fp)>22;
+      var evArr=(ed.events||[]).slice().sort(function(a,b){var sa=parseInt((a.match(/\((\d+)\)/)||[])[1]||0),sb=parseInt((b.match(/\((\d+)\)/)||[])[1]||0);return sb-sa;});
+      var evStr=evArr.join('\u3001');
+      var ev5=evArr.slice(0,5).join('\u3001')+(evArr.length>5?' +'+(evArr.length-5)+'\u7ad9':'');
+      barRows+='<div class="bd-bar-row"><div class="bd-bar-month">'+BD_MONTH_DISPLAY[i]+'</div><div class="bd-bar-track"><div class="bd-bar-fill" style="width:'+fp+'%">'+(sib?'<span class="bd-bar-fill-txt">'+ed.total+'</span>':'')+'</div></div>'+(sib?'<div class="bd-bar-score-out"></div>':'<div class="bd-bar-score-out">'+ed.total+'</div>')+'<div class="bd-bar-events" title="'+evStr+'">'+ev5+'</div></div>';
+    }else{
+      barRows+='<div class="bd-bar-row bd-bar-row-zero"><div class="bd-bar-month">'+BD_MONTH_DISPLAY[i]+'</div><span class="bd-bar-zero">\u65e0\u5931\u6548</span></div>';
+    }
+  });
+  return '<div class="bd-exp-inner">'+
+    '<div class="bd-exp-title">\uD83D\uDCCA '+u.n+
+    ' <span style="color:#f97316;font-weight:800">'+(u.s||0).toLocaleString()+'\u5206</span>'+
+    ' <span style="color:#7c3aed">\u5373\u65f6\u6392\u540d #'+(u.ir||'—')+'</span>'+
+    ' <span class="bd-badge" style="background:'+u.label_color+'">'+u.label+'</span></div>'+
+    '<div class="bd-exp-grid">'+
+    '<div class="bd-card bd-card-type"><div class="bd-card-hdr" onclick="bdToggleCard(this)"><span class="bd-toggle">▼</span>\u8d5b\u4e8b\u7c7b\u578b\u79ef\u5206</div><div class="bd-cc">'+
+    '<div class="bd-chart-area"><div class="bd-chart-wrap"><canvas id="bdpie-type-'+id+'" width="120" height="120"></canvas><div class="bd-chart-center"><div class="bd-chart-total">'+(u.s||0).toLocaleString()+'</div><div class="bd-chart-sub">\u603b\u79ef\u5206</div></div></div><div class="bd-chart-legend">'+typeLegend+'</div></div>'+
+    '<div style="margin-top:8px">'+typeHtml+'</div></div></div>'+
+    '<div class="bd-card bd-card-surf"><div class="bd-card-hdr" onclick="bdToggleCard(this)"><span class="bd-toggle">▼</span>\u573a\u5730\u7c7b\u578b\u5206\u5e03</div><div class="bd-cc">'+
+    '<div class="bd-chart-area"><div class="bd-chart-wrap"><canvas id="bdpie-surf-'+id+'" width="120" height="120"></canvas><div class="bd-chart-center"><div class="bd-chart-total" style="font-size:12px">\u573a\u5730</div><div class="bd-chart-sub">\u7c7b\u578b</div></div></div><div class="bd-chart-legend">'+surfLegend+'</div></div>'+
+    '<div style="margin-top:8px">'+surfBars+'</div></div></div>'+
+    '<div class="bd-card bd-card-expiry"><div class="bd-card-hdr" onclick="bdToggleCard(this)"><span class="bd-toggle">▼</span>⏰ \u79ef\u5206\u5931\u6548\u65f6\u95f4\uff08\u672a\u676512\u4e2a\u6708\uff09</div><div class="bd-cc">'+barRows+'</div></div>'+
+    '</div></div>';
+}
+
+function renderBdPies(u,id){
+  var c,ck,labels,vals,colors;
+  c=document.getElementById('bdpie-type-'+id);
+  if(c&&typeof Chart!=='undefined'){
+    ck='t-'+id;if(BD_CHARTS[ck])BD_CHARTS[ck].destroy();
+    labels=[];vals=[];colors=[];
+    var tv={GS:u.gs||0,YE:u.ye||0,M1000:u.m1||0,A500:u.a5||0,A250:u.a2||0};
+    BD_TYPE_ORDER.forEach(function(t){if(tv[t]>0){labels.push(BD_TYPE_LABELS[t]);vals.push(tv[t]);colors.push(BD_TYPE_COLORS[t]);}});
+    if(vals.length){BD_CHARTS[ck]=new Chart(c,{type:'doughnut',data:{labels:labels,datasets:[{data:vals,backgroundColor:colors,borderWidth:2,borderColor:'#fff'}]},options:{responsive:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ctx.label+': '+ctx.raw+'\u5206 ('+(ctx.raw/(u.s||1)*100).toFixed(1)+'%)';}}}}}}); }
+  }
+  c=document.getElementById('bdpie-surf-'+id);
+  if(c&&typeof Chart!=='undefined'){
+    ck='s-'+id;if(BD_CHARTS[ck])BD_CHARTS[ck].destroy();
+    labels=[];vals=[];colors=[];
+    var ss=u.surf_scores||{};
+    ['hard_out','hard_in','clay','grass'].forEach(function(sk){if(ss[sk]>0){labels.push(BD_SURF_LABELS[sk]);vals.push(ss[sk]);colors.push(BD_SURF_COLORS[sk]);}});
+    if(vals.length){BD_CHARTS[ck]=new Chart(c,{type:'doughnut',data:{labels:labels,datasets:[{data:vals,backgroundColor:colors,borderWidth:2,borderColor:'#fff'}]},options:{responsive:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ctx.label+': '+ctx.raw+'\u5206';}}}}}}); }
+  }
+}
+
+function bdToggleCard(hdr){
+  var cc=hdr.nextElementSibling;if(!cc)return;
+  if(cc.style.display==='none'){cc.style.display='';hdr.classList.remove('collapsed');}
+  else{cc.style.display='none';hdr.classList.add('collapsed');}
+}
+
+function bdSearch(g){
+  var q=(document.getElementById('bdq-'+g)||{value:''}).value.toLowerCase();
+  document.querySelectorAll('#bdtb-'+g+' .bd-main-row').forEach(function(row){
+    var name=row.querySelector('.bd-name')?row.querySelector('.bd-name').textContent.toLowerCase():'';
+    var show=name.includes(q);
+    row.style.display=show?'':'none';
+    var er=document.getElementById('bdexp-'+row.dataset.bdg+'-'+row.dataset.bdi);
+    if(er)er.style.display=show?'':'none';
+  });
+}
+
 loadData();
 </script>
 </body>
