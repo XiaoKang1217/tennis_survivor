@@ -195,10 +195,10 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 .bd-toolbar{display:flex;gap:8px;align-items:center;margin-bottom:8px}
 .bd-toolbar input{padding:6px 12px;border-radius:18px;border:2px solid #fde68a;background:#fffbf0;color:#44321c;font-size:13px;flex:1;max-width:220px;outline:none}
 .bd-toolbar input:focus{border-color:#f59e0b}
-.bd-tbl-wrap{overflow-x:auto;border-radius:10px;border:1px solid #fde68a;box-shadow:0 2px 10px rgba(245,158,11,.08)}
+.bd-tbl-wrap{overflow:auto;border-radius:10px;border:1px solid #fde68a;box-shadow:0 2px 10px rgba(245,158,11,.08);max-height:calc(100vh - 260px)}
 .bd-tbl{width:100%;border-collapse:collapse;font-size:12px;min-width:560px}
 .bd-tbl thead{position:sticky;top:0;z-index:5;background:linear-gradient(135deg,#fef3c7,#fde68a)}
-.bd-tbl th{padding:9px 8px;text-align:left;color:#78450a;font-weight:700;font-size:10px;border-bottom:2px solid #fcd34d;white-space:nowrap}
+.bd-tbl th{padding:9px 8px;text-align:left;color:#78450a;font-weight:700;font-size:10px;border-bottom:2px solid #fcd34d;white-space:nowrap;cursor:pointer;user-select:none}
 .bd-tbl td{padding:7px 8px;border-bottom:1px solid #fef9f0;vertical-align:middle}
 .bd-main-row:hover td{background:rgba(245,158,11,.06)!important;cursor:pointer}
 .bd-ir{font-weight:800;color:#7c3aed;text-align:center}
@@ -398,10 +398,10 @@ async function loadData(){
 
   // ③ breakdown 后台加载完，若用户已切到积分构成tab则自动渲染
   window.__bdPromise.then(function(d){
-    BD_DATA=d;
+    BD_DATA=applyCurrentToBreakdown(d);
     // 下载完直接预渲染两个panel，无论用户在哪个tab，切过去秒出
-    renderBreakdownPanel('ms',d.ms||[]);
-    renderBreakdownPanel('ws',d.ws||[]);
+    renderBreakdownPanel('ms',BD_DATA.ms||[]);
+    renderBreakdownPanel('ws',BD_DATA.ws||[]);
   }).catch(function(e){console.warn('积分构成数据加载失败',e);});
 }
 
@@ -425,6 +425,8 @@ async function refreshCurrentOnly(){
     document.getElementById('tab-ws-s').textContent='🎾 WTA '+cur.ws.event_name+' Day'+cur.ws.today_day;
     renderScore('ms', cur.ms);
     renderScore('ws', cur.ws);
+    // 实时数据刷新后，同步覆盖积分构成中的即时积分与本站得分
+    if(BD_DATA){rerenderBreakdownIfReady();}
     document.getElementById('rdot').style.background='#4ade80';
     setTimeout(()=>document.getElementById('rdot').style.background='#4ade80',2000);
   }catch(e){document.getElementById('rdot').style.background='#f87171';}
@@ -645,8 +647,8 @@ function switchTab(t,btn){
   if(t==='flight'&&!HIST_DATA){loadHistData(function(){initFlightSelect();});}
 }
 function setF(tab,f,btn){FS[tab]=f;btn.closest('.toolbar').querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');doFilter(tab);}
-function doFilter(tab){const q=(document.getElementById('q-'+tab)||{value:''}).value.toLowerCase();const f=FS[tab]||'all';document.querySelectorAll('#tb-'+tab+' tr.pref-row,#tb-'+tab+' tr[data-status]').forEach(r=>{const u=(r.dataset.u||r.dataset.user||'').toLowerCase();let ok=u.includes(q);if(f==='alive'&&r.dataset.status!=='alive')ok=false;if(f==='filled'&&r.dataset.filled!=='1')ok=false;r.style.display=ok?'':'none';const er=r.nextElementSibling;if(er&&er.classList.contains('exp-row')){if(!ok){er.style.display='none';er.classList.remove('open')}else er.style.display='';} });}
-function srt(tab,col,key){const k=tab+'_'+col;if(!SS[k])SS[k]=0;SS[k]=(SS[k]+1)%3;const dir=SS[k];const ths=document.querySelectorAll('#tbl-'+tab+' thead th');ths.forEach(t=>t.classList.remove('sa','sd'));const tb=document.getElementById('tb-'+tab);const pairs=[];const allRows=Array.from(tb.rows);for(let i=0;i<allRows.length;i++){const r=allRows[i];if(r.classList.contains('pref-row')||r.dataset.status){const exp=allRows[i+1]&&allRows[i+1].classList.contains('exp-row')?allRows[i+1]:null;pairs.push({row:r,exp});}}const nk=['cr','ir','this','deduct','instant','chg','day','ep','ee','ec','wc','bc'];if(dir===0){pairs.sort((a,b)=>parseInt(a.row.dataset.ir||9999)-parseInt(b.row.dataset.ir||9999));if(ths[1])ths[1].classList.add('sd');}else{ths[col].classList.add(dir===1?'sa':'sd');const desc=(dir===1);pairs.sort((a,b)=>{if(nk.includes(key))return desc?(parseFloat(b.row.dataset[key]||0)-parseFloat(a.row.dataset[key]||0)):(parseFloat(a.row.dataset[key]||0)-parseFloat(b.row.dataset[key]||0));const va=(a.row.dataset.user||a.row.dataset.u||'').toLowerCase();const vb=(b.row.dataset.user||b.row.dataset.u||'').toLowerCase();return desc?vb.localeCompare(va):va.localeCompare(vb);})}pairs.forEach(pair=>{tb.appendChild(pair.row);if(pair.exp)tb.appendChild(pair.exp);});doFilter(tab);}
+function doFilter(tab){const q=(document.getElementById('q-'+tab)||{value:''}).value.toLowerCase();const f=FS[tab]||'all';document.querySelectorAll('#tb-'+tab+' tr.pref-row,#tb-'+tab+' tr[data-status]').forEach(r=>{const u=(r.dataset.u||r.dataset.user||'').toLowerCase();let ok=u.includes(q);if(f==='alive'&&r.dataset.status!=='alive')ok=false;if(f==='filled'&&r.dataset.filled!=='1')ok=false;r.style.display=ok?'':'none';const er=r.nextElementSibling;if(er&&(er.classList.contains('exp-row')||er.classList.contains('sdr-row'))){if(!ok){er.style.display='none';er.classList.remove('open')}else er.style.display='';} });}
+function srt(tab,col,key){const k=tab+'_'+col;if(!SS[k])SS[k]=0;SS[k]=(SS[k]+1)%3;const dir=SS[k];const ths=document.querySelectorAll('#tbl-'+tab+' thead th');ths.forEach(t=>t.classList.remove('sa','sd'));const tb=document.getElementById('tb-'+tab);const pairs=[];const allRows=Array.from(tb.rows);for(let i=0;i<allRows.length;i++){const r=allRows[i];if(r.classList.contains('pref-row')||r.dataset.status){const nx=allRows[i+1];const exp=(nx&&(nx.classList.contains('exp-row')||nx.classList.contains('sdr-row')))?nx:null;pairs.push({row:r,exp});if(exp)i++;}}const nk=['cr','ir','this','deduct','instant','chg','day','ep','ee','ec','wc','bc'];if(dir===0){pairs.sort((a,b)=>parseInt(a.row.dataset.ir||9999)-parseInt(b.row.dataset.ir||9999));if(ths[1])ths[1].classList.add('sd');}else{ths[col].classList.add(dir===1?'sa':'sd');const desc=(dir===1);pairs.sort((a,b)=>{if(nk.includes(key))return desc?(parseFloat(b.row.dataset[key]||0)-parseFloat(a.row.dataset[key]||0)):(parseFloat(a.row.dataset[key]||0)-parseFloat(b.row.dataset[key]||0));if(key==='status')return desc?String(b.row.dataset.status||'').localeCompare(String(a.row.dataset.status||'')):String(a.row.dataset.status||'').localeCompare(String(b.row.dataset.status||''));const va=(a.row.dataset.user||a.row.dataset.u||'').toLowerCase();const vb=(b.row.dataset.user||b.row.dataset.u||'').toLowerCase();return desc?vb.localeCompare(va):va.localeCompare(vb);})}pairs.forEach(pair=>{tb.appendChild(pair.row);if(pair.exp)tb.appendChild(pair.exp);});doFilter(tab);}
 
 // 运势
 
@@ -717,6 +719,7 @@ function toggleSdr(tr){
 
 // ===== 积分构成 =====
 var BD_DATA=null;
+var BD_SORT={};
 var BD_CHARTS={};
 var BD_TYPE_LABELS={GS:'大满贯',YE:'年终',M1000:'1000赛',A500:'500赛',A250:'250赛'};
 var BD_TYPE_COLORS={GS:'#f59e0b',YE:'#8b5cf6',M1000:'#ef4444',A500:'#3b82f6',A250:'#22c55e'};
@@ -745,7 +748,7 @@ function loadBreakdown(cb){
   // 复用 loadData 里已发起的请求，避免重复下载
   const p=window.__bdPromise||fetch('data/breakdown.json?t='+Date.now()).then(r=>r.json());
   if(!window.__bdPromise)window.__bdPromise=p;
-  p.then(function(d){BD_DATA=d;cb(d);}).catch(function(e){
+  p.then(function(d){BD_DATA=applyCurrentToBreakdown(d);cb(BD_DATA);}).catch(function(e){
     console.error('积分构成加载失败',e);
     document.getElementById('bd-loading-ms')&&(document.getElementById('bd-loading-ms').textContent='⚠️ 积分构成数据加载失败，请刷新');
     document.getElementById('bd-loading-ws')&&(document.getElementById('bd-loading-ws').textContent='⚠️ 积分构成数据加载失败，请刷新');
@@ -773,7 +776,7 @@ function renderBreakdownPanel(g,data){
   var badgesHtml=feat.map(function(x){return '<div class="bd-sbadge"><span class="bd-badge" style="background:'+x[2]+'">'+x[0]+'</span> <b>'+x[1]+'</b>人</div>';}).join('');
   var rows='';
   data.forEach(function(u,i){
-    rows+='<tr class="bd-main-row" data-bdi="'+i+'" data-bdg="'+g+'" onclick="toggleBdExp(this)">'+
+    rows+='<tr class="bd-main-row" data-bdi="'+i+'" data-bdg="'+g+'" data-ir="'+(u.ir||9999)+'" data-name="'+bdEsc(u.n)+'" data-score="'+(u.s||0)+'" data-gs="'+(u.gs||0)+'" data-m1="'+(u.m1||0)+'" data-a5="'+(u.a5||0)+'" data-a2="'+(u.a2||0)+'" data-ye="'+(u.ye||0)+'" data-label="'+bdEsc(u.label||'')+'" onclick="toggleBdExp(this)">'+
       '<td class="bd-ir">'+(u.ir||'—')+'</td>'+
       '<td class="bd-name" title="'+bdEsc(u.n)+'">'+u.n+'</td>'+
       '<td class="bd-score">'+(u.s||0).toLocaleString()+'</td>'+
@@ -800,6 +803,8 @@ function renderBreakdownPanel(g,data){
     '<th style="text-align:right;color:#8b5cf6">年终</th>'+
     '<th>积分评价</th></tr></thead>'+
     '<tbody id="bdtb-'+g+'">'+rows+'</tbody></table></div>';
+  var bdKeys=['ir','name','score','score','gs','m1','a5','a2','ye','label'];
+  cont.querySelectorAll('.bd-tbl th').forEach(function(th,i){th.onclick=function(){bdSort(g,i,bdKeys[i]||'ir');};});
   cont.style.display='block';
 }
 
@@ -902,6 +907,40 @@ function bdToggleCard(hdr){
   var cc=hdr.nextElementSibling;if(!cc)return;
   if(cc.style.display==='none'){cc.style.display='';hdr.classList.remove('collapsed');}
   else{cc.style.display='none';hdr.classList.add('collapsed');}
+}
+
+function bdSort(g,col,key){
+  var k=g+'_'+key+'_'+col;
+  BD_SORT[k]=(BD_SORT[k]||0)+1;
+  var dir=BD_SORT[k]%3;
+  var tb=document.getElementById('bdtb-'+g);
+  if(!tb)return;
+  var ths=document.querySelectorAll('#bd-content-'+g+' .bd-tbl th');
+  ths.forEach(function(th){th.classList.remove('sa','sd');});
+  var rows=Array.from(tb.rows), pairs=[];
+  for(var i=0;i<rows.length;i++){
+    var r=rows[i];
+    if(r.classList.contains('bd-main-row')){
+      var exp=null; if(rows[i+1]&&rows[i+1].classList.contains('bd-exp-row')) exp=rows[i+1];
+      pairs.push({row:r,exp:exp});
+      if(exp)i++;
+    }
+  }
+  if(dir===0){key='ir'; if(ths[0])ths[0].classList.add('sd');}
+  else if(ths[col])ths[col].classList.add(dir===1?'sa':'sd');
+  var nums=['ir','score','gs','m1','a5','a2','ye'];
+  var desc=(dir===1);
+  pairs.sort(function(a,b){
+    if(nums.indexOf(key)>=0){
+      var av=parseFloat(a.row.dataset[key]||0),bv=parseFloat(b.row.dataset[key]||0);
+      if(key==='ir')return desc?(bv-av):(av-bv);
+      return desc?(bv-av):(av-bv);
+    }
+    var av=String(a.row.dataset[key]||'').toLowerCase(),bv=String(b.row.dataset[key]||'').toLowerCase();
+    return desc?bv.localeCompare(av):av.localeCompare(bv);
+  });
+  pairs.forEach(function(p){tb.appendChild(p.row);if(p.exp)tb.appendChild(p.exp);});
+  bdSearch(g);
 }
 
 function bdSearch(g){
