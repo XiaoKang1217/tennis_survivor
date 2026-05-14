@@ -16,8 +16,9 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install -r scripts/requirements.txt
+      - run: python scripts/fetch_current.py
       - run: python scripts/fetch_breakdown.py
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Auto update breakdown data"
-          file_pattern: "data/breakdown.json"
+          file_pattern: "data/current.json data/breakdown.json"
