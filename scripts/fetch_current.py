@@ -60,13 +60,55 @@ def clean_username(html):
 def parse_players(players_str):
     return re.findall(r'【([^】]*)】', players_str or '')
 
+def _event_records_total(session, event_id, gender):
+    """返回赛事 score/detail 记录数。菜单会提前露出下一站，不能直接取第一个。"""
+    try:
+        page_url = f'{BASE_URL}/zh/survivor/event/{event_id}/2026/{gender}/score'
+        resp, csrf = get_page_with_csrf(session, page_url)
+        if not csrf:
+            return 0, 0
+        iid = get_internal_id(session, event_id, gender)
+        if not iid:
+            return 0, 0
+        headers = {'X-CSRF-TOKEN': csrf, 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest'}
+        payload = 'draw=1&start=0&length=1&device=0'
+        r_score = session.post(f'{BASE_URL}/zh/survivor/event/{iid}/score', headers=headers, data=payload, timeout=20)
+        r_score.raise_for_status()
+        d_score = r_score.json()
+        score_total = int(d_score.get('recordsTotal') or len(d_score.get('data', [])) or 0)
+
+        r_detail = session.post(f'{BASE_URL}/zh/survivor/event/{iid}/2026/detail', headers=headers, data=payload, timeout=20)
+        r_detail.raise_for_status()
+        d_detail = r_detail.json()
+        detail_total = int(d_detail.get('recordsTotal') or len(d_detail.get('data', [])) or 0)
+        return score_total, detail_total
+    except Exception as e:
+        print(f"  WARN: 检查赛事数据失败 event={event_id} gender={gender}: {e}")
+        return 0, 0
+
+def _pick_active_event(session, events, gender):
+    """从菜单候选里选择真正进行中的赛事：要求 score/detail 都有记录。"""
+    if not events:
+        return None
+    checked = []
+    for eid in events:
+        score_total, detail_total = _event_records_total(session, eid, gender)
+        checked.append((eid, score_total, detail_total))
+        if score_total > 0 and detail_total > 0:
+            print(f"  {gender} 选择进行中赛事 event={eid}, score_records={score_total}, detail_records={detail_total}")
+            return eid
+    # 如果所有候选都无完整数据，保底返回菜单第一个，避免流程完全失败
+    print(f"  WARN: {gender} 菜单候选均无完整 score/detail 数据，fallback 到第一个: {checked[:5]}")
+    return events[0]
+
 def get_active_events(session):
-    """从菜单获取当前最新的ATP和WTA比赛"""
+    """从菜单获取ATP/WTA候选赛事，并过滤掉提前露出的下一站空赛事。"""
     resp = session.get(f'{BASE_URL}/zh/survivor/menu', timeout=15)
     html = resp.text
     ms_events = re.findall(r'href="https://www\.live-tennis\.cn/zh/survivor/event/([^/]+)/2026/MS/my"', html)
     ws_events = re.findall(r'href="https://www\.live-tennis\.cn/zh/survivor/event/([^/]+)/2026/WS/my"', html)
-    return (ms_events[0] if ms_events else None, ws_events[0] if ws_events else None)
+    print(f"菜单候选: ATP={ms_events[:5]}, WTA={ws_events[:5]}")
+    return (_pick_active_event(session, ms_events, 'MS'), _pick_active_event(session, ws_events, 'WS'))
 
 def get_internal_id(session, event_id, gender):
     url = f'{BASE_URL}/zh/survivor/event/{event_id}/2026/{gender}/score'
