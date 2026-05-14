@@ -270,6 +270,13 @@ def fetch_event_data(session, csrf, iid, gender, event_name, rank_dict):
         uid2 = str(uid2)
         if uid2 in existing:
             continue
+        cur2 = ri2.get('score', 0) or 0
+        det2 = ri2.get('details', '')
+        # 未参赛用户也要扣除去年本站积分：从年度排名 details 中找当前赛事的计入分
+        tmp2 = re.sub(r'<del>.*?</del>', '', det2 or '', flags=re.DOTALL)
+        dm2 = re.search(rf'【{re.escape(event_name)}\((\d+)\)】', tmp2)
+        ded2 = int(dm2.group(1)) if dm2 else 0
+        inst2 = calc_preview_v5_instant(uid2, cur2, ded2, 0, det2, gender, event_name)
         rows_out.append({
             'user_id': uid2,
             'username': ri2.get('username') or uid2,
@@ -277,14 +284,15 @@ def fetch_event_data(session, csrf, iid, gender, event_name, rank_dict):
             'day': 0,
             'fill_status': '未参赛',
             'current_rank': ri2.get('rank'),
-            'current_score': ri2.get('score', 0) or 0,
-            'deduct_score': 0,
+            'current_score': cur2,
+            'deduct_score': ded2,
             'this_event_score': 0,
-            'instant_score': ri2.get('score', 0) or 0,
+            'instant_score': inst2,
             'today_player': '',
             'today_player_alt': '',
             'has_today': False,
             'not_participated': True,
+            'players': [],
         })
 
     # 计算即时排名
