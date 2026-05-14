@@ -743,6 +743,33 @@ var BD_LABEL_GROUPS=[
 
 function bdEsc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
+
+
+function applyCurrentToBreakdown(d){
+  // 安全兜底：如果 current 已加载，则用 current.json 覆盖积分构成里的即时排名/即时积分。
+  // 如果 current 未加载或字段缺失，直接返回 breakdown 数据，避免整个积分构成模块加载失败。
+  if(!d)return {ms:[],ws:[]};
+  try{
+    if(!GDATA)return d;
+    ['ms','ws'].forEach(function(g){
+      var curRows=(GDATA[g]&&GDATA[g].rows)||[];
+      if(!curRows.length||!d[g])return;
+      var mp={};
+      curRows.forEach(function(r){mp[String(r.user_id)]=r;});
+      d[g].forEach(function(u){
+        var r=mp[String(u.uid)];
+        if(!r)return;
+        if(r.instant_rank != null)u.ir=r.instant_rank;
+        if(r.instant_score != null)u.s=r.instant_score;
+        u.this_event_score=r.this_event_score||0;
+        u.deduct_score=r.deduct_score||0;
+      });
+      d[g].sort(function(a,b){return (a.ir||9999)-(b.ir||9999);});
+    });
+  }catch(e){console.warn('applyCurrentToBreakdown fallback',e);}
+  return d;
+}
+
 function loadBreakdown(cb){
   if(BD_DATA){cb(BD_DATA);return;}
   // 复用 loadData 里已发起的请求，避免重复下载
