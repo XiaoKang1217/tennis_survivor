@@ -286,13 +286,29 @@ def fetch_event_data(session, csrf, iid, gender, event_name, rank_dict):
     # Today detail
     dd = post_api(session, csrf, iid, '2026/detail', length=500)
     today_rows = dd.get('data', [])
-    today_day = max((r.get('day', 0) for r in today_rows), default=0)
-    today_map = {str(r['user_id']): r for r in today_rows if r.get('day') == today_day}
+ # 🔧 修复1：用 score + detail 的并集作为本站参赛用户
+    score_user_ids = {str(r['user_id']) for r in score_rows}
+    detail_user_ids = {str(r['user_id']) for r in today_rows}
+    all_event_user_ids = score_user_ids | detail_user_ids  # 并集
+    
+    # 🔧 修复2：只从本站参赛用户的 detail 中取 today_day
+    event_detail_rows = [r for r in today_rows if str(r.get('user_id')) in all_event_user_ids]
+    today_day = max((r.get('day', 0) for r in event_detail_rows), default=0)
+    today_map = {str(r['user_id']): r for r in event_detail_rows if r.get('day') == today_day}
     print(f"  Today day: {today_day}, filled: {len(today_map)}")
     
     rows_out = []
-    for r in score_rows:
+  for r in score_rows:
         uid = str(r['user_id'])
+        # ... 原有逻辑 ...
+    
+    # 再从 detail 补充 score 里没有的用户
+    existing = {str(r['user_id']) for r in score_rows}
+    for r in today_rows:
+        uid = str(r['user_id'])
+        if uid in existing:
+            continue
+            
         ri = rank_dict.get(uid, {})
         cur = ri.get('score', 0) or 0
         det = ri.get('details', '')
