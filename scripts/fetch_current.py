@@ -319,7 +319,7 @@ def fetch_event_data(session, csrf, iid, gender, event_name, rank_dict):
         inst = calc_preview_v5_instant(uid, cur, ded, new_s, det, gender, event_name)
         
         tr = today_map.get(uid, {})
-          if r:
+        if r:
             fill_status = r.get('fill_status', '')
             status = r.get('status', 0)
         else:
