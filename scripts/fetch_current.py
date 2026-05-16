@@ -319,12 +319,22 @@ def fetch_event_data(session, csrf, iid, gender, event_name, rank_dict):
         inst = calc_preview_v5_instant(uid, cur, ded, new_s, det, gender, event_name)
         
         tr = today_map.get(uid, {})
+          if r:
+            fill_status = r.get('fill_status', '')
+            status = r.get('status', 0)
+        else:
+            fill_status = tr.get('fill_status', '') if tr else '未参赛'
+            if not fill_status:
+                fill_status = '存活'
+            status = tr.get('status', 2) if tr else 0
+            if not status:
+                status = 2
         rows_out.append({
             'user_id': uid,
-            'username': clean_username(r.get('username', '')),
-            'status': r.get('status', 0),
-            'day': r.get('day', 0),
-            'fill_status': r.get('fill_status', ''),
+            'username': clean_username(r.get('username', '') or tr.get('username', '')),
+            'status': status,
+            'day': r.get('day', 0) if r else 0,
+            'fill_status': fill_status,
             'current_rank': ri.get('rank'),
             'current_score': cur,
             'deduct_score': ded,
@@ -333,7 +343,7 @@ def fetch_event_data(session, csrf, iid, gender, event_name, rank_dict):
             'today_player': tr.get('player', ''),
             'today_player_alt': tr.get('player_alt', ''),
             'has_today': uid in today_map,
-            'players': parse_players(r.get('players', '')),
+            'players': parse_players(r.get('players', '') if r else tr.get('players', '')),
         })
     
     # 合并年度排名中未参加本站的用户，保证即时排名完整
