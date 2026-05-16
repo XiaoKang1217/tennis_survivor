@@ -137,47 +137,64 @@ def get_today_players_from_page(session, event_id, gender):
 
 
 def get_today_players_from_result(session, ms_event_id, ws_event_id):
-    """从当天赛程页提取当前签表幸存者赛事的所有单打正赛球员。
-    规则：只看当前开启赛事（例如罗马）的男单/女单；排除双打、资格赛/含Q轮次。
-    """
+    """从当天赛程页提取当前签表幸存者赛事的所有单打正赛球员。"""
     tz_cn = timezone(timedelta(hours=8))
     today = datetime.now(tz_cn).strftime('%Y-%m-%d')
     url = f'{BASE_URL}/zh/result/{today}'
     html = session.get(url, timeout=30).text
 
-    # 只取罗马/当前赛事块，避免抓到挑战赛/ITF等其它赛事
-    start = html.find('id="iResultRome"')
-    if start == -1:
-        start = 0
-    next_tour = html.find('<div class="cResultTour ', start + 20)
-    seg = html[start: next_tour if next_tour != -1 else len(html)]
-
     result = {'MS': set(), 'WS': set()}
-    # open_stat参数里最后两个就是两名球员中文短名
-    for m in re.finditer(r'open_stat\((.*?)\)', seg):
-        args = re.findall(r'&quot;([^&]*)&quot;', m.group(1))
-        if len(args) < 8:
-            continue
-        eid, tour, match_id, year, p1id, p2id, p1, p2 = args[:8]
-        # 限定当前签表幸存者开启赛事
-        if eid not in {str(ms_event_id), str(ws_event_id)}:
-            continue
-        pre = seg[max(0, m.start()-2500):m.start()]
-        # 必须是单打
-        if 'is-double="1"' in pre:
-            continue
-        gm = re.search(r'<div class=cResultMatchGender>([^<]+)</div>', pre)
-        rm = re.search(r'<div class=cResultMatchRound>([^<]+)</div>', pre)
-        gender_txt = gm.group(1).strip() if gm else ''
-        round_txt = rm.group(1).strip() if rm else ''
-        if 'Q' in round_txt or '资格' in round_txt:
-            continue
-        if gender_txt == '男单':
-            result['MS'].update([p1, p2])
-        elif gender_txt == '女单':
-            result['WS'].update([p1, p2])
+    
+    # 找到所有赛事块（iResult后面跟赛事名）
+    tour_blocks = list(re.finditer(r'id="iResult(\w+)"', html))
+    
+    for i, block_match in enumerate(tour_blocks):
+        tour_name = block_match.group(1)  # 例如 Rome, Hamburg, Strasbourg
+        block_start = block_match.start()
+        
+        # 确定当前赛事块的结束位置（下一个赛事块之前，或页面结尾）
+        if i + 1 < len(tour_blocks):
+            block_end = tour_blocks[i + 1].start()
+        else:
+            block_end = len(html)
+        
+        seg = html[block_start:block_end]
+        
+        # 从 open_stat() 中提取球员
+        for m in re.finditer(r'open_stat\((.*?)\)', seg):
+            args = re.findall(r'&quot;([^&]*)&quot;', m.group(1))
+            if len(args) < 8:
+                continue
+            eid, tour, match_id, year, p1id, p2id, p1, p2 = args[:8]
+            
+            # 限定当前签表幸存者开启赛事
+            if eid not in {str(ms_event_id), str(ws_event_id)}:
+                continue
+            
+            # 获取比赛上下文（性别、轮次）
+            pre = seg[max(0, m.start()-2500):m.start()]
+            
+            # 排除双打
+            if 'is-double="1"' in pre:
+                continue
+            
+            # 排除资格赛
+            gm = re.search(r'<div class=cResultMatchGender>([^<]+)</div>', pre)
+            rm = re.search(r'<div class=cResultMatchRound>([^<]+)</div>', pre)
+            gender_txt = gm.group(1).strip() if gm else ''
+            round_txt = rm.group(1).strip() if rm else ''
+            
+            if 'Q' in round_txt or '资格' in round_txt:
+                continue
+            
+            # 按性别分类
+            if gender_txt == '男单':
+                result['MS'].update([p1, p2])
+            elif gender_txt == '女单':
+                result['WS'].update([p1, p2])
 
     return {k: sorted(v) for k, v in result.items()}
+
 
 def parse_all_scores(details_html):
     if not details_html: return {}, {}
