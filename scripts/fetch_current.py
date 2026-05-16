@@ -94,11 +94,11 @@ def _pick_active_event(session, events, gender):
     for eid in events:
         score_total, detail_total = _event_records_total(session, eid, gender)
         checked.append((eid, score_total, detail_total))
-        if score_total > 0 and detail_total > 0:
+        if detail_total > 0:
             print(f"  {gender} 选择进行中赛事 event={eid}, score_records={score_total}, detail_records={detail_total}")
             return eid
     # 如果所有候选都无完整数据，保底返回菜单第一个，避免流程完全失败
-    print(f"  WARN: {gender} 菜单候选均无完整 score/detail 数据，fallback 到第一个: {checked[:5]}")
+    print(f"  WARN: {gender} 菜单候选均无完整 detail 数据，fallback 到第一个: {checked[:5]}")
     return events[0]
 
 def get_active_events(session):
