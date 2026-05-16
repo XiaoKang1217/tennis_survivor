@@ -296,18 +296,15 @@ def fetch_event_data(session, csrf, iid, gender, event_name, rank_dict):
     today_day = max((r.get('day', 0) for r in event_detail_rows), default=0)
     today_map = {str(r['user_id']): r for r in event_detail_rows if r.get('day') == today_day}
     print(f"  Today day: {today_day}, filled: {len(today_map)}")
+# 构建 score 用户快速查找
+    score_map = {str(r['user_id']): r for r in score_rows}
     
     rows_out = []
-  for r in score_rows:
-        uid = str(r['user_id'])
-        # ... 原有逻辑 ...
     
-    # 再从 detail 补充 score 里没有的用户
-    existing = {str(r['user_id']) for r in score_rows}
-    for r in today_rows:
-        uid = str(r['user_id'])
-        if uid in existing:
-            continue
+    # 🔧 修复3：遍历所有本站参赛用户（score + detail 并集）
+    for uid in all_event_user_ids:
+        r = score_map.get(uid, {})  # score 数据（可能为空）
+        tr = today_map.get(uid, {})  # detail 数据
             
         ri = rank_dict.get(uid, {})
         cur = ri.get('score', 0) or 0
