@@ -83,57 +83,66 @@ def scrape_calendar(year, session):
 
 
 # ── 从赛历详情页动态获取月份和场地 ────────────────────────
-def fetch_info_from_draw(eid, year, session):
-    """从 /zh/draw/{eid}/{year} 抓取赛事实际月份和场地类型。
-    返回 {'month': int, 'surface': str} 或 None
-    """
-    try:
-        r = session.get(f'{BASE_URL}/zh/draw/{eid}/{year}', timeout=10)
-        html = r.text
-
-        # 月份：匹配日期格式 2026-05-18 或 2026.05.18
-        m_date = re.search(r'(\d{4})[.\-/](\d{2})[.\-/](\d{2})', html)
-        month = int(m_date.group(2)) if m_date else None
-
-        # 场地：匹配 "场地: 室外硬地" / "场地：红土" 等
-        m_surf = re.search(r'场地[：:]\s*([^\n<]{2,8})', html)
-        surface = None
-        if m_surf:
-            raw = m_surf.group(1).strip()
-            if '红土' in raw or '泥地' in raw:
-                surface = 'clay'
-            elif '草地' in raw:
-                surface = 'grass'
-            elif '室内' in raw:
-                surface = 'hard_in'
-            elif '室外' in raw or '硬地' in raw:
-                surface = 'hard_out'
-
-        if month is not None:
-            return {'month': month, 'surface': surface}
-    except:
-        pass
-    return None
-
-
-def build_dynamic_info_map(cal_cache, cur_year, session):
-    """遍历赛历所有赛事，逐个从详情页抓取月份和场地。
+# ── 从 calendar_list 页面动态获取赛事月份（场地继续用赛历颜色）─
+def build_dynamic_info_map_from_calendar_list(cal_cache, cur_year, session):
+    """从 /zh/calendar_list/{year} 解析每个赛事出现月份，
+    结合 scrape_calendar 的级别/场地，生成动态映射。
     返回 {(gender, name): {'month': int, 'surface': str}}
     """
     info_map = {}
+
+    try:
+        r = session.get(f'{BASE_URL}/zh/calendar_list/{cur_year}', timeout=20)
+        html = r.text
+    except Exception as e:
+        print(f"  ⚠️ calendar_list 获取失败: {e}")
+        return info_map
+
+    # 匹配每周的日期和赛事块
+    pattern = re.compile(
+        r'(\d{4}-\d{2}-\d{2})\s*\|\s*(.*?)(?=\n\d{4}-\d{2}|\Z)',
+        re.DOTALL
+    )
+
+    # 第一步：建立 赛事名 → [出现月份列表]
+    name_months = {}
+    for m in pattern.finditer(html):
+        date_str = m.group(1)
+        events_str = m.group(2)
+        month = int(date_str[5:7])
+
+        # 提取所有纯中文赛事名（2-6 个汉字）
+        names = re.findall(r'([\u4e00-\u9fff]{2,6})', events_str)
+        for name in names:
+            # 简单过滤挑战赛/ITF：如果前后紧挨数字或英文，跳过
+            pos = events_str.find(name)
+            before = events_str[max(0, pos-2):pos].strip()
+            after = events_str[pos+len(name):pos+len(name)+2].strip()
+            if re.search(r'[A-Za-z0-9]', before) or re.search(r'[A-Za-z0-9]', after):
+                continue
+            if name not in name_months:
+                name_months[name] = []
+            if month not in name_months[name]:
+                name_months[name].append(month)
+
+    # 第二步：结合赛历信息，匹配到具体性别
     for (g, name), cal_info in cal_cache.get(cur_year, {}).items():
-        eid = cal_info.get('eid')
-        if not eid:
+        months = name_months.get(name, [])
+        if not months:
             continue
-        fetched = fetch_info_from_draw(eid, cur_year, session)
-        if fetched is None:
-            continue
-        # 场地优先用详情页抓到的，抓不到用赛历颜色兜底
-        surface = fetched['surface'] or cal_info.get('surface', 'hard_out')
-        info_map[(g, name)] = {'month': fetched['month'], 'surface': surface}
+
+        # 如果只有一个月份，直接用
+        if len(months) == 1:
+            m = months[0]
+        else:
+            # 多个月份：ATP通常在WTA之前，ATP取第一个，WTA取最后一个
+            m = months[0] if g == 'ATP' else months[-1]
+
+        surface = cal_info.get('surface', 'hard_out')
+        info_map[(g, name)] = {'month': m, 'surface': surface}
 
     print(f"  动态信息映射: {len(info_map)} 个赛事")
-    # 打印同地不同月/不同场地的情况
+    # 打印同地不同月/不同场地
     name_info = {}
     for (g, name), info in info_map.items():
         if name not in name_info:
@@ -141,7 +150,9 @@ def build_dynamic_info_map(cal_cache, cur_year, session):
         name_info[name][g] = info
     for name, gi in name_info.items():
         if len(gi) > 1:
-            parts = ", ".join(f"{g}={v['month']}月/{v['surface']}" for g, v in gi.items())
+            parts = ", ".join(
+                f"{g}={v['month']}月/{v['surface']}" for g, v in gi.items()
+            )
             print(f"  📅 {name}: {parts}")
 
     return info_map
@@ -371,9 +382,9 @@ def main():
         cal_cache[y]=scrape_calendar(y, session)
         print(f"  {y}年: {len(cal_cache[y])} 个赛事")
         time.sleep(0.5)
-
-    print("动态获取赛事月份和场地（从赛历详情页）...")
-    dynamic_info_map=build_dynamic_info_map(cal_cache, cur_year, session)
+    
+    print("动态获取赛事月份（从 calendar_list 页面）...")
+    dynamic_info_map = build_dynamic_info_map_from_calendar_list(cal_cache, cur_year, session)
 
     resp_ms=session.get(f'{BASE_URL}/zh/survivor/rank/MS/year',timeout=20)
     csrf_ms=re.search(r'meta[^>]*name="csrf-token"[^>]*content="([^"]+)"',resp_ms.text).group(1)
