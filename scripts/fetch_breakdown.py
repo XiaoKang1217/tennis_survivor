@@ -84,72 +84,96 @@ def scrape_calendar(year, session):
 
 # ── 从赛历详情页动态获取月份和场地 ────────────────────────
 # ── 从 calendar_list 页面动态获取赛事月份（场地继续用赛历颜色）─
+# ── 2026赛季 ATP/WTA赛事 → 月份 对照表 ─────────────────────
+# 数据来源：https://www.live-tennis.cn/zh/calendar_list/2026
+# 每年1月手动更新一次即可
+CALENDAR_MONTHS_2026 = {
+    # === ATP ===
+    ('ATP','联合杯'):1, ('ATP','布里斯班'):1, ('ATP','香港'):1, ('ATP','奥克兰'):1,
+    ('ATP','阿德莱德'):1, ('ATP','澳网'):1,
+    ('ATP','蒙彼利埃'):2, ('ATP','鹿特丹'):2, ('ATP','达拉斯'):2, ('ATP','布宜诺斯艾利斯'):2,
+    ('ATP','多哈'):2, ('ATP','迪拜'):2, ('ATP','里约热内卢'):2, ('ATP','德拉海滩'):2,
+    ('ATP','阿卡普尔科'):2,
+    ('ATP','印第安维尔斯'):3,
+    ('ATP','迈阿密'):3,
+    ('ATP','休斯顿'):3, ('ATP','马拉喀什'):3, ('ATP','布加勒斯特'):3,
+    ('ATP','蒙特卡洛'):4,
+    ('ATP','慕尼黑'):4, ('ATP','巴塞罗那'):4,
+    ('ATP','马德里'):4,
+    ('ATP','罗马'):5,
+    ('ATP','汉堡'):5, ('ATP','日内瓦'):5,
+    ('ATP','法网'):5,
+    ('ATP','斯图加特'):6, ('ATP','斯海尔托亨博斯'):6,
+    ('ATP','哈雷'):6, ('ATP','伦敦'):6,
+    ('ATP','马洛卡'):6, ('ATP','伊斯特本'):6,
+    ('ATP','温网'):6,
+    ('ATP','巴斯塔德'):7, ('ATP','格施塔德'):7, ('ATP','乌马格'):7, ('ATP','雅西'):7, ('ATP','雅典'):7,
+    ('ATP','基茨比厄尔'):7, ('ATP','埃斯托利尔'):7,
+    ('ATP','华盛顿'):7, ('ATP','洛斯卡沃斯'):7, ('ATP','孟菲斯'):7,
+    ('ATP','蒙特利尔'):8, ('ATP','多伦多'):8,
+    ('ATP','辛辛那提'):8,
+    ('ATP','温斯顿塞勒姆'):8,
+    ('ATP','美网'):8,
+    ('ATP','成都'):9, ('ATP','杭州'):9,
+    ('ATP','北京'):9, ('ATP','东京'):9,
+    ('ATP','上海'):10,
+    ('ATP','阿拉木图'):10, ('ATP','布鲁塞尔'):10,
+    ('ATP','维也纳'):10, ('ATP','巴塞尔'):10,
+    ('ATP','巴黎'):11,
+    ('ATP','都灵'):11, ('ATP','斯德哥尔摩'):11,
+    ('ATP','吉达'):12,
+
+    # === WTA ===
+    ('WTA','联合杯'):1, ('WTA','布里斯班'):1, ('WTA','奥克兰'):1,
+    ('WTA','阿德莱德'):1, ('WTA','霍巴特'):1,
+    ('WTA','澳网'):1,
+    ('WTA','阿布扎比'):2, ('WTA','克卢日-纳波卡'):2, ('WTA','俄斯特拉发'):2,
+    ('WTA','多哈'):2, ('WTA','迪拜'):2,
+    ('WTA','梅里达'):2, ('WTA','奥斯汀'):2, ('WTA','圣地亚哥'):2,
+    ('WTA','印第安维尔斯'):3,
+    ('WTA','迈阿密'):3,
+    ('WTA','查尔斯顿'):3, ('WTA','波哥大'):3,
+    ('WTA','蒙特卡洛'):4,
+    ('WTA','林茨'):4,
+    ('WTA','斯图加特'):4, ('WTA','鲁昂'):4,
+    ('WTA','马德里'):4,
+    ('WTA','罗马'):5,
+    ('WTA','斯特拉斯堡'):5, ('WTA','拉巴特'):5,
+    ('WTA','法网'):5,
+    ('WTA','斯海尔托亨博斯'):6,
+    ('WTA','柏林'):6, ('WTA','诺丁汉'):6,
+    ('WTA','巴特洪堡'):6, ('WTA','伊斯特本'):6,
+    ('WTA','温网'):6,
+    ('WTA','汉堡'):7, ('WTA','布拉格'):7,
+    ('WTA','华盛顿'):7,
+    ('WTA','蒙特利尔'):8, ('WTA','多伦多'):8,
+    ('WTA','辛辛那提'):8,
+    ('WTA','蒙特雷'):8,
+    ('WTA','美网'):8,
+    ('WTA','瓜达拉哈拉'):9,
+    ('WTA','首尔'):9, ('WTA','新加坡'):9,
+    ('WTA','北京'):9, ('WTA','武汉'):10,
+    ('WTA','宁波'):10, ('WTA','大阪'):10, ('WTA','里昂'):10,
+    ('WTA','东京'):10, ('WTA','广州'):10,
+    ('WTA','香港'):11, ('WTA','清奈'):11, ('WTA','九江'):11,
+    ('WTA','利雅得'):11,
+    ('WTA','深圳'):11, ('WTA','珠海'):11,
+}
+
+
 def build_dynamic_info_map_from_calendar_list(cal_cache, cur_year, session):
-    """从 /zh/calendar_list/{year} 解析每个赛事出现月份，
-    结合 scrape_calendar 的级别/场地，生成动态映射。
-    返回 {(gender, name): {'month': int, 'surface': str}}
+    """直接从硬编码的 CALENDAR_MONTHS_2026 对照表读取月份。
+    场地信息从 scrape_calendar 获取。
     """
     info_map = {}
-    
-    try:
-        r = session.get(f'{BASE_URL}/zh/calendar_list/{cur_year}', timeout=20)
-        html = r.text
-    except Exception as e:
-        print(f"  ⚠️ calendar_list 获取失败: {e}")
-        return info_map
 
-    # 匹配每周的日期和赛事块
-    pattern = re.compile(
-        r'(\d{4}-\d{2}-\d{2})\s*\|\s*(.*?)(?=\n\d{4}-\d{2}|\Z)',
-        re.DOTALL
-    )
-
-    # 第一步：建立 赛事名 → [出现月份列表]（只看巡回赛块）
-    name_months = {}
-    for m in pattern.finditer(html):
-        date_str = m.group(1)
-        events_str = m.group(2)
-        month = int(date_str[5:7])
-
-        # 提取纯中文赛事名
-        names = re.findall(r'[\u4e00-\u9fff]{2,6}', events_str)
-        for name in names:
-            # 过滤：前后紧挨数字/英文的是挑战赛/ITF
-            pos = events_str.find(name)
-            before = events_str[max(0, pos-2):pos].strip()
-            after = events_str[pos+len(name):pos+len(name)+2].strip()
-            if re.search(r'[A-Za-z0-9]', before) or re.search(r'[A-Za-z0-9]', after):
-                continue
-            # 额外黑名单：常见非赛事中文
-            if name in {'列表显示','甘特图显示'}:
-                continue
-            if name not in name_months:
-                name_months[name] = []
-            if month not in name_months[name]:
-                name_months[name].append(month)
-
-    # 第二步：只处理赛历里有的赛事，避免挑战赛污染
-    for (g, name), cal_info in cal_cache.get(cur_year, {}).items():
-        months = name_months.get(name, [])
-        if not months:
-            # 有些赛事名带连字符（克卢日-纳波卡），calendar_list里可能没连字符
-            # 尝试去掉连字符匹配
-            name_no_dash = name.replace('-', '').replace(' ', '')
-            for k, v in name_months.items():
-                if k.replace('-', '').replace(' ', '') == name_no_dash:
-                    months = v
-                    break
-        if not months:
-            continue
-
-        if len(months) == 1:
-            m = months[0]
+    for (g, name), month in CALENDAR_MONTHS_2026.items():
+        cal_info = cal_cache.get(cur_year, {}).get((g, name))
+        if cal_info:
+            surface = cal_info.get('surface', 'hard_out')
         else:
-            # 多个月份：ATP取第一个，WTA取最后一个
-            m = months[0] if g == 'ATP' else months[-1]
-
-        surface = cal_info.get('surface', 'hard_out')
-        info_map[(g, name)] = {'month': m, 'surface': surface}
+            surface = 'hard_out'
+        info_map[(g, name)] = {'month': month, 'surface': surface}
 
     print(f"  动态信息映射: {len(info_map)} 个赛事")
     # 打印同地不同月
@@ -164,7 +188,6 @@ def build_dynamic_info_map_from_calendar_list(cal_cache, cur_year, session):
             print(f"  📅 {name}: {parts}")
 
     return info_map
-
 
 # ── 元数据查找 ────────────────────────────────────────────
 def get_meta(ev, gender, cal_cache, dynamic_info_map, cur_month, cur_year):
