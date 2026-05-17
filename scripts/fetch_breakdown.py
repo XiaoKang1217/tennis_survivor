@@ -84,11 +84,50 @@ def scrape_calendar(year, session):
 
 # ── 从赛历详情页动态获取月份和场地 ────────────────────────
 # ── 从 calendar_list 页面动态获取赛事月份（场地继续用赛历颜色）─
+
 def build_dynamic_info_map_from_calendar_list(cal_cache, cur_year, session):
-    """从 /zh/calendar_list/{year} 解析每个赛事出现月份，
-    结合 scrape_calendar 的级别/场地，生成动态映射。
-    返回 {(gender, name): {'month': int, 'surface': str}}
-    """
+    # ── 调试：对比两个来源的赛事名 ──
+    cal_names = {name for (g, name) in cal_cache.get(cur_year, {}).keys()}
+    
+    # 从 calendar_list 页面提取的赛事名
+    try:
+        r = session.get(f'{BASE_URL}/zh/calendar_list/{cur_year}', timeout=20)
+        html = r.text
+    except:
+        html = ''
+    
+    list_names = set()
+    for m in re.finditer(r'([\u4e00-\u9fff]{2,6})', html):
+        list_names.add(m.group(1))
+    
+    # 过滤明显不是赛事名的（单字、包含数字等）
+    list_names = {n for n in list_names if len(n) >= 2 and not re.search(r'\d', n)}
+    
+    print(f"\n  🔍 调试：scrape_calendar 有 {len(cal_names)} 个赛事名")
+    print(f"  🔍 调试：calendar_list 有 {len(list_names)} 个赛事名")
+    
+    # 两边都有的
+    both = cal_names & list_names
+    print(f"  ✅ 两边都有的: {len(both)} 个")
+    for n in sorted(both)[:10]:
+        print(f"     {n}")
+    
+    # 只在 scrape_calendar 里的
+    only_cal = cal_names - list_names
+    if only_cal:
+        print(f"  ⚠️ 只在赛历的: {len(only_cal)} 个")
+        for n in sorted(only_cal):
+            print(f"     「{n}」")
+    
+    # 只在 calendar_list 里的
+    only_list = list_names - cal_names
+    if only_list:
+        print(f"  ⚠️ 只在calendar_list的: {len(only_list)} 个")
+        for n in sorted(only_list)[:20]:
+            print(f"     「{n}」")
+    
+    print()
+    # ── 调试结束，继续原有逻辑 ──
     info_map = {}
 
     try:
