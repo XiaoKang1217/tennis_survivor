@@ -84,52 +84,13 @@ def scrape_calendar(year, session):
 
 # ── 从赛历详情页动态获取月份和场地 ────────────────────────
 # ── 从 calendar_list 页面动态获取赛事月份（场地继续用赛历颜色）─
-
 def build_dynamic_info_map_from_calendar_list(cal_cache, cur_year, session):
-    # ── 调试：对比两个来源的赛事名 ──
-    cal_names = {name for (g, name) in cal_cache.get(cur_year, {}).keys()}
-    
-    # 从 calendar_list 页面提取的赛事名
-    try:
-        r = session.get(f'{BASE_URL}/zh/calendar_list/{cur_year}', timeout=20)
-        html = r.text
-    except:
-        html = ''
-    
-    list_names = set()
-    for m in re.finditer(r'([\u4e00-\u9fff]{2,6})', html):
-        list_names.add(m.group(1))
-    
-    # 过滤明显不是赛事名的（单字、包含数字等）
-    list_names = {n for n in list_names if len(n) >= 2 and not re.search(r'\d', n)}
-    
-    print(f"\n  🔍 调试：scrape_calendar 有 {len(cal_names)} 个赛事名")
-    print(f"  🔍 调试：calendar_list 有 {len(list_names)} 个赛事名")
-    
-    # 两边都有的
-    both = cal_names & list_names
-    print(f"  ✅ 两边都有的: {len(both)} 个")
-    for n in sorted(both)[:10]:
-        print(f"     {n}")
-    
-    # 只在 scrape_calendar 里的
-    only_cal = cal_names - list_names
-    if only_cal:
-        print(f"  ⚠️ 只在赛历的: {len(only_cal)} 个")
-        for n in sorted(only_cal):
-            print(f"     「{n}」")
-    
-    # 只在 calendar_list 里的
-    only_list = list_names - cal_names
-    if only_list:
-        print(f"  ⚠️ 只在calendar_list的: {len(only_list)} 个")
-        for n in sorted(only_list)[:20]:
-            print(f"     「{n}」")
-    
-    print()
-    # ── 调试结束，继续原有逻辑 ──
+    """从 /zh/calendar_list/{year} 解析每个赛事出现月份，
+    结合 scrape_calendar 的级别/场地，生成动态映射。
+    返回 {(gender, name): {'month': int, 'surface': str}}
+    """
     info_map = {}
-
+    
     try:
         r = session.get(f'{BASE_URL}/zh/calendar_list/{cur_year}', timeout=20)
         html = r.text
@@ -143,45 +104,55 @@ def build_dynamic_info_map_from_calendar_list(cal_cache, cur_year, session):
         re.DOTALL
     )
 
-    # 第一步：建立 赛事名 → [出现月份列表]
+    # 第一步：建立 赛事名 → [出现月份列表]（只看巡回赛块）
     name_months = {}
     for m in pattern.finditer(html):
         date_str = m.group(1)
         events_str = m.group(2)
         month = int(date_str[5:7])
 
-        # 提取所有纯中文赛事名（2-6 个汉字）
-        names = re.findall(r'([\u4e00-\u9fff]{2,6})', events_str)
+        # 提取纯中文赛事名
+        names = re.findall(r'[\u4e00-\u9fff]{2,6}', events_str)
         for name in names:
-            # 简单过滤挑战赛/ITF：如果前后紧挨数字或英文，跳过
+            # 过滤：前后紧挨数字/英文的是挑战赛/ITF
             pos = events_str.find(name)
             before = events_str[max(0, pos-2):pos].strip()
             after = events_str[pos+len(name):pos+len(name)+2].strip()
             if re.search(r'[A-Za-z0-9]', before) or re.search(r'[A-Za-z0-9]', after):
+                continue
+            # 额外黑名单：常见非赛事中文
+            if name in {'列表显示','甘特图显示'}:
                 continue
             if name not in name_months:
                 name_months[name] = []
             if month not in name_months[name]:
                 name_months[name].append(month)
 
-    # 第二步：结合赛历信息，匹配到具体性别
+    # 第二步：只处理赛历里有的赛事，避免挑战赛污染
     for (g, name), cal_info in cal_cache.get(cur_year, {}).items():
         months = name_months.get(name, [])
         if not months:
+            # 有些赛事名带连字符（克卢日-纳波卡），calendar_list里可能没连字符
+            # 尝试去掉连字符匹配
+            name_no_dash = name.replace('-', '').replace(' ', '')
+            for k, v in name_months.items():
+                if k.replace('-', '').replace(' ', '') == name_no_dash:
+                    months = v
+                    break
+        if not months:
             continue
 
-        # 如果只有一个月份，直接用
         if len(months) == 1:
             m = months[0]
         else:
-            # 多个月份：ATP通常在WTA之前，ATP取第一个，WTA取最后一个
+            # 多个月份：ATP取第一个，WTA取最后一个
             m = months[0] if g == 'ATP' else months[-1]
 
         surface = cal_info.get('surface', 'hard_out')
         info_map[(g, name)] = {'month': m, 'surface': surface}
 
     print(f"  动态信息映射: {len(info_map)} 个赛事")
-    # 打印同地不同月/不同场地
+    # 打印同地不同月
     name_info = {}
     for (g, name), info in info_map.items():
         if name not in name_info:
@@ -189,9 +160,7 @@ def build_dynamic_info_map_from_calendar_list(cal_cache, cur_year, session):
         name_info[name][g] = info
     for name, gi in name_info.items():
         if len(gi) > 1:
-            parts = ", ".join(
-                f"{g}={v['month']}月/{v['surface']}" for g, v in gi.items()
-            )
+            parts = ", ".join(f"{g}={v['month']}月/{v['surface']}" for g, v in gi.items())
             print(f"  📅 {name}: {parts}")
 
     return info_map
