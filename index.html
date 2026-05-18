@@ -58,14 +58,14 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 .st th{color:#9a7a40;font-size:11px;text-transform:uppercase;padding:5px 10px;border-bottom:1px solid #fde68a;text-align:left}
 .st td{padding:6px 10px;border-bottom:1px solid #fef9f0}
 .psr{color:#9a7a40;font-size:12px;font-weight:700;text-align:center;width:32px}
-.psp{font-weight:700;color:#44321c}.psc{text-align:center;font-weight:700;color:#d97706}
+.psp{font-weight:700;color:#44321c;cursor:pointer;text-decoration:underline}.psp:hover{color:#f59e0b}
+.psc{text-align:center;font-weight:700;color:#d97706}
 .psp2{text-align:center;color:#9a7a40;font-size:12px}
 .psb{padding-right:8px;min-width:80px}
 .bbar{height:9px;border-radius:4px;min-width:2px}
 .divider{border:none;border-top:2px dashed #fde68a;margin:14px 0}
 .tp{max-width:200px;font-size:12px;color:#78450a;line-height:1.5}
 .tw{font-weight:700;color:#44321c;max-width:150px}
-/* 展开行 */
 .exp-row{display:none;background:#fffbf0!important}
 .exp-row.open{display:table-row}
 .exp-inner{padding:12px 14px;border-top:2px dashed #fde68a}
@@ -78,7 +78,6 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 .et.g{background:#dcfce7;border-color:#86efac;color:#15803d}
 .exp-sub{margin-bottom:7px}
 .exp-sub-t{font-size:12px;font-weight:700;color:#44321c;margin-bottom:4px}
-/* 运势 */
 .fortune-wrap{max-width:580px;margin:0 auto;text-align:center;padding:16px 0}
 .fortune-title{font-size:1.5em;font-weight:800;color:#78450a;margin-bottom:5px}
 .fortune-sub{color:#9a7a40;font-size:12px;margin-bottom:20px}
@@ -96,13 +95,11 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 .exp-tag{background:#fef3c7;border:1px solid #fcd34d;border-radius:12px;padding:2px 8px;font-size:12px;color:#78450a;white-space:nowrap;display:inline-block;margin:2px}
 .exp-tag.r{background:#fee2e2;border-color:#fca5a5;color:#dc2626}
 .exp-tag.g{background:#dcfce7;border-color:#86efac;color:#15803d}
-
 .refresh-bar{display:flex;align-items:center;gap:8px;font-size:11px;color:rgba(255,255,255,.8);margin-top:4px}
 .refresh-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .loading{text-align:center;padding:40px;color:#9a7a40;font-size:16px}
 .dev{color:rgba(255,255,255,.86);font-size:11px;margin-left:10px}.upd-wrap{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.select-mini{padding:5px 12px;border-radius:20px;border:2px solid #fde68a;background:#fff;color:#9a7a40;font-size:12px;font-weight:700}.yearbar,.flight-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}.flight-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}.flight-card{background:#fff;border:1px solid #fde68a;border-radius:12px;padding:12px;box-shadow:0 2px 10px rgba(245,158,11,.1)}.flight-day{font-size:18px;font-weight:900;color:#d97706}.flight-pill{background:#fef3c7;border:1px solid #fcd34d;border-radius:12px;padding:2px 8px;font-size:12px;color:#78450a;font-weight:700;display:inline-block;margin:2px}.flight-pill.r{background:#fee2e2;border-color:#fca5a5;color:#dc2626}.fattr{font-size:13px;font-weight:900;color:#d97706;background:#fef3c7;border:1px solid #fcd34d;border-radius:14px;padding:3px 12px}.fortune-yi{font-size:12px;color:#9a7a40;line-height:1.8}.fortune-text{max-width:460px}.dev-note{font-size:11px;color:#9a7a40}
-
 @media(max-width:768px){
   body{font-size:13px}
   #hdr{padding:10px 12px}
@@ -126,68 +123,17 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
   .fortune-text{font-size:12px}
   .flight-grid{grid-template-columns:1fr}
 }
-
-
-
-
-
-
-
-/* mobile live sheet fix: remove forced 820px min-width, fix banner+kpi+stats only */
 @media(max-width:768px){
   #p-ms-s table,#p-ws-s table{min-width:0!important}
-  #p-ms-s .sc,#p-ws-s .sc{
-    box-sizing:border-box;
-    width:100%;
-    padding:10px 10px 8px;
-    margin:8px 0 10px;
-  }
-  #p-ms-s .sch,#p-ws-s .sch{
-    display:block;
-    margin-bottom:8px;
-  }
-  #p-ms-s .sch>span:first-child,#p-ws-s .sch>span:first-child{
-    display:block;
-    font-size:13px;
-    font-weight:800;
-    margin-bottom:3px;
-  }
-  #p-ms-s .sch .scs,#p-ws-s .sch .scs{
-    display:inline-block;
-    margin-top:2px;
-    padding:2px 8px;
-    border-radius:999px;
-    background:#fff7ed;
-    border:1px solid #fed7aa;
-    color:#9a3412;
-    font-size:11px;
-    font-weight:700;
-  }
-  #p-ms-s .kpi,#p-ws-s .kpi{
-    display:grid!important;
-    grid-template-columns:repeat(3,minmax(0,1fr))!important;
-    gap:6px;
-    margin-bottom:10px;
-  }
-  #p-ms-s .kpi .kc,#p-ws-s .kpi .kc{
-    min-width:0;
-    padding:7px 4px;
-    border-radius:10px;
-    box-sizing:border-box;
-  }
-  #p-ms-s .kpi .kn,#p-ws-s .kpi .kn{
-    font-size:1.1em;
-  }
-  #p-ms-s .kpi .kl,#p-ws-s .kpi .kl{
-    font-size:10px;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
+  #p-ms-s .sc,#p-ws-s .sc{box-sizing:border-box;width:100%;padding:10px 10px 8px;margin:8px 0 10px}
+  #p-ms-s .sch,#p-ws-s .sch{display:block;margin-bottom:8px}
+  #p-ms-s .sch>span:first-child,#p-ws-s .sch>span:first-child{display:block;font-size:13px;font-weight:800;margin-bottom:3px}
+  #p-ms-s .sch .scs,#p-ws-s .sch .scs{display:inline-block;margin-top:2px;padding:2px 8px;border-radius:999px;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;font-size:11px;font-weight:700}
+  #p-ms-s .kpi,#p-ws-s .kpi{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px;margin-bottom:10px}
+  #p-ms-s .kpi .kc,#p-ws-s .kpi .kc{min-width:0;padding:7px 4px;border-radius:10px;box-sizing:border-box}
+  #p-ms-s .kpi .kn,#p-ws-s .kpi .kn{font-size:1.1em}
+  #p-ms-s .kpi .kl,#p-ws-s .kpi .kl{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 }
-
-
-/* ===== 积分构成 ===== */
 .bd-loading{text-align:center;padding:40px;color:#9a7a40;font-size:15px}
 .bd-stat-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
 .bd-sbadge{background:#fff;border:1px solid #fde68a;border-radius:8px;padding:5px 12px;font-size:12px;color:#9a7a40}
@@ -257,7 +203,6 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 .bd-surf-fill{height:100%;border-radius:3px;min-width:2px}
 .bd-surf-val{font-size:10px;font-weight:700;color:#78450a;flex-shrink:0;width:34px}
 .bd-surf-pct{font-size:10px;color:#9a7a40;flex-shrink:0;width:32px}
-/* 实时选人每日明细 */
 .sdr-row{display:none;background:#fffdf0}
 .sdr-row.open{display:table-row}
 .sdr-cell{padding:8px 12px!important;border-bottom:1px solid #fde68a}
@@ -266,25 +211,21 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 .day-item.day-alive{border-color:#86efac;background:#f0fdf4;color:#15803d}
 .day-item.day-dead{border-color:#fca5a5;background:#fef2f2;color:#dc2626}
 .day-num{color:#9a7a40;font-size:10px;margin-right:2px}
-/* 手机端适配 */
 @media(max-width:700px){
   .bd-exp-grid{flex-wrap:wrap}
   .bd-card-type,.bd-card-surf{width:100%!important}
   .bd-card-expiry{flex:unset!important;width:100%!important;min-width:0!important}
-  /* 手机饼图：小饼图 + 图例横排 */
   .bd-chart-area{flex-direction:row;align-items:flex-start;gap:10px}
   .bd-chart-wrap{width:80px!important;height:80px!important;flex-shrink:0}
   .bd-chart-wrap canvas{width:80px!important;height:80px!important}
   .bd-chart-total{font-size:10px!important}
   .bd-chart-sub{font-size:8px!important}
   .bd-chart-legend{flex:1;min-width:0}
-  /* 饼图旁图例：统一 10px，不换行，行距紧凑 */
   .bd-legend-item{margin-bottom:2px;flex-wrap:nowrap}
   .bd-legend-dot{width:7px!important;height:7px!important;flex-shrink:0}
   .bd-legend-name{font-size:10px!important;white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis;min-width:0}
   .bd-legend-val{font-size:10px!important;flex-shrink:0}
   .bd-legend-pct{font-size:10px!important;flex-shrink:0}
-  /* 场地条形图图例：统一 10px，与饼图图例一致 */
   .bd-surf-row{margin-bottom:3px;gap:4px}
   .bd-surf-lbl{font-size:10px!important;width:64px!important;white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis}
   .bd-surf-val{font-size:10px!important;width:30px!important}
@@ -347,26 +288,21 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 <div id="p-ms-t" class="panel"><div id="content-ms-t"></div></div>
 <div id="p-ws-t" class="panel"><div id="content-ws-t"></div></div>
 <div id="p-flight" class="panel"><div class="flight-toolbar"><div style="font-size:15px;font-weight:800;color:#d97706">✈️ 每日航班</div><select class="select-mini" id="flight-year" onchange="initFlightSelect()"><option selected>2026</option><option>2025</option><option>2024</option></select><select class="select-mini" id="flight-select" onchange="renderFlights()"></select></div><div id="flight-box" class="flight-grid"></div></div>
-<div id="p-fortune" class="panel"><div class="fortune-wrap"><div class="fortune-title">🔮 今日运势抽签</div><div class="fortune-sub">每天选球员愁破头？让神明帮你做选择！</div><div class="fortune-tabs"><button class="ftab on" onclick="setFortune('atp',this)">⚡ ATP 男单</button><button class="ftab" onclick="setFortune('wta',this)">🌸 WTA 女单</button></div><div class="fortune-card" id="fortune-card"><div class="fortune-hint">✨ 今日可选球员已入签筒 ✨</div><div class="fortune-player" id="fortune-player">？？？</div><div class="fattr" id="fortune-attr">未摇签</div><div class="fortune-text" id="fortune-text">点击下方按钮，开始今日运势抽签</div><div class="fortune-yi" id="fortune-yi"></div></div><br><button class="fortune-btn" onclick="drawFortune()">🎋 摇签</button><br><br><div class="fortune-hint">签文仅供娱乐，后果自负 😄</div></div></div></div>>
+<div id="p-fortune" class="panel"><div class="fortune-wrap"><div class="fortune-title">🔮 今日运势抽签</div><div class="fortune-sub">每天选球员愁破头？让神明帮你做选择！</div><div class="fortune-tabs"><button class="ftab on" onclick="setFortune('atp',this)">⚡ ATP 男单</button><button class="ftab" onclick="setFortune('wta',this)">🌸 WTA 女单</button></div><div class="fortune-card" id="fortune-card"><div class="fortune-hint">✨ 今日可选球员已入签筒 ✨</div><div class="fortune-player" id="fortune-player">？？？</div><div class="fattr" id="fortune-attr">未摇签</div><div class="fortune-text" id="fortune-text">点击下方按钮，开始今日运势抽签</div><div class="fortune-yi" id="fortune-yi"></div></div><br><button class="fortune-btn" onclick="drawFortune()">🎋 摇签</button><br><br><div class="fortune-hint">签文仅供娱乐，后果自负 😄</div></div></div></div>
 
 <script>
 let HIST_DATA=null;
 const PREVIEW_MODE=false;
-const FTEXTS=["此签大吉！天罡星照命，今日所选之人，剑气冲天，胜势已定，必能全身而退。", "上上签。月将入命，此球员今日如龙腾浅水，旺你旺到底，闭眼选，稳了。", "神托：紫微入局，福缘深厚，跟此人必有斩获，今日运势爆棚，大胆选之。", "贵人相助签。鹤立鸡群，此球员今日状态如满月之辉，旺场绝了，跟上不送。", "平安签。无大吉亦无大凶，今日平稳为上，此球员带你安渡难关，别太贪心。", "静待时机签。月相未圆，但此球员蓄势待发，有缘无缘看你运气，备选别忘了填。", "此乃心诚则灵签。你诚心选之，上天可能回应，但也可能不，反正备好备选。", "中签。今日运势平稳，此球员有一战之力，但敌人也不弱，认真填好备选。", "大凶签！！太岁相冲，凶星入命，今日选此球员十有八九凉凉，请务必填好备选！", "此签主破财损运，今日选此球员极易凉场，若不信，则自求多福，备选必须填！", "赔钱签！星盘显示今日此球员水逆严重，历史上凡选此人今日的，无一生还。请谨慎。", "阴煞缠身签。今日此球员与鬼门关有约，你若跟随，怕是要同去，建议另选。", "噩签。此球员今日如掉入深渊，选TA即相当于主动寄出出局通知。后悔药没有卖的。", "签曰：你选了这个人，跟本签一点关系都没有，全凭你的命。反正签就是个乐子。", "提前告知：此球员今日输了你别骂我，我只是个随机签，我也不想的。", "今日天意：此球员赢了，你运气好；输了，签文说了但你不信，总之我无责任。", "星座配对：你今天做任何选择都是错的。但还是得选，这就是幸存者的宿命。", "本日运势：已无可救药。此球员即将带你体验什么叫做「我以为我稳了」。", "意外之喜签（也可能是意外之悲）：50%赢50%输，全看命，填好备选才是王道。", "大凶且附赠嘲讽：你明知凶签还摇，这份精神感天动地，但成绩嘛…不保证。"];
 let GDATA=null; let PDATA=null;
 let MSPOOL=[]; let WSPOOL=[];
 let fGender='atp';
 const SS={};const FS={};
 
-// ===== 数据加载 =====
 async function loadData(){
   const t=Date.now();
-  // ── 并行发起全部3个请求，不互相阻塞 ─────────────────────
   const curPromise=fetch('data/current.json?t='+t).then(r=>r.json());
   window.__histPromise=fetch('data/history.json?t='+t).then(r=>r.json());
   window.__bdPromise=fetch('data/breakdown.json?t='+t).then(r=>r.json());
-
-  // ① current 先到先渲染（最小，最快）
   try{
     const cur=await curPromise;
     GDATA=cur;
@@ -381,8 +317,6 @@ async function loadData(){
     document.getElementById('loading-ms').textContent='⚠️ 数据加载失败，请刷新页面';
     document.getElementById('loading-ws').textContent='⚠️ 数据加载失败，请刷新页面';
   }
-
-  // ② history 后台加载完自动渲染
   window.__histPromise.then(function(hist){
     HIST_DATA=hist;
     const pref={updated_at:hist.updated_at||'',ms:hist.preference_by_year['2026'].ms,ws:hist.preference_by_year['2026'].ws};
@@ -395,17 +329,13 @@ async function loadData(){
     document.getElementById('loading-msp').textContent='⚠️ 历史数据加载失败，请刷新';
     document.getElementById('loading-wsp').textContent='⚠️ 历史数据加载失败，请刷新';
   });
-
-  // ③ breakdown 后台加载完，若用户已切到积分构成tab则自动渲染
   window.__bdPromise.then(function(d){
     BD_DATA=applyCurrentToBreakdown(d);
-    // 下载完直接预渲染两个panel，无论用户在哪个tab，切过去秒出
     renderBreakdownPanel('ms',BD_DATA.ms||[]);
     renderBreakdownPanel('ws',BD_DATA.ws||[]);
   }).catch(function(e){console.warn('积分构成数据加载失败',e);});
 }
 
-// 统一获取历史数据入口（复用已发起的请求）
 function loadHistData(cb){
   if(HIST_DATA){if(cb)cb(HIST_DATA);return;}
   const p=window.__histPromise;
@@ -425,16 +355,13 @@ async function refreshCurrentOnly(){
     document.getElementById('tab-ws-s').textContent='🎾 WTA '+cur.ws.event_name+' Day'+cur.ws.today_day;
     renderScore('ms', cur.ms);
     renderScore('ws', cur.ws);
-    // 实时数据刷新后，同步覆盖积分构成中的即时积分与本站得分
     if(BD_DATA){rerenderBreakdownIfReady();}
     document.getElementById('rdot').style.background='#4ade80';
     setTimeout(()=>document.getElementById('rdot').style.background='#4ade80',2000);
   }catch(e){document.getElementById('rdot').style.background='#f87171';}
 }
-
 setInterval(refreshCurrentOnly, 30*60*1000);
 
-// ===== 渲染实时得分 =====
 function renderScore(g, data){
   const cont=document.getElementById('content-'+g+'-s');
   const loading=document.getElementById('loading-'+(g=='ms'?'ms':'ws'));
@@ -446,21 +373,14 @@ function renderScore(g, data){
   const alive=siteRows.filter(r=>r.fill_status==='存活'||r.status===2).length;
   const filled=data.filled_count||siteRows.filter(r=>r.has_today&&r.today_player&&r.today_player!=='轮空').length;
   const suicide=siteRows.filter(r=>String(r.fill_status||'').includes('自杀')).length;
-  const total=siteTotal;
   const stats=data.player_stats||[];
-  
-  // 今日选人统计
   const ccArr=['#f59e0b','#f97316','#ef4444','#8b5cf6','#10b981','#3b82f6'];
   const aliveFilled=stats.reduce((s,it)=>s+it[1],0)||1;
-  const statsHtml=stats.length?`<div class="sc"><div class="sch"><span>📊 今日选人统计（仅存活）—${g=='ms'?'ATP男单':'WTA女单'}Day${data.today_day}</span><span class="scs">存活${alive}人·今日已填${aliveFilled}人</span></div><table class="st"><thead><tr><th></th><th>选手</th><th>人数</th><th>占比</th><th>分布</th></tr></thead><tbody>${stats.map((it,i)=>`<tr><td class="psr">#${i+1}</td><td class="psp">${it[0]}</td><td class="psc">${it[1]}人</td><td class="psp2">${(it[1]/aliveFilled*100).toFixed(1)}%</td><td class="psb"><div class="bbar" style="width:${(it[1]/aliveFilled*100).toFixed(1)}%;background:${ccArr[i%6]}"></div></td></tr>`).join('')}</tbody></table></div><hr class="divider">`:'' ;
-  
-  // KPI
+  const tab=g+'-s';
+  const statsHtml=stats.length?`<div class="sc"><div class="sch"><span>📊 今日选人统计（仅存活）—${g=='ms'?'ATP男单':'WTA女单'}Day${data.today_day}</span><span class="scs">存活${alive}人·今日已填${aliveFilled}人</span></div><table class="st"><thead><tr><th></th><th>选手</th><th>人数</th><th>占比</th><th>分布</th></tr></thead><tbody>${stats.map((it,i)=>`<tr><td class="psr">#${i+1}</td><td class="psp" onclick="filterByPlayer('${tab}','${it[0].replace(/'/g,"\\'")}')">${it[0]}</td><td class="psc">${it[1]}人</td><td class="psp2">${(it[1]/aliveFilled*100).toFixed(1)}%</td><td class="psb"><div class="bbar" style="width:${(it[1]/aliveFilled*100).toFixed(1)}%;background:${ccArr[i%6]}"></div></td></tr>`).join('')}</tbody></table></div><hr class="divider">`:'';
   const kpi=`<div class="kpi"><div class="kc"><div class="kn nt">${totalUsers}</div><div class="kl">总人数</div></div><div class="kc"><div class="kn nt">${siteTotal}</div><div class="kl">本站参赛</div></div><div class="kc"><div class="kn na">${alive}</div><div class="kl">🟢存活</div></div><div class="kc"><div class="kn nd">${siteTotal-alive}</div><div class="kl">❌出局</div></div><div class="kc"><div class="kn" style="color:#7c3aed">${filled}</div><div class="kl">今日已填</div></div><div class="kc"><div class="kn nd">${suicide}</div><div class="kl">自杀</div></div></div>`;
-  
-  // 表格行
   const tb_id='tb-'+g+'-s';
   const tbl_id='tbl-'+g+'-s';
-  const tab=g+'-s';
   let rowsHtml='';
   for(const r of rows){
     const sc=getStatusClass(r.fill_status,r.status);
@@ -473,17 +393,14 @@ function renderScore(g, data){
     const chg=r.rank_change;
     const ch=chg===null?'<span class="cn">—</span>':chg>0?`<span class="cu">▲${chg}</span>`:chg<0?`<span class="cd">▼${Math.abs(chg)}</span>`:'<span class="cz">→0</span>';
     const cr=r.current_rank||9999; const ir=r.instant_rank||9999;
-    const plEnc=encodeURIComponent(JSON.stringify(r.players||[]));rowsHtml+=`<tr class="${sc==='alive'?'ra':'rd'}" data-status="${sc}" data-filled="${r.has_today?'1':'0'}" data-cr="${cr}" data-ir="${ir}" data-cur="${r.current_score||0}" data-deduct="${r.deduct_score||0}" data-this="${r.this_event_score||0}" data-instant="${r.instant_score||0}" data-day="${r.day||0}" data-chg="${r.rank_change||0}" data-user="${esc(r.username)}" data-today="${esc(r.today_player||'')}" data-alive="${sc==='alive'?1:0}" data-pl="${plEnc}" onclick="toggleSdr(this)" style="cursor:pointer"><td class="tn" data-label="当前排名">${cr==9999?'—':cr}</td><td class="tn ir" data-label="即时排名">${ir==9999?'—':ir}</td><td class="tu" data-label="用户名" data-rank="当前#${cr==9999?'—':cr} · 即时#${ir==9999?'—':ir}">${r.username}</td><td class="tt" data-label="今日选择">${td}</td><td data-label="状态">${badge}</td><td class="tn g" data-label="本站得分">${r.this_event_score||0}</td><td class="tn r" data-label="扣除积分">${r.deduct_score>0?'-'+r.deduct_score:'0'}</td><td class="tn y" data-label="即时积分">${r.instant_score||0}</td><td class="tc" data-label="排名变化">${ch}</td><td class="tn s" data-label="存活天数">${r.day||0}</td></tr>`;
+    const plEnc=encodeURIComponent(JSON.stringify(r.players||[]));
+    rowsHtml+=`<tr class="${sc==='alive'?'ra':'rd'}" data-status="${sc}" data-filled="${r.has_today?'1':'0'}" data-cr="${cr}" data-ir="${ir}" data-cur="${r.current_score||0}" data-deduct="${r.deduct_score||0}" data-this="${r.this_event_score||0}" data-instant="${r.instant_score||0}" data-day="${r.day||0}" data-chg="${r.rank_change||0}" data-user="${esc(r.username)}" data-today="${esc(r.today_player||'')}" data-alive="${sc==='alive'?1:0}" data-pl="${plEnc}" onclick="toggleSdr(this)" style="cursor:pointer"><td class="tn">${cr==9999?'—':cr}</td><td class="tn ir">${ir==9999?'—':ir}</td><td class="tu">${r.username}</td><td class="tt">${td}</td><td>${badge}</td><td class="tn g">${r.this_event_score||0}</td><td class="tn r">${r.deduct_score>0?'-'+r.deduct_score:'0'}</td><td class="tn y">${r.instant_score||0}</td><td class="tc">${ch}</td><td class="tn s">${r.day||0}</td></tr>`;
     rowsHtml+=`<tr class="sdr-row" id="sdr-${g}-${esc(r.username)}"><td class="sdr-cell" colspan="10"><div class="day-list"></div></td></tr>`;
   }
-  
   function mth(col,key,t,cls=''){return `<th${cls?' class="'+cls+'"':''} onclick="srt('${tab}',${col},'${key}')">${t}</th>`;}
   const hdrHtml=`<thead><tr>${mth(0,'cr','当前排名')}${mth(1,'ir','即时排名','sd')}${mth(2,'user','用户名')}${mth(3,'today','今日选择Day'+data.today_day)}${mth(4,'status','状态')}${mth(5,'this','本站得分')}${mth(6,'deduct','扣除积分')}${mth(7,'instant','即时积分')}${mth(8,'chg','排名变化')}${mth(9,'day','存活天数')}</tr></thead>`;
-  
   cont.innerHTML=statsHtml+kpi+`<div class="toolbar"><input id="q-${tab}" placeholder="🔍 搜索..." oninput="doFilter('${tab}')"><button class="fbtn on" onclick="setF('${tab}','all',this)">全部</button><button class="fbtn" onclick="setF('${tab}','alive',this)">仅存活</button><button class="fbtn" onclick="setF('${tab}','filled',this)">今日已填</button></div><div class="tbl-wrap"><table id="${tbl_id}">${hdrHtml}<tbody id="${tb_id}">${rowsHtml}</tbody></table></div>`;
   cont.style.display='block';
-  
-  // 按即时排名排序
   const tb=document.getElementById(tb_id);
   if(tb){
     const allTr=Array.from(tb.rows);const pairs=[];
@@ -499,6 +416,19 @@ function renderScore(g, data){
   }
 }
 
+function filterByPlayer(tab, playerName){
+  var q = document.getElementById('q-' + tab);
+  if (q) { q.value = playerName; }
+  var toolbar = q ? q.closest('.toolbar') : null;
+  if (toolbar) {
+    toolbar.querySelectorAll('.fbtn').forEach(function(b){ b.classList.remove('on'); });
+    var filledBtn = toolbar.querySelectorAll('.fbtn')[2];
+    if (filledBtn) { filledBtn.classList.add('on'); }
+    FS[tab] = 'filled';
+  }
+  doFilter(tab);
+}
+
 function getStatusClass(fs,status){
   if(fs==='存活'||status===2) return 'alive';
   if(fs==='球员输球') return 'player-loss';
@@ -511,17 +441,11 @@ function getBadge(fs,status,sc){
   if(fs==='未参赛')return '<span class="badge bs">— 未参赛</span>';return m[sc]||`<span class="badge bl">❌ ${fs||''}</span>`;
 }
 
-// ===== 渲染偏好 =====
 function normalizePrefData(g, pdata){
-  // 兼容两种 preference.json 格式：
-  // 1) 新格式：{ms:{uid:{...}}, ms_order:[[uid,ir],...]}
-  // 2) 老格式：{ms:[{user_id, username, ...}], ws:[...]}
   const raw = pdata[g] || (g==='ms' ? pdata.ms : pdata.ws) || {};
   let dict = {};
   let order = [];
-
   if (Array.isArray(raw)) {
-    // 老格式数组 -> 转成前端需要的字典格式
     for (const item of raw) {
       const uid = String(item.user_id || '');
       if (!uid) continue;
@@ -537,33 +461,16 @@ function normalizePrefData(g, pdata){
         cp: item.champion_players || '—',
         fp: item.final_players || '—',
         ir: item.instant_rank || null,
-        d: item.d || {
-          p: item.detail_participated || item.dp || [],
-          e: item.detail_eliminated || item.de || [],
-          c: item.detail_championed || item.dc || [],
-          el: item.detail_elim || item.del || {},
-          ad: item.detail_adv || item.dad || {},
-          ch: item.detail_champ || item.dch || {},
-          fi: item.detail_final || item.dfi || {}
-        }
+        d: item.d || { p: item.detail_participated || item.dp || [], e: item.detail_eliminated || item.de || [], c: item.detail_championed || item.dc || [], el: item.detail_elim || item.del || {}, ad: item.detail_adv || item.dad || {}, ch: item.detail_champ || item.dch || {}, fi: item.detail_final || item.dfi || {} }
       };
       order.push([uid, dict[uid].ir]);
     }
-    // 关键：把转换后的 dict 写回 PDATA，供 toggleExpDyn 展开明细使用
     if (pdata) pdata[g] = dict;
   } else {
-    // 新格式字典
     dict = raw;
     order = pdata[g + '_order'] || Object.keys(dict).map(uid => [uid, dict[uid].ir || null]);
   }
-
-  // 默认按即时排名升序；无即时排名排最后
-  order.sort((a,b)=>{
-    const ia = a[1] || (dict[a[0]] && dict[a[0]].ir) || 9999;
-    const ib = b[1] || (dict[b[0]] && dict[b[0]].ir) || 9999;
-    return ia - ib;
-  });
-
+  order.sort((a,b)=>{ const ia = a[1] || (dict[a[0]] && dict[a[0]].ir) || 9999; const ib = b[1] || (dict[b[0]] && dict[b[0]].ir) || 9999; return ia - ib; });
   return {dict, order};
 }
 
@@ -571,12 +478,10 @@ function renderPref(g, pdata){
   const cont=document.getElementById('content-'+g+'-p');
   const loading=document.getElementById(g==='ms' ? 'loading-msp' : 'loading-wsp');
   if(loading) loading.style.display='none';
-
   const normalized = normalizePrefData(g, pdata);
   const order = normalized.order;
   const dict = normalized.dict;
   const tab=g+'-p';
-  
   let rowsHtml='';
   for(const [uid,ir] of order){
     const p=dict[uid];
@@ -587,16 +492,13 @@ function renderPref(g, pdata){
     const bn=p.bn||''; const bc=p.bc||0;
     rowsHtml+=`<tr class="pref-row" data-ds="${g=='ms'?'MSD':'WSD'}" data-uid="${uid}" onclick="toggleExpDyn(this)" data-u="${esc(p.u)}" data-ep="${p.ep||0}" data-ee="${p.ee||0}" data-ec="${p.ec||0}" data-wc="${wc}" data-bc="${bc}" data-ir="${irVal||9999}"><td class="tn ir">${ir_d}</td><td class="tu">${p.u}</td><td class="tn">${p.ep||0}</td><td class="tn r">${p.ee||0}</td><td class="tn g">${p.ec||0}</td><td class="tw">${wn?wn+'（'+wc+'次）':'—'}</td><td class="tw g">${bn?bn+'（'+bc+'次）':'—'}</td><td class="tp">${p.cp||'—'}</td><td class="tp">${p.fp||'—'}</td></tr>`;
   }
-  
   function mth(col,key,t,cls=''){return `<th${cls?' class="'+cls+'"':''} onclick="srt('${tab}',${col},'${key}')">${t}</th>`;}
   const hdrHtml=`<thead><tr>${mth(0,'ir','即时排名','sd')}${mth(1,'user','用户名')}${mth(2,'ep','参加站数')}${mth(3,'ee','淘汰站数')}${mth(4,'ec','夺冠站数')}${mth(5,'wc','克星球员')}${mth(6,'bc','福星球员')}${mth(7,'champ','带用户夺冠')}${mth(8,'final','带用户夺亚')}</tr></thead>`;
-  
   const champCnt=Object.values(dict).filter(p=>p&&(p.ec||0)>0).length;
   cont.innerHTML=`<div class="yearbar"><span class="dev-note">统计范围</span><select class="select-mini" id="year-${tab}" onchange="renderPrefYear('${g}',this.value)"><option selected>2026</option><option>2025</option><option>2024</option><option>全部</option></select></div><div class="kpi"><div class="kc"><div class="kn nt">${order.length}</div><div class="kl">参与用户</div></div><div class="kc"><div class="kn na">${champCnt}</div><div class="kl">有夺冠经历</div></div></div><p style="font-size:12px;color:#9a7a40;margin-bottom:8px">💡 点击任意行展开该用户详细数据，再点一次收起</p><div class="toolbar"><input id="q-${tab}" placeholder="🔍 搜索..." oninput="doFilter('${tab}')"></div><div class="tbl-wrap"><table id="tbl-${tab}">${hdrHtml}<tbody id="tb-${tab}">${rowsHtml}</tbody></table></div>`;
   cont.style.display='block';
 }
 
-// ===== 展开行（使用 preference.json 里的 detail） =====
 function toggleExpDyn(row){
   const g=row.dataset.ds==='MSD'?'ms':'ws';
   const uid=row.dataset.uid;
@@ -624,18 +526,15 @@ function toggleExpDyn(row){
   er.classList.add('open');
 }
 
-// ===== 通用功能 =====
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function switchTab(t,btn){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
   document.getElementById('p-'+t).classList.add('on');btn.classList.add('on');
-  // 积分构成：复用已发起的请求，如果还没加载完就等待
   if(t==='ms-bd'||t==='ws-bd'){
     if(BD_DATA){renderBreakdownPanel('ms',BD_DATA.ms||[]);renderBreakdownPanel('ws',BD_DATA.ws||[]);}
     else{loadBreakdown(function(d){if(!d)return;renderBreakdownPanel('ms',d.ms||[]);renderBreakdownPanel('ws',d.ws||[]);});}
   }
-  // 历史相关tab：history还没加载完时等待
   if((t==='ms-p'||t==='ws-p')&&!HIST_DATA){
     loadHistData(function(d){
       var yr=document.getElementById('year-ms-p')?.value||'2026';
@@ -647,10 +546,8 @@ function switchTab(t,btn){
   if(t==='flight'&&!HIST_DATA){loadHistData(function(){initFlightSelect();});}
 }
 function setF(tab,f,btn){FS[tab]=f;btn.closest('.toolbar').querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');doFilter(tab);}
-function doFilter(tab){const q=(document.getElementById('q-'+tab)||{value:''}).value.toLowerCase();const f=FS[tab]||'all';document.querySelectorAll('#tb-'+tab+' tr.pref-row,#tb-'+tab+' tr[data-status]').forEach(r=>{const u=(r.dataset.u||r.dataset.user||'').toLowerCase();let ok=u.includes(q);if(f==='alive'&&r.dataset.status!=='alive')ok=false;if(f==='filled'&&r.dataset.filled!=='1')ok=false;r.style.display=ok?'':'none';const er=r.nextElementSibling;if(er&&(er.classList.contains('exp-row')||er.classList.contains('sdr-row'))){if(!ok){er.style.display='none';er.classList.remove('open')}else er.style.display='';} });}
+function doFilter(tab){const q=(document.getElementById('q-'+tab)||{value:''}).value.toLowerCase();const f=FS[tab]||'all';document.querySelectorAll('#tb-'+tab+' tr.pref-row,#tb-'+tab+' tr[data-status]').forEach(r=>{const u=(r.dataset.u||r.dataset.user||'').toLowerCase();let ok=u.includes(q);if(f==='alive'&&r.dataset.status!=='alive')ok=false;if(f==='filled'&&r.dataset.filled!=='1')ok=false;r.style.display=ok?'':'none';const er=r.nextElementSibling;if(er&&(er.classList.contains('exp-row')||er.classList.contains('sdr-row'))){if(!ok){er.style.display='none';er.classList.remove('open')}else er.style.display='';}});}
 function srt(tab,col,key){const k=tab+'_'+col;if(!SS[k])SS[k]=0;SS[k]=(SS[k]+1)%3;const dir=SS[k];const ths=document.querySelectorAll('#tbl-'+tab+' thead th');ths.forEach(t=>t.classList.remove('sa','sd'));const tb=document.getElementById('tb-'+tab);const pairs=[];const allRows=Array.from(tb.rows);for(let i=0;i<allRows.length;i++){const r=allRows[i];if(r.classList.contains('pref-row')||r.dataset.status){const nx=allRows[i+1];const exp=(nx&&(nx.classList.contains('exp-row')||nx.classList.contains('sdr-row')))?nx:null;pairs.push({row:r,exp});if(exp)i++;}}const nk=['cr','ir','this','deduct','instant','chg','day','ep','ee','ec','wc','bc'];if(dir===0){pairs.sort((a,b)=>parseInt(a.row.dataset.ir||9999)-parseInt(b.row.dataset.ir||9999));if(ths[1])ths[1].classList.add('sd');}else{ths[col].classList.add(dir===1?'sa':'sd');const desc=(dir===1);pairs.sort((a,b)=>{if(nk.includes(key))return desc?(parseFloat(b.row.dataset[key]||0)-parseFloat(a.row.dataset[key]||0)):(parseFloat(a.row.dataset[key]||0)-parseFloat(b.row.dataset[key]||0));if(key==='status')return desc?String(b.row.dataset.status||'').localeCompare(String(a.row.dataset.status||'')):String(a.row.dataset.status||'').localeCompare(String(b.row.dataset.status||''));const va=(a.row.dataset.user||a.row.dataset.u||'').toLowerCase();const vb=(b.row.dataset.user||b.row.dataset.u||'').toLowerCase();return desc?vb.localeCompare(va):va.localeCompare(vb);})}pairs.forEach(pair=>{tb.appendChild(pair.row);if(pair.exp)tb.appendChild(pair.exp);});doFilter(tab);}
-
-// 运势
 
 function renderPrefYear(g, year){
   if(!HIST_DATA || !HIST_DATA.preference_by_year || !HIST_DATA.preference_by_year[year]) return;
@@ -658,23 +555,65 @@ function renderPrefYear(g, year){
   const obj = {updated_at: HIST_DATA.updated_at || '', ms: pack.ms || [], ws: pack.ws || []};
   PDATA = obj;
   renderPref(g, obj);
-  setTimeout(()=>{
-    const y = document.getElementById('year-' + g + '-p');
-    if(y) y.value = year;
-  }, 0);
+  setTimeout(()=>{ const y = document.getElementById('year-' + g + '-p'); if(y) y.value = year; }, 0);
 }
 function renderDisaster(g,year='2026'){if(!HIST_DATA)return;const list=(HIST_DATA.disasters[year]&&HIST_DATA.disasters[year][g])||[]; const cont=document.getElementById('content-'+g+'-t'); const title=g==='ms'?'历史上的惨案-ATP':'历史上的惨案-WTA'; cont.innerHTML=`<div class="yearbar"><div style="font-size:15px;font-weight:800;color:#dc2626">${title}</div><select class="select-mini" onchange="renderDisaster('${g}',this.value)"><option ${year==='2026'?'selected':''}>2026</option><option ${year==='2025'?'selected':''}>2025</option><option ${year==='2024'?'selected':''}>2024</option></select></div><div class="tbl-wrap"><table><thead><tr><th>#</th><th>刽子手</th><th>赛站</th><th>轮次</th><th>受害人数</th><th>辣评</th></tr></thead><tbody>${list.slice(0,50).map(x=>`<tr><td class="tn">#${x.rank}</td><td style="font-weight:800;color:#dc2626">${x.player}</td><td><span class="exp-tag r">${x.event}</span></td><td class="tn">Day${Number(x.day)+1}</td><td class="tn y">${x.count}人</td><td style="font-size:12px;color:#78450a;line-height:1.6">${x.comment}</td></tr>`).join('')}</tbody></table></div>`;}
-function initFlightSelect(){const y=document.getElementById('flight-year').value; const sel=document.getElementById('flight-select'); sel.innerHTML=''; if(y==='2026') sel.add(new Option('2026 罗马 ATP/WTA','__current_rome__',true,true)); Object.keys(HIST_DATA.flights[y]||{}).forEach((k,i)=>sel.add(new Option(k,k,y!=='2026'&&i===0,y!=='2026'&&i===0))); renderFlights();}
-function renderFlights(){const y=document.getElementById('flight-year').value; const k=document.getElementById('flight-select').value; let arr=[]; if(k==='__current_rome__'){arr=[...((HIST_DATA.flights[y]||{})['2026 罗马 ATP']||[]),...((HIST_DATA.flights[y]||{})['2026 罗马 WTA']||[])].sort((a,b)=>(a.day-b.day)||(a.g>b.g?1:-1));}else{arr=(HIST_DATA.flights[y]||{})[k]||[];} document.getElementById('flight-box').innerHTML=arr.map(x=>`<div class="flight-card"><div class="flight-day">Day ${Number(x.day)+1}</div><div style="font-size:12px;color:#9a7a40;font-weight:700;margin-bottom:6px">${x.g} 航线</div><span class="flight-pill">${x.alive}存活</span><span class="flight-pill r">${x.out}淘汰</span><span class="flight-pill">${x.suicide}自杀</span><span class="flight-pill">${x.retired}退赛</span><div style="font-size:12px;color:#78450a;margin-top:7px"><b>主要航班：</b>${x.top}</div></div>`).join('');}
+
+function initFlightSelect(){
+  const y=document.getElementById('flight-year').value;
+  const sel=document.getElementById('flight-select');
+  sel.innerHTML='';
+  if(y==='2026'){
+    var curMsEvent = GDATA && GDATA.ms ? GDATA.ms.event_name : '';
+    var curWsEvent = GDATA && GDATA.ws ? GDATA.ws.event_name : '';
+    var currentLabel = '';
+    if(curMsEvent && curWsEvent && curMsEvent === curWsEvent){
+      currentLabel = '2026 ' + curMsEvent + ' ATP/WTA';
+    } else {
+      var parts = [];
+      if(curMsEvent) parts.push('2026 ' + curMsEvent + ' ATP');
+      if(curWsEvent) parts.push('2026 ' + curWsEvent + ' WTA');
+      currentLabel = parts.join(' + ') || '2026 当前赛事';
+    }
+    var currentKey = '__current__';
+    sel.add(new Option('📌 ' + currentLabel, currentKey, true, true));
+  }
+  Object.keys(HIST_DATA.flights[y]||{}).forEach((k,i)=>{
+    sel.add(new Option(k, k, y!=='2026' && i===0, y!=='2026' && i===0));
+  });
+  renderFlights();
+}
+
+function renderFlights(){
+  const y=document.getElementById('flight-year').value;
+  const k=document.getElementById('flight-select').value;
+  let arr=[];
+  if(k==='__current__'){
+    var msEvent = GDATA && GDATA.ms ? GDATA.ms.event_name : '';
+    var wsEvent = GDATA && GDATA.ws ? GDATA.ws.event_name : '';
+    if(msEvent){
+      var msKey = y + ' ' + msEvent + ' ATP';
+      if(HIST_DATA.flights[y] && HIST_DATA.flights[y][msKey]){ arr = arr.concat(HIST_DATA.flights[y][msKey]); }
+    }
+    if(wsEvent){
+      var wsKey = y + ' ' + wsEvent + ' WTA';
+      if(HIST_DATA.flights[y] && HIST_DATA.flights[y][wsKey]){ arr = arr.concat(HIST_DATA.flights[y][wsKey]); }
+    }
+    arr.sort((a,b)=>(a.day-b.day)||(a.g===b.g?0:a.g==='A'?1:-1));
+    if(!arr.length){
+      var firstKey = Object.keys(HIST_DATA.flights[y]||{})[0];
+      if(firstKey) arr = HIST_DATA.flights[y][firstKey] || [];
+    }
+  } else {
+    arr = (HIST_DATA.flights[y]||{})[k] || [];
+  }
+  document.getElementById('flight-box').innerHTML=arr.map(x=>`<div class="flight-card"><div class="flight-day">Day ${Number(x.day)+1}</div><div style="font-size:12px;color:#9a7a40;font-weight:700;margin-bottom:6px">${x.g==='A'?'ATP':'WTA'} 航线</div><span class="flight-pill">${x.alive}存活</span><span class="flight-pill r">${x.out}淘汰</span><span class="flight-pill">${x.suicide}自杀</span><span class="flight-pill">${x.retired}退赛</span><div style="font-size:12px;color:#78450a;margin-top:7px"><b>主要航班：</b>${x.top}</div></div>`).join('');
+}
 
 function setFortune(g,btn){fGender=g;document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');document.getElementById('fortune-player').textContent='？？？';document.getElementById('fortune-attr').textContent='未摇签';document.getElementById('fortune-text').textContent='点击下方按钮，开始今日运势抽签';document.getElementById('fortune-yi').innerHTML='';}
 function drawFortune(){if(!HIST_DATA){loadHistData(function(){drawFortune();});document.getElementById('fortune-text').textContent='⏳ 数据加载中...';return;}const key='fortune_'+fGender;const today=new Date().toISOString().slice(0,10);let rec=JSON.parse(localStorage.getItem(key)||'{}');if(rec.date!==today)rec={date:today,count:0};if(rec.count>=3){document.getElementById('fortune-player').textContent='命运是测不准的';document.getElementById('fortune-attr').textContent='明日再问';document.getElementById('fortune-text').textContent='命运是测不准的。明天再来吧';document.getElementById('fortune-yi').innerHTML='';return;}rec.count++;localStorage.setItem(key,JSON.stringify(rec));const pool=fGender==='atp'?MSPOOL:WSPOOL;if(!pool||!pool.length){document.getElementById('fortune-player').textContent='暂无数据';return;}const player=pool[Math.floor(Math.random()*pool.length)];const f=HIST_DATA.fortunes[Math.floor(Math.random()*HIST_DATA.fortunes.length)];const card=document.getElementById('fortune-card');card.classList.remove('shake');void card.offsetWidth;card.classList.add('shake');document.getElementById('fortune-player').textContent=player;document.getElementById('fortune-attr').textContent=f.attr+'（今日还可抽'+(3-rec.count)+'次）';document.getElementById('fortune-text').textContent=f.text;document.getElementById('fortune-yi').innerHTML=`宜：${f.yi}<br>忌：${f.ji}`;}
 
-// 启动加载
-
-// ===== 实时选人：每日选人明细展开 =====
 function toggleSdr(tr){
-  // 直接找下面紧邻的 sdr-row（排序已保证配对）
   var sdr=tr.nextElementSibling;
   if(!sdr||!sdr.classList.contains('sdr-row')){
     var g=(tr.closest('tbody')?.id||'').replace('tb-','').replace('-s','');
@@ -684,28 +623,19 @@ function toggleSdr(tr){
   if(sdr.classList.contains('open')){sdr.classList.remove('open');return;}
   var players=[];try{players=JSON.parse(decodeURIComponent(tr.dataset.pl||'[]'));}catch(e){}
   var isAlive=tr.dataset.status==='alive';
-  var todayPlayer=tr.dataset.today||'';   // 今天已填但未结算
-  var hasFilled=tr.dataset.filled==='1';  // 是否今天已填
+  var todayPlayer=tr.dataset.today||'';
+  var hasFilled=tr.dataset.filled==='1';
   var html='<div class="day-list">';
   if(!players.length&&!hasFilled){
     html+='<span style="color:#9a7a40;font-size:12px">暂无选人记录（请等待数据更新）</span>';
   }else{
-    // players = 已结算历史（Day1 ~ 最近一次结算），全部已出结果
     players.forEach(function(p,i){
       var icon,cls;
-      if(isAlive){
-        // 存活用户：历史所有天已结算且存活 → ✅（轮空也✅）
-        icon='✅'; cls='day-alive';
-      }else{
-        // 出局用户：最后一天是出局天❌，之前全✅
-        var isLastSettled=(i===players.length-1);
-        icon=isLastSettled?'❌':'✅';
-        cls=isLastSettled?'day-dead':'day-alive';
-      }
+      if(isAlive){ icon='✅'; cls='day-alive'; }
+      else{ var isLastSettled=(i===players.length-1); icon=isLastSettled?'❌':'✅'; cls=isLastSettled?'day-dead':'day-alive'; }
       if(p==='轮空'){icon='✅';cls='day-alive';}
       html+='<span class="day-item '+cls+'"><span class="day-num">Day'+(i+1)+'</span>'+icon+' '+p+'</span>';
     });
-    // 存活 + 今天已填 → 追加今天未结算的选择（🟢）
     if(isAlive&&hasFilled&&todayPlayer){
       var tIcon=todayPlayer==='轮空'?'✅':'🟢';
       var tNote=todayPlayer==='轮空'?'':' <span style="font-size:9px;color:#9a7a40">未结算</span>';
@@ -717,7 +647,6 @@ function toggleSdr(tr){
   sdr.classList.add('open');
 }
 
-// ===== 积分构成 =====
 var BD_DATA=null;
 var BD_SORT={};
 var BD_CHARTS={};
@@ -728,26 +657,22 @@ var BD_SURF_LABELS={hard_out:'硬地(室外)',hard_in:'硬地(室内)',clay:'红
 var BD_SURF_COLORS={hard_out:'#3b82f6',hard_in:'#6366f1',clay:'#ef4444',grass:'#22c55e'};
 var BD_MONTH_DISPLAY=['26年6月','26年7月','26年8月','26年9月','26年10月','26年11月','26年12月','27年1月','27年2月','27年3月','27年4月','27年5月'];
 var BD_LABEL_GROUPS=[
-  ['\uD83E\uDD47 世界第一'],
-  ['\uD83C\uDFC6 年终称霸','\uD83C\uDF19 年终强手'],
-  ['\uD83C\uDF3F 草地传说','\uD83C\uDF43 草地大赢家','\uD83C\uDF31 草地好手','\uD83C\uDF31 草地追梦者'],
-  ['\uD83D\uDC51 大满贯神话','\uD83D\uDC51 大满贯传奇','\uD83C\uDFBE 大满贯收割机','\uD83D\uDCAA 大满贯实力派','\uD83C\uDFC5 大赛主力','\uD83C\uDFC5 大满贯主力','\uD83C\uDFAF 大满贯好手','\uD83C\uDFAF 大满贯追梦者','\uD83C\uDFAF 大满贯新秀'],
-  ['\u26A1 1000赛霸主','\u26A1 1000赛达人','\u26A1 1000赛精英','\uD83D\uDCAB 1000赛好手','\uD83D\uDCAB 1000赛常客','\uD83D\uDCAB 1000赛新人'],
-  ['\uD83C\uDF1F 顶尖全能王','\uD83C\uDFAA 精英综合体','\uD83C\uDFA8 大赛全才','\uD83C\uDFAA 大赛综合派','\uD83E\uDDE9 均衡好手','\uD83E\uDDE9 均衡探索者'],
-  ['\uD83E\uDDF1 红土之王','\uD83C\uDFBA 红土大师','\uD83C\uDFBA 红土达人','\uD83E\uDEB4 红土好手','\uD83E\uDEB4 红土爱好者'],
-  ['\uD83D\uDC8E 硬地霸主','\uD83D\uDD37 硬地之王','\uD83D\uDD37 硬地稳健王','\uD83D\uDD39 硬地好手','\uD83D\uDD39 硬地常客'],
-  ['\uD83C\uDF06 500赛小王子','\uD83C\uDFD9\uFE0F 500赛精英','\uD83C\uDFD8\uFE0F 500赛常客'],
-  ['\uD83D\uDC11 小赛探险家','\uD83C\uDF3E 小赛爱好者'],
-  ['\uD83E\uDDE9 全面稳健型','\uD83E\uDDE9 全面均衡型','\uD83C\uDF00 积分探索者','\uD83C\uDF31 初出茅庐'],
+  ['🥇 世界第一'],
+  ['🏆 年终称霸','🌙 年终强手'],
+  ['🌿 草地传说','🍃 草地大赢家','🌱 草地好手','🌱 草地追梦者'],
+  ['👑 大满贯神话','👑 大满贯传奇','🎾 大满贯收割机','💪 大满贯实力派','🏅 大赛主力','🏅 大满贯主力','🎯 大满贯好手','🎯 大满贯追梦者','🎯 大满贯新秀'],
+  ['⚡ 1000赛霸主','⚡ 1000赛达人','⚡ 1000赛精英','💫 1000赛好手','💫 1000赛常客','💫 1000赛新人'],
+  ['🌟 顶尖全能王','🎪 精英综合体','🎨 大赛全才','🎪 大赛综合派','🧩 均衡好手','🧩 均衡探索者'],
+  ['🧱 红土之王','🏺 红土大师','🏺 红土达人','🪴 红土好手','🪴 红土爱好者'],
+  ['💎 硬地霸主','🔷 硬地之王','🔷 硬地稳健王','🔹 硬地好手','🔹 硬地常客'],
+  ['🌆 500赛小王子','🏙️ 500赛精英','🏘️ 500赛常客'],
+  ['🐑 小赛探险家','🌾 小赛爱好者'],
+  ['🧩 全面稳健型','🧩 全面均衡型','🌀 积分探索者','🌱 初出茅庐'],
 ];
 
 function bdEsc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
-
-
 function applyCurrentToBreakdown(d){
-  // 安全兜底：如果 current 已加载，则用 current.json 覆盖积分构成里的即时排名/即时积分。
-  // 如果 current 未加载或字段缺失，直接返回 breakdown 数据，避免整个积分构成模块加载失败。
   if(!d)return {ms:[],ws:[]};
   try{
     if(!GDATA)return d;
@@ -772,7 +697,6 @@ function applyCurrentToBreakdown(d){
 
 function loadBreakdown(cb){
   if(BD_DATA){cb(BD_DATA);return;}
-  // 复用 loadData 里已发起的请求，避免重复下载
   const p=window.__bdPromise||fetch('data/breakdown.json?t='+Date.now()).then(r=>r.json());
   if(!window.__bdPromise)window.__bdPromise=p;
   p.then(function(d){BD_DATA=applyCurrentToBreakdown(d);cb(BD_DATA);}).catch(function(e){
@@ -887,26 +811,26 @@ function buildBdExpHtml(u,id){
       var fp=Math.max((ed.total/maxExp*100),3).toFixed(1);
       var sib=parseFloat(fp)>22;
       var evArr=(ed.events||[]).slice().sort(function(a,b){var sa=parseInt((a.match(/\((\d+)\)/)||[])[1]||0),sb=parseInt((b.match(/\((\d+)\)/)||[])[1]||0);return sb-sa;});
-      var evStr=evArr.join('\u3001');
-      var ev5=evArr.slice(0,5).join('\u3001')+(evArr.length>5?' +'+(evArr.length-5)+'\u7ad9':'');
+      var evStr=evArr.join('、');
+      var ev5=evArr.slice(0,5).join('、')+(evArr.length>5?' +'+(evArr.length-5)+'站':'');
       barRows+='<div class="bd-bar-row"><div class="bd-bar-month">'+BD_MONTH_DISPLAY[i]+'</div><div class="bd-bar-track"><div class="bd-bar-fill" style="width:'+fp+'%">'+(sib?'<span class="bd-bar-fill-txt">'+ed.total+'</span>':'')+'</div></div>'+(sib?'<div class="bd-bar-score-out"></div>':'<div class="bd-bar-score-out">'+ed.total+'</div>')+'<div class="bd-bar-events" title="'+evStr+'">'+ev5+'</div></div>';
     }else{
-      barRows+='<div class="bd-bar-row bd-bar-row-zero"><div class="bd-bar-month">'+BD_MONTH_DISPLAY[i]+'</div><span class="bd-bar-zero">\u65e0\u5931\u6548</span></div>';
+      barRows+='<div class="bd-bar-row bd-bar-row-zero"><div class="bd-bar-month">'+BD_MONTH_DISPLAY[i]+'</div><span class="bd-bar-zero">无失效</span></div>';
     }
   });
   return '<div class="bd-exp-inner">'+
-    '<div class="bd-exp-title">\uD83D\uDCCA '+u.n+
-    ' <span style="color:#f97316;font-weight:800">'+(u.s||0).toLocaleString()+'\u5206</span>'+
-    ' <span style="color:#7c3aed">\u5373\u65f6\u6392\u540d #'+(u.ir||'—')+'</span>'+
+    '<div class="bd-exp-title">📊 '+u.n+
+    ' <span style="color:#f97316;font-weight:800">'+(u.s||0).toLocaleString()+'分</span>'+
+    ' <span style="color:#7c3aed">即时排名 #'+(u.ir||'—')+'</span>'+
     ' <span class="bd-badge" style="background:'+u.label_color+'">'+u.label+'</span></div>'+
     '<div class="bd-exp-grid">'+
-    '<div class="bd-card bd-card-type"><div class="bd-card-hdr" onclick="bdToggleCard(this)"><span class="bd-toggle">▼</span>\u8d5b\u4e8b\u7c7b\u578b\u79ef\u5206</div><div class="bd-cc">'+
-    '<div class="bd-chart-area"><div class="bd-chart-wrap"><canvas id="bdpie-type-'+id+'" width="120" height="120"></canvas><div class="bd-chart-center"><div class="bd-chart-total">'+(u.s||0).toLocaleString()+'</div><div class="bd-chart-sub">\u603b\u79ef\u5206</div></div></div><div class="bd-chart-legend">'+typeLegend+'</div></div>'+
+    '<div class="bd-card bd-card-type"><div class="bd-card-hdr" onclick="bdToggleCard(this)"><span class="bd-toggle">▼</span>赛事类型积分</div><div class="bd-cc">'+
+    '<div class="bd-chart-area"><div class="bd-chart-wrap"><canvas id="bdpie-type-'+id+'" width="120" height="120"></canvas><div class="bd-chart-center"><div class="bd-chart-total">'+(u.s||0).toLocaleString()+'</div><div class="bd-chart-sub">总积分</div></div></div><div class="bd-chart-legend">'+typeLegend+'</div></div>'+
     '<div style="margin-top:8px">'+typeHtml+'</div></div></div>'+
-    '<div class="bd-card bd-card-surf"><div class="bd-card-hdr" onclick="bdToggleCard(this)"><span class="bd-toggle">▼</span>\u573a\u5730\u7c7b\u578b\u5206\u5e03</div><div class="bd-cc">'+
-    '<div class="bd-chart-area"><div class="bd-chart-wrap"><canvas id="bdpie-surf-'+id+'" width="120" height="120"></canvas><div class="bd-chart-center"><div class="bd-chart-total" style="font-size:12px">\u573a\u5730</div><div class="bd-chart-sub">\u7c7b\u578b</div></div></div><div class="bd-chart-legend">'+surfLegend+'</div></div>'+
+    '<div class="bd-card bd-card-surf"><div class="bd-card-hdr" onclick="bdToggleCard(this)"><span class="bd-toggle">▼</span>场地类型分布</div><div class="bd-cc">'+
+    '<div class="bd-chart-area"><div class="bd-chart-wrap"><canvas id="bdpie-surf-'+id+'" width="120" height="120"></canvas><div class="bd-chart-center"><div class="bd-chart-total" style="font-size:12px">场地</div><div class="bd-chart-sub">类型</div></div></div><div class="bd-chart-legend">'+surfLegend+'</div></div>'+
     '<div style="margin-top:8px">'+surfBars+'</div></div></div>'+
-    '<div class="bd-card bd-card-expiry"><div class="bd-card-hdr" onclick="bdToggleCard(this)"><span class="bd-toggle">▼</span>⏰ \u79ef\u5206\u5931\u6548\u65f6\u95f4\uff08\u672a\u676512\u4e2a\u6708\uff09</div><div class="bd-cc">'+barRows+'</div></div>'+
+    '<div class="bd-card bd-card-expiry"><div class="bd-card-hdr" onclick="bdToggleCard(this)"><span class="bd-toggle">▼</span>⏰ 积分失效时间（未来12个月）</div><div class="bd-cc">'+barRows+'</div></div>'+
     '</div></div>';
 }
 
@@ -918,7 +842,7 @@ function renderBdPies(u,id){
     labels=[];vals=[];colors=[];
     var tv={GS:u.gs||0,YE:u.ye||0,M1000:u.m1||0,A500:u.a5||0,A250:u.a2||0};
     BD_TYPE_ORDER.forEach(function(t){if(tv[t]>0){labels.push(BD_TYPE_LABELS[t]);vals.push(tv[t]);colors.push(BD_TYPE_COLORS[t]);}});
-    if(vals.length){BD_CHARTS[ck]=new Chart(c,{type:'doughnut',data:{labels:labels,datasets:[{data:vals,backgroundColor:colors,borderWidth:2,borderColor:'#fff'}]},options:{responsive:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ctx.label+': '+ctx.raw+'\u5206 ('+(ctx.raw/(u.s||1)*100).toFixed(1)+'%)';}}}}}}); }
+    if(vals.length){BD_CHARTS[ck]=new Chart(c,{type:'doughnut',data:{labels:labels,datasets:[{data:vals,backgroundColor:colors,borderWidth:2,borderColor:'#fff'}]},options:{responsive:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ctx.label+': '+ctx.raw+'分 ('+(ctx.raw/(u.s||1)*100).toFixed(1)+'%)';}}}}}});}
   }
   c=document.getElementById('bdpie-surf-'+id);
   if(c&&typeof Chart!=='undefined'){
@@ -926,7 +850,7 @@ function renderBdPies(u,id){
     labels=[];vals=[];colors=[];
     var ss=u.surf_scores||{};
     ['hard_out','hard_in','clay','grass'].forEach(function(sk){if(ss[sk]>0){labels.push(BD_SURF_LABELS[sk]);vals.push(ss[sk]);colors.push(BD_SURF_COLORS[sk]);}});
-    if(vals.length){BD_CHARTS[ck]=new Chart(c,{type:'doughnut',data:{labels:labels,datasets:[{data:vals,backgroundColor:colors,borderWidth:2,borderColor:'#fff'}]},options:{responsive:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ctx.label+': '+ctx.raw+'\u5206';}}}}}}); }
+    if(vals.length){BD_CHARTS[ck]=new Chart(c,{type:'doughnut',data:{labels:labels,datasets:[{data:vals,backgroundColor:colors,borderWidth:2,borderColor:'#fff'}]},options:{responsive:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ctx.label+': '+ctx.raw+'分';}}}}}});}
   }
 }
 
