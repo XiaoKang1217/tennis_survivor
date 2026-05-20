@@ -299,6 +299,11 @@ def fetch_event_data(session, csrf, iid, gender, event_name, rank_dict):
     if event_detail_rows:
         print(f"  DEBUG detail keys: {list(event_detail_rows[0].keys())}")
     print(f"  Today day: {today_day}, filled: {len(today_map)}")
+        print(f"  DEBUG today_day: {today_day}")
+    # 调试：打印特定用户的 detail 记录
+    for r in today_rows:
+        if str(r.get('user_id')) == '35514':
+            print(f"  DEBUG target user detail: day={r.get('day')}, username={r.get('username')}, player={r.get('player')}")
 # 构建 score 用户快速查找
     score_map = {str(r['user_id']): r for r in score_rows}
     
