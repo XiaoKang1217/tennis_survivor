@@ -320,11 +320,11 @@ def fetch_event_data(session, csrf, iid, gender, event_name, rank_dict):
         
         tr = today_map.get(uid, {})
         if r:
+            # score 里有记录：用真实状态
             fill_status = r.get('fill_status', '')
             status = r.get('status', 0)
-        if not fill_status and not status:
-                fill_status = '未参赛'
         else:
+            # score 里完全没记录，detail 里有 → Day1 新用户，默认存活
             fill_status = tr.get('fill_status', '') if tr else '未参赛'
             if not fill_status:
                 fill_status = '存活'
