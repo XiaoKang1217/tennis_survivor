@@ -322,6 +322,8 @@ def fetch_event_data(session, csrf, iid, gender, event_name, rank_dict):
         if r:
             fill_status = r.get('fill_status', '')
             status = r.get('status', 0)
+        if not fill_status and not status:
+                fill_status = '未参赛'
         else:
             fill_status = tr.get('fill_status', '') if tr else '未参赛'
             if not fill_status:
