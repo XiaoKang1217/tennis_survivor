@@ -295,14 +295,7 @@ def fetch_event_data(session, csrf, iid, gender, event_name, rank_dict):
     event_detail_rows = [r for r in today_rows if str(r.get('user_id')) in all_event_user_ids]
     today_day = max((r.get('day', 0) for r in event_detail_rows), default=0)
     today_map = {str(r['user_id']): r for r in event_detail_rows if r.get('day') == today_day}
-    # 调试：打印第一条 detail 记录的所有 key
-    if event_detail_rows:
-        print(f"  DEBUG detail keys: {list(event_detail_rows[0].keys())}")
-    print(f"  Today day: {today_day}, filled: {len(today_map)}")
-    # 调试：打印特定用户的 detail 记录
-    for r in today_rows:
-        if str(r.get('user_id')) == '35514':
-            print(f"  DEBUG target user detail: day={r.get('day')}, username={r.get('username')}, player={r.get('player')}")
+   
     # 构建 score 用户快速查找
     score_map = {str(r['user_id']): r for r in score_rows}
     
@@ -342,7 +335,7 @@ def fetch_event_data(session, csrf, iid, gender, event_name, rank_dict):
         
         rows_out.append({
             'user_id': uid,
-            'username': clean_username(r.get('username', '') or tr.get('username', '')),
+            'username': clean_username(r.get('username', '') or tr.get('username', '') or ri.get('username', '')),
             'status': status,
             'day': r.get('day', 0) if r else 0,
             'fill_status': fill_status,
