@@ -303,14 +303,13 @@ def fetch_event_data(session, csrf, iid, gender, event_name, rank_dict):
     
     # 🔧 修复3：遍历所有本站参赛用户（score + detail 并集）
     for uid in all_event_user_ids:
-        r = score_map.get(uid, {})  # score 数据（可能为空）
-        tr = today_map.get(uid, {})  # detail 数据
+        r = score_map.get(uid, {})
+        tr = today_map.get(uid, {})
             
         ri = rank_dict.get(uid, {})
         cur = ri.get('score', 0) or 0
         det = ri.get('details', '')
         
-        # 扣除积分（非删除线部分）
         tmp = re.sub(r'<del>.*?</del>', '', det or '', flags=re.DOTALL)
         dm = re.search(rf'【{re.escape(event_name)}\((\d+)\)】', tmp)
         ded = int(dm.group(1)) if dm else 0
@@ -318,19 +317,22 @@ def fetch_event_data(session, csrf, iid, gender, event_name, rank_dict):
         new_s = r.get('score', 0) or 0
         inst = calc_preview_v5_instant(uid, cur, ded, new_s, det, gender, event_name)
         
-        tr = today_map.get(uid, {})
+        not_participated = False
         if r:
-            # score 里有记录：用真实状态
             fill_status = r.get('fill_status', '')
             status = r.get('status', 0)
+            if not fill_status and not status:
+                fill_status = '未参赛'
+                status = 1
+                not_participated = True
         else:
-            # score 里完全没记录，detail 里有 → Day1 新用户，默认存活
             fill_status = tr.get('fill_status', '') if tr else '未参赛'
             if not fill_status:
                 fill_status = '存活'
             status = tr.get('status', 2) if tr else 0
             if not status:
                 status = 2
+        
         rows_out.append({
             'user_id': uid,
             'username': clean_username(r.get('username', '') or tr.get('username', '')),
@@ -345,6 +347,7 @@ def fetch_event_data(session, csrf, iid, gender, event_name, rank_dict):
             'today_player': tr.get('player', ''),
             'today_player_alt': tr.get('player_alt', ''),
             'has_today': uid in today_map,
+            'not_participated': not_participated,
             'players': parse_players(r.get('players', '') if r else tr.get('players', '')),
         })
     
