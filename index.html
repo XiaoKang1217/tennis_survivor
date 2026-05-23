@@ -346,8 +346,8 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 </div>
 <div id="p-ms-t" class="panel"><div id="content-ms-t"></div></div>
 <div id="p-ws-t" class="panel"><div id="content-ws-t"></div></div>
-<div id="p-flight" class="panel"><div class="flight-toolbar"><div style="font-size:15px;font-weight:800;color:#d97706">✈️ 每日航班</div><select class="select-mini" id="flight-year" onchange="initFlightSelect()"><option selected>2026</option><option>2025</option><option>2024</option></select><select class="select-mini" id="flight-select" onchange="renderFlights()"></select></div><div id="flight-box" class="flight-grid"></div></div>
-<div id="p-fortune" class="panel"><div class="fortune-wrap"><div class="fortune-title">🔮 今日运势抽签</div><div class="fortune-sub">每天选球员愁破头？让神明帮你做选择！</div><div class="fortune-tabs"><button class="ftab on" onclick="setFortune('atp',this)">⚡ ATP 男单</button><button class="ftab" onclick="setFortune('wta',this)">🌸 WTA 女单</button></div><div class="fortune-card" id="fortune-card"><div class="fortune-hint">✨ 今日可选球员已入签筒 ✨</div><div class="fortune-player" id="fortune-player">？？？</div><div class="fattr" id="fortune-attr">未摇签</div><div class="fortune-text" id="fortune-text">点击下方按钮，开始今日运势抽签</div><div class="fortune-yi" id="fortune-yi"></div></div><br><button class="fortune-btn" onclick="drawFortune()">🎋 摇签</button><br><br><div class="fortune-hint">签文仅供娱乐，后果自负 😄</div></div></div></div>>
+<div id="p-flight" class="panel"><div class="flight-toolbar"><div style="font-size:15px;font-weight:800;color:#d97706">✈️ 每日航班</div><select class="select-mini" id="flight-year" onchange="initFlightSelect(true)"><option selected>2026</option><option>2025</option><option>2024</option></select><select class="select-mini" id="flight-select" onchange="renderFlights(true)"></select></div><div id="flight-box" class="flight-grid"></div></div>
+<div id="p-fortune" class="panel"><div class="fortune-wrap"><div class="fortune-title">🔮 今日运势抽签</div><div class="fortune-sub">每天选球员愁破头？让神明帮你做选择！</div><div class="fortune-tabs"><button class="ftab on" onclick="setFortune('atp',this)">⚡ ATP 男单</button><button class="ftab" onclick="setFortune('wta',this)">🌸 WTA 女单</button></div><div class="fortune-card" id="fortune-card"><div class="fortune-hint">✨ 今日可选球员已入签筒 ✨</div><div class="fortune-player" id="fortune-player">？？？</div><div class="fattr" id="fortune-attr">未摇签</div><div class="fortune-text" id="fortune-text">点击下方按钮，开始今日运势抽签</div><div class="fortune-yi" id="fortune-yi"></div></div><br><button class="fortune-btn" onclick="drawFortune()">🎋 摇签</button><br><br><div class="fortune-hint">签文仅供娱乐，后果自负 😄</div></div></div></div>
 
 <script>
 let HIST_DATA=null;
@@ -357,6 +357,75 @@ let GDATA=null; let PDATA=null;
 let MSPOOL=[]; let WSPOOL=[];
 let fGender='atp';
 const SS={};const FS={};
+const GA_MEASUREMENT_ID='G-E51GZG7C1F';
+const MODULE_VIEWED={};
+const SEARCH_TRACK_TIMERS={};
+let ACTIVE_TAB='ms-s';
+
+function gaConfigured(){
+  return /^G-[A-Z0-9]+$/.test(GA_MEASUREMENT_ID)&&GA_MEASUREMENT_ID!=='G-XXXXXXXXXX';
+}
+
+function initGa(){
+  if(!gaConfigured())return;
+  window.dataLayer=window.dataLayer||[];
+  window.gtag=function(){window.dataLayer.push(arguments);};
+  var s=document.createElement('script');
+  s.async=true;
+  s.src='https://www.googletagmanager.com/gtag/js?id='+encodeURIComponent(GA_MEASUREMENT_ID);
+  document.head.appendChild(s);
+  window.gtag('js',new Date());
+  window.gtag('config',GA_MEASUREMENT_ID,{send_page_view:true});
+}
+
+function trackEvent(name,params){
+  if(!gaConfigured()||typeof window.gtag!=='function')return;
+  try{
+    window.gtag('event',name,params||{});
+    if(window.GA_DEBUG)console.debug('[ga4]',name,params||{});
+  }catch(e){}
+}
+
+function currentEventLabel(g){
+  var d=GDATA&&GDATA[g];
+  return d&&d.event_name?d.event_name:'';
+}
+
+function tabMeta(tab){
+  var g=tab.indexOf('ws')===0?'ws':tab.indexOf('ms')===0?'ms':'';
+  var tour=g==='ms'?'ATP':g==='ws'?'WTA':(tab==='fortune'?(fGender==='atp'?'ATP':'WTA'):'combined');
+  var module={
+    'ms-s':'current_picks','ws-s':'current_picks',
+    'ms-bd':'breakdown','ws-bd':'breakdown',
+    'ms-p':'preference','ws-p':'preference',
+    'ms-t':'disasters','ws-t':'disasters',
+    flight:'daily_flights',fortune:'fortune'
+  }[tab]||tab;
+  var eventLabel=(g==='ms'||g==='ws')&&tab.slice(-2)==='-s'?currentEventLabel(g):'';
+  return {module:module,tour:tour,event_label:eventLabel};
+}
+
+function trackModuleView(tab){
+  var meta=tabMeta(tab);
+  var key=meta.module+'|'+meta.tour+'|'+(meta.event_label||'');
+  if(MODULE_VIEWED[key])return;
+  MODULE_VIEWED[key]=true;
+  trackEvent('module_view',meta);
+}
+
+function trackSearchFilter(tab){
+  clearTimeout(SEARCH_TRACK_TIMERS[tab]);
+  SEARCH_TRACK_TIMERS[tab]=setTimeout(function(){
+    var meta=tabMeta(tab);
+    trackEvent('filter_apply',{
+      module:meta.module,
+      tour:meta.tour,
+      filter_type:'search'
+    });
+  },800);
+}
+
+initGa();
 
 // ===== 数据加载 =====
 async function loadData(){
@@ -375,6 +444,7 @@ async function loadData(){
     document.getElementById('upd-time').textContent='⏱ '+(cur.updated_at||'')+'｜每30分钟更新';
     if(cur.ms){document.getElementById('tab-ms-s').textContent='🎾 ATP '+(cur.ms.event_name||'')+(cur.ms.today_day?' Day'+cur.ms.today_day:'');renderScore('ms', cur.ms);}
     if(cur.ws){document.getElementById('tab-ws-s').textContent='🎾 WTA '+(cur.ws.event_name||'')+(cur.ws.today_day?' Day'+cur.ws.today_day:'');renderScore('ws', cur.ws);}
+    trackModuleView(ACTIVE_TAB);
   }catch(e){
     console.error('实时数据加载失败',e);
     document.getElementById('upd-time').textContent='⚠️ 实时数据加载失败，请刷新';
@@ -630,9 +700,16 @@ function toggleExpDyn(row){
 // ===== 通用功能 =====
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function switchTab(t,btn){
+  var prev=ACTIVE_TAB;
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
   document.getElementById('p-'+t).classList.add('on');btn.classList.add('on');
+  ACTIVE_TAB=t;
+  var oldMeta=tabMeta(prev),newMeta=tabMeta(t);
+  trackModuleView(t);
+  if(oldMeta.module===newMeta.module&&oldMeta.tour!==newMeta.tour){
+    trackEvent('tour_switch',{module:newMeta.module,tour:newMeta.tour});
+  }
   // 积分构成：复用已发起的请求，如果还没加载完就等待
   if(t==='ms-bd'||t==='ws-bd'){
     if(BD_DATA){renderBreakdownPanel('ms',BD_DATA.ms||[]);renderBreakdownPanel('ws',BD_DATA.ws||[]);}
@@ -649,10 +726,10 @@ function switchTab(t,btn){
   if((t==='ms-t'||t==='ws-t')&&!HIST_DATA){loadHistData(function(){renderDisaster('ms');renderDisaster('ws');});}
   if(t==='flight'&&!HIST_DATA){loadHistData(function(){initFlightSelect();});}
 }
-function setF(tab,f,btn){FS[tab]={mode:f};btn.closest('.toolbar').querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');doFilter(tab);}
-function filterPick(tab,player){FS[tab]={mode:'pick',player:player};const inp=document.getElementById('q-'+tab);if(inp)inp.value='';document.querySelectorAll('#content-'+tab+' .fbtn').forEach(b=>b.classList.remove('on'));doFilter(tab);}
-function doFilter(tab){const q=(document.getElementById('q-'+tab)||{value:''}).value.toLowerCase();const fObj=typeof FS[tab]==='object'?FS[tab]:{mode:FS[tab]||'all'};const f=fObj.mode||'all';document.querySelectorAll('#tb-'+tab+' tr.pref-row,#tb-'+tab+' tr[data-status]').forEach(r=>{const u=(r.dataset.u||r.dataset.user||'').toLowerCase();let ok=u.includes(q);if(f==='alive'&&r.dataset.alive!=='1')ok=false;if(f==='filled'&&r.dataset.filled!=='1')ok=false;if(f==='pick'&&r.dataset.today!==fObj.player)ok=false;r.style.display=ok?'':'none';const er=r.nextElementSibling;if(er&&(er.classList.contains('exp-row')||er.classList.contains('sdr-row'))){if(!ok){er.style.display='none';er.classList.remove('open')}else er.style.display='';} });}
-function srt(tab,col,key){const k=tab+'_'+col;if(!SS[k])SS[k]=0;SS[k]=(SS[k]+1)%3;const dir=SS[k];const ths=document.querySelectorAll('#tbl-'+tab+' thead th');ths.forEach(t=>t.classList.remove('sa','sd'));const tb=document.getElementById('tb-'+tab);const pairs=[];const allRows=Array.from(tb.rows);for(let i=0;i<allRows.length;i++){const r=allRows[i];if(r.classList.contains('pref-row')||r.dataset.status){const nx=allRows[i+1];const exp=(nx&&(nx.classList.contains('exp-row')||nx.classList.contains('sdr-row')))?nx:null;pairs.push({row:r,exp});if(exp)i++;}}const nk=['cr','ir','this','deduct','instant','chg','day','ep','ee','ec','wc','bc'];if(dir===0){pairs.sort((a,b)=>parseInt(a.row.dataset.ir||9999)-parseInt(b.row.dataset.ir||9999));if(ths[1])ths[1].classList.add('sd');}else{ths[col].classList.add(dir===1?'sa':'sd');const desc=(dir===1);pairs.sort((a,b)=>{if(nk.includes(key))return desc?(parseFloat(b.row.dataset[key]||0)-parseFloat(a.row.dataset[key]||0)):(parseFloat(a.row.dataset[key]||0)-parseFloat(b.row.dataset[key]||0));if(key==='status')return desc?String(b.row.dataset.status||'').localeCompare(String(a.row.dataset.status||'')):String(a.row.dataset.status||'').localeCompare(String(b.row.dataset.status||''));const va=(a.row.dataset.user||a.row.dataset.u||'').toLowerCase();const vb=(b.row.dataset.user||b.row.dataset.u||'').toLowerCase();return desc?vb.localeCompare(va):va.localeCompare(vb);})}pairs.forEach(pair=>{tb.appendChild(pair.row);if(pair.exp)tb.appendChild(pair.exp);});doFilter(tab);}
+function setF(tab,f,btn){FS[tab]={mode:f};btn.closest('.toolbar').querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');var meta=tabMeta(tab);trackEvent('filter_apply',{module:meta.module,tour:meta.tour,filter_type:f});doFilter(tab);}
+function filterPick(tab,player){FS[tab]={mode:'pick',player:player};const inp=document.getElementById('q-'+tab);if(inp)inp.value='';document.querySelectorAll('#content-'+tab+' .fbtn').forEach(b=>b.classList.remove('on'));var meta=tabMeta(tab);trackEvent('player_stat_click',{module:meta.module,tour:meta.tour,player:player,event_label:meta.event_label});trackEvent('filter_apply',{module:meta.module,tour:meta.tour,filter_type:'pick'});doFilter(tab);}
+function doFilter(tab){const q=(document.getElementById('q-'+tab)||{value:''}).value.toLowerCase();if(q)trackSearchFilter(tab);const fObj=typeof FS[tab]==='object'?FS[tab]:{mode:FS[tab]||'all'};const f=fObj.mode||'all';document.querySelectorAll('#tb-'+tab+' tr.pref-row,#tb-'+tab+' tr[data-status]').forEach(r=>{const u=(r.dataset.u||r.dataset.user||'').toLowerCase();let ok=u.includes(q);if(f==='alive'&&r.dataset.alive!=='1')ok=false;if(f==='filled'&&r.dataset.filled!=='1')ok=false;if(f==='pick'&&r.dataset.today!==fObj.player)ok=false;r.style.display=ok?'':'none';const er=r.nextElementSibling;if(er&&(er.classList.contains('exp-row')||er.classList.contains('sdr-row'))){if(!ok){er.style.display='none';er.classList.remove('open')}else er.style.display='';} });}
+function srt(tab,col,key){const k=tab+'_'+col;if(!SS[k])SS[k]=0;SS[k]=(SS[k]+1)%3;const dir=SS[k];const ths=document.querySelectorAll('#tbl-'+tab+' thead th');ths.forEach(t=>t.classList.remove('sa','sd'));const tb=document.getElementById('tb-'+tab);const pairs=[];const allRows=Array.from(tb.rows);for(let i=0;i<allRows.length;i++){const r=allRows[i];if(r.classList.contains('pref-row')||r.dataset.status){const nx=allRows[i+1];const exp=(nx&&(nx.classList.contains('exp-row')||nx.classList.contains('sdr-row')))?nx:null;pairs.push({row:r,exp});if(exp)i++;}}const nk=['cr','ir','this','deduct','instant','chg','day','ep','ee','ec','wc','bc'];if(dir===0){pairs.sort((a,b)=>parseInt(a.row.dataset.ir||9999)-parseInt(b.row.dataset.ir||9999));if(ths[1])ths[1].classList.add('sd');}else{ths[col].classList.add(dir===1?'sa':'sd');const desc=(dir===1);pairs.sort((a,b)=>{if(nk.includes(key))return desc?(parseFloat(b.row.dataset[key]||0)-parseFloat(a.row.dataset[key]||0)):(parseFloat(a.row.dataset[key]||0)-parseFloat(b.row.dataset[key]||0));if(key==='status')return desc?String(b.row.dataset.status||'').localeCompare(String(a.row.dataset.status||'')):String(a.row.dataset.status||'').localeCompare(String(b.row.dataset.status||''));const va=(a.row.dataset.user||a.row.dataset.u||'').toLowerCase();const vb=(b.row.dataset.user||b.row.dataset.u||'').toLowerCase();return desc?vb.localeCompare(va):va.localeCompare(vb);})}pairs.forEach(pair=>{tb.appendChild(pair.row);if(pair.exp)tb.appendChild(pair.exp);});var meta=tabMeta(tab);trackEvent('sort_apply',{module:meta.module,tour:meta.tour,sort_key:key,sort_direction:dir===0?'default':(dir===1?'desc':'asc')});doFilter(tab);}
 
 // 运势
 
@@ -666,9 +743,10 @@ function renderPrefYear(g, year){
     const y = document.getElementById('year-' + g + '-p');
     if(y) y.value = year;
   }, 0);
+  trackEvent('event_switch',{module:'preference',tour:g==='ms'?'ATP':'WTA',event_label:'preference_by_year',year:year});
 }
-function renderDisaster(g,year='2026'){if(!HIST_DATA)return;const list=(HIST_DATA.disasters[year]&&HIST_DATA.disasters[year][g])||[]; const cont=document.getElementById('content-'+g+'-t'); const title=g==='ms'?'历史上的惨案-ATP':'历史上的惨案-WTA'; cont.innerHTML=`<div class="yearbar"><div style="font-size:15px;font-weight:800;color:#dc2626">${title}</div><select class="select-mini" onchange="renderDisaster('${g}',this.value)"><option ${year==='2026'?'selected':''}>2026</option><option ${year==='2025'?'selected':''}>2025</option><option ${year==='2024'?'selected':''}>2024</option></select></div><div class="tbl-wrap"><table><thead><tr><th>#</th><th>刽子手</th><th>赛站</th><th>轮次</th><th>受害人数</th><th>辣评</th></tr></thead><tbody>${list.slice(0,50).map(x=>`<tr><td class="tn">#${x.rank}</td><td style="font-weight:800;color:#dc2626">${x.player}</td><td><span class="exp-tag r">${x.event}</span></td><td class="tn">Day${Number(x.day)+1}</td><td class="tn y">${x.count}人</td><td style="font-size:12px;color:#78450a;line-height:1.6">${x.comment}</td></tr>`).join('')}</tbody></table></div>`;}
-function initFlightSelect(){
+function renderDisaster(g,year='2026',userAction=false){if(!HIST_DATA)return;const list=(HIST_DATA.disasters[year]&&HIST_DATA.disasters[year][g])||[]; const cont=document.getElementById('content-'+g+'-t'); const title=g==='ms'?'历史上的惨案-ATP':'历史上的惨案-WTA'; cont.innerHTML=`<div class="yearbar"><div style="font-size:15px;font-weight:800;color:#dc2626">${title}</div><select class="select-mini" onchange="renderDisaster('${g}',this.value,true)"><option ${year==='2026'?'selected':''}>2026</option><option ${year==='2025'?'selected':''}>2025</option><option ${year==='2024'?'selected':''}>2024</option></select></div><div class="tbl-wrap"><table><thead><tr><th>#</th><th>刽子手</th><th>赛站</th><th>轮次</th><th>受害人数</th><th>辣评</th></tr></thead><tbody>${list.slice(0,50).map(x=>`<tr><td class="tn">#${x.rank}</td><td style="font-weight:800;color:#dc2626">${x.player}</td><td><span class="exp-tag r">${x.event}</span></td><td class="tn">Day${Number(x.day)+1}</td><td class="tn y">${x.count}人</td><td style="font-size:12px;color:#78450a;line-height:1.6">${x.comment}</td></tr>`).join('')}</tbody></table></div>`;if(userAction)trackEvent('event_switch',{module:'disasters',tour:g==='ms'?'ATP':'WTA',event_label:'disasters_by_year',year:year});}
+function initFlightSelect(userAction=false){
   const y=document.getElementById('flight-year').value;
   const sel=document.getElementById('flight-select');
   sel.innerHTML='';
@@ -697,10 +775,11 @@ function initFlightSelect(){
   Object.keys(HIST_DATA.flights[y]||{}).forEach((k,i)=>{
     sel.add(new Option(k, k, y!=='2026' && i===0, y!=='2026' && i===0));
   });
-  renderFlights();
+  if(userAction)trackEvent('event_switch',{module:'daily_flights',tour:'combined',event_label:'flight_year',year:y});
+  renderFlights(userAction);
 }
 
-function renderFlights(){
+function renderFlights(userAction=false){
   const y=document.getElementById('flight-year').value;
   const k=document.getElementById('flight-select').value;
   let arr=[];
@@ -725,6 +804,7 @@ function renderFlights(){
     
     if(!arr.length){
       document.getElementById('flight-box').innerHTML='<div class="flight-card"><div class="flight-day">暂无航班数据</div><div style="font-size:12px;color:#9a7a40;font-weight:700;margin-top:6px">当前赛事还没有出局/退赛/自杀记录，比赛开始后会自动显示。</div></div>';
+      if(userAction)trackEvent('event_switch',{module:'daily_flights',tour:'combined',event_label:k,year:y});
       return;
     }
   } else {
@@ -732,10 +812,11 @@ function renderFlights(){
   }
   
   document.getElementById('flight-box').innerHTML=arr.map(x=>`<div class="flight-card"><div class="flight-day">Day ${Number(x.day)+1}</div><div style="font-size:12px;color:#9a7a40;font-weight:700;margin-bottom:6px">${x.g==='A'?'ATP':'WTA'} 航线</div><span class="flight-pill">${x.alive}存活</span><span class="flight-pill r">${x.out}淘汰</span><span class="flight-pill">${x.suicide}自杀</span><span class="flight-pill">${x.retired}退赛</span><div style="font-size:12px;color:#78450a;margin-top:7px"><b>主要航班：</b>${x.top}</div></div>`).join('');
+  if(userAction)trackEvent('event_switch',{module:'daily_flights',tour:'combined',event_label:k,year:y});
 }
 
-function setFortune(g,btn){fGender=g;document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');document.getElementById('fortune-player').textContent='？？？';document.getElementById('fortune-attr').textContent='未摇签';document.getElementById('fortune-text').textContent='点击下方按钮，开始今日运势抽签';document.getElementById('fortune-yi').innerHTML='';}
-function drawFortune(){if(!HIST_DATA){loadHistData(function(){drawFortune();});document.getElementById('fortune-text').textContent='⏳ 数据加载中...';return;}const key='fortune_'+fGender;const today=new Date().toISOString().slice(0,10);let rec=JSON.parse(localStorage.getItem(key)||'{}');if(rec.date!==today)rec={date:today,count:0};if(rec.count>=3){document.getElementById('fortune-player').textContent='命运是测不准的';document.getElementById('fortune-attr').textContent='明日再问';document.getElementById('fortune-text').textContent='命运是测不准的。明天再来吧';document.getElementById('fortune-yi').innerHTML='';return;}rec.count++;localStorage.setItem(key,JSON.stringify(rec));const pool=fGender==='atp'?MSPOOL:WSPOOL;if(!pool||!pool.length){document.getElementById('fortune-player').textContent='暂无数据';return;}const player=pool[Math.floor(Math.random()*pool.length)];const f=HIST_DATA.fortunes[Math.floor(Math.random()*HIST_DATA.fortunes.length)];const card=document.getElementById('fortune-card');card.classList.remove('shake');void card.offsetWidth;card.classList.add('shake');document.getElementById('fortune-player').textContent=player;document.getElementById('fortune-attr').textContent=f.attr+'（今日还可抽'+(3-rec.count)+'次）';document.getElementById('fortune-text').textContent=f.text;document.getElementById('fortune-yi').innerHTML=`宜：${f.yi}<br>忌：${f.ji}`;}
+function setFortune(g,btn){var prev=fGender;fGender=g;document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');document.getElementById('fortune-player').textContent='？？？';document.getElementById('fortune-attr').textContent='未摇签';document.getElementById('fortune-text').textContent='点击下方按钮，开始今日运势抽签';document.getElementById('fortune-yi').innerHTML='';if(prev!==g)trackEvent('tour_switch',{module:'fortune',tour:g==='atp'?'ATP':'WTA'});}
+function drawFortune(){if(!HIST_DATA){loadHistData(function(){drawFortune();});document.getElementById('fortune-text').textContent='⏳ 数据加载中...';return;}const key='fortune_'+fGender;const today=new Date().toISOString().slice(0,10);let rec=JSON.parse(localStorage.getItem(key)||'{}');if(rec.date!==today)rec={date:today,count:0};if(rec.count>=3){document.getElementById('fortune-player').textContent='命运是测不准的';document.getElementById('fortune-attr').textContent='明日再问';document.getElementById('fortune-text').textContent='命运是测不准的。明天再来吧';document.getElementById('fortune-yi').innerHTML='';return;}rec.count++;localStorage.setItem(key,JSON.stringify(rec));const pool=fGender==='atp'?MSPOOL:WSPOOL;if(!pool||!pool.length){document.getElementById('fortune-player').textContent='暂无数据';return;}const player=pool[Math.floor(Math.random()*pool.length)];const f=HIST_DATA.fortunes[Math.floor(Math.random()*HIST_DATA.fortunes.length)];const card=document.getElementById('fortune-card');card.classList.remove('shake');void card.offsetWidth;card.classList.add('shake');document.getElementById('fortune-player').textContent=player;document.getElementById('fortune-attr').textContent=f.attr+'（今日还可抽'+(3-rec.count)+'次）';document.getElementById('fortune-text').textContent=f.text;document.getElementById('fortune-yi').innerHTML=`宜：${f.yi}<br>忌：${f.ji}`;trackEvent('fortune_draw',{module:'fortune',tour:fGender==='atp'?'ATP':'WTA'});}
 
 // 启动加载
 
@@ -1050,11 +1131,14 @@ function bdSort(g,col,key){
     return desc?bv.localeCompare(av):av.localeCompare(bv);
   });
   pairs.forEach(function(p){tb.appendChild(p.row);if(p.exp)tb.appendChild(p.exp);});
+  var meta=tabMeta(g+'-bd');
+  trackEvent('sort_apply',{module:meta.module,tour:meta.tour,sort_key:key,sort_direction:dir===0?'default':(dir===1?'desc':'asc')});
   bdSearch(g);
 }
 
 function bdSearch(g){
   var q=(document.getElementById('bdq-'+g)||{value:''}).value.toLowerCase();
+  if(q)trackSearchFilter(g+'-bd');
   document.querySelectorAll('#bdtb-'+g+' .bd-main-row').forEach(function(row){
     var name=row.querySelector('.bd-name')?row.querySelector('.bd-name').textContent.toLowerCase():'';
     var show=name.includes(q);
