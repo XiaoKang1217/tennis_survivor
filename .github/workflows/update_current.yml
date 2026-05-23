@@ -2,7 +2,7 @@ name: Update Current Data
 
 on:
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: '7,37 * * * *'
   workflow_dispatch:
 
 jobs:
@@ -19,6 +19,8 @@ jobs:
           python-version: '3.11'
 
       - run: pip install -r scripts/requirements.txt
+
+      - run: python -m unittest scripts.test_scoring
 
       - run: python scripts/fetch_current.py
 

@@ -365,10 +365,11 @@ def build_users(rows, gender, ir_map, cur_map, event_name, cal_cache, dynamic_in
         if event_name:
             included=[e for e in included if e.get('n') != event_name]
 
-        if this_ev>0 and event_name:
+        if event_name:
             meta=get_meta(event_name,gender,cal_cache,dynamic_info_map,cur_month,cur_year)
-            ey,em=expiry_ym(meta)
-            included.append({'n':event_name,'s':this_ev,'inc':True,'forced':False,'meta':meta,'expiry':f'{ey}年{em}月'})
+            if this_ev>0 or meta.get('type') == 'GS':
+                ey,em=expiry_ym(meta)
+                included.append({'n':event_name,'s':this_ev,'inc':True,'forced':meta.get('type') == 'GS','meta':meta,'expiry':f'{ey}年{em}月'})
 
         ts,te,ss,em2={},{},{},{}
         for e in included:
@@ -393,7 +394,7 @@ def build_users(rows, gender, ir_map, cur_map, event_name, cal_cache, dynamic_in
     for feat in ['gs','ye','m1','a5','a2','hard','clay','grass']:
         calc_feat_pct(users,feat)
     for u in users:
-        lb,lc=get_label(u); u['label']=lb; u['label_color']=lc
+        lb,lc=get_label(u); u['label']=lb; u['label_color']=lc; u['base_label']=lb; u['base_label_color']=lc
         u['ir']=ir_map.get(u['uid'],u['rank'])
         for feat in ['gs','ye','m1','a5','a2','hard','clay','grass']: u.pop(f'{feat}_pct',None)
         u.pop('hard',None);u.pop('clay',None);u.pop('grass',None)

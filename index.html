@@ -448,19 +448,19 @@ function renderScore(g, data){
   const suicide=siteRows.filter(r=>String(r.fill_status||'').includes('自杀')).length;
   const total=siteTotal;
   const stats=data.player_stats||[];
+  const tb_id='tb-'+g+'-s';
+  const tbl_id='tbl-'+g+'-s';
+  const tab=g+'-s';
   
   // 今日选人统计
   const ccArr=['#f59e0b','#f97316','#ef4444','#8b5cf6','#10b981','#3b82f6'];
   const aliveFilled=stats.reduce((s,it)=>s+it[1],0)||1;
-  const statsHtml=stats.length?`<div class="sc"><div class="sch"><span>📊 今日选人统计（仅存活）—${g=='ms'?'ATP男单':'WTA女单'}Day${data.today_day}</span><span class="scs">存活${alive}人·今日已填${aliveFilled}人</span></div><table class="st"><thead><tr><th></th><th>选手</th><th>人数</th><th>占比</th><th>分布</th></tr></thead><tbody>${stats.map((it,i)=>`<tr><td class="psr">#${i+1}</td><td class="psp">${it[0]}</td><td class="psc">${it[1]}人</td><td class="psp2">${(it[1]/aliveFilled*100).toFixed(1)}%</td><td class="psb"><div class="bbar" style="width:${(it[1]/aliveFilled*100).toFixed(1)}%;background:${ccArr[i%6]}"></div></td></tr>`).join('')}</tbody></table></div><hr class="divider">`:'' ;
+  const statsHtml=stats.length?`<div class="sc"><div class="sch"><span>📊 今日选人统计（仅存活）—${g=='ms'?'ATP男单':'WTA女单'}Day${data.today_day}</span><span class="scs">存活${alive}人·今日已填${aliveFilled}人</span></div><table class="st"><thead><tr><th></th><th>选手</th><th>人数</th><th>占比</th><th>分布</th></tr></thead><tbody>${stats.map((it,i)=>`<tr class="pick-stat-row" onclick="filterPick('${tab}',decodeURIComponent('${encodeURIComponent(it[0])}'))" title="点击筛选选择 ${esc(it[0])} 的用户"><td class="psr">#${i+1}</td><td class="psp">${it[0]}</td><td class="psc">${it[1]}人</td><td class="psp2">${(it[1]/aliveFilled*100).toFixed(1)}%</td><td class="psb"><div class="bbar" style="width:${(it[1]/aliveFilled*100).toFixed(1)}%;background:${ccArr[i%6]}"></div></td></tr>`).join('')}</tbody></table></div><hr class="divider">`:'' ;
   
   // KPI
   const kpi=`<div class="kpi"><div class="kc"><div class="kn nt">${totalUsers}</div><div class="kl">总人数</div></div><div class="kc"><div class="kn nt">${siteTotal}</div><div class="kl">本站参赛</div></div><div class="kc"><div class="kn na">${alive}</div><div class="kl">🟢存活</div></div><div class="kc"><div class="kn nd">${siteTotal-alive}</div><div class="kl">❌出局</div></div><div class="kc"><div class="kn" style="color:#7c3aed">${filled}</div><div class="kl">今日已填</div></div><div class="kc"><div class="kn nd">${suicide}</div><div class="kl">自杀</div></div></div>`;
   
   // 表格行
-  const tb_id='tb-'+g+'-s';
-  const tbl_id='tbl-'+g+'-s';
-  const tab=g+'-s';
   let rowsHtml='';
   for(const r of rows){
     const sc=getStatusClass(r.fill_status,r.status);
@@ -473,7 +473,9 @@ function renderScore(g, data){
     const chg=r.rank_change;
     const ch=chg===null?'<span class="cn">—</span>':chg>0?`<span class="cu">▲${chg}</span>`:chg<0?`<span class="cd">▼${Math.abs(chg)}</span>`:'<span class="cz">→0</span>';
     const cr=r.current_rank||9999; const ir=r.instant_rank||9999;
-    const plEnc=encodeURIComponent(JSON.stringify(r.players||[]));rowsHtml+=`<tr class="${sc==='alive'?'ra':'rd'}" data-status="${sc}" data-filled="${r.has_today?'1':'0'}" data-cr="${cr}" data-ir="${ir}" data-cur="${r.current_score||0}" data-deduct="${r.deduct_score||0}" data-this="${r.this_event_score||0}" data-instant="${r.instant_score||0}" data-day="${r.day||0}" data-chg="${r.rank_change||0}" data-user="${esc(r.username)}" data-today="${esc(r.today_player||'')}" data-alive="${sc==='alive'?1:0}" data-pl="${plEnc}" onclick="toggleSdr(this)" style="cursor:pointer"><td class="tn" data-label="当前排名">${cr==9999?'—':cr}</td><td class="tn ir" data-label="即时排名">${ir==9999?'—':ir}</td><td class="tu" data-label="用户名" data-rank="当前#${cr==9999?'—':cr} · 即时#${ir==9999?'—':ir}">${r.username}</td><td class="tt" data-label="今日选择">${td}</td><td data-label="状态">${badge}</td><td class="tn g" data-label="本站得分">${r.this_event_score||0}</td><td class="tn r" data-label="扣除积分">${r.deduct_score>0?'-'+r.deduct_score:'0'}</td><td class="tn y" data-label="即时积分">${r.instant_score||0}</td><td class="tc" data-label="排名变化">${ch}</td><td class="tn s" data-label="存活天数">${r.day||0}</td></tr>`;
+    const isAliveRow=sc==='alive'&&!r.not_participated&&r.fill_status!=='未参赛';
+    const rowCls=isAliveRow?'ra':'rd';
+    const plEnc=encodeURIComponent(JSON.stringify(r.players||[]));rowsHtml+=`<tr class="${rowCls}" data-status="${sc}" data-filled="${r.has_today?'1':'0'}" data-cr="${cr}" data-ir="${ir}" data-cur="${r.current_score||0}" data-deduct="${r.deduct_score||0}" data-this="${r.this_event_score||0}" data-instant="${r.instant_score||0}" data-day="${r.day||0}" data-chg="${r.rank_change||0}" data-user="${esc(r.username)}" data-today="${esc(r.today_player||'')}" data-alive="${isAliveRow?1:0}" data-pl="${plEnc}" onclick="toggleSdr(this)" style="cursor:pointer"><td class="tn" data-label="当前排名">${cr==9999?'—':cr}</td><td class="tn ir" data-label="即时排名">${ir==9999?'—':ir}</td><td class="tu" data-label="用户名" data-rank="当前#${cr==9999?'—':cr} · 即时#${ir==9999?'—':ir}">${r.username}</td><td class="tt" data-label="今日选择">${td}</td><td data-label="状态">${badge}</td><td class="tn g" data-label="本站得分">${r.this_event_score||0}</td><td class="tn r" data-label="扣除积分">${r.deduct_score>0?'-'+r.deduct_score:'0'}</td><td class="tn y" data-label="即时积分">${r.instant_score||0}</td><td class="tc" data-label="排名变化">${ch}</td><td class="tn s" data-label="存活天数">${r.day||0}</td></tr>`;
     rowsHtml+=`<tr class="sdr-row" id="sdr-${g}-${esc(r.username)}"><td class="sdr-cell" colspan="10"><div class="day-list"></div></td></tr>`;
   }
   
@@ -500,6 +502,7 @@ function renderScore(g, data){
 }
 
 function getStatusClass(fs,status){
+  if(fs==='未参赛') return 'not-participated';
   if(fs==='存活'||status===2) return 'alive';
   if(fs==='球员输球') return 'player-loss';
   if(fs==='球员退赛') return 'player-wd';
@@ -646,8 +649,9 @@ function switchTab(t,btn){
   if((t==='ms-t'||t==='ws-t')&&!HIST_DATA){loadHistData(function(){renderDisaster('ms');renderDisaster('ws');});}
   if(t==='flight'&&!HIST_DATA){loadHistData(function(){initFlightSelect();});}
 }
-function setF(tab,f,btn){FS[tab]=f;btn.closest('.toolbar').querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');doFilter(tab);}
-function doFilter(tab){const q=(document.getElementById('q-'+tab)||{value:''}).value.toLowerCase();const f=FS[tab]||'all';document.querySelectorAll('#tb-'+tab+' tr.pref-row,#tb-'+tab+' tr[data-status]').forEach(r=>{const u=(r.dataset.u||r.dataset.user||'').toLowerCase();let ok=u.includes(q);if(f==='alive'&&r.dataset.status!=='alive')ok=false;if(f==='filled'&&r.dataset.filled!=='1')ok=false;r.style.display=ok?'':'none';const er=r.nextElementSibling;if(er&&(er.classList.contains('exp-row')||er.classList.contains('sdr-row'))){if(!ok){er.style.display='none';er.classList.remove('open')}else er.style.display='';} });}
+function setF(tab,f,btn){FS[tab]={mode:f};btn.closest('.toolbar').querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');doFilter(tab);}
+function filterPick(tab,player){FS[tab]={mode:'pick',player:player};const inp=document.getElementById('q-'+tab);if(inp)inp.value='';document.querySelectorAll('#content-'+tab+' .fbtn').forEach(b=>b.classList.remove('on'));doFilter(tab);}
+function doFilter(tab){const q=(document.getElementById('q-'+tab)||{value:''}).value.toLowerCase();const fObj=typeof FS[tab]==='object'?FS[tab]:{mode:FS[tab]||'all'};const f=fObj.mode||'all';document.querySelectorAll('#tb-'+tab+' tr.pref-row,#tb-'+tab+' tr[data-status]').forEach(r=>{const u=(r.dataset.u||r.dataset.user||'').toLowerCase();let ok=u.includes(q);if(f==='alive'&&r.dataset.alive!=='1')ok=false;if(f==='filled'&&r.dataset.filled!=='1')ok=false;if(f==='pick'&&r.dataset.today!==fObj.player)ok=false;r.style.display=ok?'':'none';const er=r.nextElementSibling;if(er&&(er.classList.contains('exp-row')||er.classList.contains('sdr-row'))){if(!ok){er.style.display='none';er.classList.remove('open')}else er.style.display='';} });}
 function srt(tab,col,key){const k=tab+'_'+col;if(!SS[k])SS[k]=0;SS[k]=(SS[k]+1)%3;const dir=SS[k];const ths=document.querySelectorAll('#tbl-'+tab+' thead th');ths.forEach(t=>t.classList.remove('sa','sd'));const tb=document.getElementById('tb-'+tab);const pairs=[];const allRows=Array.from(tb.rows);for(let i=0;i<allRows.length;i++){const r=allRows[i];if(r.classList.contains('pref-row')||r.dataset.status){const nx=allRows[i+1];const exp=(nx&&(nx.classList.contains('exp-row')||nx.classList.contains('sdr-row')))?nx:null;pairs.push({row:r,exp});if(exp)i++;}}const nk=['cr','ir','this','deduct','instant','chg','day','ep','ee','ec','wc','bc'];if(dir===0){pairs.sort((a,b)=>parseInt(a.row.dataset.ir||9999)-parseInt(b.row.dataset.ir||9999));if(ths[1])ths[1].classList.add('sd');}else{ths[col].classList.add(dir===1?'sa':'sd');const desc=(dir===1);pairs.sort((a,b)=>{if(nk.includes(key))return desc?(parseFloat(b.row.dataset[key]||0)-parseFloat(a.row.dataset[key]||0)):(parseFloat(a.row.dataset[key]||0)-parseFloat(b.row.dataset[key]||0));if(key==='status')return desc?String(b.row.dataset.status||'').localeCompare(String(a.row.dataset.status||'')):String(a.row.dataset.status||'').localeCompare(String(b.row.dataset.status||''));const va=(a.row.dataset.user||a.row.dataset.u||'').toLowerCase();const vb=(b.row.dataset.user||b.row.dataset.u||'').toLowerCase();return desc?vb.localeCompare(va):va.localeCompare(vb);})}pairs.forEach(pair=>{tb.appendChild(pair.row);if(pair.exp)tb.appendChild(pair.exp);});doFilter(tab);}
 
 // 运势
@@ -719,10 +723,9 @@ function renderFlights(){
     }
     arr.sort((a,b)=>(a.day-b.day)||(a.g===b.g?0:a.g==='A'?1:-1));
     
-    // 如果没找到数据，fallback 到第一个选项
     if(!arr.length){
-      var firstKey = Object.keys(HIST_DATA.flights[y]||{})[0];
-      if(firstKey) arr = HIST_DATA.flights[y][firstKey] || [];
+      document.getElementById('flight-box').innerHTML='<div class="flight-card"><div class="flight-day">暂无航班数据</div><div style="font-size:12px;color:#9a7a40;font-weight:700;margin-top:6px">当前赛事还没有出局/退赛/自杀记录，比赛开始后会自动显示。</div></div>';
+      return;
     }
   } else {
     arr = (HIST_DATA.flights[y]||{})[k] || [];
@@ -807,6 +810,21 @@ var BD_LABEL_GROUPS=[
 
 function bdEsc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
+function refreshWorldNo1Label(list){
+  if(!Array.isArray(list)||!list.length)return;
+  list.forEach(function(u){
+    if(u.label==='🥇 世界第一'){
+      u.label=u.base_label||'🌟 顶尖全能王';
+      u.label_color=u.base_label_color||'#6366f1';
+    }
+  });
+  var leader=list.find(function(u){return Number(u.ir)===1;})||list[0];
+  if(leader){
+    leader.label='🥇 世界第一';
+    leader.label_color='#b45309';
+  }
+}
+
 
 
 function applyCurrentToBreakdown(d){
@@ -829,6 +847,7 @@ function applyCurrentToBreakdown(d){
         u.deduct_score=r.deduct_score||0;
       });
       d[g].sort(function(a,b){return (a.ir||9999)-(b.ir||9999);});
+      refreshWorldNo1Label(d[g]);
     });
   }catch(e){console.warn('applyCurrentToBreakdown fallback',e);}
   return d;

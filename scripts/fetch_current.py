@@ -214,7 +214,13 @@ def calc_instant(details_html, new_score, gender, ev_name):
     c, nc = parse_all_scores(details_html)
     c.pop(ev_name, 0); nc.pop(ev_name, 0)
     av = {}; av.update(nc); av.update(c)
-    if new_score > 0: av[ev_name] = new_score
+    if new_score > 0:
+        av[ev_name] = new_score
+    elif ev_name in (ATP_GS if gender == 'MS' else WTA_GS):
+        # 大满贯是强制计分项。本站开始后，去年本站积分先扣除；
+        # 若用户本站暂未得分，当前大满贯必须以 0 分占住一个计分槽，
+        # 不能让其他普通赛事补位。
+        av[ev_name] = 0
     def srt(lst): return sorted(lst, key=lambda x: -x[1])
     if gender == 'MS':
         gs = srt([(n,s) for n,s in av.items() if n in ATP_GS])
@@ -318,6 +324,8 @@ def fetch_event_data(session, csrf, iid, gender, event_name, rank_dict):
         inst = calc_preview_v5_instant(uid, cur, ded, new_s, det, gender, event_name)
         
         not_participated = False
+        today_player = (tr.get('player', '') if tr else '') or ''
+        today_player_alt = (tr.get('player_alt', '') if tr else '') or ''
         if r:
             fill_status = r.get('fill_status', '')
             status = r.get('status', 0)
@@ -327,11 +335,18 @@ def fetch_event_data(session, csrf, iid, gender, event_name, rank_dict):
                 not_participated = True
         else:
             fill_status = tr.get('fill_status', '') if tr else '未参赛'
-            if not fill_status:
-                fill_status = '存活'
-            status = tr.get('status', 2) if tr else 0
-            if not status:
-                status = 2
+            if not today_player or today_player == '轮空':
+                # 只有 detail 没有 score 的用户，如果当天没有实际选人，属于未参赛。
+                # 典型场景：Day1 轮空也需要象征性填人；忘填后 Day2 才开始填，仍不能算存活。
+                fill_status = '未参赛'
+                status = 1
+                not_participated = True
+            else:
+                if not fill_status:
+                    fill_status = '存活'
+                status = tr.get('status', 2) if tr else 0
+                if not status:
+                    status = 2
         
         rows_out.append({
             'user_id': uid,
@@ -344,9 +359,9 @@ def fetch_event_data(session, csrf, iid, gender, event_name, rank_dict):
             'deduct_score': ded,
             'this_event_score': new_s,
             'instant_score': inst,
-            'today_player': tr.get('player', ''),
-            'today_player_alt': tr.get('player_alt', ''),
-            'has_today': uid in today_map,
+            'today_player': today_player,
+            'today_player_alt': today_player_alt,
+            'has_today': uid in today_map and bool(today_player),
             'not_participated': not_participated,
             'players': parse_players(r.get('players', '') if r else tr.get('players', '')),
         })

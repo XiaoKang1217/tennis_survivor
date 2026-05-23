@@ -2,7 +2,7 @@ name: Update Daily Data
 
 on:
   schedule:
-    - cron: '0 3 * * *'
+    - cron: '19 3 * * *'
   workflow_dispatch:
 
 jobs:
@@ -16,6 +16,7 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install -r scripts/requirements.txt
+      - run: python -m unittest scripts.test_scoring
       - run: python scripts/fetch_history.py
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:

@@ -333,46 +333,27 @@ ROAST_DICT = {('科达', '阿德莱德', 0, 'ms', 2026): '科达Day1首秀，替
 def roast(player,event,day,count,rank,year=None,gender=None):
     """只负责生成惨案辣评，不改变惨案排名/计数/筛选逻辑。"""
     g=str(gender or '').lower()
-    key=(player,event,day,g,year)
-    if key in ROAST_DICT:
-        return ROAST_DICT[key]
-
-    # 新进 Top30 但尚未手写入库的惨案：按球员/赛事/天数/人数生成一条独立兜底文案。
-    # 这里不参与惨案生成逻辑，只决定 comment 文案。
+    # 不再优先使用手写字典，避免球员背景、场地、国籍等静态信息过期或写错。
+    # 文案只引用确定数据：球员、赛事、Day、送走人数、惨案排名。
     day_no=day+1
     tour='ATP' if g=='ms' else ('WTA' if g=='ws' else '网坛')
-    event_flavor={
-        '澳网':'墨尔本热浪','法网':'罗兰加洛斯红土','温网':'温布顿草皮','美网':'法拉盛夜风',
-        '印第安维尔斯':'沙漠风暴','迈阿密':'佛州海风','马德里':'高原红土','罗马':'斗兽场余温',
-        '蒙特卡洛':'摩纳哥悬崖','多哈':'卡塔尔热风','迪拜':'中东沙尘','北京':'国家网球中心',
-        '上海':'浦东硬地','武汉':'江城夜色','东京':'东京湾风','首尔':'汉江边',
-        '香港':'维港夜景','阿德莱德':'南澳热风','布里斯班':'昆士兰烈日','霍巴特':'塔斯马尼亚海风',
-        '查尔斯顿':'绿土黏性','斯图加特':'德式室内地板','鹿特丹':'荷兰室内风车','蒙彼利埃':'法国南部室内灯光',
-        '阿卡普尔科':'太平洋海岸','休斯顿':'德州土场','慕尼黑':'巴伐利亚啤酒泡沫','林茨':'奥地利室内回声',
-        '阿布扎比':'中东夜场','梅里达':'墨西哥湿热','蒙特利尔':'加拿大夏风','多伦多':'北境硬地',
-        '辛辛那提':'俄亥俄热浪','巴黎':'巴黎室内灯光','汉堡':'德国港口风','哈雷':'德国草地',
-        '伊斯特本':'英国海边草场','斯海尔托亨博斯':'荷兰草地低地','巴特洪堡':'德国草地小镇',
-        '帕勒莫':'西西里海风','蒙特雷':'墨西哥高原','宁波':'东海边风','九江':'长江边水汽',
-        '伦敦':'伦敦草地','斯特拉斯堡':'阿尔萨斯红土','新加坡':'赤道湿热','柏林':'德国首都风',
-        '奥运会':'五环压力'
-    }
-    flavor=next((v for k,v in event_flavor.items() if k in event), f'{event}现场')
+    scale = '年度级事故' if rank <= 3 else ('大型翻车现场' if count >= 80 else ('精准破防局' if count >= 40 else '小范围痛击'))
     styles=[
-        f'{player}{event}Day{day_no}把{count}个人整齐送进候机厅，{flavor}都没这么会吹冷风。热门不是免死金牌，今天更像集体退票二维码。',
-        f'{event}Day{day_no}，{player}用一场比赛给{count}位勇士上课：幸存者最怕的不是签表难，是你以为这人稳。{flavor}见证了判断力蒸发。',
-        f'{count}个人把命交给{player}，{player}转手交给{event}的天气和玄学。Day{day_no}结束后，{tour}信仰暂时下线，扎心得很有仪式感。',
-        f'{player}今日营业项目：比赛可以输，幸存者必须带走。{event}Day{day_no}一口气收割{count}人，{flavor}都替这份信任感到尴尬。',
-        f'{event}Day{day_no}惨案更新，凶手栏写着{player}。{count}人本来想借TA续命，结果被安排成背景板，连复盘都显得多余。',
-        f'{player}在{event}Day{day_no}完成精准打击，{count}份填表自信当场碎成渣。{flavor}负责风景，TA负责把大家送回首页。',
-        f'{tour}幸存者今日冷知识：不要把全部安全感押在{player}身上。{event}Day{day_no}之后，{count}人共同拥有了一个新身份——前参赛者。',
-        f'{event}的{flavor}还在，{player}的签表寿命先没了。Day{day_no}这一下带走{count}人，属于看完比分会沉默三秒的那种惨。',
-        f'{player}Day{day_no}在{event}交出的不是比分，是{count}人的退赛通知书。选TA的人不一定天真，只是今天被网球狠狠教育。',
-        f'{event}Day{day_no}，{player}把悬念留给对手，把痛苦留给{count}个填表人。{flavor}很美，但回程机票更真实。',
-        f'{count}人跟着{player}来到{event}Day{day_no}，然后一起体验了什么叫“刚觉得安全，马上出局”。{tour}剧本组今天下手挺黑。',
-        f'{player}这场像是给幸存者开的专场脱口秀，包袱响了，{count}人没了。{event}Day{day_no}，笑点在场上，痛点在表里。',
-        f'{event}Day{day_no}的{player}，主打一个不按大家的生存计划出牌。{count}人被迫提前复盘：下次少信一点，可能多活一天。',
-        f'{player}把{event}Day{day_no}打成了大型劝退现场。{count}个人排队出局，{flavor}顺便给每个人吹了一下冷静冷静的风。',
-        f'如果幸存者有黑匣子，{event}Day{day_no}这一页会写：{player}起飞失败，{count}名乘客已转入候机。辛辣但准确。'
+        f'{event}Day{day_no}，{player}把{count}份安全感按在地上摩擦。以为是续命票，打开一看是出局通知，{scale}实至名归。',
+        f'{count}个人把今天交给{player}，{player}反手交出一份集体沉默。{event}Day{day_no}，最扎心的不是输，是大家真信了。',
+        f'{player}在{event}Day{day_no}完成精准收割：{count}人一起从“稳了”滑到“我怎么又没了”。复盘可以，别太大声。',
+        f'{tour}幸存者今日教材：不要把全部希望押给{player}。{event}Day{day_no}之后，{count}个人同时学会了这章。',
+        f'{event}Day{day_no}惨案排名第{rank}，主角{player}，受伤群众{count}。这不是爆冷，这是给填表人上的情绪管理课。',
+        f'{player}今天没有只输一场比赛，TA顺手带走了{count}个幸存者名额。{event}Day{day_no}，伤害不大，主要是很难装没事。',
+        f'{count}人本来想靠{player}过桥，结果桥到一半开始收费，费用是本轮生命值。{event}Day{day_no}，账单已出。',
+        f'{player}把{event}Day{day_no}打成了大型撤退演习，{count}个人整齐离场。选择没错，错的是网球不讲人情。',
+        f'{event}Day{day_no}，{player}给{count}个人发了同款结局：你可以分析很久，但结果只需要一秒刺痛。',
+        f'如果“我以为稳了”有纪念碑，{event}Day{day_no}会刻上{player}的名字。{count}个人路过都得低头沉思。',
+        f'{player}今日表现主打一个简单直接：比赛输了，顺便把{count}位填表人的心态也整理掉。{event}Day{day_no}，很有执行力。',
+        f'{event}Day{day_no}，{count}个人跟着{player}体验了幸存者核心玩法：你负责相信，网球负责拆台。',
+        f'{player}这一场像是专门来测试大家抗压能力的。{count}个测试样本，{event}Day{day_no}统一判定：还得练。',
+        f'{count}人选择{player}的时候可能很有逻辑，出局的时候也很有秩序。{event}Day{day_no}，理性分析被比分轻轻合上。',
+        f'{event}Day{day_no}的{player}，让{count}个人明白：幸存者最贵的不是门票，是错付后的嘴硬。'
     ]
     idx=sum(ord(ch) for ch in f'{player}|{event}|{day}|{count}|{rank}|{year}|{g}') % len(styles)
     return styles[idx]
