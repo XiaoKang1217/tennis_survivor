@@ -160,9 +160,11 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 .jinx-track{height:10px;border-radius:999px;background:#fee2e2;overflow:hidden}
 .jinx-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#ef4444,#f97316)}
 .jinx-num{font-size:12px;font-weight:900;color:#7c2d12;white-space:nowrap}
-.jinx-barrage{height:82px;position:relative;overflow:hidden;background:#451a03;border:1px solid #fb923c;border-radius:12px;margin-bottom:12px}
-.jinx-float{position:absolute;left:100%;white-space:nowrap;color:#fff7ed;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:3px 10px;font-size:13px;font-weight:800;text-shadow:0 1px 2px rgba(0,0,0,.3);animation:jinxFly linear infinite}
-@keyframes jinxFly{from{left:100%}to{left:-120%}}
+.jinx-barrage{height:144px;position:relative;overflow:hidden;background:#451a03;border:1px solid #fb923c;border-radius:12px;margin-bottom:12px}
+.jinx-float{position:absolute;left:100%;white-space:nowrap;color:#fff7ed;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:3px 10px;font-size:13px;line-height:18px;font-weight:800;text-shadow:0 1px 2px rgba(0,0,0,.3);animation:none;will-change:left,transform;pointer-events:none}
+.jinx-float.run{animation:jinxFly var(--dur,14s) linear forwards}
+.jinx-empty{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:#fff7ed;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:4px 12px;font-size:13px;font-weight:800}
+@keyframes jinxFly{from{left:100%;transform:translateX(0)}to{left:0;transform:translateX(-100%)}}
 .exp-tag{background:#fef3c7;border:1px solid #fcd34d;border-radius:12px;padding:2px 8px;font-size:12px;color:#78450a;white-space:nowrap;display:inline-block;margin:2px}
 .exp-tag.r{background:#fee2e2;border-color:#fca5a5;color:#dc2626}
 .exp-tag.g{background:#dcfce7;border-color:#86efac;color:#15803d}
@@ -485,6 +487,8 @@ let JINX_TOUR='ATP';
 let JINX_LOADED_KEY='';
 let JINX_VOTES=null;
 let JINX_LOAD_ERROR='';
+let JINX_BARRAGE_TIMERS=[];
+let JINX_BARRAGE_SOURCE=[];
 const SS={};const FS={};
 const GA_MEASUREMENT_ID='G-E51GZG7C1F';
 const SUPABASE_URL='https://avdnhcwmwdwhsecszlcd.supabase.co';
@@ -1444,6 +1448,7 @@ function renderDailyJinx(){
   }
   board.innerHTML=renderJinxShell(pack,body);
   updateJinxFormCount();
+  startJinxBarrage(JINX_VOTES||[]);
 }
 
 function renderJinxShell(pack,body){
@@ -1577,21 +1582,72 @@ function renderJinxResults(pack,votes){
 }
 
 function renderJinxBarrage(votes){
+  const msgs=jinxBarrageMessages(votes);
+  return msgs.length?'<div class="jinx-barrage" id="jinx-barrage"></div>':'<div class="jinx-barrage"><span class="jinx-empty">今天还没有弹幕</span></div>';
+}
+
+function jinxBarrageMessages(votes){
   const seen=new Set();
-  const msgs=votes.filter(v=>String(v.message||'').trim()).filter(v=>{
+  return (votes||[]).filter(v=>String(v.message||'').trim()).filter(v=>{
     const key=String(v.id||v.account_id||'')+'|'+String(v.created_at||'');
     if(seen.has(key))return false;
     seen.add(key);return true;
   }).map(v=>({name:v.voter_name_snapshot||'匿名炉友',msg:String(v.message||'').trim()}));
-  if(!msgs.length)return '<div class="jinx-barrage"><span class="jinx-float" style="top:28px;animation-duration:14s">今天还没有弹幕</span></div>';
-  const items=msgs.map((v,i)=>{
-    const top=8+(i%4)*17;
-    const dur=13+(i%5)*2;
-    const delay=-(i%7)*1.8;
-    return `<span class="jinx-float" style="top:${top}px;animation-duration:${dur}s;animation-delay:${delay}s">@${esc(v.name)}：${esc(v.msg)}</span>`;
-  }).join('');
-  return `<div class="jinx-barrage">${items}</div>`;
 }
+
+function stopJinxBarrage(){
+  JINX_BARRAGE_TIMERS.forEach(t=>clearTimeout(t));
+  JINX_BARRAGE_TIMERS=[];
+  const box=document.getElementById('jinx-barrage');
+  if(box)box.innerHTML='';
+}
+
+function startJinxBarrage(votes){
+  JINX_BARRAGE_SOURCE=votes||[];
+  stopJinxBarrage();
+  const box=document.getElementById('jinx-barrage');
+  const msgs=jinxBarrageMessages(votes);
+  if(!box||!msgs.length||document.hidden)return;
+  const laneCount=Math.min(4,msgs.length);
+  const lanes=Array.from({length:laneCount},()=>[]);
+  msgs.forEach((v,i)=>lanes[i%laneCount].push(v));
+  const next=Array(laneCount).fill(0);
+  const speedPxMs=(box.clientWidth+220)/14000;
+  function launch(laneIdx){
+    if(document.hidden)return;
+    if(!box.isConnected||document.getElementById('jinx-barrage')!==box)return;
+    const lane=lanes[laneIdx];
+    const item=lane[next[laneIdx]%lane.length];
+    next[laneIdx]+=1;
+    const span=document.createElement('span');
+    span.className='jinx-float';
+    span.style.top=(10+laneIdx*32)+'px';
+    span.textContent='@'+item.name+'：'+item.msg;
+    box.appendChild(span);
+    const width=span.getBoundingClientRect().width||220;
+    const dur=Math.round((box.clientWidth+width)/speedPxMs);
+    span.style.setProperty('--dur',dur+'ms');
+    span.addEventListener('animationend',()=>span.remove(),{once:true});
+    requestAnimationFrame(()=>span.classList.add('run'));
+    const clearance=Math.max(2800,Math.ceil((width+96)/speedPxMs));
+    JINX_BARRAGE_TIMERS.push(setTimeout(()=>launch(laneIdx),clearance));
+  }
+  lanes.forEach((_,laneIdx)=>{
+    JINX_BARRAGE_TIMERS.push(setTimeout(()=>launch(laneIdx),laneIdx*900));
+  });
+}
+
+function restartJinxBarrageOnFocus(){
+  if(document.hidden){
+    stopJinxBarrage();
+    return;
+  }
+  if(document.getElementById('jinx-barrage'))startJinxBarrage(JINX_BARRAGE_SOURCE);
+}
+
+document.addEventListener('visibilitychange',restartJinxBarrageOnFocus);
+window.addEventListener('pageshow',restartJinxBarrageOnFocus);
+window.addEventListener('focus',restartJinxBarrageOnFocus);
 
 // 启动加载
 

@@ -7,6 +7,22 @@ Versioning guideline:
 - Minor versions add user-facing features or change data logic.
 - Major versions are reserved for large rewrites or incompatible data changes.
 
+## v0.3.1 - 2026-05-24
+
+Release baseline:
+- Online version before release: `v0.3.0` lineage at live commit `3c01bcb`.
+- New published version: `v0.3.1`.
+- Rollback target for this release: commit `3c01bcb`.
+
+### Fixed
+- Fixed `每日毒奶` barrage playback so messages use a consistent speed, queue per lane, and avoid visual overlap.
+- Fixed barrage recovery after switching away from the page and returning by clearing paused animation state and restarting the queue.
+
+### Validation
+- Ran JS syntax checks for `index.html`.
+- Ran `git diff --check`.
+- Verified the local barrage preview at `http://127.0.0.1:4182/jinx-preview.html`, including consistent speed, no overlap, continuous looping, and recovery after tab visibility changes.
+
 ## v0.3.0 - 2026-05-24
 
 Release baseline:

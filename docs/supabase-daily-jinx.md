@@ -18,6 +18,7 @@ This document records the setup for the `每日毒奶` voting module.
 - Results are visible only after the logged-in account has submitted that date and tour.
 - Messages appear as module-local barrage text in this format: `@用户名：留言`.
 - Each submission produces at most one barrage message, even when the submission selects multiple players.
+- Barrage messages run through same-speed lane queues, loop continuously, and restart after page visibility changes to avoid browser-throttling pileups.
 
 ## SQL Schema And RLS
 
