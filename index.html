@@ -15,6 +15,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Noto Sans SC","Microsoft YaHe
 .tab{padding:5px 12px;border:2px solid rgba(255,255,255,.4);border-radius:20px;cursor:pointer;background:rgba(255,255,255,.15);color:rgba(255,255,255,.9);font-size:12px;font-weight:700;transition:all .2s}
 .tab.on{background:#fff;color:#f59e0b;border-color:#fff;box-shadow:0 3px 10px rgba(0,0,0,.15)}
 .tab:hover:not(.on){background:rgba(255,255,255,.3)}
+.sheet-tabs{display:flex;justify-content:flex-start;gap:8px;margin:0 0 14px;flex-wrap:wrap}
+.sheet-tab{border:2px solid #fde68a;background:#fff;color:#9a7a40;border-radius:20px;padding:7px 20px;font-size:13px;font-weight:800;cursor:pointer;transition:all .2s}
+.sheet-tab.on{background:linear-gradient(135deg,#f59e0b,#f97316);border-color:transparent;color:#fff;box-shadow:0 4px 15px rgba(245,158,11,.24)}
+.sheet-tab:hover:not(.on){border-color:#f97316;color:#f97316}
 .main{padding:15px 20px}
 .panel{display:none}.panel.on{display:block}
 .kpi{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
@@ -82,11 +86,15 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 .st{width:100%;border-collapse:collapse;font-size:13px}
 .st th{color:#9a7a40;font-size:11px;text-transform:uppercase;padding:5px 10px;border-bottom:1px solid #fde68a;text-align:left}
 .st td{padding:6px 10px;border-bottom:1px solid #fef9f0}
-.psr{color:#9a7a40;font-size:12px;font-weight:700;text-align:center;width:32px}
-.psp{font-weight:700;color:#44321c}.psc{text-align:center;font-weight:700;color:#d97706}
-.psp2{text-align:center;color:#9a7a40;font-size:12px}
+.st th,.st td{text-align:left!important}
+.psr{color:#9a7a40;font-size:12px;font-weight:700;width:52px}
+.psp{font-weight:700;color:#44321c}.psc{font-weight:700;color:#d97706}
+.psp2{color:#9a7a40;font-size:12px}
 .psb{padding-right:8px;min-width:80px}
 .bbar{height:9px;border-radius:4px;min-width:2px}
+.pick-stat-more{margin-top:9px;border:2px solid #fde68a;background:#fffaf0;color:#9a7a40;border-radius:18px;padding:5px 14px;font-size:12px;font-weight:800;cursor:pointer}
+.pick-stat-more:hover{border-color:#f97316;color:#f97316}
+.sc:not(.pick-stats-expanded) .pick-stat-extra{display:none}
 .divider{border:none;border-top:2px dashed #fde68a;margin:14px 0}
 .tp{max-width:200px;font-size:12px;color:#78450a;line-height:1.5}
 .tw{font-weight:700;color:#44321c;max-width:150px}
@@ -118,6 +126,43 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 .fortune-btn{padding:11px 32px;background:linear-gradient(135deg,#f59e0b,#f97316);color:#fff;border:none;border-radius:24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 15px rgba(245,158,11,.4);transition:all .2s;margin-top:4px}
 .fortune-btn:hover{transform:translateY(-2px)}.fortune-btn:active{transform:translateY(0)}
 .fortune-hint{color:#9a7a40;font-size:11px}
+.jinx-wrap{max-width:900px;margin:0 auto;padding:16px 0}
+.jinx-title{text-align:center;font-size:1.5em;font-weight:900;color:#78450a;margin-bottom:5px}
+.jinx-sub{text-align:center;color:#9a7a40;font-size:12px;margin-bottom:18px}
+.jinx-tabs{display:flex;justify-content:center;gap:10px;margin-bottom:18px}
+.jtab{padding:7px 22px;border:2px solid #fecaca;border-radius:20px;cursor:pointer;background:#fff;color:#991b1b;font-weight:800;font-size:13px;transition:all .2s}
+.jtab.on{background:linear-gradient(135deg,#ef4444,#f97316);color:#fff;border-color:transparent;box-shadow:0 4px 15px rgba(239,68,68,.26)}
+.jinx-board{background:#fff;border:2px solid #fecaca;border-radius:16px;overflow:hidden;box-shadow:0 8px 30px rgba(239,68,68,.12)}
+.jinx-hero{background:linear-gradient(135deg,#991b1b,#ef4444,#f97316);color:#fff;padding:18px;position:relative;overflow:hidden}
+.jinx-q{font-size:20px;font-weight:900;margin-bottom:7px}
+.jinx-meta{display:flex;gap:7px;flex-wrap:wrap;color:rgba(255,255,255,.88);font-size:12px;font-weight:800}
+.jinx-pill{border:1px solid rgba(255,255,255,.36);background:rgba(255,255,255,.14);border-radius:999px;padding:3px 9px}
+.jinx-body{padding:16px}
+.jinx-status{font-size:12px;color:#9a7a40;margin-bottom:12px;line-height:1.7}
+.jinx-picks{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:8px;margin-bottom:13px}
+.jinx-player{display:flex;align-items:center;gap:7px;border:1px solid #fed7aa;background:#fff7ed;border-radius:10px;padding:8px 10px;cursor:pointer;color:#7c2d12;font-size:13px;font-weight:800;min-height:38px;transition:all .15s}
+.jinx-player:hover{border-color:#fb923c;background:#ffedd5}
+.jinx-player input{accent-color:#ef4444;flex-shrink:0}
+.jinx-player:has(input:checked){border-color:#ef4444;background:#fee2e2;color:#991b1b;box-shadow:0 2px 8px rgba(239,68,68,.12)}
+.jinx-form textarea{width:100%;min-height:78px;resize:vertical;border:2px solid #fed7aa;border-radius:12px;background:#fffaf0;color:#44321c;font-size:14px;line-height:1.6;padding:9px 11px;outline:none}
+.jinx-form textarea:focus{border-color:#ef4444}
+.jinx-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:10px}
+.jinx-count{font-size:12px;color:#9a7a40;font-weight:800}
+.jinx-submit{border:0;border-radius:22px;background:linear-gradient(135deg,#ef4444,#f97316);color:#fff;font-size:14px;font-weight:900;padding:10px 22px;cursor:pointer;box-shadow:0 4px 14px rgba(239,68,68,.24)}
+.jinx-submit:disabled{opacity:.58;cursor:not-allowed}
+.jinx-msg{min-height:18px;margin-top:10px;color:#9a7a40;font-size:12px;line-height:1.5}
+.jinx-msg.err{color:#dc2626}.jinx-msg.ok{color:#15803d}
+.jinx-results{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+.jinx-results .kc .kn{font-size:1.15em;max-width:150px;margin:0 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.jinx-bars{display:grid;gap:8px}
+.jinx-bar{display:grid;grid-template-columns:minmax(90px,150px) 1fr auto;gap:8px;align-items:center;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:8px 10px}
+.jinx-bar-name{font-weight:900;color:#991b1b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.jinx-track{height:10px;border-radius:999px;background:#fee2e2;overflow:hidden}
+.jinx-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#ef4444,#f97316)}
+.jinx-num{font-size:12px;font-weight:900;color:#7c2d12;white-space:nowrap}
+.jinx-barrage{height:82px;position:relative;overflow:hidden;background:#451a03;border:1px solid #fb923c;border-radius:12px;margin-bottom:12px}
+.jinx-float{position:absolute;left:100%;white-space:nowrap;color:#fff7ed;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:3px 10px;font-size:13px;font-weight:800;text-shadow:0 1px 2px rgba(0,0,0,.3);animation:jinxFly linear infinite}
+@keyframes jinxFly{from{left:100%}to{left:-120%}}
 .exp-tag{background:#fef3c7;border:1px solid #fcd34d;border-radius:12px;padding:2px 8px;font-size:12px;color:#78450a;white-space:nowrap;display:inline-block;margin:2px}
 .exp-tag.r{background:#fee2e2;border-color:#fca5a5;color:#dc2626}
 .exp-tag.g{background:#dcfce7;border-color:#86efac;color:#15803d}
@@ -135,6 +180,8 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
   .hdt{align-items:flex-start}
   .tabs{gap:5px;overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px}
   .tab{white-space:nowrap;padding:6px 10px;font-size:12px}
+  .sheet-tabs{overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px}
+  .sheet-tab{white-space:nowrap;padding:6px 14px;font-size:12px}
   .main{padding:10px}
   .kpi{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
   .kc{min-width:0;padding:8px}
@@ -151,6 +198,14 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
   .fortune-card{padding:18px;min-height:210px}
   .fortune-player{font-size:1.55em}
   .fortune-text{font-size:12px}
+  .jinx-wrap{padding:8px 0}
+  .jinx-hero{padding:14px}
+  .jinx-q{font-size:17px}
+  .jinx-body{padding:12px}
+  .jinx-picks{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+  .jinx-player{font-size:12px;padding:8px}
+  .jinx-bar{grid-template-columns:minmax(72px,112px) 1fr;gap:6px}
+  .jinx-num{grid-column:2;text-align:right}
   .flight-grid{grid-template-columns:1fr}
 }
 
@@ -326,7 +381,7 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 <div id="hdr">
   <div class="hdt">
     <h1>🎾 签表幸存者之炉网</h1>
-    <div class="upd-wrap"><span class="upd" id="upd-time">加载中...</span><span class="dev">开发者：Candice·卢布列娃</span><button class="auth-chip" id="auth-chip" onclick="openAuthModal()">登录</button></div>
+    <div class="upd-wrap"><span class="upd" id="upd-time">加载中...</span><button class="auth-chip" id="auth-chip" onclick="openAuthModal()">登录</button><span class="dev">开发者：Candice·卢布列娃</span></div>
   </div>
   <div class="refresh-bar">
     <div class="refresh-dot" id="rdot"></div>
@@ -335,14 +390,12 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
   <div class="tabs">
     <button class="tab on" onclick="switchTab('ms-s',this)" id="tab-ms-s">🎾 ATP 男单</button>
     <button class="tab" onclick="switchTab('ws-s',this)" id="tab-ws-s">🎾 WTA 女单</button>
-    <button class="tab" onclick="switchTab('ms-bd',this)" id="tab-ms-bd">💹 ATP 积分构成</button>
-    <button class="tab" onclick="switchTab('ws-bd',this)" id="tab-ws-bd">💹 WTA 积分构成</button>
-    <button class="tab" onclick="switchTab('ms-p',this)">📊 ATP 用户偏好</button>
-    <button class="tab" onclick="switchTab('ws-p',this)">📊 WTA 用户偏好</button>
-    <button class="tab" onclick="switchTab('ms-t',this)">💀 历史上的惨案-ATP</button>
-    <button class="tab" onclick="switchTab('ws-t',this)">💔 历史上的惨案-WTA</button>
-    <button class="tab" onclick="switchTab('flight',this)">✈️ 每日航班</button>
-    <button class="tab" onclick="switchTab('fortune',this)">🔮 每日运势</button>
+    <button class="tab" onclick="switchTab('ms-bd',this)" id="tab-breakdown">💹 积分构成</button>
+    <button class="tab" onclick="switchTab('ms-p',this)" id="tab-preference">📊 用户偏好</button>
+    <button class="tab" onclick="switchTab('ms-t',this)" id="tab-disasters">💀 历史上的惨案</button>
+    <button class="tab" onclick="switchTab('flight',this)" id="tab-flight">✈️ 每日航班</button>
+    <button class="tab" onclick="switchTab('fortune',this)" id="tab-fortune">🔮 每日运势</button>
+    <button class="tab" onclick="switchTab('jinx',this)" id="tab-jinx">🥛 每日毒奶</button>
   </div>
 </div>
 <div class="main">
@@ -356,25 +409,42 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
   <div id="content-ws-s" style="display:none"></div>
 </div>
 <div id="p-ms-bd" class="panel">
+  <div class="sheet-tabs" aria-label="积分构成 ATP/WTA 切换">
+    <button class="sheet-tab on" onclick="switchTab('ms-bd',this)">ATP 男单</button>
+    <button class="sheet-tab" onclick="switchTab('ws-bd',this)">WTA 女单</button>
+  </div>
   <div class="bd-loading" id="bd-loading-ms">⏳ 加载ATP积分构成数据中...</div>
   <div id="bd-content-ms" style="display:none"></div>
 </div>
 <div id="p-ws-bd" class="panel">
+  <div class="sheet-tabs" aria-label="积分构成 ATP/WTA 切换">
+    <button class="sheet-tab" onclick="switchTab('ms-bd',this)">ATP 男单</button>
+    <button class="sheet-tab on" onclick="switchTab('ws-bd',this)">WTA 女单</button>
+  </div>
   <div class="bd-loading" id="bd-loading-ws">⏳ 加载WTA积分构成数据中...</div>
   <div id="bd-content-ws" style="display:none"></div>
 </div>
 <div id="p-ms-p" class="panel">
+  <div class="sheet-tabs" aria-label="用户偏好 ATP/WTA 切换">
+    <button class="sheet-tab on" onclick="switchTab('ms-p',this)">ATP 男单</button>
+    <button class="sheet-tab" onclick="switchTab('ws-p',this)">WTA 女单</button>
+  </div>
   <div class="loading" id="loading-msp">⏳ 加载ATP偏好数据中...</div>
   <div id="content-ms-p" style="display:none"></div>
 </div>
 <div id="p-ws-p" class="panel">
+  <div class="sheet-tabs" aria-label="用户偏好 ATP/WTA 切换">
+    <button class="sheet-tab" onclick="switchTab('ms-p',this)">ATP 男单</button>
+    <button class="sheet-tab on" onclick="switchTab('ws-p',this)">WTA 女单</button>
+  </div>
   <div class="loading" id="loading-wsp">⏳ 加载WTA偏好数据中...</div>
   <div id="content-ws-p" style="display:none"></div>
 </div>
-<div id="p-ms-t" class="panel"><div id="content-ms-t"></div></div>
-<div id="p-ws-t" class="panel"><div id="content-ws-t"></div></div>
+<div id="p-ms-t" class="panel"><div class="sheet-tabs" aria-label="历史上的惨案 ATP/WTA 切换"><button class="sheet-tab on" onclick="switchTab('ms-t',this)">ATP 男单</button><button class="sheet-tab" onclick="switchTab('ws-t',this)">WTA 女单</button></div><div id="content-ms-t"></div></div>
+<div id="p-ws-t" class="panel"><div class="sheet-tabs" aria-label="历史上的惨案 ATP/WTA 切换"><button class="sheet-tab" onclick="switchTab('ms-t',this)">ATP 男单</button><button class="sheet-tab on" onclick="switchTab('ws-t',this)">WTA 女单</button></div><div id="content-ws-t"></div></div>
 <div id="p-flight" class="panel"><div class="flight-toolbar"><div style="font-size:15px;font-weight:800;color:#d97706">✈️ 每日航班</div><select class="select-mini" id="flight-year" onchange="initFlightSelect(true)"><option selected>2026</option><option>2025</option><option>2024</option></select><select class="select-mini" id="flight-select" onchange="renderFlights(true)"></select></div><div id="flight-box" class="flight-grid"></div></div>
 <div id="p-fortune" class="panel"><div class="fortune-wrap"><div class="fortune-title">🔮 今日运势抽签</div><div class="fortune-sub">每天选球员愁破头？让神明帮你做选择！</div><div class="fortune-tabs"><button class="ftab on" onclick="setFortune('atp',this)">⚡ ATP 男单</button><button class="ftab" onclick="setFortune('wta',this)">🌸 WTA 女单</button></div><div class="fortune-card" id="fortune-card"><div class="fortune-hint">✨ 今日可选球员已入签筒 ✨</div><div class="fortune-player" id="fortune-player">？？？</div><div class="fattr" id="fortune-attr">未摇签</div><div class="fortune-text" id="fortune-text">点击下方按钮，开始今日运势抽签</div><div class="fortune-yi" id="fortune-yi"></div></div><br><button class="fortune-btn" onclick="drawFortune()">🎋 摇签</button><br><br><div class="fortune-hint">签文仅供娱乐，后果自负 😄</div></div></div></div>
+<div id="p-jinx" class="panel"><div class="jinx-wrap"><div class="jinx-title">🥛 每日毒奶</div><div class="jinx-sub">今天你最希望谁出局？</div><div class="jinx-tabs"><button class="jtab on" id="jinx-tab-atp" onclick="setJinxTour('ATP',this)">⚡ ATP 男单</button><button class="jtab" id="jinx-tab-wta" onclick="setJinxTour('WTA',this)">🌸 WTA 女单</button></div><div class="jinx-board" id="jinx-board"><div class="loading">⏳ 等待今日赛程数据...</div></div></div></div>
 
 <div class="auth-modal" id="auth-modal" aria-hidden="true">
   <div class="auth-card">
@@ -411,6 +481,10 @@ const FTEXTS=["此签大吉！天罡星照命，今日所选之人，剑气冲�
 let GDATA=null; let PDATA=null;
 let MSPOOL=[]; let WSPOOL=[];
 let fGender='atp';
+let JINX_TOUR='ATP';
+let JINX_LOADED_KEY='';
+let JINX_VOTES=null;
+let JINX_LOAD_ERROR='';
 const SS={};const FS={};
 const GA_MEASUREMENT_ID='G-E51GZG7C1F';
 const SUPABASE_URL='https://avdnhcwmwdwhsecszlcd.supabase.co';
@@ -418,6 +492,13 @@ const SUPABASE_ANON_KEY='sb_publishable_W7jtbI1juCvm80UvZ3qgJQ_MrGfhwKG';
 const SUPABASE_JS_URL='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
 const MODULE_VIEWED={};
 const SEARCH_TRACK_TIMERS={};
+const TOP_TAB_BY_PANEL={
+  'ms-s':'tab-ms-s','ws-s':'tab-ws-s',
+  'ms-bd':'tab-breakdown','ws-bd':'tab-breakdown',
+  'ms-p':'tab-preference','ws-p':'tab-preference',
+  'ms-t':'tab-disasters','ws-t':'tab-disasters',
+  flight:'tab-flight',fortune:'tab-fortune',jinx:'tab-jinx'
+};
 let ACTIVE_TAB='ms-s';
 let SUPABASE_CLIENT=null;
 let SUPABASE_LOADING=null;
@@ -461,13 +542,13 @@ function currentEventLabel(g){
 
 function tabMeta(tab){
   var g=tab.indexOf('ws')===0?'ws':tab.indexOf('ms')===0?'ms':'';
-  var tour=g==='ms'?'ATP':g==='ws'?'WTA':(tab==='fortune'?(fGender==='atp'?'ATP':'WTA'):'combined');
+  var tour=g==='ms'?'ATP':g==='ws'?'WTA':(tab==='fortune'?(fGender==='atp'?'ATP':'WTA'):(tab==='jinx'?JINX_TOUR:'combined'));
   var module={
     'ms-s':'current_picks','ws-s':'current_picks',
     'ms-bd':'breakdown','ws-bd':'breakdown',
     'ms-p':'preference','ws-p':'preference',
     'ms-t':'disasters','ws-t':'disasters',
-    flight:'daily_flights',fortune:'fortune'
+    flight:'daily_flights',fortune:'fortune',jinx:'daily_jinx'
   }[tab]||tab;
   var eventLabel=(g==='ms'||g==='ws')&&tab.slice(-2)==='-s'?currentEventLabel(g):'';
   return {module:module,tour:tour,event_label:eventLabel};
@@ -565,6 +646,8 @@ function openAuthModal(opts){
     setAuthMessage('登录后可以查看你关注的用户。');
   }else if(opts.reason==='follow'){
     setAuthMessage('登录后可以关注这位用户。');
+  }else if(opts.reason==='jinx_vote'){
+    setAuthMessage('登录后可以提交今日毒奶。');
   }
   trackEvent('auth_modal_open',{module:tabMeta(ACTIVE_TAB).module,source:opts.reason||'account'});
   setTimeout(()=>{
@@ -590,6 +673,7 @@ async function afterAuthChanged(user){
   updateAuthUi();
   refreshFollowButtons();
   refreshLiveFilters();
+  if(ACTIVE_TAB==='jinx')renderDailyJinx();
 }
 
 async function initAuth(){
@@ -806,7 +890,6 @@ function resetFollowingFilters(){
 
 // ===== 数据加载 =====
 const CURRENT_REFRESH_MS=10*60*1000;
-const CURRENT_UPDATE_LABEL='每30分钟内更新';
 
 async function loadData(){
   const t=Date.now();
@@ -821,9 +904,10 @@ async function loadData(){
     GDATA=cur;
     MSPOOL=(cur.ms&&cur.ms.today_pool)||[];
     WSPOOL=(cur.ws&&cur.ws.today_pool)||[];
-    document.getElementById('upd-time').textContent='⏱ '+(cur.updated_at||'')+'｜'+CURRENT_UPDATE_LABEL;
+    document.getElementById('upd-time').textContent='⏱ '+(cur.updated_at||'');
     if(cur.ms){document.getElementById('tab-ms-s').textContent='🎾 ATP '+(cur.ms.event_name||'')+(cur.ms.today_day?' Day'+cur.ms.today_day:'');renderScore('ms', cur.ms);}
     if(cur.ws){document.getElementById('tab-ws-s').textContent='🎾 WTA '+(cur.ws.event_name||'')+(cur.ws.today_day?' Day'+cur.ws.today_day:'');renderScore('ws', cur.ws);}
+    if(ACTIVE_TAB==='jinx')renderDailyJinx();
     trackModuleView(ACTIVE_TAB);
   }catch(e){
     console.error('实时数据加载失败',e);
@@ -870,11 +954,12 @@ async function refreshCurrentOnly(){
     GDATA=cur;
     MSPOOL=cur.ms.today_pool||[];
     WSPOOL=cur.ws.today_pool||[];
-    document.getElementById('upd-time').textContent='⏱ '+cur.updated_at+'｜'+CURRENT_UPDATE_LABEL;
+    document.getElementById('upd-time').textContent='⏱ '+cur.updated_at;
     document.getElementById('tab-ms-s').textContent='🎾 ATP '+cur.ms.event_name+' Day'+cur.ms.today_day;
     document.getElementById('tab-ws-s').textContent='🎾 WTA '+cur.ws.event_name+' Day'+cur.ws.today_day;
     renderScore('ms', cur.ms);
     renderScore('ws', cur.ws);
+    if(ACTIVE_TAB==='jinx')renderDailyJinx();
     // 实时数据刷新后，同步覆盖积分构成中的即时积分与本站得分
     if(BD_DATA){rerenderBreakdownIfReady();}
     document.getElementById('rdot').style.background='#4ade80';
@@ -894,7 +979,8 @@ function renderScore(g, data){
   const siteRows=rows.filter(r=>r.fill_status!=='未参赛' && !r.not_participated);
   const siteTotal=siteRows.length;
   const alive=siteRows.filter(r=>r.fill_status==='存活'||r.status===2).length;
-  const filled=data.filled_count||siteRows.filter(r=>r.has_today&&r.today_player&&r.today_player!=='轮空').length;
+  const filledSource=data.filled_count!=null?Number(data.filled_count):null;
+  const filled=Number.isFinite(filledSource)?filledSource:siteRows.filter(r=>r.has_today).length;
   const suicide=siteRows.filter(r=>String(r.fill_status||'').includes('自杀')).length;
   const total=siteTotal;
   const stats=data.player_stats||[];
@@ -904,8 +990,17 @@ function renderScore(g, data){
   
   // 今日选人统计
   const ccArr=['#f59e0b','#f97316','#ef4444','#8b5cf6','#10b981','#3b82f6'];
-  const aliveFilled=stats.reduce((s,it)=>s+it[1],0)||1;
-  const statsHtml=stats.length?`<div class="sc"><div class="sch"><span>📊 今日选人统计（仅存活）—${g=='ms'?'ATP男单':'WTA女单'}Day${data.today_day}</span><span class="scs">存活${alive}人·今日已填${aliveFilled}人</span></div><table class="st"><thead><tr><th></th><th>选手</th><th>人数</th><th>占比</th><th>分布</th></tr></thead><tbody>${stats.map((it,i)=>`<tr class="pick-stat-row" onclick="filterPick('${tab}',decodeURIComponent('${encodeURIComponent(it[0])}'))" title="点击筛选选择 ${esc(it[0])} 的用户"><td class="psr">#${i+1}</td><td class="psp">${it[0]}</td><td class="psc">${it[1]}人</td><td class="psp2">${(it[1]/aliveFilled*100).toFixed(1)}%</td><td class="psb"><div class="bbar" style="width:${(it[1]/aliveFilled*100).toFixed(1)}%;background:${ccArr[i%6]}"></div></td></tr>`).join('')}</tbody></table></div><hr class="divider">`:'' ;
+  const statsCount=stats.reduce((s,it)=>s+Number(it[1]||0),0);
+  const statsTotal=filled||statsCount||alive||1;
+  const extraStats=Math.max(0,stats.length-10);
+  const statRows=stats.map((it,i)=>{
+    const name=String(it[0]||'');
+    const count=Number(it[1]||0);
+    const pct=count/statsTotal*100;
+    return `<tr class="pick-stat-row ${i>=10?'pick-stat-extra':''}" onclick="filterPick('${tab}',decodeURIComponent('${encodeURIComponent(name)}'))" title="点击筛选选择 ${esc(name)} 的用户"><td class="psr">#${i+1}</td><td class="psp">${esc(name)}</td><td class="psc">${count}人</td><td class="psp2">${pct.toFixed(1)}%</td><td class="psb"><div class="bbar" style="width:${pct.toFixed(1)}%;background:${ccArr[i%6]}"></div></td></tr>`;
+  }).join('');
+  const moreStats=extraStats?`<button class="pick-stat-more" type="button" onclick="togglePickStats(this)">展开</button>`:'';
+  const statsHtml=stats.length?`<div class="sc"><div class="sch"><span>📊 今日选人统计（仅存活）—${g=='ms'?'ATP男单':'WTA女单'}Day${data.today_day}</span><span class="scs">存活${alive}人·今日已填${filled}人</span></div><table class="st"><thead><tr><th></th><th>选手</th><th>人数</th><th>占比</th><th>分布</th></tr></thead><tbody>${statRows}</tbody></table>${moreStats}</div><hr class="divider">`:'' ;
   
   // KPI
   const kpi=`<div class="kpi"><div class="kc"><div class="kn nt">${totalUsers}</div><div class="kl">总人数</div></div><div class="kc"><div class="kn nt">${siteTotal}</div><div class="kl">本站参赛</div></div><div class="kc"><div class="kn na">${alive}</div><div class="kl">🟢存活</div></div><div class="kc"><div class="kn nd">${siteTotal-alive}</div><div class="kl">❌出局</div></div><div class="kc"><div class="kn" style="color:#7c3aed">${filled}</div><div class="kl">今日已填</div></div><div class="kc"><div class="kn nd">${suicide}</div><div class="kl">自杀</div></div></div>`;
@@ -1090,9 +1185,13 @@ function toggleExpDyn(row){
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function switchTab(t,btn){
   var prev=ACTIVE_TAB;
+  var panel=document.getElementById('p-'+t);
+  if(!panel)return;
+  var topBtn=(btn&&btn.classList&&btn.classList.contains('tab'))?btn:document.getElementById(TOP_TAB_BY_PANEL[t]);
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
-  document.getElementById('p-'+t).classList.add('on');btn.classList.add('on');
+  panel.classList.add('on');
+  if(topBtn)topBtn.classList.add('on');
   ACTIVE_TAB=t;
   var oldMeta=tabMeta(prev),newMeta=tabMeta(t);
   trackModuleView(t);
@@ -1114,6 +1213,13 @@ function switchTab(t,btn){
   }
   if((t==='ms-t'||t==='ws-t')&&!HIST_DATA){loadHistData(function(){renderDisaster('ms');renderDisaster('ws');});}
   if(t==='flight'&&!HIST_DATA){loadHistData(function(){initFlightSelect();});}
+  if(t==='jinx')renderDailyJinx();
+}
+function togglePickStats(btn){
+  const box=btn.closest('.sc');
+  if(!box)return;
+  const open=box.classList.toggle('pick-stats-expanded');
+  btn.textContent=open?'收起':'展开';
 }
 function setF(tab,f,btn){
   if(f==='following'&&!AUTH_USER){
@@ -1237,6 +1343,255 @@ function renderFlights(userAction=false){
 
 function setFortune(g,btn){var prev=fGender;fGender=g;document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');document.getElementById('fortune-player').textContent='？？？';document.getElementById('fortune-attr').textContent='未摇签';document.getElementById('fortune-text').textContent='点击下方按钮，开始今日运势抽签';document.getElementById('fortune-yi').innerHTML='';if(prev!==g)trackEvent('tour_switch',{module:'fortune',tour:g==='atp'?'ATP':'WTA'});}
 function drawFortune(){if(!HIST_DATA){loadHistData(function(){drawFortune();});document.getElementById('fortune-text').textContent='⏳ 数据加载中...';return;}const key='fortune_'+fGender;const today=new Date().toISOString().slice(0,10);let rec=JSON.parse(localStorage.getItem(key)||'{}');if(rec.date!==today)rec={date:today,count:0};if(rec.count>=3){document.getElementById('fortune-player').textContent='命运是测不准的';document.getElementById('fortune-attr').textContent='明日再问';document.getElementById('fortune-text').textContent='命运是测不准的。明天再来吧';document.getElementById('fortune-yi').innerHTML='';return;}rec.count++;localStorage.setItem(key,JSON.stringify(rec));const pool=fGender==='atp'?MSPOOL:WSPOOL;if(!pool||!pool.length){document.getElementById('fortune-player').textContent='暂无数据';return;}const player=pool[Math.floor(Math.random()*pool.length)];const f=HIST_DATA.fortunes[Math.floor(Math.random()*HIST_DATA.fortunes.length)];const card=document.getElementById('fortune-card');card.classList.remove('shake');void card.offsetWidth;card.classList.add('shake');document.getElementById('fortune-player').textContent=player;document.getElementById('fortune-attr').textContent=f.attr+'（今日还可抽'+(3-rec.count)+'次）';document.getElementById('fortune-text').textContent=f.text;document.getElementById('fortune-yi').innerHTML=`宜：${f.yi}<br>忌：${f.ji}`;trackEvent('fortune_draw',{module:'fortune',tour:fGender==='atp'?'ATP':'WTA'});}
+
+// 每日毒奶
+function chinaDateKey(){
+  try{
+    const parts=new Intl.DateTimeFormat('zh-CN',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
+    const p={};parts.forEach(x=>{if(x.type!=='literal')p[x.type]=x.value;});
+    return p.year+'-'+p.month+'-'+p.day;
+  }catch(e){
+    return new Date(Date.now()+8*60*60*1000).toISOString().slice(0,10);
+  }
+}
+
+function getJinxPack(){
+  const g=JINX_TOUR==='ATP'?'ms':'ws';
+  const data=GDATA&&GDATA[g];
+  const seen=new Set();
+  const pool=((data&&data.today_pool)||[]).filter(name=>{
+    name=String(name||'').trim();
+    if(!name||seen.has(name))return false;
+    seen.add(name);return true;
+  }).sort(compareChineseNamePinyin);
+  return {
+    g:g,
+    tour:JINX_TOUR,
+    date:chinaDateKey(),
+    event_id:(data&&data.event_id)||'',
+    event_name:(data&&data.event_name)||'',
+    day:(data&&data.today_day)||'',
+    pool:pool
+  };
+}
+
+function compareChineseNamePinyin(a,b){
+  return String(a||'').localeCompare(String(b||''),'zh-Hans-CN-u-co-pinyin',{sensitivity:'base',numeric:true});
+}
+
+function jinxStateKey(pack){
+  return (AUTH_USER?AUTH_USER.id:'anon')+'|'+pack.date+'|'+pack.tour+'|'+pack.event_id;
+}
+
+function jinxDisplayMeta(pack){
+  const day=pack.day?' Day'+pack.day:'';
+  return `${pack.date} · ${pack.tour}${pack.event_name?' · '+pack.event_name:''}${day}`;
+}
+
+function setJinxTour(tour,btn){
+  const prev=JINX_TOUR;
+  JINX_TOUR=tour;
+  document.querySelectorAll('.jtab').forEach(b=>b.classList.remove('on'));
+  if(btn)btn.classList.add('on');
+  JINX_LOADED_KEY='';JINX_VOTES=null;JINX_LOAD_ERROR='';
+  renderDailyJinx();
+  if(prev!==tour)trackEvent('tour_switch',{module:'daily_jinx',tour:tour});
+}
+
+function dailyJinxErrorText(err){
+  const msg=String(err&&err.message||err||'');
+  if(/relation .*daily_jinx_votes|does not exist|schema cache/i.test(msg))return '每日毒奶数据表还没创建，请先执行 Supabase SQL。';
+  if(/duplicate|unique|23505/i.test(msg))return '你今天已经提交过了，不能修改。';
+  if(/row-level security|permission|policy/i.test(msg))return '数据库权限校验未通过，请检查每日毒奶 RLS 配置。';
+  return authErrorText(err);
+}
+
+function setJinxMsg(msg,type){
+  const el=document.getElementById('jinx-msg');
+  if(!el)return;
+  el.textContent=msg||'';
+  el.className='jinx-msg'+(type?' '+type:'');
+}
+
+function renderDailyJinx(){
+  const board=document.getElementById('jinx-board');
+  if(!board)return;
+  if(!GDATA){
+    board.innerHTML='<div class="loading">⏳ 等待今日赛程数据...</div>';
+    return;
+  }
+  const pack=getJinxPack();
+  const key=jinxStateKey(pack);
+  if(!pack.pool.length){
+    board.innerHTML=renderJinxShell(pack,'<div class="jinx-status">今日赛程候选池为空，等实时数据刷新后再来毒奶。</div>');
+    return;
+  }
+  if(AUTH_USER&&key!==JINX_LOADED_KEY){
+    JINX_LOADED_KEY=key;JINX_VOTES=null;JINX_LOAD_ERROR='';
+    loadDailyJinxVotes();
+  }else if(!AUTH_USER&&key!==JINX_LOADED_KEY){
+    JINX_LOADED_KEY=key;JINX_VOTES=null;JINX_LOAD_ERROR='';
+  }
+  let body='';
+  if(JINX_LOAD_ERROR){
+    body='<div class="jinx-status r">'+esc(JINX_LOAD_ERROR)+'</div>'+renderJinxForm(pack,false);
+  }else if(AUTH_USER&&JINX_VOTES===null){
+    body='<div class="loading">⏳ 正在检查今日提交状态...</div>';
+  }else if(AUTH_USER&&hasSubmittedJinxVote()){
+    body=renderJinxResults(pack,JINX_VOTES||[]);
+  }else{
+    body=renderJinxForm(pack,false);
+  }
+  board.innerHTML=renderJinxShell(pack,body);
+  updateJinxFormCount();
+}
+
+function renderJinxShell(pack,body){
+  return `<div class="jinx-hero"><div class="jinx-q">今天你最希望谁出局？</div><div class="jinx-meta"><span class="jinx-pill">${esc(pack.tour)}</span><span class="jinx-pill">${esc(pack.event_name||'当前赛事')}</span><span class="jinx-pill">${esc(pack.date)}</span><span class="jinx-pill">${pack.pool.length} 名候选</span></div></div><div class="jinx-body">${body}</div>`;
+}
+
+function renderJinxForm(pack,disabled){
+  const note=AUTH_USER?'提交后今天不能修改。':'提交时需要登录炉网账号。';
+  const opts=pack.pool.map(name=>`<label class="jinx-player"><input type="checkbox" name="jinx-player" value="${esc(name)}" onchange="limitJinxSelection(this)" ${disabled?'disabled':''}><span>${esc(name)}</span></label>`).join('');
+  return `<form class="jinx-form" onsubmit="submitDailyJinx(event)"><div class="jinx-status">${esc(jinxDisplayMeta(pack))}<br>${note}</div><div class="jinx-picks">${opts}</div><textarea id="jinx-message" maxlength="50" placeholder="@${esc((AUTH_PROFILE&&AUTH_PROFILE.display_name)||'你')}：一句毒奶留言，最多50字" oninput="updateJinxFormCount()" ${disabled?'disabled':''}></textarea><div class="jinx-foot"><span class="jinx-count" id="jinx-count">已选 0/3 · 留言 0/50</span><button class="jinx-submit" type="submit" ${disabled?'disabled':''}>提交毒奶</button></div><div class="jinx-msg" id="jinx-msg"></div></form>`;
+}
+
+function limitJinxSelection(input){
+  const checked=Array.from(document.querySelectorAll('#jinx-board input[name="jinx-player"]:checked'));
+  if(checked.length>3){
+    input.checked=false;
+    setJinxMsg('最多只能选 3 名球员。','err');
+  }else setJinxMsg('');
+  updateJinxFormCount();
+}
+
+function updateJinxFormCount(){
+  const el=document.getElementById('jinx-count');
+  if(!el)return;
+  const picks=document.querySelectorAll('#jinx-board input[name="jinx-player"]:checked').length;
+  const msg=document.getElementById('jinx-message')?.value||'';
+  el.textContent='已选 '+picks+'/3 · 留言 '+Array.from(msg).length+'/50';
+}
+
+function hasSubmittedJinxVote(){
+  return !!(AUTH_USER&&Array.isArray(JINX_VOTES)&&JINX_VOTES.some(v=>v.account_id===AUTH_USER.id));
+}
+
+function normalizeVotePlayers(v){
+  const raw=v&&v.selected_players;
+  if(Array.isArray(raw))return raw.map(String).filter(Boolean);
+  if(typeof raw==='string'){
+    try{
+      const parsed=JSON.parse(raw);
+      if(Array.isArray(parsed))return parsed.map(String).filter(Boolean);
+    }catch(e){}
+    return raw.replace(/^\{|\}$/g,'').split(',').map(x=>x.replace(/^"|"$/g,'').trim()).filter(Boolean);
+  }
+  return [];
+}
+
+async function loadDailyJinxVotes(){
+  if(!AUTH_USER)return;
+  const pack=getJinxPack();
+  const key=jinxStateKey(pack);
+  try{
+    const client=await ensureSupabaseClient();
+    const res=await client.from('daily_jinx_votes')
+      .select('id,account_id,voter_name_snapshot,selected_players,message,created_at')
+      .eq('vote_date',pack.date)
+      .eq('tour',pack.tour)
+      .order('created_at',{ascending:true});
+    if(res.error)throw res.error;
+    if(key!==jinxStateKey(getJinxPack()))return;
+    JINX_VOTES=res.data||[];
+    JINX_LOAD_ERROR='';
+  }catch(err){
+    if(key!==jinxStateKey(getJinxPack()))return;
+    JINX_VOTES=[];
+    JINX_LOAD_ERROR=dailyJinxErrorText(err);
+  }
+  renderDailyJinx();
+}
+
+async function submitDailyJinx(e){
+  e.preventDefault();
+  if(!AUTH_USER){
+    openAuthModal({reason:'jinx_vote',afterLogin:function(){JINX_LOADED_KEY='';renderDailyJinx();}});
+    return;
+  }
+  if(hasSubmittedJinxVote()){
+    setJinxMsg('你今天已经提交过了，不能修改。','err');
+    return;
+  }
+  const pack=getJinxPack();
+  const selected=Array.from(document.querySelectorAll('#jinx-board input[name="jinx-player"]:checked')).map(x=>x.value);
+  const msg=String(document.getElementById('jinx-message')?.value||'').trim();
+  const msgLen=Array.from(msg).length;
+  if(selected.length<1){setJinxMsg('至少选 1 名球员。','err');return;}
+  if(selected.length>3){setJinxMsg('最多只能选 3 名球员。','err');return;}
+  if(!msg){setJinxMsg('留言不能为空。','err');return;}
+  if(msgLen>50){setJinxMsg('留言最多 50 字。','err');return;}
+  const btn=document.querySelector('#jinx-board .jinx-submit');
+  if(btn)btn.disabled=true;
+  setJinxMsg('提交中...');
+  try{
+    const client=await ensureSupabaseClient();
+    const display=(AUTH_PROFILE&&AUTH_PROFILE.display_name)||AUTH_USER.user_metadata?.display_name||'匿名炉友';
+    const payload={
+      account_id:AUTH_USER.id,
+      voter_name_snapshot:display,
+      vote_date:pack.date,
+      tour:pack.tour,
+      event_id:pack.event_id,
+      event_name:pack.event_name,
+      selected_players:selected,
+      message:msg
+    };
+    const res=await client.from('daily_jinx_votes').insert(payload);
+    if(res.error)throw res.error;
+    trackEvent('daily_jinx_submit',{module:'daily_jinx',tour:pack.tour});
+    JINX_LOADED_KEY='';
+    await loadDailyJinxVotes();
+  }catch(err){
+    setJinxMsg(dailyJinxErrorText(err),'err');
+    if(/duplicate|unique|23505/i.test(String(err&&err.message||''))){
+      JINX_LOADED_KEY='';
+      loadDailyJinxVotes();
+    }
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
+
+function renderJinxResults(pack,votes){
+  const counts={};
+  votes.forEach(v=>normalizeVotePlayers(v).forEach(name=>{counts[name]=(counts[name]||0)+1;}));
+  const stats=Object.entries(counts).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
+  const total=Math.max(votes.length,1);
+  const top=stats[0]?stats[0][0]:'暂无';
+  const bars=stats.length?stats.map(([name,count],i)=>{
+    const pct=(count/total*100);
+    return `<div class="jinx-bar"><div class="jinx-bar-name">#${i+1} ${esc(name)}</div><div class="jinx-track"><div class="jinx-fill" style="width:${Math.max(4,pct).toFixed(1)}%"></div></div><div class="jinx-num">${count}票 · ${pct.toFixed(1)}%</div></div>`;
+  }).join(''):'<div class="jinx-status">还没有可展示的投票。</div>';
+  return `<div class="kpi"><div class="kc"><div class="kn nd">${votes.length}</div><div class="kl">参与人数</div></div><div class="kc"><div class="kn y">${stats.length}</div><div class="kl">被毒奶人数</div></div><div class="kc"><div class="kn r">${esc(top)}</div><div class="kl">当前奶王</div></div></div>${renderJinxBarrage(votes)}<div class="jinx-results"><div class="jinx-status">${esc(jinxDisplayMeta(pack))}<br>你已提交，今日不能修改。</div><div class="jinx-bars">${bars}</div></div>`;
+}
+
+function renderJinxBarrage(votes){
+  const seen=new Set();
+  const msgs=votes.filter(v=>String(v.message||'').trim()).filter(v=>{
+    const key=String(v.id||v.account_id||'')+'|'+String(v.created_at||'');
+    if(seen.has(key))return false;
+    seen.add(key);return true;
+  }).map(v=>({name:v.voter_name_snapshot||'匿名炉友',msg:String(v.message||'').trim()}));
+  if(!msgs.length)return '<div class="jinx-barrage"><span class="jinx-float" style="top:28px;animation-duration:14s">今天还没有弹幕</span></div>';
+  const items=msgs.map((v,i)=>{
+    const top=8+(i%4)*17;
+    const dur=13+(i%5)*2;
+    const delay=-(i%7)*1.8;
+    return `<span class="jinx-float" style="top:${top}px;animation-duration:${dur}s;animation-delay:${delay}s">@${esc(v.name)}：${esc(v.msg)}</span>`;
+  }).join('');
+  return `<div class="jinx-barrage">${items}</div>`;
+}
 
 // 启动加载
 

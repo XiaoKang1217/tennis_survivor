@@ -425,7 +425,7 @@ def fetch_event_data(session, csrf, iid, gender, event_name, rank_dict):
         'total_count': len(site_rows),
         'user_count': len(rows_out),
         'suicide_count': suicide_count,
-        'player_stats': player_stats.most_common(20),
+        'player_stats': player_stats.most_common(),
     }
 
 def main():

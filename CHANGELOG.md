@@ -7,6 +7,35 @@ Versioning guideline:
 - Minor versions add user-facing features or change data logic.
 - Major versions are reserved for large rewrites or incompatible data changes.
 
+## v0.3.0 - 2026-05-24
+
+Release baseline:
+- Online version before release: `v0.2.0` lineage at live commit `92d3eb2`.
+- New published version: `v0.3.0`.
+- Rollback target for this release: commit `92d3eb2`.
+
+### Added
+- Added the Supabase-backed `每日毒奶` module with ATP/WTA voting, one daily submission per account per tour, 1-3 player selections, and a required 50-character-max message.
+- Added post-submission results for `每日毒奶`, including participant count, per-player vote counts, percentages, and module-local barrage messages.
+- Added Supabase SQL/RLS documentation and validation notes for `daily_jinx_votes`.
+
+### Changed
+- Consolidated top navigation so ATP/WTA live-pick pages stay separate while breakdown, preference, and disaster modules use internal ATP/WTA sheet switches.
+- Changed live-pick player statistics to left-align text, show the top 10 by default, and expand to the full player list on demand.
+- Changed live-pick `今日已填` display to use the dynamic `filled_count` data field rather than summing player-stat rows.
+- Changed current-data generation so `player_stats` outputs the full list instead of top 20 only.
+- Moved the account button next to the update timestamp on mobile and removed the repeated `每30分钟内更新` suffix from the timestamp line.
+
+### Fixed
+- Fixed `每日毒奶` barrage rendering so one submission creates only one barrage message even when the user selects multiple players.
+
+### Validation
+- Ran JS syntax checks for `index.html`.
+- Ran `python3 -m unittest scripts.test_scoring`.
+- Ran Python syntax checks for `scripts/fetch_current.py`.
+- Ran `git diff --check`.
+- Verified local preview at `http://127.0.0.1:4181/`, including grouped navigation, live-pick stat expansion, mobile header layout, and daily-jinx submission/results behavior.
+
 ## v0.2.0 - 2026-05-24
 
 Release baseline:

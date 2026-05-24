@@ -61,6 +61,7 @@ GA4 默认 page view 会记录：
 - `disasters`
 - `daily_flights`
 - `fortune`
+- `daily_jinx`
 
 ### `tour_switch`
 
@@ -162,6 +163,21 @@ GA4 默认 page view 会记录：
 - 不上传登录账号 ID。
 - 不上传被关注用户 ID 或关注列表。
 
+### `daily_jinx_submit`
+
+用户成功提交每日毒奶投票时记录。
+
+参数：
+
+- `module`
+- `tour`
+
+注意：
+
+- 不上传登录账号 ID。
+- 不上传所选球员列表。
+- 不上传留言内容。
+
 ## 实现注意事项
 
 - `trackEvent()` 必须在 GA4 未加载时安全失败，不影响页面功能。
@@ -175,6 +191,7 @@ GA4 默认 page view 会记录：
 - 已接入 GA4 初始化封装。
 - 已接入 `module_view`、`tour_switch`、`event_switch`、`filter_apply`、`player_stat_click`、`sort_apply`、`fortune_draw`。
 - 关注用户功能新增 `auth_modal_open`、`login_success`、`follow_add`、`follow_remove` 事件；这些事件不包含用户身份和关注明细。
+- 每日毒奶新增 `daily_jinx_submit` 事件；该事件不包含用户身份、投票对象或留言。
 - 已填写 Measurement ID：`G-E51GZG7C1F`。
 
 ## 后续查看方式

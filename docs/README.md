@@ -12,6 +12,7 @@ Recommended files to attach to the Codex project:
 - `docs/analytics.md`
 - `docs/backlog.md`
 - `docs/supabase-auth-following.md`
+- `docs/supabase-daily-jinx.md`
 
 ## File Guide
 
@@ -32,6 +33,9 @@ Recommended files to attach to the Codex project:
 
 - `supabase-auth-following.md`
   - Supabase Auth, Postgres tables, RLS policies, and validation checklist for the following-users feature.
+
+- `supabase-daily-jinx.md`
+  - Supabase table, RLS policies, and validation checklist for the `每日毒奶` voting module.
 
 - `backlog.md`
   - Near-term and long-term feature ideas.
