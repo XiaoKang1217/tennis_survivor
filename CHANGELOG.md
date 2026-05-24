@@ -7,6 +7,26 @@ Versioning guideline:
 - Minor versions add user-facing features or change data logic.
 - Major versions are reserved for large rewrites or incompatible data changes.
 
+## v0.3.3 - 2026-05-24
+
+Release baseline:
+- Online version before release: `v0.3.2` lineage at live commit `aebeec1`.
+- New published version: `v0.3.3`.
+- Rollback target for this release: commit `aebeec1`.
+
+### Added
+- Added the Daily Jinx settlement data pipeline for `毒奶榜`, including the generated `data/daily_jinx_settlements.json`, fetch script, and scheduled workflow integration.
+
+### Fixed
+- Changed the Daily Jinx submitted-result copy to show the current account's actual selected players: `你今日的毒奶球员为：xxx，xxx，xxx`.
+- Fixed Daily Jinx submission under Supabase RLS by inserting votes without requesting a returned row, so the write no longer triggers an unnecessary select/returning permission check.
+
+### Validation
+- Ran JS syntax checks for `index.html`.
+- Ran `python3 -m unittest scripts.test_scoring`.
+- Ran `git diff --check`.
+- Opened local `每日毒奶` preview and confirmed the module loads without browser console errors.
+
 ## v0.3.2 - 2026-05-24
 
 Release baseline:

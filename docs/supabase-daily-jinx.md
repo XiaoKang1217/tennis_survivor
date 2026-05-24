@@ -16,9 +16,13 @@ This document records the setup for the `每日毒奶` voting module.
 - Each submission can select 1 to 3 players.
 - Each submission must include one message, up to 50 characters.
 - Results are visible only after the logged-in account has submitted that date and tour.
+- After submitting, the result status line shows the current account's real selected players, for example `你今日的毒奶球员为：丰塞卡，布洛克斯`.
 - Messages appear as module-local barrage text in this format: `@用户名：留言`.
 - Each submission produces at most one barrage message, even when the submission selects multiple players.
 - Barrage messages run through same-speed lane queues, loop continuously, and restart after page visibility changes to avoid browser-throttling pileups.
+- The `毒奶榜` view shows ATP and WTA leaderboards side by side.
+- Leaderboard scoring is aggregate-only: if a jinxed player really loses, and that player was selected by `x` Daily Jinx submissions on that date/tour, every user who selected that player gets `x` points.
+- Match-loss settlements are generated into `data/daily_jinx_settlements.json` by `scripts/fetch_daily_jinx_settlements.py`; raw vote rows remain protected by RLS.
 
 ## SQL Schema And RLS
 
@@ -87,12 +91,90 @@ with check ((select auth.uid()) = account_id);
 grant select, insert on public.daily_jinx_votes to authenticated;
 ```
 
+Leaderboard RPC:
+
+```sql
+create or replace function public.daily_jinx_leaderboard(p_settlements jsonb)
+returns table (
+  tour text,
+  display_name text,
+  score integer,
+  hit_count integer,
+  scored_days integer
+)
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  with settlements as (
+    select distinct
+      s.vote_date,
+      s.tour,
+      coalesce(s.event_id, '') as event_id,
+      btrim(s.player_name) as player_name
+    from jsonb_to_recordset(coalesce(p_settlements, '[]'::jsonb))
+      as s(vote_date date, tour text, event_id text, player_name text)
+    where s.vote_date is not null
+      and s.tour in ('ATP', 'WTA')
+      and btrim(s.player_name) <> ''
+  ),
+  vote_picks as (
+    select distinct
+      v.id,
+      v.account_id,
+      v.vote_date,
+      v.tour,
+      coalesce(v.event_id, '') as event_id,
+      btrim(p.player_name) as player_name
+    from public.daily_jinx_votes v
+    cross join lateral unnest(v.selected_players) as p(player_name)
+    where btrim(p.player_name) <> ''
+  ),
+  hits as (
+    select
+      vp.*,
+      count(*) over (
+        partition by vp.vote_date, vp.tour, vp.event_id, vp.player_name
+      )::integer as player_vote_count
+    from vote_picks vp
+    join settlements s
+      on s.vote_date = vp.vote_date
+     and s.tour = vp.tour
+     and (s.event_id = '' or s.event_id = vp.event_id)
+     and s.player_name = vp.player_name
+  ),
+  latest_names as (
+    select distinct on (v.account_id)
+      v.account_id,
+      v.voter_name_snapshot
+    from public.daily_jinx_votes v
+    order by v.account_id, v.created_at desc
+  )
+  select
+    h.tour,
+    coalesce(nullif(ln.voter_name_snapshot, ''), '匿名炉友') as display_name,
+    sum(h.player_vote_count)::integer as score,
+    count(*)::integer as hit_count,
+    count(distinct h.vote_date)::integer as scored_days
+  from hits h
+  left join latest_names ln on ln.account_id = h.account_id
+  group by h.tour, h.account_id, ln.voter_name_snapshot
+  order by h.tour, score desc, hit_count desc, display_name asc;
+$$;
+
+revoke all on function public.daily_jinx_leaderboard(jsonb) from public;
+grant execute on function public.daily_jinx_leaderboard(jsonb) to anon, authenticated;
+```
+
 Notes:
 
 - No update or delete policy is created, so normal authenticated users cannot change or remove a submitted vote.
 - The unique constraint on `(account_id, vote_date, tour)` prevents duplicate same-day submissions.
 - The select policy lets a logged-in user read that date/tour's results only after they have submitted that same date/tour.
+- The frontend inserts into `daily_jinx_votes` without requesting returned rows; requesting an inserted row would add an unnecessary select/returning permission check and can fail under RLS.
 - The frontend still hides results before submission, but the database policy is the real guardrail.
+- The leaderboard RPC returns only aggregate nickname/score data. It does not expose raw vote messages, selected-player arrays, or account ids.
 
 ## Validation Checklist
 
@@ -120,6 +202,8 @@ Verified:
 - Barrage messages include the username snapshot, for example `@codexjinx1779608621416：codex test vote`.
 - Refreshing the page preserves the logged-in submitted state and still shows the ATP result view.
 - WTA remains an unsubmitted form for the same account, confirming ATP/WTA submissions are independent.
+- The `daily_jinx_leaderboard(jsonb)` RPC was created successfully and appears in `pg_proc`.
+- Local preview can open `毒奶榜` without the missing-RPC error; with no settled matches yet, it shows the expected empty leaderboard state.
 
 Cleanup SQL for the 2026-05-24 test account:
 

@@ -1718,19 +1718,8 @@ async function submitDailyJinx(e){
       selected_players:selected,
       message:msg
     };
-    const res=await client.from('daily_jinx_votes').insert(payload).select('id').maybeSingle();
+    const res=await client.from('daily_jinx_votes').insert(payload);
     if(res.error)throw res.error;
-    if(res.data&&res.data.id){
-      const pickRows=selected.map(name=>({
-        vote_id:res.data.id,
-        account_id:AUTH_USER.id,
-        vote_date:pack.date,
-        tour:pack.tour,
-        event_id:pack.event_id,
-        player_name:name
-      }));
-      optionalSupabaseInsert('daily_jinx_vote_picks',pickRows);
-    }
     trackEvent('daily_jinx_submit',{module:'daily_jinx',tour:pack.tour});
     logUserFeatureDaily('daily_jinx',pack.tour,'submit');
     JINX_LOADED_KEY='';
@@ -1835,11 +1824,14 @@ function renderJinxResults(pack,votes){
   const stats=Object.entries(counts).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
   const total=Math.max(votes.length,1);
   const top=stats[0]?stats[0][0]:'暂无';
+  const ownVote=AUTH_USER?votes.find(v=>v.account_id===AUTH_USER.id):null;
+  const ownPlayers=ownVote?normalizeVotePlayers(ownVote):[];
+  const ownPickText=ownPlayers.length?'你今日的毒奶球员为：'+ownPlayers.join('，'):'你今日的毒奶球员为：读取中';
   const bars=stats.length?stats.map(([name,count],i)=>{
     const pct=(count/total*100);
     return `<div class="jinx-bar"><div class="jinx-bar-name">#${i+1} ${esc(name)}</div><div class="jinx-track"><div class="jinx-fill" style="width:${Math.max(4,pct).toFixed(1)}%"></div></div><div class="jinx-num">${count}票 · ${pct.toFixed(1)}%</div></div>`;
   }).join(''):'<div class="jinx-status">还没有可展示的投票。</div>';
-  return `<div class="kpi"><div class="kc"><div class="kn nd">${votes.length}</div><div class="kl">参与人数</div></div><div class="kc"><div class="kn y">${stats.length}</div><div class="kl">被毒奶人数</div></div><div class="kc"><div class="kn r">${esc(top)}</div><div class="kl">当前奶王</div></div></div>${renderJinxBarrage(votes)}<div class="jinx-results"><div class="jinx-status">${esc(jinxDisplayMeta(pack))}<br>你已提交，今日不能修改。</div><div class="jinx-bars">${bars}</div></div>`;
+  return `<div class="kpi"><div class="kc"><div class="kn nd">${votes.length}</div><div class="kl">参与人数</div></div><div class="kc"><div class="kn y">${stats.length}</div><div class="kl">被毒奶人数</div></div><div class="kc"><div class="kn r">${esc(top)}</div><div class="kl">当前奶王</div></div></div>${renderJinxBarrage(votes)}<div class="jinx-results"><div class="jinx-status">${esc(jinxDisplayMeta(pack))}<br>${esc(ownPickText)}</div><div class="jinx-bars">${bars}</div></div>`;
 }
 
 function renderJinxBarrage(votes){

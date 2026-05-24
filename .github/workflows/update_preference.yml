@@ -18,7 +18,8 @@ jobs:
       - run: pip install -r scripts/requirements.txt
       - run: python -m unittest scripts.test_scoring
       - run: python scripts/fetch_history.py
+      - run: python scripts/fetch_daily_jinx_settlements.py
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Auto update daily history data"
-          file_pattern: "data/history.json"
+          file_pattern: "data/history.json data/daily_jinx_settlements.json"
