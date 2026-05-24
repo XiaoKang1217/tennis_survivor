@@ -7,6 +7,24 @@ Versioning guideline:
 - Minor versions add user-facing features or change data logic.
 - Major versions are reserved for large rewrites or incompatible data changes.
 
+## v0.3.2 - 2026-05-24
+
+Release baseline:
+- Online version before release: `v0.3.1` lineage at live commit `b223575`.
+- New published version: `v0.3.2`.
+- Rollback target for this release: commit `b223575`.
+
+### Added
+- Added frontend analytics events for registration, logout, daily-jinx result views, daily-jinx leaderboard views, row expansion, data-load errors, Supabase errors, and external-link clicks.
+- Added anonymous GA4 `user_id` hashing for logged-in sessions without sending nicknames, emails, survivor usernames, follow targets, vote targets, or messages.
+- Added optional frontend Supabase writes for login events, follow/unfollow events, daily-jinx vote picks, and feature-daily activity; these safely no-op until the corresponding tables or RPC are created.
+
+### Validation
+- Ran JS syntax checks for `index.html`.
+- Ran `python3 -m unittest scripts.test_scoring`.
+- Ran `git diff --check`.
+- Verified the local main page at `http://127.0.0.1:8001/`.
+
 ## v0.3.1 - 2026-05-24
 
 Release baseline:

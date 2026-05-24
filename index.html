@@ -165,6 +165,17 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 .jinx-float.run{animation:jinxFly var(--dur,14s) linear forwards}
 .jinx-empty{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:#fff7ed;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:4px 12px;font-size:13px;font-weight:800}
 @keyframes jinxFly{from{left:100%;transform:translateX(0)}to{left:0;transform:translateX(-100%)}}
+.jinx-leader-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.jinx-leader-card{border:1px solid #fed7aa;background:#fffaf0;border-radius:12px;overflow:hidden}
+.jinx-leader-head{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#fff7ed;border-bottom:1px solid #fed7aa;padding:10px 12px;font-size:14px;font-weight:900;color:#991b1b}
+.jinx-leader-meta{font-size:11px;color:#9a7a40;font-weight:800}
+.jinx-leader-table{width:100%;border-collapse:collapse;font-size:12px}
+.jinx-leader-table th{background:#fef3c7;color:#78450a;text-align:left;padding:8px;border-bottom:1px solid #fde68a}
+.jinx-leader-table td{padding:8px;border-bottom:1px solid #ffedd5;color:#44321c}
+.jinx-leader-table tr:last-child td{border-bottom:0}
+.jinx-leader-rank{width:44px;text-align:center!important;color:#7c3aed!important;font-weight:900}
+.jinx-leader-score{text-align:right!important;color:#ea580c!important;font-weight:900;white-space:nowrap}
+.jinx-leader-hit{text-align:right!important;color:#9a7a40!important;white-space:nowrap}
 .exp-tag{background:#fef3c7;border:1px solid #fcd34d;border-radius:12px;padding:2px 8px;font-size:12px;color:#78450a;white-space:nowrap;display:inline-block;margin:2px}
 .exp-tag.r{background:#fee2e2;border-color:#fca5a5;color:#dc2626}
 .exp-tag.g{background:#dcfce7;border-color:#86efac;color:#15803d}
@@ -208,6 +219,7 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
   .jinx-player{font-size:12px;padding:8px}
   .jinx-bar{grid-template-columns:minmax(72px,112px) 1fr;gap:6px}
   .jinx-num{grid-column:2;text-align:right}
+  .jinx-leader-grid{grid-template-columns:1fr}
   .flight-grid{grid-template-columns:1fr}
 }
 
@@ -446,7 +458,7 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 <div id="p-ws-t" class="panel"><div class="sheet-tabs" aria-label="历史上的惨案 ATP/WTA 切换"><button class="sheet-tab" onclick="switchTab('ms-t',this)">ATP 男单</button><button class="sheet-tab on" onclick="switchTab('ws-t',this)">WTA 女单</button></div><div id="content-ws-t"></div></div>
 <div id="p-flight" class="panel"><div class="flight-toolbar"><div style="font-size:15px;font-weight:800;color:#d97706">✈️ 每日航班</div><select class="select-mini" id="flight-year" onchange="initFlightSelect(true)"><option selected>2026</option><option>2025</option><option>2024</option></select><select class="select-mini" id="flight-select" onchange="renderFlights(true)"></select></div><div id="flight-box" class="flight-grid"></div></div>
 <div id="p-fortune" class="panel"><div class="fortune-wrap"><div class="fortune-title">🔮 今日运势抽签</div><div class="fortune-sub">每天选球员愁破头？让神明帮你做选择！</div><div class="fortune-tabs"><button class="ftab on" onclick="setFortune('atp',this)">⚡ ATP 男单</button><button class="ftab" onclick="setFortune('wta',this)">🌸 WTA 女单</button></div><div class="fortune-card" id="fortune-card"><div class="fortune-hint">✨ 今日可选球员已入签筒 ✨</div><div class="fortune-player" id="fortune-player">？？？</div><div class="fattr" id="fortune-attr">未摇签</div><div class="fortune-text" id="fortune-text">点击下方按钮，开始今日运势抽签</div><div class="fortune-yi" id="fortune-yi"></div></div><br><button class="fortune-btn" onclick="drawFortune()">🎋 摇签</button><br><br><div class="fortune-hint">签文仅供娱乐，后果自负 😄</div></div></div></div>
-<div id="p-jinx" class="panel"><div class="jinx-wrap"><div class="jinx-title">🥛 每日毒奶</div><div class="jinx-sub">今天你最希望谁出局？</div><div class="jinx-tabs"><button class="jtab on" id="jinx-tab-atp" onclick="setJinxTour('ATP',this)">⚡ ATP 男单</button><button class="jtab" id="jinx-tab-wta" onclick="setJinxTour('WTA',this)">🌸 WTA 女单</button></div><div class="jinx-board" id="jinx-board"><div class="loading">⏳ 等待今日赛程数据...</div></div></div></div>
+<div id="p-jinx" class="panel"><div class="jinx-wrap"><div class="jinx-title">🥛 每日毒奶</div><div class="jinx-sub">今天你最希望谁出局？</div><div class="jinx-tabs"><button class="jtab on" id="jinx-tab-atp" onclick="setJinxTour('ATP',this)">⚡ ATP 男单</button><button class="jtab" id="jinx-tab-wta" onclick="setJinxTour('WTA',this)">🌸 WTA 女单</button><button class="jtab" id="jinx-tab-leader" onclick="setJinxLeaderboard(this)">🏆 毒奶榜</button></div><div class="jinx-board" id="jinx-board"><div class="loading">⏳ 等待今日赛程数据...</div></div></div></div>
 
 <div class="auth-modal" id="auth-modal" aria-hidden="true">
   <div class="auth-card">
@@ -483,12 +495,18 @@ const FTEXTS=["此签大吉！天罡星照命，今日所选之人，剑气冲�
 let GDATA=null; let PDATA=null;
 let MSPOOL=[]; let WSPOOL=[];
 let fGender='atp';
+let JINX_VIEW='vote';
 let JINX_TOUR='ATP';
 let JINX_LOADED_KEY='';
 let JINX_VOTES=null;
 let JINX_LOAD_ERROR='';
 let JINX_BARRAGE_TIMERS=[];
 let JINX_BARRAGE_SOURCE=[];
+let JINX_SETTLEMENT_DATA=null;
+let JINX_LEADERBOARD=null;
+let JINX_LEADERBOARD_LOADING=false;
+let JINX_LEADERBOARD_ERROR='';
+const JINX_RESULT_VIEWED={};
 const SS={};const FS={};
 const GA_MEASUREMENT_ID='G-E51GZG7C1F';
 const SUPABASE_URL='https://avdnhcwmwdwhsecszlcd.supabase.co';
@@ -546,7 +564,7 @@ function currentEventLabel(g){
 
 function tabMeta(tab){
   var g=tab.indexOf('ws')===0?'ws':tab.indexOf('ms')===0?'ms':'';
-  var tour=g==='ms'?'ATP':g==='ws'?'WTA':(tab==='fortune'?(fGender==='atp'?'ATP':'WTA'):(tab==='jinx'?JINX_TOUR:'combined'));
+  var tour=g==='ms'?'ATP':g==='ws'?'WTA':(tab==='fortune'?(fGender==='atp'?'ATP':'WTA'):(tab==='jinx'?(JINX_VIEW==='leaderboard'?'combined':JINX_TOUR):'combined'));
   var module={
     'ms-s':'current_picks','ws-s':'current_picks',
     'ms-bd':'breakdown','ws-bd':'breakdown',
@@ -564,6 +582,7 @@ function trackModuleView(tab){
   if(MODULE_VIEWED[key])return;
   MODULE_VIEWED[key]=true;
   trackEvent('module_view',meta);
+  logUserFeatureDaily(meta.module,meta.tour,'view');
 }
 
 function trackSearchFilter(tab){
@@ -575,7 +594,116 @@ function trackSearchFilter(tab){
       tour:meta.tour,
       filter_type:'search'
     });
+    logUserFeatureDaily(meta.module,meta.tour,'search');
   },800);
+}
+
+function safeEventParam(v){
+  return String(v||'').replace(/[^a-zA-Z0-9_:-]+/g,'_').slice(0,80)||'unknown';
+}
+
+function errorType(err){
+  const msg=String(err&&err.message||err||'');
+  if(/network|fetch|timeout|failed to fetch/i.test(msg))return 'network';
+  if(/permission|policy|row-level security|denied/i.test(msg))return 'permission';
+  if(/relation .*does not exist|schema cache|Could not find|function .*does not exist/i.test(msg))return 'missing_schema';
+  if(/duplicate|unique|23505/i.test(msg))return 'duplicate';
+  return 'other';
+}
+
+function trackDataLoadError(resource,err){
+  trackEvent('data_load_error',{module:'data',resource:safeEventParam(resource),error_type:errorType(err)});
+}
+
+function trackSupabaseError(operation,err,ignoreMissing){
+  const type=errorType(err);
+  if(ignoreMissing&&type==='missing_schema')return;
+  trackEvent('supabase_error',{module:tabMeta(ACTIVE_TAB).module,operation:safeEventParam(operation),error_type:type});
+}
+
+async function sha256Hex(text){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(String(text||'')));
+  return bytesToHex(buf);
+}
+
+async function setAnalyticsUser(user){
+  if(!gaConfigured()||typeof window.gtag!=='function')return;
+  try{
+    if(user&&user.id){
+      const anon=await sha256Hex(user.id);
+      window.gtag('set',{user_id:anon});
+    }else{
+      window.gtag('set',{user_id:null});
+    }
+  }catch(e){}
+}
+
+async function optionalSupabaseInsert(table,payload,opts){
+  opts=opts||{};
+  if(!AUTH_USER||!supabaseConfigured())return null;
+  try{
+    const client=await ensureSupabaseClient();
+    let req=client.from(table).insert(payload);
+    if(opts.select)req=req.select(opts.select).maybeSingle();
+    const res=await req;
+    if(res.error)throw res.error;
+    return res.data||null;
+  }catch(err){
+    trackSupabaseError(table+'.insert',err,true);
+    return null;
+  }
+}
+
+async function optionalSupabaseRpc(name,args){
+  if(!AUTH_USER||!supabaseConfigured())return null;
+  try{
+    const client=await ensureSupabaseClient();
+    const res=await client.rpc(name,args||{});
+    if(res.error)throw res.error;
+    return res.data||null;
+  }catch(err){
+    trackSupabaseError(name,err,true);
+    return null;
+  }
+}
+
+function currentDisplayName(){
+  return (AUTH_PROFILE&&AUTH_PROFILE.display_name)||AUTH_USER?.user_metadata?.display_name||'';
+}
+
+function logUserLoginEvent(eventType,isNewUser,sourceModule){
+  if(!AUTH_USER)return;
+  optionalSupabaseInsert('user_login_events',{
+    account_id:AUTH_USER.id,
+    event_type:eventType,
+    source_module:sourceModule||tabMeta(ACTIVE_TAB).module,
+    is_new_user:!!isNewUser,
+    display_name_snapshot:currentDisplayName()
+  });
+}
+
+function logFollowEvent(action,id,name){
+  if(!AUTH_USER)return;
+  optionalSupabaseInsert('user_follow_events',{
+    account_id:AUTH_USER.id,
+    followed_user_id:String(id||''),
+    followed_username_snapshot:String(name||''),
+    action:action,
+    source_module:tabMeta(ACTIVE_TAB).module
+  });
+}
+
+function logUserFeatureDaily(module,tour,action){
+  optionalSupabaseRpc('record_user_feature_daily',{
+    p_feature:module,
+    p_tour:tour||'combined',
+    p_action:action||'view'
+  });
+}
+
+function trackRowExpand(module,tour,rowType){
+  trackEvent('row_expand',{module:module,tour:tour||'combined',row_type:rowType||'detail'});
+  logUserFeatureDaily(module,tour,'row_expand');
 }
 
 initGa();
@@ -674,6 +802,7 @@ async function afterAuthChanged(user){
   FOLLOWING_IDS=new Set();
   if(AUTH_USER)await loadAccountData();
   else resetFollowingFilters();
+  await setAnalyticsUser(AUTH_USER);
   updateAuthUi();
   refreshFollowButtons();
   refreshLiveFilters();
@@ -692,6 +821,7 @@ async function initAuth(){
     });
   }catch(e){
     console.warn('账号系统初始化失败',e);
+    trackSupabaseError('auth.init',e,false);
   }
 }
 
@@ -706,6 +836,7 @@ async function loadAccountData(){
     if(!results[1].error)FOLLOWING_IDS=new Set((results[1].data||[]).map(x=>String(x.followed_user_id)));
   }catch(e){
     console.warn('账号资料加载失败',e);
+    trackSupabaseError('account.load',e,false);
   }
 }
 
@@ -759,10 +890,13 @@ async function submitRegister(e){
     await ensureProfile(nickname);
     await afterAuthChanged(AUTH_USER);
     setAuthMessage('注册成功。','ok');
+    trackEvent('signup_success',{method:'nickname_password'});
     trackEvent('login_success',{method:'nickname_password',is_new_user:true});
+    logUserLoginEvent('signup',true,tabMeta(ACTIVE_TAB).module);
     finishAuthFlow();
   }catch(err){
     setAuthMessage(authErrorText(err),'err');
+    trackSupabaseError('auth.signup',err,false);
   }finally{
     setAuthBusy(false);
   }
@@ -786,9 +920,11 @@ async function submitLogin(e){
     refreshLiveFilters();
     setAuthMessage('登录成功。','ok');
     trackEvent('login_success',{method:'nickname_password',is_new_user:false});
+    logUserLoginEvent('login',false,tabMeta(ACTIVE_TAB).module);
     finishAuthFlow();
   }catch(err){
     setAuthMessage(authErrorText(err),'err');
+    trackSupabaseError('auth.login',err,false);
   }finally{
     setAuthBusy(false);
   }
@@ -807,7 +943,8 @@ async function logout(){
   try{
     const client=await ensureSupabaseClient();
     await client.auth.signOut();
-  }catch(e){}
+  }catch(e){trackSupabaseError('auth.logout',e,false);}
+  trackEvent('logout_success',{method:'nickname_password'});
   await afterAuthChanged(null);
 }
 
@@ -858,16 +995,19 @@ async function toggleFollow(id,name){
       if(res.error)throw res.error;
       FOLLOWING_IDS.delete(id);
       trackEvent('follow_remove',{module:tabMeta(ACTIVE_TAB).module});
+      logFollowEvent('unfollow',id,name);
     }else{
       const payload={account_id:AUTH_USER.id,followed_user_id:id,followed_username_snapshot:name};
       const res=await client.from('user_follows').upsert(payload,{onConflict:'account_id,followed_user_id'});
       if(res.error)throw res.error;
       FOLLOWING_IDS.add(id);
       trackEvent('follow_add',{module:tabMeta(ACTIVE_TAB).module});
+      logFollowEvent('follow',id,name);
     }
     refreshFollowButtons();
     refreshLiveFilters();
   }catch(e){
+    trackSupabaseError('follow.toggle',e,false);
     alert(authErrorText(e));
   }finally{
     setFollowBusy(id,false);
@@ -915,6 +1055,7 @@ async function loadData(){
     trackModuleView(ACTIVE_TAB);
   }catch(e){
     console.error('实时数据加载失败',e);
+    trackDataLoadError('current_json',e);
     document.getElementById('upd-time').textContent='⚠️ 实时数据加载失败，请刷新';
     document.getElementById('loading-ms').textContent='⚠️ 数据加载失败，请刷新页面';
     document.getElementById('loading-ws').textContent='⚠️ 数据加载失败，请刷新页面';
@@ -930,6 +1071,7 @@ async function loadData(){
     initFlightSelect();
   }).catch(function(e){
     console.warn('历史数据加载失败（非致命）',e);
+    trackDataLoadError('history_json',e);
     document.getElementById('loading-msp').textContent='⚠️ 历史数据加载失败，请刷新';
     document.getElementById('loading-wsp').textContent='⚠️ 历史数据加载失败，请刷新';
   });
@@ -940,14 +1082,14 @@ async function loadData(){
     // 下载完直接预渲染两个panel，无论用户在哪个tab，切过去秒出
     renderBreakdownPanel('ms',BD_DATA.ms||[]);
     renderBreakdownPanel('ws',BD_DATA.ws||[]);
-  }).catch(function(e){console.warn('积分构成数据加载失败',e);});
+  }).catch(function(e){console.warn('积分构成数据加载失败',e);trackDataLoadError('breakdown_json',e);});
 }
 
 // 统一获取历史数据入口（复用已发起的请求）
 function loadHistData(cb){
   if(HIST_DATA){if(cb)cb(HIST_DATA);return;}
   const p=window.__histPromise;
-  if(p){p.then(function(d){if(cb)cb(d);}).catch(function(){});return;}
+  if(p){p.then(function(d){if(cb)cb(d);}).catch(function(e){trackDataLoadError('history_json',e);});return;}
   window.__histPromise=fetch('data/history.json?t='+Date.now()).then(r=>r.json());
   window.__histPromise.then(function(d){HIST_DATA=d;if(cb)cb(d);});
 }
@@ -968,7 +1110,7 @@ async function refreshCurrentOnly(){
     if(BD_DATA){rerenderBreakdownIfReady();}
     document.getElementById('rdot').style.background='#4ade80';
     setTimeout(()=>document.getElementById('rdot').style.background='#4ade80',2000);
-  }catch(e){document.getElementById('rdot').style.background='#f87171';}
+  }catch(e){trackDataLoadError('current_json_refresh',e);document.getElementById('rdot').style.background='#f87171';}
 }
 
 setInterval(refreshCurrentOnly, CURRENT_REFRESH_MS);
@@ -1183,6 +1325,7 @@ function toggleExpDyn(row){
   if(d.fi && Object.keys(d.fi).length) secs.push(`<div class="exp-sec"><h5>夺亚球员🎯</h5>${mkSubs(d.fi)}</div>`);
   er.querySelector('td').innerHTML=`<div class="exp-inner"><div class="exp-grid">${secs.join('')}</div></div>`;
   er.classList.add('open');
+  trackRowExpand('preference',g==='ms'?'ATP':'WTA','user_preference');
 }
 
 // ===== 通用功能 =====
@@ -1231,8 +1374,9 @@ function setF(tab,f,btn){
     return;
   }
   FS[tab]={mode:f};btn.closest('.toolbar').querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');var meta=tabMeta(tab);trackEvent('filter_apply',{module:meta.module,tour:meta.tour,filter_type:f});doFilter(tab);
+  logUserFeatureDaily(meta.module,meta.tour,'filter_'+f);
 }
-function filterPick(tab,player){FS[tab]={mode:'pick',player:player};const inp=document.getElementById('q-'+tab);if(inp)inp.value='';document.querySelectorAll('#content-'+tab+' .fbtn').forEach(b=>b.classList.remove('on'));var meta=tabMeta(tab);trackEvent('player_stat_click',{module:meta.module,tour:meta.tour,player:player,event_label:meta.event_label});trackEvent('filter_apply',{module:meta.module,tour:meta.tour,filter_type:'pick'});doFilter(tab);}
+function filterPick(tab,player){FS[tab]={mode:'pick',player:player};const inp=document.getElementById('q-'+tab);if(inp)inp.value='';document.querySelectorAll('#content-'+tab+' .fbtn').forEach(b=>b.classList.remove('on'));var meta=tabMeta(tab);trackEvent('player_stat_click',{module:meta.module,tour:meta.tour,player:player,event_label:meta.event_label});trackEvent('filter_apply',{module:meta.module,tour:meta.tour,filter_type:'pick'});logUserFeatureDaily(meta.module,meta.tour,'player_stat_click');doFilter(tab);}
 function doFilter(tab){
   const q=(document.getElementById('q-'+tab)||{value:''}).value.toLowerCase();
   if(q)trackSearchFilter(tab);
@@ -1259,7 +1403,7 @@ function doFilter(tab){
     }else empty.style.display='none';
   }
 }
-function srt(tab,col,key){const k=tab+'_'+col;if(!SS[k])SS[k]=0;SS[k]=(SS[k]+1)%3;const dir=SS[k];const ths=document.querySelectorAll('#tbl-'+tab+' thead th');ths.forEach(t=>t.classList.remove('sa','sd'));const tb=document.getElementById('tb-'+tab);const pairs=[];const allRows=Array.from(tb.rows);for(let i=0;i<allRows.length;i++){const r=allRows[i];if(r.classList.contains('pref-row')||r.dataset.status){const nx=allRows[i+1];const exp=(nx&&(nx.classList.contains('exp-row')||nx.classList.contains('sdr-row')))?nx:null;pairs.push({row:r,exp});if(exp)i++;}}const nk=['cr','ir','this','deduct','instant','chg','day','ep','ee','ec','wc','bc'];if(dir===0){pairs.sort((a,b)=>parseInt(a.row.dataset.ir||9999)-parseInt(b.row.dataset.ir||9999));if(ths[1])ths[1].classList.add('sd');}else{ths[col].classList.add(dir===1?'sa':'sd');const desc=(dir===1);pairs.sort((a,b)=>{if(nk.includes(key))return desc?(parseFloat(b.row.dataset[key]||0)-parseFloat(a.row.dataset[key]||0)):(parseFloat(a.row.dataset[key]||0)-parseFloat(b.row.dataset[key]||0));if(key==='status')return desc?String(b.row.dataset.status||'').localeCompare(String(a.row.dataset.status||'')):String(a.row.dataset.status||'').localeCompare(String(b.row.dataset.status||''));const va=(a.row.dataset.user||a.row.dataset.u||'').toLowerCase();const vb=(b.row.dataset.user||b.row.dataset.u||'').toLowerCase();return desc?vb.localeCompare(va):va.localeCompare(vb);})}pairs.forEach(pair=>{tb.appendChild(pair.row);if(pair.exp)tb.appendChild(pair.exp);});var meta=tabMeta(tab);trackEvent('sort_apply',{module:meta.module,tour:meta.tour,sort_key:key,sort_direction:dir===0?'default':(dir===1?'desc':'asc')});doFilter(tab);}
+function srt(tab,col,key){const k=tab+'_'+col;if(!SS[k])SS[k]=0;SS[k]=(SS[k]+1)%3;const dir=SS[k];const ths=document.querySelectorAll('#tbl-'+tab+' thead th');ths.forEach(t=>t.classList.remove('sa','sd'));const tb=document.getElementById('tb-'+tab);const pairs=[];const allRows=Array.from(tb.rows);for(let i=0;i<allRows.length;i++){const r=allRows[i];if(r.classList.contains('pref-row')||r.dataset.status){const nx=allRows[i+1];const exp=(nx&&(nx.classList.contains('exp-row')||nx.classList.contains('sdr-row')))?nx:null;pairs.push({row:r,exp});if(exp)i++;}}const nk=['cr','ir','this','deduct','instant','chg','day','ep','ee','ec','wc','bc'];if(dir===0){pairs.sort((a,b)=>parseInt(a.row.dataset.ir||9999)-parseInt(b.row.dataset.ir||9999));if(ths[1])ths[1].classList.add('sd');}else{ths[col].classList.add(dir===1?'sa':'sd');const desc=(dir===1);pairs.sort((a,b)=>{if(nk.includes(key))return desc?(parseFloat(b.row.dataset[key]||0)-parseFloat(a.row.dataset[key]||0)):(parseFloat(a.row.dataset[key]||0)-parseFloat(b.row.dataset[key]||0));if(key==='status')return desc?String(b.row.dataset.status||'').localeCompare(String(a.row.dataset.status||'')):String(a.row.dataset.status||'').localeCompare(String(b.row.dataset.status||''));const va=(a.row.dataset.user||a.row.dataset.u||'').toLowerCase();const vb=(b.row.dataset.user||b.row.dataset.u||'').toLowerCase();return desc?vb.localeCompare(va):va.localeCompare(vb);})}pairs.forEach(pair=>{tb.appendChild(pair.row);if(pair.exp)tb.appendChild(pair.exp);});var meta=tabMeta(tab);trackEvent('sort_apply',{module:meta.module,tour:meta.tour,sort_key:key,sort_direction:dir===0?'default':(dir===1?'desc':'asc')});logUserFeatureDaily(meta.module,meta.tour,'sort');doFilter(tab);}
 
 // 运势
 
@@ -1346,7 +1490,7 @@ function renderFlights(userAction=false){
 }
 
 function setFortune(g,btn){var prev=fGender;fGender=g;document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');document.getElementById('fortune-player').textContent='？？？';document.getElementById('fortune-attr').textContent='未摇签';document.getElementById('fortune-text').textContent='点击下方按钮，开始今日运势抽签';document.getElementById('fortune-yi').innerHTML='';if(prev!==g)trackEvent('tour_switch',{module:'fortune',tour:g==='atp'?'ATP':'WTA'});}
-function drawFortune(){if(!HIST_DATA){loadHistData(function(){drawFortune();});document.getElementById('fortune-text').textContent='⏳ 数据加载中...';return;}const key='fortune_'+fGender;const today=new Date().toISOString().slice(0,10);let rec=JSON.parse(localStorage.getItem(key)||'{}');if(rec.date!==today)rec={date:today,count:0};if(rec.count>=3){document.getElementById('fortune-player').textContent='命运是测不准的';document.getElementById('fortune-attr').textContent='明日再问';document.getElementById('fortune-text').textContent='命运是测不准的。明天再来吧';document.getElementById('fortune-yi').innerHTML='';return;}rec.count++;localStorage.setItem(key,JSON.stringify(rec));const pool=fGender==='atp'?MSPOOL:WSPOOL;if(!pool||!pool.length){document.getElementById('fortune-player').textContent='暂无数据';return;}const player=pool[Math.floor(Math.random()*pool.length)];const f=HIST_DATA.fortunes[Math.floor(Math.random()*HIST_DATA.fortunes.length)];const card=document.getElementById('fortune-card');card.classList.remove('shake');void card.offsetWidth;card.classList.add('shake');document.getElementById('fortune-player').textContent=player;document.getElementById('fortune-attr').textContent=f.attr+'（今日还可抽'+(3-rec.count)+'次）';document.getElementById('fortune-text').textContent=f.text;document.getElementById('fortune-yi').innerHTML=`宜：${f.yi}<br>忌：${f.ji}`;trackEvent('fortune_draw',{module:'fortune',tour:fGender==='atp'?'ATP':'WTA'});}
+function drawFortune(){if(!HIST_DATA){loadHistData(function(){drawFortune();});document.getElementById('fortune-text').textContent='⏳ 数据加载中...';return;}const key='fortune_'+fGender;const today=new Date().toISOString().slice(0,10);let rec=JSON.parse(localStorage.getItem(key)||'{}');if(rec.date!==today)rec={date:today,count:0};if(rec.count>=3){document.getElementById('fortune-player').textContent='命运是测不准的';document.getElementById('fortune-attr').textContent='明日再问';document.getElementById('fortune-text').textContent='命运是测不准的。明天再来吧';document.getElementById('fortune-yi').innerHTML='';return;}rec.count++;localStorage.setItem(key,JSON.stringify(rec));const pool=fGender==='atp'?MSPOOL:WSPOOL;if(!pool||!pool.length){document.getElementById('fortune-player').textContent='暂无数据';return;}const player=pool[Math.floor(Math.random()*pool.length)];const f=HIST_DATA.fortunes[Math.floor(Math.random()*HIST_DATA.fortunes.length)];const card=document.getElementById('fortune-card');card.classList.remove('shake');void card.offsetWidth;card.classList.add('shake');document.getElementById('fortune-player').textContent=player;document.getElementById('fortune-attr').textContent=f.attr+'（今日还可抽'+(3-rec.count)+'次）';document.getElementById('fortune-text').textContent=f.text;document.getElementById('fortune-yi').innerHTML=`宜：${f.yi}<br>忌：${f.ji}`;trackEvent('fortune_draw',{module:'fortune',tour:fGender==='atp'?'ATP':'WTA'});logUserFeatureDaily('fortune',fGender==='atp'?'ATP':'WTA','draw');}
 
 // 每日毒奶
 function chinaDateKey(){
@@ -1394,17 +1538,34 @@ function jinxDisplayMeta(pack){
 
 function setJinxTour(tour,btn){
   const prev=JINX_TOUR;
+  const prevView=JINX_VIEW;
+  JINX_VIEW='vote';
   JINX_TOUR=tour;
   document.querySelectorAll('.jtab').forEach(b=>b.classList.remove('on'));
   if(btn)btn.classList.add('on');
   JINX_LOADED_KEY='';JINX_VOTES=null;JINX_LOAD_ERROR='';
   renderDailyJinx();
-  if(prev!==tour)trackEvent('tour_switch',{module:'daily_jinx',tour:tour});
+  if(prev!==tour||prevView!=='vote')trackEvent('tour_switch',{module:'daily_jinx',tour:tour});
+}
+
+function setJinxLeaderboard(btn){
+  const prevView=JINX_VIEW;
+  JINX_VIEW='leaderboard';
+  document.querySelectorAll('.jtab').forEach(b=>b.classList.remove('on'));
+  if(btn)btn.classList.add('on');
+  stopJinxBarrage();
+  renderDailyJinx();
+  if(prevView!=='leaderboard'){
+    trackEvent('module_view',{module:'daily_jinx_leaderboard',tour:'combined'});
+    trackEvent('daily_jinx_leaderboard_view',{module:'daily_jinx',tour:'combined'});
+    logUserFeatureDaily('daily_jinx_leaderboard','combined','view');
+  }
 }
 
 function dailyJinxErrorText(err){
   const msg=String(err&&err.message||err||'');
   if(/relation .*daily_jinx_votes|does not exist|schema cache/i.test(msg))return '每日毒奶数据表还没创建，请先执行 Supabase SQL。';
+  if(/daily_jinx_leaderboard|function .*does not exist|Could not find the function/i.test(msg))return '毒奶榜 RPC 还没创建，请先执行 Supabase SQL。';
   if(/duplicate|unique|23505/i.test(msg))return '你今天已经提交过了，不能修改。';
   if(/row-level security|permission|policy/i.test(msg))return '数据库权限校验未通过，请检查每日毒奶 RLS 配置。';
   return authErrorText(err);
@@ -1420,6 +1581,10 @@ function setJinxMsg(msg,type){
 function renderDailyJinx(){
   const board=document.getElementById('jinx-board');
   if(!board)return;
+  if(JINX_VIEW==='leaderboard'){
+    renderJinxLeaderboard();
+    return;
+  }
   if(!GDATA){
     board.innerHTML='<div class="loading">⏳ 等待今日赛程数据...</div>';
     return;
@@ -1514,6 +1679,7 @@ async function loadDailyJinxVotes(){
     if(key!==jinxStateKey(getJinxPack()))return;
     JINX_VOTES=[];
     JINX_LOAD_ERROR=dailyJinxErrorText(err);
+    trackSupabaseError('daily_jinx.load_votes',err,false);
   }
   renderDailyJinx();
 }
@@ -1552,13 +1718,26 @@ async function submitDailyJinx(e){
       selected_players:selected,
       message:msg
     };
-    const res=await client.from('daily_jinx_votes').insert(payload);
+    const res=await client.from('daily_jinx_votes').insert(payload).select('id').maybeSingle();
     if(res.error)throw res.error;
+    if(res.data&&res.data.id){
+      const pickRows=selected.map(name=>({
+        vote_id:res.data.id,
+        account_id:AUTH_USER.id,
+        vote_date:pack.date,
+        tour:pack.tour,
+        event_id:pack.event_id,
+        player_name:name
+      }));
+      optionalSupabaseInsert('daily_jinx_vote_picks',pickRows);
+    }
     trackEvent('daily_jinx_submit',{module:'daily_jinx',tour:pack.tour});
+    logUserFeatureDaily('daily_jinx',pack.tour,'submit');
     JINX_LOADED_KEY='';
     await loadDailyJinxVotes();
   }catch(err){
     setJinxMsg(dailyJinxErrorText(err),'err');
+    trackSupabaseError('daily_jinx.submit',err,false);
     if(/duplicate|unique|23505/i.test(String(err&&err.message||''))){
       JINX_LOADED_KEY='';
       loadDailyJinxVotes();
@@ -1568,7 +1747,89 @@ async function submitDailyJinx(e){
   }
 }
 
+async function loadJinxSettlements(){
+  if(JINX_SETTLEMENT_DATA)return JINX_SETTLEMENT_DATA;
+  if(!window.__jinxSettlementPromise){
+    window.__jinxSettlementPromise=fetch('data/daily_jinx_settlements.json?t='+Date.now()).then(function(r){
+      if(!r.ok)return {updated_at:'',settled_through:'',settlements:[]};
+      return r.json();
+    }).catch(function(e){trackDataLoadError('daily_jinx_settlements_json',e);return {updated_at:'',settled_through:'',settlements:[]};});
+  }
+  JINX_SETTLEMENT_DATA=await window.__jinxSettlementPromise;
+  return JINX_SETTLEMENT_DATA;
+}
+
+function normalizedJinxSettlements(){
+  const rows=(JINX_SETTLEMENT_DATA&&JINX_SETTLEMENT_DATA.settlements)||[];
+  return rows.filter(x=>x&&x.date&&x.tour&&x.player_name).map(x=>({
+    vote_date:x.date,
+    tour:x.tour,
+    event_id:x.event_id||'',
+    player_name:x.player_name
+  }));
+}
+
+async function loadJinxLeaderboard(){
+  if(JINX_LEADERBOARD_LOADING)return;
+  JINX_LEADERBOARD_LOADING=true;
+  JINX_LEADERBOARD_ERROR='';
+  renderJinxLeaderboard();
+  try{
+    await loadJinxSettlements();
+    const settlements=normalizedJinxSettlements();
+    if(!settlements.length){
+      JINX_LEADERBOARD=[];
+      return;
+    }
+    const client=await ensureSupabaseClient();
+    const res=await client.rpc('daily_jinx_leaderboard',{p_settlements:settlements});
+    if(res.error)throw res.error;
+    JINX_LEADERBOARD=res.data||[];
+  }catch(err){
+    JINX_LEADERBOARD=[];
+    JINX_LEADERBOARD_ERROR=dailyJinxErrorText(err);
+    trackSupabaseError('daily_jinx.leaderboard',err,false);
+  }finally{
+    JINX_LEADERBOARD_LOADING=false;
+    renderJinxLeaderboard();
+  }
+}
+
+function renderJinxLeaderboard(){
+  const board=document.getElementById('jinx-board');
+  if(!board)return;
+  stopJinxBarrage();
+  if(JINX_LEADERBOARD===null&&!JINX_LEADERBOARD_LOADING&&!JINX_LEADERBOARD_ERROR)loadJinxLeaderboard();
+  const meta=JINX_SETTLEMENT_DATA&&JINX_SETTLEMENT_DATA.settled_through?`结算至 ${esc(JINX_SETTLEMENT_DATA.settled_through)}`:'等待昨日赛果结算';
+  let body='';
+  if(JINX_LEADERBOARD_LOADING){
+    body='<div class="loading">⏳ 正在加载毒奶榜...</div>';
+  }else if(JINX_LEADERBOARD_ERROR){
+    body='<div class="jinx-status r">'+esc(JINX_LEADERBOARD_ERROR)+'</div>';
+  }else{
+    const note='<div class="jinx-status">毒奶分规则：毒中的球员真实出局时，该球员当日被 x 人毒奶，所有毒中它的人各得 x 分。榜单每天随昨日赛果更新。</div>';
+    body=note+`<div class="jinx-leader-grid">${renderJinxLeaderCard('ATP')}${renderJinxLeaderCard('WTA')}</div>`;
+  }
+  board.innerHTML=`<div class="jinx-hero"><div class="jinx-q">毒奶榜</div><div class="jinx-meta"><span class="jinx-pill">ATP / WTA</span><span class="jinx-pill">${meta}</span></div></div><div class="jinx-body">${body}</div>`;
+}
+
+function renderJinxLeaderCard(tour){
+  const rows=(JINX_LEADERBOARD||[]).filter(x=>x.tour===tour).sort((a,b)=>Number(b.score||0)-Number(a.score||0)||String(a.display_name||'').localeCompare(String(b.display_name||''),'zh-Hans-CN-u-co-pinyin'));
+  const title=tour==='ATP'?'ATP 男单':'WTA 女单';
+  if(!rows.length){
+    return `<div class="jinx-leader-card"><div class="jinx-leader-head"><span>${title}</span><span class="jinx-leader-meta">暂无上榜</span></div><div class="jinx-status" style="padding:12px;margin:0">暂无毒奶得分，等昨日赛果结算后自动更新。</div></div>`;
+  }
+  const trs=rows.map((x,i)=>`<tr><td class="jinx-leader-rank">#${i+1}</td><td>${esc(x.display_name||'匿名炉友')}</td><td class="jinx-leader-score">${Number(x.score||0).toLocaleString()}分</td><td class="jinx-leader-hit">${Number(x.hit_count||0)}中</td></tr>`).join('');
+  return `<div class="jinx-leader-card"><div class="jinx-leader-head"><span>${title}</span><span class="jinx-leader-meta">${rows.length} 人上榜</span></div><table class="jinx-leader-table"><thead><tr><th>排名</th><th>用户</th><th>毒奶分</th><th>命中</th></tr></thead><tbody>${trs}</tbody></table></div>`;
+}
+
 function renderJinxResults(pack,votes){
+  const viewKey=jinxStateKey(pack)+'|result';
+  if(!JINX_RESULT_VIEWED[viewKey]){
+    JINX_RESULT_VIEWED[viewKey]=true;
+    trackEvent('daily_jinx_result_view',{module:'daily_jinx',tour:pack.tour});
+    logUserFeatureDaily('daily_jinx',pack.tour,'result_view');
+  }
   const counts={};
   votes.forEach(v=>normalizeVotePlayers(v).forEach(name=>{counts[name]=(counts[name]||0)+1;}));
   const stats=Object.entries(counts).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
@@ -1648,6 +1909,16 @@ function restartJinxBarrageOnFocus(){
 document.addEventListener('visibilitychange',restartJinxBarrageOnFocus);
 window.addEventListener('pageshow',restartJinxBarrageOnFocus);
 window.addEventListener('focus',restartJinxBarrageOnFocus);
+document.addEventListener('click',function(e){
+  const a=e.target&&e.target.closest?e.target.closest('a[href]'):null;
+  if(!a)return;
+  try{
+    const url=new URL(a.href,location.href);
+    if(url.origin!==location.origin){
+      trackEvent('external_link_click',{module:tabMeta(ACTIVE_TAB).module,link_host:url.host});
+    }
+  }catch(_err){}
+});
 
 // 启动加载
 
@@ -1694,6 +1965,8 @@ function toggleSdr(tr){
   html+='</div>';
   sdr.querySelector('.sdr-cell').innerHTML=html;
   sdr.classList.add('open');
+  var tour=(tr.closest('tbody')?.id||'').indexOf('ws')>=0?'WTA':'ATP';
+  trackRowExpand('current_picks',tour,'pick_history');
 }
 
 // ===== 积分构成 =====
@@ -1772,6 +2045,7 @@ function loadBreakdown(cb){
   if(!window.__bdPromise)window.__bdPromise=p;
   p.then(function(d){BD_DATA=applyCurrentToBreakdown(d);cb(BD_DATA);}).catch(function(e){
     console.error('积分构成加载失败',e);
+    trackDataLoadError('breakdown_json',e);
     document.getElementById('bd-loading-ms')&&(document.getElementById('bd-loading-ms').textContent='⚠️ 积分构成数据加载失败，请刷新');
     document.getElementById('bd-loading-ws')&&(document.getElementById('bd-loading-ws').textContent='⚠️ 积分构成数据加载失败，请刷新');
   });
@@ -1846,6 +2120,7 @@ function toggleBdExp(row){
   if(!u){er.classList.add('open');return;}
   er.querySelector('.bd-exp-cell').innerHTML=buildBdExpHtml(u,'bd-'+g+'-'+idx);
   er.classList.add('open');
+  trackRowExpand('breakdown',g==='ms'?'ATP':'WTA','score_breakdown');
   setTimeout(function(){renderBdPies(u,'bd-'+g+'-'+idx);},60);
 }
 
@@ -1970,6 +2245,7 @@ function bdSort(g,col,key){
   pairs.forEach(function(p){tb.appendChild(p.row);if(p.exp)tb.appendChild(p.exp);});
   var meta=tabMeta(g+'-bd');
   trackEvent('sort_apply',{module:meta.module,tour:meta.tour,sort_key:key,sort_direction:dir===0?'default':(dir===1?'desc':'asc')});
+  logUserFeatureDaily(meta.module,meta.tour,'sort');
   bdSearch(g);
 }
 
@@ -2009,6 +2285,7 @@ function setBdF(g,f,btn){
   btn.classList.add('on');
   var meta=tabMeta(tab);
   trackEvent('filter_apply',{module:meta.module,tour:meta.tour,filter_type:f});
+  logUserFeatureDaily(meta.module,meta.tour,'filter_'+f);
   bdSearch(g);
 }
 
