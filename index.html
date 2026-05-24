@@ -27,6 +27,31 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Noto Sans SC","Microsoft YaHe
 .fbtn{padding:5px 12px;border-radius:20px;border:2px solid #fde68a;background:#fff;color:#9a7a40;cursor:pointer;font-size:12px;font-weight:600;transition:all .2s}
 .fbtn.on{border-color:#f59e0b;background:#f59e0b;color:#fff}
 .fbtn:hover:not(.on){border-color:#f97316;color:#f97316}
+.auth-chip{border:1px solid rgba(255,255,255,.55);background:rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:4px 10px;font-size:11px;font-weight:800;cursor:pointer;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.auth-chip:hover{background:rgba(255,255,255,.3)}
+.follow-btn{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;margin-right:6px;border:1px solid #fde68a;border-radius:50%;background:#fffaf0;color:#c9a96b;font-size:15px;line-height:1;cursor:pointer;vertical-align:middle;transition:all .15s}
+.follow-btn:hover{border-color:#f59e0b;color:#f59e0b;transform:translateY(-1px)}
+.follow-btn.on{background:#fef3c7;border-color:#f59e0b;color:#f59e0b;box-shadow:0 2px 8px rgba(245,158,11,.2)}
+.follow-btn.busy{opacity:.55;pointer-events:none}
+.follow-empty{display:none;margin:8px 0 10px;padding:9px 12px;border:1px dashed #fcd34d;border-radius:10px;background:#fffdf4;color:#9a7a40;font-size:12px}
+.auth-modal{position:fixed;inset:0;z-index:500;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(68,50,28,.42)}
+.auth-modal.on{display:flex}
+.auth-card{width:min(420px,100%);background:#fffaf0;border:1px solid #fde68a;border-radius:14px;box-shadow:0 18px 60px rgba(68,50,28,.28);overflow:hidden}
+.auth-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:linear-gradient(135deg,#fef3c7,#fde68a);color:#78450a;font-weight:900}
+.auth-close{border:0;background:rgba(255,255,255,.7);color:#78450a;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:18px;line-height:1}
+.auth-body{padding:14px 16px 16px}
+.auth-tabs{display:flex;gap:6px;margin-bottom:12px}
+.auth-tab{flex:1;border:2px solid #fde68a;background:#fff;color:#9a7a40;border-radius:18px;padding:7px 10px;font-size:13px;font-weight:800;cursor:pointer}
+.auth-tab.on{background:#f59e0b;border-color:#f59e0b;color:#fff}
+.auth-form{display:none}.auth-form.on{display:block}
+.auth-form label{display:block;font-size:12px;color:#78450a;font-weight:800;margin:9px 0 5px}
+.auth-form input{width:100%;border:2px solid #fde68a;border-radius:10px;background:#fff;padding:9px 10px;color:#44321c;font-size:14px}
+.auth-form input:focus{outline:none;border-color:#f59e0b}
+.auth-submit{width:100%;margin-top:13px;border:0;border-radius:20px;background:linear-gradient(135deg,#f59e0b,#f97316);color:#fff;font-size:14px;font-weight:900;padding:10px 12px;cursor:pointer;box-shadow:0 4px 14px rgba(245,158,11,.26)}
+.auth-submit:disabled{opacity:.6;cursor:not-allowed}
+.auth-msg{min-height:18px;margin-top:10px;color:#9a7a40;font-size:12px;line-height:1.5}
+.auth-msg.err{color:#dc2626}.auth-msg.ok{color:#15803d}
+.auth-note{margin-top:8px;color:#9a7a40;font-size:11px;line-height:1.6}
 .tbl-wrap{overflow:auto;border-radius:10px;border:1px solid #fde68a;box-shadow:0 2px 12px rgba(245,158,11,.1);max-height:calc(100vh - 260px)}
 table{width:100%;border-collapse:collapse;font-size:13px}
 thead{position:sticky;top:0;z-index:10;background:linear-gradient(135deg,#fef3c7,#fde68a)}
@@ -116,6 +141,8 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
   .kn{font-size:1.35em}
   .toolbar{position:sticky;top:88px;background:#fff7e6cc;z-index:20;padding:6px;border-radius:10px;backdrop-filter:blur(6px)}
   .toolbar input{width:130px;flex:1}
+  .auth-chip{max-width:110px}
+  .follow-btn{width:22px;height:22px;margin-right:4px;font-size:14px}
   .tbl-wrap{max-height:none;border-radius:8px}
   table{font-size:12px;min-width:820px}
   th,td{padding:7px 8px}
@@ -299,11 +326,11 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 <div id="hdr">
   <div class="hdt">
     <h1>🎾 签表幸存者之炉网</h1>
-    <div class="upd-wrap"><span class="upd" id="upd-time">加载中...</span><span class="dev">开发者：Candice·卢布列娃</span></div>
+    <div class="upd-wrap"><span class="upd" id="upd-time">加载中...</span><span class="dev">开发者：Candice·卢布列娃</span><button class="auth-chip" id="auth-chip" onclick="openAuthModal()">登录</button></div>
   </div>
   <div class="refresh-bar">
     <div class="refresh-dot" id="rdot"></div>
-    <span id="refresh-info">选人数据每30分钟自动更新；其他模块每天11:00更新</span>
+    <span id="refresh-info">选人数据每30分钟内自动更新；其他模块每天11:00更新</span>
   </div>
   <div class="tabs">
     <button class="tab on" onclick="switchTab('ms-s',this)" id="tab-ms-s">🎾 ATP 男单</button>
@@ -349,6 +376,34 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 <div id="p-flight" class="panel"><div class="flight-toolbar"><div style="font-size:15px;font-weight:800;color:#d97706">✈️ 每日航班</div><select class="select-mini" id="flight-year" onchange="initFlightSelect(true)"><option selected>2026</option><option>2025</option><option>2024</option></select><select class="select-mini" id="flight-select" onchange="renderFlights(true)"></select></div><div id="flight-box" class="flight-grid"></div></div>
 <div id="p-fortune" class="panel"><div class="fortune-wrap"><div class="fortune-title">🔮 今日运势抽签</div><div class="fortune-sub">每天选球员愁破头？让神明帮你做选择！</div><div class="fortune-tabs"><button class="ftab on" onclick="setFortune('atp',this)">⚡ ATP 男单</button><button class="ftab" onclick="setFortune('wta',this)">🌸 WTA 女单</button></div><div class="fortune-card" id="fortune-card"><div class="fortune-hint">✨ 今日可选球员已入签筒 ✨</div><div class="fortune-player" id="fortune-player">？？？</div><div class="fattr" id="fortune-attr">未摇签</div><div class="fortune-text" id="fortune-text">点击下方按钮，开始今日运势抽签</div><div class="fortune-yi" id="fortune-yi"></div></div><br><button class="fortune-btn" onclick="drawFortune()">🎋 摇签</button><br><br><div class="fortune-hint">签文仅供娱乐，后果自负 😄</div></div></div></div>
 
+<div class="auth-modal" id="auth-modal" aria-hidden="true">
+  <div class="auth-card">
+    <div class="auth-head"><span>炉网账号</span><button class="auth-close" onclick="closeAuthModal()" aria-label="关闭">×</button></div>
+    <div class="auth-body">
+      <div class="auth-tabs">
+        <button class="auth-tab on" id="auth-tab-login" onclick="showAuthMode('login')">登录</button>
+        <button class="auth-tab" id="auth-tab-register" onclick="showAuthMode('register')">注册</button>
+      </div>
+      <form class="auth-form on" id="auth-form-login" onsubmit="submitLogin(event)">
+        <label for="login-name">昵称</label>
+        <input id="login-name" autocomplete="username" required>
+        <label for="login-pass">密码</label>
+        <input id="login-pass" type="password" autocomplete="current-password" minlength="6" required>
+        <button class="auth-submit" type="submit">登录</button>
+      </form>
+      <form class="auth-form" id="auth-form-register" onsubmit="submitRegister(event)">
+        <label for="register-name">昵称</label>
+        <input id="register-name" autocomplete="username" required>
+        <label for="register-pass">密码</label>
+        <input id="register-pass" type="password" autocomplete="new-password" minlength="6" required>
+        <button class="auth-submit" type="submit">注册并登录</button>
+      </form>
+      <div class="auth-msg" id="auth-msg"></div>
+      <div class="auth-note">昵称可以使用中英文和特殊字符，不可为空，且不能和其他账号重复。</div>
+    </div>
+  </div>
+</div>
+
 <script>
 let HIST_DATA=null;
 const PREVIEW_MODE=false;
@@ -358,12 +413,25 @@ let MSPOOL=[]; let WSPOOL=[];
 let fGender='atp';
 const SS={};const FS={};
 const GA_MEASUREMENT_ID='G-E51GZG7C1F';
+const SUPABASE_URL='https://avdnhcwmwdwhsecszlcd.supabase.co';
+const SUPABASE_ANON_KEY='sb_publishable_W7jtbI1juCvm80UvZ3qgJQ_MrGfhwKG';
+const SUPABASE_JS_URL='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
 const MODULE_VIEWED={};
 const SEARCH_TRACK_TIMERS={};
 let ACTIVE_TAB='ms-s';
+let SUPABASE_CLIENT=null;
+let SUPABASE_LOADING=null;
+let AUTH_USER=null;
+let AUTH_PROFILE=null;
+let AUTH_AFTER_LOGIN=null;
+let FOLLOWING_IDS=new Set();
 
 function gaConfigured(){
   return /^G-[A-Z0-9]+$/.test(GA_MEASUREMENT_ID)&&GA_MEASUREMENT_ID!=='G-XXXXXXXXXX';
+}
+
+function supabaseConfigured(){
+  return /^https:\/\/.+\.supabase\.co$/.test(SUPABASE_URL)&&SUPABASE_ANON_KEY.length>20;
 }
 
 function initGa(){
@@ -427,7 +495,319 @@ function trackSearchFilter(tab){
 
 initGa();
 
+function normalizeNickname(v){
+  return String(v||'').trim().normalize('NFC');
+}
+
+function bytesToHex(buf){
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+async function nicknameToAuthEmail(nickname){
+  const bytes=new TextEncoder().encode(normalizeNickname(nickname));
+  const hash=await crypto.subtle.digest('SHA-256',bytes);
+  return 'u-'+bytesToHex(hash)+'@users.tennis-survivor.local';
+}
+
+function setAuthMessage(msg,type){
+  const el=document.getElementById('auth-msg');
+  if(!el)return;
+  el.textContent=msg||'';
+  el.className='auth-msg'+(type?' '+type:'');
+}
+
+function setAuthBusy(busy){
+  document.querySelectorAll('.auth-submit').forEach(b=>b.disabled=!!busy);
+}
+
+function loadSupabaseScript(){
+  if(window.supabase)return Promise.resolve();
+  if(SUPABASE_LOADING)return SUPABASE_LOADING;
+  SUPABASE_LOADING=new Promise((resolve,reject)=>{
+    const s=document.createElement('script');
+    s.src=SUPABASE_JS_URL;
+    s.async=true;
+    s.onload=resolve;
+    s.onerror=()=>reject(new Error('Supabase SDK 加载失败'));
+    document.head.appendChild(s);
+  });
+  return SUPABASE_LOADING;
+}
+
+async function ensureSupabaseClient(){
+  if(!supabaseConfigured())throw new Error('账号系统还没有配置 Supabase URL 和 anon key。');
+  if(SUPABASE_CLIENT)return SUPABASE_CLIENT;
+  await loadSupabaseScript();
+  SUPABASE_CLIENT=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+  return SUPABASE_CLIENT;
+}
+
+function showAuthMode(mode){
+  const isRegister=mode==='register';
+  document.getElementById('auth-tab-login')?.classList.toggle('on',!isRegister);
+  document.getElementById('auth-tab-register')?.classList.toggle('on',isRegister);
+  document.getElementById('auth-form-login')?.classList.toggle('on',!isRegister);
+  document.getElementById('auth-form-register')?.classList.toggle('on',isRegister);
+  setAuthMessage('');
+}
+
+function openAuthModal(opts){
+  opts=opts||{};
+  AUTH_AFTER_LOGIN=opts.afterLogin||null;
+  const modal=document.getElementById('auth-modal');
+  if(!modal)return;
+  modal.classList.add('on');
+  modal.setAttribute('aria-hidden','false');
+  showAuthMode(opts.mode||'login');
+  if(!supabaseConfigured()){
+    setAuthMessage('账号系统还未填入 Supabase 配置。请先完成 docs/supabase-auth-following.md 里的配置。','err');
+  }else if(opts.reason==='following_filter'){
+    setAuthMessage('登录后可以查看你关注的用户。');
+  }else if(opts.reason==='follow'){
+    setAuthMessage('登录后可以关注这位用户。');
+  }
+  trackEvent('auth_modal_open',{module:tabMeta(ACTIVE_TAB).module,source:opts.reason||'account'});
+  setTimeout(()=>{
+    const id=(opts.mode==='register')?'register-name':'login-name';
+    document.getElementById(id)?.focus();
+  },50);
+}
+
+function closeAuthModal(){
+  const modal=document.getElementById('auth-modal');
+  if(!modal)return;
+  modal.classList.remove('on');
+  modal.setAttribute('aria-hidden','true');
+  setAuthMessage('');
+}
+
+async function afterAuthChanged(user){
+  AUTH_USER=user||null;
+  AUTH_PROFILE=null;
+  FOLLOWING_IDS=new Set();
+  if(AUTH_USER)await loadAccountData();
+  else resetFollowingFilters();
+  updateAuthUi();
+  refreshFollowButtons();
+  refreshLiveFilters();
+}
+
+async function initAuth(){
+  updateAuthUi();
+  if(!supabaseConfigured())return;
+  try{
+    const client=await ensureSupabaseClient();
+    const res=await client.auth.getSession();
+    await afterAuthChanged(res.data.session&&res.data.session.user);
+    client.auth.onAuthStateChange(function(_event,session){
+      afterAuthChanged(session&&session.user);
+    });
+  }catch(e){
+    console.warn('账号系统初始化失败',e);
+  }
+}
+
+async function loadAccountData(){
+  if(!AUTH_USER)return;
+  try{
+    const client=await ensureSupabaseClient();
+    const profileReq=client.from('profiles').select('display_name').eq('id',AUTH_USER.id).maybeSingle();
+    const followsReq=client.from('user_follows').select('followed_user_id').eq('account_id',AUTH_USER.id);
+    const results=await Promise.all([profileReq,followsReq]);
+    if(!results[0].error)AUTH_PROFILE=results[0].data;
+    if(!results[1].error)FOLLOWING_IDS=new Set((results[1].data||[]).map(x=>String(x.followed_user_id)));
+  }catch(e){
+    console.warn('账号资料加载失败',e);
+  }
+}
+
+function updateAuthUi(){
+  const chip=document.getElementById('auth-chip');
+  if(!chip)return;
+  if(AUTH_USER){
+    chip.textContent=(AUTH_PROFILE&&AUTH_PROFILE.display_name)||AUTH_USER.user_metadata?.display_name||'已登录';
+    chip.title='点击退出登录';
+    chip.onclick=logout;
+  }else{
+    chip.textContent='登录';
+    chip.title='登录炉网账号';
+    chip.onclick=function(){openAuthModal();};
+  }
+}
+
+async function ensureProfile(displayName){
+  if(!AUTH_USER)return;
+  const client=await ensureSupabaseClient();
+  const res=await client.from('profiles').upsert({id:AUTH_USER.id,display_name:displayName},{onConflict:'id'});
+  if(res.error)throw res.error;
+  AUTH_PROFILE={display_name:displayName};
+}
+
+function authErrorText(err){
+  const msg=String(err&&err.message||err||'');
+  if(/already|registered|duplicate|unique/i.test(msg))return '这个昵称已经被注册了，请换一个。';
+  if(/invalid login|credentials/i.test(msg))return '昵称或密码不对。';
+  if(/password/i.test(msg))return '密码至少需要 6 位。';
+  return msg||'操作失败，请稍后重试。';
+}
+
+async function submitRegister(e){
+  e.preventDefault();
+  const nickname=normalizeNickname(document.getElementById('register-name').value);
+  const password=document.getElementById('register-pass').value;
+  if(!nickname){setAuthMessage('昵称不能为空。','err');return;}
+  if(password.length<6){setAuthMessage('密码至少需要 6 位。','err');return;}
+  setAuthBusy(true);setAuthMessage('注册中...');
+  try{
+    const client=await ensureSupabaseClient();
+    const email=await nicknameToAuthEmail(nickname);
+    const res=await client.auth.signUp({email:email,password:password,options:{data:{display_name:nickname}}});
+    if(res.error)throw res.error;
+    if(!res.data.session){
+      const loginRes=await client.auth.signInWithPassword({email:email,password:password});
+      if(loginRes.error)throw loginRes.error;
+      AUTH_USER=loginRes.data.user;
+    }else AUTH_USER=res.data.user;
+    await ensureProfile(nickname);
+    await afterAuthChanged(AUTH_USER);
+    setAuthMessage('注册成功。','ok');
+    trackEvent('login_success',{method:'nickname_password',is_new_user:true});
+    finishAuthFlow();
+  }catch(err){
+    setAuthMessage(authErrorText(err),'err');
+  }finally{
+    setAuthBusy(false);
+  }
+}
+
+async function submitLogin(e){
+  e.preventDefault();
+  const nickname=normalizeNickname(document.getElementById('login-name').value);
+  const password=document.getElementById('login-pass').value;
+  if(!nickname){setAuthMessage('昵称不能为空。','err');return;}
+  setAuthBusy(true);setAuthMessage('登录中...');
+  try{
+    const client=await ensureSupabaseClient();
+    const email=await nicknameToAuthEmail(nickname);
+    const res=await client.auth.signInWithPassword({email:email,password:password});
+    if(res.error)throw res.error;
+    AUTH_USER=res.data.user;
+    await loadAccountData();
+    updateAuthUi();
+    refreshFollowButtons();
+    refreshLiveFilters();
+    setAuthMessage('登录成功。','ok');
+    trackEvent('login_success',{method:'nickname_password',is_new_user:false});
+    finishAuthFlow();
+  }catch(err){
+    setAuthMessage(authErrorText(err),'err');
+  }finally{
+    setAuthBusy(false);
+  }
+}
+
+function finishAuthFlow(){
+  const action=AUTH_AFTER_LOGIN;
+  AUTH_AFTER_LOGIN=null;
+  setTimeout(()=>{
+    closeAuthModal();
+    if(typeof action==='function')action();
+  },250);
+}
+
+async function logout(){
+  try{
+    const client=await ensureSupabaseClient();
+    await client.auth.signOut();
+  }catch(e){}
+  await afterAuthChanged(null);
+}
+
+function isFollowingUser(id){
+  return FOLLOWING_IDS.has(String(id||''));
+}
+
+function followButtonHtml(uid,name){
+  uid=String(uid||'');
+  const safeName=String(name||'用户');
+  const star=isFollowingUser(uid)?'★':'☆';
+  const cls=isFollowingUser(uid)?'follow-btn on':'follow-btn';
+  return `<button type="button" class="${cls}" data-follow-id="${esc(uid)}" data-follow-name="${esc(safeName)}" onclick="event.stopPropagation();toggleFollowFromButton(this)" title="${isFollowingUser(uid)?'取消关注':'关注'} ${esc(safeName)}">${star}</button>`;
+}
+
+function refreshFollowButtons(){
+  document.querySelectorAll('.follow-btn').forEach(btn=>{
+    const on=isFollowingUser(btn.dataset.followId);
+    btn.classList.toggle('on',on);
+    btn.textContent=on?'★':'☆';
+    btn.title=(on?'取消关注 ':'关注 ')+(btn.dataset.followName||'用户');
+  });
+}
+
+function setFollowBusy(id,busy){
+  var safe=window.CSS&&CSS.escape?CSS.escape(String(id)):String(id).replace(/\\/g,'\\\\').replace(/"/g,'\\"');
+  document.querySelectorAll('.follow-btn[data-follow-id="'+safe+'"]').forEach(btn=>btn.classList.toggle('busy',!!busy));
+}
+
+async function toggleFollowFromButton(btn){
+  const id=String(btn.dataset.followId||'');
+  const name=btn.dataset.followName||'';
+  if(!id)return;
+  if(!AUTH_USER){
+    openAuthModal({reason:'follow',afterLogin:function(){toggleFollow(id,name);}});
+    return;
+  }
+  await toggleFollow(id,name);
+}
+
+async function toggleFollow(id,name){
+  if(!AUTH_USER)return;
+  setFollowBusy(id,true);
+  try{
+    const client=await ensureSupabaseClient();
+    if(isFollowingUser(id)){
+      const res=await client.from('user_follows').delete().eq('account_id',AUTH_USER.id).eq('followed_user_id',id);
+      if(res.error)throw res.error;
+      FOLLOWING_IDS.delete(id);
+      trackEvent('follow_remove',{module:tabMeta(ACTIVE_TAB).module});
+    }else{
+      const payload={account_id:AUTH_USER.id,followed_user_id:id,followed_username_snapshot:name};
+      const res=await client.from('user_follows').upsert(payload,{onConflict:'account_id,followed_user_id'});
+      if(res.error)throw res.error;
+      FOLLOWING_IDS.add(id);
+      trackEvent('follow_add',{module:tabMeta(ACTIVE_TAB).module});
+    }
+    refreshFollowButtons();
+    refreshLiveFilters();
+  }catch(e){
+    alert(authErrorText(e));
+  }finally{
+    setFollowBusy(id,false);
+  }
+}
+
+function refreshLiveFilters(){
+  ['ms-s','ws-s','ms-p','ws-p'].forEach(tab=>{if(document.getElementById('tb-'+tab))doFilter(tab);});
+  ['ms','ws'].forEach(g=>{if(document.getElementById('bdtb-'+g))bdSearch(g);});
+}
+
+function resetFollowingFilters(){
+  ['ms-s','ws-s','ms-p','ws-p','ms-bd','ws-bd'].forEach(tab=>{
+    const fObj=typeof FS[tab]==='object'?FS[tab]:{mode:FS[tab]||'all'};
+    if(fObj.mode!=='following')return;
+    FS[tab]={mode:'all'};
+    const root=document.getElementById(tab.endsWith('-bd')?'bd-content-'+tab.slice(0,2):'content-'+tab);
+    if(!root)return;
+    root.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));
+    const allBtn=Array.from(root.querySelectorAll('.fbtn')).find(b=>b.textContent.trim()==='全部');
+    if(allBtn)allBtn.classList.add('on');
+  });
+}
+
 // ===== 数据加载 =====
+const CURRENT_REFRESH_MS=10*60*1000;
+const CURRENT_UPDATE_LABEL='每30分钟内更新';
+
 async function loadData(){
   const t=Date.now();
   // ── 并行发起全部3个请求，不互相阻塞 ─────────────────────
@@ -441,7 +821,7 @@ async function loadData(){
     GDATA=cur;
     MSPOOL=(cur.ms&&cur.ms.today_pool)||[];
     WSPOOL=(cur.ws&&cur.ws.today_pool)||[];
-    document.getElementById('upd-time').textContent='⏱ '+(cur.updated_at||'')+'｜每30分钟更新';
+    document.getElementById('upd-time').textContent='⏱ '+(cur.updated_at||'')+'｜'+CURRENT_UPDATE_LABEL;
     if(cur.ms){document.getElementById('tab-ms-s').textContent='🎾 ATP '+(cur.ms.event_name||'')+(cur.ms.today_day?' Day'+cur.ms.today_day:'');renderScore('ms', cur.ms);}
     if(cur.ws){document.getElementById('tab-ws-s').textContent='🎾 WTA '+(cur.ws.event_name||'')+(cur.ws.today_day?' Day'+cur.ws.today_day:'');renderScore('ws', cur.ws);}
     trackModuleView(ACTIVE_TAB);
@@ -490,7 +870,7 @@ async function refreshCurrentOnly(){
     GDATA=cur;
     MSPOOL=cur.ms.today_pool||[];
     WSPOOL=cur.ws.today_pool||[];
-    document.getElementById('upd-time').textContent='⏱ '+cur.updated_at+'｜每30分钟更新';
+    document.getElementById('upd-time').textContent='⏱ '+cur.updated_at+'｜'+CURRENT_UPDATE_LABEL;
     document.getElementById('tab-ms-s').textContent='🎾 ATP '+cur.ms.event_name+' Day'+cur.ms.today_day;
     document.getElementById('tab-ws-s').textContent='🎾 WTA '+cur.ws.event_name+' Day'+cur.ws.today_day;
     renderScore('ms', cur.ms);
@@ -502,7 +882,7 @@ async function refreshCurrentOnly(){
   }catch(e){document.getElementById('rdot').style.background='#f87171';}
 }
 
-setInterval(refreshCurrentOnly, 30*60*1000);
+setInterval(refreshCurrentOnly, CURRENT_REFRESH_MS);
 
 // ===== 渲染实时得分 =====
 function renderScore(g, data){
@@ -545,14 +925,18 @@ function renderScore(g, data){
     const cr=r.current_rank||9999; const ir=r.instant_rank||9999;
     const isAliveRow=sc==='alive'&&!r.not_participated&&r.fill_status!=='未参赛';
     const rowCls=isAliveRow?'ra':'rd';
-    const plEnc=encodeURIComponent(JSON.stringify(r.players||[]));rowsHtml+=`<tr class="${rowCls}" data-status="${sc}" data-filled="${r.has_today?'1':'0'}" data-cr="${cr}" data-ir="${ir}" data-cur="${r.current_score||0}" data-deduct="${r.deduct_score||0}" data-this="${r.this_event_score||0}" data-instant="${r.instant_score||0}" data-day="${r.day||0}" data-chg="${r.rank_change||0}" data-user="${esc(r.username)}" data-today="${esc(r.today_player||'')}" data-alive="${isAliveRow?1:0}" data-pl="${plEnc}" onclick="toggleSdr(this)" style="cursor:pointer"><td class="tn" data-label="当前排名">${cr==9999?'—':cr}</td><td class="tn ir" data-label="即时排名">${ir==9999?'—':ir}</td><td class="tu" data-label="用户名" data-rank="当前#${cr==9999?'—':cr} · 即时#${ir==9999?'—':ir}">${r.username}</td><td class="tt" data-label="今日选择">${td}</td><td data-label="状态">${badge}</td><td class="tn g" data-label="本站得分">${r.this_event_score||0}</td><td class="tn r" data-label="扣除积分">${r.deduct_score>0?'-'+r.deduct_score:'0'}</td><td class="tn y" data-label="即时积分">${r.instant_score||0}</td><td class="tc" data-label="排名变化">${ch}</td><td class="tn s" data-label="存活天数">${r.day||0}</td></tr>`;
+    const uid=String(r.user_id||r.username||'');
+    const followBtn=followButtonHtml(uid,r.username);
+    const plEnc=encodeURIComponent(JSON.stringify(r.players||[]));rowsHtml+=`<tr class="${rowCls}" data-status="${sc}" data-filled="${r.has_today?'1':'0'}" data-cr="${cr}" data-ir="${ir}" data-cur="${r.current_score||0}" data-deduct="${r.deduct_score||0}" data-this="${r.this_event_score||0}" data-instant="${r.instant_score||0}" data-day="${r.day||0}" data-chg="${r.rank_change||0}" data-user="${esc(r.username)}" data-uid="${esc(uid)}" data-today="${esc(r.today_player||'')}" data-alive="${isAliveRow?1:0}" data-pl="${plEnc}" onclick="toggleSdr(this)" style="cursor:pointer"><td class="tn" data-label="当前排名">${cr==9999?'—':cr}</td><td class="tn ir" data-label="即时排名">${ir==9999?'—':ir}</td><td class="tu" data-label="用户名" data-rank="当前#${cr==9999?'—':cr} · 即时#${ir==9999?'—':ir}">${followBtn}<span>${esc(r.username)}</span></td><td class="tt" data-label="今日选择">${td}</td><td data-label="状态">${badge}</td><td class="tn g" data-label="本站得分">${r.this_event_score||0}</td><td class="tn r" data-label="扣除积分">${r.deduct_score>0?'-'+r.deduct_score:'0'}</td><td class="tn y" data-label="即时积分">${r.instant_score||0}</td><td class="tc" data-label="排名变化">${ch}</td><td class="tn s" data-label="存活天数">${r.day||0}</td></tr>`;
     rowsHtml+=`<tr class="sdr-row" id="sdr-${g}-${esc(r.username)}"><td class="sdr-cell" colspan="10"><div class="day-list"></div></td></tr>`;
   }
   
   function mth(col,key,t,cls=''){return `<th${cls?' class="'+cls+'"':''} onclick="srt('${tab}',${col},'${key}')">${t}</th>`;}
   const hdrHtml=`<thead><tr>${mth(0,'cr','当前排名')}${mth(1,'ir','即时排名','sd')}${mth(2,'user','用户名')}${mth(3,'today','今日选择Day'+data.today_day)}${mth(4,'status','状态')}${mth(5,'this','本站得分')}${mth(6,'deduct','扣除积分')}${mth(7,'instant','即时积分')}${mth(8,'chg','排名变化')}${mth(9,'day','存活天数')}</tr></thead>`;
   
-  cont.innerHTML=statsHtml+kpi+`<div class="toolbar"><input id="q-${tab}" placeholder="🔍 搜索..." oninput="doFilter('${tab}')"><button class="fbtn on" onclick="setF('${tab}','all',this)">全部</button><button class="fbtn" onclick="setF('${tab}','alive',this)">仅存活</button><button class="fbtn" onclick="setF('${tab}','filled',this)">今日已填</button></div><div class="tbl-wrap"><table id="${tbl_id}">${hdrHtml}<tbody id="${tb_id}">${rowsHtml}</tbody></table></div>`;
+  const fObj=typeof FS[tab]==='object'?FS[tab]:{mode:FS[tab]||'all'};
+  const fMode=fObj.mode||'all';
+  cont.innerHTML=statsHtml+kpi+`<div class="toolbar"><input id="q-${tab}" placeholder="🔍 搜索..." oninput="doFilter('${tab}')"><button class="fbtn ${fMode==='all'?'on':''}" onclick="setF('${tab}','all',this)">全部</button><button class="fbtn ${fMode==='alive'?'on':''}" onclick="setF('${tab}','alive',this)">仅存活</button><button class="fbtn ${fMode==='filled'?'on':''}" onclick="setF('${tab}','filled',this)">今日已填</button><button class="fbtn ${fMode==='following'?'on':''}" onclick="setF('${tab}','following',this)">关注用户</button></div><div class="follow-empty" id="follow-empty-${tab}"></div><div class="tbl-wrap"><table id="${tbl_id}">${hdrHtml}<tbody id="${tb_id}">${rowsHtml}</tbody></table></div>`;
   cont.style.display='block';
   
   // 按即时排名排序
@@ -569,6 +953,7 @@ function renderScore(g, data){
     pairs.sort((a,b)=>parseInt(a.main.dataset.ir||9999)-parseInt(b.main.dataset.ir||9999));
     pairs.forEach(p=>{tb.appendChild(p.main);if(p.sdr)tb.appendChild(p.sdr);});
   }
+  doFilter(tab);
 }
 
 function getStatusClass(fs,status){
@@ -658,15 +1043,19 @@ function renderPref(g, pdata){
     const ir_d=irVal?irVal:'—';
     const wn=p.wn||''; const wc=p.wc||0;
     const bn=p.bn||''; const bc=p.bc||0;
-    rowsHtml+=`<tr class="pref-row" data-ds="${g=='ms'?'MSD':'WSD'}" data-uid="${uid}" onclick="toggleExpDyn(this)" data-u="${esc(p.u)}" data-ep="${p.ep||0}" data-ee="${p.ee||0}" data-ec="${p.ec||0}" data-wc="${wc}" data-bc="${bc}" data-ir="${irVal||9999}"><td class="tn ir">${ir_d}</td><td class="tu">${p.u}</td><td class="tn">${p.ep||0}</td><td class="tn r">${p.ee||0}</td><td class="tn g">${p.ec||0}</td><td class="tw">${wn?wn+'（'+wc+'次）':'—'}</td><td class="tw g">${bn?bn+'（'+bc+'次）':'—'}</td><td class="tp">${p.cp||'—'}</td><td class="tp">${p.fp||'—'}</td></tr>`;
+    const followBtn=followButtonHtml(uid,p.u);
+    rowsHtml+=`<tr class="pref-row" data-ds="${g=='ms'?'MSD':'WSD'}" data-uid="${esc(uid)}" onclick="toggleExpDyn(this)" data-u="${esc(p.u)}" data-ep="${p.ep||0}" data-ee="${p.ee||0}" data-ec="${p.ec||0}" data-wc="${wc}" data-bc="${bc}" data-ir="${irVal||9999}"><td class="tn ir">${ir_d}</td><td class="tu">${followBtn}<span>${esc(p.u)}</span></td><td class="tn">${p.ep||0}</td><td class="tn r">${p.ee||0}</td><td class="tn g">${p.ec||0}</td><td class="tw">${wn?esc(wn)+'（'+wc+'次）':'—'}</td><td class="tw g">${bn?esc(bn)+'（'+bc+'次）':'—'}</td><td class="tp">${esc(p.cp||'—')}</td><td class="tp">${esc(p.fp||'—')}</td></tr>`;
   }
   
   function mth(col,key,t,cls=''){return `<th${cls?' class="'+cls+'"':''} onclick="srt('${tab}',${col},'${key}')">${t}</th>`;}
   const hdrHtml=`<thead><tr>${mth(0,'ir','即时排名','sd')}${mth(1,'user','用户名')}${mth(2,'ep','参加站数')}${mth(3,'ee','淘汰站数')}${mth(4,'ec','夺冠站数')}${mth(5,'wc','克星球员')}${mth(6,'bc','福星球员')}${mth(7,'champ','带用户夺冠')}${mth(8,'final','带用户夺亚')}</tr></thead>`;
   
   const champCnt=Object.values(dict).filter(p=>p&&(p.ec||0)>0).length;
-  cont.innerHTML=`<div class="yearbar"><span class="dev-note">统计范围</span><select class="select-mini" id="year-${tab}" onchange="renderPrefYear('${g}',this.value)"><option selected>2026</option><option>2025</option><option>2024</option><option>全部</option></select></div><div class="kpi"><div class="kc"><div class="kn nt">${order.length}</div><div class="kl">参与用户</div></div><div class="kc"><div class="kn na">${champCnt}</div><div class="kl">有夺冠经历</div></div></div><p style="font-size:12px;color:#9a7a40;margin-bottom:8px">💡 点击任意行展开该用户详细数据，再点一次收起</p><div class="toolbar"><input id="q-${tab}" placeholder="🔍 搜索..." oninput="doFilter('${tab}')"></div><div class="tbl-wrap"><table id="tbl-${tab}">${hdrHtml}<tbody id="tb-${tab}">${rowsHtml}</tbody></table></div>`;
+  const fObj=typeof FS[tab]==='object'?FS[tab]:{mode:FS[tab]||'all'};
+  const fMode=fObj.mode||'all';
+  cont.innerHTML=`<div class="yearbar"><span class="dev-note">统计范围</span><select class="select-mini" id="year-${tab}" onchange="renderPrefYear('${g}',this.value)"><option selected>2026</option><option>2025</option><option>2024</option><option>全部</option></select></div><div class="kpi"><div class="kc"><div class="kn nt">${order.length}</div><div class="kl">参与用户</div></div><div class="kc"><div class="kn na">${champCnt}</div><div class="kl">有夺冠经历</div></div></div><p style="font-size:12px;color:#9a7a40;margin-bottom:8px">💡 点击任意行展开该用户详细数据，再点一次收起</p><div class="toolbar"><input id="q-${tab}" placeholder="🔍 搜索..." oninput="doFilter('${tab}')"><button class="fbtn ${fMode==='all'?'on':''}" onclick="setF('${tab}','all',this)">全部</button><button class="fbtn ${fMode==='following'?'on':''}" onclick="setF('${tab}','following',this)">关注用户</button></div><div class="follow-empty" id="follow-empty-${tab}"></div><div class="tbl-wrap"><table id="tbl-${tab}">${hdrHtml}<tbody id="tb-${tab}">${rowsHtml}</tbody></table></div>`;
   cont.style.display='block';
+  doFilter(tab);
 }
 
 // ===== 展开行（使用 preference.json 里的 detail） =====
@@ -726,9 +1115,40 @@ function switchTab(t,btn){
   if((t==='ms-t'||t==='ws-t')&&!HIST_DATA){loadHistData(function(){renderDisaster('ms');renderDisaster('ws');});}
   if(t==='flight'&&!HIST_DATA){loadHistData(function(){initFlightSelect();});}
 }
-function setF(tab,f,btn){FS[tab]={mode:f};btn.closest('.toolbar').querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');var meta=tabMeta(tab);trackEvent('filter_apply',{module:meta.module,tour:meta.tour,filter_type:f});doFilter(tab);}
+function setF(tab,f,btn){
+  if(f==='following'&&!AUTH_USER){
+    openAuthModal({reason:'following_filter',afterLogin:function(){setF(tab,'following',btn);}});
+    return;
+  }
+  FS[tab]={mode:f};btn.closest('.toolbar').querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');var meta=tabMeta(tab);trackEvent('filter_apply',{module:meta.module,tour:meta.tour,filter_type:f});doFilter(tab);
+}
 function filterPick(tab,player){FS[tab]={mode:'pick',player:player};const inp=document.getElementById('q-'+tab);if(inp)inp.value='';document.querySelectorAll('#content-'+tab+' .fbtn').forEach(b=>b.classList.remove('on'));var meta=tabMeta(tab);trackEvent('player_stat_click',{module:meta.module,tour:meta.tour,player:player,event_label:meta.event_label});trackEvent('filter_apply',{module:meta.module,tour:meta.tour,filter_type:'pick'});doFilter(tab);}
-function doFilter(tab){const q=(document.getElementById('q-'+tab)||{value:''}).value.toLowerCase();if(q)trackSearchFilter(tab);const fObj=typeof FS[tab]==='object'?FS[tab]:{mode:FS[tab]||'all'};const f=fObj.mode||'all';document.querySelectorAll('#tb-'+tab+' tr.pref-row,#tb-'+tab+' tr[data-status]').forEach(r=>{const u=(r.dataset.u||r.dataset.user||'').toLowerCase();let ok=u.includes(q);if(f==='alive'&&r.dataset.alive!=='1')ok=false;if(f==='filled'&&r.dataset.filled!=='1')ok=false;if(f==='pick'&&r.dataset.today!==fObj.player)ok=false;r.style.display=ok?'':'none';const er=r.nextElementSibling;if(er&&(er.classList.contains('exp-row')||er.classList.contains('sdr-row'))){if(!ok){er.style.display='none';er.classList.remove('open')}else er.style.display='';} });}
+function doFilter(tab){
+  const q=(document.getElementById('q-'+tab)||{value:''}).value.toLowerCase();
+  if(q)trackSearchFilter(tab);
+  const fObj=typeof FS[tab]==='object'?FS[tab]:{mode:FS[tab]||'all'};
+  const f=fObj.mode||'all';
+  let shown=0;
+  document.querySelectorAll('#tb-'+tab+' tr.pref-row,#tb-'+tab+' tr[data-status]').forEach(r=>{
+    const u=(r.dataset.u||r.dataset.user||'').toLowerCase();
+    let ok=u.includes(q);
+    if(f==='alive'&&r.dataset.alive!=='1')ok=false;
+    if(f==='filled'&&r.dataset.filled!=='1')ok=false;
+    if(f==='pick'&&r.dataset.today!==fObj.player)ok=false;
+    if(f==='following'&&!isFollowingUser(r.dataset.uid))ok=false;
+    if(ok)shown++;
+    r.style.display=ok?'':'none';
+    const er=r.nextElementSibling;
+    if(er&&(er.classList.contains('exp-row')||er.classList.contains('sdr-row'))){if(!ok){er.style.display='none';er.classList.remove('open')}else er.style.display='';}
+  });
+  const empty=document.getElementById('follow-empty-'+tab);
+  if(empty){
+    if(f==='following'&&shown===0){
+      empty.textContent=FOLLOWING_IDS.size?'当前搜索或模块里没有匹配的关注用户。':'还没有关注用户，点击用户名前的星星即可关注。';
+      empty.style.display='block';
+    }else empty.style.display='none';
+  }
+}
 function srt(tab,col,key){const k=tab+'_'+col;if(!SS[k])SS[k]=0;SS[k]=(SS[k]+1)%3;const dir=SS[k];const ths=document.querySelectorAll('#tbl-'+tab+' thead th');ths.forEach(t=>t.classList.remove('sa','sd'));const tb=document.getElementById('tb-'+tab);const pairs=[];const allRows=Array.from(tb.rows);for(let i=0;i<allRows.length;i++){const r=allRows[i];if(r.classList.contains('pref-row')||r.dataset.status){const nx=allRows[i+1];const exp=(nx&&(nx.classList.contains('exp-row')||nx.classList.contains('sdr-row')))?nx:null;pairs.push({row:r,exp});if(exp)i++;}}const nk=['cr','ir','this','deduct','instant','chg','day','ep','ee','ec','wc','bc'];if(dir===0){pairs.sort((a,b)=>parseInt(a.row.dataset.ir||9999)-parseInt(b.row.dataset.ir||9999));if(ths[1])ths[1].classList.add('sd');}else{ths[col].classList.add(dir===1?'sa':'sd');const desc=(dir===1);pairs.sort((a,b)=>{if(nk.includes(key))return desc?(parseFloat(b.row.dataset[key]||0)-parseFloat(a.row.dataset[key]||0)):(parseFloat(a.row.dataset[key]||0)-parseFloat(b.row.dataset[key]||0));if(key==='status')return desc?String(b.row.dataset.status||'').localeCompare(String(a.row.dataset.status||'')):String(a.row.dataset.status||'').localeCompare(String(b.row.dataset.status||''));const va=(a.row.dataset.user||a.row.dataset.u||'').toLowerCase();const vb=(b.row.dataset.user||b.row.dataset.u||'').toLowerCase();return desc?vb.localeCompare(va):va.localeCompare(vb);})}pairs.forEach(pair=>{tb.appendChild(pair.row);if(pair.exp)tb.appendChild(pair.exp);});var meta=tabMeta(tab);trackEvent('sort_apply',{module:meta.module,tour:meta.tour,sort_key:key,sort_direction:dir===0?'default':(dir===1?'desc':'asc')});doFilter(tab);}
 
 // 运势
@@ -967,9 +1387,11 @@ function renderBreakdownPanel(g,data){
   var badgesHtml=feat.map(function(x){return '<div class="bd-sbadge"><span class="bd-badge" style="background:'+x[2]+'">'+x[0]+'</span> <b>'+x[1]+'</b>人</div>';}).join('');
   var rows='';
   data.forEach(function(u,i){
-    rows+='<tr class="bd-main-row" data-bdi="'+i+'" data-bdg="'+g+'" data-ir="'+(u.ir||9999)+'" data-name="'+bdEsc(u.n)+'" data-score="'+(u.s||0)+'" data-gs="'+(u.gs||0)+'" data-m1="'+(u.m1||0)+'" data-a5="'+(u.a5||0)+'" data-a2="'+(u.a2||0)+'" data-ye="'+(u.ye||0)+'" data-label="'+bdEsc(u.label||'')+'" onclick="toggleBdExp(this)">'+
+    var uid=String(u.uid||u.id||u.n||'');
+    var followBtn=followButtonHtml(uid,u.n);
+    rows+='<tr class="bd-main-row" data-bdi="'+i+'" data-bdg="'+g+'" data-uid="'+bdEsc(uid)+'" data-ir="'+(u.ir||9999)+'" data-name="'+bdEsc(u.n)+'" data-score="'+(u.s||0)+'" data-gs="'+(u.gs||0)+'" data-m1="'+(u.m1||0)+'" data-a5="'+(u.a5||0)+'" data-a2="'+(u.a2||0)+'" data-ye="'+(u.ye||0)+'" data-label="'+bdEsc(u.label||'')+'" onclick="toggleBdExp(this)">'+
       '<td class="bd-ir">'+(u.ir||'—')+'</td>'+
-      '<td class="bd-name" title="'+bdEsc(u.n)+'">'+u.n+'</td>'+
+      '<td class="bd-name" title="'+bdEsc(u.n)+'">'+followBtn+'<span>'+bdEsc(u.n)+'</span></td>'+
       '<td class="bd-score">'+(u.s||0).toLocaleString()+'</td>'+
       '<td>'+bdTypeBarHtml(u)+'</td>'+
       '<td class="bd-num" style="color:#f59e0b">'+(u.gs||'—')+'</td>'+
@@ -981,9 +1403,12 @@ function renderBreakdownPanel(g,data){
     '</tr>'+
     '<tr class="bd-exp-row" id="bdexp-'+g+'-'+i+'"><td class="bd-exp-cell" colspan="10"></td></tr>';
   });
+  var tab=g+'-bd';
+  var fObj=typeof FS[tab]==='object'?FS[tab]:{mode:FS[tab]||'all'};
+  var fMode=fObj.mode||'all';
   cont.innerHTML=
     '<div class="bd-stat-row"><div class="bd-sbadge">参与用户 <b>'+data.length+'</b></div>'+badgesHtml+'</div>'+
-    '<div class="bd-toolbar"><input id="bdq-'+g+'" placeholder="🔍 搜索用户名..." oninput="bdSearch(\''+g+'\')"></div>'+
+    '<div class="bd-toolbar"><input id="bdq-'+g+'" placeholder="🔍 搜索用户名..." oninput="bdSearch(\''+g+'\')"><button class="fbtn '+(fMode==='all'?'on':'')+'" onclick="setBdF(\''+g+'\',\'all\',this)">全部</button><button class="fbtn '+(fMode==='following'?'on':'')+'" onclick="setBdF(\''+g+'\',\'following\',this)">关注用户</button></div><div class="follow-empty" id="follow-empty-'+tab+'"></div>'+
     '<div class="bd-tbl-wrap"><table class="bd-tbl"><thead><tr>'+
     '<th>排名</th><th>用户名</th><th style="text-align:right">即时积分</th>'+
     '<th>类型分布</th>'+
@@ -997,6 +1422,7 @@ function renderBreakdownPanel(g,data){
   var bdKeys=['ir','name','score','score','gs','m1','a5','a2','ye','label'];
   cont.querySelectorAll('.bd-tbl th').forEach(function(th,i){th.onclick=function(){bdSort(g,i,bdKeys[i]||'ir');};});
   cont.style.display='block';
+  bdSearch(g);
 }
 
 function toggleBdExp(row){
@@ -1139,15 +1565,43 @@ function bdSort(g,col,key){
 function bdSearch(g){
   var q=(document.getElementById('bdq-'+g)||{value:''}).value.toLowerCase();
   if(q)trackSearchFilter(g+'-bd');
+  var tab=g+'-bd';
+  var fObj=typeof FS[tab]==='object'?FS[tab]:{mode:FS[tab]||'all'};
+  var f=fObj.mode||'all';
+  var shown=0;
   document.querySelectorAll('#bdtb-'+g+' .bd-main-row').forEach(function(row){
     var name=row.querySelector('.bd-name')?row.querySelector('.bd-name').textContent.toLowerCase():'';
     var show=name.includes(q);
+    if(f==='following'&&!isFollowingUser(row.dataset.uid))show=false;
+    if(show)shown++;
     row.style.display=show?'':'none';
     var er=document.getElementById('bdexp-'+row.dataset.bdg+'-'+row.dataset.bdi);
     if(er)er.style.display=show?'':'none';
   });
+  var empty=document.getElementById('follow-empty-'+tab);
+  if(empty){
+    if(f==='following'&&shown===0){
+      empty.textContent=FOLLOWING_IDS.size?'当前搜索或模块里没有匹配的关注用户。':'还没有关注用户，点击用户名前的星星即可关注。';
+      empty.style.display='block';
+    }else empty.style.display='none';
+  }
 }
 
+function setBdF(g,f,btn){
+  var tab=g+'-bd';
+  if(f==='following'&&!AUTH_USER){
+    openAuthModal({reason:'following_filter',afterLogin:function(){setBdF(g,'following',btn);}});
+    return;
+  }
+  FS[tab]={mode:f};
+  btn.closest('.bd-toolbar').querySelectorAll('.fbtn').forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on');
+  var meta=tabMeta(tab);
+  trackEvent('filter_apply',{module:meta.module,tour:meta.tour,filter_type:f});
+  bdSearch(g);
+}
+
+initAuth();
 loadData();
 </script>
 </body>

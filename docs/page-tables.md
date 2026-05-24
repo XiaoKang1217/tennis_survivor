@@ -1,0 +1,216 @@
+# Page Tables
+
+## 说明
+
+本项目目前没有直接使用 Google Sheets 作为数据源。用户口中的“sheet”主要指网站前端里的表格模块。
+
+如果未来引入 Google Sheets 作为可编辑后台，需要另开文档记录真实 Google Sheets 的 worksheet、列名、权限和同步规则。
+
+## 实时选人表
+
+位置：
+
+- ATP：`content-ms-s`
+- WTA：`content-ws-s`
+
+数据来源：
+
+- `data/current.json`
+
+核心字段：
+
+- `user_id`
+- `username`
+- `current_rank`
+- `instant_rank`
+- `today_player`
+- `players`
+- `status`
+- `fill_status`
+- `has_today`
+- `not_participated`
+- `current_score`
+- `deduct_score`
+- `this_event_score`
+- `instant_score`
+- `rank_change`
+- `day`
+
+核心交互：
+
+- 搜索用户名或选手
+- 全部/仅存活/今日已填筛选
+- 关注/取消关注用户，并通过“关注用户”筛选查看已关注玩家
+- 点击今日选人统计里的选手，筛选选择该选手的用户
+- 点击用户行展开历史选择
+- 点击表头排序
+
+关注规则：
+
+- 关注关系保存稳定的 `user_id`。
+- 同一个 `user_id` 被关注后，在 ATP/WTA 实时选人表、积分构成表、用户偏好表中出现时都显示为已关注。
+- 未登录用户点击关注或“关注用户”筛选时弹出注册/登录界面；其他浏览不需要登录。
+
+## 积分构成表
+
+位置：
+
+- ATP：`bd-content-ms`
+- WTA：`bd-content-ws`
+
+数据来源：
+
+- `data/breakdown.json`
+
+核心字段：
+
+- `uid`
+- `n`
+- `ir`
+- `s`
+- `gs`
+- `m1`
+- `a5`
+- `a2`
+- `ye`
+- `label`
+- `detail`
+- `exp_list`
+
+核心交互：
+
+- 按排名、积分和积分类型排序
+- 点击用户行展开积分构成
+- 关注/取消关注用户，并通过“关注用户”筛选查看已关注玩家的积分构成
+- 查看赛事类型、场地、积分失效时间
+- 世界第一标签动态跟随即时排名第一
+
+## 用户偏好表
+
+位置：
+
+- ATP：`content-ms-p`
+- WTA：`content-ws-p`
+
+数据来源：
+
+- `data/history.json`
+
+核心字段：
+
+- `user_id`
+- `username`
+- `instant_rank`
+- `events_participated`
+- `events_eliminated`
+- `events_champion`
+- `worst_player_name`
+- `worst_player_count`
+- `best_player_name`
+- `best_player_count`
+- `champion_players`
+- `final_players`
+
+核心交互：
+
+- 切换年份范围
+- 点击用户行展开详情
+- 关注/取消关注用户，并通过“关注用户”筛选查看已关注玩家的历史偏好
+- 排序
+
+## 历史上的惨案表
+
+位置：
+
+- ATP：`content-ms-t`
+- WTA：`content-ws-t`
+
+数据来源：
+
+- `data/history.json`
+
+核心字段：
+
+- `rank`
+- `player`
+- `event`
+- `day`
+- `count`
+- `comment`
+
+核心交互：
+
+- 切换年份
+- 查看球员、赛站、轮次、受害人数和辣评
+
+## 每日航班
+
+位置：
+
+- `p-flight`
+
+数据来源：
+
+- `data/history.json`
+- 当前赛事信息来自 `data/current.json`
+
+核心规则：
+
+- 当前赛事无出局/退赛/自杀记录时显示暂无航班数据。
+- 不应该自动回退展示历史赛事航班，避免误导用户。
+
+## 每日运势
+
+位置：
+
+- `p-fortune`
+
+数据来源：
+
+- 当前可选球员主要来自 `data/current.json`
+
+核心交互：
+
+- ATP/WTA 切换
+- 摇签生成今日娱乐建议
+
+## 候选模块：签表挑战观察室
+
+状态：
+
+- 已完成原站入口和规则调研，尚未编码。
+
+候选位置：
+
+- `p-dc`
+
+候选数据来源：
+
+- 新增 `data/dc.json`
+- 候选生成脚本：`scripts/fetch_dc.py`
+
+候选核心字段：
+
+- `updated_at`
+- `events`
+- `event_id`
+- `year`
+- `gender`
+- `event_name`
+- `tour`
+- `deadline`
+- `entry_url`
+- `distribution_url`
+- `distribution`
+- `section`
+- `player`
+- `opponent`
+- `count`
+- `percent`
+
+候选核心交互：
+
+- ATP/WTA 和赛事切换。
+- 查看当前挑战、截止时间和原站填表入口。
+- 查看冠军、半区、1/4 区、1/8 区和决赛对阵预测分布。
+- 高亮共识热门、争议区块和娱乐向冷门提醒。

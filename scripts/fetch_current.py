@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 签表幸存者之炉网 - 实时数据获取脚本（GitHub Actions 版）
-每5分钟运行：自动检测当前进行中的ATP/WTA比赛，更新选人和积分数据
+定时运行：自动检测当前进行中的ATP/WTA比赛，更新选人和积分数据
 """
 import requests, json, re, time, os, sys
 from collections import Counter

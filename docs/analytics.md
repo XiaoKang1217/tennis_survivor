@@ -16,6 +16,8 @@
 - 不上传具体玩家用户名。
 - 不上传完整选人明细。
 - 可以上传模块名、赛事名、巡回赛类型、筛选类型、被点击的球员名。
+- 如果未来接入登录，可考虑向 GA4 发送内部稳定匿名 `user_id`，用于提升跨设备/跨会话统计准确性；不得发送邮箱、手机号、用户名等可识别个人信息。
+- 不应为了 analytics 准确性强制注册登录；登录应首先服务竞猜、历史战绩、点赞等用户价值。
 
 ## GA4 Measurement ID
 
@@ -129,17 +131,50 @@ GA4 默认 page view 会记录：
 - `module`
 - `tour`
 
+### `auth_modal_open`
+
+用户主动触发登录/注册弹窗时记录。
+
+参数：
+
+- `module`
+- `source`
+
+### `login_success`
+
+用户登录或注册成功时记录。
+
+参数：
+
+- `method`
+- `is_new_user`
+
+### `follow_add` / `follow_remove`
+
+用户关注或取消关注某个炉网玩家时记录。
+
+参数：
+
+- `module`
+
+注意：
+
+- 不上传登录账号 ID。
+- 不上传被关注用户 ID 或关注列表。
+
 ## 实现注意事项
 
 - `trackEvent()` 必须在 GA4 未加载时安全失败，不影响页面功能。
 - 模块初始化时只打一次默认模块访问事件。
 - 对搜索输入类事件做节流或只记录筛选类型，不记录每个键盘输入。
 - 本地预览时可保留 debug 输出，但发布前不应污染页面 UI。
+- 页面刷新通常应增加 page view，不应在 cookie 正常保留时每次都变成新用户；若 GA4 报表出现“刷新一次算一个新用户”，优先排查 cookie/同意模式/本地预览环境/重复初始化/Realtime 报表理解偏差。
 
 ## 当前接入状态
 
 - 已接入 GA4 初始化封装。
 - 已接入 `module_view`、`tour_switch`、`event_switch`、`filter_apply`、`player_stat_click`、`sort_apply`、`fortune_draw`。
+- 关注用户功能新增 `auth_modal_open`、`login_success`、`follow_add`、`follow_remove` 事件；这些事件不包含用户身份和关注明细。
 - 已填写 Measurement ID：`G-E51GZG7C1F`。
 
 ## 后续查看方式
