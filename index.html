@@ -1754,7 +1754,8 @@ function normalizedJinxSettlements(){
     vote_date:x.date,
     tour:x.tour,
     event_id:x.event_id||'',
-    player_name:x.player_name
+    player_name:x.player_name,
+    pick_count:Number(x.pick_count||0)
   }));
 }
 
@@ -1796,7 +1797,7 @@ function renderJinxLeaderboard(){
   }else if(JINX_LEADERBOARD_ERROR){
     body='<div class="jinx-status r">'+esc(JINX_LEADERBOARD_ERROR)+'</div>';
   }else{
-    const note='<div class="jinx-status">毒奶分规则：毒中的球员真实出局时，该球员当日被 x 人毒奶，所有毒中它的人各得 x 分。榜单每天随昨日赛果更新。</div>';
+    const note='<div class="jinx-status">毒奶分规则：毒中的球员真实出局时，该球员当日在实时选人统计里有 x 人选择，所有毒中它的人各得 x 分。榜单每天随昨日赛果更新。</div>';
     body=note+`<div class="jinx-leader-grid">${renderJinxLeaderCard('ATP')}${renderJinxLeaderCard('WTA')}</div>`;
   }
   board.innerHTML=`<div class="jinx-hero"><div class="jinx-q">毒奶榜</div><div class="jinx-meta"><span class="jinx-pill">ATP / WTA</span><span class="jinx-pill">${meta}</span></div></div><div class="jinx-body">${body}</div>`;

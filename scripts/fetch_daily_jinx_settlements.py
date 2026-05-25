@@ -2,9 +2,9 @@
 """
 Generate public settlement data for the Daily Jinx leaderboard.
 
-The file only records which players lost on settled dates. Vote aggregation
-stays inside Supabase through a security-definer RPC so raw vote rows are not
-exposed publicly.
+The file records which players lost on settled dates plus the survivor
+live-pick count for each loser. Vote aggregation stays inside Supabase through
+a security-definer RPC so raw vote rows are not exposed publicly.
 """
 import json
 import os
@@ -16,6 +16,7 @@ import requests
 
 BASE_URL = "https://www.live-tennis.cn"
 OUT_PATH = os.path.join("data", "daily_jinx_settlements.json")
+PICK_COUNTS_PATH = os.path.join("data", "daily_jinx_pick_counts.json")
 START_DATE = datetime(2026, 5, 24).date()
 REFRESH_DAYS = 10
 
@@ -119,11 +120,40 @@ def load_existing():
     return data.get("settlements", [])
 
 
+def load_pick_count_snapshots():
+    if not os.path.exists(PICK_COUNTS_PATH):
+        return {}
+    try:
+        with open(PICK_COUNTS_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except Exception:
+        return {}
+
+    snapshots = {}
+    for item in data.get("snapshots", []):
+        key = (item.get("date"), item.get("tour"), item.get("event_id") or "")
+        if item.get("date") and item.get("tour"):
+            snapshots[key] = item.get("player_counts") or {}
+    return snapshots
+
+
+def attach_pick_counts(records, snapshots):
+    out = []
+    for item in records:
+        row = dict(item)
+        key = (row.get("date"), row.get("tour"), row.get("event_id") or "")
+        player_counts = snapshots.get(key) or {}
+        row["pick_count"] = int(player_counts.get(row.get("player_name"), row.get("pick_count") or 0) or 0)
+        out.append(row)
+    return out
+
+
 def main():
     tz_cn = timezone(timedelta(hours=8))
     today = datetime.now(tz_cn).date()
     yesterday = today - timedelta(days=1)
     existing = load_existing()
+    pick_count_snapshots = load_pick_count_snapshots()
 
     if yesterday < START_DATE:
         settlements = []
@@ -138,20 +168,24 @@ def main():
 
         session = make_session()
         refreshed = []
+        successful_refresh_dates = set()
         for d in refresh_dates:
             date_key = d.isoformat()
             try:
                 day_records = parse_result_date(session, date_key)
                 print(f"{date_key}: {len(day_records)} lost singles records")
                 refreshed.extend(day_records)
+                successful_refresh_dates.add(date_key)
             except Exception as exc:
                 print(f"WARN: failed to parse {date_key}: {exc}")
 
-        refresh_keys = {d.isoformat() for d in refresh_dates}
+        refresh_keys = successful_refresh_dates
         kept = [x for x in existing if x.get("date") not in refresh_keys]
-        settlements = kept + refreshed
+        settlements = attach_pick_counts(kept + refreshed, pick_count_snapshots)
         settlements.sort(key=lambda x: (x.get("date", ""), x.get("tour", ""), x.get("event_id", ""), x.get("player_name", "")))
-        settled_through = yesterday.isoformat()
+        settled_dates = {x.get("date") for x in settlements if x.get("date")}
+        settled_dates.update(successful_refresh_dates)
+        settled_through = max(settled_dates) if settled_dates else ""
 
     output = {
         "updated_at": datetime.now(tz_cn).strftime("%Y-%m-%d %H:%M:%S"),

@@ -8,6 +8,7 @@ from collections import Counter
 from datetime import datetime, timezone, timedelta
 
 BASE_URL = "https://www.live-tennis.cn"
+PICK_COUNTS_PATH = os.path.join('data', 'daily_jinx_pick_counts.json')
 
 REAL_MAX_DAY = {
     '香港':7,'布里斯班':8,'阿德莱德':6,'霍巴特':6,'澳网':13,
@@ -428,9 +429,65 @@ def fetch_event_data(session, csrf, iid, gender, event_name, rank_dict):
         'player_stats': player_stats.most_common(),
     }
 
+def update_daily_jinx_pick_counts(output, now_dt):
+    date_key = now_dt.date().isoformat()
+    existing = []
+    if os.path.exists(PICK_COUNTS_PATH):
+        try:
+            with open(PICK_COUNTS_PATH, 'r', encoding='utf-8') as f:
+                existing = json.load(f).get('snapshots', [])
+        except Exception:
+            existing = []
+
+    by_key = {}
+    for item in existing:
+        key = (item.get('date'), item.get('tour'), item.get('event_id'))
+        if all(key):
+            by_key[key] = item
+
+    for group, tour in (('ms', 'ATP'), ('ws', 'WTA')):
+        data = output.get(group) or {}
+        event_id = data.get('event_id') or ''
+        if not event_id:
+            continue
+        player_counts = {
+            str(name): int(count or 0)
+            for name, count in data.get('player_stats', [])
+            if name
+        }
+        by_key[(date_key, tour, event_id)] = {
+            'date': date_key,
+            'tour': tour,
+            'event_id': event_id,
+            'event_name': data.get('event_name') or '',
+            'today_day': data.get('today_day'),
+            'filled_count': data.get('filled_count', 0),
+            'updated_at': output.get('updated_at') or '',
+            'player_counts': player_counts,
+        }
+
+    cutoff = now_dt.date() - timedelta(days=90)
+    snapshots = []
+    for item in by_key.values():
+        try:
+            item_date = datetime.fromisoformat(item.get('date', '')).date()
+        except ValueError:
+            continue
+        if item_date >= cutoff:
+            snapshots.append(item)
+    snapshots.sort(key=lambda x: (x.get('date', ''), x.get('tour', ''), x.get('event_id', '')))
+
+    with open(PICK_COUNTS_PATH, 'w', encoding='utf-8') as f:
+        json.dump({
+            'updated_at': output.get('updated_at') or '',
+            'snapshots': snapshots,
+        }, f, ensure_ascii=False, separators=(',', ':'))
+    print(f"每日毒奶选人统计快照: {len(snapshots)} 条")
+
 def main():
     tz_cn = timezone(timedelta(hours=8))
-    print(f"[{datetime.now(tz_cn).strftime('%Y-%m-%d %H:%M:%S')}] 开始更新实时数据...")
+    now_dt = datetime.now(tz_cn)
+    print(f"[{now_dt.strftime('%Y-%m-%d %H:%M:%S')}] 开始更新实时数据...")
     
     session = make_session()
     
@@ -485,7 +542,8 @@ def main():
     print(f"  ATP今日赛程球员: {len(ms_players)}, WTA今日赛程球员: {len(ws_players)}")
     
     # 7. 输出
-    now_str = datetime.now(tz_cn).strftime('%Y-%m-%d %H:%M:%S')
+    now_dt = datetime.now(tz_cn)
+    now_str = now_dt.strftime('%Y-%m-%d %H:%M:%S')
     output = {
         'updated_at': now_str,
         'ms': {
@@ -513,6 +571,7 @@ def main():
     os.makedirs('data', exist_ok=True)
     with open('data/current.json', 'w', encoding='utf-8') as f:
         json.dump(output, f, ensure_ascii=False, separators=(',', ':'))
+    update_daily_jinx_pick_counts(output, now_dt)
     
     size_kb = os.path.getsize('data/current.json') // 1024
     print(f"[{now_str}] 完成！文件大小: {size_kb} KB")

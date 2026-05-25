@@ -7,6 +7,27 @@ Versioning guideline:
 - Minor versions add user-facing features or change data logic.
 - Major versions are reserved for large rewrites or incompatible data changes.
 
+## v0.3.4 - 2026-05-25
+
+Release baseline:
+- Online version before release: `v0.3.3` lineage at live commit `79c68f2`.
+- New published version: `v0.3.4`.
+- Rollback target for this release: commit `79c68f2`.
+
+### Added
+- Added `data/daily_jinx_pick_counts.json` as a daily survivor live-pick snapshot so the Daily Jinx leaderboard can score against the original pick-count weights after `current.json` moves to the next day.
+- Updated the current-data workflow to publish the Daily Jinx pick-count snapshot together with `data/current.json`.
+
+### Fixed
+- Fixed `毒奶榜` scoring to award each correct jinx the losing player's survivor live-pick count, rather than the number of Daily Jinx voters who selected that player.
+- Preserved existing Daily Jinx settlement records when the settlement refresh cannot fetch a result page, avoiding accidental data loss during transient network failures.
+
+### Validation
+- Ran JS syntax checks for `index.html`.
+- Ran Python syntax checks for `scripts/fetch_current.py` and `scripts/fetch_daily_jinx_settlements.py`.
+- Ran `python3 -m unittest scripts.test_scoring`.
+- Ran `git diff --check`.
+
 ## v0.3.3 - 2026-05-24
 
 Release baseline:
