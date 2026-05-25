@@ -7,6 +7,22 @@ Versioning guideline:
 - Minor versions add user-facing features or change data logic.
 - Major versions are reserved for large rewrites or incompatible data changes.
 
+## v0.3.5 - 2026-05-25
+
+Release baseline:
+- Online version before release: `v0.3.4` lineage at live commit `93bdc10`.
+- New published version: `v0.3.5`.
+- Rollback target for this release: commit `93bdc10`.
+
+### Changed
+- Mask phone-like炉网账号 nicknames in frontend display, keeping only the first three and last four digits, for example `15804031803` renders as `158****1803`.
+- Documented that `毒奶榜` shows cumulative scores across all settled Daily Jinx dates while adding newly settled points each day.
+
+### Validation
+- Ran JS syntax checks for `index.html`.
+- Verified `15804031803` renders as `158****1803` while normal nicknames are unchanged.
+- Ran `git diff --check`.
+
 ## v0.3.4 - 2026-05-25
 
 Release baseline:

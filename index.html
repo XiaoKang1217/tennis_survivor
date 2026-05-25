@@ -671,6 +671,16 @@ function currentDisplayName(){
   return (AUTH_PROFILE&&AUTH_PROFILE.display_name)||AUTH_USER?.user_metadata?.display_name||'';
 }
 
+function maskPhoneNickname(name){
+  const text=String(name||'').trim();
+  return /^1\d{10}$/.test(text)?text.slice(0,3)+'****'+text.slice(7):text;
+}
+
+function displayNickname(name,fallback){
+  const text=String(name||'').trim()||String(fallback||'');
+  return maskPhoneNickname(text);
+}
+
 function logUserLoginEvent(eventType,isNewUser,sourceModule){
   if(!AUTH_USER)return;
   optionalSupabaseInsert('user_login_events',{
@@ -844,7 +854,7 @@ function updateAuthUi(){
   const chip=document.getElementById('auth-chip');
   if(!chip)return;
   if(AUTH_USER){
-    chip.textContent=(AUTH_PROFILE&&AUTH_PROFILE.display_name)||AUTH_USER.user_metadata?.display_name||'已登录';
+    chip.textContent=displayNickname((AUTH_PROFILE&&AUTH_PROFILE.display_name)||AUTH_USER.user_metadata?.display_name,'已登录');
     chip.title='点击退出登录';
     chip.onclick=logout;
   }else{
@@ -1623,7 +1633,7 @@ function renderJinxShell(pack,body){
 function renderJinxForm(pack,disabled){
   const note=AUTH_USER?'提交后今天不能修改。':'提交时需要登录炉网账号。';
   const opts=pack.pool.map(name=>`<label class="jinx-player"><input type="checkbox" name="jinx-player" value="${esc(name)}" onchange="limitJinxSelection(this)" ${disabled?'disabled':''}><span>${esc(name)}</span></label>`).join('');
-  return `<form class="jinx-form" onsubmit="submitDailyJinx(event)"><div class="jinx-status">${esc(jinxDisplayMeta(pack))}<br>${note}</div><div class="jinx-picks">${opts}</div><textarea id="jinx-message" maxlength="50" placeholder="@${esc((AUTH_PROFILE&&AUTH_PROFILE.display_name)||'你')}：一句毒奶留言，最多50字" oninput="updateJinxFormCount()" ${disabled?'disabled':''}></textarea><div class="jinx-foot"><span class="jinx-count" id="jinx-count">已选 0/3 · 留言 0/50</span><button class="jinx-submit" type="submit" ${disabled?'disabled':''}>提交毒奶</button></div><div class="jinx-msg" id="jinx-msg"></div></form>`;
+  return `<form class="jinx-form" onsubmit="submitDailyJinx(event)"><div class="jinx-status">${esc(jinxDisplayMeta(pack))}<br>${note}</div><div class="jinx-picks">${opts}</div><textarea id="jinx-message" maxlength="50" placeholder="@${esc(displayNickname(currentDisplayName(),'你'))}：一句毒奶留言，最多50字" oninput="updateJinxFormCount()" ${disabled?'disabled':''}></textarea><div class="jinx-foot"><span class="jinx-count" id="jinx-count">已选 0/3 · 留言 0/50</span><button class="jinx-submit" type="submit" ${disabled?'disabled':''}>提交毒奶</button></div><div class="jinx-msg" id="jinx-msg"></div></form>`;
 }
 
 function limitJinxSelection(input){
@@ -1809,7 +1819,7 @@ function renderJinxLeaderCard(tour){
   if(!rows.length){
     return `<div class="jinx-leader-card"><div class="jinx-leader-head"><span>${title}</span><span class="jinx-leader-meta">暂无上榜</span></div><div class="jinx-status" style="padding:12px;margin:0">暂无毒奶得分，等昨日赛果结算后自动更新。</div></div>`;
   }
-  const trs=rows.map((x,i)=>`<tr><td class="jinx-leader-rank">#${i+1}</td><td>${esc(x.display_name||'匿名炉友')}</td><td class="jinx-leader-score">${Number(x.score||0).toLocaleString()}分</td><td class="jinx-leader-hit">${Number(x.hit_count||0)}中</td></tr>`).join('');
+  const trs=rows.map((x,i)=>`<tr><td class="jinx-leader-rank">#${i+1}</td><td>${esc(displayNickname(x.display_name,'匿名炉友'))}</td><td class="jinx-leader-score">${Number(x.score||0).toLocaleString()}分</td><td class="jinx-leader-hit">${Number(x.hit_count||0)}中</td></tr>`).join('');
   return `<div class="jinx-leader-card"><div class="jinx-leader-head"><span>${title}</span><span class="jinx-leader-meta">${rows.length} 人上榜</span></div><table class="jinx-leader-table"><thead><tr><th>排名</th><th>用户</th><th>毒奶分</th><th>命中</th></tr></thead><tbody>${trs}</tbody></table></div>`;
 }
 
@@ -1846,7 +1856,7 @@ function jinxBarrageMessages(votes){
     const key=String(v.id||v.account_id||'')+'|'+String(v.created_at||'');
     if(seen.has(key))return false;
     seen.add(key);return true;
-  }).map(v=>({name:v.voter_name_snapshot||'匿名炉友',msg:String(v.message||'').trim()}));
+  }).map(v=>({name:displayNickname(v.voter_name_snapshot,'匿名炉友'),msg:String(v.message||'').trim()}));
 }
 
 function stopJinxBarrage(){

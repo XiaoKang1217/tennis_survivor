@@ -22,6 +22,8 @@ This document records the setup for the `每日毒奶` voting module.
 - Barrage messages run through same-speed lane queues, loop continuously, and restart after page visibility changes to avoid browser-throttling pileups.
 - The `毒奶榜` view shows ATP and WTA leaderboards side by side.
 - Leaderboard scoring is aggregate-only: if a jinxed player really loses, and that player had `x` picks in the survivor live-pick player statistics on that date/tour, every Daily Jinx user who selected that player gets `x` points.
+- Leaderboard scores are cumulative across all settled vote dates; each daily settlement adds yesterday's newly hit points to the user's historical total.
+- Phone-like account nicknames are masked on the frontend before display, for example `15804031803` becomes `158****1803`.
 - Live-pick player-count snapshots are generated into `data/daily_jinx_pick_counts.json` by `scripts/fetch_current.py`.
 - Match-loss settlements, including each loser's `pick_count`, are generated into `data/daily_jinx_settlements.json` by `scripts/fetch_daily_jinx_settlements.py`; raw vote rows remain protected by RLS.
 
