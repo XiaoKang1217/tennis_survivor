@@ -55,6 +55,29 @@ def post_api(session, csrf, iid, suffix, start=0, length=2000):
     r.raise_for_status()
     return r.json()
 
+def post_api_all(session, csrf, iid, suffix, length=1000):
+    """分页读取 DataTables 接口，避免 detail 超过默认 length 后被截断。"""
+    start = 0
+    all_rows = []
+    total = None
+    last = None
+    while True:
+        d = post_api(session, csrf, iid, suffix, start=start, length=length)
+        rows = d.get('data', [])
+        all_rows.extend(rows)
+        if total is None:
+            total = int(d.get('recordsTotal') or len(rows) or 0)
+        last = d
+        if len(all_rows) >= total or not rows:
+            break
+        start += length
+        time.sleep(0.2)
+    if last is None:
+        return {'data': [], 'recordsTotal': 0}
+    last['data'] = all_rows
+    last['recordsTotal'] = total if total is not None else len(all_rows)
+    return last
+
 def clean_username(html):
     return re.sub(r'<[^>]+>', '', str(html)).strip()
 
@@ -290,27 +313,41 @@ def fetch_event_data(session, csrf, iid, gender, event_name, rank_dict):
     score_rows = sd.get('data', [])
     print(f"  Score rows: {len(score_rows)}")
     
-    # Today detail
-    dd = post_api(session, csrf, iid, '2026/detail', length=500)
+    # Detail 可能超过 500 条；必须全量读取，否则 WTA 大满贯 Day1 会被截断。
+    dd = post_api_all(session, csrf, iid, '2026/detail', length=1000)
     today_rows = dd.get('data', [])
- # 🔧 修复1：用 score + detail 的并集作为本站参赛用户
     score_user_ids = {str(r['user_id']) for r in score_rows}
-    detail_user_ids = {str(r['user_id']) for r in today_rows}
-    all_event_user_ids = score_user_ids | detail_user_ids  # 并集
-    
-    # 🔧 修复2：只从本站参赛用户的 detail 中取 today_day
-    event_detail_rows = [r for r in today_rows if str(r.get('user_id')) in all_event_user_ids]
-    today_day = max((r.get('day', 0) for r in event_detail_rows), default=0)
-    today_map = {str(r['user_id']): r for r in event_detail_rows if r.get('day') == today_day}
+    settled_days = [
+        r.get('day', 0) for r in today_rows
+        if str(r.get('fill_status', '')).strip()
+    ]
+    settled_day = max(settled_days, default=None)
+    today_day = max((r.get('day', 0) for r in today_rows), default=settled_day or 0)
+    settled_map = {
+        str(r['user_id']): r for r in today_rows
+        if settled_day is not None and r.get('day') == settled_day
+    }
+    today_map = {str(r['user_id']): r for r in today_rows if r.get('day') == today_day}
+
+    if score_user_ids or settled_map:
+        # Day2 预填记录可能已经出现；只有 score 或已结算日记录才代表本站参赛。
+        all_event_user_ids = score_user_ids | set(settled_map.keys())
+    else:
+        # Day1 未结算前没有 fill_status，只能用当日有效选人临时判断参赛。
+        all_event_user_ids = {
+            str(r['user_id']) for r in today_rows
+            if r.get('day') == today_day and r.get('player') and r.get('player') != '轮空'
+        }
    
     # 构建 score 用户快速查找
     score_map = {str(r['user_id']): r for r in score_rows}
     
     rows_out = []
     
-    # 🔧 修复3：遍历所有本站参赛用户（score + detail 并集）
+    # 遍历本站有效参赛用户；Day2 才首次出现的预填记录不能补成参赛。
     for uid in all_event_user_ids:
         r = score_map.get(uid, {})
+        sr = r or settled_map.get(uid, {})
         tr = today_map.get(uid, {})
             
         ri = rank_dict.get(uid, {})
@@ -327,9 +364,12 @@ def fetch_event_data(session, csrf, iid, gender, event_name, rank_dict):
         not_participated = False
         today_player = (tr.get('player', '') if tr else '') or ''
         today_player_alt = (tr.get('player_alt', '') if tr else '') or ''
-        if r:
-            fill_status = r.get('fill_status', '')
-            status = r.get('status', 0)
+        if sr:
+            fill_status = sr.get('fill_status', '')
+            status = sr.get('status', 0)
+            if not fill_status and not score_user_ids and settled_day is None and today_player and today_player != '轮空':
+                fill_status = '存活'
+                status = 2
             if not fill_status and not status:
                 fill_status = '未参赛'
                 status = 1
@@ -351,9 +391,9 @@ def fetch_event_data(session, csrf, iid, gender, event_name, rank_dict):
         
         rows_out.append({
             'user_id': uid,
-            'username': clean_username(r.get('username', '') or tr.get('username', '') or ri.get('username', '')),
+            'username': clean_username(sr.get('username', '') or tr.get('username', '') or ri.get('username', '')),
             'status': status,
-            'day': r.get('day', 0) if r else 0,
+            'day': sr.get('day', 0) if sr else 0,
             'fill_status': fill_status,
             'current_rank': ri.get('rank'),
             'current_score': cur,
@@ -364,7 +404,7 @@ def fetch_event_data(session, csrf, iid, gender, event_name, rank_dict):
             'today_player_alt': today_player_alt,
             'has_today': uid in today_map and bool(today_player),
             'not_participated': not_participated,
-            'players': parse_players(r.get('players', '') if r else tr.get('players', '')),
+            'players': parse_players(sr.get('players', '') if sr else tr.get('players', '')),
         })
     
     # 合并年度排名中未参加本站的用户，保证即时排名完整
