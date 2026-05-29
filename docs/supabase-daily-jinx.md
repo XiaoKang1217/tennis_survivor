@@ -21,11 +21,12 @@ This document records the setup for the `每日毒奶` voting module.
 - Each submission produces at most one barrage message, even when the submission selects multiple players.
 - Barrage messages run through same-speed lane queues, loop continuously, and restart after page visibility changes to avoid browser-throttling pileups.
 - The `毒奶榜` view shows ATP and WTA leaderboards side by side.
-- Leaderboard scoring is aggregate-only: if a jinxed player really loses, and that player had `x` picks in the survivor live-pick player statistics on that date/tour, every Daily Jinx user who selected that player gets `x` points.
+- Leaderboard scoring is aggregate-only: if a Daily Jinx submission was created before the selected player's match started, the player really loses, and that player had `x` picks in the survivor live-pick player statistics on that date/tour, every Daily Jinx user who selected that player gets `x` points.
+- Canceled, postponed, unstarted, and unfinished matches do not create scoring settlements.
 - Leaderboard scores are cumulative across all settled vote dates; each daily settlement adds yesterday's newly hit points to the user's historical total.
 - Phone-like account nicknames are masked on the frontend before display, for example `15804031803` becomes `158****1803`.
 - Live-pick player-count snapshots are generated into `data/daily_jinx_pick_counts.json` by `scripts/fetch_current.py`.
-- Match-loss settlements, including each loser's `pick_count`, are generated into `data/daily_jinx_settlements.json` by `scripts/fetch_daily_jinx_settlements.py`; raw vote rows remain protected by RLS.
+- Match-loss settlements, including each loser's `pick_count` and match start time, are generated into `data/daily_jinx_settlements.json` by `scripts/fetch_daily_jinx_settlements.py`; raw vote rows remain protected by RLS.
 
 ## SQL Schema And RLS
 
@@ -116,12 +117,21 @@ as $$
       s.tour,
       coalesce(s.event_id, '') as event_id,
       btrim(s.player_name) as player_name,
-      greatest(coalesce(s.pick_count, 0), 0)::integer as pick_count
+      greatest(coalesce(s.pick_count, 0), 0)::integer as pick_count,
+      s.match_start_at
     from jsonb_to_recordset(coalesce(p_settlements, '[]'::jsonb))
-      as s(vote_date date, tour text, event_id text, player_name text, pick_count integer)
+      as s(
+        vote_date date,
+        tour text,
+        event_id text,
+        player_name text,
+        pick_count integer,
+        match_start_at timestamptz
+      )
     where s.vote_date is not null
       and s.tour in ('ATP', 'WTA')
       and btrim(s.player_name) <> ''
+      and s.match_start_at is not null
   ),
   vote_picks as (
     select distinct
@@ -130,7 +140,8 @@ as $$
       v.vote_date,
       v.tour,
       coalesce(v.event_id, '') as event_id,
-      btrim(p.player_name) as player_name
+      btrim(p.player_name) as player_name,
+      v.created_at
     from public.daily_jinx_votes v
     cross join lateral unnest(v.selected_players) as p(player_name)
     where btrim(p.player_name) <> ''
@@ -146,6 +157,7 @@ as $$
      and (s.event_id = '' or s.event_id = vp.event_id)
      and s.player_name = vp.player_name
      and s.pick_count > 0
+     and vp.created_at < s.match_start_at
   ),
   latest_names as (
     select distinct on (v.account_id)
@@ -179,6 +191,7 @@ Notes:
 - The frontend still hides results before submission, but the database policy is the real guardrail.
 - The leaderboard RPC returns only aggregate nickname/score data. It does not expose raw vote messages, selected-player arrays, or account ids.
 - The `pick_count` used by the leaderboard is the survivor live-pick player count from the static settlement payload, not the number of Daily Jinx users who voted for that player.
+- A vote scores only if its `created_at` is earlier than the selected player's `match_start_at` in the settlement payload.
 
 ## Validation Checklist
 

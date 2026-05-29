@@ -169,11 +169,13 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 .jinx-leader-card{border:1px solid #fed7aa;background:#fffaf0;border-radius:12px;overflow:hidden}
 .jinx-leader-head{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#fff7ed;border-bottom:1px solid #fed7aa;padding:10px 12px;font-size:14px;font-weight:900;color:#991b1b}
 .jinx-leader-meta{font-size:11px;color:#9a7a40;font-weight:800}
-.jinx-leader-table{width:100%;border-collapse:collapse;font-size:12px}
+.jinx-col-rank{width:44px}.jinx-col-score{width:76px}.jinx-col-hit{width:52px}
+.jinx-leader-table{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
 .jinx-leader-table th{background:#fef3c7;color:#78450a;text-align:left;padding:8px;border-bottom:1px solid #fde68a}
 .jinx-leader-table td{padding:8px;border-bottom:1px solid #ffedd5;color:#44321c}
 .jinx-leader-table tr:last-child td{border-bottom:0}
 .jinx-leader-rank{width:44px;text-align:center!important;color:#7c3aed!important;font-weight:900}
+.jinx-leader-user{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .jinx-leader-score{text-align:right!important;color:#ea580c!important;font-weight:900;white-space:nowrap}
 .jinx-leader-hit{text-align:right!important;color:#9a7a40!important;white-space:nowrap}
 .exp-tag{background:#fef3c7;border:1px solid #fcd34d;border-radius:12px;padding:2px 8px;font-size:12px;color:#78450a;white-space:nowrap;display:inline-block;margin:2px}
@@ -220,6 +222,11 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
   .jinx-bar{grid-template-columns:minmax(72px,112px) 1fr;gap:6px}
   .jinx-num{grid-column:2;text-align:right}
   .jinx-leader-grid{grid-template-columns:1fr}
+  .jinx-leader-head{padding:9px 10px}
+  .jinx-col-rank{width:38px}.jinx-col-score{width:66px}.jinx-col-hit{width:42px}
+  .jinx-leader-table{font-size:11px;min-width:0!important}
+  .jinx-leader-table th,.jinx-leader-table td{padding:7px 6px}
+  .jinx-leader-rank{width:38px}
   .flight-grid{grid-template-columns:1fr}
 }
 
@@ -1765,7 +1772,8 @@ function normalizedJinxSettlements(){
     tour:x.tour,
     event_id:x.event_id||'',
     player_name:x.player_name,
-    pick_count:Number(x.pick_count||0)
+    pick_count:Number(x.pick_count||0),
+    match_start_at:x.match_start_at||null
   }));
 }
 
@@ -1807,7 +1815,7 @@ function renderJinxLeaderboard(){
   }else if(JINX_LEADERBOARD_ERROR){
     body='<div class="jinx-status r">'+esc(JINX_LEADERBOARD_ERROR)+'</div>';
   }else{
-    const note='<div class="jinx-status">毒奶分规则：毒中的球员真实出局时，该球员当日在实时选人统计里有 x 人选择，所有毒中它的人各得 x 分。榜单每天随昨日赛果更新。</div>';
+    const note='<div class="jinx-status">毒奶分规则：提交时间早于该球员比赛开始时间，且球员真实出局时，该球员当日在实时选人统计里有 x 人选择，所有毒中它的人各得 x 分；取消、推迟或未完赛不计分。榜单每天随昨日赛果更新。</div>';
     body=note+`<div class="jinx-leader-grid">${renderJinxLeaderCard('ATP')}${renderJinxLeaderCard('WTA')}</div>`;
   }
   board.innerHTML=`<div class="jinx-hero"><div class="jinx-q">毒奶榜</div><div class="jinx-meta"><span class="jinx-pill">ATP / WTA</span><span class="jinx-pill">${meta}</span></div></div><div class="jinx-body">${body}</div>`;
@@ -1819,8 +1827,8 @@ function renderJinxLeaderCard(tour){
   if(!rows.length){
     return `<div class="jinx-leader-card"><div class="jinx-leader-head"><span>${title}</span><span class="jinx-leader-meta">暂无上榜</span></div><div class="jinx-status" style="padding:12px;margin:0">暂无毒奶得分，等昨日赛果结算后自动更新。</div></div>`;
   }
-  const trs=rows.map((x,i)=>`<tr><td class="jinx-leader-rank">#${i+1}</td><td>${esc(displayNickname(x.display_name,'匿名炉友'))}</td><td class="jinx-leader-score">${Number(x.score||0).toLocaleString()}分</td><td class="jinx-leader-hit">${Number(x.hit_count||0)}中</td></tr>`).join('');
-  return `<div class="jinx-leader-card"><div class="jinx-leader-head"><span>${title}</span><span class="jinx-leader-meta">${rows.length} 人上榜</span></div><table class="jinx-leader-table"><thead><tr><th>排名</th><th>用户</th><th>毒奶分</th><th>命中</th></tr></thead><tbody>${trs}</tbody></table></div>`;
+  const trs=rows.map((x,i)=>`<tr><td class="jinx-leader-rank">#${i+1}</td><td class="jinx-leader-user">${esc(displayNickname(x.display_name,'匿名炉友'))}</td><td class="jinx-leader-score">${Number(x.score||0).toLocaleString()}分</td><td class="jinx-leader-hit">${Number(x.hit_count||0)}中</td></tr>`).join('');
+  return `<div class="jinx-leader-card"><div class="jinx-leader-head"><span>${title}</span><span class="jinx-leader-meta">${rows.length} 人上榜</span></div><table class="jinx-leader-table"><colgroup><col class="jinx-col-rank"><col><col class="jinx-col-score"><col class="jinx-col-hit"></colgroup><thead><tr><th>排名</th><th>用户</th><th>毒奶分</th><th>命中</th></tr></thead><tbody>${trs}</tbody></table></div>`;
 }
 
 function renderJinxResults(pack,votes){

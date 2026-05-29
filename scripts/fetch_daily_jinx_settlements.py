@@ -2,9 +2,9 @@
 """
 Generate public settlement data for the Daily Jinx leaderboard.
 
-The file records which players lost on settled dates plus the survivor
-live-pick count for each loser. Vote aggregation stays inside Supabase through
-a security-definer RPC so raw vote rows are not exposed publicly.
+The file records which players lost on settled dates, when each match started,
+and the survivor live-pick count for each loser. Vote aggregation stays inside
+Supabase through a security-definer RPC so raw vote rows are not exposed publicly.
 """
 import json
 import os
@@ -41,6 +41,16 @@ def parse_open_stat_args(raw):
     return re.findall(r"&quot;([^&]*)&quot;", raw or "")
 
 
+def unix_timestamp_to_iso(raw):
+    try:
+        ts = int(str(raw or "").strip())
+    except ValueError:
+        return None, None
+    if ts <= 0:
+        return None, None
+    return ts, datetime.fromtimestamp(ts, timezone.utc).isoformat().replace("+00:00", "Z")
+
+
 def parse_result_date(session, date_key):
     url = f"{BASE_URL}/zh/result/{date_key}"
     html = session.get(url, timeout=35).text
@@ -70,6 +80,8 @@ def parse_result_date(session, date_key):
             if 'is-double="1"' in match_html:
                 continue
 
+            time_match = re.search(r"<div class=cResultMatchTime>(\d+)</div>", match_html)
+            match_start_ts, match_start_at = unix_timestamp_to_iso(time_match.group(1) if time_match else "")
             gender_match = re.search(r"<div class=cResultMatchGender>([^<]+)</div>", match_html)
             round_match = re.search(r"<div class=cResultMatchRound>([^<]+)</div>", match_html)
             gender_text = clean_html(gender_match.group(1)) if gender_match else ""
@@ -108,6 +120,8 @@ def parse_result_date(session, date_key):
                 "match_id": match_id,
                 "round": round_text,
                 "player_name": loser,
+                "match_start_ts": match_start_ts,
+                "match_start_at": match_start_at,
             })
     return records
 

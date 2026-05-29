@@ -7,6 +7,28 @@ Versioning guideline:
 - Minor versions add user-facing features or change data logic.
 - Major versions are reserved for large rewrites or incompatible data changes.
 
+## v0.3.6 - 2026-05-29
+
+Release baseline:
+- Online version before release: `v0.3.5` lineage at live commit `dbb22cd`.
+- New published version: `v0.3.6`.
+- Rollback target for this release: commit `dbb22cd`.
+
+### Changed
+- Daily Jinx settlements now include each completed match's start time so leaderboard scoring can ignore votes submitted after that player's match had already started.
+- Updated the Daily Jinx leaderboard RPC documentation so a hit only scores when the vote was submitted before `match_start_at`; canceled, postponed, unstarted, and unfinished matches do not score.
+
+### Fixed
+- Fixed the Daily Jinx leaderboard on mobile by preventing the global table minimum width from pushing score and hit columns off-screen.
+
+### Validation
+- Regenerated `data/daily_jinx_settlements.json` with match-start timestamps and confirmed no settlement rows are missing `match_start_at`.
+- Verified the mobile Daily Jinx leaderboard at 390x844: board width and table scroll width both fit within the viewport.
+- Ran JS syntax checks for `index.html`.
+- Ran Python syntax checks for `scripts/fetch_daily_jinx_settlements.py`.
+- Ran `python3 -m unittest scripts.test_scoring`.
+- Ran `git diff --check`.
+
 ## v0.3.5 - 2026-05-25
 
 Release baseline:
