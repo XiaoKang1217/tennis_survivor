@@ -1,8 +1,6 @@
 name: Update Breakdown Data
 
 on:
-  schedule:
-    - cron: '11 3 * * *'
   workflow_dispatch:
 
 jobs:
