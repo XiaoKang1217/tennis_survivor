@@ -723,6 +723,7 @@ let MANAGER_HALL_SEARCH='';
 let MANAGER_HALL_SEARCH_COMPOSING=false;
 let MANAGER_MARKET_PAGE=1;
 let MANAGER_HALL_PAGE=1;
+let MANAGER_STATION_NET_PAGE=1;
 let MANAGER_LEDGER_SEARCH='';
 let MANAGER_LEDGER_SEARCH_COMPOSING=false;
 let MANAGER_LEDGER_SEARCH_TIMER=null;
@@ -738,6 +739,7 @@ let MANAGER_PHOTO_DATA={fallbacks:{},players:{}};
 let MANAGER_REMOTE_STATE=null;
 let MANAGER_REMOTE_SYNC_KEY='';
 let MANAGER_REMOTE_CONFIGS=[];
+let MANAGER_REMOTE_STATION_NET_BOARD=[];
 let MANAGER_REMOTE_PUBLIC_SYNC_KEY='';
 let MANAGER_PENDING_TRANSFER=null;
 const MANAGER_STORE_KEY='tennis_manager_state_v3';
@@ -1118,6 +1120,10 @@ function managerLineupStatusText(submitted){
 }
 function managerStationKey(){return MANAGER_ACTIVE_EVENTS&&MANAGER_ACTIVE_EVENTS.station_key?MANAGER_ACTIVE_EVENTS.station_key:managerContestPacks().map(managerPackLabel).join(' + ');}
 function managerStationName(){return MANAGER_ACTIVE_EVENTS&&MANAGER_ACTIVE_EVENTS.station_name?MANAGER_ACTIVE_EVENTS.station_name:managerContestPacks().map(managerPackLabel).join(' + ');}
+function managerSeason(){
+  var atp=managerEventPack('ATP'),wta=managerEventPack('WTA');
+  return Number(atp.meta&&atp.meta.season||wta.meta&&wta.meta.season||MANAGER_ACTIVE_EVENTS&&MANAGER_ACTIVE_EVENTS.season)||2026;
+}
 function managerPlainMoney(value){
   var n=Number(value);
   return '$'+(Number.isFinite(n)?Math.round(n):String(value||0));
@@ -1368,11 +1374,12 @@ function managerPaginate(items,page,pageSize){
 }
 function managerPagerHtml(kind,pager){
   if(!pager||pager.total<=pager.size)return '';
-  var action=kind==='hall'?'page-hall':'page-market';
+  var action=kind==='hall'?'page-hall':(kind==='station-net'?'page-station-net':'page-market');
   return '<div class="manager-pager"><button class="manager-clear" data-manager-action="'+action+'" data-manager-page="'+(pager.page-1)+'" '+(pager.page<=1?'disabled':'')+'>上一页</button><span>第 '+pager.page+' / '+pager.pages+' 页 · '+pager.start+'-'+pager.end+' / '+pager.total+'</span><button class="manager-clear" data-manager-action="'+action+'" data-manager-page="'+(pager.page+1)+'" '+(pager.page>=pager.pages?'disabled':'')+'>下一页</button></div>';
 }
 function managerSetMarketPage(page){MANAGER_MARKET_PAGE=Number(page)||1;renderManagerDemo();}
 function managerSetHallPage(page){MANAGER_HALL_PAGE=Number(page)||1;renderManagerDemo();}
+function managerSetStationNetPage(page){MANAGER_STATION_NET_PAGE=Number(page)||1;renderManagerDemo();}
 function managerMarketFilterChanged(){MANAGER_MARKET_PAGE=1;renderManagerDemo();}
 function managerSearchInput(v,isComposing){
   if(isComposing||MANAGER_SEARCH_COMPOSING)return;
@@ -1990,14 +1997,27 @@ function managerRenderBoards(){
   var boards=[['赛季经理榜','草地运营部 +186','冷门研究所 +142','冠军资产组 +118'],['本站收益榜','柏林操盘手 +64','女王草地组 +58','均衡基金 +41'],['王牌球员','德米纳尔 +230','萨巴莲卡 +210','巴尔通科娃 +112'],['慧眼识珠榜','伊埃拉 18→82','费里 16→58','巴尔通科娃 22→72'],['巨星依赖指数','冠军资产组 78%','重仓一号 71%','稳胆派 63%'],['场地收益榜','草地 +266','红土 +184','硬地 +121'],['大满贯收益王','澳网资产部 +420','罗兰经纪 +388','温网观察组 +0'],['被坑球员榜','热门一号 -96','草地高价股 -82','签表硬汉 -70'],['调仓大师榜','窗口救火 +48','手续费也值 +32','止损专家 +21'],['破产重建榜','30 起步到 112','低保翻身 +66','冷门回血 +44']];
   return boards.map(function(b){return '<div class="manager-board"><h4>'+b[0]+'</h4><ol><li><span>'+b[1].replace(/ [+-].*/,'')+'</span><em>'+((b[1].match(/[+-].*/)||[''])[0])+'</em></li><li><span>'+b[2].replace(/ [+-].*/,'')+'</span><em>'+((b[2].match(/[+-].*/)||[''])[0])+'</em></li><li><span>'+b[3].replace(/ [+-].*/,'')+'</span><em>'+((b[3].match(/[+-].*/)||[''])[0])+'</em></li></ol></div>';}).join('');
 }
+function managerSignedPoints(value){
+  var n=Number(value)||0;
+  return (n>0?'+':'')+Math.round(n);
+}
+function managerRenderStationNetBoard(){
+  var list=Array.isArray(MANAGER_REMOTE_STATION_NET_BOARD)?MANAGER_REMOTE_STATION_NET_BOARD:[],pager=managerPaginate(list,MANAGER_STATION_NET_PAGE,10);
+  MANAGER_STATION_NET_PAGE=pager.page;
+  if(!pager.items.length)return '<div class="manager-empty">本站净收益榜等待真实结算数据。</div>';
+  var rows=pager.items.map(function(x,i){
+    var rank=x.rank||pager.start+i;
+    return '<tr><td>'+rank+'</td><td>'+esc(x.user)+'</td><td class="'+(x.net>=0?'g':'r')+'">'+managerSignedPoints(x.net)+'</td><td>'+managerSignedPoints(x.player)+'</td><td>'+managerSignedPoints(x.combo)+'</td></tr>';
+  }).join('');
+  return '<table class="manager-ledger-table"><thead><tr><th>排名</th><th>用户名</th><th>本站净收益</th><th>球员结算收益</th><th>combo奖励</th></tr></thead><tbody>'+rows+'</tbody></table>'+managerPagerHtml('station-net',pager);
+}
 function managerRenderPrivateBoards(){
   var c=managerCalc(),stars=c.players.filter(function(p){return p.tier==='S'||p.tier==='A';}).reduce(function(s,p){return s+p.price;},0),starRate=c.lineupCost?Math.round(stars/c.lineupCost*100):0;
   var cards=[['我的赛季资产',managerWallet(),'钱包余额'],['本周阵容成本',c.spent,'含沉没成本'],['我的王牌球员',c.players[0]?c.players[0].name:'待结算','按本站阵容暂估'],['巨星依赖指数',starRate+'%','S/A 档成本占比'],['调仓记录',MANAGER_TRANSFER_COUNT+'/1','本站已用次数'],['当前风险画像',c.style,'由阵容结构生成']];
   return cards.map(function(x){return '<div class="manager-board"><h4>'+x[0]+'</h4><div class="manager-price" style="text-align:left">'+esc(x[1])+'</div><div class="manager-note">'+esc(x[2])+'</div></div>';}).join('');
 }
 function managerRenderBoardsPage(){
-  var publicBoards=managerLocalPreviewEnabled()&&!supabaseConfigured()?managerRenderBoards():'<div class="manager-empty">公共榜单等待真实结算数据。上线后由 Supabase 榜单视图/RPC 提供，不显示 demo 假排行。</div>';
-  return '<div class="manager-note" style="margin-bottom:12px">公共榜单看大家的赛季表现；私人榜单只给自己看，记录你的王牌球员、风险偏好和调仓习惯。</div><div class="manager-rules"><details open><summary>公共榜单</summary><div class="rule-body"><div class="manager-board-grid">'+publicBoards+'</div></div></details><details open><summary>我的私人榜单</summary><div class="rule-body"><div class="manager-board-grid">'+managerRenderPrivateBoards()+'</div></div></details></div>';
+  return '<div class="manager-note" style="margin-bottom:12px">本站净收益 = 球员结算收益 + combo奖励。每天随经纪人自动结算更新。</div><div class="manager-rules"><details open><summary>本站净收益榜</summary><div class="rule-body">'+managerRenderStationNetBoard()+'</div></details><details open><summary>我的私人榜单</summary><div class="rule-body"><div class="manager-board-grid">'+managerRenderPrivateBoards()+'</div></div></details></div>';
 }
 function managerMarketHeaderMeta(){
   var packs=managerContestPacks().filter(function(pack){return MANAGER_TOUR==='ALL'||pack.tour===MANAGER_TOUR;});
@@ -2127,20 +2147,45 @@ async function managerLoadRemoteState(){
   }catch(e){return null;}
 }
 async function managerLoadRemotePublicData(){
-  if(managerLocalPreviewEnabled()||!supabaseConfigured())return [];
+  if(managerLocalPreviewEnabled()||!supabaseConfigured()){
+    MANAGER_REMOTE_STATION_NET_BOARD=[];
+    return [];
+  }
   var key=managerStationKey();
   if(MANAGER_REMOTE_PUBLIC_SYNC_KEY===key)return MANAGER_REMOTE_CONFIGS;
+  const client=await ensureSupabaseClient();
   try{
-    const client=await ensureSupabaseClient();
     const res=await client.from('tour_manager_public_configurations').select('*').eq('station_key',key).order('submitted_at',{ascending:false}).limit(300);
     if(res.error)throw res.error;
     MANAGER_REMOTE_CONFIGS=(res.data||[]).map(function(x){
       return {user:x.display_name||'炉友',style:x.lineup_style||'待建仓',cost:x.lineup_cost||0,players:(x.players||[]).map(function(p){return p.name||p.name_zh||'';}),note:'预测净值 '+(x.predicted_net||0)};
     });
-    MANAGER_REMOTE_PUBLIC_SYNC_KEY=key;
   }catch(e){
     trackSupabaseError('manager.public_configurations',e,true);
   }
+  try{
+    const board=await client.from('tour_manager_station_net_leaderboard')
+      .select('rank_no,display_name,station_net_income,player_settlement_income,combo_bonus')
+      .eq('station_key',key)
+      .eq('season',managerSeason())
+      .order('rank_no',{ascending:true})
+      .limit(300);
+    if(board.error)throw board.error;
+    MANAGER_REMOTE_STATION_NET_BOARD=(board.data||[]).map(function(x){
+      return {
+        rank:Number(x.rank_no)||0,
+        user:x.display_name||'炉友',
+        net:Number(x.station_net_income)||0,
+        player:Number(x.player_settlement_income)||0,
+        combo:Number(x.combo_bonus)||0
+      };
+    });
+    MANAGER_STATION_NET_PAGE=1;
+  }catch(e){
+    MANAGER_REMOTE_STATION_NET_BOARD=[];
+    trackSupabaseError('manager.station_net_leaderboard',e,true);
+  }
+  MANAGER_REMOTE_PUBLIC_SYNC_KEY=key;
   return MANAGER_REMOTE_CONFIGS;
 }
 function managerChinaDateKey(value,offsetDays){
@@ -3529,6 +3574,7 @@ document.addEventListener('click',function(e){
   else if(btn.dataset.managerAction==='confirm-submit')managerSubmitLineup(true);
   else if(btn.dataset.managerAction==='page-market')managerSetMarketPage(btn.dataset.managerPage);
   else if(btn.dataset.managerAction==='page-hall')managerSetHallPage(btn.dataset.managerPage);
+  else if(btn.dataset.managerAction==='page-station-net')managerSetStationNetPage(btn.dataset.managerPage);
   else if(btn.dataset.managerAction==='close-dialog')managerCloseAlert();
   else if(btn.dataset.managerAction==='submit')managerSubmitLineup();
 });
