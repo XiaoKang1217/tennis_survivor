@@ -18,7 +18,7 @@
   "market_status": "open",
   "submission_status": "open",
   "submission_opens_at": "2026-06-20T00:00:00+08:00",
-  "schedule_status": "published",
+  "schedule_status": "partial",
   "main_draw_first_match_at": "2026-06-21T09:00:00.000Z",
   "submission_cutoff_at": "2026-06-21T08:45:00.000Z",
   "submission_closes_at": "2026-06-21T08:45:00.000Z",
@@ -42,7 +42,7 @@
     "form": 0.15,
     "manual": 0.05,
     "formula_version": "build-prices-v1",
-    "generated_at": "2026-06-21T02:37:36.370Z"
+    "generated_at": "2026-06-21T02:51:50.955Z"
   },
   "players": [
     {
