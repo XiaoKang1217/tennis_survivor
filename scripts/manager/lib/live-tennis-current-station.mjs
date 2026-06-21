@@ -470,7 +470,7 @@ export function deriveEventWindows(event, matchRows, fetchedAt = new Date()) {
   }
 
   return {
-    schedule_status: matchRows.length ? 'published' : (event.schedule_status || 'pending'),
+    schedule_status: matchRows.length ? 'partial' : (event.schedule_status || 'pending'),
     main_draw_first_match_at: mainDrawFirstMatchAt || event.main_draw_first_match_at || null,
     submission_cutoff_at: mainDrawFirstMatchAt ? addMinutes(mainDrawFirstMatchAt, -15) : (event.submission_cutoff_at || null),
     submission_closes_at: mainDrawFirstMatchAt ? addMinutes(mainDrawFirstMatchAt, -15) : (event.submission_closes_at || null),

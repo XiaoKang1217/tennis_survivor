@@ -44,7 +44,7 @@ export function buildStationPayload({ active, events, photoMap = {}, priceVersio
       draw_status: event.draw_status || 'pending',
       market_status: event.market_status || 'draw_pending',
       submission_opens_at: event.submission_opens_at || null,
-      schedule_status: event.schedule_status || 'pending',
+      schedule_status: normalizeScheduleStatus(event.schedule_status),
       main_draw_first_match_at: event.main_draw_first_match_at || null,
       submission_cutoff_at: event.submission_cutoff_at || event.submission_closes_at || null,
       submission_closes_at: event.submission_closes_at || event.submission_cutoff_at || null,
@@ -211,6 +211,11 @@ export function buildStationPayload({ active, events, photoMap = {}, priceVersio
     priceVersionRow,
     priceRows
   };
+}
+
+function normalizeScheduleStatus(status) {
+  if (status === 'published') return 'partial';
+  return ['pending', 'partial', 'confirmed', 'final'].includes(status) ? status : 'pending';
 }
 
 function normalizePhotoStatus(status, hasUrl) {
