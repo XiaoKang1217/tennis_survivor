@@ -1173,9 +1173,10 @@ async function main() {
 
   const client = new SupabaseRestClient({ dryRun: false });
   const rankingRows = [...rankingRowsByTour.values()].flat();
+  const rankingRowsForSync = uniqueRankingRowsForSync(rankingRows);
   const eloRows = [...eloRowsByTour.values()].flat();
-  await replaceRankingSnapshots(client, rankingRows);
-  await upsertCompat(client, 'tour_manager_ranking_snapshots', rankingRows, 'tour,ranking_type,ranking_date,player_key');
+  await replaceRankingSnapshots(client, rankingRowsForSync);
+  await upsertCompat(client, 'tour_manager_ranking_snapshots', rankingRowsForSync, 'tour,ranking_type,ranking_date,player_key');
   await upsertCompat(client, 'tour_manager_elo_snapshots', eloRows, 'tour,snapshot_date,player_key');
   await upsertCompat(client, 'tour_manager_events', payload.eventRows, 'event_key');
   await upsertCompat(client, 'tour_manager_players', payload.playerRows, 'tour,player_key');
@@ -1198,8 +1199,29 @@ async function main() {
   );
 
   console.log(`Synced build-prices for ${active.station_key}`);
-  console.log(`ranking_rows=${rankingRows.length} elo_rows=${eloRows.length} price_rows=${payload.priceRows.length}`);
+  console.log(`ranking_rows=${rankingRowsForSync.length}/${rankingRows.length} elo_rows=${eloRows.length} price_rows=${payload.priceRows.length}`);
   for (const warning of [...new Set(warnings)].slice(0, 20)) console.log(`warning: ${warning}`);
+}
+
+function uniqueRankingRowsForSync(rows) {
+  const rankKeys = new Set();
+  const playerKeys = new Set();
+  const out = [];
+  let omitted = 0;
+  for (const row of rows) {
+    const rankingType = row.ranking_type || 'singles';
+    const rankKey = [row.tour, rankingType, row.ranking_date, row.rank].join('|');
+    const playerKey = [row.tour, rankingType, row.ranking_date, row.player_key].join('|');
+    if (rankKeys.has(rankKey) || playerKeys.has(playerKey)) {
+      omitted += 1;
+      continue;
+    }
+    rankKeys.add(rankKey);
+    playerKeys.add(playerKey);
+    out.push(row);
+  }
+  if (omitted) console.log(`ranking-sync: omitted ${omitted} duplicate ranking rows for current schema compatibility.`);
+  return out;
 }
 
 async function replaceRankingSnapshots(client, rows) {
