@@ -20,6 +20,7 @@ Current station selection is still manual: edit `data/manager/active_events.json
 
 3. `apply-qualifier-placements.mjs`
    - Reads qualifier-placement markers created during draw refresh, syncs the replacement player rows, and calls the service-role RPC that updates already submitted Q-slot contracts to the real landed player while keeping the original Q-slot contract price.
+   - If the Supabase RPC migration has not been applied yet, the script writes a warning report and exits successfully so the daily workflow is not blocked.
 
 4. `sync-current-station.mjs`
    - Runs validation, station sync, Tennis Abstract Elo imports, and reviewed photo metadata sync in order.

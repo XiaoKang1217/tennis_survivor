@@ -72,21 +72,30 @@ for (const { item, event } of events) {
 
   const submissionCutoff = dateValue(event.submission_cutoff_at || event.submission_closes_at);
   const mainDrawFirstMatch = dateValue(event.main_draw_first_match_at);
-	  const round1Completed = dateValue(event.round1_completed_at || event.transfer_window_opens_at);
-	  const round2FirstMatch = dateValue(event.round2_first_match_at || event.transfer_window_closes_at);
-	  if (event.market_status === 'open') {
-	    openEventWindows.push({ label, event, submissionCutoff, mainDrawFirstMatch });
-	  }
-
-	  if (event.market_status === 'open') {
-	    if (!submissionCutoff) warnings.push(`${label}: market is open but this event has no per-event submission cutoff yet.`);
-	    if (!mainDrawFirstMatch) warnings.push(`${label}: market is open but this event has no per-event main_draw_first_match_at yet.`);
-	    if (submissionCutoff && mainDrawFirstMatch && submissionCutoff >= mainDrawFirstMatch) {
-	      errors.push(`${label}: submission cutoff must be before main_draw_first_match_at.`);
-	    }
+  const round1Completed = dateValue(event.round1_completed_at || event.transfer_window_opens_at);
+  const round2FirstMatch = dateValue(event.round2_first_match_at || event.transfer_window_closes_at);
+  const scheduleStatus = String(event.schedule_status || '').toLowerCase();
+  if (event.market_status === 'open') {
+    openEventWindows.push({ label, event, submissionCutoff, mainDrawFirstMatch });
   }
-  if (mainDrawFirstMatch && now >= mainDrawFirstMatch && (!round1Completed || !round2FirstMatch)) {
-    errors.push(`${label}: main draw has started but transfer window fields are still missing.`);
+
+  if (event.market_status === 'open') {
+    if (!submissionCutoff) warnings.push(`${label}: market is open but this event has no per-event submission cutoff yet.`);
+    if (!mainDrawFirstMatch) warnings.push(`${label}: market is open but this event has no per-event main_draw_first_match_at yet.`);
+    if (submissionCutoff && mainDrawFirstMatch && submissionCutoff >= mainDrawFirstMatch) {
+      errors.push(`${label}: submission cutoff must be before main_draw_first_match_at.`);
+    }
+  }
+  if (mainDrawFirstMatch && now >= mainDrawFirstMatch && !round1Completed) {
+    warnings.push(`${label}: main draw has started but R1 completion/transfer open is not known yet.`);
+  }
+  if (mainDrawFirstMatch && now >= mainDrawFirstMatch && !round2FirstMatch) {
+    const round2ShouldBeKnown = Boolean(round1Completed) || ['confirmed', 'final'].includes(scheduleStatus);
+    if (round2ShouldBeKnown) {
+      errors.push(`${label}: round2_first_match_at/transfer close should be known but is still missing.`);
+    } else {
+      warnings.push(`${label}: main draw has started but round2_first_match_at/transfer close is not known yet.`);
+    }
   }
   if (round1Completed && round2FirstMatch && round1Completed >= round2FirstMatch) {
     errors.push(`${label}: round1_completed_at/transfer open must be before round2_first_match_at/transfer close.`);

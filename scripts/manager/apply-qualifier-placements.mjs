@@ -56,12 +56,22 @@ if (syncRows) {
 }
 
 for (const placement of placements) {
-  const count = await client.rpc('tour_manager_apply_qualifier_placement', {
-    p_event_key: placement.event_key,
-    p_placeholder_player_key: placement.placeholder_player_key,
-    p_replacement_player_key: placement.replacement_player_key,
-    p_source_url: placement.source_url
-  });
+  let count = 0;
+  try {
+    count = await client.rpc('tour_manager_apply_qualifier_placement', {
+      p_event_key: placement.event_key,
+      p_placeholder_player_key: placement.placeholder_player_key,
+      p_replacement_player_key: placement.replacement_player_key,
+      p_source_url: placement.source_url
+    });
+  } catch (error) {
+    if (!isMissingQualifierPlacementRpc(error)) throw error;
+    report.skipped_reason = 'missing_tour_manager_apply_qualifier_placement_rpc';
+    report.warning = 'Supabase migration 202606210004_manager_qualifier_placements.sql has not been applied yet; skipped contract replacements.';
+    await writeJson(outFile, report);
+    console.log(`WARN ${report.warning} report=${outFile}`);
+    process.exit(0);
+  }
   report.applied.push({
     ...placement,
     updated_contracts: Number(count || 0)
@@ -73,4 +83,10 @@ const changed = report.applied.filter((item) => item.updated_contracts > 0);
 console.log(`Applied qualifier placements for ${active.station_key}. scanned=${placements.length} updated=${changed.length} report=${outFile}`);
 for (const item of changed) {
   console.log(`${item.event_key} ${item.placeholder_player_key} -> ${item.replacement_player_key}: contracts=${item.updated_contracts}`);
+}
+
+function isMissingQualifierPlacementRpc(error) {
+  const message = String(error?.message || error || '');
+  return /tour_manager_apply_qualifier_placement/.test(message)
+    && (/PGRST202/.test(message) || /Could not find/i.test(message) || /rpc failed:\s*404/.test(message));
 }
