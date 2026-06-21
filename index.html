@@ -1126,7 +1126,7 @@ function managerLedgerPlayerTokenFromPlayer(p){
   return (p&&p.name?p.name:'球员')+'（'+managerPlainMoney(p&&p.price||0)+'）';
 }
 function managerLedgerPlayerTokenFromContract(x){
-  var name=x.name_zh||x.name||x.name_en||'球员';
+  var name=x.name_zh||x.name||x.name_en||x.player_name||x.display_name||x.player_key||'球员';
   var price=Number(x.price||x.contract_price||x.purchase_price||x.cost);
   if(!Number.isFinite(price)||price<=0){
     var key=x.player_key||x.playerKey||x.source_player_key||'';
@@ -1137,6 +1137,10 @@ function managerLedgerPlayerTokenFromContract(x){
   }
   return name+'（'+managerPlainMoney(price||0)+'）';
 }
+function managerLedgerPlayerObjectName(item){
+  if(!item||typeof item!=='object')return '';
+  return String(item.name_zh||item.name||item.name_en||item.player_name||item.display_name||item.player_key||'').trim();
+}
 function managerSubmittedRecord(){
   if(MANAGER_REMOTE_STATE&&MANAGER_REMOTE_STATE.lineup){
     var l=MANAGER_REMOTE_STATE.lineup,contracts=MANAGER_REMOTE_STATE.contracts||[];
@@ -1146,16 +1150,19 @@ function managerSubmittedRecord(){
   var station=managerStationKey();return (MANAGER_LEDGER||[]).find(function(x){return x.station===station&&x.status==='已提交';})||null;
 }
 function managerLedgerPlayerName(text){
+  if(text&&typeof text==='object')return managerLedgerPlayerObjectName(text);
   text=String(text||'').trim();
   text=text.replace(/（\$?\d+）|\(\$?\d+\)/g,'').trim();
   var m=text.match(/^(.*)\s+(OUT|R128|R64|R32|R16|QF|SF|F|W|冠军|决赛|半决赛|8强|16强|32强|64强|128强)$/);
   return (m?m[1]:text).trim();
 }
 function managerLedgerPlayerRound(text){
+  if(text&&typeof text==='object')text=text.reached_round||text.predicted_round||text.round||'';
   var m=String(text||'').trim().match(/\s+(OUT|R128|R64|R32|R16|QF|SF|F|W|冠军|决赛|半决赛|8强|16强|32强|64强|128强)$/);
   return m?m[1]:'';
 }
 function managerLedgerPlayerToken(item,p){
+  if(item&&typeof item==='object')return managerLedgerPlayerTokenFromContract(item);
   var text=String(item||'').trim();
   if(/（\$?\d+）|\(\$?\d+\)/.test(text))return text.replace(/\s+(OUT|R128|R64|R32|R16|QF|SF|F|W|冠军|决赛|半决赛|8强|16强|32强|64强|128强)$/,'');
   if(p)return managerLedgerPlayerTokenFromPlayer(p);
@@ -1560,8 +1567,17 @@ function managerAllLedger(){
     var ledger=Array.isArray(state.ledger)?state.ledger:[];
     ledger.forEach(function(x){
       var meta=x.metadata&&typeof x.metadata==='object'?x.metadata:{},type=String(x.type||''),amount=Number(x.amount)||0;
-      var isSubmit=/lineup_wallet_spend|lineup_submit|submit/i.test(type),isBonus=/submit_bonus/i.test(type),isSettle=/settle|settlement|points/i.test(type),isTransfer=/transfer/i.test(type);
-      var players=managerSanitizeLedgerPlayers(Array.isArray(meta.players)?meta.players:(isSubmit||isBonus?playerTokens:[]));
+      var isWalletSpend=/lineup_wallet_spend/i.test(type),isSubmit=/lineup_submit/i.test(type),isBonus=/submit_bonus/i.test(type),isStationGrant=/station_grant/i.test(type),isSettle=/settle|settlement|points/i.test(type),isTransfer=/transfer/i.test(type);
+      if(isWalletSpend)return;
+      var players=[];
+      if(isSubmit)players=managerSanitizeLedgerPlayers(Array.isArray(meta.players)?meta.players:playerTokens);
+      else if(isSettle){
+        if(Array.isArray(meta.players))players=managerSanitizeLedgerPlayers(meta.players);
+        else if(meta.player_key){
+          var settledContract=contracts.find(function(c){return c.player_key===meta.player_key;});
+          players=settledContract?[managerLedgerPlayerTokenFromContract(settledContract)]:[];
+        }
+      }else if(isTransfer)players=managerSanitizeLedgerPlayers(Array.isArray(meta.players)?meta.players:playerTokens);
       var transfers=Array.isArray(meta.transfers)?meta.transfers:(isTransfer?[meta.out_name&&meta.in_name?meta.out_name+' → '+meta.in_name:(x.description||'换人')]:[]);
       rows.push({
         id:x.id||('remote-'+rows.length),
@@ -1571,8 +1587,8 @@ function managerAllLedger(){
         level:'',
         status:managerLedgerStatusText(type),
         rawStatus:type,
-        cost:Number(meta.cost??meta.lineup_cost??(isSubmit&&lineup?lineup.lineup_cost:0))||0,
-        gross:Number(meta.gross??meta.points_gross??(isSettle?Math.max(0,amount):0))||0,
+        cost:(isBonus||isStationGrant)?0:(Number(meta.cost??meta.lineup_cost??(isSubmit&&lineup?lineup.lineup_cost:0))||0),
+        gross:(isBonus||isStationGrant)?0:(Number(meta.gross??meta.points_gross??(isSettle?Math.max(0,amount):0))||0),
         bonus:Number(meta.bonus??(isBonus?amount:0))||0,
         net:Number(meta.net??amount)||0,
         walletDelta:amount,
@@ -1581,11 +1597,14 @@ function managerAllLedger(){
         note:x.description||''
       });
     });
+    if(lineup&&Number(lineup.lineup_cost)>0){
+      rows.push({id:'synthetic-lineup-purchase',date:String(lineup.submitted_at||new Date().toISOString()).slice(0,10),station:lineup.station_key||stationKey,stationLabel:stationName,level:'',status:'签约球员支出',rawStatus:'lineup_purchase_cost',cost:Number(lineup.lineup_cost)||0,gross:0,bonus:0,net:-(Number(lineup.lineup_cost)||0),walletDelta:-(Number(lineup.wallet_used)||0),players:playerTokens,transfers:[],note:'本站签约成本，包含本站签约金占用和经纪人本金占用。'});
+    }
     if(state.wallet&&!rows.some(function(x){return x.rawStatus==='season_opening'||x.status==='新赛季开户';})){
       rows.push({id:'synthetic-season-opening',date:String(state.wallet.created_at||new Date().toISOString()).slice(0,10),station:'赛季',stationLabel:'赛季',level:'',status:'新赛季开户',rawStatus:'season_opening',cost:0,gross:0,bonus:300,net:300,walletDelta:300,players:[],transfers:[],note:'新赛季开户发放 300。'});
     }
     if(lineup&&Number(lineup.station_grant)>0&&!rows.some(function(x){return /本站签约金/.test(x.status)||x.rawStatus==='station_grant_issued';})){
-      rows.push({id:'synthetic-station-grant',date:String(lineup.submitted_at||new Date().toISOString()).slice(0,10),station:lineup.station_key||stationKey,stationLabel:stationName,level:'',status:'本站签约金发放',rawStatus:'station_grant_issued',cost:0,gross:0,bonus:Number(lineup.station_grant)||0,net:Number(lineup.station_grant)||0,walletDelta:0,players:playerTokens,transfers:[],note:'本站签约金额度，仅本站使用，未用部分赛后作废。'});
+      rows.push({id:'synthetic-station-grant',date:String(lineup.submitted_at||new Date().toISOString()).slice(0,10),station:lineup.station_key||stationKey,stationLabel:stationName,level:'',status:'本站签约金发放',rawStatus:'station_grant_issued',cost:0,gross:0,bonus:Number(lineup.station_grant)||0,net:Number(lineup.station_grant)||0,walletDelta:0,players:[],transfers:[],note:'本站签约金额度，仅本站使用，未用部分赛后作废。'});
     }
     return rows.sort(managerLedgerSortFn);
   }
@@ -1596,7 +1615,7 @@ function managerAllLedger(){
   }
   var rec=managerSubmittedRecord();
   if(rec&&!rows.some(function(x){return x.rawStatus==='station_grant_issued'||x.status==='本站签约金发放';})){
-    rows.push({id:'local-station-grant',date:rec.date||new Date().toISOString().slice(0,10),station:rec.station||stationKey,stationLabel:rec.station||stationName,level:'',status:'本站签约金发放',rawStatus:'station_grant_issued',cost:0,gross:0,bonus:managerRules().stationGrant,net:managerRules().stationGrant,walletDelta:0,players:rec.players||[],transfers:[],note:'本站签约金额度，仅本站使用。'});
+    rows.push({id:'local-station-grant',date:rec.date||new Date().toISOString().slice(0,10),station:rec.station||stationKey,stationLabel:rec.station||stationName,level:'',status:'本站签约金发放',rawStatus:'station_grant_issued',cost:0,gross:0,bonus:managerRules().stationGrant,net:managerRules().stationGrant,walletDelta:0,players:[],transfers:[],note:'本站签约金额度，仅本站使用。'});
   }
   return rows.sort(managerLedgerSortFn);
 }
@@ -1605,6 +1624,7 @@ function managerLedgerStatusText(type){
   if(t==='已提交')return '阵容已提交';
   if(/season_opening|开户/i.test(t))return '新赛季开户';
   if(/station_grant/i.test(t))return '本站签约金发放';
+  if(/lineup_purchase_cost/i.test(t))return '签约球员支出';
   if(/lineup_wallet_spend/i.test(t))return '提交阵容占用钱包';
   if(/submit_bonus/i.test(t))return '提交阵容奖励';
   if(/transfer/i.test(t))return '换人扣费';
