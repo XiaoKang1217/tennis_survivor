@@ -1,0 +1,27 @@
+{
+  "season": 2026,
+  "station_key": "2026-w25-eastbourne-bad-homburg",
+  "station_name": "ATP Eastbourne + WTA Bad Homburg",
+  "survivor_aligned": true,
+  "status": "pre_open",
+  "updated_at": "2026-06-20T13:30:00+08:00",
+  "notes": [
+    "经理模块只读取这里声明的 active events，不再从 index.html 硬编码赛站。",
+    "ATP 伊斯特本签表未出时保留事件壳，市场显示待出提示；签表落位后替换 event data 文件即可。",
+    "WTA 巴特洪堡使用官方 2026 签表，资格赛落位前保留 Qualifier 占位。"
+  ],
+  "events": [
+    {
+      "tour": "ATP",
+      "event_key": "atp-2026-w25-eastbourne-lexus-eastbourne-open",
+      "data_file": "events/atp-2026-w25-eastbourne.json",
+      "active": true
+    },
+    {
+      "tour": "WTA",
+      "event_key": "wta-2026-w25-bad-homburg-open",
+      "data_file": "events/wta-2026-w25-bad-homburg.json",
+      "active": true
+    }
+  ]
+}

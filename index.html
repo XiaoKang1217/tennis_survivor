@@ -20,6 +20,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Noto Sans SC","Microsoft YaHe
 .sheet-tab.on{background:linear-gradient(135deg,#f59e0b,#f97316);border-color:transparent;color:#fff;box-shadow:0 4px 15px rgba(245,158,11,.24)}
 .sheet-tab:hover:not(.on){border-color:#f97316;color:#f97316}
 .main{padding:15px 20px}
+body.manager-mode .main{padding:0}
+body.manager-mode{background:#f2f7f1}
+body.manager-mode #hdr{background:linear-gradient(135deg,#f59e0b,#f97316,#ef4444);box-shadow:0 4px 18px rgba(245,128,35,.26)}
+body.manager-mode #hdr h1{color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.18)}
+body.manager-mode .tab{border-color:rgba(255,255,255,.55);background:rgba(255,255,255,.14);color:#fff}
+body.manager-mode .tab.on{background:#fff;color:#0f4c5c;border-color:#fff}
+body.manager-mode .tab:hover:not(.on){background:rgba(255,255,255,.28)}
 .panel{display:none}.panel.on{display:block}
 .kpi{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
 .kc{background:#fff;border:1px solid #fde68a;border-radius:10px;padding:9px 13px;min-width:88px;text-align:center;box-shadow:0 2px 8px rgba(245,158,11,.1)}
@@ -181,6 +188,129 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 .exp-tag{background:#fef3c7;border:1px solid #fcd34d;border-radius:12px;padding:2px 8px;font-size:12px;color:#78450a;white-space:nowrap;display:inline-block;margin:2px}
 .exp-tag.r{background:#fee2e2;border-color:#fca5a5;color:#dc2626}
 .exp-tag.g{background:#dcfce7;border-color:#86efac;color:#15803d}
+.manager-wrap{width:100%;margin:0;padding:0}
+.manager-shell{min-height:calc(100vh - 116px);background:#fbf0d8;color:#2f2a22;padding:18px 22px 28px}
+.manager-hero{background:linear-gradient(135deg,#fff7cf 0%,#f7df94 56%,#efbf5d 100%);color:#503713;border:1px solid #dfb257;border-radius:10px;padding:18px 20px;margin-bottom:14px;box-shadow:0 10px 28px rgba(129,88,31,.16);display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:18px;align-items:center;overflow:hidden}
+.manager-title{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.manager-title-line{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.manager-title h2{font-size:25px;font-weight:950;letter-spacing:0;margin-bottom:4px}
+.manager-title p{font-size:13px;color:#6c5531;line-height:1.55;max-width:820px}
+.manager-hero-art{width:250px;max-width:28vw;aspect-ratio:1.88;object-fit:cover;border-radius:12px;border:1px solid rgba(255,255,255,.64);box-shadow:0 12px 30px rgba(92,66,24,.18);background:#f2e2c2}
+.manager-meta{display:flex;gap:7px;flex-wrap:wrap}
+.manager-chip{border:1px solid rgba(255,255,255,.34);background:rgba(255,255,255,.14);border-radius:999px;padding:5px 10px;font-size:12px;font-weight:900;color:#fff8ea}
+.manager-action,.manager-clear{border:0;border-radius:8px;padding:8px 12px;font-size:12px;font-weight:950;cursor:pointer;white-space:nowrap}
+.manager-action{background:#85612f;color:#fff}
+.manager-action.secondary{background:#5f4b8b}.manager-action.warn{background:#c45f2d}.manager-action.remove{background:#776d61}.manager-action:disabled{opacity:.45;cursor:not-allowed}
+.manager-clear{border:1px solid #d9c49d;background:#fffdf8;color:#6f4b1d}
+.manager-actions{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
+.manager-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.manager-tab{border:1px solid #dfcaa2;background:#fffdf8;color:#6b4b25;border-radius:8px;padding:9px 14px;font-size:13px;font-weight:950;cursor:pointer}
+.manager-tab.on{background:#85612f;color:#fff;border-color:#85612f}
+.manager-tour-tabs{display:flex;gap:5px;align-items:center;margin-left:2px;margin-right:4px}
+.manager-tour-tab{border:1px solid #dfcaa2;background:#fffdf8;color:#6b4b25;border-radius:8px;padding:6px 11px;font-size:12px;font-weight:950;cursor:pointer}
+.manager-tour-tab.on{background:#c45f2d;border-color:#c45f2d;color:#fff}
+.manager-money-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.manager-money{background:#fffdf8;border:1px solid #dfcaa2;border-radius:10px;padding:12px;min-height:86px}
+.manager-money b{display:block;font-size:24px;color:#5c421f;line-height:1.1}.manager-money>span{display:block;color:#756651;font-size:12px;font-weight:850;margin-top:5px;line-height:1.4}
+.manager-money.hot{border-color:#d9984b}.manager-money.hot b{color:#c45f2d}
+.manager-money-amount{display:inline-flex!important;align-items:baseline;gap:1px;margin:0!important;color:#c45f2d!important;font-family:Impact,"Cooper Black","Arial Black","Noto Sans SC",sans-serif;font-weight:950;letter-spacing:.4px;line-height:1;text-shadow:1px 1px 0 #fff3bf,2px 2px 0 rgba(122,79,36,.16)}
+.manager-money-amount .manager-dollar{display:inline!important;color:#f2b43f!important;font-size:.82em;margin:0!important;text-shadow:1px 1px 0 #7a4f24,2px 2px 0 rgba(122,79,36,.16)}
+.manager-money-amount.compact{font-size:30px}
+.manager-money-amount.inline{font-size:1em;vertical-align:baseline}
+.manager-grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:14px;align-items:start}
+.manager-grid.single{grid-template-columns:1fr}
+.manager-panel{background:#fffdf8;border:1px solid #dfcaa2;border-radius:10px;overflow:hidden;box-shadow:0 5px 18px rgba(73,48,23,.07)}
+.manager-panel-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;background:#f2e2c2;border-bottom:1px solid #dfcaa2;color:#5c421f;font-weight:950;flex-wrap:wrap}
+.manager-panel-title{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.manager-panel-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-left:auto}
+.manager-panel-chip{font-size:12px;font-weight:900;color:#7a572b;background:#fff8ea;border:1px solid #dfcaa2;border-radius:999px;padding:5px 9px;white-space:nowrap}
+.manager-panel-chip.surface.grass{color:#15803d;background:#e7f6d8;border-color:#b9dda0}.manager-panel-chip.surface.clay{color:#c2410c;background:#ffe3d1;border-color:#f3b48e}.manager-panel-chip.surface.hard{color:#2563eb;background:#dbeafe;border-color:#93c5fd}
+.manager-panel-b{padding:14px}
+.manager-market-layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:12px}
+.manager-filter{display:grid;gap:9px;background:#fff8e8;border:1px solid #ead8b7;border-radius:10px;padding:12px;align-self:start}
+.manager-filter label{font-size:11px;color:#756651;font-weight:950;text-transform:uppercase}
+.manager-filter input,.manager-filter select,.manager-ledger-filters input,.manager-ledger-filters select{width:100%;border:1px solid #d3bd94;background:#fffdf8;border-radius:8px;padding:8px 10px;color:#2f2a22;font-size:13px;outline:none}
+.manager-filter input:focus,.manager-filter select:focus,.manager-ledger-filters input:focus,.manager-ledger-filters select:focus{border-color:#a8783f}
+.manager-list{display:grid;gap:8px}
+.manager-row{display:grid;grid-template-columns:64px minmax(170px,1.25fr) 104px minmax(240px,1fr) auto;gap:10px;align-items:center;border:1px solid #ead8b7;background:#fffdf8;border-radius:10px;padding:10px}
+.manager-row.sel{border-color:#d9984b;background:#fff3dd}
+.manager-avatar{width:58px;height:58px;border-radius:8px;overflow:hidden;background:linear-gradient(135deg,#f2e2c2,#fff8e8);border:1px solid #dfcaa2;display:flex;align-items:center;justify-content:center;color:#7a4f24;font-size:18px;font-weight:950;box-shadow:inset 0 0 0 2px rgba(255,255,255,.45);position:relative;flex-shrink:0}
+.manager-avatar.small{width:42px;height:42px;border-radius:7px;font-size:15px}
+.manager-avatar.large{width:100%;height:118px;border-radius:10px;font-size:26px}
+.manager-avatar.fullbody{width:100%;height:220px;border-radius:10px;font-size:30px;background:#fff8e8}
+.manager-avatar span{position:absolute;inset:0;display:flex!important;align-items:center;justify-content:center;margin:0!important;color:#7a4f24}
+.manager-avatar img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block;position:relative;z-index:1;background:#fffdf8}
+.manager-avatar.fullbody img{object-fit:contain;object-position:center bottom;background:#fff8e8}
+.manager-name{font-size:15px;font-weight:950;color:#2f2a22;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.manager-sub{font-size:11px;color:#756651;font-weight:850;margin-top:3px;display:flex;gap:5px;flex-wrap:wrap}
+.manager-pill{display:inline-flex;align-items:center;border-radius:999px;background:#f2e2c2;color:#5c421f;padding:2px 7px;font-size:11px;font-weight:900}
+.manager-pill.r{background:#ffe8d7;color:#c2410c}.manager-pill.g{background:#eadfbd;color:#7b5a1e}
+.manager-price{font-size:24px;font-weight:950;color:#c45f2d;line-height:1;text-align:right}
+.manager-coin{display:none}
+.manager-price small{font-size:11px;color:#756651;font-weight:800}
+.manager-bars{display:grid;gap:5px}
+.manager-bar{display:grid;grid-template-columns:42px 1fr 28px;gap:6px;align-items:center;font-size:11px;color:#756651;font-weight:850}
+.manager-track{height:7px;border-radius:99px;background:#efe3cf;overflow:hidden}.manager-fill{height:100%;border-radius:99px;background:#85612f}
+.manager-detail{grid-column:1 / -1;border-top:1px solid #ead8b7;background:#fff8e8;border-radius:0 0 8px 8px;padding:12px;display:grid;gap:10px}
+.manager-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:start}
+.manager-detail-grid.score-row{grid-template-columns:repeat(2,minmax(0,1fr))}
+.manager-detail-item{background:#fffdf8;border:1px solid #ead8b7;border-radius:8px;padding:9px}
+.manager-detail-item.full{grid-column:1 / -1}
+.manager-detail-item b{display:block;color:#5c421f;font-size:12px;margin-bottom:4px}.manager-detail-item span{display:block;color:#6c5c46;font-size:12px;line-height:1.5}
+.manager-detail-table{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.manager-detail-item .manager-detail-table{margin-top:8px}
+.manager-detail-stat{background:#fffdf8;border:1px solid #ead8b7;border-radius:8px;padding:8px;min-height:58px}
+.manager-detail-stat span{display:block;color:#756651;font-size:11px;font-weight:850;margin-bottom:3px}.manager-detail-stat b{display:block;color:#2f2a22;font-size:14px;line-height:1.25;word-break:break-word}
+.manager-path{display:flex;gap:5px;flex-wrap:wrap}.manager-path .manager-pill{font-size:10px}
+.manager-side{display:grid;gap:12px;position:sticky;top:118px}
+.manager-roster{display:grid;gap:7px}
+.manager-roster-row{display:grid;grid-template-columns:42px 1fr auto auto;gap:8px;align-items:center;border:1px solid #ead8b7;background:#fffaf0;border-radius:9px;padding:8px}
+.manager-roster-name{font-weight:950;color:#2f2a22;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.manager-roster-price{font-weight:950;color:#c45f2d}
+.manager-empty{border:1px dashed #c8ad7e;border-radius:10px;background:#fff8e8;color:#6c5c46;padding:14px;text-align:center;font-size:12px;font-weight:850}
+.manager-msg{min-height:18px;color:#7a4f24;font-size:12px;font-weight:850;line-height:1.5;margin-top:8px}.manager-msg.r{color:#a43b3b}
+.manager-sim{display:grid;gap:7px;background:#fff8e8;border:1px solid #ead8b7;border-radius:10px;padding:10px;color:#2f2a22;font-size:12px;font-weight:850;line-height:1.5}
+.manager-sim-row{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}.manager-sim-row b{color:#c45f2d}
+.manager-sim-hint{margin-top:-4px;color:#756651;font-size:11px;font-weight:850}
+.manager-calc-table,.manager-ledger-table,.manager-reward-table{width:100%;border-collapse:collapse;font-size:13px}
+.manager-calc-table th,.manager-ledger-table th,.manager-reward-table th{position:static;background:#f2e2c2;color:#5c421f;border-bottom:1px solid #dfcaa2;cursor:default;text-transform:none;letter-spacing:0}
+.manager-th-button{border:0;background:transparent;color:#5c421f;font:inherit;font-weight:950;cursor:pointer;padding:0;text-align:left}
+.manager-calc-table td,.manager-ledger-table td,.manager-reward-table td{border-bottom:1px solid #f0e2cb}
+.manager-calc-table select{border:1px solid #d3bd94;border-radius:8px;padding:6px 8px;background:#fffdf8;color:#2f2a22}
+.manager-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0}
+.manager-summary .manager-money{min-height:74px}
+.manager-subtabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.manager-subtab{border:1px solid #d3bd94;background:#fffdf8;color:#5c421f;border-radius:8px;padding:8px 12px;font-weight:900;cursor:pointer}
+.manager-subtab.on{background:#8a612c;color:#fff}
+.manager-status-line{border:1px solid #dfcaa2;background:#fff8e8;border-radius:10px;padding:12px 14px;margin-bottom:10px;color:#5c421f;font-weight:950}
+.manager-my-summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.manager-my-highlight{border:1px solid #ead8b7;background:#fffdf8;border-radius:10px;padding:14px;box-shadow:0 8px 18px rgba(122,79,36,.05)}
+.manager-my-highlight h4{margin:0 0 10px;color:#5c421f;font-size:16px}
+.manager-my-highlight .manager-kv{display:grid;gap:7px}
+.manager-my-highlight .manager-kv div{display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px dashed rgba(223,202,162,.8);padding-bottom:5px}
+.manager-my-highlight .manager-kv div:last-child{border-bottom:0;padding-bottom:0}
+.manager-my-highlight b,.manager-my-card b{font-family:Impact,"Cooper Black","Arial Black","Noto Sans SC",sans-serif;color:#c45f2d;letter-spacing:.2px;text-shadow:1px 1px 0 #fff3bf}
+.manager-my-lineup{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.manager-my-card{border:1px solid #ead8b7;background:#fffdf8;border-radius:10px;padding:12px}
+.manager-my-head{display:grid;grid-template-columns:150px 1fr;gap:12px;align-items:start}
+.manager-my-portrait h4{margin:8px 0 0!important;text-align:center;color:#2f2a22;font-size:18px}
+.manager-my-card h4{margin:0 0 6px;color:#2f2a22;font-size:16px}
+.manager-player-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:8px}
+.manager-metric-box{border:1px solid #ead8b7;background:#fff8e8;border-radius:9px;padding:10px}
+.manager-metric-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 0;border-bottom:1px dashed rgba(223,202,162,.75)}
+.manager-metric-row:last-child{border-bottom:0}
+.manager-ledger-filters{display:grid;grid-template-columns:170px 160px 160px 1fr minmax(220px,1.2fr);gap:8px;margin-bottom:10px}
+.manager-rules{display:grid;gap:10px}
+.manager-rules details{background:#fffdf8;border:1px solid #dfcaa2;border-radius:10px;overflow:hidden}.manager-rules summary{cursor:pointer;padding:12px 14px;background:#f2e2c2;color:#5c421f;font-weight:950}.manager-rules .rule-body{padding:12px 14px;color:#4c3d2a;line-height:1.7;font-size:13px}
+.manager-rule-grid,.manager-board-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.manager-rule-card,.manager-board{border:1px solid #ead8b7;background:#fffaf0;border-radius:10px;padding:11px}
+.manager-rule-card b,.manager-board h4{display:block;color:#5c421f;font-size:13px;margin-bottom:7px}.manager-rule-card span{display:block;color:#6c5c46;font-size:12px;line-height:1.6}
+.manager-board ol{list-style:none;display:grid;gap:6px;counter-reset:mgr}.manager-board li{counter-increment:mgr;display:grid;grid-template-columns:24px 1fr auto;gap:7px;align-items:center;font-size:12px;color:#2f2a22}.manager-board li:before{content:counter(mgr);display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#f2e2c2;color:#7a4f24;font-weight:950}.manager-board em{font-style:normal;color:#c45f2d;font-weight:950}
+.manager-note{font-size:12px;color:#6c5c46;line-height:1.6}
+.manager-lines{list-style:none;display:grid;gap:5px;color:#6c5c46;font-size:12px;line-height:1.55}.manager-lines li{padding-left:12px;position:relative}.manager-lines li:before{content:"";position:absolute;left:0;top:.75em;width:4px;height:4px;border-radius:50%;background:#c45f2d}
+.manager-dialog{position:fixed;inset:0;z-index:420;display:flex;align-items:center;justify-content:center;background:rgba(75,48,21,.34);padding:18px}
+.manager-dialog-card{width:min(420px,100%);background:#fffaf0;border:1px solid #d9984b;border-radius:12px;box-shadow:0 18px 50px rgba(75,48,21,.22);overflow:hidden}
+.manager-dialog-card h3{background:#7a4f24;color:#fff;font-size:16px;padding:13px 15px}.manager-dialog-card p{padding:16px;color:#2f2a22;line-height:1.7;font-size:14px}.manager-dialog-card .manager-actions{padding:0 16px 16px;justify-content:flex-end}
 
 .refresh-bar{display:flex;align-items:center;gap:8px;font-size:11px;color:rgba(255,255,255,.8);margin-top:4px}
 .refresh-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite}
@@ -395,6 +525,41 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
   .bd-surf-track{height:11px!important}
   .bd-tbl{min-width:440px!important}
 }
+@media(max-width:900px){
+  .manager-hero{grid-template-columns:1fr}
+  .manager-hero-art{display:none}
+  .manager-grid{grid-template-columns:1fr}
+  .manager-side{position:static}
+  .manager-market-layout{grid-template-columns:1fr}
+  .manager-money-grid,.manager-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .manager-my-summary-grid,.manager-my-lineup{grid-template-columns:1fr}
+  .manager-my-head{grid-template-columns:130px 1fr}
+  .manager-rule-grid,.manager-board-grid{grid-template-columns:1fr}
+  .manager-detail-grid{grid-template-columns:1fr}
+  .manager-detail-table{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .manager-row{grid-template-columns:58px minmax(140px,1fr) 92px;align-items:start}
+  .manager-bars{grid-column:1 / -1}
+  .manager-actions{grid-column:1 / -1;justify-content:flex-start}
+}
+@media(max-width:640px){
+  .manager-shell{padding:12px 10px 20px}
+  .manager-hero{border-radius:12px;padding:13px}
+  .manager-title h2{font-size:18px}
+  .manager-money-grid,.manager-summary,.manager-ledger-filters{grid-template-columns:1fr}
+  .manager-tabs{overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px}
+  .manager-tab{white-space:nowrap}
+  .manager-row{grid-template-columns:52px 1fr;gap:8px}
+  .manager-avatar{width:48px;height:48px}
+  .manager-avatar.fullbody{height:180px}
+  .manager-my-head,.manager-player-metrics{grid-template-columns:1fr}
+  .manager-row .manager-price{grid-column:2;text-align:left}
+  .manager-actions{grid-column:1 / -1;width:100%}
+  .manager-actions .manager-action,.manager-actions .manager-clear{flex:1}
+  .manager-bars{grid-column:1 / -1}
+  .manager-roster-row{grid-template-columns:42px 1fr auto}
+  .manager-roster-row .manager-avatar{display:flex}
+  .manager-detail-table{grid-template-columns:1fr}
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
@@ -410,6 +575,7 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
   </div>
   <div class="tabs">
     <button class="tab on" onclick="switchTab('ms-s',this)" id="tab-ms-s">🎾 ATP 男单</button>
+    <button class="tab" onclick="switchTab('manager',this)" id="tab-manager">💼 巡回赛经纪人</button>
     <button class="tab" onclick="switchTab('ws-s',this)" id="tab-ws-s">🎾 WTA 女单</button>
     <button class="tab" onclick="switchTab('ms-bd',this)" id="tab-breakdown">💹 积分构成</button>
     <button class="tab" onclick="switchTab('ms-p',this)" id="tab-preference">📊 用户偏好</button>
@@ -425,6 +591,7 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
   <div class="loading" id="loading-ms">⏳ 加载ATP数据中...</div>
   <div id="content-ms-s" style="display:none"></div>
 </div>
+<div id="p-manager" class="panel"><div class="manager-wrap" id="manager-root"><div class="loading">⏳ 加载巡回赛经纪人...</div></div></div>
 <div id="p-ws-s" class="panel">
   <div class="loading" id="loading-ws">⏳ 加载WTA数据中...</div>
   <div id="content-ws-s" style="display:none"></div>
@@ -526,7 +693,7 @@ const TOP_TAB_BY_PANEL={
   'ms-bd':'tab-breakdown','ws-bd':'tab-breakdown',
   'ms-p':'tab-preference','ws-p':'tab-preference',
   'ms-t':'tab-disasters','ws-t':'tab-disasters',
-  flight:'tab-flight',fortune:'tab-fortune',jinx:'tab-jinx'
+  flight:'tab-flight',fortune:'tab-fortune',jinx:'tab-jinx',manager:'tab-manager'
 };
 let ACTIVE_TAB='ms-s';
 let SUPABASE_CLIENT=null;
@@ -535,6 +702,194 @@ let AUTH_USER=null;
 let AUTH_PROFILE=null;
 let AUTH_AFTER_LOGIN=null;
 let FOLLOWING_IDS=new Set();
+let MANAGER_VIEW='market';
+let MANAGER_TOUR='ATP';
+let MANAGER_MY_VIEW='lineup';
+let MANAGER_LINEUP=[];
+let MANAGER_PREDICTIONS={};
+let MANAGER_LEDGER=[];
+let MANAGER_SUNK_COST=0;
+let MANAGER_LAST_MSG='';
+let MANAGER_DETAIL_ID='';
+let MANAGER_DIALOG=null;
+let MANAGER_SEARCH='';
+let MANAGER_SEARCH_TIMER=null;
+let MANAGER_SEARCH_COMPOSING=false;
+let MANAGER_HALL_SEARCH='';
+let MANAGER_HALL_SEARCH_COMPOSING=false;
+let MANAGER_LEDGER_SEARCH='';
+let MANAGER_LEDGER_SEARCH_COMPOSING=false;
+let MANAGER_LEDGER_SEARCH_TIMER=null;
+let MANAGER_LEDGER_SORT='date';
+let MANAGER_LEDGER_SORT_DIR='desc';
+let MANAGER_TRANSFER_COUNT=0;
+let MANAGER_DATA_LOADED=false;
+let MANAGER_DATA_LOADING=null;
+let MANAGER_DATA_ERROR=null;
+let MANAGER_ACTIVE_EVENTS=null;
+let MANAGER_EVENT_DATA={};
+let MANAGER_PHOTO_DATA={fallbacks:{},players:{}};
+let MANAGER_REMOTE_STATE=null;
+let MANAGER_REMOTE_SYNC_KEY='';
+let MANAGER_REMOTE_CONFIGS=[];
+let MANAGER_REMOTE_PUBLIC_SYNC_KEY='';
+let MANAGER_PENDING_TRANSFER=null;
+const MANAGER_STORE_KEY='tennis_manager_state_v3';
+const MANAGER_LEDGER_KEY='tennis_manager_ledger_v2';
+const MANAGER_DEMO_EVENT_META={};
+const MANAGER_LEVEL_CONFIG={
+  '250':{label:'250赛',sideGrant:45,grant:90,min:1,max:2,transfers:1,transferDays:2,transferFee:.10},
+  '500':{label:'500赛',sideGrant:65,grant:130,min:1,max:2,transfers:1,transferDays:2,transferFee:.10},
+  '1000':{label:'1000赛',sideGrant:120,grant:240,min:2,max:3,transfers:1,transferDays:3,transferFee:.15},
+  'GS':{label:'大满贯',sideGrant:230,grant:460,min:2,max:4,transfers:1,transferDays:3,transferFee:.15}
+};
+const MANAGER_POINT_TABLES={
+  ATP:{
+    '250':{
+      '28':{R128:0,R64:0,R32:0,R16:25,QF:50,SF:100,F:165,W:250},
+      '32':{R128:0,R64:0,R32:0,R16:25,QF:50,SF:100,F:165,W:250},
+      '48':{R128:0,R64:0,R32:13,R16:25,QF:50,SF:100,F:165,W:250}
+    },
+    '500':{
+      '28':{R128:0,R64:0,R32:0,R16:50,QF:100,SF:200,F:330,W:500},
+      '32':{R128:0,R64:0,R32:0,R16:50,QF:100,SF:200,F:330,W:500},
+      '48':{R128:0,R64:0,R32:25,R16:50,QF:100,SF:200,F:330,W:500}
+    },
+    '1000':{
+      '56':{R128:0,R64:10,R32:50,R16:100,QF:200,SF:400,F:650,W:1000},
+      '64':{R128:0,R64:10,R32:50,R16:100,QF:200,SF:400,F:650,W:1000},
+      '96':{R128:10,R64:30,R32:50,R16:100,QF:200,SF:400,F:650,W:1000}
+    },
+    'GS':{'128':{R128:10,R64:50,R32:100,R16:200,QF:400,SF:800,F:1300,W:2000}}
+  },
+  WTA:{
+    '250':{
+      '28':{R128:0,R64:0,R32:1,R16:30,QF:54,SF:98,F:163,W:250},
+      '32':{R128:0,R64:0,R32:1,R16:30,QF:54,SF:98,F:163,W:250},
+      '48':{R128:0,R64:1,R32:18,R16:30,QF:54,SF:98,F:163,W:250}
+    },
+    '500':{
+      '28':{R128:0,R64:0,R32:1,R16:60,QF:108,SF:195,F:325,W:500},
+      '32':{R128:0,R64:0,R32:1,R16:60,QF:108,SF:195,F:325,W:500},
+      '48':{R128:0,R64:1,R32:30,R16:60,QF:108,SF:195,F:325,W:500}
+    },
+    '1000':{
+      '56':{R128:0,R64:10,R32:65,R16:120,QF:215,SF:390,F:650,W:1000},
+      '64':{R128:0,R64:10,R32:65,R16:120,QF:215,SF:390,F:650,W:1000},
+      '96':{R128:10,R64:35,R32:65,R16:120,QF:215,SF:390,F:650,W:1000}
+    },
+    'GS':{'128':{R128:10,R64:70,R32:130,R16:240,QF:430,SF:780,F:1300,W:2000}}
+  }
+};
+const MANAGER_ROUNDS=[
+  {key:'OUT',label:'早退/未进账',short:'出局'},
+  {key:'R128',label:'进128强',short:'128强'},
+  {key:'R64',label:'进64强',short:'64强'},
+  {key:'R32',label:'进32强',short:'32强'},
+  {key:'R16',label:'进16强',short:'16强'},
+  {key:'QF',label:'进8强',short:'8强'},
+  {key:'SF',label:'半决赛',short:'4强'},
+  {key:'F',label:'决赛',short:'决赛'},
+  {key:'W',label:'冠军',short:'冠军'}
+];
+const MANAGER_REWARD_COLUMNS=['R1','R2','R3','R4','QF','SF','F','冠军'];
+const MANAGER_PLAYER_PHOTOS={
+  'ATP|阿尔卡拉斯':'https://www.atptour.com/-/media/alias/player-gladiator-headshot/A0E2',
+  'ATP|德米纳尔':'https://www.atptour.com/-/media/alias/player-gladiator-headshot/DH58',
+  'ATP|弗里茨':'https://www.atptour.com/-/media/alias/player-gladiator-headshot/FB98',
+  'ATP|德雷珀':'https://www.atptour.com/-/media/alias/player-gladiator-headshot/D0CO',
+  'ATP|保罗':'https://www.atptour.com/-/media/alias/player-gladiator-headshot/PL56',
+  'ATP|沙波瓦洛夫':'https://www.atptour.com/-/media/alias/player-gladiator-headshot/SV37',
+  'ATP|莱赫奇卡':'https://www.atptour.com/-/media/alias/player-gladiator-headshot/L0BV',
+  'ATP|门希克':'https://www.atptour.com/-/media/alias/player-gladiator-headshot/M0M6',
+  'ATP|费里':'https://www.atptour.com/-/media/alias/player-gladiator-headshot/F0F1',
+  'ATP|安贝尔':'https://www.atptour.com/-/media/alias/player-gladiator-headshot/HH26',
+  'WTA|萨巴莲卡':'https://photoresources.wtatennis.com/photo-resources/2025/05/06/837e6f32-a9b9-42e2-b3a8-057f37846755/Home-Share_1200x630.png?width=300&height=300',
+  'WTA|佩古拉':'https://photoresources.wtatennis.com/photo-resources/2025/05/28/80ba0ad2-fd9b-4332-899d-5a9f6e74c5ba/Home-Share_1200x630.png?width=300&height=300',
+  'WTA|高芙':'https://www.wtatennis.com/resources/ver/i/elements/global/wta-fallback-player.png',
+  'WTA|雷巴金娜':'https://www.wtatennis.com/resources/ver/i/elements/global/wta-fallback-player.png',
+  'WTA|凯斯':'https://www.wtatennis.com/resources/ver/i/elements/global/wta-fallback-player.png'
+};
+const MANAGER_DEMO_FIELD_HINTS={
+  ATP:['阿尔卡拉斯','德雷珀','弗里茨','鲁内','门希克','莱赫奇卡','吉隆','曼纳里诺','布鲁克斯比','沙波瓦洛夫','科达','波佩林'],
+  WTA:['高芙','郑钦文','雷巴金娜','保利尼','米-安德烈耶娃','陶森','本西奇','亚斯特列姆斯卡','库德梅托娃','大坂直美','卡林斯卡娅','奥斯塔彭科']
+};
+const MANAGER_DEMO_FIELD_NAMES={
+  ATP:['德米纳尔','中岛布兰登','费里','弗-塞伦多洛','保罗','达维多维奇','土方凛辉','沙波瓦洛夫','布塞','曼纳里诺','布鲁克斯比','范德尚舒尔普','穆泰','梅杰多维奇','安贝尔','莱赫奇卡','迪亚洛','平宁顿','富乔维奇','吉隆','门希克','塞缪尔','达姆','科瓦切维奇','什瓦伊达','温德尔肯','姆佩奇-佩里卡尔','诺里','林德克内希','西里奇','塔比洛','迈赫扎克'],
+  WTA:['佩古拉','萨巴莲卡','巴尔通科娃','凯斯','诺斯科娃','巴多萨','斯维托丽娜','伊埃拉','亚历山德罗娃','梅尔滕斯','西尼亚科娃','穆霍娃','帕里','高芙','利斯','雷巴金娜','波塔波娃','萨姆索诺娃','施内德','马萨洛娃','王欣瑜','张帅','扎拉祖哈','陶森','拉门斯','卡林斯卡娅','弗雷希','维基奇']
+};
+const MANAGER_PLAYER_PRIORS={
+  '阿尔卡拉斯':{base:97,surface:96,draw:68,form:94},
+  '德雷珀':{base:84,surface:88,draw:63,form:82},
+  '弗里茨':{base:86,surface:84,draw:58,form:78},
+  '鲁内':{base:82,surface:80,draw:56,form:72},
+  '门希克':{base:78,surface:78,draw:64,form:76},
+  '莱赫奇卡':{base:79,surface:80,draw:62,form:74},
+  '迪亚洛':{base:64,surface:74,draw:66,form:72},
+  '平宁顿':{base:45,surface:58,draw:76,form:68},
+  '富乔维奇':{base:66,surface:78,draw:70,form:70},
+  '布塞':{base:64,surface:70,draw:68,form:72},
+  '塞缪尔':{base:46,surface:58,draw:74,form:64},
+  '达姆':{base:44,surface:56,draw:72,form:62},
+  '科瓦切维奇':{base:58,surface:70,draw:62,form:66},
+  '什瓦伊达':{base:54,surface:66,draw:68,form:70},
+  '温德尔肯':{base:48,surface:62,draw:72,form:66},
+  '姆佩奇-佩里卡尔':{base:70,surface:86,draw:58,form:64},
+  '诺里':{base:70,surface:80,draw:62,form:68},
+  '林德克内希':{base:64,surface:78,draw:64,form:66},
+  '西里奇':{base:68,surface:82,draw:60,form:64},
+  '塔比洛':{base:68,surface:70,draw:62,form:66},
+  '迈赫扎克':{base:52,surface:62,draw:70,form:68},
+  '吉隆':{base:67,surface:72,draw:66,form:70},
+  '曼纳里诺':{base:68,surface:82,draw:70,form:68},
+  '布鲁克斯比':{base:66,surface:66,draw:72,form:70},
+  '沙波瓦洛夫':{base:72,surface:83,draw:58,form:64},
+  '萨巴莲卡':{base:96,surface:86,draw:76,form:88},
+  '高芙':{base:90,surface:82,draw:62,form:82},
+  '郑钦文':{base:84,surface:72,draw:58,form:76},
+  '雷巴金娜':{base:88,surface:88,draw:60,form:74},
+  '保利尼':{base:82,surface:72,draw:66,form:80},
+  '米-安德烈耶娃':{base:83,surface:74,draw:70,form:84},
+  '陶森':{base:72,surface:82,draw:68,form:76},
+  '本西奇':{base:76,surface:78,draw:72,form:74},
+  '亚斯特列姆斯卡':{base:68,surface:74,draw:66,form:70},
+  '佩古拉':{base:82,surface:72,draw:60,form:78},
+  '凯斯':{base:78,surface:78,draw:56,form:72},
+  '巴多萨':{base:70,surface:68,draw:52,form:62},
+  '巴尔通科娃':{base:48,surface:54,draw:66,form:70},
+  '斯维托丽娜':{base:78,surface:76,draw:70,form:80},
+  '诺斯科娃':{base:75,surface:73,draw:74,form:82},
+  '伊埃拉':{base:54,surface:62,draw:68,form:74},
+  '西尼亚科娃':{base:66,surface:72,draw:70,form:74},
+  '利斯':{base:60,surface:68,draw:72,form:76},
+  '波塔波娃':{base:66,surface:70,draw:62,form:68},
+  '萨姆索诺娃':{base:72,surface:82,draw:60,form:70},
+  '施内德':{base:74,surface:76,draw:64,form:76},
+  '马萨洛娃':{base:58,surface:66,draw:68,form:70},
+  '张帅':{base:52,surface:62,draw:70,form:68},
+  '扎拉祖哈':{base:54,surface:66,draw:72,form:70},
+  '拉门斯':{base:58,surface:66,draw:70,form:72},
+  '弗雷希':{base:60,surface:66,draw:64,form:68},
+  '德米纳尔':{base:86,surface:82,draw:68,form:84},
+  '保罗':{base:80,surface:76,draw:64,form:78},
+  '安贝尔':{base:76,surface:84,draw:62,form:70},
+  '弗-塞伦多洛':{base:74,surface:68,draw:78,form:80},
+  '中岛布兰登':{base:66,surface:67,draw:58,form:70},
+  '土方凛辉':{base:58,surface:62,draw:64,form:66},
+  '梅杰多维奇':{base:62,surface:66,draw:70,form:74},
+  '费里':{base:48,surface:58,draw:76,form:72},
+  '达维多维奇':{base:72,surface:74,draw:60,form:68}
+};
+const MANAGER_DEMO_LEDGER=[
+  {id:'demo-1',date:'2026-06-09',station:'斯海尔托亨博斯 ATP + 伦敦 WTA',level:'250/500',status:'已结算',cost:118,gross:162,bonus:10,net:54,walletDelta:64,players:['德米纳尔 SF','凯斯 QF','巴尔通科娃 SF'],transfers:['无'],note:'冷门股进四强，慧眼识珠 +30'},
+  {id:'demo-2',date:'2026-06-16',station:'伦敦 ATP + 柏林 WTA',level:'500',status:'未结算',cost:126,gross:92,bonus:0,net:-34,walletDelta:10,players:['德米纳尔 F','伊埃拉 R16'],transfers:['等待窗口'],note:'提交奖励已入钱包，比赛收益待结算'}
+];
+const MANAGER_DEMO_CONFIGS=[
+  {user:'草地运营部',style:'均衡基金流',cost:430,players:['德米纳尔','高芙','保罗','陶森'],note:'避开双核心，押草地适配和签表红利'},
+  {user:'冷门研究所',style:'慧眼识珠流',cost:330,players:['曼纳里诺','费里','巴尔通科娃','伊埃拉'],note:'低价覆盖，靠四强冷门和 combo 起飞'},
+  {user:'冠军资产组',style:'巨星核心流',cost:520,players:['萨巴莲卡','雷巴金娜','德米纳尔'],note:'双女单核心，钱包承担超额成本'},
+  {user:'窗口救火队',style:'调仓止损流',cost:390,players:['莱赫奇卡','诺斯科娃','梅杰多维奇'],note:'留出额度等首轮后换人'}
+];
 
 function gaConfigured(){
   return /^G-[A-Z0-9]+$/.test(GA_MEASUREMENT_ID)&&GA_MEASUREMENT_ID!=='G-XXXXXXXXXX';
@@ -571,13 +926,13 @@ function currentEventLabel(g){
 
 function tabMeta(tab){
   var g=tab.indexOf('ws')===0?'ws':tab.indexOf('ms')===0?'ms':'';
-  var tour=g==='ms'?'ATP':g==='ws'?'WTA':(tab==='fortune'?(fGender==='atp'?'ATP':'WTA'):(tab==='jinx'?(JINX_VIEW==='leaderboard'?'combined':JINX_TOUR):'combined'));
+  var tour=g==='ms'?'ATP':g==='ws'?'WTA':(tab==='fortune'?(fGender==='atp'?'ATP':'WTA'):(tab==='jinx'?(JINX_VIEW==='leaderboard'?'combined':JINX_TOUR):(tab==='manager'?MANAGER_TOUR:'combined')));
   var module={
     'ms-s':'current_picks','ws-s':'current_picks',
     'ms-bd':'breakdown','ws-bd':'breakdown',
     'ms-p':'preference','ws-p':'preference',
     'ms-t':'disasters','ws-t':'disasters',
-    flight:'daily_flights',fortune:'fortune',jinx:'daily_jinx'
+    flight:'daily_flights',fortune:'fortune',jinx:'daily_jinx',manager:'manager_demo'
   }[tab]||tab;
   var eventLabel=(g==='ms'||g==='ws')&&tab.slice(-2)==='-s'?currentEventLabel(g):'';
   return {module:module,tour:tour,event_label:eventLabel};
@@ -622,6 +977,1007 @@ function trackDataLoadError(resource,err){
   trackEvent('data_load_error',{module:'data',resource:safeEventParam(resource),error_type:errorType(err)});
 }
 
+function managerLocalPreviewEnabled(){
+  return location.hostname==='127.0.0.1'||location.hostname==='localhost'||location.protocol==='file:';
+}
+function managerDataPath(file){
+  return 'data/manager/'+file.replace(/^data\/manager\//,'');
+}
+async function managerFetchJson(file){
+  const url=managerDataPath(file)+(managerLocalPreviewEnabled()?('?t='+Date.now()):'');
+  const res=await fetch(url);
+  if(!res.ok)throw new Error('manager data fetch failed: '+file+' '+res.status);
+  return res.json();
+}
+async function loadManagerData(){
+  if(MANAGER_DATA_LOADED)return;
+  if(MANAGER_DATA_LOADING)return MANAGER_DATA_LOADING;
+  MANAGER_DATA_LOADING=(async function(){
+    try{
+      const active=await managerFetchJson('active_events.json');
+      const photos=await managerFetchJson('player_photos.json').catch(function(){return {fallbacks:{},players:{}};});
+      const eventPairs=await Promise.all((active.events||[]).filter(function(x){return x.active!==false;}).map(async function(item){
+        const data=await managerFetchJson(item.data_file);
+        return [item.tour,data];
+      }));
+      MANAGER_ACTIVE_EVENTS=active;
+      MANAGER_EVENT_DATA={};
+      eventPairs.forEach(function(pair){MANAGER_EVENT_DATA[pair[0]]=pair[1];});
+      MANAGER_PHOTO_DATA=photos||{fallbacks:{},players:{}};
+      MANAGER_DATA_LOADED=true;
+      MANAGER_DATA_ERROR=null;
+      managerLoadState();
+    }catch(e){
+      console.warn('巡回赛经纪人数据加载失败',e);
+      trackDataLoadError('manager_data',e);
+      MANAGER_DATA_ERROR=e;
+      MANAGER_DATA_LOADED=true;
+    }
+  })();
+  return MANAGER_DATA_LOADING;
+}
+function managerStorageNamespace(){
+  var user=AUTH_USER&&AUTH_USER.id?AUTH_USER.id:'anon';
+  return user+'|'+managerStationKey();
+}
+function managerStoreKey(){return MANAGER_STORE_KEY+'|'+managerStorageNamespace();}
+function managerLedgerKey(){return MANAGER_LEDGER_KEY+'|'+(AUTH_USER&&AUTH_USER.id?AUTH_USER.id:'anon');}
+function managerNormalizeIds(ids,max){var seen={},out=[];(ids||[]).forEach(function(id){id=String(id||'');if(!/^(ATP|WTA)\|.+/.test(id)||seen[id]||out.length>=max)return;seen[id]=true;out.push(id);});return out;}
+function managerLoadState(){
+  try{
+    var raw=localStorage.getItem(managerStoreKey()),d=raw?JSON.parse(raw):{};
+    MANAGER_LINEUP=managerNormalizeIds(d.lineup||[],managerRules().maxPlayers);
+    MANAGER_PREDICTIONS=d.predictions&&typeof d.predictions==='object'?d.predictions:{};
+    MANAGER_SUNK_COST=Math.max(0,Number(d.sunk_cost)||0);
+    MANAGER_TRANSFER_COUNT=d.transfer_station===managerStationKey()?Math.max(0,Number(d.transfer_count)||0):0;
+    var lraw=localStorage.getItem(managerLedgerKey());
+    MANAGER_LEDGER=lraw?JSON.parse(lraw):[];
+    if(!Array.isArray(MANAGER_LEDGER))MANAGER_LEDGER=[];
+    managerRestoreLineupFromSubmittedRecord();
+    if(!managerSubmittedRecord()){
+      MANAGER_SUNK_COST=0;
+      MANAGER_TRANSFER_COUNT=0;
+    }
+  }catch(e){MANAGER_LINEUP=[];MANAGER_PREDICTIONS={};MANAGER_SUNK_COST=0;MANAGER_TRANSFER_COUNT=0;MANAGER_LEDGER=[];}
+}
+function managerSaveState(){try{localStorage.setItem(managerStoreKey(),JSON.stringify({lineup:MANAGER_LINEUP,predictions:MANAGER_PREDICTIONS,sunk_cost:MANAGER_SUNK_COST,transfer_count:MANAGER_TRANSFER_COUNT,transfer_station:managerStationKey(),updated_at:new Date().toISOString()}));}catch(e){}}
+function managerSaveLedger(){try{localStorage.setItem(managerLedgerKey(),JSON.stringify(MANAGER_LEDGER));}catch(e){}}
+function managerActiveEvent(tour){return MANAGER_EVENT_DATA&&MANAGER_EVENT_DATA[tour]||null;}
+function managerEventPack(tour){
+  var key=tour==='ATP'?'ms':'ws',event=managerActiveEvent(tour),d=GDATA&&GDATA[key]||{};
+  if(event){
+    var meta={season:event.season,tour:event.tour,eventKey:event.event_key,eventId:event.event_id,level:event.level||'500',surface:event.surface||'grass',drawSize:Number(event.draw_size)||32,display:event.display_name||((event.tour||tour)+' '+(event.name_zh||event.short_name||event.name||'当前站')),drawStatus:event.draw_status,marketStatus:event.market_status,source:(event.source_urls||[]).join(' + ')};
+    return {tour:tour,key:key,data:Object.assign({},d,{event_name:event.name_zh||event.short_name||event.name,manager_field:event.players||[]}),meta:meta,event:event};
+  }
+  if(!managerLocalPreviewEnabled()){
+    var unavailable={level:'500',surface:'grass',drawSize:32,display:tour+' 当前站',drawStatus:'unavailable',marketStatus:'closed',source:'manager data unavailable'};
+    return {tour:tour,key:key,data:Object.assign({},d,{event_name:tour+' 当前站',manager_field:[]}),meta:unavailable,event:null};
+  }
+  var meta={level:'500',surface:'grass',drawSize:32,display:(tour+' '+(d.event_name||'当前站')),drawStatus:'unavailable',marketStatus:'closed',source:'manager data unavailable'};
+  return {tour:tour,key:key,data:d,meta:meta,event:null};
+}
+function managerPackLabel(pack){
+  if(pack.data&&pack.data.event_name)return pack.tour+' '+pack.data.event_name;
+  var text=String(pack.meta&&pack.meta.display||pack.tour+' 当前站');
+  text=text.replace(/\s+(250|500|1000|大满贯|草地|红土|硬地|室内硬地).*$/,'');
+  return text;
+}
+function managerDateValue(value){
+  if(!value)return null;
+  var d=new Date(value);
+  return Number.isNaN(d.getTime())?null:d;
+}
+function managerFormatDateTime(value){
+  var d=managerDateValue(value);
+  if(!d)return '待确认';
+  return d.toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false});
+}
+function managerEarliestDate(values){
+  var list=(values||[]).map(managerDateValue).filter(Boolean).sort(function(a,b){return a-b;});
+  return list[0]||null;
+}
+function managerSubmissionWindowInfo(){
+  var packs=managerContestPacks(),cutoff=managerEarliestDate(packs.map(function(pack){
+    var e=pack.event||{};
+    return e.submission_cutoff_at||e.submission_closes_at||null;
+  }));
+  if(!cutoff)return {status:'pending',cutoff:null,label:'待确认'};
+  return {status:(Date.now()>cutoff.getTime()?'closed':'open'),cutoff:cutoff,label:managerFormatDateTime(cutoff)};
+}
+function managerTransferWindowInfo(tour){
+  var pack=managerEventPack(tour||MANAGER_TOUR||'ATP'),e=pack.event||{};
+  var open=e.transfer_window_opens_at||e.round1_completed_at||null;
+  var close=e.transfer_window_closes_at||e.round2_first_match_at||null;
+  var openDate=managerDateValue(open),closeDate=managerDateValue(close);
+  if(!openDate||!closeDate){
+    return {status:'pending',open:null,close:null,label:'待确认',tour:pack.tour,event:pack};
+  }
+  var now=Date.now();
+  var status=now<openDate.getTime()?'before':(now>closeDate.getTime()?'after':'open');
+  return {status:status,open:openDate,close:closeDate,label:managerFormatDateTime(openDate)+' - '+managerFormatDateTime(closeDate),tour:pack.tour,event:pack};
+}
+function managerTransferWindowText(tour){
+  var info=managerTransferWindowInfo(tour);
+  return '换人窗口期为 R1 所有比赛结束后，R2 所有比赛开始前；本站换人窗口期：'+info.label+'。';
+}
+function managerEventStarted(tour){
+  var pack=managerEventPack(tour||MANAGER_TOUR||'ATP'),e=pack.event||{};
+  var start=managerDateValue(e.main_draw_first_match_at||e.start_date||null);
+  return !!(start&&Date.now()>=start.getTime());
+}
+function managerLineupStatusText(submitted){
+  if(!submitted)return '未提交，仍可编辑阵容。';
+  return managerContestPacks().some(function(pack){return managerEventStarted(pack.tour);})?'比赛进行中，等待结算。':'已提交，等待开赛/每日结算；';
+}
+function managerStationKey(){return MANAGER_ACTIVE_EVENTS&&MANAGER_ACTIVE_EVENTS.station_key?MANAGER_ACTIVE_EVENTS.station_key:managerContestPacks().map(managerPackLabel).join(' + ');}
+function managerStationName(){return MANAGER_ACTIVE_EVENTS&&MANAGER_ACTIVE_EVENTS.station_name?MANAGER_ACTIVE_EVENTS.station_name:managerContestPacks().map(managerPackLabel).join(' + ');}
+function managerPlainMoney(value){
+  var n=Number(value);
+  return '$'+(Number.isFinite(n)?Math.round(n):String(value||0));
+}
+function managerLedgerPlayerTokenFromPlayer(p){
+  return (p&&p.name?p.name:'球员')+'（'+managerPlainMoney(p&&p.price||0)+'）';
+}
+function managerLedgerPlayerTokenFromContract(x){
+  var name=x.name_zh||x.name||x.name_en||'球员';
+  var price=Number(x.price||x.contract_price||x.purchase_price||x.cost);
+  if(!Number.isFinite(price)||price<=0){
+    var key=x.player_key||x.playerKey||x.source_player_key||'';
+    var p=managerBuildPool().find(function(item){
+      return item.id===key||item.playerKey===key||item.sourcePlayerKey===key||item.name===name||item.nameEn===name;
+    });
+    price=p?Number(p.price):0;
+  }
+  return name+'（'+managerPlainMoney(price||0)+'）';
+}
+function managerSubmittedRecord(){
+  if(MANAGER_REMOTE_STATE&&MANAGER_REMOTE_STATE.lineup){
+    var l=MANAGER_REMOTE_STATE.lineup,contracts=MANAGER_REMOTE_STATE.contracts||[];
+    return {id:l.id,date:String(l.submitted_at||'').slice(0,10),station:l.station_key||managerStationKey(),level:(managerRules().levels||[]).join('/'),status:'已提交',cost:l.lineup_cost||0,gross:l.predicted_gross||0,bonus:l.predicted_bonus||0,net:l.predicted_net||0,walletDelta:l.submission_bonus||10,players:contracts.filter(function(x){return x.is_active!==false;}).map(managerLedgerPlayerTokenFromContract),transfers:['后台记录'],note:'已由 Supabase 记录并锁定'};
+  }
+  if(AUTH_USER&&supabaseConfigured())return null;
+  var station=managerStationKey();return (MANAGER_LEDGER||[]).find(function(x){return x.station===station&&x.status==='已提交';})||null;
+}
+function managerLedgerPlayerName(text){
+  text=String(text||'').trim();
+  text=text.replace(/（\$?\d+）|\(\$?\d+\)/g,'').trim();
+  var m=text.match(/^(.*)\s+(OUT|R128|R64|R32|R16|QF|SF|F|W|冠军|决赛|半决赛|8强|16强|32强|64强|128强)$/);
+  return (m?m[1]:text).trim();
+}
+function managerLedgerPlayerRound(text){
+  var m=String(text||'').trim().match(/\s+(OUT|R128|R64|R32|R16|QF|SF|F|W|冠军|决赛|半决赛|8强|16强|32强|64强|128强)$/);
+  return m?m[1]:'';
+}
+function managerLedgerPlayerToken(item,p){
+  var text=String(item||'').trim();
+  if(/（\$?\d+）|\(\$?\d+\)/.test(text))return text.replace(/\s+(OUT|R128|R64|R32|R16|QF|SF|F|W|冠军|决赛|半决赛|8强|16强|32强|64强|128强)$/,'');
+  if(p)return managerLedgerPlayerTokenFromPlayer(p);
+  return managerLedgerPlayerName(text)||text;
+}
+function managerSanitizeLedgerPlayers(list){
+  var pool=managerBuildPool(),byName={};
+  pool.forEach(function(p){if(!byName[p.name])byName[p.name]=p;});
+  return (Array.isArray(list)?list:[]).map(function(item){
+    var name=managerLedgerPlayerName(item);
+    return managerLedgerPlayerToken(item,byName[name]);
+  });
+}
+function managerRoundKeyFromLedgerToken(token,p){
+  token=String(token||'').trim();
+  var opt=managerRoundOptions(p).find(function(r){return r.key===token||r.label===token||managerRoundDisplay(r.key,p)===token||managerRoundLabel(r.key)===token;});
+  return opt?opt.key:'OUT';
+}
+function managerRestoreLineupFromSubmittedRecord(){
+  if(MANAGER_LINEUP.length)return false;
+  var rec=managerSubmittedRecord();
+  if(!rec||!Array.isArray(rec.players)||!rec.players.length)return false;
+  var pool=managerBuildPool(),byName={};
+  pool.forEach(function(p){if(!byName[p.name])byName[p.name]=p;});
+  var restored=[];
+  rec.players.forEach(function(item){
+    var name=managerLedgerPlayerName(item),p=byName[name];
+    if(!p)return;
+    restored.push(p.id);
+    var roundToken=managerLedgerPlayerRound(item);
+    MANAGER_PREDICTIONS[p.id]=MANAGER_PREDICTIONS[p.id]||(roundToken?managerRoundKeyFromLedgerToken(roundToken,p):p.breakEven);
+  });
+  MANAGER_LINEUP=managerNormalizeIds(restored,managerRules().maxPlayers);
+  if(!MANAGER_LINEUP.length)return false;
+  managerSaveState();
+  managerSetMsg('已从本站提交记录恢复你的阵容。');
+  return true;
+}
+function managerSurfaceName(s){return ({grass:'草地',clay:'红土',hard_out:'硬地',hard_in:'室内硬地'}[s]||'待接入');}
+function managerSurfaceClass(s){return s==='grass'?'grass':(s==='clay'?'clay':'hard');}
+function managerLevelName(l){return l==='GS'?'大满贯':((l||'500')+'赛');}
+function managerHashScore(name,salt){var str=(name||'')+'|'+(salt||''),h=0;for(var i=0;i<str.length;i++)h=(h*31+str.charCodeAt(i))%1000003;return h/1000003;}
+function managerSlug(value){return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');}
+function managerCanonicalPlayerKey(tour,raw){
+  if(raw&&raw.is_qualifier_placeholder)return tour+'|qualifier-'+(raw.draw_position||managerSlug(raw.name_en||raw.name_zh||'q'));
+  var base=raw&&(raw.name_en||raw.name_zh||raw.name||raw.player_key)||'';
+  return tour+'|'+(managerSlug(base)||managerSlug(raw&&raw.player_key||''));
+}
+function managerContestPacks(){return [managerEventPack('ATP'),managerEventPack('WTA')];}
+function managerRules(){
+  var packs=managerContestPacks(),levels=packs.map(function(p){return p.meta.level||'500';});
+  var cfgs=levels.map(function(l){return MANAGER_LEVEL_CONFIG[l]||MANAGER_LEVEL_CONFIG['500'];});
+  var order={'250':1,'500':2,'1000':3,'GS':4};
+  var top=levels.slice().sort(function(a,b){return (order[b]||2)-(order[a]||2);})[0]||'500';
+  var topCfg=MANAGER_LEVEL_CONFIG[top]||MANAGER_LEVEL_CONFIG['500'];
+  var minPlayers=cfgs.length?Math.min.apply(null,cfgs.map(function(c){return c.min;})):topCfg.min;
+  var maxPlayers=cfgs.length?cfgs.reduce(function(s,c){return s+c.max;},0):topCfg.max;
+  var wallet=managerWallet(),stationGrant=cfgs.reduce(function(s,c){return s+c.sideGrant;},0);
+  return {
+    initialWallet:300,
+    wallet:wallet,
+    stationGrant:stationGrant,
+    usableBudget:wallet+stationGrant,
+    minPlayers:minPlayers,
+    maxPlayers:maxPlayers,
+    transfers:topCfg.transfers,
+    transferDays:topCfg.transferDays,
+    transferFee:topCfg.transferFee,
+    topLevel:top,
+    levels:levels
+  };
+}
+function managerDemoLedgerAllowed(){
+  return managerLocalPreviewEnabled()&&!managerSupabaseMode();
+}
+function managerWallet(){
+  if(MANAGER_REMOTE_STATE&&MANAGER_REMOTE_STATE.wallet&&Number.isFinite(Number(MANAGER_REMOTE_STATE.wallet.balance)))return Number(MANAGER_REMOTE_STATE.wallet.balance);
+  var all=(managerDemoLedgerAllowed()?MANAGER_DEMO_LEDGER:[]).concat(MANAGER_LEDGER||[]);
+  var w=300+all.reduce(function(s,x){return s+(Number(x.walletDelta)||0);},0);
+  return w<30?30:w;
+}
+function managerDrawBucket(drawSize){
+  var n=Number(drawSize)||32;
+  if(n>=128)return '128';
+  if(n>=96)return '96';
+  if(n>=64)return '64';
+  if(n>=56)return '56';
+  if(n>=48)return '48';
+  if(n>=32)return '32';
+  if(n>=28)return '28';
+  return '32';
+}
+function managerPointTable(tour,level,drawSize){
+  var byTour=MANAGER_POINT_TABLES[tour]||MANAGER_POINT_TABLES.ATP;
+  var byLevel=byTour[level]||byTour['500']||{};
+  var bucket=managerDrawBucket(drawSize);
+  return byLevel[bucket]||byLevel['32']||byLevel['28']||byLevel['64']||byLevel['96']||byLevel['128']||{};
+}
+function managerRoundValue(round,level,tour,drawSize){
+  if(round==='OUT')return 0;
+  var table=managerPointTable(tour,level,drawSize);
+  return table[round]||0;
+}
+function managerRoundLabel(k){var r=MANAGER_ROUNDS.find(function(x){return x.key===k;});return r?r.short:k;}
+function managerStageRoundKeys(drawSize){
+  var bucket=managerDrawBucket(drawSize);
+  if(bucket==='28'||bucket==='32')return ['R32','R16','QF','SF','F','W'];
+  if(bucket==='48'||bucket==='56'||bucket==='64')return ['R64','R32','R16','QF','SF','F','W'];
+  return ['R128','R64','R32','R16','QF','SF','F','W'];
+}
+function managerStageColumnMap(drawSize){
+  var bucket=managerDrawBucket(drawSize);
+  if(bucket==='28'||bucket==='32')return {R1:'R32',R2:'R16',QF:'QF',SF:'SF',F:'F','冠军':'W'};
+  if(bucket==='48'||bucket==='56'||bucket==='64')return {R1:'R64',R2:'R32',R3:'R16',QF:'QF',SF:'SF',F:'F','冠军':'W'};
+  return {R1:'R128',R2:'R64',R3:'R32',R4:'R16',QF:'QF',SF:'SF',F:'F','冠军':'W'};
+}
+function managerRoundDisplay(k,p){
+  if(k==='OUT')return '出局';
+  if(k==='W')return '冠军';
+  if(k==='F')return 'F';
+  if(k==='SF')return 'SF';
+  if(k==='QF')return 'QF';
+  var map=managerStageColumnMap(p&&p.drawSize);
+  var found=Object.keys(map).find(function(col){return map[col]===k;});
+  return found||managerRoundLabel(k);
+}
+function managerRoundOptionLabel(k,p){
+  if(k==='OUT')return '出局';
+  var stage=managerRoundDisplay(k,p),legacy=managerRoundLabel(k);
+  return stage===legacy?stage:(stage+' · '+legacy);
+}
+function managerRoundOptions(p){
+  return [{key:'OUT',label:'出局'}].concat(managerStageRoundKeys(p&&p.drawSize).map(function(k){
+    return {key:k,label:managerRoundOptionLabel(k,p)};
+  }));
+}
+function managerRoundIndex(k){return MANAGER_ROUNDS.findIndex(function(x){return x.key===k;});}
+function managerRoundBreakEven(price,level,tour,drawSize){var order=managerStageRoundKeys(drawSize);for(var i=0;i<order.length;i++){if(managerRoundValue(order[i],level,tour,drawSize)>=price)return managerRoundDisplay(order[i],{drawSize:drawSize});}return '冠军+组合分';}
+function managerWinnerPoints(level,tour,drawSize){return managerRoundValue('W',level,tour,drawSize)||500;}
+function managerTier(price,level,tour,drawSize){
+  var ratio=price/managerWinnerPoints(level,tour,drawSize);
+  return ratio>=.62?'S':ratio>=.46?'A':ratio>=.29?'B':ratio>=.16?'C':'D';
+}
+function managerPrior(name,tour,index,pickCount,maxPick){
+  var p=MANAGER_PLAYER_PRIORS[name]||{},h1=managerHashScore(name,tour),h2=managerHashScore(name,'surface'),h3=managerHashScore(name,'draw');
+  var base=p.base!=null?p.base:Math.max(42,Math.min(88,82-Math.min(index,36)*1.05+h1*10+(tour==='WTA'?1:0)));
+  var surface=p.surface!=null?p.surface:Math.max(40,Math.min(90,base-8+h2*20));
+  var draw=p.draw!=null?p.draw:Math.max(30,Math.min(88,38+h3*48));
+  var form=p.form!=null?p.form:Math.max(34,Math.min(90,56+h1*20+Math.min(8,(pickCount||0)/4)-index*.28));
+  return {base:base,surface:surface,draw:draw,form:form};
+}
+function managerPrice(f,level,tour,drawSize){
+  var total=.35*f.base+.25*f.surface+.20*f.draw+.15*f.form;
+  var champ=managerWinnerPoints(level,tour,drawSize),finalPts=managerRoundValue('F',level,tour,drawSize);
+  var ratio=total>=88?.66:total>=84?.60:total>=80?.36:total>=74?.27:total>=66?.18:.12;
+  var price=Math.round(champ*ratio/5)*5;
+  if(f.base>=95&&f.form>=85)price=finalPts;
+  else if(total>=88)price=Math.max(price,Math.round(champ*.64/5)*5);
+  return Math.max(Math.round(champ*.08/5)*5,Math.min(Math.round(champ*.72/5)*5,price));
+}
+function managerFieldCandidates(pack,tour){
+  if(pack.event&&Array.isArray(pack.event.players)&&pack.event.players.length){
+    var stats={},names=[];
+    pack.event.players.forEach(function(p,i){var name=p.name_zh||p.name||p.name_en||'';if(name&&names.indexOf(name)<0)names.push(name);stats[name]=Math.max(1,60-i);});
+    return {names:names,stats:stats,maxPick:Math.max.apply(null,Object.values(stats).concat([1]))};
+  }
+  var stats={},source=pack.data.manager_field||pack.data.draw_players||MANAGER_DEMO_FIELD_NAMES[tour]||MANAGER_DEMO_FIELD_HINTS[tour]||[],names=[];
+  source.forEach(function(name){if(name&&names.indexOf(name)<0)names.push(name);});
+  names.forEach(function(name){stats[name]=Math.round(6+managerHashScore(name,'preheat')*30);});
+  return {names:names.slice(0,64),stats:stats,maxPick:Math.max.apply(null,Object.values(stats).concat([1]))};
+}
+function managerPlayerFromEvent(pack,raw,index){
+  var tour=pack.tour,name=raw.name_zh||raw.name||raw.name_en||'',drawSize=Number(pack.meta.drawSize)||32;
+  var playerKey=managerCanonicalPlayerKey(tour,raw);
+  var sourcePlayerKey=raw.player_key||playerKey;
+  var officialRank=raw.rank!=null?Number(raw.rank):(raw.ranking!=null?Number(raw.ranking):(raw.official_rank!=null?Number(raw.official_rank):null));
+  if(!Number.isFinite(officialRank))officialRank=null;
+  var f=raw.scores||{};
+  var base=f.base!=null?f.base:50,surface=f.surface!=null?f.surface:50,draw=f.draw!=null?f.draw:50,form=f.form!=null?f.form:50,manual=f.manual!=null?f.manual:0;
+  var score=.35*base+.25*surface+.20*draw+.15*form+.05*manual;
+  var price=raw.price!=null?Number(raw.price):managerPrice({base:base,surface:surface,draw:draw,form:form},pack.meta.level,tour,drawSize);
+  return {id:playerKey,playerKey:playerKey,sourcePlayerKey:sourcePlayerKey,tour:tour,name:name,nameEn:raw.name_en||'',event:pack.data.event_name||pack.meta.display||'当前站',eventKey:pack.meta.eventKey,level:pack.meta.level,drawSize:drawSize,surface:pack.meta.surface,rank:officialRank,seed:raw.seed||null,drawPosition:raw.draw_position||null,firstRound:raw.first_round||'',profileId:raw.profile_id||'',photoUrl:raw.photo_url||raw.profile_image_url||'',fullBodyUrl:raw.full_body_url||raw.body_url||raw.photo_full_url||'',isQualifierPlaceholder:!!raw.is_qualifier_placeholder,pathNote:raw.path_note||'',pickCount:Math.max(1,60-index),base:base,surfaceScore:surface,draw:draw,form:form,manual:manual,total:score,price:price,tier:managerTier(price,pack.meta.level,tour,drawSize),breakEven:managerRoundBreakEven(price,pack.meta.level,tour,drawSize),overallElo:raw.overall_elo??null,surfaceElo:raw.surface_elo??null,peakElo:raw.peak_elo??null,peakMonth:raw.peak_month||'',expectedPoints:raw.expected_points??null,expectedRound:raw.expected_round||'',pricingDetail:raw.pricing_detail||null,risk:score>=84?'冠军核心':(draw<45?'签表偏硬':(price<=managerWinnerPoints(pack.meta.level,tour,drawSize)*.16?'冷门彩票':'均衡资产'))};
+}
+function managerBuildPool(){
+  var out=[];
+  ['ATP','WTA'].forEach(function(tour){
+    var pack=managerEventPack(tour),field=managerFieldCandidates(pack,tour);
+    if(pack.event&&Array.isArray(pack.event.players)&&pack.event.players.length){
+      pack.event.players.forEach(function(raw,index){out.push(managerPlayerFromEvent(pack,raw,index));});
+      return;
+    }
+    field.names.forEach(function(name,index){
+      var drawSize=Number(pack.meta.drawSize)||32,f=managerPrior(name,tour,index,field.stats[name]||0,field.maxPick),score=.35*f.base+.25*f.surface+.20*f.draw+.15*f.form,price=managerPrice(f,pack.meta.level,tour,drawSize);
+      out.push({id:tour+'|'+name,tour:tour,name:name,event:pack.data.event_name||'当前站',level:pack.meta.level,drawSize:drawSize,surface:pack.meta.surface,rank:index+1,pickCount:field.stats[name]||0,base:f.base,surfaceScore:f.surface,draw:f.draw,form:f.form,total:score,price:price,tier:managerTier(price,pack.meta.level,tour,drawSize),breakEven:managerRoundBreakEven(price,pack.meta.level,tour,drawSize),risk:score>=84?'冠军核心':(f.draw<45?'签表偏硬':(price<=managerWinnerPoints(pack.meta.level,tour,drawSize)*.16?'冷门彩票':'均衡资产'))});
+    });
+  });
+  return out.sort(function(a,b){return b.price-a.price||a.rank-b.rank;});
+}
+function managerSearchInput(v,isComposing){
+  if(isComposing||MANAGER_SEARCH_COMPOSING)return;
+  MANAGER_SEARCH=v||'';
+  clearTimeout(MANAGER_SEARCH_TIMER);
+  MANAGER_SEARCH_TIMER=setTimeout(function(){renderManagerDemo();},550);
+}
+function managerSearchCompose(active,el){MANAGER_SEARCH_COMPOSING=!!active;if(!active)setTimeout(function(){managerSearchInput(el&&el.value||'',false);},0);}
+function managerSearchNow(){clearTimeout(MANAGER_SEARCH_TIMER);renderManagerDemo();}
+function managerHallSearchInput(v,isComposing){if(isComposing||MANAGER_HALL_SEARCH_COMPOSING)return;MANAGER_HALL_SEARCH=v||'';renderManagerDemo();}
+function managerHallSearchCompose(active,el){MANAGER_HALL_SEARCH_COMPOSING=!!active;if(!active)setTimeout(function(){managerHallSearchInput(el&&el.value||'',false);},0);}
+function managerLedgerSearchInput(v,isComposing){if(isComposing||MANAGER_LEDGER_SEARCH_COMPOSING)return;MANAGER_LEDGER_SEARCH=v||'';clearTimeout(MANAGER_LEDGER_SEARCH_TIMER);MANAGER_LEDGER_SEARCH_TIMER=setTimeout(function(){renderManagerDemo();},350);}
+function managerLedgerSearchCompose(active,el){MANAGER_LEDGER_SEARCH_COMPOSING=!!active;if(!active)setTimeout(function(){managerLedgerSearchInput(el&&el.value||'',false);},0);}
+function managerSetMarketTour(tour){MANAGER_TOUR=tour||'ATP';MANAGER_VIEW='market';renderManagerDemo();}
+function managerFilterValue(id,def){if(id==='manager-q')return MANAGER_SEARCH;if(id==='manager-hall-q')return MANAGER_HALL_SEARCH;if(id==='manager-ledger-q')return MANAGER_LEDGER_SEARCH;if(id==='manager-tour')return MANAGER_TOUR;var el=document.getElementById(id);return el&&el.value?el.value:def;}
+function managerSelectedAttr(id,val,def){return managerFilterValue(id,def)===val?'selected':'';}
+function managerSurfaceSpecialist(p){return p.surfaceScore>=85||(p.surfaceScore>=78&&p.surfaceScore-p.base>=4);}
+function managerPoolFiltered(){
+  var q=managerFilterValue('manager-q','').toLowerCase(),tour=managerFilterValue('manager-tour','ALL'),price=managerFilterValue('manager-price-filter','all'),tier=managerFilterValue('manager-tier-filter','all'),rank=managerFilterValue('manager-rank-filter','all'),surface=managerFilterValue('manager-surface-filter','all'),sort=managerFilterValue('manager-sort','price'),dir=managerFilterValue('manager-sort-dir','desc');
+  var list=managerBuildPool().filter(function(p){
+    if(tour!=='ALL'&&p.tour!==tour)return false;
+    var hay=[p.name,p.nameEn,p.event,p.tour,p.tier,p.risk,p.rank?('rank '+p.rank):''].join(' ').toLowerCase();
+    if(q&&hay.indexOf(q)<0)return false;
+    var winner=managerWinnerPoints(p.level,p.tour,p.drawSize),rankNum=Number(p.rank),hasRank=Number.isFinite(rankNum)&&rankNum>0;
+    if(price==='cheap'&&!(p.tier==='C'||p.tier==='D'||p.price<=winner*.20))return false;
+    if(price==='mid'&&!(p.tier==='B'||(p.price>winner*.20&&p.price<winner*.46)))return false;
+    if(price==='star'&&!(p.tier==='S'||p.tier==='A'||p.price>=winner*.46))return false;
+    if(tier!=='all'&&p.tier!==tier)return false;
+    if(rank==='top10'&&!(hasRank&&rankNum<=10))return false;
+    if(rank==='low'&&!(hasRank&&rankNum>=50))return false;
+    if(surface==='strong'&&!(Number.isFinite(Number(p.surfaceScore))&&p.surfaceScore>=78))return false;
+    if(surface==='specialist'&&!managerSurfaceSpecialist(p))return false;
+    return true;
+  });
+  var keys={price:'price',base:'base',surface:'surfaceScore',draw:'draw',form:'form'};
+  var prop=keys[sort]||'price',mult=dir==='asc'?1:-1;
+  return list.sort(function(a,b){var d=(a[prop]||0)-(b[prop]||0);return d?d*mult:(b.total-a.total);});
+}
+function managerLineupPlayers(){var map={};managerBuildPool().forEach(function(p){map[p.id]=p;if(p.sourcePlayerKey)map[p.sourcePlayerKey]=p;});return MANAGER_LINEUP.map(function(id){return map[id];}).filter(Boolean);}
+function managerSelected(id){return MANAGER_LINEUP.indexOf(id)>=0;}
+function managerContractForPlayer(p){
+  var contracts=MANAGER_REMOTE_STATE&&Array.isArray(MANAGER_REMOTE_STATE.contracts)?MANAGER_REMOTE_STATE.contracts:[];
+  return contracts.find(function(x){
+    return (x.player_key===p.id||x.player_key===p.playerKey||x.player_key===p.sourcePlayerKey)&&x.is_active!==false;
+  })||null;
+}
+function managerPlayerCurrentStats(p){
+  var submitted=managerSubmittedRecord(),contract=managerContractForPlayer(p),meta=contract&&contract.metadata&&typeof contract.metadata==='object'?contract.metadata:{};
+  var earned=Number(contract&&contract.earned_points);
+  if(!Number.isFinite(earned))earned=0;
+  var yesterday=Number(meta.yesterday_earned??meta.last_settlement_delta??meta.points_delta_yesterday??0);
+  if(!Number.isFinite(yesterday))yesterday=0;
+  var started=managerEventStarted(p.tour),eliminated=meta.eliminated||meta.status==='eliminated'||meta.status_zh==='出局'||contract&&contract.is_active===false;
+  var reached=contract&&(contract.reached_round||contract.current_round)||meta.reached_round||meta.current_round||'';
+  var status=!submitted?'未提交':(!started?'存活':(contract&&contract.is_active===false?'已换下':(eliminated?'已出局':'存活')));
+  var round=!submitted?'未开赛':(!started?'未开赛':(eliminated?'已出局':(reached?managerRoundDisplay(reached,p):'进行中')));
+  return {
+    earned:earned,
+    yesterday:yesterday,
+    round:round,
+    status:status
+  };
+}
+function managerTeamCurrentStats(players,c){
+  var stats=players.map(managerPlayerCurrentStats),earned=stats.reduce(function(s,x){return s+x.earned;},0),yesterday=stats.reduce(function(s,x){return s+x.yesterday;},0),alive=stats.filter(function(x){return x.status==='存活'||x.round==='未开赛';}).length;
+  return {earned:earned,yesterday:yesterday,alive:alive,max:c.max};
+}
+function managerSetMsg(msg,isErr){MANAGER_LAST_MSG=msg||'';setTimeout(function(){var el=document.getElementById('manager-msg');if(el){el.textContent=MANAGER_LAST_MSG;el.classList.toggle('r',!!isErr);}},0);}
+function managerRequireLogin(reason){if(AUTH_USER)return true;openAuthModal({reason:reason||'manager',afterLogin:function(){renderManagerDemo();}});return false;}
+function managerViewNeedsLogin(view){return ['calculator','mine','hall','transfer','ledger','boards'].indexOf(view)>=0;}
+function managerSetView(view){
+  if(managerViewNeedsLogin(view)&&!managerRequireLogin('manager'))return;
+  MANAGER_VIEW=view;
+  if(view==='mine'&&!MANAGER_MY_VIEW)MANAGER_MY_VIEW='lineup';
+  if(view==='hall'||view==='boards')managerLoadRemotePublicData().then(function(){if(MANAGER_VIEW===view)renderManagerDemo();});
+  renderManagerDemo();
+}
+function managerSetMyView(view){
+  if(!managerRequireLogin('manager'))return;
+  MANAGER_VIEW='mine';
+  MANAGER_MY_VIEW=view||'lineup';
+  renderManagerDemo();
+}
+function managerAlert(msg,title){MANAGER_DIALOG={title:title||'阵容提示',msg:msg};renderManagerDemo();}
+function managerCloseAlert(){MANAGER_DIALOG=null;MANAGER_PENDING_TRANSFER=null;renderManagerDemo();}
+function managerAdd(id){
+  if(!managerRequireLogin('manager'))return;
+  if(managerSubmittedRecord()){managerAlert('本站阵容已经提交，不能再直接加人。开赛后的调整请走换人窗口。','阵容已锁定');return;}
+  var rules=managerRules(),pick=managerBuildPool().find(function(p){return p.id===id;});
+  if(managerSelected(id)){managerRemove(id);return;}
+  if(!pick){managerAlert('球员不在当前赛前市场，请刷新后重试。');return;}
+  if(MANAGER_LINEUP.length>=rules.maxPlayers){managerAlert('本站最多签 '+rules.maxPlayers+' 人。你可以先从右侧阵容移除一位球员，再加入新球员。','签约人数已满');return;}
+  var c=managerCalc();
+  if(pick.price>c.remaining){managerAlert('签下 '+pick.name+' 需要 '+pick.price+'，当前剩余可用额度 '+c.remaining+'。可以换低价球员，或等下一站/结算后补充钱包。','可用额度不够');return;}
+  MANAGER_LINEUP.push(id);MANAGER_PREDICTIONS[id]=MANAGER_PREDICTIONS[id]||pick.breakEven;managerSetMsg('已加入阵容。去计算器选择每个人的预计轮次。');managerSaveState();renderManagerDemo();
+}
+function managerRemove(id){if(!managerRequireLogin('manager'))return;if(managerSubmittedRecord()){managerAlert('提交后不能直接移除球员。你可以在换人窗口进行一次调仓。','阵容已锁定');return;}MANAGER_LINEUP=MANAGER_LINEUP.filter(function(x){return x!==id;});delete MANAGER_PREDICTIONS[id];managerSaveState();renderManagerDemo();}
+function managerResetDraft(){if(!managerRequireLogin('manager'))return;if(managerSubmittedRecord()){managerAlert('本站阵容已经提交，不能清空草稿。换人记录会保留在我的收益里。','阵容已锁定');return;}MANAGER_LINEUP=[];MANAGER_PREDICTIONS={};MANAGER_SUNK_COST=0;MANAGER_TRANSFER_COUNT=0;managerSetMsg('阵容草稿已重置。');managerSaveState();renderManagerDemo();}
+function managerSetPrediction(id,round){if(!managerRequireLogin('manager'))return;MANAGER_PREDICTIONS[id]=round;managerSaveState();renderManagerDemo();}
+function managerScoreScenario(players,roundFor){
+  var gross=0,champ=0,finals=0,qf=0,jewel=0;
+  players.forEach(function(p){
+    var r=roundFor(p)||'OUT',v=managerRoundValue(r,p.level,p.tour,p.drawSize);
+    gross+=v;
+    if(managerRoundIndex(r)>=managerRoundIndex('QF'))qf++;
+    if(managerRoundIndex(r)>=managerRoundIndex('F'))finals++;
+    if(r==='W')champ++;
+    if((p.tier==='C'||p.tier==='D')&&managerRoundIndex(r)>=managerRoundIndex('SF'))jewel++;
+  });
+  var stable=players.length&&qf/players.length>=.6?Math.min(80,Math.round(gross*.08)):0;
+  var finalBonus=finals>=2?60:0,champBonus=champ>=1?40:0,jewelBonus=jewel*30;
+  return {gross:gross,stable:stable,finalBonus:finalBonus,champBonus:champBonus,jewelBonus:jewelBonus,bonus:stable+finalBonus+champBonus+jewelBonus};
+}
+function managerBestRoundMap(players){
+  var slots=['W','F','SF','SF','QF','QF','QF','QF','R16','R16','R16','R16','R16','R16','R16','R16'],map={};
+  var groups={};
+  players.forEach(function(p){var k=p.tour+'|'+p.level;groups[k]=groups[k]||[];groups[k].push(p);});
+  Object.keys(groups).forEach(function(k){
+    groups[k].slice().sort(function(a,b){return b.total-a.total;}).forEach(function(p,i){map[p.id]=slots[i]||'R32';});
+  });
+  return map;
+}
+function managerPredictionWarning(players){
+  var groups={};
+  players.forEach(function(p){var r=MANAGER_PREDICTIONS[p.id]||'OUT',k=p.tour+'|'+p.level;groups[k]=groups[k]||{W:0,F:0,SF:0,QF:0};if(r==='W')groups[k].W++;if(managerRoundIndex(r)>=managerRoundIndex('F'))groups[k].F++;if(managerRoundIndex(r)>=managerRoundIndex('SF'))groups[k].SF++;if(managerRoundIndex(r)>=managerRoundIndex('QF'))groups[k].QF++;});
+  var bad=Object.keys(groups).find(function(k){var g=groups[k];return g.W>1||g.F>2||g.SF>4||g.QF>8;});
+  return bad?'当前预计轮次存在同一赛站不可能同时发生的结果，计算器仍展示你的假设，但“可行最高收益”会按签表席位约束计算。':'';
+}
+function managerBudgetState(rules,spent){
+  var lineup=MANAGER_REMOTE_STATE&&MANAGER_REMOTE_STATE.lineup?MANAGER_REMOTE_STATE.lineup:null;
+  var stationGrant=rules.stationGrant;
+  var stationUsed=Math.min(spent,stationGrant);
+  var walletUsed=Math.max(0,spent-stationGrant);
+  var walletCurrent=rules.wallet;
+  var walletStart=walletCurrent;
+  var usableStart=walletStart+stationGrant;
+  var currentAvailable=usableStart-spent;
+  if(lineup){
+    stationGrant=Number(lineup.station_grant)||stationGrant;
+    stationUsed=Number(lineup.station_grant_used);
+    if(!Number.isFinite(stationUsed))stationUsed=Math.min(Number(lineup.lineup_cost)||spent,stationGrant);
+    walletUsed=Number(lineup.wallet_used);
+    if(!Number.isFinite(walletUsed))walletUsed=Math.max(0,(Number(lineup.lineup_cost)||spent)-stationGrant);
+    var bonus=Number(lineup.submission_bonus);
+    if(!Number.isFinite(bonus))bonus=10;
+    walletStart=Math.max(0,walletCurrent+walletUsed-bonus);
+    usableStart=walletStart+stationGrant;
+    currentAvailable=walletCurrent+Math.max(0,stationGrant-stationUsed);
+  }else if(managerSubmittedRecord()){
+    var localBonus=10;
+    walletCurrent=Math.max(0,walletCurrent-walletUsed);
+    walletStart=Math.max(0,walletCurrent+walletUsed-localBonus);
+    usableStart=walletStart+stationGrant;
+    currentAvailable=walletCurrent+Math.max(0,stationGrant-stationUsed);
+  }
+  return {
+    walletStart:walletStart,
+    walletCurrent:walletCurrent,
+    stationGrant:stationGrant,
+    stationUsed:Math.max(0,stationUsed),
+    stationRemaining:Math.max(0,stationGrant-stationUsed),
+    walletUsed:Math.max(0,walletUsed),
+    usableStart:usableStart,
+    currentAvailable:currentAvailable
+  };
+}
+function managerCalc(){
+  var rules=managerRules(),players=managerLineupPlayers(),lineupCost=players.reduce(function(s,p){return s+p.price;},0),submitted=managerSubmittedRecord();
+  var effectiveSunk=submitted?Math.max(0,Number(MANAGER_SUNK_COST)||0):0;
+  if(MANAGER_REMOTE_STATE&&MANAGER_REMOTE_STATE.lineup){
+    effectiveSunk=Math.max(0,Number(MANAGER_REMOTE_STATE.lineup.lineup_cost||0)-lineupCost);
+  }
+  var spent=lineupCost+effectiveSunk;
+  if(MANAGER_REMOTE_STATE&&MANAGER_REMOTE_STATE.lineup&&Number.isFinite(Number(MANAGER_REMOTE_STATE.lineup.lineup_cost)))spent=Number(MANAGER_REMOTE_STATE.lineup.lineup_cost);
+  var actual=managerScoreScenario(players,function(p){return MANAGER_PREDICTIONS[p.id]||'OUT';});
+  var bestMap=managerBestRoundMap(players),best=managerScoreScenario(players,function(p){return bestMap[p.id]||'OUT';});
+  var budget=managerBudgetState(rules,spent);
+  var legal=players.length>=rules.minPlayers&&players.length<=rules.maxPlayers&&spent<=budget.usableStart;
+  return {players:players,spent:spent,lineupCost:lineupCost,sunkCost:effectiveSunk,budget:budget.usableStart,stationUsed:budget.stationUsed,stationRemaining:budget.stationRemaining,walletStart:budget.walletStart,walletCurrent:budget.walletCurrent,walletUsed:budget.walletUsed,remaining:budget.currentAvailable,gross:actual.gross,bonus:actual.bonus,stable:actual.stable,finalBonus:actual.finalBonus,champBonus:actual.champBonus,jewelBonus:actual.jewelBonus,net:actual.gross+actual.bonus-spent,max:best.gross+best.bonus-spent,maxGross:best.gross,maxBonus:best.bonus,legal:legal,warning:managerPredictionWarning(players),style:managerLineupStyle(players)};
+}
+function managerLineupStyle(players){
+  if(!players.length)return '待建仓';
+  var star=players.some(function(p){return p.tier==='S'}),cheap=players.filter(function(p){return p.tier==='C'||p.tier==='D'}).length,avg=players.reduce(function(s,p){return s+p.price;},0)/players.length;
+  if(star&&cheap)return '巨星核心 + 冷门彩票';if(avg<100)return '冷门伯乐流';if(avg<220)return '均衡基金流';return '争冠核心流';
+}
+function managerAllLedger(){
+  var stationKey=managerStationKey(),stationName=managerStationName(),rows=[];
+  if(MANAGER_REMOTE_STATE){
+    var state=MANAGER_REMOTE_STATE,lineup=state.lineup||null,contracts=Array.isArray(state.contracts)?state.contracts:[],active=contracts.filter(function(x){return x.is_active!==false;});
+    var playerTokens=active.map(managerLedgerPlayerTokenFromContract);
+    var ledger=Array.isArray(state.ledger)?state.ledger:[];
+    ledger.forEach(function(x){
+      var meta=x.metadata&&typeof x.metadata==='object'?x.metadata:{},type=String(x.type||''),amount=Number(x.amount)||0;
+      var isSubmit=/lineup_wallet_spend|lineup_submit|submit/i.test(type),isBonus=/submit_bonus/i.test(type),isSettle=/settle|settlement|points/i.test(type),isTransfer=/transfer/i.test(type);
+      var players=managerSanitizeLedgerPlayers(Array.isArray(meta.players)?meta.players:(isSubmit||isBonus?playerTokens:[]));
+      var transfers=Array.isArray(meta.transfers)?meta.transfers:(isTransfer?[meta.out_name&&meta.in_name?meta.out_name+' → '+meta.in_name:(x.description||'换人')]:[]);
+      rows.push({
+        id:x.id||('remote-'+rows.length),
+        date:String(x.created_at||'').slice(0,10),
+        station:x.station_key||stationKey,
+        stationLabel:meta.station_name||stationName,
+        level:'',
+        status:managerLedgerStatusText(type),
+        rawStatus:type,
+        cost:Number(meta.cost??meta.lineup_cost??(isSubmit&&lineup?lineup.lineup_cost:0))||0,
+        gross:Number(meta.gross??meta.points_gross??(isSettle?Math.max(0,amount):0))||0,
+        bonus:Number(meta.bonus??(isBonus?amount:0))||0,
+        net:Number(meta.net??amount)||0,
+        walletDelta:amount,
+        players:players,
+        transfers:transfers,
+        note:x.description||''
+      });
+    });
+    if(state.wallet&&!rows.some(function(x){return x.rawStatus==='season_opening'||x.status==='新赛季开户';})){
+      rows.push({id:'synthetic-season-opening',date:String(state.wallet.created_at||new Date().toISOString()).slice(0,10),station:'赛季',stationLabel:'赛季',level:'',status:'新赛季开户',rawStatus:'season_opening',cost:0,gross:0,bonus:300,net:300,walletDelta:300,players:[],transfers:[],note:'新赛季开户发放 300。'});
+    }
+    if(lineup&&Number(lineup.station_grant)>0&&!rows.some(function(x){return /本站签约金/.test(x.status)||x.rawStatus==='station_grant_issued';})){
+      rows.push({id:'synthetic-station-grant',date:String(lineup.submitted_at||new Date().toISOString()).slice(0,10),station:lineup.station_key||stationKey,stationLabel:stationName,level:'',status:'本站签约金发放',rawStatus:'station_grant_issued',cost:0,gross:0,bonus:Number(lineup.station_grant)||0,net:Number(lineup.station_grant)||0,walletDelta:0,players:playerTokens,transfers:[],note:'本站签约金额度，仅本站使用，未用部分赛后作废。'});
+    }
+    return rows.sort(managerLedgerSortFn);
+  }
+  if(AUTH_USER&&supabaseConfigured())return [];
+  rows=(managerDemoLedgerAllowed()?MANAGER_DEMO_LEDGER:[]).concat(MANAGER_LEDGER||[]).map(function(x){return Object.assign({stationLabel:x.station,rawStatus:x.status},x,{status:managerLedgerStatusText(x.status),players:managerSanitizeLedgerPlayers(x.players)});});
+  if(!rows.some(function(x){return x.rawStatus==='season_opening'||x.status==='新赛季开户';})){
+    rows.push({id:'local-season-opening',date:new Date().toISOString().slice(0,10),station:'赛季',stationLabel:'赛季',level:'',status:'新赛季开户',rawStatus:'season_opening',cost:0,gross:0,bonus:300,net:300,walletDelta:300,players:[],transfers:[],note:'新赛季开户发放 300。'});
+  }
+  var rec=managerSubmittedRecord();
+  if(rec&&!rows.some(function(x){return x.rawStatus==='station_grant_issued'||x.status==='本站签约金发放';})){
+    rows.push({id:'local-station-grant',date:rec.date||new Date().toISOString().slice(0,10),station:rec.station||stationKey,stationLabel:rec.station||stationName,level:'',status:'本站签约金发放',rawStatus:'station_grant_issued',cost:0,gross:0,bonus:managerRules().stationGrant,net:managerRules().stationGrant,walletDelta:0,players:rec.players||[],transfers:[],note:'本站签约金额度，仅本站使用。'});
+  }
+  return rows.sort(managerLedgerSortFn);
+}
+function managerLedgerStatusText(type){
+  var t=String(type||'');
+  if(t==='已提交')return '阵容已提交';
+  if(/season_opening|开户/i.test(t))return '新赛季开户';
+  if(/station_grant/i.test(t))return '本站签约金发放';
+  if(/lineup_wallet_spend/i.test(t))return '提交阵容占用钱包';
+  if(/submit_bonus/i.test(t))return '提交阵容奖励';
+  if(/transfer/i.test(t))return '换人扣费';
+  if(/settle|settlement|points/i.test(t))return '每日收益结算';
+  if(/low_income|sponsor|低保/i.test(t))return '低保赞助';
+  return t||'未命名流水';
+}
+function managerLedgerSortFn(a,b){
+  var key=MANAGER_LEDGER_SORT||'date',dir=MANAGER_LEDGER_SORT_DIR==='asc'?1:-1;
+  function val(x){
+    if(['cost','gross','bonus','net'].indexOf(key)>=0)return Number(x[key])||0;
+    if(key==='players')return (x.players||[]).join('、');
+    if(key==='transfers')return (x.transfers||[]).join('、');
+    return String(x[key]||x.stationLabel||'');
+  }
+  var av=val(a),bv=val(b),out;
+  if(typeof av==='number'||typeof bv==='number')out=(av||0)-(bv||0);
+  else out=String(av).localeCompare(String(bv),'zh-CN');
+  if(!out)out=String(a.date||'').localeCompare(String(b.date||''),'zh-CN');
+  return out*dir;
+}
+function managerSetLedgerSort(key){
+  if(MANAGER_LEDGER_SORT===key)MANAGER_LEDGER_SORT_DIR=MANAGER_LEDGER_SORT_DIR==='asc'?'desc':'asc';
+  else{MANAGER_LEDGER_SORT=key;MANAGER_LEDGER_SORT_DIR=key==='date'?'desc':'asc';}
+  renderManagerDemo();
+}
+function managerLedgerHeader(label,key){
+  var mark=MANAGER_LEDGER_SORT===key?(MANAGER_LEDGER_SORT_DIR==='asc'?' ▲':' ▼'):'';
+  return '<th><button class="manager-th-button" data-manager-ledger-sort="'+esc(key)+'">'+esc(label+mark)+'</button></th>';
+}
+function managerLedgerRowText(x){
+  return [x.date,x.station,x.stationLabel,x.status,x.rawStatus,x.cost,x.gross,x.bonus,x.net,(x.players||[]).join('、'),(x.transfers||[]).join('、'),x.note].join(' ').toLowerCase();
+}
+async function managerSubmitLineup(){
+  if(!managerRequireLogin('manager'))return;
+  var c=managerCalc(),rules=managerRules(),packs=managerContestPacks();
+  var submitInfo=managerSubmissionWindowInfo();
+  if(submitInfo.status==='closed'){
+    managerAlert('本站阵容提交已截止。提交截止时间为 R1 第一场正赛开始前 15 分钟；本站截止时间：'+submitInfo.label+'。','提交时间已过');
+    return;
+  }
+  if(!c.legal){managerAlert('阵容还不合法：需要 '+rules.minPlayers+'-'+rules.maxPlayers+' 人，且总成本不能超过本次起始可用额度 '+c.budget+'。','暂时不能提交');return;}
+  if(managerSubmittedRecord()){managerAlert('本站阵容已经提交过了。可以去配置大厅查看，也可以在窗口期开启一次换人。','不要重复提交');return;}
+  if(managerSupabaseMode()){
+    try{
+      await managerSubmitLineupRemote(c,rules);
+      managerSetMsg('阵容已提交，Supabase 已记录扣款和提交奖励。');
+      MANAGER_VIEW='mine';MANAGER_MY_VIEW='lineup';renderManagerDemo();
+    }catch(e){
+      console.error(e);
+      managerAlert(authErrorText(e),'提交失败');
+    }
+    return;
+  }
+  var rec={id:'local-'+Date.now(),date:new Date().toISOString().slice(0,10),station:packs.map(managerPackLabel).join(' + '),level:rules.levels.join('/'),status:'已提交',cost:c.spent,gross:c.gross,bonus:c.bonus,net:c.net,walletDelta:10,players:c.players.map(managerLedgerPlayerTokenFromPlayer),transfers:['未调仓'],note:'阵容提交奖励 +10 钱包；本站签约金优先占用，钱包占用 '+c.walletUsed+'；比赛收益待结算'};
+  MANAGER_LEDGER.push(rec);managerSaveLedger();managerSetMsg('阵容已提交，+10 钱包奖励已记入我的收益。我的工作区已切换为赛后/换人状态。');MANAGER_VIEW='mine';MANAGER_MY_VIEW='lineup';renderManagerDemo();
+}
+function managerMoneyAmount(value,cls){
+  var n=Number(value);
+  return '<span class="manager-money-amount '+(cls||'')+'"><span class="manager-dollar">$</span>'+esc(Number.isFinite(n)?Math.round(n):value)+'</span>';
+}
+function managerMoneyCards(c,rules){
+  return '<div class="manager-money hot"><b>'+managerMoneyAmount(c.budget)+'</b><span>本站真实可用额度<br>经纪人钱包 + 本站签约金</span></div><div class="manager-money"><b>'+managerMoneyAmount(c.walletCurrent)+'</b><span>经纪人钱包<br>起始值 '+managerMoneyAmount(c.walletStart,'inline')+'，当前值 '+managerMoneyAmount(c.walletCurrent,'inline')+'</span></div><div class="manager-money"><b>'+managerMoneyAmount(c.stationRemaining)+'</b><span>本站签约金<br>起始值 '+managerMoneyAmount(rules.stationGrant,'inline')+'，当前值 '+managerMoneyAmount(c.stationRemaining,'inline')+'</span></div><div class="manager-money"><b>'+managerMoneyAmount(c.remaining)+'</b><span>剩余可用额度<br>已锁定 '+managerMoneyAmount(c.spent,'inline')+'，钱包占用 '+managerMoneyAmount(c.walletUsed,'inline')+'</span></div>';
+}
+function managerRenderMoney(c,rules){
+  return '<div class="manager-money-grid">'+managerMoneyCards(c,rules)+'</div>';
+}
+function managerTransferEstimate(fromId,toId){
+  var players=managerLineupPlayers(),from=players.find(function(p){return p.id===fromId;}),to=managerBuildPool().find(function(p){return p.id===toId;}),rules=managerRules(),c=managerCalc();
+  if(!from||!to)return null;
+  var refund=Math.round(from.price*.70),fee=Math.ceil(to.price*rules.transferFee);
+  var delta=to.price+fee-refund;
+  return {from:from,to:to,refund:refund,loss:from.price-refund,fee:fee,delta:delta,newSpent:c.spent+delta,remainingAfter:c.remaining-delta,available:c.remaining};
+}
+function managerValidateTransfer(est,rules){
+  var reasons=[],submitted=managerSubmittedRecord();
+  if(!submitted)reasons.push('请先提交阵容！');
+  if(!est)reasons.push('请选择要换下和换上的球员。');
+  if(MANAGER_TRANSFER_COUNT>=1)reasons.push('每站仅可换人一次！');
+  if(est){
+    var windowInfo=managerTransferWindowInfo(est.from.tour);
+    if(windowInfo.status==='pending')reasons.push('本站换人窗口期待确认，请等待赛程更新。换人窗口期是每站比赛R1所有比赛结束后，R2所有比赛开始前。');
+    if(windowInfo.status==='before')reasons.push('请等待换人窗口期！换人窗口期是每站比赛R1所有比赛结束后，R2所有比赛开始前。本站窗口期：'+windowInfo.label+'。');
+    if(windowInfo.status==='after')reasons.push('换人窗口期已过，无法换人！');
+    if(est.delta>est.available)reasons.push('钱不够：本次换人需要新增占用 $'+Math.round(est.delta)+'，当前剩余可用额度 $'+Math.round(est.available)+'。');
+    var afterCount=managerLineupPlayers().length;
+    if(afterCount<rules.minPlayers||afterCount>rules.maxPlayers)reasons.push('换人后阵容人数需要保持在 '+rules.minPlayers+'-'+rules.maxPlayers+' 人。');
+  }
+  return {ok:reasons.length===0,reasons:reasons};
+}
+function managerConfirmTransfer(est,rules){
+  MANAGER_PENDING_TRANSFER={fromId:est.from.id,toId:est.to.id};
+  var total=est.loss+est.to.price+est.fee;
+  MANAGER_DIALOG={
+    title:'确认换人',
+    msg:'确定换人吗？\n本次将 '+est.from.name+' 换成 '+est.to.name+'。\n沉没成本 $'+est.loss+'。\n手续费 $'+est.fee+'。\n新换球员花费 $'+est.to.price+'。\n总花费 $'+total+'。\n额度剩余 $'+est.remainingAfter+'。',
+    confirmAction:'confirm-transfer',
+    confirmLabel:'确认换人',
+    cancelLabel:'取消'
+  };
+  renderManagerDemo();
+}
+async function managerTransferCommit(est,rules){
+  if(managerSupabaseMode()){
+    try{
+      await managerTransferRemote(est,rules);
+      managerSetMsg('换人已由 Supabase 记录，手续费和钱包变化已写入我的收益。');
+      renderManagerDemo();
+    }catch(e){
+      console.error(e);
+      managerAlert(authErrorText(e),'换人失败');
+    }
+    return;
+  }
+  var fromId=est.from.id,toId=est.to.id;
+  MANAGER_LINEUP=MANAGER_LINEUP.filter(function(id){return id!==fromId;});
+  MANAGER_LINEUP.push(toId);
+  MANAGER_SUNK_COST+=est.from.price-est.refund+est.fee;
+  MANAGER_TRANSFER_COUNT+=1;
+  delete MANAGER_PREDICTIONS[fromId];
+  MANAGER_PREDICTIONS[toId]=MANAGER_PREDICTIONS[toId]||est.to.breakEven;
+  var rec=managerSubmittedRecord();
+  if(rec){
+    rec.transfers=[est.from.name+' → '+est.to.name+'，退回 '+est.refund+'，新约 '+est.to.price+'，手续费 '+est.fee];
+    rec.cost=est.newSpent;
+    managerSaveLedger();
+  }
+  managerSetMsg('已模拟换人：'+est.from.name+' → '+est.to.name+'，本次新增占用 '+est.delta+'，本站换人 1/1 已用。');
+  managerSaveState();
+  renderManagerDemo();
+}
+async function managerTransfer(){
+  if(!managerRequireLogin('manager'))return;
+  var fromEl=document.getElementById('manager-transfer-from'),toEl=document.getElementById('manager-transfer-to');
+  var fromId=fromEl&&fromEl.value,toId=toEl&&toEl.value,est=managerTransferEstimate(fromId,toId),rules=managerRules();
+  var validation=managerValidateTransfer(est,rules);
+  if(!validation.ok){managerAlert(validation.reasons.join('\n'),'无法换人');return;}
+  managerConfirmTransfer(est,rules);
+}
+async function managerConfirmPendingTransfer(){
+  var pending=MANAGER_PENDING_TRANSFER;
+  MANAGER_DIALOG=null;
+  MANAGER_PENDING_TRANSFER=null;
+  if(!pending){renderManagerDemo();return;}
+  var rules=managerRules(),est=managerTransferEstimate(pending.fromId,pending.toId),validation=managerValidateTransfer(est,rules);
+  if(!validation.ok){managerAlert(validation.reasons.join('\n'),'无法换人');return;}
+  await managerTransferCommit(est,rules);
+}
+function managerSidebar(c,rules){
+  var submitted=managerSubmittedRecord();
+  var team=managerTeamCurrentStats(c.players,c);
+  var rows=c.players.map(function(p){var st=managerPlayerCurrentStats(p);return '<div class="manager-roster-row">'+managerPlayerAvatar(p,'small')+'<div class="manager-roster-name">'+esc(p.name)+'<div class="manager-sub">'+p.tour+' · '+p.tier+'档 · '+p.drawSize+'签 · 回本 '+p.breakEven+' · 目前收益 '+st.earned+'</div></div><div class="manager-roster-price">'+managerMoneyAmount(p.price,'inline')+'</div>'+(submitted?'<span class="manager-pill">已锁定</span>':'<button class="manager-clear" data-manager-action="remove" data-manager-id="'+esc(p.id)+'">移除</button>')+'</div>';}).join('')||'<div class="manager-empty">还没签人。先在市场加入 '+rules.minPlayers+'-'+rules.maxPlayers+' 名球员。</div>';
+  var headBtn=submitted?'<button class="manager-clear" data-manager-view="hall">配置大厅</button>':'<button class="manager-clear" data-manager-action="reset">清空</button>';
+  var actions=submitted?'<button class="manager-action secondary" data-manager-view="hall" style="width:100%;margin-top:10px">查看配置大厅</button><button class="manager-clear" data-manager-my-view="transfer" style="width:100%;margin-top:8px">打开换人窗口（'+MANAGER_TRANSFER_COUNT+'/1）</button><button class="manager-clear" data-manager-my-view="ledger" style="width:100%;margin-top:8px">查看我的收益</button>':'<button class="manager-action secondary" data-manager-action="calc" style="width:100%;margin-top:10px">去计算器测算</button><button class="manager-action" data-manager-action="submit" style="width:100%;margin-top:8px">提交阵容</button>';
+  var status=submitted?'<div class="manager-sim-row"><span>提交状态</span><b>已提交，等待开赛/结算</b></div><div class="manager-sim-row"><span>换人机会</span><b>'+MANAGER_TRANSFER_COUNT+'/1</b></div>':'';
+  return '<div class="manager-panel manager-side"><div class="manager-panel-h"><span>我的阵容</span>'+headBtn+'</div><div class="manager-panel-b"><div class="manager-roster">'+rows+'</div><div class="manager-sim"><div class="manager-sim-row"><span>人数</span><b>'+c.players.length+'/'+rules.maxPlayers+'</b></div><div class="manager-sim-hint">本次最少选 '+rules.minPlayers+' 人，最多选 '+rules.maxPlayers+' 人</div>'+status+'<div class="manager-sim-row"><span>目前收益</span><b>累计 '+team.earned+' / 昨天 '+team.yesterday+'</b></div><div class="manager-sim-row"><span>阵容风格</span><b>'+c.style+'</b></div><div class="manager-sim-row"><span>当前预测净收益</span><b>'+c.net+'</b></div><div class="manager-sim-row"><span>可行最高收益</span><b>'+c.max+'</b></div></div>'+actions+'<div class="manager-msg" id="manager-msg">'+esc(MANAGER_LAST_MSG||(submitted?'阵容已锁定。开赛后可以使用一次换人窗口。':'加入阵容后，先去计算器选择预计轮次，再提交。'))+'</div></div></div>';
+}
+function managerInitial(name){return String(name||'?').trim().slice(0,1)||'?';}
+function managerPhotoValue(hit,size){
+  if(!hit)return '';
+  if(typeof hit==='object'){
+    if(size==='fullbody')return hit.full_body_url||hit.body_url||hit.photo_full_url||hit.photo_url||'';
+    return hit.photo_url||hit.profile_image_url||hit.full_body_url||hit.body_url||'';
+  }
+  return hit;
+}
+function managerPlayerPhotoSrc(p,size){
+  var players=MANAGER_PHOTO_DATA.players||{};
+  var key=(p.tour||'')+'|'+p.name;
+  var enKey=p.nameEn?(p.tour+'|'+managerSlug(p.nameEn)):'';
+  var hit=players[p.playerKey]||players[p.id]||(enKey&&players[enKey])||(p.sourcePlayerKey&&players[p.sourcePlayerKey])||players[key]||MANAGER_PLAYER_PHOTOS[p.playerKey]||MANAGER_PLAYER_PHOTOS[key]||MANAGER_PLAYER_PHOTOS[p.name]||'';
+  hit=managerPhotoValue(hit,size)||(size==='fullbody'?(p.fullBodyUrl||p.photoUrl):(p.photoUrl||p.fullBodyUrl));
+  return hit||(MANAGER_PHOTO_DATA.fallbacks&&MANAGER_PHOTO_DATA.fallbacks[p.tour])||'';
+}
+function managerPlayerAvatar(p,size){
+  var src=managerPlayerPhotoSrc(p,size),cls='manager-avatar';
+  if(size===true||size==='small')cls+=' small';
+  else if(size)cls+=' '+size;
+  return '<div class="'+cls+'" aria-hidden="true"><span>'+esc(managerInitial(p.name))+'</span>'+(src?'<img src="'+esc(src)+'" alt="" loading="lazy" decoding="async" onerror="this.remove()">':'')+'</div>';
+}
+function managerDisplayValue(value,suffix){
+  var n=Number(value);
+  if(value===null||value===undefined||value==='')return '待同步';
+  return esc(Number.isFinite(n)?(Math.round(n*10)/10)+(suffix||''):String(value)+(suffix||''));
+}
+function managerSurfaceEloLabel(p){
+  var name=managerSurfaceName(p&&p.surface);
+  if(name==='室内硬地')name='硬地';
+  return name+'Elo';
+}
+function managerPricingDetail(p){
+  var detail=p.pricingDetail||{};
+  var rank=Number.isFinite(Number(p.rank))?Number(p.rank):null;
+  return {
+    elo:p.overallElo,
+    surfaceElo:p.surfaceElo,
+    peakElo:p.peakElo||detail.peak_elo||null,
+    peakMonth:p.peakMonth||detail.peak_month||'',
+    peakClose:detail.peak_close_score,
+    peakRecency:detail.peak_recency_score,
+    officialRank:rank,
+    base:Math.round(p.base),
+    surface:Math.round(p.surfaceScore),
+    draw:Math.round(p.draw),
+    actualPath:detail.draw_actual_expected_points,
+    randomBaseline:detail.draw_same_bucket_baseline_points,
+    rawBonus:detail.draw_bonus_raw,
+    form:Math.round(p.form),
+    manual:Math.round(p.manual||0),
+    total:Number(p.total.toFixed(1))
+  };
+}
+function managerDetailStat(label,value){return '<div class="manager-detail-stat"><span>'+label+'</span><b>'+esc(value)+'</b></div>';}
+function managerPricingDetailHtml(p){
+  var d=managerPricingDetail(p),stats=[
+    ['Elo',managerDisplayValue(d.elo)],
+    [managerSurfaceEloLabel(p),managerDisplayValue(d.surfaceElo)],
+    ['个人峰值Elo',managerDisplayValue(d.peakElo)],
+    ['峰值月份',d.peakMonth||'待同步'],
+    ['官方排名',managerDisplayValue(d.officialRank)],
+    ['基础实力分',d.base],
+    ['场地适配分',d.surface],
+    ['签表红利分',d.draw],
+    ['实际路径值',managerDisplayValue(d.actualPath)],
+    ['随机基准值',managerDisplayValue(d.randomBaseline)],
+    ['签表红利原始值',managerDisplayValue(d.rawBonus)],
+    ['近期状态分',d.form],
+    ['接近峰值分',managerDisplayValue(d.peakClose)],
+    ['峰值新近分',managerDisplayValue(d.peakRecency)],
+    ['人工矫正分',d.manual],
+    ['总分',d.total]
+  ];
+  return '<div class="manager-detail-table">'+stats.map(function(x){return managerDetailStat(x[0],x[1]);}).join('')+'</div>';
+}
+function managerBar(label,value){return '<div class="manager-bar"><span>'+label+'</span><div class="manager-track"><div class="manager-fill" style="width:'+Math.max(4,Math.min(100,Math.round(value)))+'%"></div></div><b>'+Math.round(value)+'</b></div>';}
+function managerToggleDetail(id){if(!managerRequireLogin('manager'))return;MANAGER_DETAIL_ID=MANAGER_DETAIL_ID===id?'':id;renderManagerDemo();}
+function managerPlayerAdvice(p){
+  var notes=[];
+  if(p.tier==='S')notes.push('争冠核心：适合当阵容锚点，但通常要到决赛才接近回本。');
+  else if(p.tier==='C'||p.tier==='D')notes.push('慧眼识珠：成本低，进 16/8 强就可能改变本站收益曲线。');
+  else notes.push('均衡资产：适合搭配核心或补足 combo 稳定性。');
+  if(managerSurfaceSpecialist(p))notes.push('场地专精：当前场地评分足够高，或明显高于自己的基础实力。');
+  if(p.draw>=68)notes.push('签表红利：路径相对松，适合做进阶轮次假设。');
+  if(p.form<68)notes.push('状态风险：近期状态偏低，计算器里建议保守预估。');
+  return notes.join(' ');
+}
+function managerRoundPathHtml(p){
+  return managerRoundOptions(p).slice(1).map(function(r){
+    var v=managerRoundValue(r.key,p.level,p.tour,p.drawSize),cls=v>=p.price?'manager-pill g':'manager-pill';
+    return '<span class="'+cls+'">'+managerRoundDisplay(r.key,p)+' +'+v+'</span>';
+  }).join('');
+}
+function managerPlayerDetail(p){
+  var total=(.35*p.base+.25*p.surfaceScore+.20*p.draw+.15*p.form+.05*(p.manual||0)).toFixed(1);
+  return '<div class="manager-detail"><div class="manager-detail-grid score-row"><div class="manager-detail-item"><b>综合评分</b><span>基础实力 '+Math.round(p.base)+' ×35%<br>场地适配 '+Math.round(p.surfaceScore)+' ×25%<br>签表红利 '+Math.round(p.draw)+' ×20%<br>近期状态 '+Math.round(p.form)+' ×15%<br>人工矫正 '+Math.round(p.manual||0)+' ×5%<br>加权总分 '+total+'，映射为 '+managerMoneyAmount(p.price,'inline')+'，'+p.tier+' 档资产。</span></div><div class="manager-detail-item"><b>轮次收益</b><div class="manager-path">'+managerRoundPathHtml(p)+'</div><span>'+p.tour+' '+managerLevelName(p.level)+' · '+p.drawSize+' 签。绿色轮次表示该轮收益已经覆盖身价；'+esc(p.name)+' 的静态回本线是 '+p.breakEven+'。</span></div></div>'+managerPricingDetailHtml(p)+'</div>';
+}
+function managerPlayerRow(p){
+  var sel=managerSelected(p.id);
+  var specialist=managerSurfaceSpecialist(p)?'<span class="manager-pill g">场地专精</span>':'';
+  return '<div class="manager-row '+(sel?'sel':'')+'">'+managerPlayerAvatar(p)+'<div><div class="manager-name" title="'+esc(p.name)+'">'+esc(p.name)+'</div><div class="manager-sub"><span class="manager-pill">'+p.tier+'档</span>'+specialist+'<span class="manager-pill r">回本 '+p.breakEven+'</span></div></div><div class="manager-price">'+managerMoneyAmount(p.price,'compact')+'</div><div class="manager-bars">'+managerBar('实力',p.base)+managerBar('场地',p.surfaceScore)+managerBar('签表',p.draw)+managerBar('状态',p.form)+'</div><div class="manager-actions"><button class="manager-clear" data-manager-action="detail" data-manager-id="'+esc(p.id)+'">'+(MANAGER_DETAIL_ID===p.id?'收起':'详情')+'</button><button class="manager-action '+(sel?'secondary':'')+'" data-manager-action="'+(sel?'calc':'add')+'" data-manager-id="'+esc(p.id)+'">'+(sel?'去测算':'加入阵容')+'</button></div>'+(MANAGER_DETAIL_ID===p.id?managerPlayerDetail(p):'')+'</div>';
+}
+function managerRenderMarket(){
+  var list=managerPoolFiltered(),pack=managerEventPack(MANAGER_TOUR==='WTA'?'WTA':'ATP');
+  var emptyMsg=(pack.event&&pack.event.market_message)?pack.event.market_message:'没有符合筛选的球员。';
+  return '<div class="manager-market-layout"><div class="manager-filter"><label>搜索</label><input id="manager-q" placeholder="球员 / 赛事" value="'+esc(managerFilterValue('manager-q',''))+'" autocomplete="off" oncompositionstart="managerSearchCompose(true,this)" oncompositionend="managerSearchCompose(false,this)" oninput="managerSearchInput(this.value,event&&event.isComposing)" onkeydown="if(event.isComposing||MANAGER_SEARCH_COMPOSING)return;if(event.key===\'Enter\')managerSearchNow()"><label>巡回赛</label><select id="manager-tour" onchange="managerSetMarketTour(this.value)"><option value="ALL">全部</option><option value="ATP" '+managerSelectedAttr('manager-tour','ATP','ATP')+'>ATP</option><option value="WTA" '+managerSelectedAttr('manager-tour','WTA','ATP')+'>WTA</option></select><label>价格</label><select id="manager-price-filter" onchange="renderManagerDemo()"><option value="all">全部价格</option><option value="cheap" '+managerSelectedAttr('manager-price-filter','cheap','all')+'>低价资产（C/D）</option><option value="mid" '+managerSelectedAttr('manager-price-filter','mid','all')+'>中档资产（B）</option><option value="star" '+managerSelectedAttr('manager-price-filter','star','all')+'>高价核心（S/A）</option></select><label>档位</label><select id="manager-tier-filter" onchange="renderManagerDemo()"><option value="all">全部档位</option><option value="S" '+managerSelectedAttr('manager-tier-filter','S','all')+'>S</option><option value="A" '+managerSelectedAttr('manager-tier-filter','A','all')+'>A</option><option value="B" '+managerSelectedAttr('manager-tier-filter','B','all')+'>B</option><option value="C" '+managerSelectedAttr('manager-tier-filter','C','all')+'>C</option><option value="D" '+managerSelectedAttr('manager-tier-filter','D','all')+'>D</option></select><label>排名</label><select id="manager-rank-filter" onchange="renderManagerDemo()"><option value="all">全部排名</option><option value="top10" '+managerSelectedAttr('manager-rank-filter','top10','all')+'>Top 10</option><option value="low" '+managerSelectedAttr('manager-rank-filter','low','all')+'>低排名（50+）/ 冷门</option></select><label>场地</label><select id="manager-surface-filter" onchange="renderManagerDemo()"><option value="all">全部场地能力</option><option value="strong" '+managerSelectedAttr('manager-surface-filter','strong','all')+'>场地评分 ≥78</option><option value="specialist" '+managerSelectedAttr('manager-surface-filter','specialist','all')+'>场地专精</option></select><label>排序</label><select id="manager-sort" onchange="renderManagerDemo()"><option value="price" '+managerSelectedAttr('manager-sort','price','price')+'>所需金币</option><option value="base" '+managerSelectedAttr('manager-sort','base','price')+'>实力</option><option value="surface" '+managerSelectedAttr('manager-sort','surface','price')+'>场地</option><option value="draw" '+managerSelectedAttr('manager-sort','draw','price')+'>签表</option><option value="form" '+managerSelectedAttr('manager-sort','form','price')+'>状态</option></select><label>方向</label><select id="manager-sort-dir" onchange="renderManagerDemo()"><option value="desc" '+managerSelectedAttr('manager-sort-dir','desc','desc')+'>降序</option><option value="asc" '+managerSelectedAttr('manager-sort-dir','asc','desc')+'>升序</option></select><div class="manager-note">筛选和排序是为了做经济约束下的选人：找低价、低排名、场地强、签表软的资产。</div></div><div class="manager-list">'+(list.length?list.map(managerPlayerRow).join(''):'<div class="manager-empty">'+esc(emptyMsg)+'</div>')+'</div></div>';
+}
+function managerRenderCalculator(){
+  var c=managerCalc(),rows=c.players.map(function(p){var val=MANAGER_PREDICTIONS[p.id]||'OUT',rv=managerRoundValue(val,p.level,p.tour,p.drawSize);return '<tr><td><b>'+esc(p.name)+'</b><div class="manager-sub">'+p.tour+' · '+p.tier+'档 · '+p.drawSize+'签 · 身价 '+managerMoneyAmount(p.price,'inline')+'</div></td><td><select data-manager-pred="'+esc(p.id)+'">'+managerRoundOptions(p).map(function(r){return '<option value="'+r.key+'" '+(val===r.key?'selected':'')+'>'+r.label+' / +'+managerRoundValue(r.key,p.level,p.tour,p.drawSize)+'</option>';}).join('')+'</select></td><td>'+rv+'</td><td>'+(rv-p.price)+'</td><td>'+p.breakEven+'</td></tr>';}).join('');
+  if(!rows)rows='<tr><td colspan="5"><div class="manager-empty">先去市场加入球员，计算器会按你选择的预计轮次计算收益。</div></td></tr>';
+  return '<table class="manager-calc-table"><thead><tr><th>球员</th><th>我预计他到哪轮</th><th>轮次收益</th><th>单人净值</th><th>回本线</th></tr></thead><tbody>'+rows+'</tbody></table><div class="manager-note" style="margin-top:10px">这里按你手动选择的预计轮次测算收益；市场选人和右侧阵容会同步到这张表。'+(c.warning?'<br><b class="r">'+esc(c.warning)+'</b>':'')+'</div><div class="manager-sim" style="margin-top:10px"><div class="manager-sim-row"><span>Combo</span><b>稳健 '+c.stable+' / 决赛团队 '+c.finalBonus+' / 冠军经纪 '+c.champBonus+' / 慧眼识珠 '+c.jewelBonus+'</b></div><div class="manager-sim-row"><span>计算结果</span><b>毛收益 '+c.gross+' + 奖励 '+c.bonus+' - 成本 '+c.spent+' = '+c.net+'</b></div><div class="manager-sim-row"><span>阵容风格</span><b>'+c.style+'</b></div><div class="manager-sim-row"><span>可行最高收益</span><b>毛收益 '+c.maxGross+' + 奖励 '+c.maxBonus+' - 成本 '+c.spent+' = '+c.max+'</b></div></div>';
+}
+function managerRenderTransfer(){
+  var c=managerCalc(),rules=managerRules(),players=c.players,pool=managerBuildPool().filter(function(p){return !managerSelected(p.id);}),submitted=managerSubmittedRecord();
+  var tour=players[0]?players[0].tour:(MANAGER_TOUR||'ATP'),windowLine=managerTransferWindowText(tour);
+  var ruleHtml='<div class="manager-rule-grid"><div class="manager-rule-card"><b>窗口时间</b><ul class="manager-lines"><li>换人窗口期为 R1 所有比赛结束后，R2 所有比赛开始前。</li><li>本站换人窗口期：'+esc(managerTransferWindowInfo(tour).label)+'。</li><li>新球员下一场必须还没开赛。</li></ul></div><div class="manager-rule-card"><b>换人次数</b><ul class="manager-lines"><li>每站只允许换 1 次。</li><li>当前已用 '+MANAGER_TRANSFER_COUNT+'/1。</li><li>换人记录会进入我的收益。</li></ul></div><div class="manager-rule-card"><b>扣费规则</b><ul class="manager-lines"><li>原球员未出局：退回 70% 原成本。</li><li>沉没成本、新合同和手续费都会写入我的收益。</li><li>手续费：250/500 为 10%，1000/大满贯为 15%。</li></ul></div></div>';
+  if(!players.length)return ruleHtml+'<div class="manager-empty" style="margin-top:12px">先建立并提交阵容，开赛后的换人窗口会在这里操作。</div>';
+  var fromId=managerFilterValue('manager-transfer-from',players[0].id),toId=managerFilterValue('manager-transfer-to',pool[0]?pool[0].id:''),est=managerTransferEstimate(fromId,toId);
+  var fromOpts=players.map(function(p){return '<option value="'+esc(p.id)+'" '+(fromId===p.id?'selected':'')+'>'+esc(p.name)+' · $'+p.price+'</option>';}).join('');
+  var toOpts=pool.slice(0,40).map(function(p){return '<option value="'+esc(p.id)+'" '+(toId===p.id?'selected':'')+'>'+esc(p.name)+' · '+p.tour+' · $'+p.price+'</option>';}).join('');
+  var detail=est?'<div class="manager-sim" style="margin-top:12px"><div class="manager-sim-row"><span>换下合同</span><b>'+esc(est.from.name)+' 原价 $'+est.from.price+'；退回 $'+est.refund+'；沉没 $'+est.loss+'</b></div><div class="manager-sim-row"><span>换上合同</span><b>'+esc(est.to.name)+' 扣 $'+est.to.price+'</b></div><div class="manager-sim-row"><span>手续费</span><b>扣 $'+est.fee+'（新合同 '+Math.round(rules.transferFee*100)+'%）</b></div><div class="manager-sim-row"><span>本次合计</span><b>'+(est.delta>=0?'新增占用 $':'释放额度 $')+Math.abs(est.delta)+'</b></div><div class="manager-sim-row"><span>换后额度</span><b>当前可用 $'+est.available+'；换后剩余 $'+est.remainingAfter+'</b></div></div>':'';
+  return ruleHtml+'<div class="manager-note" style="margin-top:12px">'+esc(windowLine)+(submitted?'':' 请先提交阵容，当前只做费用预估，不会扣钱。')+'</div><div class="manager-filter" style="margin-top:12px"><label>换下球员</label><select id="manager-transfer-from" onchange="renderManagerDemo()">'+fromOpts+'</select><label>换上球员</label><select id="manager-transfer-to" onchange="renderManagerDemo()">'+toOpts+'</select>'+detail+'<button class="manager-action warn" data-manager-action="transfer" style="margin-top:10px">检查并换人</button></div>';
+}
+function managerRenderLedger(){
+  var station=managerFilterValue('manager-ledger-station','all'),start=managerFilterValue('manager-ledger-start',''),end=managerFilterValue('manager-ledger-end',''),q=managerFilterValue('manager-ledger-q','').toLowerCase(),all=managerAllLedger();
+  var stations=[...new Set(all.map(function(x){return x.stationLabel||x.station;}))];
+  var rows=all.filter(function(x){
+    var d=String(x.date).slice(0,10);
+    return (station==='all'||x.station===station||x.stationLabel===station)&&(!start||d>=start)&&(!end||d<=end)&&(!q||managerLedgerRowText(x).includes(q));
+  }).map(function(x){return '<tr><td>'+esc(x.date)+'</td><td>'+esc(x.stationLabel||x.station)+'</td><td>'+esc(x.status)+'</td><td>'+x.cost+'</td><td>'+x.gross+'</td><td>'+x.bonus+'</td><td class="'+(x.net>=0?'g':'r')+'">'+(x.net>=0?'+':'')+x.net+'</td><td>'+esc((x.players||[]).join('、')||'-')+'</td><td>'+esc((x.transfers||[]).join('、')||'-')+'</td></tr>';}).join('');
+  return '<div class="manager-ledger-filters"><select id="manager-ledger-station" onchange="renderManagerDemo()"><option value="all">全部赛站</option>'+stations.map(function(s){return '<option value="'+esc(s)+'" '+(station===s?'selected':'')+'>'+esc(s)+'</option>';}).join('')+'</select><input type="date" id="manager-ledger-start" value="'+esc(start)+'" onchange="renderManagerDemo()"><input type="date" id="manager-ledger-end" value="'+esc(end)+'" onchange="renderManagerDemo()"><button class="manager-clear" onclick="document.getElementById(\'manager-ledger-start\').value=\'\';document.getElementById(\'manager-ledger-end\').value=\'\';renderManagerDemo()">清除日期区间</button><input id="manager-ledger-q" placeholder="搜索日期 / 赛站 / 状态 / 球员 / 换人" value="'+esc(MANAGER_LEDGER_SEARCH)+'" autocomplete="off" oncompositionstart="managerLedgerSearchCompose(true,this)" oncompositionend="managerLedgerSearchCompose(false,this)" oninput="managerLedgerSearchInput(this.value,event&&event.isComposing)"></div><table class="manager-ledger-table"><thead><tr>'+managerLedgerHeader('日期','date')+managerLedgerHeader('赛站','stationLabel')+managerLedgerHeader('状态','status')+managerLedgerHeader('成本','cost')+managerLedgerHeader('毛收益','gross')+managerLedgerHeader('奖励','bonus')+managerLedgerHeader('净收益','net')+managerLedgerHeader('球员','players')+managerLedgerHeader('换人','transfers')+'</tr></thead><tbody>'+(rows||'<tr><td colspan="9"><div class="manager-empty">没有匹配的收益记录。</div></td></tr>')+'</tbody></table>';
+}
+function managerRenderMyLineup(){
+  var c=managerCalc(),rules=managerRules(),submitted=managerSubmittedRecord();
+  if(!c.players.length)return '<div class="manager-empty">还没签人。去球员市场加入 '+rules.minPlayers+'-'+rules.maxPlayers+' 名球员后，这里会显示你的私人阵容、预算占用和预测收益。</div>';
+  var team=managerTeamCurrentStats(c.players,c);
+  var statusLine=managerLineupStatusText(submitted);
+  var rows=c.players.map(function(p){
+    var r=MANAGER_PREDICTIONS[p.id]||'OUT',v=managerRoundValue(r,p.level,p.tour,p.drawSize),st=managerPlayerCurrentStats(p);
+    return '<div class="manager-my-card"><div class="manager-my-head"><div class="manager-my-portrait">'+managerPlayerAvatar(p,'fullbody')+'<h4>'+esc(p.name)+'</h4></div><div><div class="manager-sub">'+p.tour+' · '+p.tier+'档 · '+p.drawSize+'签 · 身价 '+managerMoneyAmount(p.price,'inline')+'</div><div class="manager-player-metrics"><div class="manager-metric-box"><div class="manager-metric-row"><span>累计收益</span><b>'+st.earned+'</b></div><div class="manager-metric-row"><span>昨天收益</span><b>'+st.yesterday+'</b></div><div class="manager-metric-row"><span>目前轮次</span><b>'+esc(st.round)+'</b></div><div class="manager-metric-row"><span>目前状态</span><b>'+esc(st.status)+'</b></div></div><div class="manager-metric-box"><div class="manager-metric-row"><span>预测轮次</span><b>'+managerRoundDisplay(r,p)+'</b></div><div class="manager-metric-row"><span>轮次收益</span><b>'+v+'</b></div><div class="manager-metric-row"><span>单人净值</span><b>'+(v-p.price)+'</b></div><div class="manager-metric-row"><span>回本线</span><b>'+p.breakEven+'</b></div></div></div></div></div></div>';
+  }).join('');
+  return '<div class="manager-status-line">'+esc(statusLine)+'</div><div class="manager-my-summary-grid"><div class="manager-my-highlight"><h4>队伍目前收益</h4><div class="manager-kv"><div><span>累计收益</span><b>'+team.earned+'</b></div><div><span>昨天收益</span><b>'+team.yesterday+'</b></div><div><span>目前存活</span><b>'+team.alive+' 人</b></div><div><span>预计最高收益</span><b>'+team.max+'</b></div></div></div><div class="manager-my-highlight"><h4>当前预测</h4><div class="manager-kv"><div><span>毛收益</span><b>'+c.gross+'</b></div><div><span>奖励</span><b>'+c.bonus+'</b></div><div><span>成本</span><b>'+c.spent+'</b></div><div><span>当前预测净收益</span><b>'+c.net+'</b></div><div><span>阵容风格</span><b>'+esc(c.style)+'</b></div></div></div></div><div class="manager-my-lineup">'+rows+'</div>';
+}
+function managerRenderMine(){
+  var tabs=[['lineup','我的阵容'],['transfer','换人窗口'],['ledger','我的收益']];
+  var body=MANAGER_MY_VIEW==='transfer'?managerRenderTransfer():(MANAGER_MY_VIEW==='ledger'?managerRenderLedger():managerRenderMyLineup());
+  return '<div class="manager-subtabs">'+tabs.map(function(x){return '<button class="manager-subtab '+(MANAGER_MY_VIEW===x[0]?'on':'')+'" onclick="managerSetMyView(\''+x[0]+'\')">'+x[1]+'</button>';}).join('')+'</div>'+body;
+}
+function managerRewardTable(){
+  function cell(table,k){if(!k)return '-';var v=table[k];return v==null?'-':v;}
+  function tr(label,p,drawSize){var map=managerStageColumnMap(drawSize);return '<tr><td>'+esc(label)+'</td>'+MANAGER_REWARD_COLUMNS.map(function(col){return '<td>'+cell(p,map[col])+'</td>';}).join('')+'</tr>';}
+  var packs=managerContestPacks();
+  var currentRows=packs.map(function(pack){
+    return tr('当前本站 · '+managerPackLabel(pack)+' · '+pack.tour+' '+managerLevelName(pack.meta.level)+' · '+pack.meta.drawSize+'签',managerPointTable(pack.tour,pack.meta.level,pack.meta.drawSize),pack.meta.drawSize);
+  }).join('');
+  var rows=[];
+  ['ATP','WTA'].forEach(function(tour){
+    ['250','500','1000','GS'].forEach(function(level){
+      var tables=(MANAGER_POINT_TABLES[tour]||{})[level]||{};
+      Object.keys(tables).sort(function(a,b){return Number(a)-Number(b);}).forEach(function(draw){
+        rows.push(tr(tour+' '+managerLevelName(level)+' · '+draw+'签',tables[draw],draw));
+      });
+    });
+  });
+  return '<table class="manager-reward-table"><thead><tr><th>赛事</th>'+MANAGER_REWARD_COLUMNS.map(function(x){return '<th>'+x+'</th>';}).join('')+'</tr></thead><tbody>'+currentRows+rows.join('')+'</tbody></table>';
+}
+function managerLeaderList(kind){var pool=managerBuildPool();if(kind==='value')pool=pool.filter(function(p){return p.tier==='C'||p.tier==='D';}).sort(function(a,b){return b.total-a.total;});else if(kind==='stars')pool=pool.filter(function(p){return p.tier==='S'||p.tier==='A';}).sort(function(a,b){return b.price-a.price;});else pool=pool.slice().sort(function(a,b){return (b.form+b.draw)-(a.form+a.draw);});return pool.slice(0,5).map(function(p){return '<li><span>'+esc(p.name)+'</span><em>'+p.price+'</em></li>';}).join('');}
+function managerRuleCard(title,lines){
+  return '<div class="manager-rule-card"><b>'+title+'</b><ul class="manager-lines">'+lines.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul></div>';
+}
+function managerRenderRules(){
+  var rules=managerRules(),current='当前本站：'+managerContestPacks().map(function(p){return p.tour+' '+managerLevelName(p.meta.level)+' '+(p.meta.drawSize||32)+'签';}).join(' + ')+'，买 '+rules.minPlayers+'-'+rules.maxPlayers+' 人。';
+  return '<div class="manager-rules"><details open><summary>一、货币系统与获取渠道</summary><div class="rule-body"><div class="manager-rule-grid">'+managerRuleCard('真实可用额度',['本站可签约额度 = 经纪人钱包 + 本站签约金。','签约时优先消耗本站签约金。','超出部分占用经纪人钱包。'])+managerRuleCard('经纪人钱包',['新赛季初始 300。','可跨站结转。','提交奖励、连续参赛、球员净收益进入钱包。'])+managerRuleCard('本站签约金',['250/500/1000/大满贯：90/130/240/460。','ATP/WTA 分级不同，按单边 45/65/120/230 相加。','未使用部分本站结束后作废。'])+managerRuleCard('获取渠道',['开户 +300。','提交阵容 +10。','连续参赛 +5/+10/+15。','低保补到 30。','球员收益按积分表逐日/最终结算。'])+'</div></div></details><details open><summary>二、买人数量、提交截止、换人窗口和收益表</summary><div class="rule-body"><div class="manager-rule-grid">'+managerRuleCard('买人数量',['250：1-2 人。','500：1-2 人。','1000：2-3 人。','大满贯：2-4 人。',current])+managerRuleCard('提交截止',['每站阵容提交截止为 R1 第一场正赛开始前 15 分钟。','本站截止时间：'+managerSubmissionWindowInfo().label+'。','超过截止后提交会被前端和后台同时拦截。'])+managerRuleCard('换人窗口',['每站只能换 1 次。','换人窗口期为 R1 所有比赛结束后，R2 所有比赛开始前。','本站换人窗口期：'+managerTransferWindowInfo(MANAGER_TOUR).label+'。','手续费按新合同 10%/15% 计算。'])+managerRuleCard('赛站元数据',['后台存 season、tour、event_id。','同时存级别、场地、签数、提交截止、R1 完赛时间、R2 开赛时间和来源链接。','前端按幸存者当前站直接读取，不让用户打开时临时查。'])+managerRuleCard('身价公式',['基础实力 35%。','场地适配 25%。','签表路径 20%。','近期状态 15%。','人工校正 5%，Demo 中为 0。'])+'</div>'+managerRewardTable()+'</div></details><details open><summary>三、每日结算、Combo 与策略边界</summary><div class="rule-body"><div class="manager-rule-grid">'+managerRuleCard('每日结算',['每天抓取昨天完赛结果。','同一合同按新到达轮次补差额，不重复发放。','结算同步到我的阵容、配置大厅和公共榜单。','最终净收益 = 累计积分收益 + Combo - 成本。'])+managerRuleCard('Combo',['稳健：60% 阵容进 8 强。毛收益 +8%，封顶 80。','决赛团队：至少 2 人进决赛，+60。','冠军经纪：至少 1 人夺冠，+40。','慧眼识珠：C/D 档进 4 强，每人 +30。'])+managerRuleCard('退赛替补',['球员 R1 开打后退赛，按实际赛果结算。','球员 R1 上场前退赛且签位被替补顶替，购买该球员的合同统一替换为顶替签位的新球员。','替补记录写入后台替补表和我的收益备注。'])+managerRuleCard('策略流派',['巨星核心流。','均衡基金流。','冷门伯乐流。','场地专家流。','调仓止损流。','大满贯攒钱流。'])+managerRuleCard('破产保护',['钱包花光也不会退坑。','每站仍有本站签约金。','钱包低于 30 自动低保赞助。'])+'</div></div></details></div>';
+}
+function managerRenderHall(){
+  var submitted=managerSubmittedRecord(),mine=submitted?{user:'我的办公室',style:managerCalc().style,cost:submitted.cost,players:managerSanitizeLedgerPlayers(submitted.players||[]).map(managerLedgerPlayerName),note:'已提交，换人 '+MANAGER_TRANSFER_COUNT+'/1。'+submitted.note}:null;
+  var useDemoConfigs=managerLocalPreviewEnabled()&&!supabaseConfigured();
+  var source=MANAGER_REMOTE_CONFIGS&&MANAGER_REMOTE_CONFIGS.length?MANAGER_REMOTE_CONFIGS:(useDemoConfigs?MANAGER_DEMO_CONFIGS:[]);
+  var q=String(MANAGER_HALL_SEARCH||'').toLowerCase(),configs=(mine?[mine]:[]).concat(source).filter(function(x){
+    if(!q)return true;
+    return [x.user,x.style,x.note].concat(x.players||[]).join(' ').toLowerCase().includes(q);
+  });
+  var emptyText=q?'没有搜到匹配的配置。':'暂无真实配置。等本站有人提交并锁定后，这里会从 Supabase 展示。';
+  return '<div class="manager-filter" style="margin-bottom:12px"><label>搜索配置大厅</label><input id="manager-hall-q" placeholder="玩家 / 球员 / 风格" value="'+esc(MANAGER_HALL_SEARCH)+'" autocomplete="off" oncompositionstart="managerHallSearchCompose(true,this)" oncompositionend="managerHallSearchCompose(false,this)" oninput="managerHallSearchInput(this.value,event&&event.isComposing)" onkeydown="if(event.isComposing||MANAGER_HALL_SEARCH_COMPOSING)return;"><div class="manager-note">配置大厅展示本站已经提交的阵容。正式版只在锁定后展示完整配置，锁定前可显示匿名/延迟信息，避免抄作业。</div></div><div class="manager-board-grid">'+(configs.length?configs.map(function(x){return '<div class="manager-board"><h4>'+esc(x.user)+'</h4><div class="manager-sim"><div class="manager-sim-row"><span>阵容风格</span><b>'+esc(x.style)+'</b></div><div class="manager-sim-row"><span>已用额度</span><b>'+x.cost+'</b></div><div class="manager-sim-row"><span>签约球员</span><b>'+esc((x.players||[]).join(' / '))+'</b></div></div><div class="manager-note" style="margin-top:8px">'+esc(x.note||'')+'</div></div>';}).join(''):'<div class="manager-empty">'+emptyText+'</div>')+'</div>';
+}
+function managerRenderBoards(){
+  var boards=[['赛季经理榜','草地运营部 +186','冷门研究所 +142','冠军资产组 +118'],['本站收益榜','柏林操盘手 +64','女王草地组 +58','均衡基金 +41'],['王牌球员','德米纳尔 +230','萨巴莲卡 +210','巴尔通科娃 +112'],['慧眼识珠榜','伊埃拉 18→82','费里 16→58','巴尔通科娃 22→72'],['巨星依赖指数','冠军资产组 78%','重仓一号 71%','稳胆派 63%'],['场地收益榜','草地 +266','红土 +184','硬地 +121'],['大满贯收益王','澳网资产部 +420','罗兰经纪 +388','温网观察组 +0'],['被坑球员榜','热门一号 -96','草地高价股 -82','签表硬汉 -70'],['调仓大师榜','窗口救火 +48','手续费也值 +32','止损专家 +21'],['破产重建榜','30 起步到 112','低保翻身 +66','冷门回血 +44']];
+  return boards.map(function(b){return '<div class="manager-board"><h4>'+b[0]+'</h4><ol><li><span>'+b[1].replace(/ [+-].*/,'')+'</span><em>'+((b[1].match(/[+-].*/)||[''])[0])+'</em></li><li><span>'+b[2].replace(/ [+-].*/,'')+'</span><em>'+((b[2].match(/[+-].*/)||[''])[0])+'</em></li><li><span>'+b[3].replace(/ [+-].*/,'')+'</span><em>'+((b[3].match(/[+-].*/)||[''])[0])+'</em></li></ol></div>';}).join('');
+}
+function managerRenderPrivateBoards(){
+  var c=managerCalc(),stars=c.players.filter(function(p){return p.tier==='S'||p.tier==='A';}).reduce(function(s,p){return s+p.price;},0),starRate=c.lineupCost?Math.round(stars/c.lineupCost*100):0;
+  var cards=[['我的赛季资产',managerWallet(),'钱包余额'],['本周阵容成本',c.spent,'含沉没成本'],['我的王牌球员',c.players[0]?c.players[0].name:'待结算','按本站阵容暂估'],['巨星依赖指数',starRate+'%','S/A 档成本占比'],['调仓记录',MANAGER_TRANSFER_COUNT+'/1','本站已用次数'],['当前风险画像',c.style,'由阵容结构生成']];
+  return cards.map(function(x){return '<div class="manager-board"><h4>'+x[0]+'</h4><div class="manager-price" style="text-align:left">'+esc(x[1])+'</div><div class="manager-note">'+esc(x[2])+'</div></div>';}).join('');
+}
+function managerRenderBoardsPage(){
+  var publicBoards=managerLocalPreviewEnabled()&&!supabaseConfigured()?managerRenderBoards():'<div class="manager-empty">公共榜单等待真实结算数据。上线后由 Supabase 榜单视图/RPC 提供，不显示 demo 假排行。</div>';
+  return '<div class="manager-note" style="margin-bottom:12px">公共榜单看大家的赛季表现；私人榜单只给自己看，记录你的王牌球员、风险偏好和调仓习惯。</div><div class="manager-rules"><details open><summary>公共榜单</summary><div class="rule-body"><div class="manager-board-grid">'+publicBoards+'</div></div></details><details open><summary>我的私人榜单</summary><div class="rule-body"><div class="manager-board-grid">'+managerRenderPrivateBoards()+'</div></div></details></div>';
+}
+function managerMarketHeaderMeta(){
+  var packs=managerContestPacks().filter(function(pack){return MANAGER_TOUR==='ALL'||pack.tour===MANAGER_TOUR;});
+  return packs.map(function(pack){return pack.tour+' · '+managerSurfaceName(pack.meta.surface)+' · '+(pack.meta.drawSize||32)+'签';}).join(' / ');
+}
+function managerEventShortName(pack){
+  var text=String(pack.meta&&pack.meta.display||managerPackLabel(pack));
+  text=text.replace(/\s+(250|500|1000|大满贯|草地|红土|硬地|室内硬地).*$/,'');
+  return text.indexOf(pack.tour)===0?text:(pack.tour+' '+text.replace(/^ATP\s+|^WTA\s+/,''));
+}
+function managerEventMetaHtml(rules){
+  var tour=MANAGER_TOUR==='WTA'?'WTA':'ATP',pack=managerEventPack(tour),cfg=MANAGER_LEVEL_CONFIG[pack.meta.level]||MANAGER_LEVEL_CONFIG['500'];
+  return '<div class="manager-panel-meta"><span class="manager-panel-chip">'+esc(managerEventShortName(pack))+'</span><span class="manager-panel-chip surface '+managerSurfaceClass(pack.meta.surface)+'">'+managerSurfaceName(pack.meta.surface)+'</span><span class="manager-panel-chip">'+managerLevelName(pack.meta.level)+'</span><span class="manager-panel-chip">'+(pack.meta.drawSize||32)+'签</span><span class="manager-panel-chip">'+cfg.min+'-'+cfg.max+' 人阵容</span><span class="manager-panel-chip">换人 1 次 · 手续费 '+Math.round(cfg.transferFee*100)+'%</span></div>';
+}
+function managerRenderBody(){if(MANAGER_VIEW==='calculator')return managerRenderCalculator();if(MANAGER_VIEW==='mine')return managerRenderMine();if(MANAGER_VIEW==='hall')return managerRenderHall();if(MANAGER_VIEW==='transfer')return managerRenderTransfer();if(MANAGER_VIEW==='ledger')return managerRenderLedger();if(MANAGER_VIEW==='rules')return managerRenderRules();if(MANAGER_VIEW==='boards')return managerRenderBoardsPage();return managerRenderMarket();}
+function renderManagerDemo(){
+  var root=document.getElementById('manager-root');if(!root)return;
+  if(!MANAGER_DATA_LOADED){
+    root.innerHTML='<div class="manager-shell"><div class="manager-panel"><div class="manager-panel-b"><div class="manager-empty">正在加载巡回赛经纪人赛站数据...</div></div></div></div>';
+    loadManagerData().then(function(){renderManagerDemo();});
+    return;
+  }
+  if(MANAGER_DATA_ERROR&&!managerLocalPreviewEnabled()){
+    root.innerHTML='<div class="manager-shell"><div class="manager-panel"><div class="manager-panel-h">巡回赛经纪人</div><div class="manager-panel-b"><div class="manager-empty">巡回赛经纪人赛站数据暂时加载失败，请稍后刷新。正式环境不会使用 demo 数据兜底。</div></div></div></div>';
+    return;
+  }
+  managerLoadState();
+  var c=managerCalc(),rules=managerRules();
+  var viewTitle={market:'球员市场',calculator:'收益计算器',mine:'我的',hall:'配置大厅',transfer:'换人窗口',ledger:'我的收益',rules:'规则',boards:'榜单'}[MANAGER_VIEW]||'球员市场';
+  var showSide=MANAGER_VIEW!=='mine';
+  var marketTabs='<div class="manager-tour-tabs"><button class="manager-tour-tab '+(MANAGER_TOUR==='ATP'?'on':'')+'" data-manager-tour="ATP">ATP</button><button class="manager-tour-tab '+(MANAGER_TOUR==='WTA'?'on':'')+'" data-manager-tour="WTA">WTA</button></div>';
+  var tabs='<div class="manager-tabs"><button class="manager-tab '+(MANAGER_VIEW==='market'?'on':'')+'" data-manager-view="market">球员市场</button><button class="manager-tab '+(MANAGER_VIEW==='calculator'?'on':'')+'" data-manager-view="calculator">收益计算器</button><button class="manager-tab '+(MANAGER_VIEW==='mine'?'on':'')+'" data-manager-view="mine">我的</button><button class="manager-tab '+(MANAGER_VIEW==='hall'?'on':'')+'" data-manager-view="hall">配置大厅</button><button class="manager-tab '+(MANAGER_VIEW==='boards'?'on':'')+'" data-manager-view="boards">榜单</button></div>';
+  var panelTitle='<div class="manager-panel-title"><span>'+viewTitle+'</span>'+(MANAGER_VIEW==='market'?marketTabs:'')+'</div>';
+  var panelHead='<div class="manager-panel-h">'+panelTitle+(MANAGER_VIEW==='market'?managerEventMetaHtml(rules):'')+'</div>';
+  var dialog=MANAGER_DIALOG?'<div class="manager-dialog"><div class="manager-dialog-card"><h3>'+esc(MANAGER_DIALOG.title)+'</h3><p>'+esc(MANAGER_DIALOG.msg).replace(/\n/g,'<br>')+'</p><div class="manager-actions">'+(MANAGER_DIALOG.confirmAction?'<button class="manager-clear" data-manager-action="close-dialog">'+esc(MANAGER_DIALOG.cancelLabel||'取消')+'</button><button class="manager-action" data-manager-action="'+esc(MANAGER_DIALOG.confirmAction)+'">'+esc(MANAGER_DIALOG.confirmLabel||'确定')+'</button>':'<button class="manager-action" data-manager-action="close-dialog">知道了</button>')+'</div></div></div>':'';
+  root.innerHTML='<div class="manager-shell"><div class="manager-hero"><div class="manager-title"><div><div class="manager-title-line"><h2>巡回赛经纪人</h2><button class="manager-clear" data-manager-view="rules">查看规则</button></div><p>组建你自己的球员阵容，在巡回赛里征战！<br>用钱包里的额度在市场上购买球员，球员打进轮次越深，你赚的越多，收益按巡回赛积分计算。<br>你不只懂网球，你是在做预算、风险和轮次收益的组合策略。</p></div></div><img class="manager-hero-art" src="assets/manager/agent-money-bag.png" alt="" loading="lazy" decoding="async"></div>'+managerRenderMoney(c,rules)+tabs+'<div class="manager-grid '+(showSide?'':'single')+'"><div class="manager-panel">'+panelHead+'<div class="manager-panel-b">'+managerRenderBody()+'</div></div>'+(showSide?managerSidebar(c,rules):'')+'</div>'+dialog+'</div>';
+}
+
 function trackSupabaseError(operation,err,ignoreMissing){
   const type=errorType(err);
   if(ignoreMissing&&type==='missing_schema')return;
@@ -661,8 +2017,12 @@ async function optionalSupabaseInsert(table,payload,opts){
   }
 }
 
-async function optionalSupabaseRpc(name,args){
-  if(!AUTH_USER||!supabaseConfigured())return null;
+async function supabaseRpc(name,args,opts){
+  opts=opts||{};
+  if(!AUTH_USER||!supabaseConfigured()){
+    if(opts.optional)return null;
+    throw new Error('auth_required');
+  }
   try{
     const client=await ensureSupabaseClient();
     const res=await client.rpc(name,args||{});
@@ -670,8 +2030,95 @@ async function optionalSupabaseRpc(name,args){
     return res.data||null;
   }catch(err){
     trackSupabaseError(name,err,true);
-    return null;
+    if(opts.optional)return null;
+    throw err;
   }
+}
+async function optionalSupabaseRpc(name,args){
+  return supabaseRpc(name,args,{optional:true});
+}
+
+function managerSupabaseMode(){
+  return !!(AUTH_USER&&supabaseConfigured());
+}
+function managerContractPayload(p){
+  return {event_key:p.eventKey||managerEventPack(p.tour).meta.eventKey||'',player_key:p.playerKey||p.id,tour:p.tour,name:p.name,name_en:p.nameEn||'',price:p.price,tier:p.tier,predicted_round:MANAGER_PREDICTIONS[p.id]||'OUT'};
+}
+function managerApplyRemoteState(state){
+  if(!state)return;
+  MANAGER_REMOTE_STATE=state;
+  var contracts=Array.isArray(state.contracts)?state.contracts:[];
+  if(contracts.length){
+    var active=contracts.filter(function(x){return x.is_active!==false;});
+    MANAGER_LINEUP=managerNormalizeIds(active.map(function(x){return x.player_key;}),managerRules().maxPlayers);
+    MANAGER_PREDICTIONS={};
+    active.forEach(function(x){MANAGER_PREDICTIONS[x.player_key]=x.predicted_round||'OUT';});
+  }
+  if(state.lineup){
+    MANAGER_TRANSFER_COUNT=Number(state.lineup.transfer_count)||0;
+  }
+}
+async function managerLoadRemoteState(){
+  if(!AUTH_USER||!supabaseConfigured())return null;
+  var key=managerStationKey()+'|'+AUTH_USER.id;
+  if(MANAGER_REMOTE_SYNC_KEY===key&&MANAGER_REMOTE_STATE)return MANAGER_REMOTE_STATE;
+  try{
+    const data=await optionalSupabaseRpc('tour_manager_get_my_state',{p_station_key:managerStationKey(),p_season:managerRules().initialSeason||2026});
+    if(data){MANAGER_REMOTE_SYNC_KEY=key;managerApplyRemoteState(data);}
+    return data;
+  }catch(e){return null;}
+}
+async function managerLoadRemotePublicData(){
+  if(managerLocalPreviewEnabled()||!supabaseConfigured())return [];
+  var key=managerStationKey();
+  if(MANAGER_REMOTE_PUBLIC_SYNC_KEY===key)return MANAGER_REMOTE_CONFIGS;
+  try{
+    const client=await ensureSupabaseClient();
+    const res=await client.from('tour_manager_public_configurations').select('*').eq('station_key',key).order('submitted_at',{ascending:false}).limit(60);
+    if(res.error)throw res.error;
+    MANAGER_REMOTE_CONFIGS=(res.data||[]).map(function(x){
+      return {user:x.display_name||'炉友',style:x.lineup_style||'待建仓',cost:x.lineup_cost||0,players:(x.players||[]).map(function(p){return p.name||p.name_zh||'';}),note:'预测净值 '+(x.predicted_net||0)};
+    });
+    MANAGER_REMOTE_PUBLIC_SYNC_KEY=key;
+  }catch(e){
+    trackSupabaseError('manager.public_configurations',e,true);
+  }
+  return MANAGER_REMOTE_CONFIGS;
+}
+async function managerSubmitLineupRemote(c,rules){
+  var payload=c.players.map(managerContractPayload);
+  const data=await supabaseRpc('tour_manager_submit_lineup',{
+    p_station_key:managerStationKey(),
+    p_season:2026,
+    p_station_grant:rules.stationGrant,
+    p_min_players:rules.minPlayers,
+    p_max_players:rules.maxPlayers,
+    p_transfer_fee_rate:rules.transferFee,
+    p_contracts:payload,
+    p_predictions:MANAGER_PREDICTIONS,
+    p_predicted_gross:c.gross,
+    p_predicted_bonus:c.bonus,
+    p_predicted_net:c.net,
+    p_lineup_style:c.style
+  });
+  if(!data)throw new Error('巡回赛经纪人后台未返回提交结果。');
+  managerApplyRemoteState(data);
+  return data;
+}
+async function managerTransferRemote(est,rules){
+  var state=MANAGER_REMOTE_STATE||await managerLoadRemoteState();
+  if(!state||!state.lineup)throw new Error('没有找到已提交阵容。');
+  var out=(state.contracts||[]).find(function(x){return x.player_key===est.from.id&&x.is_active!==false;});
+  if(!out)throw new Error('没有找到要换下的合同。');
+  const data=await supabaseRpc('tour_manager_transfer_player',{
+    p_lineup_id:state.lineup.id,
+    p_out_contract_id:out.id,
+    p_in_contract:managerContractPayload(est.to),
+    p_fee_rate:rules.transferFee
+  });
+  if(!data)throw new Error('巡回赛经纪人后台未返回换人结果。');
+  managerApplyRemoteState(data);
+  return data;
 }
 
 function currentDisplayName(){
@@ -797,6 +2244,8 @@ function openAuthModal(opts){
     setAuthMessage('登录后可以关注这位用户。');
   }else if(opts.reason==='jinx_vote'){
     setAuthMessage('登录后可以提交今日毒奶。');
+  }else if(opts.reason==='manager'){
+    setAuthMessage('登录炉网账号后才能使用巡回赛经纪人，包括签约、提交阵容、换人和查看个人榜单。');
   }
   trackEvent('auth_modal_open',{module:tabMeta(ACTIVE_TAB).module,source:opts.reason||'account'});
   setTimeout(()=>{
@@ -824,6 +2273,7 @@ async function afterAuthChanged(user){
   refreshFollowButtons();
   refreshLiveFilters();
   if(ACTIVE_TAB==='jinx')renderDailyJinx();
+  if(ACTIVE_TAB==='manager'){await loadManagerData();await managerLoadRemoteState();await managerLoadRemotePublicData();renderManagerDemo();}
 }
 
 async function initAuth(){
@@ -881,6 +2331,25 @@ async function ensureProfile(displayName){
 
 function authErrorText(err){
   const msg=String(err&&err.message||err||'');
+  if(/transfer_window_pending/i.test(msg))return '本站换人窗口期待确认，请等待赛程更新。换人窗口期是每站比赛R1所有比赛结束后，R2所有比赛开始前。';
+  if(/transfer_window_not_open/i.test(msg))return '请等待换人窗口期！换人窗口期是每站比赛R1所有比赛结束后，R2所有比赛开始前。';
+  if(/transfer_window_closed/i.test(msg))return '换人窗口期已过，无法换人！';
+  if(/submission_window_pending/i.test(msg))return '本站提交截止时间待赛程确认，请等待赛程更新后再提交。';
+  if(/submission_window_not_open/i.test(msg))return '本站阵容提交还没有开始。';
+  if(/submission_window_closed/i.test(msg))return '本站阵容提交已截止。';
+  if(/incoming_player_next_match_started/i.test(msg))return '这名球员的下一场已经开始，不能换入。';
+  if(/incoming_player_eliminated/i.test(msg))return '这名球员已经出局，不能换入。';
+  if(/transfer_limit_reached/i.test(msg))return '每站仅可换人一次！';
+  if(/insufficient_wallet_for_transfer|insufficient_budget/i.test(msg))return '钱不够，无法完成这次操作。';
+  if(/station_market_not_open/i.test(msg))return '本站球员市场还没有开放。';
+  if(/invalid_lineup_size/i.test(msg))return '阵容人数不符合本站限制。';
+  if(/lineup_already_submitted/i.test(msg))return '本站阵容已经提交过了，不能重复提交。';
+  if(/duplicate_contract_player/i.test(msg))return '阵容里有重复球员，请调整后再提交。';
+  if(/invalid_or_closed_contract_player/i.test(msg))return '阵容提交已截止，或球员不在当前可签约市场。';
+  if(/out_contract_not_found/i.test(msg))return '没有找到要换下的合同，请刷新后重试。';
+  if(/invalid_new_contract/i.test(msg))return '换入球员不在当前可签约市场。';
+  if(/player_already_active/i.test(msg))return '这名球员已经在你的阵容里。';
+  if(/contract_not_in_station/i.test(msg))return '这名球员不属于本站，不能换入。';
   if(/already|registered|duplicate|unique/i.test(msg))return '这个昵称已经被注册了，请换一个。';
   if(/invalid login|credentials/i.test(msg))return '昵称或密码不对。';
   if(/password/i.test(msg))return '密码至少需要 6 位。';
@@ -1069,6 +2538,7 @@ async function loadData(){
     if(cur.ms){document.getElementById('tab-ms-s').textContent='🎾 ATP '+(cur.ms.event_name||'')+(cur.ms.today_day?' Day'+cur.ms.today_day:'');renderScore('ms', cur.ms);}
     if(cur.ws){document.getElementById('tab-ws-s').textContent='🎾 WTA '+(cur.ws.event_name||'')+(cur.ws.today_day?' Day'+cur.ws.today_day:'');renderScore('ws', cur.ws);}
     if(ACTIVE_TAB==='jinx')renderDailyJinx();
+    if(ACTIVE_TAB==='manager')renderManagerDemo();
     trackModuleView(ACTIVE_TAB);
   }catch(e){
     console.error('实时数据加载失败',e);
@@ -1123,6 +2593,7 @@ async function refreshCurrentOnly(){
     renderScore('ms', cur.ms);
     renderScore('ws', cur.ws);
     if(ACTIVE_TAB==='jinx')renderDailyJinx();
+    if(ACTIVE_TAB==='manager')renderManagerDemo();
     // 实时数据刷新后，同步覆盖积分构成中的即时积分与本站得分
     if(BD_DATA){rerenderBreakdownIfReady();}
     document.getElementById('rdot').style.background='#4ade80';
@@ -1357,6 +2828,7 @@ function switchTab(t,btn){
   panel.classList.add('on');
   if(topBtn)topBtn.classList.add('on');
   ACTIVE_TAB=t;
+  document.body.classList.toggle('manager-mode',t==='manager');
   var oldMeta=tabMeta(prev),newMeta=tabMeta(t);
   trackModuleView(t);
   if(oldMeta.module===newMeta.module&&oldMeta.tour!==newMeta.tour){
@@ -1378,6 +2850,11 @@ function switchTab(t,btn){
   if((t==='ms-t'||t==='ws-t')&&!HIST_DATA){loadHistData(function(){renderDisaster('ms');renderDisaster('ws');});}
   if(t==='flight'&&!HIST_DATA){loadHistData(function(){initFlightSelect();});}
   if(t==='jinx')renderDailyJinx();
+  if(t==='manager'){
+    if(!AUTH_USER)openAuthModal({reason:'manager',afterLogin:function(){loadManagerData().then(managerLoadRemoteState).then(renderManagerDemo);}});
+    loadManagerData().then(managerLoadRemoteState).then(managerLoadRemotePublicData).then(renderManagerDemo);
+    renderManagerDemo();
+  }
 }
 function togglePickStats(btn){
   const box=btn.closest('.sc');
@@ -1920,6 +3397,73 @@ function restartJinxBarrageOnFocus(){
 document.addEventListener('visibilitychange',restartJinxBarrageOnFocus);
 window.addEventListener('pageshow',restartJinxBarrageOnFocus);
 window.addEventListener('focus',restartJinxBarrageOnFocus);
+document.addEventListener('click',function(e){
+  const viewBtn=e.target&&e.target.closest?e.target.closest('[data-manager-view]'):null;
+  if(viewBtn){managerSetView(viewBtn.dataset.managerView||'market');return;}
+  const myViewBtn=e.target&&e.target.closest?e.target.closest('[data-manager-my-view]'):null;
+  if(myViewBtn){managerSetMyView(myViewBtn.dataset.managerMyView||'lineup');return;}
+  const tourBtn=e.target&&e.target.closest?e.target.closest('[data-manager-tour]'):null;
+  if(tourBtn){managerSetMarketTour(tourBtn.dataset.managerTour||'ATP');return;}
+  const ledgerSortBtn=e.target&&e.target.closest?e.target.closest('[data-manager-ledger-sort]'):null;
+  if(ledgerSortBtn){managerSetLedgerSort(ledgerSortBtn.dataset.managerLedgerSort||'date');return;}
+  const btn=e.target&&e.target.closest?e.target.closest('[data-manager-action]'):null;
+  if(!btn)return;
+  const id=btn.dataset.managerId||'';
+  if(btn.dataset.managerAction==='add')managerAdd(id);
+  else if(btn.dataset.managerAction==='remove')managerRemove(id);
+  else if(btn.dataset.managerAction==='detail')managerToggleDetail(id);
+  else if(btn.dataset.managerAction==='calc')managerSetView('calculator');
+  else if(btn.dataset.managerAction==='reset')managerResetDraft();
+  else if(btn.dataset.managerAction==='transfer')managerTransfer();
+  else if(btn.dataset.managerAction==='confirm-transfer')managerConfirmPendingTransfer();
+  else if(btn.dataset.managerAction==='close-dialog')managerCloseAlert();
+  else if(btn.dataset.managerAction==='submit')managerSubmitLineup();
+});
+document.addEventListener('compositionstart',function(e){
+  const id=e.target&&e.target.id;
+  if(id==='manager-q')MANAGER_SEARCH_COMPOSING=true;
+  if(id==='manager-hall-q')MANAGER_HALL_SEARCH_COMPOSING=true;
+  if(id==='manager-ledger-q')MANAGER_LEDGER_SEARCH_COMPOSING=true;
+});
+document.addEventListener('compositionend',function(e){
+  const id=e.target&&e.target.id;
+  if(id==='manager-q')managerSearchCompose(false,e.target);
+  if(id==='manager-hall-q')managerHallSearchCompose(false,e.target);
+  if(id==='manager-ledger-q')managerLedgerSearchCompose(false,e.target);
+});
+document.addEventListener('input',function(e){
+  const id=e.target&&e.target.id;
+  if(id==='manager-q')managerSearchInput(e.target.value,e.isComposing);
+  if(id==='manager-hall-q')managerHallSearchInput(e.target.value,e.isComposing);
+  if(id==='manager-ledger-q')managerLedgerSearchInput(e.target.value,e.isComposing);
+});
+document.addEventListener('keydown',function(e){
+  const id=e.target&&e.target.id;
+  if(id==='manager-q'&&e.key==='Enter'&&!e.isComposing&&!MANAGER_SEARCH_COMPOSING)managerSearchNow();
+});
+document.addEventListener('change',function(e){
+  const target=e.target,tid=target&&target.id;
+  if(tid==='manager-tour'){managerSetMarketTour(target.value);return;}
+  if(['manager-price-filter','manager-tier-filter','manager-rank-filter','manager-surface-filter','manager-sort','manager-sort-dir','manager-transfer-from','manager-transfer-to','manager-ledger-station','manager-ledger-start','manager-ledger-end'].indexOf(tid)>=0){renderManagerDemo();return;}
+  const sel=e.target&&e.target.closest?e.target.closest('[data-manager-pred]'):null;
+  if(!sel)return;
+  managerSetPrediction(sel.dataset.managerPred||'',sel.value);
+});
+Object.assign(window,{
+  renderManagerDemo,
+  managerSetView,
+  managerSetMyView,
+  managerSetMarketTour,
+  managerResetDraft,
+  managerSearchInput,
+  managerSearchCompose,
+  managerSearchNow,
+  managerHallSearchInput,
+  managerHallSearchCompose,
+  managerLedgerSearchInput,
+  managerLedgerSearchCompose,
+  managerSetLedgerSort
+});
 document.addEventListener('click',function(e){
   const a=e.target&&e.target.closest?e.target.closest('a[href]'):null;
   if(!a)return;

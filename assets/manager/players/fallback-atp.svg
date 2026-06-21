@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320" role="img" aria-label="ATP player placeholder">
+  <rect width="320" height="320" rx="24" fill="#fff7df"/>
+  <rect x="18" y="18" width="284" height="284" rx="20" fill="#f4dfad" stroke="#d7b579" stroke-width="6"/>
+  <circle cx="160" cy="118" r="54" fill="#9a6a27"/>
+  <path d="M62 272c18-59 55-90 98-90s80 31 98 90" fill="#9a6a27"/>
+  <path d="M78 72h164" stroke="#fff3c4" stroke-width="12" stroke-linecap="round"/>
+  <text x="160" y="302" text-anchor="middle" font-family="Arial Black, Impact, sans-serif" font-size="34" fill="#6d471b">ATP</text>
+</svg>

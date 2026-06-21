@@ -2,16 +2,19 @@
 
 ## 数据来源总览
 
-当前网站不依赖后端数据库。所有前端数据来自仓库内的静态 JSON 文件：
+当前主站的幸存者、积分构成、用户偏好等老模块不依赖后端数据库，前端数据来自仓库内的静态 JSON 文件：
 
 - `data/current.json`
 - `data/breakdown.json`
 - `data/history.json`
 - `data/preference.json`
+- `data/manager_atp_calendar_2026.json`
 
 这些 JSON 文件由 `scripts/` 下的 Python 脚本抓取和生成，主要外部来源是：
 
 - `https://www.live-tennis.cn`
+
+巡回赛经纪人模块是新增例外：市场和赛事元数据保留静态 JSON 快照用于快速首屏加载，登录后的提交阵容、扣款、换人、账本和配置大厅真实数据走 Supabase 表/RPC。
 
 ## 候选新增数据：签表挑战
 
@@ -108,6 +111,75 @@
 
 - 仓库中存在该数据文件和脚本，但当前 GitHub Actions 的每日数据主要更新 `data/history.json`。
 - 后续如果偏好模块重构，需要确认 `preference.json` 是否继续作为独立数据源，还是并入 `history.json`。
+
+## `data/manager_atp_calendar_2026.json`
+
+来源：
+
+- 用户提供的 ATP 官方 2026 巡回赛历 PDF：`2026-atp-tour-calendar-december-2025.pdf`
+
+主要用途：
+
+- 巡回赛经纪人模块的 ATP 赛站元数据种子表。
+- 存储每站赛事的赛季、巡回赛、周次、城市、级别、场地、签位数、赛事名和来源。
+- 正式接入 Supabase 后，可导入 `manager_tournaments` 表；前端根据幸存者当前开放赛事直接查询对应赛站，不需要用户打开页面时再临时查签位数。
+
+字段：
+
+- `season`
+- `tour`
+- `calendar_month`
+- `week`
+- `start_date_label`
+- `city`
+- `category`
+- `level`
+- `tournament_name`
+- `surface_code`
+- `surface`
+- `draw_size`
+- `manager_eligible`
+- `source`
+- `event_key`
+
+关键规则：
+
+- 只保留第一版经理游戏可用的普通单打赛事：ATP 250、ATP 500、ATP Masters 1000、大满贯。
+- United Cup、Davis Cup、Laver Cup、ATP Finals、Next Gen Finals 暂不进入第一版经理经济规则，避免团队赛和小组赛误用淘汰赛轮次收益。
+- `event_key` 包含赛季、周次、城市和赛事名，避免巴黎、伦敦等同城多站覆盖。
+
+建议 Supabase 表：
+
+```sql
+create table if not exists public.manager_tournaments (
+  id uuid primary key default gen_random_uuid(),
+  season int not null,
+  tour text not null check (tour in ('ATP', 'WTA')),
+  event_key text not null,
+  live_tennis_event_id text,
+  calendar_month text,
+  week int,
+  start_date_label text,
+  city text not null,
+  category text not null,
+  level text not null,
+  tournament_name text not null,
+  surface_code text,
+  surface text,
+  draw_size int not null,
+  manager_eligible boolean not null default true,
+  source text,
+  source_url text,
+  updated_at timestamptz not null default now(),
+  unique (season, tour, event_key)
+);
+```
+
+查询方式：
+
+- 当前幸存者赛事有 live-tennis `event_id` 时，优先用 `live_tennis_event_id` 查。
+- 没有映射时，用 `season + tour + week + city/tournament_name` 兜底匹配。
+- 前端只接收已经归一化后的 `level/surface/draw_size`，不在页面加载时解析 PDF 或网页。
 
 ## 数据更新风险
 

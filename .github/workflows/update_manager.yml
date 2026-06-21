@@ -1,0 +1,35 @@
+name: Update Tour Manager Data
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 06:00 Asia/Shanghai.
+    - cron: "0 22 * * *"
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - run: node scripts/manager/refresh-current-station-data.mjs --write --sync --settle
+
+      - run: node scripts/manager/build-prices.mjs
+
+      - run: node scripts/manager/validate-station.mjs
+
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Auto update tour manager data"
+          file_pattern: "data/manager/active_events.json data/manager/events/*.json data/manager/market_snapshot.json data/manager/player_photos.json"
