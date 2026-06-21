@@ -29,6 +29,8 @@ jobs:
 
       - run: node scripts/manager/apply-qualifier-placements.mjs
 
+      - run: node scripts/manager/apply-pre-r1-substitutions.mjs
+
       - run: node scripts/manager/refresh-current-station-data.mjs --skip-draw --skip-schedule --sync --settle
 
       - run: node scripts/manager/validate-station.mjs

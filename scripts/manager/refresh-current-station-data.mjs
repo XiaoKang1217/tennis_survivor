@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { loadActiveStation, buildStationPayload } from './lib/station-payload.mjs';
 import { SupabaseRestClient } from './lib/supabase-rest.mjs';
-import { collectQualifierPlacements } from './lib/qualifier-placements.mjs';
+import { collectPreR1Substitutions, collectQualifierPlacements } from './lib/qualifier-placements.mjs';
 import {
   parseArgs,
   readJson,
@@ -121,6 +121,7 @@ const out = {
   sync,
   settle,
   qualifier_placements: collectQualifierPlacements(refreshedEvents, { includeDerived: false }),
+  pre_r1_substitutions: collectPreR1Substitutions(refreshedEvents),
   reports,
   matches: allMatchRows
 };

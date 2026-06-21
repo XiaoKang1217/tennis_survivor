@@ -292,6 +292,13 @@ export function mergeDrawPlayers(event, parsedPlayers, sourceUrl = '') {
       && oldByPosition.is_qualifier_placeholder
       && !player.is_qualifier_placeholder
     );
+    const isPreR1Substitution = Boolean(
+      oldByPosition
+      && !oldByPosition.is_qualifier_placeholder
+      && !player.is_qualifier_placeholder
+      && !oldByIdentity
+      && !sameDrawPlayer(event.tour, oldByPosition, player)
+    );
     const old = oldByIdentity || (isQualifierPlacement ? oldByPosition : null) || {};
     const stableKey = isQualifierPlacement ? key : (old.player_key || key);
     const qualifierReplacement = isQualifierPlacement
@@ -308,10 +315,26 @@ export function mergeDrawPlayers(event, parsedPlayers, sourceUrl = '') {
           source_url: sourceUrl || player.source || null
         }
       : old.qualifier_replacement || null;
+    const preR1Substitution = isPreR1Substitution
+      ? {
+          out_player_key: oldByPosition.player_key || canonicalPlayerKey(event.tour, oldByPosition),
+          out_name_en: oldByPosition.name_en || null,
+          out_name_zh: oldByPosition.name_zh || null,
+          out_profile_id: oldByPosition.profile_id || null,
+          replacement_player_key: key,
+          replacement_name_en: player.name_en || null,
+          replacement_name_zh: player.name_zh || null,
+          replacement_profile_id: player.profile_id || null,
+          draw_position: Number(player.draw_position),
+          reason: 'pre_r1_withdrawal',
+          source_url: sourceUrl || player.source || null
+        }
+      : old.pre_r1_substitution || null;
     return {
       ...old,
       ...player,
       player_key: stableKey,
+      is_qualifier_placeholder: !!player.is_qualifier_placeholder,
       name_en: isQualifierPlacement ? player.name_en : (old.name_en || player.name_en),
       name_zh: isQualifierPlacement ? player.name_zh : (old.name_zh || player.name_zh),
       rank: old.rank ?? player.rank ?? null,
@@ -329,9 +352,20 @@ export function mergeDrawPlayers(event, parsedPlayers, sourceUrl = '') {
       tier: old.tier ?? null,
       pricing_detail: old.pricing_detail ?? null,
       qualifier_replacement: qualifierReplacement,
+      pre_r1_substitution: preR1Substitution,
       source: sourceUrl || player.source || old.source || 'live-tennis.cn draw ajax'
     };
   });
+}
+
+function sameDrawPlayer(tour, a = {}, b = {}) {
+  const aKey = a.player_key || canonicalPlayerKey(tour, a);
+  const bKey = b.player_key || canonicalPlayerKey(tour, b);
+  if (aKey && bKey && aKey === bKey) return true;
+  if (a.profile_id && b.profile_id && String(a.profile_id) === String(b.profile_id)) return true;
+  const aName = slugify(a.name_en || a.name_zh || '');
+  const bName = slugify(b.name_en || b.name_zh || '');
+  return Boolean(aName && bName && aName === bName);
 }
 
 export function parseOpenStatArgs(raw = '') {

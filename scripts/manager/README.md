@@ -23,29 +23,34 @@ Current station selection is still manual: edit `data/manager/active_events.json
    - Reads qualifier-placement markers created during draw refresh, syncs the replacement player rows, and calls the service-role RPC that updates already submitted Q-slot contracts to the real landed player while keeping the original Q-slot contract price.
    - If the Supabase RPC migration has not been applied yet, the script writes a warning report and exits successfully so the daily workflow is not blocked.
 
-4. `sync-current-station.mjs`
+4. `apply-pre-r1-substitutions.mjs`
+   - Reads same draw-position pre-R1 substitution markers created during draw refresh, syncs the replacement player rows, and calls the service-role RPC that updates submitted contracts to the replacement player while keeping the original contract price.
+   - Requires migration `202606210006_manager_pre_r1_substitution_price_policy.sql`; without it, the script exits successfully with a warning instead of calling the old price-changing RPC.
+   - Skips substitutions after the main draw has started; those need manual review.
+
+5. `sync-current-station.mjs`
    - Runs validation, station sync, Tennis Abstract Elo imports, and reviewed photo metadata sync in order.
    - This is a lower-level fallback if prices have already been reviewed and generated.
 
-5. `sync-station.mjs`
+6. `sync-station.mjs`
    - Reads `data/manager/active_events.json`.
    - Writes events, player master records, draw entries, market players, and a draft price version.
 
-6. `import-tennis-abstract-elo.mjs`
+7. `import-tennis-abstract-elo.mjs`
    - Reads Tennis Abstract ATP/WTA Elo pages.
    - Writes `tour_manager_elo_snapshots`.
 
-7. `sync-player-photos.mjs`
+8. `sync-player-photos.mjs`
    - Syncs reviewed photo metadata into player tables.
    - Real download/cache/upload is intentionally separated so bad remote photos cannot silently enter production.
 
-8. `refresh-player-photos.mjs`
+9. `refresh-player-photos.mjs`
    - Resolves official player photos for the active station and updates `data/manager/player_photos.json`.
    - WTA defaults to the official `wtafiles.blob.core.windows.net/images/headshots/{profile_id}.jpg` headshot and can download it into `assets/manager/players/wta/`.
    - ATP official media aliases are Cloudflare-protected from direct scripts, so ATP rows stay pending unless already manually cached.
 
 `.github/workflows/update_manager.yml` runs the manager refresh at 06:00 Asia/Shanghai each day:
-`refresh-current-station-data.mjs --write --sync`, then `maybe-build-prices.mjs`, then `apply-qualifier-placements.mjs`, then `refresh-current-station-data.mjs --skip-draw --skip-schedule --sync --settle`, then `validate-station.mjs`.
+`refresh-current-station-data.mjs --write --sync`, then `maybe-build-prices.mjs`, then `apply-qualifier-placements.mjs`, then `apply-pre-r1-substitutions.mjs`, then `refresh-current-station-data.mjs --skip-draw --skip-schedule --sync --settle`, then `validate-station.mjs`.
 
 All scripts support `--dry-run`. Without `SUPABASE_SERVICE_ROLE_KEY`, dry-run is automatic.
 
@@ -66,6 +71,7 @@ To write to Supabase:
 SUPABASE_SERVICE_ROLE_KEY=... /Users/candicekang/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node scripts/manager/refresh-current-station-data.mjs --write --sync
 SUPABASE_SERVICE_ROLE_KEY=... /Users/candicekang/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node scripts/manager/maybe-build-prices.mjs
 SUPABASE_SERVICE_ROLE_KEY=... /Users/candicekang/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node scripts/manager/apply-qualifier-placements.mjs
+SUPABASE_SERVICE_ROLE_KEY=... /Users/candicekang/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node scripts/manager/apply-pre-r1-substitutions.mjs
 SUPABASE_SERVICE_ROLE_KEY=... /Users/candicekang/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node scripts/manager/refresh-current-station-data.mjs --skip-draw --skip-schedule --sync --settle
 ```
 
@@ -93,4 +99,4 @@ Do not publish a price version until the imported draw, ranking, Elo, and photos
    - Review warnings for missing rankings, missing Elo, ATP official ranking blocking, and qualifier placeholders.
 5. Run `refresh-player-photos.mjs --write` to refresh official WTA photos and pending ATP photo metadata.
 6. Review `data/manager/player_photos.json`. Only keep reviewed real official photos or stable fallbacks.
-7. Re-run `refresh-current-station-data.mjs --write --sync`, `maybe-build-prices.mjs`, `apply-qualifier-placements.mjs`, and then `refresh-current-station-data.mjs --skip-draw --skip-schedule --sync --settle` with `SUPABASE_SERVICE_ROLE_KEY=...` to write matches, qualifier placements, settlements, ranking, Elo, draw, market, and price-version rows.
+7. Re-run `refresh-current-station-data.mjs --write --sync`, `maybe-build-prices.mjs`, `apply-qualifier-placements.mjs`, `apply-pre-r1-substitutions.mjs`, and then `refresh-current-station-data.mjs --skip-draw --skip-schedule --sync --settle` with `SUPABASE_SERVICE_ROLE_KEY=...` to write matches, qualifier placements, pre-R1 substitutions, settlements, ranking, Elo, draw, market, and price-version rows.
