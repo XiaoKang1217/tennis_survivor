@@ -1617,7 +1617,7 @@ function managerLedgerHeader(label,key){
 function managerLedgerRowText(x){
   return [x.date,x.station,x.stationLabel,x.status,x.rawStatus,x.cost,x.gross,x.bonus,x.net,(x.players||[]).join('、'),(x.transfers||[]).join('、'),x.note].join(' ').toLowerCase();
 }
-async function managerSubmitLineup(){
+async function managerSubmitLineup(confirmed){
   if(!managerRequireLogin('manager'))return;
   var c=managerCalc(),rules=managerRules(),packs=managerContestPacks();
   var submitInfo=managerSubmissionWindowInfo();
@@ -1627,6 +1627,18 @@ async function managerSubmitLineup(){
   }
   if(!c.legal){managerAlert('阵容还不合法：需要 '+rules.minPlayers+'-'+rules.maxPlayers+' 人，且总成本不能超过本次起始可用额度 '+c.budget+'。','暂时不能提交');return;}
   if(managerSubmittedRecord()){managerAlert('本站阵容已经提交过了。可以去配置大厅查看，也可以在窗口期开启一次换人。','不要重复提交');return;}
+  if(confirmed!==true){
+    MANAGER_DIALOG={
+      title:'确认提交阵容',
+      msg:'每站只能有一次提交机会，ATP和WTA一起提交，确认提交吗？',
+      confirmAction:'confirm-submit',
+      confirmLabel:'确认提交',
+      cancelLabel:'再想想'
+    };
+    renderManagerDemo();
+    return;
+  }
+  MANAGER_DIALOG=null;
   if(managerSupabaseMode()){
     try{
       await managerSubmitLineupRemote(c,rules);
@@ -1646,7 +1658,10 @@ function managerMoneyAmount(value,cls){
   return '<span class="manager-money-amount '+(cls||'')+'"><span class="manager-dollar">$</span>'+esc(Number.isFinite(n)?Math.round(n):value)+'</span>';
 }
 function managerMoneyCards(c,rules){
-  return '<div class="manager-money hot"><b>'+managerMoneyAmount(c.budget)+'</b><span>本站真实可用额度<br>经纪人钱包 + 本站签约金</span></div><div class="manager-money"><b>'+managerMoneyAmount(c.walletCurrent)+'</b><span>经纪人钱包<br>起始值 '+managerMoneyAmount(c.walletStart,'inline')+'，当前值 '+managerMoneyAmount(c.walletCurrent,'inline')+'</span></div><div class="manager-money"><b>'+managerMoneyAmount(c.stationRemaining)+'</b><span>本站签约金<br>起始值 '+managerMoneyAmount(rules.stationGrant,'inline')+'，当前值 '+managerMoneyAmount(c.stationRemaining,'inline')+'</span></div><div class="manager-money"><b>'+managerMoneyAmount(c.remaining)+'</b><span>剩余可用额度<br>已锁定 '+managerMoneyAmount(c.spent,'inline')+'，钱包占用 '+managerMoneyAmount(c.walletUsed,'inline')+'</span></div>';
+  return '<div class="manager-money hot"><b>'+managerMoneyAmount(c.budget)+'</b><span>总可用额度<br>经纪人本金 + 本站签约金<br>本站赢得钱全部带到下一站</span></div>'+
+    '<div class="manager-money"><b>'+managerMoneyAmount(c.walletCurrent)+'</b><span>经纪人本金<br>起始值 '+managerMoneyAmount(c.walletStart,'inline')+'，当前值 '+managerMoneyAmount(c.walletCurrent,'inline')+'<br>赛季初发放</span></div>'+
+    '<div class="manager-money"><b>'+managerMoneyAmount(c.stationRemaining)+'</b><span>本站签约金<br>起始值 '+managerMoneyAmount(rules.stationGrant,'inline')+'，当前值 '+managerMoneyAmount(c.stationRemaining,'inline')+'<br>只能本站使用，带不到下一站</span></div>'+
+    '<div class="manager-money"><b>'+managerMoneyAmount(c.remaining)+'</b><span>剩余可用额度<br>已花费 '+managerMoneyAmount(c.spent,'inline')+'，其中本金 '+managerMoneyAmount(c.walletUsed,'inline')+'</span></div>';
 }
 function managerRenderMoney(c,rules){
   return '<div class="manager-money-grid">'+managerMoneyCards(c,rules)+'</div>';
@@ -3416,6 +3431,7 @@ document.addEventListener('click',function(e){
   else if(btn.dataset.managerAction==='reset')managerResetDraft();
   else if(btn.dataset.managerAction==='transfer')managerTransfer();
   else if(btn.dataset.managerAction==='confirm-transfer')managerConfirmPendingTransfer();
+  else if(btn.dataset.managerAction==='confirm-submit')managerSubmitLineup(true);
   else if(btn.dataset.managerAction==='close-dialog')managerCloseAlert();
   else if(btn.dataset.managerAction==='submit')managerSubmitLineup();
 });
