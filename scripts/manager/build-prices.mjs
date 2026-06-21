@@ -1174,6 +1174,7 @@ async function main() {
   const client = new SupabaseRestClient({ dryRun: false });
   const rankingRows = [...rankingRowsByTour.values()].flat();
   const eloRows = [...eloRowsByTour.values()].flat();
+  await replaceRankingSnapshots(client, rankingRows);
   await upsertCompat(client, 'tour_manager_ranking_snapshots', rankingRows, 'tour,ranking_type,ranking_date,player_key');
   await upsertCompat(client, 'tour_manager_elo_snapshots', eloRows, 'tour,snapshot_date,player_key');
   await upsertCompat(client, 'tour_manager_events', payload.eventRows, 'event_key');
@@ -1199,6 +1200,22 @@ async function main() {
   console.log(`Synced build-prices for ${active.station_key}`);
   console.log(`ranking_rows=${rankingRows.length} elo_rows=${eloRows.length} price_rows=${payload.priceRows.length}`);
   for (const warning of [...new Set(warnings)].slice(0, 20)) console.log(`warning: ${warning}`);
+}
+
+async function replaceRankingSnapshots(client, rows) {
+  const keys = new Set();
+  for (const row of rows) {
+    if (!row.tour || !row.ranking_date) continue;
+    keys.add([row.tour, row.ranking_type || 'singles', row.ranking_date].join('|'));
+  }
+  for (const key of keys) {
+    const [tour, rankingType, rankingDate] = key.split('|');
+    await client.delete('tour_manager_ranking_snapshots', {
+      tour: `eq.${tour}`,
+      ranking_type: `eq.${rankingType}`,
+      ranking_date: `eq.${rankingDate}`
+    });
+  }
 }
 
 async function upsertCompat(client, table, rows, conflict, options = {}) {

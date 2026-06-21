@@ -78,6 +78,18 @@ export class SupabaseRestClient {
     return text ? JSON.parse(text) : [];
   }
 
+  async delete(table, query = {}) {
+    if (this.dryRun) return [];
+    const res = await fetch(this.endpoint(table, query), {
+      method: 'DELETE',
+      headers: this.headers('return=minimal')
+    });
+    if (!res.ok) {
+      throw new Error(`${table} delete failed: ${res.status} ${await res.text()}`);
+    }
+    return [];
+  }
+
   async rpc(name, args = {}) {
     if (this.dryRun) return null;
     const url = new URL(`/rest/v1/rpc/${name}`, this.url);
