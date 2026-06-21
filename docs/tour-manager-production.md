@@ -29,7 +29,7 @@ SUPABASE_SERVICE_ROLE_KEY=... node scripts/manager/sync-current-station.mjs
 - 人数、预算、重复提交、换人次数都由 RPC 校验。
 - 提交和换人只信数据库里的 `event_key + player_key + price`，不信前端传来的价格。
 - 赛事按 `station_key` 绑定，不能把别站球员塞进当前站。
-- 配置大厅和公共榜单应从 Supabase view 读取；锁定前匿名展示，锁定后才展示完整阵容。
+- 配置大厅和公共榜单应从 Supabase view 读取；阵容提交后立即展示完整配置。
 - 每日结算任务以后只写 `tour_manager_settlements` 和 `tour_manager_wallet_ledger`，前端不自行结算真实收益。
 - 球员主键统一使用 `tour|english-slug`；事件 JSON 里若保留中文 key，前端和同步脚本都会转成 canonical key，避免本地草稿、头像和 RPC 提交不一致。
 - WTA 官方页面/头像 blob 若缺图，只标记 `missing` 并使用 fallback，不自动抓外部图片。
