@@ -195,6 +195,7 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 .manager-title-line{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
 .manager-title h2{font-size:25px;font-weight:950;letter-spacing:0;margin-bottom:4px}
 .manager-title p{font-size:13px;color:#6c5531;line-height:1.55;max-width:820px}
+.manager-settle-note{font-size:12px;color:#7a572b;font-weight:950}
 .manager-hero-art{width:250px;max-width:28vw;aspect-ratio:1.88;object-fit:cover;border-radius:12px;border:1px solid rgba(255,255,255,.64);box-shadow:0 12px 30px rgba(92,66,24,.18);background:#f2e2c2}
 .manager-meta{display:flex;gap:7px;flex-wrap:wrap}
 .manager-chip{border:1px solid rgba(255,255,255,.34);background:rgba(255,255,255,.14);border-radius:999px;padding:5px 10px;font-size:12px;font-weight:900;color:#fff8ea}
@@ -307,6 +308,9 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 .manager-rule-card b,.manager-board h4{display:block;color:#5c421f;font-size:13px;margin-bottom:7px}.manager-rule-card span{display:block;color:#6c5c46;font-size:12px;line-height:1.6}
 .manager-board ol{list-style:none;display:grid;gap:6px;counter-reset:mgr}.manager-board li{counter-increment:mgr;display:grid;grid-template-columns:24px 1fr auto;gap:7px;align-items:center;font-size:12px;color:#2f2a22}.manager-board li:before{content:counter(mgr);display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#f2e2c2;color:#7a4f24;font-weight:950}.manager-board em{font-style:normal;color:#c45f2d;font-weight:950}
 .manager-note{font-size:12px;color:#6c5c46;line-height:1.6}
+.manager-pager{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px;flex-wrap:wrap;color:#756651;font-size:12px;font-weight:900}
+.manager-pager .manager-clear{padding:6px 10px}
+.manager-pager .manager-clear:disabled{opacity:.45;cursor:not-allowed}
 .manager-lines{list-style:none;display:grid;gap:5px;color:#6c5c46;font-size:12px;line-height:1.55}.manager-lines li{padding-left:12px;position:relative}.manager-lines li:before{content:"";position:absolute;left:0;top:.75em;width:4px;height:4px;border-radius:50%;background:#c45f2d}
 .manager-dialog{position:fixed;inset:0;z-index:420;display:flex;align-items:center;justify-content:center;background:rgba(75,48,21,.34);padding:18px}
 .manager-dialog-card{width:min(420px,100%);background:#fffaf0;border:1px solid #d9984b;border-radius:12px;box-shadow:0 18px 50px rgba(75,48,21,.22);overflow:hidden}
@@ -717,6 +721,8 @@ let MANAGER_SEARCH_TIMER=null;
 let MANAGER_SEARCH_COMPOSING=false;
 let MANAGER_HALL_SEARCH='';
 let MANAGER_HALL_SEARCH_COMPOSING=false;
+let MANAGER_MARKET_PAGE=1;
+let MANAGER_HALL_PAGE=1;
 let MANAGER_LEDGER_SEARCH='';
 let MANAGER_LEDGER_SEARCH_COMPOSING=false;
 let MANAGER_LEDGER_SEARCH_TIMER=null;
@@ -736,6 +742,7 @@ let MANAGER_REMOTE_PUBLIC_SYNC_KEY='';
 let MANAGER_PENDING_TRANSFER=null;
 const MANAGER_STORE_KEY='tennis_manager_state_v3';
 const MANAGER_LEDGER_KEY='tennis_manager_ledger_v2';
+const MANAGER_DAILY_SUMMARY_KEY='tennis_manager_daily_summary_v1';
 const MANAGER_DEMO_EVENT_META={};
 const MANAGER_LEVEL_CONFIG={
   '250':{label:'250赛',sideGrant:45,grant:90,min:1,max:2,transfers:1,transferDays:2,transferFee:.10},
@@ -1347,19 +1354,33 @@ function managerBuildPool(){
   });
   return out.sort(function(a,b){return b.price-a.price||a.rank-b.rank;});
 }
+function managerPaginate(items,page,pageSize){
+  var total=items.length,size=Math.max(1,Number(pageSize)||30),pages=Math.max(1,Math.ceil(total/size));
+  var current=Math.max(1,Math.min(pages,Number(page)||1)),start=(current-1)*size;
+  return {items:items.slice(start,start+size),page:current,pages:pages,total:total,size:size,start:start+1,end:Math.min(total,start+size)};
+}
+function managerPagerHtml(kind,pager){
+  if(!pager||pager.total<=pager.size)return '';
+  var action=kind==='hall'?'page-hall':'page-market';
+  return '<div class="manager-pager"><button class="manager-clear" data-manager-action="'+action+'" data-manager-page="'+(pager.page-1)+'" '+(pager.page<=1?'disabled':'')+'>上一页</button><span>第 '+pager.page+' / '+pager.pages+' 页 · '+pager.start+'-'+pager.end+' / '+pager.total+'</span><button class="manager-clear" data-manager-action="'+action+'" data-manager-page="'+(pager.page+1)+'" '+(pager.page>=pager.pages?'disabled':'')+'>下一页</button></div>';
+}
+function managerSetMarketPage(page){MANAGER_MARKET_PAGE=Number(page)||1;renderManagerDemo();}
+function managerSetHallPage(page){MANAGER_HALL_PAGE=Number(page)||1;renderManagerDemo();}
+function managerMarketFilterChanged(){MANAGER_MARKET_PAGE=1;renderManagerDemo();}
 function managerSearchInput(v,isComposing){
   if(isComposing||MANAGER_SEARCH_COMPOSING)return;
+  MANAGER_MARKET_PAGE=1;
   MANAGER_SEARCH=v||'';
   clearTimeout(MANAGER_SEARCH_TIMER);
   MANAGER_SEARCH_TIMER=setTimeout(function(){renderManagerDemo();},550);
 }
 function managerSearchCompose(active,el){MANAGER_SEARCH_COMPOSING=!!active;if(!active)setTimeout(function(){managerSearchInput(el&&el.value||'',false);},0);}
-function managerSearchNow(){clearTimeout(MANAGER_SEARCH_TIMER);renderManagerDemo();}
-function managerHallSearchInput(v,isComposing){if(isComposing||MANAGER_HALL_SEARCH_COMPOSING)return;MANAGER_HALL_SEARCH=v||'';renderManagerDemo();}
+function managerSearchNow(){clearTimeout(MANAGER_SEARCH_TIMER);MANAGER_MARKET_PAGE=1;renderManagerDemo();}
+function managerHallSearchInput(v,isComposing){if(isComposing||MANAGER_HALL_SEARCH_COMPOSING)return;MANAGER_HALL_PAGE=1;MANAGER_HALL_SEARCH=v||'';renderManagerDemo();}
 function managerHallSearchCompose(active,el){MANAGER_HALL_SEARCH_COMPOSING=!!active;if(!active)setTimeout(function(){managerHallSearchInput(el&&el.value||'',false);},0);}
 function managerLedgerSearchInput(v,isComposing){if(isComposing||MANAGER_LEDGER_SEARCH_COMPOSING)return;MANAGER_LEDGER_SEARCH=v||'';clearTimeout(MANAGER_LEDGER_SEARCH_TIMER);MANAGER_LEDGER_SEARCH_TIMER=setTimeout(function(){renderManagerDemo();},350);}
 function managerLedgerSearchCompose(active,el){MANAGER_LEDGER_SEARCH_COMPOSING=!!active;if(!active)setTimeout(function(){managerLedgerSearchInput(el&&el.value||'',false);},0);}
-function managerSetMarketTour(tour){MANAGER_TOUR=tour||'ATP';MANAGER_VIEW='market';renderManagerDemo();}
+function managerSetMarketTour(tour){MANAGER_TOUR=tour||'ATP';MANAGER_MARKET_PAGE=1;MANAGER_VIEW='market';renderManagerDemo();}
 function managerFilterValue(id,def){if(id==='manager-q')return MANAGER_SEARCH;if(id==='manager-hall-q')return MANAGER_HALL_SEARCH;if(id==='manager-ledger-q')return MANAGER_LEDGER_SEARCH;if(id==='manager-tour')return MANAGER_TOUR;var el=document.getElementById(id);return el&&el.value?el.value:def;}
 function managerSelectedAttr(id,val,def){return managerFilterValue(id,def)===val?'selected':'';}
 function managerSurfaceSpecialist(p){return p.surfaceScore>=85||(p.surfaceScore>=78&&p.surfaceScore-p.base>=4);}
@@ -1414,7 +1435,7 @@ function managerTeamCurrentStats(players,c){
   return {earned:earned,yesterday:yesterday,alive:alive,max:c.max};
 }
 function managerSetMsg(msg,isErr){MANAGER_LAST_MSG=msg||'';setTimeout(function(){var el=document.getElementById('manager-msg');if(el){el.textContent=MANAGER_LAST_MSG;el.classList.toggle('r',!!isErr);}},0);}
-function managerRequireLogin(reason){if(AUTH_USER)return true;openAuthModal({reason:reason||'manager',afterLogin:function(){renderManagerDemo();}});return false;}
+function managerRequireLogin(reason){if(AUTH_USER)return true;openAuthModal({reason:reason||'manager',afterLogin:function(){if((reason||'manager')==='manager')managerEnterFlow();else renderManagerDemo();}});return false;}
 function managerViewNeedsLogin(view){return ['calculator','mine','hall','transfer','ledger','boards'].indexOf(view)>=0;}
 function managerSetView(view){
   if(managerViewNeedsLogin(view)&&!managerRequireLogin('manager'))return;
@@ -1861,9 +1882,10 @@ function managerPlayerRow(p){
   return '<div class="manager-row '+(sel?'sel':'')+'">'+managerPlayerAvatar(p)+'<div><div class="manager-name" title="'+esc(p.name)+'">'+esc(p.name)+'</div><div class="manager-sub"><span class="manager-pill">'+p.tier+'档</span>'+specialist+'<span class="manager-pill r">回本 '+p.breakEven+'</span></div></div><div class="manager-price">'+managerMoneyAmount(p.price,'compact')+'</div><div class="manager-bars">'+managerBar('实力',p.base)+managerBar('场地',p.surfaceScore)+managerBar('签表',p.draw)+managerBar('状态',p.form)+'</div><div class="manager-actions"><button class="manager-clear" data-manager-action="detail" data-manager-id="'+esc(p.id)+'">'+(MANAGER_DETAIL_ID===p.id?'收起':'详情')+'</button><button class="manager-action '+(sel?'secondary':'')+'" data-manager-action="'+(sel?'calc':'add')+'" data-manager-id="'+esc(p.id)+'">'+(sel?'去测算':'加入阵容')+'</button></div>'+(MANAGER_DETAIL_ID===p.id?managerPlayerDetail(p):'')+'</div>';
 }
 function managerRenderMarket(){
-  var list=managerPoolFiltered(),pack=managerEventPack(MANAGER_TOUR==='WTA'?'WTA':'ATP');
+  var list=managerPoolFiltered(),pack=managerEventPack(MANAGER_TOUR==='WTA'?'WTA':'ATP'),pager=managerPaginate(list,MANAGER_MARKET_PAGE,30);
+  MANAGER_MARKET_PAGE=pager.page;
   var emptyMsg=(pack.event&&pack.event.market_message)?pack.event.market_message:'没有符合筛选的球员。';
-  return '<div class="manager-market-layout"><div class="manager-filter"><label>搜索</label><input id="manager-q" placeholder="球员 / 赛事" value="'+esc(managerFilterValue('manager-q',''))+'" autocomplete="off" oncompositionstart="managerSearchCompose(true,this)" oncompositionend="managerSearchCompose(false,this)" oninput="managerSearchInput(this.value,event&&event.isComposing)" onkeydown="if(event.isComposing||MANAGER_SEARCH_COMPOSING)return;if(event.key===\'Enter\')managerSearchNow()"><label>巡回赛</label><select id="manager-tour" onchange="managerSetMarketTour(this.value)"><option value="ALL">全部</option><option value="ATP" '+managerSelectedAttr('manager-tour','ATP','ATP')+'>ATP</option><option value="WTA" '+managerSelectedAttr('manager-tour','WTA','ATP')+'>WTA</option></select><label>价格</label><select id="manager-price-filter" onchange="renderManagerDemo()"><option value="all">全部价格</option><option value="cheap" '+managerSelectedAttr('manager-price-filter','cheap','all')+'>低价资产（C/D）</option><option value="mid" '+managerSelectedAttr('manager-price-filter','mid','all')+'>中档资产（B）</option><option value="star" '+managerSelectedAttr('manager-price-filter','star','all')+'>高价核心（S/A）</option></select><label>档位</label><select id="manager-tier-filter" onchange="renderManagerDemo()"><option value="all">全部档位</option><option value="S" '+managerSelectedAttr('manager-tier-filter','S','all')+'>S</option><option value="A" '+managerSelectedAttr('manager-tier-filter','A','all')+'>A</option><option value="B" '+managerSelectedAttr('manager-tier-filter','B','all')+'>B</option><option value="C" '+managerSelectedAttr('manager-tier-filter','C','all')+'>C</option><option value="D" '+managerSelectedAttr('manager-tier-filter','D','all')+'>D</option></select><label>排名</label><select id="manager-rank-filter" onchange="renderManagerDemo()"><option value="all">全部排名</option><option value="top10" '+managerSelectedAttr('manager-rank-filter','top10','all')+'>Top 10</option><option value="low" '+managerSelectedAttr('manager-rank-filter','low','all')+'>低排名（50+）/ 冷门</option></select><label>场地</label><select id="manager-surface-filter" onchange="renderManagerDemo()"><option value="all">全部场地能力</option><option value="strong" '+managerSelectedAttr('manager-surface-filter','strong','all')+'>场地评分 ≥78</option><option value="specialist" '+managerSelectedAttr('manager-surface-filter','specialist','all')+'>场地专精</option></select><label>排序</label><select id="manager-sort" onchange="renderManagerDemo()"><option value="price" '+managerSelectedAttr('manager-sort','price','price')+'>所需金币</option><option value="base" '+managerSelectedAttr('manager-sort','base','price')+'>实力</option><option value="surface" '+managerSelectedAttr('manager-sort','surface','price')+'>场地</option><option value="draw" '+managerSelectedAttr('manager-sort','draw','price')+'>签表</option><option value="form" '+managerSelectedAttr('manager-sort','form','price')+'>状态</option></select><label>方向</label><select id="manager-sort-dir" onchange="renderManagerDemo()"><option value="desc" '+managerSelectedAttr('manager-sort-dir','desc','desc')+'>降序</option><option value="asc" '+managerSelectedAttr('manager-sort-dir','asc','desc')+'>升序</option></select><div class="manager-note">筛选和排序是为了做经济约束下的选人：找低价、低排名、场地强、签表软的资产。</div></div><div class="manager-list">'+(list.length?list.map(managerPlayerRow).join(''):'<div class="manager-empty">'+esc(emptyMsg)+'</div>')+'</div></div>';
+  return '<div class="manager-market-layout"><div class="manager-filter"><label>搜索</label><input id="manager-q" placeholder="球员 / 赛事" value="'+esc(managerFilterValue('manager-q',''))+'" autocomplete="off" oncompositionstart="managerSearchCompose(true,this)" oncompositionend="managerSearchCompose(false,this)" oninput="managerSearchInput(this.value,event&&event.isComposing)" onkeydown="if(event.isComposing||MANAGER_SEARCH_COMPOSING)return;if(event.key===\'Enter\')managerSearchNow()"><label>巡回赛</label><select id="manager-tour" onchange="managerSetMarketTour(this.value)"><option value="ALL">全部</option><option value="ATP" '+managerSelectedAttr('manager-tour','ATP','ATP')+'>ATP</option><option value="WTA" '+managerSelectedAttr('manager-tour','WTA','ATP')+'>WTA</option></select><label>价格</label><select id="manager-price-filter" onchange="managerMarketFilterChanged()"><option value="all">全部价格</option><option value="cheap" '+managerSelectedAttr('manager-price-filter','cheap','all')+'>低价资产（C/D）</option><option value="mid" '+managerSelectedAttr('manager-price-filter','mid','all')+'>中档资产（B）</option><option value="star" '+managerSelectedAttr('manager-price-filter','star','all')+'>高价核心（S/A）</option></select><label>档位</label><select id="manager-tier-filter" onchange="managerMarketFilterChanged()"><option value="all">全部档位</option><option value="S" '+managerSelectedAttr('manager-tier-filter','S','all')+'>S</option><option value="A" '+managerSelectedAttr('manager-tier-filter','A','all')+'>A</option><option value="B" '+managerSelectedAttr('manager-tier-filter','B','all')+'>B</option><option value="C" '+managerSelectedAttr('manager-tier-filter','C','all')+'>C</option><option value="D" '+managerSelectedAttr('manager-tier-filter','D','all')+'>D</option></select><label>排名</label><select id="manager-rank-filter" onchange="managerMarketFilterChanged()"><option value="all">全部排名</option><option value="top10" '+managerSelectedAttr('manager-rank-filter','top10','all')+'>Top 10</option><option value="low" '+managerSelectedAttr('manager-rank-filter','low','all')+'>低排名（50+）/ 冷门</option></select><label>场地</label><select id="manager-surface-filter" onchange="managerMarketFilterChanged()"><option value="all">全部场地能力</option><option value="strong" '+managerSelectedAttr('manager-surface-filter','strong','all')+'>场地评分 ≥78</option><option value="specialist" '+managerSelectedAttr('manager-surface-filter','specialist','all')+'>场地专精</option></select><label>排序</label><select id="manager-sort" onchange="managerMarketFilterChanged()"><option value="price" '+managerSelectedAttr('manager-sort','price','price')+'>所需金币</option><option value="base" '+managerSelectedAttr('manager-sort','base','price')+'>实力</option><option value="surface" '+managerSelectedAttr('manager-sort','surface','price')+'>场地</option><option value="draw" '+managerSelectedAttr('manager-sort','draw','price')+'>签表</option><option value="form" '+managerSelectedAttr('manager-sort','form','price')+'>状态</option></select><label>方向</label><select id="manager-sort-dir" onchange="managerMarketFilterChanged()"><option value="desc" '+managerSelectedAttr('manager-sort-dir','desc','desc')+'>降序</option><option value="asc" '+managerSelectedAttr('manager-sort-dir','asc','desc')+'>升序</option></select><div class="manager-note">筛选和排序是为了做经济约束下的选人：找低价、低排名、场地强、签表软的资产。</div></div><div><div class="manager-list">'+(pager.items.length?pager.items.map(managerPlayerRow).join(''):'<div class="manager-empty">'+esc(emptyMsg)+'</div>')+'</div>'+managerPagerHtml('market',pager)+'</div></div>';
 }
 function managerRenderCalculator(){
   var c=managerCalc(),rows=c.players.map(function(p){var val=MANAGER_PREDICTIONS[p.id]||'OUT',rv=managerRoundValue(val,p.level,p.tour,p.drawSize);return '<tr><td><b>'+esc(p.name)+'</b><div class="manager-sub">'+p.tour+' · '+p.tier+'档 · '+p.drawSize+'签 · 身价 '+managerMoneyAmount(p.price,'inline')+'</div></td><td><select data-manager-pred="'+esc(p.id)+'">'+managerRoundOptions(p).map(function(r){return '<option value="'+r.key+'" '+(val===r.key?'selected':'')+'>'+r.label+' / +'+managerRoundValue(r.key,p.level,p.tour,p.drawSize)+'</option>';}).join('')+'</select></td><td>'+rv+'</td><td>'+(rv-p.price)+'</td><td>'+p.breakEven+'</td></tr>';}).join('');
@@ -1939,9 +1961,10 @@ function managerRenderHall(){
   var q=String(MANAGER_HALL_SEARCH||'').toLowerCase(),configs=(mine?[mine]:[]).concat(source).filter(function(x){
     if(!q)return true;
     return [x.user,x.style,x.note].concat(x.players||[]).join(' ').toLowerCase().includes(q);
-  });
+  }),pager=managerPaginate(configs,MANAGER_HALL_PAGE,15);
+  MANAGER_HALL_PAGE=pager.page;
   var emptyText=q?'没有搜到匹配的配置。':'暂无真实配置。等本站有人提交后，这里会从 Supabase 展示。';
-  return '<div class="manager-filter" style="margin-bottom:12px"><label>搜索配置大厅</label><input id="manager-hall-q" placeholder="玩家 / 球员 / 风格" value="'+esc(MANAGER_HALL_SEARCH)+'" autocomplete="off" oncompositionstart="managerHallSearchCompose(true,this)" oncompositionend="managerHallSearchCompose(false,this)" oninput="managerHallSearchInput(this.value,event&&event.isComposing)" onkeydown="if(event.isComposing||MANAGER_HALL_SEARCH_COMPOSING)return;"><div class="manager-note">配置大厅展示本站已经提交的阵容，提交后立即公开完整配置。</div></div><div class="manager-board-grid">'+(configs.length?configs.map(function(x){return '<div class="manager-board"><h4>'+esc(x.user)+'</h4><div class="manager-sim"><div class="manager-sim-row"><span>阵容风格</span><b>'+esc(x.style)+'</b></div><div class="manager-sim-row"><span>已用额度</span><b>'+x.cost+'</b></div><div class="manager-sim-row"><span>签约球员</span><b>'+esc((x.players||[]).join(' / '))+'</b></div></div><div class="manager-note" style="margin-top:8px">'+esc(x.note||'')+'</div></div>';}).join(''):'<div class="manager-empty">'+emptyText+'</div>')+'</div>';
+  return '<div class="manager-filter" style="margin-bottom:12px"><label>搜索配置大厅</label><input id="manager-hall-q" placeholder="玩家 / 球员 / 风格" value="'+esc(MANAGER_HALL_SEARCH)+'" autocomplete="off" oncompositionstart="managerHallSearchCompose(true,this)" oncompositionend="managerHallSearchCompose(false,this)" oninput="managerHallSearchInput(this.value,event&&event.isComposing)" onkeydown="if(event.isComposing||MANAGER_HALL_SEARCH_COMPOSING)return;"><div class="manager-note">配置大厅展示本站已经提交的阵容，提交后立即公开完整配置。</div></div><div class="manager-board-grid">'+(pager.items.length?pager.items.map(function(x){return '<div class="manager-board"><h4>'+esc(x.user)+'</h4><div class="manager-sim"><div class="manager-sim-row"><span>阵容风格</span><b>'+esc(x.style)+'</b></div><div class="manager-sim-row"><span>已用额度</span><b>'+x.cost+'</b></div><div class="manager-sim-row"><span>签约球员</span><b>'+esc((x.players||[]).join(' / '))+'</b></div></div><div class="manager-note" style="margin-top:8px">'+esc(x.note||'')+'</div></div>';}).join(''):'<div class="manager-empty">'+emptyText+'</div>')+'</div>'+managerPagerHtml('hall',pager);
 }
 function managerRenderBoards(){
   var boards=[['赛季经理榜','草地运营部 +186','冷门研究所 +142','冠军资产组 +118'],['本站收益榜','柏林操盘手 +64','女王草地组 +58','均衡基金 +41'],['王牌球员','德米纳尔 +230','萨巴莲卡 +210','巴尔通科娃 +112'],['慧眼识珠榜','伊埃拉 18→82','费里 16→58','巴尔通科娃 22→72'],['巨星依赖指数','冠军资产组 78%','重仓一号 71%','稳胆派 63%'],['场地收益榜','草地 +266','红土 +184','硬地 +121'],['大满贯收益王','澳网资产部 +420','罗兰经纪 +388','温网观察组 +0'],['被坑球员榜','热门一号 -96','草地高价股 -82','签表硬汉 -70'],['调仓大师榜','窗口救火 +48','手续费也值 +32','止损专家 +21'],['破产重建榜','30 起步到 112','低保翻身 +66','冷门回血 +44']];
@@ -1990,7 +2013,7 @@ function renderManagerDemo(){
   var panelTitle='<div class="manager-panel-title"><span>'+viewTitle+'</span>'+(MANAGER_VIEW==='market'?marketTabs:'')+'</div>';
   var panelHead='<div class="manager-panel-h">'+panelTitle+(MANAGER_VIEW==='market'?managerEventMetaHtml(rules):'')+'</div>';
   var dialog=MANAGER_DIALOG?'<div class="manager-dialog"><div class="manager-dialog-card"><h3>'+esc(MANAGER_DIALOG.title)+'</h3><p>'+esc(MANAGER_DIALOG.msg).replace(/\n/g,'<br>')+'</p><div class="manager-actions">'+(MANAGER_DIALOG.confirmAction?'<button class="manager-clear" data-manager-action="close-dialog">'+esc(MANAGER_DIALOG.cancelLabel||'取消')+'</button><button class="manager-action" data-manager-action="'+esc(MANAGER_DIALOG.confirmAction)+'">'+esc(MANAGER_DIALOG.confirmLabel||'确定')+'</button>':'<button class="manager-action" data-manager-action="close-dialog">知道了</button>')+'</div></div></div>':'';
-  root.innerHTML='<div class="manager-shell"><div class="manager-hero"><div class="manager-title"><div><div class="manager-title-line"><h2>巡回赛经纪人</h2><button class="manager-clear" data-manager-view="rules">查看规则</button></div><p>组建你的球员阵容，在巡回赛里征战！<br>在公开市场上购买球员，球员成绩越好，你赚的越多，收益按巡回赛积分计算。<br>你不只懂网球，你是在做预算、风险和轮次收益的组合策略。</p></div></div><img class="manager-hero-art" src="assets/manager/agent-money-bag.png" alt="" loading="lazy" decoding="async"></div>'+managerRenderMoney(c,rules)+tabs+'<div class="manager-grid '+(showSide?'':'single')+'"><div class="manager-panel">'+panelHead+'<div class="manager-panel-b">'+managerRenderBody()+'</div></div>'+(showSide?managerSidebar(c,rules):'')+'</div>'+dialog+'</div>';
+  root.innerHTML='<div class="manager-shell"><div class="manager-hero"><div class="manager-title"><div><div class="manager-title-line"><h2>巡回赛经纪人</h2><button class="manager-clear" data-manager-view="rules">查看规则</button><span class="manager-settle-note">每天09:37结算</span></div><p>组建你的球员阵容，在巡回赛里征战！<br>在公开市场上购买球员，球员成绩越好，你赚的越多，收益按巡回赛积分计算。<br>你不只懂网球，你是在做预算、风险和轮次收益的组合策略。</p></div></div><img class="manager-hero-art" src="assets/manager/agent-money-bag.png" alt="" loading="lazy" decoding="async"></div>'+managerRenderMoney(c,rules)+tabs+'<div class="manager-grid '+(showSide?'':'single')+'"><div class="manager-panel">'+panelHead+'<div class="manager-panel-b">'+managerRenderBody()+'</div></div>'+(showSide?managerSidebar(c,rules):'')+'</div>'+dialog+'</div>';
 }
 
 function trackSupabaseError(operation,err,ignoreMissing){
@@ -2089,7 +2112,7 @@ async function managerLoadRemotePublicData(){
   if(MANAGER_REMOTE_PUBLIC_SYNC_KEY===key)return MANAGER_REMOTE_CONFIGS;
   try{
     const client=await ensureSupabaseClient();
-    const res=await client.from('tour_manager_public_configurations').select('*').eq('station_key',key).order('submitted_at',{ascending:false}).limit(60);
+    const res=await client.from('tour_manager_public_configurations').select('*').eq('station_key',key).order('submitted_at',{ascending:false}).limit(300);
     if(res.error)throw res.error;
     MANAGER_REMOTE_CONFIGS=(res.data||[]).map(function(x){
       return {user:x.display_name||'炉友',style:x.lineup_style||'待建仓',cost:x.lineup_cost||0,players:(x.players||[]).map(function(p){return p.name||p.name_zh||'';}),note:'预测净值 '+(x.predicted_net||0)};
@@ -2099,6 +2122,58 @@ async function managerLoadRemotePublicData(){
     trackSupabaseError('manager.public_configurations',e,true);
   }
   return MANAGER_REMOTE_CONFIGS;
+}
+function managerChinaDateKey(value,offsetDays){
+  var date=value?new Date(value):new Date();
+  if(!Number.isFinite(date.getTime()))date=new Date();
+  date=new Date(date.getTime()+(Number(offsetDays)||0)*86400000);
+  try{
+    var parts=new Intl.DateTimeFormat('zh-CN',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(date);
+    var map={};
+    parts.forEach(function(p){map[p.type]=p.value;});
+    if(map.year&&map.month&&map.day)return map.year+'-'+map.month+'-'+map.day;
+  }catch(_err){}
+  return new Date(date.getTime()+8*3600000).toISOString().slice(0,10);
+}
+function managerIncomeLedgerRows(){
+  var ledger=MANAGER_REMOTE_STATE&&Array.isArray(MANAGER_REMOTE_STATE.ledger)?MANAGER_REMOTE_STATE.ledger:[];
+  return ledger.filter(function(x){return /player_points_delta|points_delta/i.test(String(x.type||''));});
+}
+function managerDailyIncomeSummary(){
+  if(!AUTH_USER||!MANAGER_REMOTE_STATE)return null;
+  var stationKey=managerStationKey(),todayKey=managerChinaDateKey(),rows=managerIncomeLedgerRows();
+  function amount(x){return Math.max(0,Number(x.amount)||0);}
+  var todayRows=rows.filter(function(x){
+    return (x.station_key||stationKey)===stationKey&&managerChinaDateKey(x.created_at||x.updated_at)===todayKey;
+  });
+  var yesterdayIncome=todayRows.reduce(function(s,x){return s+amount(x);},0);
+  if(yesterdayIncome<=0)return null;
+  var stationTotal=rows.filter(function(x){return (x.station_key||stationKey)===stationKey;}).reduce(function(s,x){return s+amount(x);},0);
+  var careerTotal=rows.reduce(function(s,x){return s+amount(x);},0);
+  return {dateKey:todayKey,yesterdayIncome:yesterdayIncome,stationTotal:stationTotal,careerTotal:careerTotal};
+}
+function managerMaybeShowDailyIncomeDialog(){
+  if(!AUTH_USER||MANAGER_DIALOG)return false;
+  var summary=managerDailyIncomeSummary();
+  if(!summary)return false;
+  var key=[MANAGER_DAILY_SUMMARY_KEY,AUTH_USER.id,managerStationKey(),summary.dateKey].join('|');
+  try{
+    if(localStorage.getItem(key))return false;
+    localStorage.setItem(key,'1');
+  }catch(_err){}
+  var name=displayNickname(currentDisplayName(),'你');
+  MANAGER_DIALOG={
+    title:'昨日收益到账',
+    msg:'亲爱的'+name+'，昨天收益 '+summary.yesterdayIncome+'。\n本站收益一共 '+summary.stationTotal+'。\n参赛以来累计收益 '+summary.careerTotal+'。'
+  };
+  return true;
+}
+async function managerEnterFlow(){
+  await loadManagerData();
+  await managerLoadRemoteState();
+  await managerLoadRemotePublicData();
+  managerMaybeShowDailyIncomeDialog();
+  renderManagerDemo();
 }
 async function managerSubmitLineupRemote(c,rules){
   var payload=c.players.map(managerContractPayload);
@@ -2288,7 +2363,7 @@ async function afterAuthChanged(user){
   refreshFollowButtons();
   refreshLiveFilters();
   if(ACTIVE_TAB==='jinx')renderDailyJinx();
-  if(ACTIVE_TAB==='manager'){await loadManagerData();await managerLoadRemoteState();await managerLoadRemotePublicData();renderManagerDemo();}
+  if(ACTIVE_TAB==='manager')await managerEnterFlow();
 }
 
 async function initAuth(){
@@ -2866,8 +2941,8 @@ function switchTab(t,btn){
   if(t==='flight'&&!HIST_DATA){loadHistData(function(){initFlightSelect();});}
   if(t==='jinx')renderDailyJinx();
   if(t==='manager'){
-    if(!AUTH_USER)openAuthModal({reason:'manager',afterLogin:function(){loadManagerData().then(managerLoadRemoteState).then(renderManagerDemo);}});
-    loadManagerData().then(managerLoadRemoteState).then(managerLoadRemotePublicData).then(renderManagerDemo);
+    if(!AUTH_USER)openAuthModal({reason:'manager',afterLogin:managerEnterFlow});
+    else managerEnterFlow();
     renderManagerDemo();
   }
 }
@@ -3432,6 +3507,8 @@ document.addEventListener('click',function(e){
   else if(btn.dataset.managerAction==='transfer')managerTransfer();
   else if(btn.dataset.managerAction==='confirm-transfer')managerConfirmPendingTransfer();
   else if(btn.dataset.managerAction==='confirm-submit')managerSubmitLineup(true);
+  else if(btn.dataset.managerAction==='page-market')managerSetMarketPage(btn.dataset.managerPage);
+  else if(btn.dataset.managerAction==='page-hall')managerSetHallPage(btn.dataset.managerPage);
   else if(btn.dataset.managerAction==='close-dialog')managerCloseAlert();
   else if(btn.dataset.managerAction==='submit')managerSubmitLineup();
 });
@@ -3460,7 +3537,8 @@ document.addEventListener('keydown',function(e){
 document.addEventListener('change',function(e){
   const target=e.target,tid=target&&target.id;
   if(tid==='manager-tour'){managerSetMarketTour(target.value);return;}
-  if(['manager-price-filter','manager-tier-filter','manager-rank-filter','manager-surface-filter','manager-sort','manager-sort-dir','manager-transfer-from','manager-transfer-to','manager-ledger-station','manager-ledger-start','manager-ledger-end'].indexOf(tid)>=0){renderManagerDemo();return;}
+  if(['manager-price-filter','manager-tier-filter','manager-rank-filter','manager-surface-filter','manager-sort','manager-sort-dir'].indexOf(tid)>=0){MANAGER_MARKET_PAGE=1;renderManagerDemo();return;}
+  if(['manager-transfer-from','manager-transfer-to','manager-ledger-station','manager-ledger-start','manager-ledger-end'].indexOf(tid)>=0){renderManagerDemo();return;}
   const sel=e.target&&e.target.closest?e.target.closest('[data-manager-pred]'):null;
   if(!sel)return;
   managerSetPrediction(sel.dataset.managerPred||'',sel.value);
@@ -3470,6 +3548,9 @@ Object.assign(window,{
   managerSetView,
   managerSetMyView,
   managerSetMarketTour,
+  managerSetMarketPage,
+  managerSetHallPage,
+  managerMarketFilterChanged,
   managerResetDraft,
   managerSearchInput,
   managerSearchCompose,
