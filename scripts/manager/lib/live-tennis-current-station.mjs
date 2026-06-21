@@ -271,26 +271,49 @@ export function mergeDrawPlayers(event, parsedPlayers, sourceUrl = '') {
   const byKey = new Map();
   const byProfile = new Map();
   const byName = new Map();
+  const byDrawPosition = new Map();
   for (const player of existing) {
     const key = player.player_key || canonicalPlayerKey(event.tour, player);
     byKey.set(key, player);
     if (player.profile_id) byProfile.set(String(player.profile_id), player);
     byName.set(slugify(player.name_en || player.name_zh || ''), player);
+    if (player.draw_position) byDrawPosition.set(Number(player.draw_position), player);
   }
 
   return parsedPlayers.map((player) => {
     const key = player.player_key || canonicalPlayerKey(event.tour, player);
-    const old = byKey.get(key)
+    const oldByIdentity = byKey.get(key)
       || byProfile.get(String(player.profile_id || ''))
       || byName.get(slugify(player.name_en || player.name_zh || ''))
-      || {};
-    const stableKey = old.player_key || key;
+      || null;
+    const oldByPosition = player.draw_position ? byDrawPosition.get(Number(player.draw_position)) : null;
+    const isQualifierPlacement = Boolean(
+      oldByPosition
+      && oldByPosition.is_qualifier_placeholder
+      && !player.is_qualifier_placeholder
+    );
+    const old = oldByIdentity || (isQualifierPlacement ? oldByPosition : null) || {};
+    const stableKey = isQualifierPlacement ? key : (old.player_key || key);
+    const qualifierReplacement = isQualifierPlacement
+      ? {
+          placeholder_player_key: oldByPosition.player_key || canonicalPlayerKey(event.tour, oldByPosition),
+          placeholder_name_en: oldByPosition.name_en || null,
+          placeholder_name_zh: oldByPosition.name_zh || null,
+          placeholder_profile_id: oldByPosition.profile_id || null,
+          replacement_player_key: key,
+          replacement_name_en: player.name_en || null,
+          replacement_name_zh: player.name_zh || null,
+          replacement_profile_id: player.profile_id || null,
+          draw_position: Number(player.draw_position),
+          source_url: sourceUrl || player.source || null
+        }
+      : old.qualifier_replacement || null;
     return {
       ...old,
       ...player,
       player_key: stableKey,
-      name_en: old.name_en || player.name_en,
-      name_zh: old.name_zh || player.name_zh,
+      name_en: isQualifierPlacement ? player.name_en : (old.name_en || player.name_en),
+      name_zh: isQualifierPlacement ? player.name_zh : (old.name_zh || player.name_zh),
       rank: old.rank ?? player.rank ?? null,
       points: old.points ?? player.points ?? null,
       overall_elo: old.overall_elo ?? null,
@@ -305,6 +328,7 @@ export function mergeDrawPlayers(event, parsedPlayers, sourceUrl = '') {
       price: old.price ?? 0,
       tier: old.tier ?? null,
       pricing_detail: old.pricing_detail ?? null,
+      qualifier_replacement: qualifierReplacement,
       source: sourceUrl || player.source || old.source || 'live-tennis.cn draw ajax'
     };
   });

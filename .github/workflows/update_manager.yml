@@ -23,9 +23,13 @@ jobs:
         with:
           node-version: "20"
 
-      - run: node scripts/manager/refresh-current-station-data.mjs --write --sync --settle
+      - run: node scripts/manager/refresh-current-station-data.mjs --write --sync
 
       - run: node scripts/manager/build-prices.mjs
+
+      - run: node scripts/manager/apply-qualifier-placements.mjs
+
+      - run: node scripts/manager/refresh-current-station-data.mjs --skip-draw --skip-schedule --sync --settle
 
       - run: node scripts/manager/validate-station.mjs
 

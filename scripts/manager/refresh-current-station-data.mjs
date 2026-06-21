@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { loadActiveStation, buildStationPayload } from './lib/station-payload.mjs';
 import { SupabaseRestClient } from './lib/supabase-rest.mjs';
+import { collectQualifierPlacements } from './lib/qualifier-placements.mjs';
 import {
   parseArgs,
   readJson,
@@ -119,6 +120,7 @@ const out = {
   write,
   sync,
   settle,
+  qualifier_placements: collectQualifierPlacements(refreshedEvents, { includeDerived: false }),
   reports,
   matches: allMatchRows
 };
