@@ -1419,7 +1419,34 @@ function managerPoolFiltered(){
   var prop=keys[sort]||'price',mult=dir==='asc'?1:-1;
   return list.sort(function(a,b){var d=(a[prop]||0)-(b[prop]||0);return d?d*mult:(b.total-a.total);});
 }
-function managerLineupPlayers(){var map={};managerBuildPool().forEach(function(p){map[p.id]=p;if(p.sourcePlayerKey)map[p.sourcePlayerKey]=p;});return MANAGER_LINEUP.map(function(id){return map[id];}).filter(Boolean);}
+function managerEventPackForKey(eventKey,tour){
+  var packs=managerContestPacks();
+  return packs.find(function(pack){return (pack.meta&&pack.meta.eventKey)===eventKey||(pack.event&&pack.event.event_key)===eventKey;})||managerEventPack(tour||'ATP');
+}
+function managerPlayerFromContract(x){
+  if(!x)return null;
+  var key=x.player_key||x.playerKey||'',tour=x.tour||(key.indexOf('|')>0?key.split('|')[0]:'ATP');
+  if(!key)key=managerCanonicalPlayerKey(tour,{name_en:x.name_en||x.name,name_zh:x.name_zh||x.name});
+  if(!/^(ATP|WTA)\|.+/.test(key))return null;
+  var pack=managerEventPackForKey(x.event_key,tour),meta=x.metadata&&typeof x.metadata==='object'?x.metadata:{},drawSize=Number(pack.meta&&pack.meta.drawSize)||32;
+  var price=Number(x.price||x.contract_price||x.purchase_price||x.cost);
+  if(!Number.isFinite(price))price=0;
+  var level=pack.meta&&pack.meta.level||'500';
+  var name=x.name_zh||x.name||x.name_en||x.player_name||x.display_name||key;
+  return {id:key,playerKey:key,sourcePlayerKey:meta.qualifier_replacement_from_player_key||meta.pre_r1_substitution_from_player_key||key,tour:tour,name:name,nameEn:x.name_en||'',event:pack.data&&pack.data.event_name||pack.meta.display||managerStationName(),eventKey:x.event_key||pack.meta.eventKey,level:level,drawSize:drawSize,surface:pack.meta&&pack.meta.surface||'grass',rank:null,seed:null,drawPosition:meta.qualifier_replacement_draw_position||meta.replacement_draw_position||null,firstRound:meta.first_round||'',profileId:meta.qualifier_replacement_profile_id||meta.replacement_profile_id||'',photoUrl:'',fullBodyUrl:'',isQualifierPlaceholder:false,pathNote:'',pickCount:1,base:50,surfaceScore:50,draw:50,form:50,manual:0,total:50,price:price,tier:x.tier||managerTier(price,level,tour,drawSize),breakEven:managerRoundBreakEven(price,level,tour,drawSize),overallElo:null,surfaceElo:null,peakElo:null,peakMonth:'',expectedPoints:null,expectedRound:'',pricingDetail:null,risk:'后台合同'};
+}
+function managerLineupPlayers(){
+  var map={};
+  managerBuildPool().forEach(function(p){map[p.id]=p;if(p.sourcePlayerKey)map[p.sourcePlayerKey]=p;});
+  var contracts=MANAGER_REMOTE_STATE&&Array.isArray(MANAGER_REMOTE_STATE.contracts)?MANAGER_REMOTE_STATE.contracts:[];
+  contracts.filter(function(x){return x.is_active!==false;}).forEach(function(x){
+    var p=managerPlayerFromContract(x);
+    if(!p)return;
+    if(!map[p.id])map[p.id]=p;
+    if(p.sourcePlayerKey&&!map[p.sourcePlayerKey])map[p.sourcePlayerKey]=p;
+  });
+  return MANAGER_LINEUP.map(function(id){return map[id];}).filter(Boolean);
+}
 function managerSelected(id){return MANAGER_LINEUP.indexOf(id)>=0;}
 function managerContractForPlayer(p){
   var contracts=MANAGER_REMOTE_STATE&&Array.isArray(MANAGER_REMOTE_STATE.contracts)?MANAGER_REMOTE_STATE.contracts:[];
