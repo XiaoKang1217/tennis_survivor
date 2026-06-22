@@ -19,9 +19,9 @@
   "submission_status": "open",
   "submission_opens_at": "2026-06-20T00:00:00+08:00",
   "schedule_status": "partial",
-  "main_draw_first_match_at": "2026-06-21T09:00:00.000Z",
-  "submission_cutoff_at": "2026-06-21T08:45:00.000Z",
-  "submission_closes_at": "2026-06-21T08:45:00.000Z",
+  "main_draw_first_match_at": "2026-06-21T09:20:00.000Z",
+  "submission_cutoff_at": "2026-06-21T09:05:00.000Z",
+  "submission_closes_at": "2026-06-21T09:05:00.000Z",
   "round1_completed_at": null,
   "round2_first_match_at": null,
   "transfer_window_opens_at": null,
@@ -116,7 +116,9 @@
       "country_code": "POL",
       "entry_type": "direct_acceptance",
       "is_qualifier_placeholder": false,
-      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true"
+      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true",
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "player_key": "WTA|eva-lys",
@@ -189,7 +191,9 @@
       "country_code": "GER",
       "entry_type": "wildcard",
       "is_qualifier_placeholder": false,
-      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true"
+      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true",
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "player_key": "WTA|emma-navarro",
@@ -262,13 +266,15 @@
       "country_code": "USA",
       "entry_type": "direct_acceptance",
       "is_qualifier_placeholder": false,
-      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true"
+      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true",
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
-      "player_key": "WTA|qualifier-5",
-      "name_zh": "资格赛选手Q1",
-      "name_en": "Qualifier Q1",
-      "profile_id": "QUAL-1",
+      "player_key": "WTA|sinja-kraus",
+      "name_zh": "克劳斯",
+      "name_en": "Sinja KRAUS",
+      "profile_id": "327061",
       "seed": null,
       "rank": 999,
       "draw_position": 5,
@@ -282,7 +288,7 @@
         "manual": 0
       },
       "price": 45,
-      "is_qualifier_placeholder": true,
+      "is_qualifier_placeholder": false,
       "points": null,
       "overall_elo": null,
       "surface_elo": null,
@@ -332,10 +338,23 @@
       },
       "peak_elo": null,
       "peak_month": null,
-      "photo_url": null,
-      "country_code": null,
-      "entry_type": "qualifier",
-      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true"
+      "photo_url": "https://static.live-tennis.cn/pic/ts/327061",
+      "country_code": "AUT",
+      "entry_type": "direct_acceptance",
+      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true",
+      "qualifier_replacement": {
+        "placeholder_player_key": "WTA|qualifier-5",
+        "placeholder_name_en": "Qualifier Q1",
+        "placeholder_name_zh": "资格赛选手Q1",
+        "placeholder_profile_id": "QUAL-1",
+        "replacement_player_key": "WTA|sinja-kraus",
+        "replacement_name_en": "Sinja KRAUS",
+        "replacement_name_zh": "克劳斯",
+        "replacement_profile_id": "327061",
+        "draw_position": 5,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true"
+      },
+      "pre_r1_substitution": null
     },
     {
       "player_key": "WTA|anna-kalinskaya",
@@ -345,8 +364,8 @@
       "seed": null,
       "rank": 20,
       "draw_position": 6,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "克劳斯",
+      "path_note": "首轮对阵 克劳斯。",
       "scores": {
         "base": 71.48,
         "surface": 50.74,
@@ -408,13 +427,15 @@
       "country_code": "RUS",
       "entry_type": "direct_acceptance",
       "is_qualifier_placeholder": false,
-      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true"
+      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true",
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
-      "player_key": "WTA|qualifier-7",
-      "name_zh": "资格赛选手Q2",
-      "name_en": "Qualifier Q2",
-      "profile_id": "QUAL-2",
+      "player_key": "WTA|elena-gabriela-ruse",
+      "name_zh": "鲁塞",
+      "name_en": "Elena-Gabriela RUSE",
+      "profile_id": "320408",
       "seed": null,
       "rank": 999,
       "draw_position": 7,
@@ -428,7 +449,7 @@
         "manual": 0
       },
       "price": 45,
-      "is_qualifier_placeholder": true,
+      "is_qualifier_placeholder": false,
       "points": null,
       "overall_elo": null,
       "surface_elo": null,
@@ -478,10 +499,23 @@
       },
       "peak_elo": null,
       "peak_month": null,
-      "photo_url": null,
-      "country_code": null,
-      "entry_type": "qualifier",
-      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true"
+      "photo_url": "https://static.live-tennis.cn/pic/ts/320408",
+      "country_code": "ROU",
+      "entry_type": "direct_acceptance",
+      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true",
+      "qualifier_replacement": {
+        "placeholder_player_key": "WTA|qualifier-7",
+        "placeholder_name_en": "Qualifier Q2",
+        "placeholder_name_zh": "资格赛选手Q2",
+        "placeholder_profile_id": "QUAL-2",
+        "replacement_player_key": "WTA|elena-gabriela-ruse",
+        "replacement_name_en": "Elena-Gabriela RUSE",
+        "replacement_name_zh": "鲁塞",
+        "replacement_profile_id": "320408",
+        "draw_position": 7,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true"
+      },
+      "pre_r1_substitution": null
     },
     {
       "player_key": "WTA|linda-noskova",
@@ -491,8 +525,8 @@
       "seed": 5,
       "rank": 13,
       "draw_position": 8,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "鲁塞",
+      "path_note": "首轮对阵 鲁塞。",
       "scores": {
         "base": 82.78,
         "surface": 65.92,
@@ -554,7 +588,9 @@
       "country_code": "CZE",
       "entry_type": "direct_acceptance",
       "is_qualifier_placeholder": false,
-      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true"
+      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true",
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "player_key": "WTA|karolina-muchova",
@@ -627,7 +663,9 @@
       "country_code": "CZE",
       "entry_type": "direct_acceptance",
       "is_qualifier_placeholder": false,
-      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true"
+      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true",
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "player_key": "WTA|venus-williams",
@@ -637,8 +675,8 @@
       "seed": null,
       "rank": 462,
       "draw_position": 11,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "贝古",
+      "path_note": "首轮对阵 贝古。",
       "scores": {
         "base": 14.81,
         "surface": 38.89,
@@ -700,13 +738,15 @@
       "country_code": "USA",
       "entry_type": "wildcard",
       "is_qualifier_placeholder": false,
-      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true"
+      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true",
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
-      "player_key": "WTA|qualifier-12",
-      "name_zh": "资格赛选手Q3",
-      "name_en": "Qualifier Q3",
-      "profile_id": "QUAL-3",
+      "player_key": "WTA|irina-camelia-begu",
+      "name_zh": "贝古",
+      "name_en": "Irina-Camelia BEGU",
+      "profile_id": "313169",
       "seed": null,
       "rank": 999,
       "draw_position": 12,
@@ -720,7 +760,7 @@
         "manual": 0
       },
       "price": 50,
-      "is_qualifier_placeholder": true,
+      "is_qualifier_placeholder": false,
       "points": null,
       "overall_elo": null,
       "surface_elo": null,
@@ -770,16 +810,29 @@
       },
       "peak_elo": null,
       "peak_month": null,
-      "photo_url": null,
-      "country_code": null,
-      "entry_type": "qualifier",
-      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true"
+      "photo_url": "https://static.live-tennis.cn/pic/ts/313169",
+      "country_code": "ROU",
+      "entry_type": "direct_acceptance",
+      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true",
+      "qualifier_replacement": {
+        "placeholder_player_key": "WTA|qualifier-12",
+        "placeholder_name_en": "Qualifier Q3",
+        "placeholder_name_zh": "资格赛选手Q3",
+        "placeholder_profile_id": "QUAL-3",
+        "replacement_player_key": "WTA|irina-camelia-begu",
+        "replacement_name_en": "Irina-Camelia BEGU",
+        "replacement_name_zh": "贝古",
+        "replacement_profile_id": "313169",
+        "draw_position": 12,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true"
+      },
+      "pre_r1_substitution": null
     },
     {
-      "player_key": "WTA|qualifier-13",
-      "name_zh": "资格赛选手Q4",
-      "name_en": "Qualifier Q4",
-      "profile_id": "QUAL-4",
+      "player_key": "WTA|solana-sierra",
+      "name_zh": "谢拉",
+      "name_en": "Solana SIERRA",
+      "profile_id": "329081",
       "seed": null,
       "rank": 999,
       "draw_position": 13,
@@ -793,7 +846,7 @@
         "manual": 0
       },
       "price": 50,
-      "is_qualifier_placeholder": true,
+      "is_qualifier_placeholder": false,
       "points": null,
       "overall_elo": null,
       "surface_elo": null,
@@ -843,10 +896,23 @@
       },
       "peak_elo": null,
       "peak_month": null,
-      "photo_url": null,
-      "country_code": null,
-      "entry_type": "qualifier",
-      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true"
+      "photo_url": "https://static.live-tennis.cn/pic/ts/329081",
+      "country_code": "ARG",
+      "entry_type": "direct_acceptance",
+      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true",
+      "qualifier_replacement": {
+        "placeholder_player_key": "WTA|qualifier-13",
+        "placeholder_name_en": "Qualifier Q4",
+        "placeholder_name_zh": "资格赛选手Q4",
+        "placeholder_profile_id": "QUAL-4",
+        "replacement_player_key": "WTA|solana-sierra",
+        "replacement_name_en": "Solana SIERRA",
+        "replacement_name_zh": "谢拉",
+        "replacement_profile_id": "329081",
+        "draw_position": 13,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true"
+      },
+      "pre_r1_substitution": null
     },
     {
       "player_key": "WTA|qinwen-zheng",
@@ -856,8 +922,8 @@
       "seed": null,
       "rank": 160,
       "draw_position": 14,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "谢拉",
+      "path_note": "首轮对阵 谢拉。",
       "scores": {
         "base": 45,
         "surface": 20.37,
@@ -919,7 +985,9 @@
       "country_code": "CHN",
       "entry_type": "wildcard",
       "is_qualifier_placeholder": false,
-      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true"
+      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true",
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "player_key": "WTA|clara-tauson",
@@ -992,7 +1060,9 @@
       "country_code": "DEN",
       "entry_type": "direct_acceptance",
       "is_qualifier_placeholder": false,
-      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true"
+      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true",
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "player_key": "WTA|diana-shnaider",
@@ -1065,7 +1135,9 @@
       "country_code": "RUS",
       "entry_type": "direct_acceptance",
       "is_qualifier_placeholder": false,
-      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true"
+      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true",
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "player_key": "WTA|iva-jovic",
@@ -1138,7 +1210,9 @@
       "country_code": "USA",
       "entry_type": "direct_acceptance",
       "is_qualifier_placeholder": false,
-      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true"
+      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true",
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "WANG Xinyu",
@@ -1211,7 +1285,9 @@
           "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
           "manual": "Manual correction defaults to 0."
         }
-      }
+      },
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "player_key": "WTA|katie-boulter",
@@ -1284,7 +1360,9 @@
       "country_code": "GBR",
       "entry_type": "wildcard",
       "is_qualifier_placeholder": false,
-      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true"
+      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true",
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "player_key": "WTA|leylah-fernandez",
@@ -1357,7 +1435,9 @@
       "country_code": "CAN",
       "entry_type": "direct_acceptance",
       "is_qualifier_placeholder": false,
-      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true"
+      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true",
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "player_key": "WTA|liudmila-samsonova",
@@ -1430,7 +1510,9 @@
       "country_code": "RUS",
       "entry_type": "direct_acceptance",
       "is_qualifier_placeholder": false,
-      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true"
+      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true",
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "player_key": "WTA|katerina-siniakova",
@@ -1503,7 +1585,9 @@
       "country_code": "CZE",
       "entry_type": "direct_acceptance",
       "is_qualifier_placeholder": false,
-      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true"
+      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true",
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "player_key": "WTA|elina-svitolina",
@@ -1576,7 +1660,9 @@
       "country_code": "UKR",
       "entry_type": "direct_acceptance",
       "is_qualifier_placeholder": false,
-      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true"
+      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true",
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "player_key": "WTA|naomi-osaka",
@@ -1649,7 +1735,9 @@
       "country_code": "JPN",
       "entry_type": "direct_acceptance",
       "is_qualifier_placeholder": false,
-      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true"
+      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true",
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "player_key": "WTA|magdalena-frech",
@@ -1722,7 +1810,9 @@
       "country_code": "POL",
       "entry_type": "direct_acceptance",
       "is_qualifier_placeholder": false,
-      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true"
+      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true",
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "player_key": "WTA|alexandra-eala",
@@ -1795,7 +1885,9 @@
       "country_code": "PHI",
       "entry_type": "direct_acceptance",
       "is_qualifier_placeholder": false,
-      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true"
+      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true",
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "player_key": "WTA|elise-mertens",
@@ -1868,7 +1960,9 @@
       "country_code": "BEL",
       "entry_type": "direct_acceptance",
       "is_qualifier_placeholder": false,
-      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true"
+      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true",
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "player_key": "WTA|ann-li",
@@ -1941,7 +2035,9 @@
       "country_code": "USA",
       "entry_type": "direct_acceptance",
       "is_qualifier_placeholder": false,
-      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true"
+      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true",
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "player_key": "WTA|ekaterina-alexandrova",
@@ -2014,7 +2110,9 @@
       "country_code": "RUS",
       "entry_type": "direct_acceptance",
       "is_qualifier_placeholder": false,
-      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true"
+      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true",
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "player_key": "WTA|mirra-andreeva",
@@ -2087,7 +2185,9 @@
       "country_code": "RUS",
       "entry_type": "direct_acceptance",
       "is_qualifier_placeholder": false,
-      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true"
+      "source": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true",
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     }
   ],
   "market_message": "签表已由 live-tennis 当前站刷新。"

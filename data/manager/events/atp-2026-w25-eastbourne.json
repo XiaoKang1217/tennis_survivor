@@ -18,10 +18,10 @@
   "market_status": "open",
   "submission_status": "open",
   "submission_opens_at": null,
-  "schedule_status": "pending",
-  "main_draw_first_match_at": null,
-  "submission_cutoff_at": null,
-  "submission_closes_at": null,
+  "schedule_status": "partial",
+  "main_draw_first_match_at": "2026-06-22T10:00:00.000Z",
+  "submission_cutoff_at": "2026-06-22T09:45:00.000Z",
+  "submission_closes_at": "2026-06-22T09:45:00.000Z",
   "round1_completed_at": null,
   "round2_first_match_at": null,
   "transfer_window_opens_at": null,
@@ -108,24 +108,26 @@
           "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
           "manual": "Manual correction defaults to 0."
         }
-      }
+      },
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q1",
-      "name_zh": "资格赛选手 Q1",
-      "profile_id": "QUAL-1",
-      "country_code": null,
+      "name_en": "Jan CHOINSKI",
+      "name_zh": "霍因斯基",
+      "profile_id": "CH12",
+      "country_code": "GBR",
       "seed": null,
-      "entry_type": "qualifier",
+      "entry_type": "direct_acceptance",
       "draw_position": 3,
       "first_round": "波佩林",
       "path_note": "首轮对阵 波佩林。",
       "rank": null,
       "points": null,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/CH12",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20741/2026/device/0/horizontal/true",
-      "player_key": "ATP|qualifier-3",
+      "player_key": "ATP|jan-choinski",
       "overall_elo": null,
       "surface_elo": null,
       "peak_elo": null,
@@ -181,7 +183,20 @@
           "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
           "manual": "Manual correction defaults to 0."
         }
-      }
+      },
+      "qualifier_replacement": {
+        "placeholder_player_key": "ATP|qualifier-3",
+        "placeholder_name_en": "Qualifier Q1",
+        "placeholder_name_zh": "资格赛选手 Q1",
+        "placeholder_profile_id": "QUAL-1",
+        "replacement_player_key": "ATP|jan-choinski",
+        "replacement_name_en": "Jan CHOINSKI",
+        "replacement_name_zh": "霍因斯基",
+        "replacement_profile_id": "CH12",
+        "draw_position": 3,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/20741/2026/device/0/horizontal/true"
+      },
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Alexei POPYRIN",
@@ -191,8 +206,8 @@
       "seed": null,
       "entry_type": "direct_acceptance",
       "draw_position": 4,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "霍因斯基",
+      "path_note": "首轮对阵 霍因斯基。",
       "rank": 100,
       "points": 630,
       "photo_url": "https://static.live-tennis.cn/pic/ts/P09Z",
@@ -254,7 +269,9 @@
           "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
           "manual": "Manual correction defaults to 0."
         }
-      }
+      },
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Daniel ALTMAIER",
@@ -327,7 +344,9 @@
           "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
           "manual": "Manual correction defaults to 0."
         }
-      }
+      },
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Aleksandar KOVACEVIC",
@@ -400,7 +419,9 @@
           "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
           "manual": "Manual correction defaults to 0."
         }
-      }
+      },
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Zizou BERGS",
@@ -473,7 +494,9 @@
           "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
           "manual": "Manual correction defaults to 0."
         }
-      }
+      },
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Jaume MUNAR",
@@ -546,7 +569,9 @@
           "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
           "manual": "Manual correction defaults to 0."
         }
-      }
+      },
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Francisco CERUNDOLO",
@@ -619,7 +644,9 @@
           "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
           "manual": "Manual correction defaults to 0."
         }
-      }
+      },
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Thiago Agustin TIRANTE",
@@ -692,7 +719,9 @@
           "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
           "manual": "Manual correction defaults to 0."
         }
-      }
+      },
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Jacob FEARNLEY",
@@ -765,7 +794,9 @@
           "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
           "manual": "Manual correction defaults to 0."
         }
-      }
+      },
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Roman Andres BURRUCHAGA",
@@ -838,7 +869,9 @@
           "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
           "manual": "Manual correction defaults to 0."
         }
-      }
+      },
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Arthur FERY",
@@ -911,7 +944,9 @@
           "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
           "manual": "Manual correction defaults to 0."
         }
-      }
+      },
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Raphael COLLIGNON",
@@ -984,7 +1019,9 @@
           "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
           "manual": "Manual correction defaults to 0."
         }
-      }
+      },
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Juan Manuel CERUNDOLO",
@@ -1057,7 +1094,9 @@
           "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
           "manual": "Manual correction defaults to 0."
         }
-      }
+      },
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Brandon NAKASHIMA",
@@ -1130,7 +1169,9 @@
           "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
           "manual": "Manual correction defaults to 0."
         }
-      }
+      },
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Jack DRAPER",
@@ -1203,7 +1244,9 @@
           "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
           "manual": "Manual correction defaults to 0."
         }
-      }
+      },
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Jack PINNINGTON JONES",
@@ -1276,7 +1319,9 @@
           "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
           "manual": "Manual correction defaults to 0."
         }
-      }
+      },
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Camilo UGO CARABELLI",
@@ -1349,7 +1394,9 @@
           "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
           "manual": "Manual correction defaults to 0."
         }
-      }
+      },
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Gabriel DIALLO",
@@ -1422,7 +1469,9 @@
           "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
           "manual": "Manual correction defaults to 0."
         }
-      }
+      },
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Terence ATMANE",
@@ -1495,7 +1544,9 @@
           "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
           "manual": "Manual correction defaults to 0."
         }
-      }
+      },
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Tomas Martin ETCHEVERRY",
@@ -1568,7 +1619,9 @@
           "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
           "manual": "Manual correction defaults to 0."
         }
-      }
+      },
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Ugo HUMBERT",
@@ -1641,7 +1694,9 @@
           "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
           "manual": "Manual correction defaults to 0."
         }
-      }
+      },
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Mattia BELLUCCI",
@@ -1714,7 +1769,9 @@
           "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
           "manual": "Manual correction defaults to 0."
         }
-      }
+      },
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Jenson BROOKSBY",
@@ -1724,8 +1781,8 @@
       "seed": null,
       "entry_type": "direct_acceptance",
       "draw_position": 27,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "武基奇",
+      "path_note": "首轮对阵 武基奇。",
       "rank": 67,
       "points": 867,
       "photo_url": "https://static.live-tennis.cn/pic/ts/B0CD",
@@ -1787,24 +1844,26 @@
           "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
           "manual": "Manual correction defaults to 0."
         }
-      }
+      },
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q2",
-      "name_zh": "资格赛选手 Q2",
-      "profile_id": "QUAL-2",
-      "country_code": null,
+      "name_en": "Aleksandar VUKIC",
+      "name_zh": "武基奇",
+      "profile_id": "V832",
+      "country_code": "AUS",
       "seed": null,
-      "entry_type": "qualifier",
+      "entry_type": "direct_acceptance",
       "draw_position": 28,
       "first_round": "布鲁克斯比",
       "path_note": "首轮对阵 布鲁克斯比。",
       "rank": null,
       "points": null,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/V832",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20741/2026/device/0/horizontal/true",
-      "player_key": "ATP|qualifier-28",
+      "player_key": "ATP|aleksandar-vukic",
       "overall_elo": null,
       "surface_elo": null,
       "peak_elo": null,
@@ -1860,24 +1919,37 @@
           "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
           "manual": "Manual correction defaults to 0."
         }
-      }
+      },
+      "qualifier_replacement": {
+        "placeholder_player_key": "ATP|qualifier-28",
+        "placeholder_name_en": "Qualifier Q2",
+        "placeholder_name_zh": "资格赛选手 Q2",
+        "placeholder_profile_id": "QUAL-2",
+        "replacement_player_key": "ATP|aleksandar-vukic",
+        "replacement_name_en": "Aleksandar VUKIC",
+        "replacement_name_zh": "武基奇",
+        "replacement_profile_id": "V832",
+        "draw_position": 28,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/20741/2026/device/0/horizontal/true"
+      },
+      "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q3",
-      "name_zh": "资格赛选手 Q3",
-      "profile_id": "QUAL-3",
-      "country_code": null,
+      "name_en": "Matteo ARNALDI",
+      "name_zh": "阿纳尔迪",
+      "profile_id": "A0FC",
+      "country_code": "ITA",
       "seed": null,
-      "entry_type": "qualifier",
+      "entry_type": "direct_acceptance",
       "draw_position": 29,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "赫西",
+      "path_note": "首轮对阵 赫西。",
       "rank": null,
       "points": null,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/A0FC",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20741/2026/device/0/horizontal/true",
-      "player_key": "ATP|qualifier-29",
+      "player_key": "ATP|matteo-arnaldi",
       "overall_elo": null,
       "surface_elo": null,
       "peak_elo": null,
@@ -1933,24 +2005,37 @@
           "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
           "manual": "Manual correction defaults to 0."
         }
-      }
+      },
+      "qualifier_replacement": {
+        "placeholder_player_key": "ATP|qualifier-29",
+        "placeholder_name_en": "Qualifier Q3",
+        "placeholder_name_zh": "资格赛选手 Q3",
+        "placeholder_profile_id": "QUAL-3",
+        "replacement_player_key": "ATP|matteo-arnaldi",
+        "replacement_name_en": "Matteo ARNALDI",
+        "replacement_name_zh": "阿纳尔迪",
+        "replacement_profile_id": "A0FC",
+        "draw_position": 29,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/20741/2026/device/0/horizontal/true"
+      },
+      "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q4",
-      "name_zh": "资格赛选手 Q4",
-      "profile_id": "QUAL-4",
-      "country_code": null,
+      "name_en": "Giles HUSSEY",
+      "name_zh": "赫西",
+      "profile_id": "H0DC",
+      "country_code": "GBR",
       "seed": null,
-      "entry_type": "qualifier",
+      "entry_type": "direct_acceptance",
       "draw_position": 30,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "阿纳尔迪",
+      "path_note": "首轮对阵 阿纳尔迪。",
       "rank": null,
       "points": null,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/H0DC",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20741/2026/device/0/horizontal/true",
-      "player_key": "ATP|qualifier-30",
+      "player_key": "ATP|giles-hussey",
       "overall_elo": null,
       "surface_elo": null,
       "peak_elo": null,
@@ -2006,7 +2091,20 @@
           "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
           "manual": "Manual correction defaults to 0."
         }
-      }
+      },
+      "qualifier_replacement": {
+        "placeholder_player_key": "ATP|qualifier-30",
+        "placeholder_name_en": "Qualifier Q4",
+        "placeholder_name_zh": "资格赛选手 Q4",
+        "placeholder_profile_id": "QUAL-4",
+        "replacement_player_key": "ATP|giles-hussey",
+        "replacement_name_en": "Giles HUSSEY",
+        "replacement_name_zh": "赫西",
+        "replacement_profile_id": "H0DC",
+        "draw_position": 30,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/20741/2026/device/0/horizontal/true"
+      },
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Joao FONSECA",
@@ -2079,7 +2177,9 @@
           "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
           "manual": "Manual correction defaults to 0."
         }
-      }
+      },
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     }
   ],
   "pricing_formula": {
