@@ -1610,9 +1610,43 @@ function managerWalletImpactAmount(row){
   var walletDelta=Number(row&&row.walletDelta);
   return Number.isFinite(walletDelta)?walletDelta:0;
 }
+function managerLedgerBelongsToStation(row,stationKey){
+  if(!row||!stationKey)return false;
+  var meta=row.metadata&&typeof row.metadata==='object'?row.metadata:{};
+  if(row.station_key)return row.station_key===stationKey;
+  if(meta.station_key)return meta.station_key===stationKey;
+  if(row.station)return row.station===stationKey||row.station===managerStationName();
+  return false;
+}
 function managerRemoteStationWalletDelta(stationKey){
   var ledger=MANAGER_REMOTE_STATE&&Array.isArray(MANAGER_REMOTE_STATE.ledger)?MANAGER_REMOTE_STATE.ledger:[];
-  return ledger.filter(function(x){return (x.station_key||stationKey)===stationKey;}).reduce(function(s,x){return s+managerWalletImpactAmount(x);},0);
+  return ledger.filter(function(x){return managerLedgerBelongsToStation(x,stationKey);}).reduce(function(s,x){return s+managerWalletImpactAmount(x);},0);
+}
+function managerIncomePartsFromRow(row){
+  var type=String(row&&row.type||row&&row.rawStatus||row&&row.status||'');
+  if(/station_grant/i.test(type)||/本站签约金/.test(type)||/season_opening|开户/i.test(type))return null;
+  if(/lineup_wallet_spend|lineup_purchase_cost|transfer/i.test(type))return null;
+  var amount=Number(row&&row.amount);
+  if(!Number.isFinite(amount))amount=Number(row&&row.walletDelta);
+  if(!Number.isFinite(amount))amount=Number(row&&row.net);
+  if(!Number.isFinite(amount)||amount<=0)return null;
+  if(/player_points_delta|points_delta/i.test(type))return {kind:'player',amount:amount};
+  if(/station_combo_bonus|combo/i.test(type))return {kind:'combo',amount:amount};
+  return {kind:'other',amount:amount};
+}
+function managerStationIncomeSummary(){
+  var stationKey=managerStationKey(),rows=[];
+  if(MANAGER_REMOTE_STATE&&Array.isArray(MANAGER_REMOTE_STATE.ledger)){
+    rows=MANAGER_REMOTE_STATE.ledger.filter(function(x){return managerLedgerBelongsToStation(x,stationKey);});
+  }else{
+    rows=(MANAGER_LEDGER||[]).filter(function(x){return managerLedgerBelongsToStation(x,stationKey);});
+  }
+  return rows.reduce(function(out,row){
+    var part=managerIncomePartsFromRow(row);
+    if(part)out[part.kind]+=part.amount;
+    out.total=out.player+out.combo+out.other;
+    return out;
+  },{player:0,combo:0,other:0,total:0});
 }
 function managerBudgetState(rules,spent){
   var lineup=MANAGER_REMOTE_STATE&&MANAGER_REMOTE_STATE.lineup?MANAGER_REMOTE_STATE.lineup:null;
@@ -1667,8 +1701,9 @@ function managerCalc(){
   var actual=managerScoreScenario(players,function(p){return MANAGER_PREDICTIONS[p.id]||'OUT';});
   var bestMap=managerBestRoundMap(players),best=managerScoreScenario(players,function(p){return bestMap[p.id]||'OUT';});
   var budget=managerBudgetState(rules,spent);
+  var stationIncome=managerStationIncomeSummary();
   var legal=players.length>=rules.minPlayers&&players.length<=rules.maxPlayers&&spent<=budget.usableStart;
-  return {players:players,spent:spent,lineupCost:lineupCost,sunkCost:effectiveSunk,budget:budget.usableStart,stationUsed:budget.stationUsed,stationRemaining:budget.stationRemaining,walletStart:budget.walletStart,walletSeasonStart:budget.walletSeasonStart,walletStationStart:budget.walletStationStart,walletCurrent:budget.walletCurrent,walletUsed:budget.walletUsed,remaining:budget.currentAvailable,gross:actual.gross,bonus:actual.bonus,stable:actual.stable,finalBonus:actual.finalBonus,champBonus:actual.champBonus,jewelBonus:actual.jewelBonus,net:actual.gross+actual.bonus-spent,max:best.gross+best.bonus-spent,maxGross:best.gross,maxBonus:best.bonus,legal:legal,warning:managerPredictionWarning(players),style:managerLineupStyle(players)};
+  return {players:players,spent:spent,lineupCost:lineupCost,sunkCost:effectiveSunk,budget:budget.usableStart,stationIncome:stationIncome,stationUsed:budget.stationUsed,stationRemaining:budget.stationRemaining,walletStart:budget.walletStart,walletSeasonStart:budget.walletSeasonStart,walletStationStart:budget.walletStationStart,walletCurrent:budget.walletCurrent,walletUsed:budget.walletUsed,remaining:budget.currentAvailable,gross:actual.gross,bonus:actual.bonus,stable:actual.stable,finalBonus:actual.finalBonus,champBonus:actual.champBonus,jewelBonus:actual.jewelBonus,net:actual.gross+actual.bonus-spent,max:best.gross+best.bonus-spent,maxGross:best.gross,maxBonus:best.bonus,legal:legal,warning:managerPredictionWarning(players),style:managerLineupStyle(players)};
 }
 function managerLineupStyle(players){
   if(!players.length)return '待建仓';
@@ -1820,8 +1855,9 @@ function managerMoneyAmount(value,cls){
 function managerMoneyCards(c,rules){
   var walletSeasonStart=Number.isFinite(Number(c.walletSeasonStart))?c.walletSeasonStart:rules.initialWallet;
   var walletStationStart=Number.isFinite(Number(c.walletStationStart))?c.walletStationStart:c.walletStart;
-  return '<div class="manager-money hot"><b>'+managerMoneyAmount(c.budget)+'</b><span>总可用额度<br>经纪人本金 + 本站签约金<br>本站赢得钱全部带到下一站</span></div>'+
-    '<div class="manager-money"><b>'+managerMoneyAmount(c.walletCurrent)+'</b><span>经纪人本金<br>赛季起始值 '+managerMoneyAmount(walletSeasonStart,'inline')+'，本站起始值 '+managerMoneyAmount(walletStationStart,'inline')+'，当前值 '+managerMoneyAmount(c.walletCurrent,'inline')+'<br>所有收益都归到本金！</span></div>'+
+  var income=c.stationIncome||{player:0,combo:0,other:0,total:0};
+  return '<div class="manager-money hot"><b>'+managerMoneyAmount(income.total)+'</b><span>本站总收益<br>球员收益 '+managerMoneyAmount(income.player,'inline')+'，combo收益 '+managerMoneyAmount(income.combo,'inline')+'，其他收益 '+managerMoneyAmount(income.other,'inline')+'<br>所有收益归入本金带走。</span></div>'+
+    '<div class="manager-money"><b>'+managerMoneyAmount(c.walletCurrent)+'</b><span>经纪人本金<br>赛季起始值 '+managerMoneyAmount(walletSeasonStart,'inline')+'，本站起始值 '+managerMoneyAmount(walletStationStart,'inline')+'，当前值 '+managerMoneyAmount(c.walletCurrent,'inline')+'<br>所有本金归你，可以带到下一站</span></div>'+
     '<div class="manager-money"><b>'+managerMoneyAmount(c.stationRemaining)+'</b><span>本站签约金<br>起始值 '+managerMoneyAmount(rules.stationGrant,'inline')+'，当前值 '+managerMoneyAmount(c.stationRemaining,'inline')+'<br>只能本站使用，带不到下一站</span></div>'+
     '<div class="manager-money"><b>'+managerMoneyAmount(c.remaining)+'</b><span>剩余可用额度<br>已花费 '+managerMoneyAmount(c.spent,'inline')+'，其中本金 '+managerMoneyAmount(c.walletUsed,'inline')+'</span></div>';
 }
@@ -2350,11 +2386,11 @@ function managerDailyIncomeSummary(){
   var stationKey=managerStationKey(),todayKey=managerChinaDateKey(),rows=managerIncomeLedgerRows();
   function amount(x){return Math.max(0,Number(x.amount)||0);}
   var todayRows=rows.filter(function(x){
-    return (x.station_key||stationKey)===stationKey&&managerChinaDateKey(x.created_at||x.updated_at)===todayKey;
+    return managerLedgerBelongsToStation(x,stationKey)&&managerChinaDateKey(x.created_at||x.updated_at)===todayKey;
   });
   var yesterdayIncome=todayRows.reduce(function(s,x){return s+amount(x);},0);
   if(yesterdayIncome<=0)return null;
-  var stationTotal=rows.filter(function(x){return (x.station_key||stationKey)===stationKey;}).reduce(function(s,x){return s+amount(x);},0);
+  var stationTotal=rows.filter(function(x){return managerLedgerBelongsToStation(x,stationKey);}).reduce(function(s,x){return s+amount(x);},0);
   var careerTotal=rows.reduce(function(s,x){return s+amount(x);},0);
   return {dateKey:todayKey,yesterdayIncome:yesterdayIncome,stationTotal:stationTotal,careerTotal:careerTotal};
 }
