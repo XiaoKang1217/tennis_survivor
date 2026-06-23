@@ -917,20 +917,64 @@ function updateEventPrices(event, rankings, elos, warnings, snapshotDate, aliase
     const freshScore = Number.isFinite(Number(fact.peak_fresh_score)) ? Number(fact.peak_fresh_score) : 50;
     const formScore = round2(closeScore * 0.70 + freshScore * 0.30);
     const manualScore = toNum(player.scores?.manual) || 0;
-    const scores = {
+    let scores = {
       base: baseScore,
       surface: surfaceScore,
       draw: drawScore,
       form: formScore,
       manual: manualScore
     };
-    const totalScore = scoreTotal(scores);
-    const price = marketPrice(totalScore, actual.expected_points || 0, event);
-    const tier = priceTier(price, event);
-    const breakeven = breakevenRound(price, actualSimulation.pointTable, actualSimulation.stages);
+    let totalScore = scoreTotal(scores);
+    let price = marketPrice(totalScore, actual.expected_points || 0, event);
+    let tier = priceTier(price, event);
+    let breakeven = breakevenRound(price, actualSimulation.pointTable, actualSimulation.stages);
     const drawFacts = drawRowsByKey.get(key) || {};
     if (!fact.ranking && !player.is_qualifier_placeholder) sourceWarnings.push(`${player.name_en || player.name_zh}: missing official ranking.`);
     if (!fact.elo && !player.is_qualifier_placeholder) sourceWarnings.push(`${player.name_en || player.name_zh}: missing TA Elo, used neutral/proxy score.`);
+    const computedPricingDetail = {
+      formula_version: 'build-prices-v1',
+      weights: WEIGHTS,
+      point_table: actualSimulation.pointTable,
+      ranking_source: fact.ranking?.source_url || 'missing_official_ranking',
+      elo_source: fact.elo?.source_url || 'missing_or_event_proxy',
+      surface_elo_field: surfaceEloField,
+      peak_elo: round2(fact.peak_elo),
+      peak_month: fact.peak_month || null,
+      peak_close_score: round2(fact.peak_close_score),
+      peak_recency_score: round2(fact.peak_fresh_score),
+      draw_bonus_raw: round2(drawFacts.draw_bonus),
+      draw_actual_expected_points: round2(drawFacts.actual),
+      draw_same_bucket_baseline_points: round2(drawFacts.baseline),
+      draw_bucket: drawFacts.bucket,
+      draw_baseline_sample_count: drawFacts.baseline_sample_count,
+      score_explanation: {
+        base: '65% TA overall Elo percentile + 35% official ranking inverse percentile.',
+        surface: '70% surface Elo percentile + 30% surface bonus percentile.',
+        draw: 'Same-bucket draw bonus percentile: actual expected points minus average after swapping into legal comparable draw slots.',
+        form: '70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.',
+        manual: 'Manual correction defaults to 0.'
+      }
+    };
+    let pricingDetail = computedPricingDetail;
+    const preR1Substitution = player.pre_r1_substitution || null;
+    const inheritedPrice = Number(player.price);
+    if (preR1Substitution && Number.isFinite(inheritedPrice) && inheritedPrice > 0) {
+      scores = player.scores || scores;
+      totalScore = player.total_score ?? scoreTotal(scores);
+      price = inheritedPrice;
+      tier = player.tier || priceTier(price, event);
+      breakeven = player.breakeven_round || breakevenRound(price, actualSimulation.pointTable, actualSimulation.stages);
+      pricingDetail = {
+        ...(player.pricing_detail || {}),
+        formula_version: player.pricing_detail?.formula_version || 'pre-r1-substitution-inherited-price',
+        contract_price_policy: 'keep_original_contract_price',
+        inherited_from_player_key: preR1Substitution.out_player_key || null,
+        inherited_from_name_en: preR1Substitution.out_name_en || null,
+        inherited_from_name_zh: preR1Substitution.out_name_zh || null,
+        original_contract_price: preR1Substitution.original_contract_price ?? price,
+        replacement_pricing_reference: computedPricingDetail
+      };
+    }
     return {
       ...player,
       player_key: key,
@@ -950,30 +994,7 @@ function updateEventPrices(event, rankings, elos, warnings, snapshotDate, aliase
       total_score: totalScore,
       price,
       tier,
-      pricing_detail: {
-        formula_version: 'build-prices-v1',
-        weights: WEIGHTS,
-        point_table: actualSimulation.pointTable,
-        ranking_source: fact.ranking?.source_url || 'missing_official_ranking',
-        elo_source: fact.elo?.source_url || 'missing_or_event_proxy',
-        surface_elo_field: surfaceEloField,
-        peak_elo: round2(fact.peak_elo),
-        peak_month: fact.peak_month || null,
-        peak_close_score: round2(fact.peak_close_score),
-        peak_recency_score: round2(fact.peak_fresh_score),
-        draw_bonus_raw: round2(drawFacts.draw_bonus),
-        draw_actual_expected_points: round2(drawFacts.actual),
-        draw_same_bucket_baseline_points: round2(drawFacts.baseline),
-        draw_bucket: drawFacts.bucket,
-        draw_baseline_sample_count: drawFacts.baseline_sample_count,
-        score_explanation: {
-          base: '65% TA overall Elo percentile + 35% official ranking inverse percentile.',
-          surface: '70% surface Elo percentile + 30% surface bonus percentile.',
-          draw: 'Same-bucket draw bonus percentile: actual expected points minus average after swapping into legal comparable draw slots.',
-          form: '70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.',
-          manual: 'Manual correction defaults to 0.'
-        }
-      }
+      pricing_detail: pricingDetail
     };
   });
 
@@ -1031,7 +1052,9 @@ function snapshotFor(active, events, sourceStatus, warnings) {
         price: player.price || 0,
         tier: player.tier || priceTier(player.price || 0, event),
         pricing_detail: player.pricing_detail || null,
-        is_qualifier_placeholder: !!player.is_qualifier_placeholder
+        is_qualifier_placeholder: !!player.is_qualifier_placeholder,
+        pre_r1_substitution: player.pre_r1_substitution || null,
+        qualifier_replacement: player.qualifier_replacement || null
       }))
     }))
   };

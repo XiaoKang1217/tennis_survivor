@@ -25,8 +25,8 @@ Current station selection is still manual: edit `data/manager/active_events.json
 
 4. `apply-pre-r1-substitutions.mjs`
    - Reads same draw-position pre-R1 substitution markers created during draw refresh, syncs the replacement player rows, and calls the service-role RPC that updates submitted contracts to the replacement player while keeping the original contract price.
-   - Requires migration `202606210006_manager_pre_r1_substitution_price_policy.sql`; without it, the script exits successfully with a warning instead of calling the old price-changing RPC.
-   - Skips substitutions after the main draw has started; those need manual review.
+   - Requires migrations `202606210006_manager_pre_r1_substitution_price_policy.sql` and `202606230004_manager_pre_r1_substitution_repair.sql`; without the RPC, the script exits successfully with a warning instead of calling the old price-changing RPC.
+   - Can be rerun after the main draw has started to repair missed substitutions. The report marks those rows as `late_review`, but still applies them with service-role access.
 
 5. `sync-current-station.mjs`
    - Runs validation, station sync, Tennis Abstract Elo imports, and reviewed photo metadata sync in order.

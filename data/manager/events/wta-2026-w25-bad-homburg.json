@@ -1159,20 +1159,63 @@
       "surface_elo": null,
       "peak_elo": null,
       "peak_month": null,
-      "expected_points": null,
-      "expected_round": null,
-      "breakeven_round": null,
+      "expected_points": 93.21,
+      "expected_round": "R16",
+      "breakeven_round": "SF",
       "scores": {
-        "base": 50,
-        "surface": 50,
-        "draw": 50,
-        "form": 50,
+        "base": 71.66,
+        "surface": 80,
+        "draw": 0,
+        "form": 95.87,
         "manual": 0
       },
-      "total_score": null,
-      "price": 0,
-      "tier": null,
-      "pricing_detail": null,
+      "total_score": 59.46,
+      "price": 110,
+      "tier": "C",
+      "pricing_detail": {
+        "formula_version": "build-prices-v1",
+        "weights": {
+          "base": 0.35,
+          "surface": 0.25,
+          "draw": 0.2,
+          "form": 0.15,
+          "manual": 0.05
+        },
+        "point_table": {
+          "R128": 0,
+          "R64": 0,
+          "R32": 1,
+          "R16": 60,
+          "QF": 108,
+          "SF": 195,
+          "F": 325,
+          "W": 500
+        },
+        "ranking_source": "https://api.wtatennis.com/tennis/players/ranked?page=0&pageSize=100&type=rankSingles&sort=asc&metric=SINGLES&at=2026-06-15&name=&nationality=",
+        "elo_source": "https://tennisabstract.com/reports/wta_elo_ratings.html",
+        "surface_elo_field": "grass_elo",
+        "peak_elo": 1951.1,
+        "peak_month": "2026-02",
+        "peak_close_score": 97.67,
+        "peak_recency_score": 91.67,
+        "draw_bonus_raw": -20.56,
+        "draw_actual_expected_points": 93.21,
+        "draw_same_bucket_baseline_points": 113.77,
+        "draw_bucket": "seed",
+        "draw_baseline_sample_count": 4,
+        "score_explanation": {
+          "base": "65% TA overall Elo percentile + 35% official ranking inverse percentile.",
+          "surface": "70% surface Elo percentile + 30% surface bonus percentile.",
+          "draw": "Same-bucket draw bonus percentile: actual expected points minus average after swapping into legal comparable draw slots.",
+          "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
+          "manual": "Manual correction defaults to 0."
+        },
+        "contract_price_policy": "keep_original_contract_price",
+        "inherited_from_player_key": "WTA|iva-jovic",
+        "inherited_from_name_en": "Iva Jovic",
+        "inherited_from_name_zh": "约维奇",
+        "original_contract_price": 110
+      },
       "qualifier_replacement": null,
       "pre_r1_substitution": {
         "out_player_key": "WTA|iva-jovic",
@@ -1185,7 +1228,9 @@
         "replacement_profile_id": "320716",
         "draw_position": 17,
         "reason": "pre_r1_withdrawal",
-        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true"
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/32017/2026/device/0/horizontal/true",
+        "contract_price_policy": "keep_original_contract_price",
+        "original_contract_price": 110
       }
     },
     {

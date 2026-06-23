@@ -74,6 +74,8 @@ export function buildStationPayload({ active, events, photoMap = {}, priceVersio
       const scores = player.scores || {};
       const photoStatus = normalizePhotoStatus(photo.status, Boolean(photo.photo_url));
       const profileUrl = officialProfileUrl(tour, player);
+      const preR1Substitution = player.pre_r1_substitution || null;
+      const playerPrice = Number.isFinite(Number(player.price)) ? Number(player.price) : 0;
 
       playerRowsByKey.set(`${tour}:${playerKey}`, {
         tour,
@@ -92,7 +94,8 @@ export function buildStationPayload({ active, events, photoMap = {}, priceVersio
         source: {
           source_urls: sourceUrls,
           source_file_player_key: player.player_key || null,
-          is_qualifier_placeholder: !!player.is_qualifier_placeholder
+          is_qualifier_placeholder: !!player.is_qualifier_placeholder,
+          pre_r1_substitution: preR1Substitution
         }
       });
 
@@ -136,7 +139,7 @@ export function buildStationPayload({ active, events, photoMap = {}, priceVersio
         draw_score: scores.draw ?? 50,
         form_score: scores.form ?? 50,
         manual_score: scores.manual ?? 0,
-        price: player.price,
+        price: playerPrice,
         photo_url: photo.photo_url || null,
         photo_status: photoStatus,
         photo_storage_path: photo.storage_path || null,
@@ -147,7 +150,10 @@ export function buildStationPayload({ active, events, photoMap = {}, priceVersio
           path_note: player.path_note || '',
           source_urls: sourceUrls,
           source_file_player_key: player.player_key || null,
-          pricing_detail: player.pricing_detail || null
+          pricing_detail: player.pricing_detail || null,
+          pre_r1_substitution: preR1Substitution,
+          contract_price_policy: preR1Substitution?.contract_price_policy || null,
+          original_contract_price: preR1Substitution?.original_contract_price ?? null
         }
       });
 
@@ -170,8 +176,8 @@ export function buildStationPayload({ active, events, photoMap = {}, priceVersio
         expected_points: player.expected_points || null,
         expected_round: player.expected_round || null,
         breakeven_round: player.breakeven_round || null,
-        price: player.price,
-        tier: priceTier(player.price, event),
+        price: playerPrice,
+        tier: priceTier(playerPrice, event),
         source_facts: {
           rank: player.rank || null,
           seed: player.seed || null,
@@ -182,7 +188,10 @@ export function buildStationPayload({ active, events, photoMap = {}, priceVersio
           draw_position: player.draw_position || null,
           path_note: player.path_note || '',
           pricing_formula: event.pricing_formula || null,
-          pricing_detail: player.pricing_detail || null
+          pricing_detail: player.pricing_detail || null,
+          pre_r1_substitution: preR1Substitution,
+          contract_price_policy: preR1Substitution?.contract_price_policy || null,
+          original_contract_price: preR1Substitution?.original_contract_price ?? null
         }
       });
     }

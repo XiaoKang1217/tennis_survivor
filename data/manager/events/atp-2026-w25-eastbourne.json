@@ -593,20 +593,63 @@
       "surface_elo": null,
       "peak_elo": null,
       "peak_month": null,
-      "expected_points": null,
-      "expected_round": null,
-      "breakeven_round": null,
+      "expected_points": 78.48,
+      "expected_round": "QF",
+      "breakeven_round": "SF",
       "scores": {
-        "base": 50,
-        "surface": 50,
-        "draw": 50,
-        "form": 50,
+        "base": 88.7,
+        "surface": 65.19,
+        "draw": 66.67,
+        "form": 88.84,
         "manual": 0
       },
-      "total_score": null,
-      "price": 0,
-      "tier": null,
-      "pricing_detail": null,
+      "total_score": 74,
+      "price": 80,
+      "tier": "B",
+      "pricing_detail": {
+        "formula_version": "build-prices-v1",
+        "weights": {
+          "base": 0.35,
+          "surface": 0.25,
+          "draw": 0.2,
+          "form": 0.15,
+          "manual": 0.05
+        },
+        "point_table": {
+          "R128": 0,
+          "R64": 0,
+          "R32": 0,
+          "R16": 25,
+          "QF": 50,
+          "SF": 100,
+          "F": 165,
+          "W": 250
+        },
+        "ranking_source": "https://www.live-tennis.cn/zh/rank/atp/s/year",
+        "elo_source": "https://tennisabstract.com/reports/atp_elo_ratings.html",
+        "surface_elo_field": "grass_elo",
+        "peak_elo": 1961.6,
+        "peak_month": "2025-04",
+        "peak_close_score": 96.56,
+        "peak_recency_score": 70.83,
+        "draw_bonus_raw": 1.36,
+        "draw_actual_expected_points": 78.48,
+        "draw_same_bucket_baseline_points": 77.12,
+        "draw_bucket": "seed_bye",
+        "draw_baseline_sample_count": 4,
+        "score_explanation": {
+          "base": "65% TA overall Elo percentile + 35% official ranking inverse percentile.",
+          "surface": "70% surface Elo percentile + 30% surface bonus percentile.",
+          "draw": "Same-bucket draw bonus percentile: actual expected points minus average after swapping into legal comparable draw slots.",
+          "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
+          "manual": "Manual correction defaults to 0."
+        },
+        "contract_price_policy": "keep_original_contract_price",
+        "inherited_from_player_key": "ATP|francisco-cerundolo",
+        "inherited_from_name_en": "Francisco CERUNDOLO",
+        "inherited_from_name_zh": "弗-塞伦多洛",
+        "original_contract_price": 80
+      },
       "qualifier_replacement": null,
       "pre_r1_substitution": {
         "out_player_key": "ATP|francisco-cerundolo",
@@ -619,7 +662,9 @@
         "replacement_profile_id": "S0TM",
         "draw_position": 9,
         "reason": "pre_r1_withdrawal",
-        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/20741/2026/device/0/horizontal/true"
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/20741/2026/device/0/horizontal/true",
+        "contract_price_policy": "keep_original_contract_price",
+        "original_contract_price": 80
       }
     },
     {
@@ -1092,20 +1137,63 @@
       "surface_elo": null,
       "peak_elo": null,
       "peak_month": null,
-      "expected_points": null,
-      "expected_round": null,
-      "breakeven_round": null,
+      "expected_points": 60.28,
+      "expected_round": "QF",
+      "breakeven_round": "SF",
       "scores": {
-        "base": 50,
-        "surface": 50,
-        "draw": 50,
-        "form": 50,
+        "base": 75.19,
+        "surface": 86.3,
+        "draw": 85.19,
+        "form": 83.28,
         "manual": 0
       },
-      "total_score": null,
-      "price": 0,
-      "tier": null,
-      "pricing_detail": null,
+      "total_score": 77.42,
+      "price": 85,
+      "tier": "B",
+      "pricing_detail": {
+        "formula_version": "build-prices-v1",
+        "weights": {
+          "base": 0.35,
+          "surface": 0.25,
+          "draw": 0.2,
+          "form": 0.15,
+          "manual": 0.05
+        },
+        "point_table": {
+          "R128": 0,
+          "R64": 0,
+          "R32": 0,
+          "R16": 25,
+          "QF": 50,
+          "SF": 100,
+          "F": 165,
+          "W": 250
+        },
+        "ranking_source": "https://www.live-tennis.cn/zh/rank/atp/s/year",
+        "elo_source": "https://tennisabstract.com/reports/atp_elo_ratings.html",
+        "surface_elo_field": "grass_elo",
+        "peak_elo": 1909.5,
+        "peak_month": "2024-09",
+        "peak_close_score": 94.87,
+        "peak_recency_score": 56.25,
+        "draw_bonus_raw": 3.37,
+        "draw_actual_expected_points": 60.28,
+        "draw_same_bucket_baseline_points": 56.91,
+        "draw_bucket": "seed",
+        "draw_baseline_sample_count": 4,
+        "score_explanation": {
+          "base": "65% TA overall Elo percentile + 35% official ranking inverse percentile.",
+          "surface": "70% surface Elo percentile + 30% surface bonus percentile.",
+          "draw": "Same-bucket draw bonus percentile: actual expected points minus average after swapping into legal comparable draw slots.",
+          "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
+          "manual": "Manual correction defaults to 0."
+        },
+        "contract_price_policy": "keep_original_contract_price",
+        "inherited_from_player_key": "ATP|brandon-nakashima",
+        "inherited_from_name_en": "Brandon NAKASHIMA",
+        "inherited_from_name_zh": "中岛布兰登",
+        "original_contract_price": 85
+      },
       "qualifier_replacement": null,
       "pre_r1_substitution": {
         "out_player_key": "ATP|brandon-nakashima",
@@ -1118,7 +1206,9 @@
         "replacement_profile_id": "GC88",
         "draw_position": 17,
         "reason": "pre_r1_withdrawal",
-        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/20741/2026/device/0/horizontal/true"
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/20741/2026/device/0/horizontal/true",
+        "contract_price_policy": "keep_original_contract_price",
+        "original_contract_price": 85
       }
     },
     {
@@ -1291,20 +1381,63 @@
       "surface_elo": null,
       "peak_elo": null,
       "peak_month": null,
-      "expected_points": null,
-      "expected_round": null,
-      "breakeven_round": null,
+      "expected_points": 14.64,
+      "expected_round": "R32",
+      "breakeven_round": "QF",
       "scores": {
-        "base": 50,
-        "surface": 50,
-        "draw": 50,
-        "form": 50,
+        "base": 52.78,
+        "surface": 14.07,
+        "draw": 22.22,
+        "form": 91.37,
         "manual": 0
       },
-      "total_score": null,
-      "price": 0,
-      "tier": null,
-      "pricing_detail": null,
+      "total_score": 40.14,
+      "price": 30,
+      "tier": "D",
+      "pricing_detail": {
+        "formula_version": "build-prices-v1",
+        "weights": {
+          "base": 0.35,
+          "surface": 0.25,
+          "draw": 0.2,
+          "form": 0.15,
+          "manual": 0.05
+        },
+        "point_table": {
+          "R128": 0,
+          "R64": 0,
+          "R32": 0,
+          "R16": 25,
+          "QF": 50,
+          "SF": 100,
+          "F": 165,
+          "W": 250
+        },
+        "ranking_source": "https://www.live-tennis.cn/zh/rank/atp/s/year",
+        "elo_source": "https://tennisabstract.com/reports/atp_elo_ratings.html",
+        "surface_elo_field": "grass_elo",
+        "peak_elo": 1771.9,
+        "peak_month": "2025-05",
+        "peak_close_score": 99.28,
+        "peak_recency_score": 72.92,
+        "draw_bonus_raw": -0.99,
+        "draw_actual_expected_points": 14.64,
+        "draw_same_bucket_baseline_points": 15.63,
+        "draw_bucket": "direct",
+        "draw_baseline_sample_count": 16,
+        "score_explanation": {
+          "base": "65% TA overall Elo percentile + 35% official ranking inverse percentile.",
+          "surface": "70% surface Elo percentile + 30% surface bonus percentile.",
+          "draw": "Same-bucket draw bonus percentile: actual expected points minus average after swapping into legal comparable draw slots.",
+          "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
+          "manual": "Manual correction defaults to 0."
+        },
+        "contract_price_policy": "keep_original_contract_price",
+        "inherited_from_player_key": "ATP|camilo-ugo-carabelli",
+        "inherited_from_name_en": "Camilo UGO CARABELLI",
+        "inherited_from_name_zh": "乌戈-卡拉贝利",
+        "original_contract_price": 30
+      },
       "qualifier_replacement": null,
       "pre_r1_substitution": {
         "out_player_key": "ATP|camilo-ugo-carabelli",
@@ -1317,7 +1450,9 @@
         "replacement_profile_id": "TA29",
         "draw_position": 20,
         "reason": "pre_r1_withdrawal",
-        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/20741/2026/device/0/horizontal/true"
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/20741/2026/device/0/horizontal/true",
+        "contract_price_policy": "keep_original_contract_price",
+        "original_contract_price": 30
       }
     },
     {

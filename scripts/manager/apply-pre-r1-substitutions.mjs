@@ -21,21 +21,12 @@ const report = {
   dry_run: dryRun,
   sync_rows: syncRows && !dryRun,
   substitutions,
+  late_review: substitutions.filter((item) => isMainDrawStarted(item.main_draw_first_match_at, now)),
   skipped: [],
   applied: []
 };
 
-const pending = [];
-for (const item of substitutions) {
-  if (isMainDrawStarted(item.main_draw_first_match_at, now)) {
-    report.skipped.push({
-      ...item,
-      skipped_reason: 'main_draw_already_started'
-    });
-  } else {
-    pending.push(item);
-  }
-}
+const pending = substitutions;
 
 if (!substitutions.length) {
   await writeJson(outFile, report);
@@ -43,15 +34,9 @@ if (!substitutions.length) {
   process.exit(0);
 }
 
-if (!pending.length) {
-  await writeJson(outFile, report);
-  console.log(`No eligible pre-R1 substitutions before main draw start. skipped=${report.skipped.length} report=${outFile}`);
-  process.exit(0);
-}
-
 if (dryRun) {
   await writeJson(outFile, report);
-  console.log(`Dry run. pre_r1_substitutions=${pending.length} skipped=${report.skipped.length} report=${outFile}`);
+  console.log(`Dry run. pre_r1_substitutions=${pending.length} late_review=${report.late_review.length} report=${outFile}`);
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
     console.log('Set SUPABASE_SERVICE_ROLE_KEY to apply pre-R1 substitutions to Supabase.');
   }
@@ -95,21 +80,13 @@ for (const item of pending) {
       console.log(`WARN ${report.warning} report=${outFile}`);
       process.exit(0);
     }
-    if (isTooLateSubstitutionError(error)) {
-      report.skipped.push({
-        ...item,
-        skipped_reason: 'main_draw_already_started',
-        error: String(error?.message || error)
-      });
-      continue;
-    }
     throw error;
   }
 }
 
 await writeJson(outFile, report);
 const changed = report.applied.filter((item) => item.updated_contracts > 0);
-console.log(`Applied pre-R1 substitutions for ${active.station_key}. scanned=${substitutions.length} updated=${changed.length} skipped=${report.skipped.length} report=${outFile}`);
+console.log(`Applied pre-R1 substitutions for ${active.station_key}. scanned=${substitutions.length} updated=${changed.length} late_review=${report.late_review.length} report=${outFile}`);
 for (const item of changed) {
   console.log(`${item.event_key} ${item.out_player_key} -> ${item.replacement_player_key}: contracts=${item.updated_contracts}`);
 }
@@ -124,8 +101,4 @@ function isMissingPreR1SubstitutionRpc(error) {
   const message = String(error?.message || error || '');
   return /tour_manager_apply_pre_r1_substitution_v2/.test(message)
     && (/PGRST202/.test(message) || /Could not find/i.test(message) || /rpc failed:\s*404/.test(message));
-}
-
-function isTooLateSubstitutionError(error) {
-  return /main_draw_already_started/.test(String(error?.message || error || ''));
 }

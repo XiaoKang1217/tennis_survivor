@@ -299,8 +299,8 @@ export function mergeDrawPlayers(event, parsedPlayers, sourceUrl = '') {
       && !oldByIdentity
       && !sameDrawPlayer(event.tour, oldByPosition, player)
     );
-    const old = oldByIdentity || (isQualifierPlacement ? oldByPosition : null) || {};
-    const stableKey = isQualifierPlacement ? key : (old.player_key || key);
+    const old = oldByIdentity || ((isQualifierPlacement || isPreR1Substitution) ? oldByPosition : null) || {};
+    const stableKey = (isQualifierPlacement || isPreR1Substitution) ? key : (old.player_key || key);
     const qualifierReplacement = isQualifierPlacement
       ? {
           placeholder_player_key: oldByPosition.player_key || canonicalPlayerKey(event.tour, oldByPosition),
@@ -327,7 +327,9 @@ export function mergeDrawPlayers(event, parsedPlayers, sourceUrl = '') {
           replacement_profile_id: player.profile_id || null,
           draw_position: Number(player.draw_position),
           reason: 'pre_r1_withdrawal',
-          source_url: sourceUrl || player.source || null
+          source_url: sourceUrl || player.source || null,
+          contract_price_policy: 'keep_original_contract_price',
+          original_contract_price: oldByPosition?.price ?? null
         }
       : old.pre_r1_substitution || null;
     return {
@@ -335,14 +337,14 @@ export function mergeDrawPlayers(event, parsedPlayers, sourceUrl = '') {
       ...player,
       player_key: stableKey,
       is_qualifier_placeholder: !!player.is_qualifier_placeholder,
-      name_en: isQualifierPlacement ? player.name_en : (old.name_en || player.name_en),
-      name_zh: isQualifierPlacement ? player.name_zh : (old.name_zh || player.name_zh),
-      rank: old.rank ?? player.rank ?? null,
-      points: old.points ?? player.points ?? null,
-      overall_elo: old.overall_elo ?? null,
-      surface_elo: old.surface_elo ?? null,
-      peak_elo: old.peak_elo ?? null,
-      peak_month: old.peak_month ?? null,
+      name_en: (isQualifierPlacement || isPreR1Substitution) ? player.name_en : (old.name_en || player.name_en),
+      name_zh: (isQualifierPlacement || isPreR1Substitution) ? player.name_zh : (old.name_zh || player.name_zh),
+      rank: isPreR1Substitution ? (player.rank ?? old.rank ?? null) : (old.rank ?? player.rank ?? null),
+      points: isPreR1Substitution ? (player.points ?? old.points ?? null) : (old.points ?? player.points ?? null),
+      overall_elo: isPreR1Substitution ? (player.overall_elo ?? old.overall_elo ?? null) : (old.overall_elo ?? null),
+      surface_elo: isPreR1Substitution ? (player.surface_elo ?? old.surface_elo ?? null) : (old.surface_elo ?? null),
+      peak_elo: isPreR1Substitution ? (player.peak_elo ?? old.peak_elo ?? null) : (old.peak_elo ?? null),
+      peak_month: isPreR1Substitution ? (player.peak_month ?? old.peak_month ?? null) : (old.peak_month ?? null),
       expected_points: old.expected_points ?? null,
       expected_round: old.expected_round ?? null,
       breakeven_round: old.breakeven_round ?? null,
