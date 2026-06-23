@@ -111,29 +111,68 @@ def _event_records_total(session, event_id, gender):
         print(f"  WARN: 检查赛事数据失败 event={event_id} gender={gender}: {e}")
         return 0, 0
 
-def _pick_active_event(session, events, gender):
+def _calendar_active_event(cal_cache, event_name, gender, today):
+    if not cal_cache or not event_name or not today:
+        return False
+    tour = 'ATP' if gender == 'MS' else 'WTA'
+    rows = (cal_cache.get('by_alias') or {}).get((tour, official_scoring.norm_event_key(event_name)), [])
+    for rec in rows:
+        if int(rec.get('year') or 0) != today.year:
+            continue
+        start = official_scoring.parse_ymd(rec.get('start_date'))
+        end = official_scoring.parse_ymd(rec.get('end_date')) or start
+        if start and end and start <= today <= end:
+            return True
+    return False
+
+def _official_current_candidates(session, events, gender, cal_cache, today):
+    if not cal_cache or not today:
+        return []
+    current = []
+    for eid in events:
+        try:
+            name = get_event_name(session, eid, gender)
+        except Exception as e:
+            print(f"  WARN: 读取赛事名称失败 event={eid} gender={gender}: {e}")
+            continue
+        if _calendar_active_event(cal_cache, name, gender, today):
+            current.append((eid, name))
+    if current:
+        print(f"  {gender} 官方赛历当前候选: {current[:5]}")
+    return current
+
+def _pick_active_event(session, events, gender, cal_cache=None, today=None):
     """从菜单候选里选择真正进行中的赛事：要求 score/detail 都有记录。"""
     if not events:
         return None
+    official_current = _official_current_candidates(session, events, gender, cal_cache, today)
+    candidates = [eid for eid, _ in official_current] if official_current else events
     checked = []
-    for eid in events:
+    for eid in candidates:
         score_total, detail_total = _event_records_total(session, eid, gender)
         checked.append((eid, score_total, detail_total))
         if detail_total > 0:
             print(f"  {gender} 选择进行中赛事 event={eid}, score_records={score_total}, detail_records={detail_total}")
             return eid
+    if official_current:
+        print(f"  WARN: {gender} 官方当前候选未查到完整 detail，fallback 到官方赛历第一个当前候选: {checked[:5]}")
+        return official_current[0][0]
     # 如果所有候选都无完整数据，保底返回菜单第一个，避免流程完全失败
     print(f"  WARN: {gender} 菜单候选均无完整 detail 数据，fallback 到第一个: {checked[:5]}")
     return events[0]
 
-def get_active_events(session):
+def get_active_events(session, cal_cache=None, now_dt=None):
     """从菜单获取ATP/WTA候选赛事，并过滤掉提前露出的下一站空赛事。"""
     resp = session.get(f'{BASE_URL}/zh/survivor/menu', timeout=15)
     html = resp.text
     ms_events = re.findall(r'href="https://www\.live-tennis\.cn/zh/survivor/event/([^/]+)/2026/MS/my"', html)
     ws_events = re.findall(r'href="https://www\.live-tennis\.cn/zh/survivor/event/([^/]+)/2026/WS/my"', html)
     print(f"菜单候选: ATP={ms_events[:5]}, WTA={ws_events[:5]}")
-    return (_pick_active_event(session, ms_events, 'MS'), _pick_active_event(session, ws_events, 'WS'))
+    today = now_dt.date() if now_dt else None
+    return (
+        _pick_active_event(session, ms_events, 'MS', cal_cache, today),
+        _pick_active_event(session, ws_events, 'WS', cal_cache, today),
+    )
 
 def get_internal_id(session, event_id, gender):
     url = f'{BASE_URL}/zh/survivor/event/{event_id}/2026/{gender}/score'
@@ -620,7 +659,7 @@ def main():
     print(f"  当前站/待吸收缓存: {len(event_overlays)} 站")
     
     # 1. 获取活跃比赛
-    ms_eid, ws_eid = get_active_events(session)
+    ms_eid, ws_eid = get_active_events(session, cal_cache, now_dt)
     if not ms_eid or not ws_eid:
         print("ERROR: 未找到活跃比赛")
         sys.exit(1)
