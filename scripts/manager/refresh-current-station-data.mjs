@@ -44,6 +44,7 @@ for (const entry of events) {
     draw_players: 0,
     draw_updated: false,
     matches: 0,
+    duplicate_matches_dropped: 0,
     completed_matches: 0,
     windows_updated: false,
     warnings: []
@@ -92,7 +93,9 @@ if (!skipSchedule) {
   for (let i = 0; i < refreshedEvents.length; i += 1) {
     const entry = refreshedEvents[i];
     const report = reports[i];
-    const rows = matchRowsForEvent(entry.event, resultRecords, report.draw_url || '');
+    const rawRows = matchRowsForEvent(entry.event, resultRecords, report.draw_url || '');
+    const rows = dedupeMatchRows(rawRows);
+    const duplicateMatchesDropped = rawRows.length - rows.length;
     const windows = deriveEventWindows(entry.event, rows, fetchedAt);
     entry.event = {
       ...entry.event,
@@ -101,11 +104,19 @@ if (!skipSchedule) {
       source_urls: mergeSourceUrls(entry.event.source_urls, report.draw_url)
     };
     report.matches = rows.length;
+    report.duplicate_matches_dropped = duplicateMatchesDropped;
+    if (duplicateMatchesDropped > 0) {
+      report.warnings.push(`dropped ${duplicateMatchesDropped} duplicate match row(s) before sync`);
+    }
     report.completed_matches = rows.filter((row) => ['completed', 'walkover', 'retired'].includes(row.status)).length;
     report.windows_updated = Boolean(windows.main_draw_first_match_at || windows.round2_first_match_at);
     allMatchRows.push(...rows);
   }
 }
+
+const syncMatchRows = dedupeMatchRows(allMatchRows);
+const duplicateMatchesDropped = reports.reduce((sum, report) => sum + Number(report.duplicate_matches_dropped || 0), 0)
+  + (allMatchRows.length - syncMatchRows.length);
 
 if (write) {
   for (const { item, event } of refreshedEvents) {
@@ -122,8 +133,9 @@ const out = {
   settle,
   qualifier_placements: collectQualifierPlacements(refreshedEvents, { includeDerived: false }),
   pre_r1_substitutions: collectPreR1Substitutions(refreshedEvents),
+  duplicate_matches_dropped: duplicateMatchesDropped,
   reports,
-  matches: allMatchRows
+  matches: syncMatchRows
 };
 const outFile = `outputs/manager-sync/${active.station_key}-current-station-data.json`;
 await writeJson(outFile, out);
@@ -139,8 +151,8 @@ if (sync) {
   });
   const client = new SupabaseRestClient({ dryRun: false });
   await client.upsert('tour_manager_events', payload.eventRows, 'event_key');
-  if (allMatchRows.length) {
-    await client.upsert('tour_manager_matches', allMatchRows, 'event_key,match_key');
+  if (syncMatchRows.length) {
+    await client.upsert('tour_manager_matches', syncMatchRows, 'event_key,match_key');
   }
   if (settle) {
     const settledFor = args['settled-for-date'] || localDateKey(new Date(Date.now() - 86400000), 8);
@@ -155,7 +167,7 @@ if (sync) {
 }
 
 console.log(`${write ? 'Updated' : 'Dry run'} current station data for ${active.station_key}`);
-console.log(`events=${reports.length} matches=${allMatchRows.length} report=${outFile}`);
+console.log(`events=${reports.length} matches=${syncMatchRows.length} duplicates_dropped=${duplicateMatchesDropped} report=${outFile}`);
 for (const report of reports) {
   const bits = [
     `${report.tour}`,
@@ -178,6 +190,36 @@ function mergeSourceUrls(urls = [], ...items) {
     if (!out.includes(item)) out.push(item);
   }
   return out;
+}
+
+function dedupeMatchRows(rows) {
+  const byKey = new Map();
+  for (const row of rows) {
+    const key = `${row.event_key}\u0000${row.match_key}`;
+    const existing = byKey.get(key);
+    if (!existing || matchRowCompleteness(row) >= matchRowCompleteness(existing)) {
+      byKey.set(key, row);
+    }
+  }
+  return [...byKey.values()];
+}
+
+function matchRowCompleteness(row) {
+  return statusPriority(row.status) * 1000
+    + (row.winner_key || row.winner_name ? 100 : 0)
+    + (row.score ? 40 : 0)
+    + (row.player1_key ? 10 : 0)
+    + (row.player2_key ? 10 : 0)
+    + (row.scheduled_at ? 5 : 0)
+    + (row.source_url ? 1 : 0);
+}
+
+function statusPriority(status) {
+  if (['completed', 'walkover', 'retired'].includes(status)) return 5;
+  if (status === 'live') return 4;
+  if (status === 'scheduled') return 3;
+  if (status === 'cancelled') return 2;
+  return 1;
 }
 
 function stationDateRange(entries) {

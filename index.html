@@ -1721,12 +1721,21 @@ function managerTransferEstimate(fromId,toId){
   var delta=to.price+fee-refund;
   return {from:from,to:to,refund:refund,loss:from.price-refund,fee:fee,delta:delta,newSpent:c.spent+delta,remainingAfter:c.remaining-delta,available:c.remaining};
 }
+function managerEligibleTransferPool(from){
+  if(!from)return [];
+  return managerBuildPool().filter(function(p){
+    if(managerSelected(p.id))return false;
+    if(from.eventKey&&p.eventKey)return p.eventKey===from.eventKey;
+    return p.tour===from.tour;
+  });
+}
 function managerValidateTransfer(est,rules){
   var reasons=[],submitted=managerSubmittedRecord();
   if(!submitted)reasons.push('请先提交阵容！');
   if(!est)reasons.push('请选择要换下和换上的球员。');
   if(MANAGER_TRANSFER_COUNT>=1)reasons.push('每站仅可换人一次！');
   if(est){
+    if(est.from.eventKey&&est.to.eventKey&&est.from.eventKey!==est.to.eventKey)reasons.push('换人必须在同一站内进行，ATP/WTA 窗口分开计算。');
     var windowInfo=managerTransferWindowInfo(est.from.tour);
     if(windowInfo.status==='pending')reasons.push('本站换人窗口期待确认，请等待赛程更新。换人窗口期是每站比赛R1所有比赛结束后，R2所有比赛开始前。');
     if(windowInfo.status==='before')reasons.push('请等待换人窗口期！换人窗口期是每站比赛R1所有比赛结束后，R2所有比赛开始前。本站窗口期：'+windowInfo.label+'。');
@@ -1924,7 +1933,11 @@ function managerRenderTransfer(){
   var tour=players[0]?players[0].tour:(MANAGER_TOUR||'ATP'),windowLine=managerTransferWindowText(tour);
   var ruleHtml='<div class="manager-rule-grid"><div class="manager-rule-card"><b>窗口时间</b><ul class="manager-lines"><li>换人窗口期为 R1 所有比赛结束后，R2 所有比赛开始前。</li><li>本站换人窗口期：'+esc(managerTransferWindowInfo(tour).label)+'。</li><li>新球员下一场必须还没开赛。</li></ul></div><div class="manager-rule-card"><b>换人次数</b><ul class="manager-lines"><li>每站只允许换 1 次。</li><li>当前已用 '+MANAGER_TRANSFER_COUNT+'/1。</li><li>换人记录会进入我的收益。</li></ul></div><div class="manager-rule-card"><b>扣费规则</b><ul class="manager-lines"><li>原球员未出局：退回 70% 原成本。</li><li>沉没成本、新合同和手续费都会写入我的收益。</li><li>手续费：250/500 为 10%，1000/大满贯为 15%。</li></ul></div></div>';
   if(!players.length)return ruleHtml+'<div class="manager-empty" style="margin-top:12px">先建立并提交阵容，开赛后的换人窗口会在这里操作。</div>';
-  var fromId=managerFilterValue('manager-transfer-from',players[0].id),toId=managerFilterValue('manager-transfer-to',pool[0]?pool[0].id:''),est=managerTransferEstimate(fromId,toId);
+  var fromId=managerFilterValue('manager-transfer-from',players[0].id),fromPlayer=players.find(function(p){return p.id===fromId;})||players[0];
+  fromId=fromPlayer.id;
+  pool=managerEligibleTransferPool(fromPlayer);
+  var savedToId=managerFilterValue('manager-transfer-to',pool[0]?pool[0].id:''),toId=pool.some(function(p){return p.id===savedToId;})?savedToId:(pool[0]?pool[0].id:'');
+  var est=managerTransferEstimate(fromId,toId);
   var fromOpts=players.map(function(p){return '<option value="'+esc(p.id)+'" '+(fromId===p.id?'selected':'')+'>'+esc(p.name)+' · $'+p.price+'</option>';}).join('');
   var toOpts=pool.slice(0,40).map(function(p){return '<option value="'+esc(p.id)+'" '+(toId===p.id?'selected':'')+'>'+esc(p.name)+' · '+p.tour+' · $'+p.price+'</option>';}).join('');
   var detail=est?'<div class="manager-sim" style="margin-top:12px"><div class="manager-sim-row"><span>换下合同</span><b>'+esc(est.from.name)+' 原价 $'+est.from.price+'；退回 $'+est.refund+'；沉没 $'+est.loss+'</b></div><div class="manager-sim-row"><span>换上合同</span><b>'+esc(est.to.name)+' 扣 $'+est.to.price+'</b></div><div class="manager-sim-row"><span>手续费</span><b>扣 $'+est.fee+'（新合同 '+Math.round(rules.transferFee*100)+'%）</b></div><div class="manager-sim-row"><span>本次合计</span><b>'+(est.delta>=0?'新增占用 $':'释放额度 $')+Math.abs(est.delta)+'</b></div><div class="manager-sim-row"><span>换后额度</span><b>当前可用 $'+est.available+'；换后剩余 $'+est.remainingAfter+'</b></div></div>':'';
@@ -2494,6 +2507,7 @@ function authErrorText(err){
   if(/submission_window_closed/i.test(msg))return '本站阵容提交已截止。';
   if(/incoming_player_next_match_started/i.test(msg))return '这名球员的下一场已经开始，不能换入。';
   if(/incoming_player_eliminated/i.test(msg))return '这名球员已经出局，不能换入。';
+  if(/transfer_event_mismatch/i.test(msg))return '换人必须在同一站内进行，ATP/WTA 换人窗口分开计算。';
   if(/transfer_limit_reached/i.test(msg))return '每站仅可换人一次！';
   if(/insufficient_wallet_for_transfer|insufficient_budget/i.test(msg))return '钱不够，无法完成这次操作。';
   if(/station_market_not_open/i.test(msg))return '本站球员市场还没有开放。';
