@@ -108,9 +108,9 @@ export function normalizeRoundKey(rawRound = '', event = {}) {
   if (/\bQF\b|QUARTER|1\/4|四分之一|八强/.test(raw)) return 'QF';
   if (/\bSF\b|SEMI|半决/.test(raw)) return 'SF';
   if (/\bF\b|FINAL|决赛/.test(raw)) return 'F';
-  if (/^1R$|ROUND\s*1|第一轮|首轮/.test(raw)) return keys[0];
-  if (/^2R$|ROUND\s*2|第二轮/.test(raw)) return keys[1] || keys[0];
-  if (/^3R$|ROUND\s*3|第三轮/.test(raw)) return keys[2] || keys[keys.length - 2];
+  if (/^1R$|ROUND\s*1|第\s*1\s*轮|第一轮|首轮/.test(raw)) return keys[0];
+  if (/^2R$|ROUND\s*2|第\s*2\s*轮|第二轮/.test(raw)) return keys[1] || keys[0];
+  if (/^3R$|ROUND\s*3|第\s*3\s*轮|第三轮/.test(raw)) return keys[2] || keys[keys.length - 2];
   return keys.find((key) => raw.includes(key)) || keys[0];
 }
 
@@ -516,15 +516,21 @@ export function deriveEventWindows(event, matchRows, fetchedAt = new Date()) {
   const completedR1 = firstRound.filter((row) => ['completed', 'walkover', 'retired'].includes(row.status));
   const expectedR1 = expectedRoundOneMatches(event);
   const allR1Complete = expectedR1 > 0 && completedR1.length >= expectedR1;
+  const allR1Scheduled = expectedR1 > 0 && firstRound.length >= expectedR1;
   let round1CompletedAt = null;
+  const latestR1Start = maxIso(firstRound.map((row) => row.scheduled_at));
   if (allR1Complete) {
-    const latestR1Start = maxIso(completedR1.map((row) => row.scheduled_at));
-    const estimate = addMinutes(latestR1Start, 180) || fetchedAt.toISOString();
+    const fetchedIso = fetchedAt.toISOString();
+    const estimate = round2FirstMatchAt && new Date(fetchedIso) < new Date(round2FirstMatchAt)
+      ? fetchedIso
+      : addMinutes(maxIso(completedR1.map((row) => row.scheduled_at)), 180) || fetchedIso;
     if (round2FirstMatchAt && new Date(estimate) >= new Date(round2FirstMatchAt)) {
       round1CompletedAt = addMinutes(round2FirstMatchAt, -1);
     } else {
       round1CompletedAt = estimate;
     }
+  } else if (allR1Scheduled && round2FirstMatchAt && latestR1Start && new Date(latestR1Start) < new Date(round2FirstMatchAt)) {
+    round1CompletedAt = latestR1Start;
   }
 
   return {
