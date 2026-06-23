@@ -3724,6 +3724,13 @@ var BD_TYPE_ORDER=['GS','YE','M1000','A500','A250'];
 var BD_SURF_LABELS={hard_out:'硬地(室外)',hard_in:'硬地(室内)',clay:'红土',grass:'草地'};
 var BD_SURF_COLORS={hard_out:'#3b82f6',hard_in:'#6366f1',clay:'#ef4444',grass:'#22c55e'};
 var BD_MONTH_DISPLAY=['26年6月','26年7月','26年8月','26年9月','26年10月','26年11月','26年12月','27年1月','27年2月','27年3月','27年4月','27年5月'];
+var BD_ATP_GS={'澳网':1,'法网':1,'温网':1,'美网':1};
+var BD_ATP_YE={'都灵':1};
+var BD_ATP_M1000={'印第安维尔斯':1,'迈阿密':1,'马德里':1,'罗马':1,'多伦多':1,'蒙特利尔':1,'辛辛那提':1,'上海':1,'巴黎':1};
+var BD_WTA_GS={'澳网':1,'法网':1,'温网':1,'美网':1};
+var BD_WTA_YE={'利雅得':1};
+var BD_WTA_M1000_NC={'多哈':1,'迪拜':1,'武汉':1};
+var BD_WTA_M1000_C={'印第安维尔斯':1,'迈阿密':1,'马德里':1,'罗马':1,'蒙特利尔':1,'多伦多':1,'辛辛那提':1,'北京':1};
 var BD_LABEL_GROUPS=[
   ['\uD83E\uDD47 世界第一'],
   ['\uD83C\uDFC6 年终称霸','\uD83C\uDF19 年终强手'],
@@ -3757,17 +3764,241 @@ function refreshWorldNo1Label(list){
 
 
 
+function bdEventCopy(ev){
+  return {
+    n:ev&&ev.n||'',
+    s:Number(ev&&ev.s)||0,
+    inc:ev&&ev.inc!==false,
+    lt_inc:ev&&ev.lt_inc!=null?!!ev.lt_inc:(ev&&ev.inc!==false),
+    forced:!!(ev&&ev.forced),
+    current:!!(ev&&ev.current),
+    source:ev&&ev.source||'live',
+    selected:!!(ev&&ev.selected),
+    type:ev&&ev.type||null,
+    surf:ev&&ev.surf||ev&&ev.surface||'hard_out',
+    expiry:ev&&ev.expiry||null,
+    start_counting_score:ev&&ev.start_counting_score,
+    counting_started:ev&&ev.counting_started
+  };
+}
+
+function bdEventType(ev,g){
+  var n=ev&&ev.n||'';
+  if(g==='ms'){
+    if(BD_ATP_GS[n])return 'GS';
+    if(BD_ATP_YE[n])return 'YE';
+    if(BD_ATP_M1000[n])return 'M1000';
+  }else{
+    if(BD_WTA_GS[n])return 'GS';
+    if(BD_WTA_YE[n])return 'YE';
+    if(BD_WTA_M1000_NC[n]||BD_WTA_M1000_C[n])return 'M1000';
+  }
+  return ev&&ev.type||'A250';
+}
+
+function bdSelectedEvents(pool,g){
+  var vals=(pool||[]).map(bdEventCopy);
+  var expKey=function(e){
+    var m=String(e.expiry||'').match(/(\d+)年(\d+)月/);
+    return m?[Number(m[1]),Number(m[2])]:[9999,99];
+  };
+  var sourcePri=function(e){
+    if(e.lt_inc)return 0;
+    if(e.source==='current'||e.source==='pending')return 1;
+    if(e.forced)return 2;
+    return 3;
+  };
+  var srt=function(arr){return arr.slice().sort(function(a,b){
+    var score=(b.s||0)-(a.s||0);
+    if(score)return score;
+    var sp=sourcePri(a)-sourcePri(b);
+    if(sp)return sp;
+    var ea=expKey(a),eb=expKey(b);
+    if(ea[0]!==eb[0])return ea[0]-eb[0];
+    if(ea[1]!==eb[1])return ea[1]-eb[1];
+    return String(a.n||'').localeCompare(String(b.n||''),'zh-Hans-CN');
+  });};
+  if(g==='ms'){
+    var gs=srt(vals.filter(function(e){return BD_ATP_GS[e.n];}));
+    var ye=srt(vals.filter(function(e){return BD_ATP_YE[e.n];})).slice(0,1);
+    var m1=srt(vals.filter(function(e){return BD_ATP_M1000[e.n];}));
+    var m1Top=m1.slice(0,5),m1Spare=m1.slice(5);
+    var other=srt(vals.filter(function(e){return !BD_ATP_GS[e.n]&&!BD_ATP_YE[e.n]&&!BD_ATP_M1000[e.n];}).concat(m1Spare));
+    return gs.concat(ye,m1Top,other.slice(0,Math.max(0,18-gs.length-m1Top.length)));
+  }
+  var wgs=srt(vals.filter(function(e){return BD_WTA_GS[e.n];}));
+  var wye=srt(vals.filter(function(e){return BD_WTA_YE[e.n];})).slice(0,1);
+  var nc=srt(vals.filter(function(e){return BD_WTA_M1000_NC[e.n];}));
+  var cc=srt(vals.filter(function(e){return BD_WTA_M1000_C[e.n];}));
+  var ncTop=nc.slice(0,1),ncSpare=nc.slice(1),ccTop=cc.slice(0,6),ccSpare=cc.slice(6);
+  var otherW=srt(vals.filter(function(e){return !BD_WTA_GS[e.n]&&!BD_WTA_YE[e.n]&&!BD_WTA_M1000_NC[e.n]&&!BD_WTA_M1000_C[e.n];}).concat(ncSpare,ccSpare));
+  return wgs.concat(wye,ncTop,ccTop,otherW.slice(0,Math.max(0,18-wgs.length-ncTop.length-ccTop.length)));
+}
+
+function bdRebuildUserComposition(u,selected,g,expiryMonths){
+  var ts={GS:0,YE:0,M1000:0,A500:0,A250:0},te={},ss={},em={};
+  selected.forEach(function(ev){
+    var t=bdEventType(ev,g),s=Number(ev.s)||0,surf=ev.surf||'hard_out';
+    ts[t]=(ts[t]||0)+s;
+    if(!te[t])te[t]=[];
+    te[t].push({n:ev.n,s:s,forced:!!ev.forced,current:!!ev.current,surf:surf,expiry:ev.expiry||null});
+    ss[surf]=(ss[surf]||0)+s;
+    if(ev.expiry){
+      if(!em[ev.expiry])em[ev.expiry]={total:0,events:[]};
+      em[ev.expiry].total+=s;
+      em[ev.expiry].events.push(ev.n+'('+s+')');
+    }
+  });
+  Object.keys(te).forEach(function(t){te[t].sort(function(a,b){return (b.s||0)-(a.s||0);});});
+  u.gs=ts.GS||0;u.ye=ts.YE||0;u.m1=ts.M1000||0;u.a5=ts.A500||0;u.a2=ts.A250||0;
+  u.type_evs=te;
+  u.surf_scores=ss;
+  var months=expiryMonths||BD_MONTH_DISPLAY;
+  u.exp_list=months.map(function(mk){var row=em[mk]||{total:0,events:[]};return {mk:mk,total:row.total||0,events:row.events||[]};});
+  u.composition_total=selected.reduce(function(sum,ev){return sum+(Number(ev.s)||0);},0);
+  u.composition_gap=(Number(u.s)||0)-u.composition_total;
+}
+
+function bdApplyCurrentRowToUser(u,g,row,currentMeta,expiryMonths){
+  if(!u||!Array.isArray(u.calc_pool))return false;
+  var eventName=(currentMeta&&currentMeta.name)||((GDATA&&GDATA[g]&&GDATA[g].event_name)||'');
+  var pool=u.calc_pool.map(bdEventCopy).filter(function(ev){return !eventName||ev.n!==eventName;});
+  var thisScore=Number(row&&row.this_event_score)||0;
+  var forced=!!(currentMeta&&currentMeta.forced);
+  if(eventName&&(thisScore>0||forced)){
+    pool.push({n:eventName,s:thisScore,inc:true,lt_inc:false,forced:forced,current:true,source:'current',type:currentMeta&&currentMeta.type||null,surf:currentMeta&&currentMeta.surface||'hard_out',expiry:currentMeta&&currentMeta.expiry||null,start_counting_score:currentMeta&&currentMeta.start_counting_score});
+  }
+  u.calc_pool=pool;
+  var selected=bdSelectedEvents(pool,g);
+  var selectedNames={};
+  selected.forEach(function(ev){selectedNames[ev.n]=1;});
+  u.calc_pool=pool.map(function(ev){
+    ev.selected=!!selectedNames[ev.n];
+    if(ev.current)ev.counting_started=ev.selected||ev.forced;
+    return ev;
+  });
+  bdRebuildUserComposition(u,selected,g,expiryMonths);
+  return true;
+}
+
+function bdValueForLabel(u,feat){
+  if(feat==='hard')return ((u.surf_scores&&u.surf_scores.hard_out)||0)+((u.surf_scores&&u.surf_scores.hard_in)||0);
+  if(feat==='clay')return (u.surf_scores&&u.surf_scores.clay)||0;
+  if(feat==='grass')return (u.surf_scores&&u.surf_scores.grass)||0;
+  return Number(u[feat])||0;
+}
+
+function bdPercentiles(list,feat){
+  var vals=list.map(function(u){return bdValueForLabel(u,feat);}).sort(function(a,b){return b-a;});
+  var n=vals.length||1,out=new Map();
+  list.forEach(function(u){
+    var v=bdValueForLabel(u,feat);
+    var higher=vals.filter(function(x){return x>v;}).length;
+    out.set(u,(1-higher/n)*100);
+  });
+  return out;
+}
+
+function bdLabelFromStats(u,p){
+  var total=Number(u.s)||1;
+  var gs=Number(u.gs)||0,ye=Number(u.ye)||0,m1=Number(u.m1)||0,a5=Number(u.a5)||0;
+  var hard=bdValueForLabel(u,'hard'),cl=bdValueForLabel(u,'clay'),gr=bdValueForLabel(u,'grass');
+  var gsR=gs/total,yeR=ye/total,m1R=m1/total,a5R=a5/total,hardR=hard/total,clR=cl/total,grR=gr/total;
+  if(ye>=500||yeR>=0.12)return (p.ye>=80)?['🏆 年终称霸','#7c3aed']:['🌙 年终强手','#a78bfa'];
+  if(grR>=0.32){
+    if(p.grass>=95)return ['🌿 草地传说','#15803d'];
+    if(p.grass>=80)return ['🍃 草地大赢家','#16a34a'];
+    if(p.grass>=55)return ['🌱 草地好手','#4ade80'];
+    return ['🌱 草地追梦者','#86efac'];
+  }
+  if(p.gs>=97&&gsR>=0.50)return ['👑 大满贯神话','#b45309'];
+  if(gsR>=0.65){
+    if(p.gs>=90)return ['👑 大满贯传奇','#d97706'];
+    if(p.gs>=75)return ['🎾 大满贯收割机','#f97316'];
+    if(p.gs>=55)return ['🏅 大满贯主力','#fb923c'];
+    return ['🎯 大满贯好手','#fbbf24'];
+  }
+  if(gsR>=0.52){
+    if(p.gs>=95)return ['👑 大满贯传奇','#d97706'];
+    if(p.gs>=82)return ['🎾 大满贯收割机','#f97316'];
+    if(p.gs>=68)return ['💪 大满贯实力派','#ea580c'];
+    if(p.gs>=50)return ['🏅 大满贯主力','#fb923c'];
+    return ['🎯 大满贯好手','#fbbf24'];
+  }
+  if(gsR>=0.40){
+    if(p.gs>=90)return ['🎾 大满贯收割机','#f97316'];
+    if(p.gs>=75)return ['💪 大满贯实力派','#ea580c'];
+    if(p.gs>=55)return ['🏅 大满贯主力','#fb923c'];
+    if(p.gs>=35)return ['🎯 大满贯好手','#f97316'];
+    return ['🎯 大满贯追梦者','#fbbf24'];
+  }
+  if(m1R>=0.40){
+    if(p.m1>=95)return ['⚡ 1000赛霸主','#dc2626'];
+    if(p.m1>=80)return ['⚡ 1000赛达人','#ef4444'];
+    if(p.m1>=62)return ['⚡ 1000赛精英','#f87171'];
+    if(p.m1>=45)return ['💫 1000赛好手','#fca5a5'];
+    return ['💫 1000赛常客','#fed7d7'];
+  }
+  if(m1R>=0.32){
+    if(p.m1>=85)return ['⚡ 1000赛达人','#ef4444'];
+    if(p.m1>=65)return ['⚡ 1000赛精英','#f87171'];
+    return ['💫 1000赛好手','#fca5a5'];
+  }
+  var combo=(p.gs+p.m1)/2;
+  if((gsR+m1R)>=0.60&&combo>=88)return ['🌟 顶尖全能王','#6366f1'];
+  if((gsR+m1R)>=0.55&&combo>=78)return ['🎪 精英综合体','#8b5cf6'];
+  if((gsR+m1R)>=0.48&&combo>=65)return ['🎨 大赛全才','#a78bfa'];
+  if((gsR+m1R)>=0.42)return ['🧩 大赛均衡型','#c4b5fd'];
+  if(clR>=0.38){
+    if(p.clay>=95)return ['🧱 红土之王','#b91c1c'];
+    if(p.clay>=80)return ['🏺 红土大师','#ef4444'];
+    if(p.clay>=62)return ['🏺 红土达人','#f87171'];
+    if(p.clay>=45)return ['🪴 红土好手','#fca5a5'];
+    return ['🪴 红土爱好者','#fed7d7'];
+  }
+  if(hardR>=0.60){
+    if(p.hard>=95)return ['💎 硬地霸主','#1d4ed8'];
+    if(p.hard>=80)return ['🔷 硬地之王','#3b82f6'];
+    if(p.hard>=62)return ['🔷 硬地稳健王','#60a5fa'];
+    if(p.hard>=45)return ['🔹 硬地好手','#93c5fd'];
+    return ['🔹 硬地常客','#bfdbfe'];
+  }
+  if(a5R>=0.28){
+    if(p.a5>=88)return ['🌆 500赛小王子','#0369a1'];
+    if(p.a5>=70)return ['🏙️ 500赛精英','#0ea5e9'];
+    if(p.a5>=45)return ['🏘️ 500赛常客','#7dd3fc'];
+    return ['🏘️ 500赛常客','#bfdbfe'];
+  }
+  var overall=(p.gs+p.m1)/2;
+  if(overall>=85)return ['🧩 全面稳健型','#475569'];
+  if(overall>=65)return ['🧩 全面均衡型','#64748b'];
+  if(overall>=35)return ['🌀 积分探索者','#94a3b8'];
+  return ['🌱 初出茅庐','#9ca3af'];
+}
+
+function bdRefreshLabels(list){
+  if(!Array.isArray(list)||!list.length)return;
+  var maps={gs:bdPercentiles(list,'gs'),ye:bdPercentiles(list,'ye'),m1:bdPercentiles(list,'m1'),a5:bdPercentiles(list,'a5'),hard:bdPercentiles(list,'hard'),clay:bdPercentiles(list,'clay'),grass:bdPercentiles(list,'grass')};
+  list.forEach(function(u){
+    var pair=bdLabelFromStats(u,{gs:maps.gs.get(u)||0,ye:maps.ye.get(u)||0,m1:maps.m1.get(u)||0,a5:maps.a5.get(u)||0,hard:maps.hard.get(u)||0,clay:maps.clay.get(u)||0,grass:maps.grass.get(u)||0});
+    u.label=pair[0];u.label_color=pair[1];u.base_label=pair[0];u.base_label_color=pair[1];
+  });
+}
+
 function applyCurrentToBreakdown(d){
   // 安全兜底：如果 current 已加载，则用 current.json 覆盖积分构成里的即时排名/即时积分。
   // 如果 current 未加载或字段缺失，直接返回 breakdown 数据，避免整个积分构成模块加载失败。
   if(!d)return {ms:[],ws:[]};
   try{
+    if(Array.isArray(d.expiry_months)&&d.expiry_months.length)BD_MONTH_DISPLAY=d.expiry_months;
     if(!GDATA)return d;
+    var currentEvents=d.current_events||{};
     ['ms','ws'].forEach(function(g){
       var curRows=(GDATA[g]&&GDATA[g].rows)||[];
       if(!curRows.length||!d[g])return;
       var mp={};
       curRows.forEach(function(r){mp[String(r.user_id)]=r;});
+      var currentMeta=currentEvents[g]||{name:GDATA[g]&&GDATA[g].event_name};
       d[g].forEach(function(u){
         var r=mp[String(u.uid)];
         if(!r)return;
@@ -3775,7 +4006,12 @@ function applyCurrentToBreakdown(d){
         if(r.instant_score != null)u.s=r.instant_score;
         u.this_event_score=r.this_event_score||0;
         u.deduct_score=r.deduct_score||0;
+        if(!bdApplyCurrentRowToUser(u,g,r,currentMeta,BD_MONTH_DISPLAY)){
+          u.composition_total=(u.gs||0)+(u.ye||0)+(u.m1||0)+(u.a5||0)+(u.a2||0);
+          u.composition_gap=(Number(u.s)||0)-u.composition_total;
+        }
       });
+      bdRefreshLabels(d[g]);
       d[g].sort(function(a,b){return (a.ir||9999)-(b.ir||9999);});
       refreshWorldNo1Label(d[g]);
     });

@@ -1,21 +1,33 @@
 #!/usr/bin/env python3
 """
-签表幸存者之炉网 - 积分构成数据生成脚本（动态赛历版）
+签表幸存者之炉网 - 积分构成数据生成脚本（官方赛历版）
 改进：
-1. 从 /zh/draw/{eid}/{year} 动态获取每个赛事实际月份和场地（自动处理ATP/WTA同地不同月）
-2. 赛事级别从赛历动态读取（处理升降级）
+1. ATP 从官方 PDF 赛历、WTA 从官方 API 缓存读取每个赛事实际月份和场地
+2. 赛事级别从官方赛历读取（处理升降级）
 3. 使用即时积分（instant_score），加入本站当前得分
 """
 import re, json, time, os, requests
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone, timedelta, date
 
 BASE_URL = "https://www.live-tennis.cn"
+OFFICIAL_CALENDAR_PATH = os.path.join('data', 'official_calendar.json')
+CURRENT_EVENT_OVERLAYS_PATH = os.path.join('data', 'current_event_overlays.json')
+
+ATP_GS = {'澳网','法网','温网','美网'}
+ATP_YE = {'都灵'}
+ATP_MANDATORY_1000 = {'印第安维尔斯','迈阿密','马德里','罗马','多伦多','蒙特利尔','辛辛那提','上海','巴黎'}
+ATP_OPTIONAL_1000 = {'蒙特卡洛'}
+ATP_M1000 = ATP_MANDATORY_1000 | ATP_OPTIONAL_1000
+WTA_GS = {'澳网','法网','温网','美网'}
+WTA_YE = {'利雅得'}
+WTA_M1000_NC = {'多哈','迪拜','武汉'}
+WTA_M1000_C = {'印第安维尔斯','迈阿密','马德里','罗马','蒙特利尔','多伦多','辛辛那提','北京'}
 
 GS_ATTRS = {'澳网': 'hard_out', '法网': 'clay', '温网': 'grass', '美网': 'hard_out'}
 GS_MONTHS = {'澳网': 1, '法网': 6, '温网': 7, '美网': 9}
 YE_EVENTS = {
-    'ATP': {'都灵': 11, '伦敦': 11},
-    'WTA': {'利雅得': 11, '深圳': 11, '新加坡': 11, '吉达': 11},
+    'ATP': {'都灵': 11},
+    'WTA': {'利雅得': 11},
 }
 
 # 仅用作 scrape_calendar 里颜色无法判断时的兜底，后续会被动态场地覆盖
@@ -189,44 +201,164 @@ def build_dynamic_info_map_from_calendar_list(cal_cache, cur_year, session):
 
     return info_map
 
-# ── 元数据查找 ────────────────────────────────────────────
-def get_meta(ev, gender, cal_cache, dynamic_info_map, cur_month, cur_year):
-    g_str = 'ATP' if gender == 'MS' else 'WTA'
+# ── 官方赛历索引 ──────────────────────────────────────────
+def norm_event_key(s):
+    s = str(s or '').strip().lower()
+    return re.sub(r'\s+', '', s)
 
-    # 大满贯
+
+def parse_ymd(s):
+    try:
+        return date.fromisoformat(str(s)[:10])
+    except Exception:
+        return None
+
+
+def load_official_calendar():
+    try:
+        with open(OFFICIAL_CALENDAR_PATH, encoding='utf-8') as f:
+            payload = json.load(f)
+    except FileNotFoundError:
+        print(f"  ⚠️ 官方赛历不存在: {OFFICIAL_CALENDAR_PATH}")
+        return {'events': [], 'by_alias': {}}
+
+    events = payload.get('events') or []
+    by_alias = {}
+    for rec in events:
+        tour = rec.get('tour')
+        aliases = set(rec.get('aliases') or [])
+        for k in ('event_key', 'city', 'name', 'level'):
+            if rec.get(k):
+                aliases.add(rec[k])
+        for alias in aliases:
+            key = norm_event_key(alias)
+            if key:
+                by_alias.setdefault((tour, key), []).append(rec)
+
+    def rec_key(rec):
+        return parse_ymd(rec.get('start_date')) or date.min
+
+    for rows in by_alias.values():
+        rows.sort(key=rec_key)
+
+    return {'events': events, 'by_alias': by_alias}
+
+
+def has_official_calendar(cal_cache):
+    return bool(cal_cache and cal_cache.get('events') and cal_cache.get('by_alias'))
+
+
+def load_current_event_overlays():
+    try:
+        with open(CURRENT_EVENT_OVERLAYS_PATH, encoding='utf-8') as f:
+            payload = json.load(f)
+    except FileNotFoundError:
+        return []
+    except Exception as e:
+        print(f"  ⚠️ 当前站缓存读取失败: {e}")
+        return []
+    rows = payload.get('events') if isinstance(payload, dict) else payload
+    return rows if isinstance(rows, list) else []
+
+
+def fallback_type(ev, gender):
+    sets = event_selection_sets(gender)
+    if ev in sets['gs']:
+        return 'GS'
+    if ev in sets['ye']:
+        return 'YE'
+    if gender == 'MS':
+        return 'M1000' if ev in sets['m1000'] else 'A250'
+    if ev in sets['m1000_nc'] or ev in sets['m1000_c']:
+        return 'M1000'
+    return 'A250'
+
+
+def choose_official_record(ev, gender, official_calendar, today, force_year=None):
+    tour = 'ATP' if gender == 'MS' else 'WTA'
+    rows = list((official_calendar or {}).get('by_alias', {}).get((tour, norm_event_key(ev)), []))
+    if not rows:
+        return None
+
+    def end_date(rec):
+        return parse_ymd(rec.get('end_date')) or parse_ymd(rec.get('start_date'))
+
+    def started(rec):
+        start = parse_ymd(rec.get('start_date'))
+        return start is not None and start <= today
+
+    def active_today(rec):
+        start = parse_ymd(rec.get('start_date'))
+        end = end_date(rec)
+        return start is not None and end is not None and start <= today <= end
+
+    def score(rec):
+        type_weight = {'GS': 5, 'YE': 4, 'M1000': 3, 'A500': 2, 'A250': 1}.get(rec.get('type'), 0)
+        start = parse_ymd(rec.get('start_date')) or date.min
+        return (type_weight, start)
+
+    if force_year:
+        exact = [rec for rec in rows if int(rec.get('year') or 0) == force_year]
+        if exact:
+            active = [rec for rec in exact if active_today(rec)]
+            if active:
+                return max(active, key=score)
+            started_exact = [rec for rec in exact if started(rec)]
+            if started_exact:
+                return max(started_exact, key=lambda rec: parse_ymd(rec.get('start_date')) or date.min)
+            return min(exact, key=lambda rec: parse_ymd(rec.get('start_date')) or date.max)
+
+    this_year = [rec for rec in rows if int(rec.get('year') or 0) == today.year]
+    started_this_year = [rec for rec in this_year if started(rec)]
+    if started_this_year:
+        return max(started_this_year, key=score)
+
+    prev_year = [rec for rec in rows if int(rec.get('year') or 0) == today.year - 1]
+    if prev_year:
+        return max(prev_year, key=score)
+
+    started_any = [rec for rec in rows if started(rec)]
+    if started_any:
+        return max(started_any, key=score)
+
+    return min(rows, key=lambda rec: parse_ymd(rec.get('start_date')) or date.max)
+
+
+# ── 元数据查找 ────────────────────────────────────────────
+def get_meta(ev, gender, official_calendar, dynamic_info_map, cur_month, cur_year, force_year=None):
+    today = datetime.now(timezone(timedelta(hours=8))).date()
+    rec = choose_official_record(ev, gender, official_calendar, today, force_year=force_year)
+    if rec:
+        return {
+            'event_key': rec.get('event_key') or ev,
+            'type': rec.get('type') or fallback_type(ev, gender),
+            'surface': rec.get('surface') or 'hard_out',
+            'month': int(rec.get('month') or cur_month),
+            'year': int(rec.get('year') or cur_year),
+            'start_date': rec.get('start_date'),
+            'end_date': rec.get('end_date'),
+            'source': rec.get('source'),
+        }
+
+    g_str = 'ATP' if gender == 'MS' else 'WTA'
     if ev in GS_ATTRS:
         m = GS_MONTHS[ev]
         yr = cur_year if m <= cur_month else cur_year - 1
-        return {'type': 'GS', 'surface': GS_ATTRS[ev], 'month': m, 'year': yr}
+        return {'event_key': ev, 'type': 'GS', 'surface': GS_ATTRS[ev], 'month': m, 'year': yr, 'source': 'fallback'}
 
-    # 年终
     if ev in YE_EVENTS.get(g_str, {}):
         m = YE_EVENTS[g_str][ev]
         yr = cur_year if m <= cur_month else cur_year - 1
-        return {'type': 'YE', 'surface': 'hard_in', 'month': m, 'year': yr}
+        return {'event_key': ev, 'type': 'YE', 'surface': 'hard_in', 'month': m, 'year': yr, 'source': 'fallback'}
 
-    # 从动态信息映射获取
-    dyn_info = dynamic_info_map.get((g_str, ev))
-    if dyn_info is None:
-        other_g = 'WTA' if g_str == 'ATP' else 'ATP'
-        dyn_info = dynamic_info_map.get((other_g, ev))
-
-    if dyn_info is not None:
-        m = dyn_info['month']
-        yr = cur_year if m <= cur_month else cur_year - 1
-        surf = dyn_info['surface']
-        # 级别从赛历获取
-        info = cal_cache.get(cur_year, {}).get((g_str, ev))
-        if not info:
-            for y in [cur_year - 1, cur_year]:
-                info = cal_cache.get(y, {}).get((g_str, ev))
-                if info:
-                    break
-        etype = info['type'] if info else 'A250'
-        return {'type': etype, 'surface': surf, 'month': m, 'year': yr}
-
-    # 兜底
-    return {'type': 'A250', 'surface': 'hard_out', 'month': 6, 'year': cur_year}
+    return {
+        'type': fallback_type(ev, gender),
+        'event_key': ev,
+        'surface': 'hard_out',
+        'month': cur_month,
+        'year': cur_year,
+        'source': 'fallback',
+    }
 
 
 def expiry_ym(meta):
@@ -240,7 +372,7 @@ def parse_details(det, gender, cal_cache, dynamic_info_map, cur_month, cur_year)
         meta = get_meta(ev, gender, cal_cache, dynamic_info_map, cur_month, cur_year)
         ey, em = expiry_ym(meta) if inc else (0, 0)
         res.append({'n':ev,'s':sc,'inc':inc,'forced':forced,'meta':meta,
-                    'expiry':f'{ey}年{em}月' if inc else None})
+                    'expiry':f'{ey}年{em}月' if inc else None,'current':False})
     for m in re.finditer(r'<b>【([^】(]+)\((\d+)\)】</b>', det):
         add(m.group(1).strip(), int(m.group(2)), True, True)
     for m in re.finditer(r'<del>【([^】(]+)\((\d+)\)】</del>', det):
@@ -250,6 +382,323 @@ def parse_details(det, gender, cal_cache, dynamic_info_map, cur_month, cur_year)
     for m in re.finditer(r'【([^】(]+)\((\d+)\)】',tmp):
         add(m.group(1).strip(), int(m.group(2)), True, False)
     return res
+
+
+def event_selection_sets(gender):
+    if gender == 'MS':
+        return {
+            'gs': ATP_GS,
+            'ye': ATP_YE,
+            'm1000_mandatory': ATP_MANDATORY_1000,
+            'm1000_optional': ATP_OPTIONAL_1000,
+            'm1000': ATP_M1000,
+        }
+    return {
+        'gs': WTA_GS,
+        'ye': WTA_YE,
+        'm1000_nc': WTA_M1000_NC,
+        'm1000_c': WTA_M1000_C,
+    }
+
+
+def clone_event(e):
+    return {
+        'n': e['n'],
+        's': int(e.get('s') or 0),
+        'inc': bool(e.get('inc')),
+        'lt_inc': bool(e.get('lt_inc', e.get('inc'))),
+        'forced': bool(e.get('forced')),
+        'meta': e.get('meta') or {},
+        'expiry': e.get('expiry'),
+        'current': bool(e.get('current')),
+        'source': e.get('source') or 'live',
+        'start_counting_score': e.get('start_counting_score'),
+        'counting_started': e.get('counting_started'),
+    }
+
+
+def event_payload(e):
+    meta = e.get('meta') or {}
+    return {
+        'n': e.get('n'),
+        's': int(e.get('s') or 0),
+        'inc': bool(e.get('inc', True)),
+        'lt_inc': bool(e.get('lt_inc', e.get('inc', True))),
+        'forced': bool(e.get('forced')),
+        'current': bool(e.get('current')),
+        'source': e.get('source') or 'live',
+        'type': meta.get('type'),
+        'surf': meta.get('surface'),
+        'expiry': e.get('expiry'),
+        'start_counting_score': e.get('start_counting_score'),
+        'counting_started': e.get('counting_started'),
+    }
+
+
+def canonical_event_name(event_name, meta=None):
+    return (meta or {}).get('event_key') or event_name
+
+
+def is_force_counting_event(event_name, gender, meta=None):
+    if not event_name:
+        return False
+    name = canonical_event_name(event_name, meta)
+    event_type = (meta or {}).get('type')
+    sets = event_selection_sets(gender)
+    if event_type == 'GS' or name in sets['gs'] or event_name in sets['gs']:
+        return True
+    if gender == 'MS':
+        return event_type == 'M1000' and (name in sets['m1000_mandatory'] or event_name in sets['m1000_mandatory'])
+    return event_type == 'M1000' and (
+        name in sets['m1000_nc'] or event_name in sets['m1000_nc']
+        or name in sets['m1000_c'] or event_name in sets['m1000_c']
+    )
+
+
+def start_counting_score_for_event(event_name, gender, meta=None, forced=None):
+    if forced is None:
+        forced = is_force_counting_event(event_name, gender, meta)
+    if forced:
+        return 0
+    return None
+
+
+def event_bucket(e, gender):
+    name = e.get('n') or ''
+    meta = e.get('meta') or {}
+    key = canonical_event_name(name, meta)
+    event_type = meta.get('type')
+    sets = event_selection_sets(gender)
+    if event_type == 'GS' or key in sets['gs'] or name in sets['gs']:
+        return 'gs'
+    if event_type == 'YE' or key in sets['ye'] or name in sets['ye']:
+        return 'ye'
+    if gender == 'MS':
+        if event_type == 'M1000' and (key in sets['m1000_mandatory'] or name in sets['m1000_mandatory']):
+            return 'atp_mandatory_1000'
+        return 'other'
+    if event_type == 'M1000' and (key in sets['m1000_nc'] or name in sets['m1000_nc']):
+        return 'wta_1000_nc'
+    if event_type == 'M1000' and (key in sets['m1000_c'] or name in sets['m1000_c']):
+        return 'wta_1000_c'
+    return 'other'
+
+
+def build_live_available_events(parsed_events):
+    c, nc = {}, {}
+    for e in parsed_events:
+        e2 = clone_event(e)
+        e2['source'] = 'live'
+        e2['lt_inc'] = bool(e.get('inc'))
+        target = c if e.get('inc') else nc
+        target[e['n']] = e2
+
+    available = {}
+    available.update(nc)
+    available.update(c)
+    return available
+
+
+def event_absorbed_by_live_details(available, event_name, meta):
+    existing = (available or {}).get(event_name)
+    if not existing:
+        return False
+    existing_meta = existing.get('meta') or {}
+    return int(existing_meta.get('year') or 0) == int((meta or {}).get('year') or 0)
+
+
+def with_event_candidate(available, gender, event_name, this_event_score,
+                         cal_cache, dynamic_info_map, cur_month, cur_year,
+                         source='current', force_year=None, skip_if_absorbed=False):
+    if not event_name:
+        return dict(available)
+
+    score = int(this_event_score or 0)
+    meta = get_meta(event_name, gender, cal_cache, dynamic_info_map, cur_month, cur_year, force_year=force_year or cur_year)
+    forced = is_force_counting_event(event_name, gender, meta)
+    start_counting_score = start_counting_score_for_event(event_name, gender, meta, forced)
+    adjusted = {name: clone_event(e) for name, e in available.items()}
+    if skip_if_absorbed and event_absorbed_by_live_details(adjusted, event_name, meta):
+        return adjusted
+    original = adjusted.pop(event_name, None)
+    if score <= 0 and not forced:
+        return adjusted
+
+    ey, em = expiry_ym(meta)
+    adjusted[event_name] = {
+        'n': event_name,
+        's': score,
+        'inc': True,
+        'lt_inc': bool(original and original.get('lt_inc', original.get('inc'))),
+        'forced': forced,
+        'meta': meta,
+        'expiry': f'{ey}年{em}月',
+        'current': source == 'current',
+        'source': source,
+        'start_counting_score': start_counting_score,
+        'counting_started': forced or score > 0,
+    }
+    return adjusted
+
+
+def with_current_event_candidate(available, gender, event_name, this_event_score,
+                                 cal_cache, dynamic_info_map, cur_month, cur_year):
+    return with_event_candidate(
+        available, gender, event_name, this_event_score,
+        cal_cache, dynamic_info_map, cur_month, cur_year,
+        source='current', force_year=cur_year, skip_if_absorbed=False
+    )
+
+
+def overlay_events_for_user(overlays, uid, gender, current_event_name=None):
+    tour = 'ATP' if gender == 'MS' else 'WTA'
+    uid = str(uid)
+    res = []
+    for rec in overlays or []:
+        if rec.get('tour') != tour:
+            continue
+        name = rec.get('event_name') or ''
+        if not name:
+            continue
+        scores = rec.get('scores') or rec.get('rows') or {}
+        if uid not in scores:
+            continue
+        res.append({
+            'event_name': name,
+            'score': int(scores.get(uid) or 0),
+            'year': int(rec.get('year') or 0) or None,
+            'event_id': rec.get('event_id') or '',
+            'is_current': bool(current_event_name and name == current_event_name),
+        })
+    return res
+
+
+def with_pending_event_candidates(available, pending_events, gender, cal_cache, dynamic_info_map, cur_month, cur_year):
+    adjusted = {name: clone_event(e) for name, e in available.items()}
+    for rec in pending_events or []:
+        adjusted = with_event_candidate(
+            adjusted, gender, rec.get('event_name'), rec.get('score', 0),
+            cal_cache, dynamic_info_map, cur_month, cur_year,
+            source='pending', force_year=rec.get('year') or cur_year, skip_if_absorbed=True
+        )
+    return adjusted
+
+
+def select_events_by_rules(values, gender):
+    def live_included(e):
+        return bool(e.get('lt_inc', e.get('inc')))
+
+    def source_priority(e):
+        if live_included(e):
+            return 0
+        if e.get('source') in ('current', 'pending'):
+            return 1
+        if e.get('forced'):
+            return 2
+        return 3
+
+    def expiry_key(e):
+        m = re.match(r'(\d+)年(\d+)月', str(e.get('expiry') or ''))
+        if m:
+            return int(m.group(1)), int(m.group(2))
+        return 9999, 99
+
+    def srt(items):
+        return sorted(items, key=lambda x: (
+            -int(x.get('s') or 0),
+            source_priority(x),
+            expiry_key(x),
+            x.get('n') or '',
+        ))
+
+    if gender == 'MS':
+        gs = srt([e for e in values if event_bucket(e, gender) == 'gs'])
+        ye = srt([e for e in values if event_bucket(e, gender) == 'ye'])[:1]
+        m1_all = srt([e for e in values if event_bucket(e, gender) == 'atp_mandatory_1000'])
+        m1_top, m1_spare = m1_all[:5], m1_all[5:]
+        others = srt([e for e in values if event_bucket(e, gender) == 'other'] + m1_spare)
+        rem = max(0, 18 - len(gs) - len(m1_top))
+        selected = gs + ye + m1_top + others[:rem]
+    else:
+        gs = srt([e for e in values if event_bucket(e, gender) == 'gs'])
+        ye = srt([e for e in values if event_bucket(e, gender) == 'ye'])[:1]
+        nc2_all = srt([e for e in values if event_bucket(e, gender) == 'wta_1000_nc'])
+        cc_all = srt([e for e in values if event_bucket(e, gender) == 'wta_1000_c'])
+        nc_top, nc_spare = nc2_all[:1], nc2_all[1:]
+        cc_top, cc_spare = cc_all[:6], cc_all[6:]
+        others = srt([e for e in values if event_bucket(e, gender) == 'other'] + nc_spare + cc_spare)
+        rem = max(0, 18 - len(gs) - len(nc_top) - len(cc_top))
+        selected = gs + ye + nc_top + cc_top + others[:rem]
+
+    return selected
+
+
+def select_live_included_events(values):
+    return [clone_event(e) for e in values if e.get('lt_inc', e.get('inc'))]
+
+
+def sum_events(events):
+    return sum(int(e.get('s') or 0) for e in events)
+
+
+def select_countable_events(parsed_events, gender, event_name, this_event_score, target_score,
+                            cal_cache, dynamic_info_map, cur_month, cur_year, pending_events=None):
+    """Select the ranking composition that best matches instant score.
+
+    LiveTennis details are the baseline ledger. The current event is injected only as
+    a second scenario, then we pick the scenario matching current.json's instant
+    score, preferring the baseline when both totals are valid.
+    """
+    baseline_available = build_live_available_events(parsed_events)
+    pending_available = with_pending_event_candidates(
+        baseline_available, pending_events, gender, cal_cache, dynamic_info_map, cur_month, cur_year
+    )
+    adjusted_available = with_current_event_candidate(
+        pending_available, gender, event_name, this_event_score,
+        cal_cache, dynamic_info_map, cur_month, cur_year
+    )
+
+    baseline_selected = select_live_included_events(list(baseline_available.values()))
+    adjusted_selected = select_events_by_rules(list(adjusted_available.values()), gender)
+    baseline_total = sum_events(baseline_selected)
+    adjusted_total = sum_events(adjusted_selected)
+    target = int(target_score or 0)
+    has_event_adjustment = adjusted_available != baseline_available
+
+    mode = 'baseline'
+    selected = baseline_selected
+    available = baseline_available
+    if baseline_total != target:
+        if adjusted_total == target or abs(adjusted_total - target) < abs(baseline_total - target):
+            mode = 'event_adjusted' if has_event_adjustment else 'official_recomposed'
+            selected = adjusted_selected
+            available = adjusted_available
+        elif has_event_adjustment:
+            mode = 'baseline_closest'
+    elif adjusted_total == target and has_event_adjustment:
+        mode = 'baseline_live_preferred'
+
+    return selected, list(available.values()), mode
+
+
+def current_event_info(event_name, gender, cal_cache, dynamic_info_map, cur_month, cur_year):
+    if not event_name:
+        return None
+    meta = get_meta(event_name, gender, cal_cache, dynamic_info_map, cur_month, cur_year, force_year=cur_year)
+    ey, em = expiry_ym(meta)
+    forced = is_force_counting_event(event_name, gender, meta)
+    return {
+        'name': event_name,
+        'type': meta.get('type'),
+        'surface': meta.get('surface'),
+        'year': meta.get('year'),
+        'month': meta.get('month'),
+        'start_date': meta.get('start_date'),
+        'end_date': meta.get('end_date'),
+        'expiry': f'{ey}年{em}月',
+        'forced': forced,
+        'start_counting_score': start_counting_score_for_event(event_name, gender, meta, forced),
+    }
 
 
 def get_label(u):
@@ -345,7 +794,7 @@ def fetch_rank_data(session, csrf, gidx):
     return all_rows
 
 
-def build_users(rows, gender, ir_map, cur_map, event_name, cal_cache, dynamic_info_map, cur_month, cur_year):
+def build_users(rows, gender, ir_map, cur_map, event_name, cal_cache, dynamic_info_map, cur_month, cur_year, event_overlays=None):
     EXPIRY_MONTHS=[]
     m2,y2=cur_month+1,cur_year
     if m2>12: m2=1;y2+=1
@@ -360,16 +809,10 @@ def build_users(rows, gender, ir_map, cur_map, event_name, cal_cache, dynamic_in
         score=ci.get('instant_score',r.get('score',0) or 0)
         this_ev=ci.get('this_event_score',0)
         evs=parse_details(det,gender,cal_cache,dynamic_info_map,cur_month,cur_year)
-        included=[e for e in evs if e['inc']]
-
-        if event_name:
-            included=[e for e in included if e.get('n') != event_name]
-
-        if event_name:
-            meta=get_meta(event_name,gender,cal_cache,dynamic_info_map,cur_month,cur_year)
-            if this_ev>0 or meta.get('type') == 'GS':
-                ey,em=expiry_ym(meta)
-                included.append({'n':event_name,'s':this_ev,'inc':True,'forced':meta.get('type') == 'GS','meta':meta,'expiry':f'{ey}年{em}月'})
+        pending_events = overlay_events_for_user(event_overlays, uid, gender, current_event_name=event_name)
+        included, calc_pool, composition_mode = select_countable_events(
+            evs, gender, event_name, this_ev, score, cal_cache, dynamic_info_map, cur_month, cur_year, pending_events
+        )
 
         ts,te,ss,em2={},{},{},{}
         for e in included:
@@ -382,11 +825,25 @@ def build_users(rows, gender, ir_map, cur_map, event_name, cal_cache, dynamic_in
                 if e['expiry'] not in em2: em2[e['expiry']]={'total':0,'events':[]}
                 em2[e['expiry']]['total']+=sc2; em2[e['expiry']]['events'].append(f"{e['n']}({sc2})")
         ho=ss.get('hard_out',0);hi=ss.get('hard_in',0)
+        selected_names = {e['n'] for e in included}
+        calc_pool_payload = []
+        for e in calc_pool:
+            payload = event_payload(e)
+            payload['selected'] = e.get('n') in selected_names
+            if payload.get('current'):
+                payload['counting_started'] = payload['selected'] or payload.get('forced')
+            calc_pool_payload.append(payload)
         u={'uid':uid,'n':name,'s':score,'rank':rank,
            'gs':ts.get('GS',0),'ye':ts.get('YE',0),'m1':ts.get('M1000',0),'a5':ts.get('A500',0),'a2':ts.get('A250',0),
            'hard':ho+hi,'clay':ss.get('clay',0),'grass':ss.get('grass',0),'surf_scores':ss,
-           'type_evs':{t:[{'n':e['n'],'s':e['s'],'forced':e['forced'],'surf':e['meta']['surface'],'expiry':e['expiry']}
+           'type_evs':{t:[{'n':e['n'],'s':e['s'],'inc':e.get('inc', True),'lt_inc':e.get('lt_inc', e.get('inc', True)),
+                           'forced':e['forced'],'current':e.get('current', False),'source':e.get('source', 'live'),
+                           'surf':e['meta']['surface'],'expiry':e['expiry']}
                            for e in sorted(evs2,key=lambda x:-x['s'])] for t,evs2 in te.items()},
+           'calc_pool':calc_pool_payload,
+           'composition_total':sum(e['s'] for e in included),
+           'composition_gap':score-sum(e['s'] for e in included),
+           'composition_mode':composition_mode,
            'exp_list':[{'mk':mk,'total':em2.get(mk,{'total':0})['total'],'events':em2.get(mk,{'events':[]})['events']}
                        for mk in EXPIRY_MONTHS]}
         users.append(u)
@@ -405,18 +862,15 @@ def build_users(rows, gender, ir_map, cur_map, event_name, cal_cache, dynamic_in
 def main():
     tz_cn=timezone(timedelta(hours=8))
     now=datetime.now(tz_cn); cur_month=now.month; cur_year=now.year
-    print(f"[{now.strftime('%Y-%m-%d %H:%M:%S')}] 开始生成积分构成数据（动态赛历版）...")
+    print(f"[{now.strftime('%Y-%m-%d %H:%M:%S')}] 开始生成积分构成数据（官方赛历版）...")
     session=make_session()
 
-    print("读取赛历...")
-    cal_cache={}
-    for y in [cur_year-1, cur_year]:
-        cal_cache[y]=scrape_calendar(y, session)
-        print(f"  {y}年: {len(cal_cache[y])} 个赛事")
-        time.sleep(0.5)
-    
-    print("动态获取赛事月份（从 calendar_list 页面）...")
-    dynamic_info_map = build_dynamic_info_map_from_calendar_list(cal_cache, cur_year, session)
+    print("读取官方赛历...")
+    cal_cache = load_official_calendar()
+    dynamic_info_map = None
+    print(f"  官方赛历赛事: {len(cal_cache.get('events', []))} 个")
+    event_overlays = load_current_event_overlays()
+    print(f"  当前站/待吸收缓存: {len(event_overlays)} 站")
 
     resp_ms=session.get(f'{BASE_URL}/zh/survivor/rank/MS/year',timeout=20)
     csrf_ms=re.search(r'meta[^>]*name="csrf-token"[^>]*content="([^"]+)"',resp_ms.text).group(1)
@@ -439,12 +893,26 @@ def main():
         print(f"  ⚠️ current.json读取失败: {e}"); ms_ir={}; ws_ir={}; ms_cur={}; ws_cur={}; ms_event=''; ws_event=''
 
     print("构建ATP积分构成...")
-    ms_users=build_users(ms_rows,'MS',ms_ir,ms_cur,ms_event,cal_cache,dynamic_info_map,cur_month,cur_year)
+    ms_users=build_users(ms_rows,'MS',ms_ir,ms_cur,ms_event,cal_cache,dynamic_info_map,cur_month,cur_year,event_overlays)
     print("构建WTA积分构成...")
-    ws_users=build_users(ws_rows,'WS',ws_ir,ws_cur,ws_event,cal_cache,dynamic_info_map,cur_month,cur_year)
+    ws_users=build_users(ws_rows,'WS',ws_ir,ws_cur,ws_event,cal_cache,dynamic_info_map,cur_month,cur_year,event_overlays)
 
     now_str=now.strftime('%Y-%m-%d %H:%M:%S')
-    output={'updated_at':now_str,'ms':ms_users,'ws':ws_users}
+    output={
+        'updated_at':now_str,
+        'calendar_source':'official_calendar',
+        'event_overlay_count':len(event_overlays),
+        'expiry_months':[
+            f'{(cur_year + (cur_month+i)//12)}年{((cur_month+i)%12)+1}月'
+            for i in range(12)
+        ],
+        'current_events':{
+            'ms':current_event_info(ms_event,'MS',cal_cache,dynamic_info_map,cur_month,cur_year),
+            'ws':current_event_info(ws_event,'WS',cal_cache,dynamic_info_map,cur_month,cur_year),
+        },
+        'ms':ms_users,
+        'ws':ws_users
+    }
     os.makedirs('data',exist_ok=True)
     with open('data/breakdown.json','w',encoding='utf-8') as f:
         json.dump(output,f,ensure_ascii=False,separators=(',',':'))

@@ -6,6 +6,7 @@
 import requests, json, re, time, os, sys
 from collections import Counter
 from datetime import datetime, timezone, timedelta
+import fetch_breakdown as official_scoring
 
 BASE_URL = "https://www.live-tennis.cn"
 PICK_COUNTS_PATH = os.path.join('data', 'daily_jinx_pick_counts.json')
@@ -234,7 +235,25 @@ def parse_all_scores(details_html):
         if n not in c: c[n] = int(m.group(2))
     return c, nc
 
-def calc_instant(details_html, new_score, gender, ev_name):
+def calc_instant(details_html, new_score, gender, ev_name, cal_cache=None, cur_month=None, cur_year=None,
+                 event_overlays=None, uid=None):
+    if official_scoring.has_official_calendar(cal_cache):
+        cur_month = cur_month or datetime.now(timezone(timedelta(hours=8))).month
+        cur_year = cur_year or datetime.now(timezone(timedelta(hours=8))).year
+        events = official_scoring.parse_details(details_html, gender, cal_cache, None, cur_month, cur_year)
+        available = official_scoring.build_live_available_events(events)
+        pending_events = official_scoring.overlay_events_for_user(
+            event_overlays, uid, gender, current_event_name=ev_name
+        ) if uid else []
+        available = official_scoring.with_pending_event_candidates(
+            available, pending_events, gender, cal_cache, None, cur_month, cur_year
+        )
+        adjusted = official_scoring.with_current_event_candidate(
+            available, gender, ev_name, new_score, cal_cache, None, cur_month, cur_year
+        )
+        selected = official_scoring.select_events_by_rules(list(adjusted.values()), gender)
+        return official_scoring.sum_events(selected)
+
     c, nc = parse_all_scores(details_html)
     c.pop(ev_name, 0); nc.pop(ev_name, 0)
     av = {}; av.update(nc); av.update(c)
@@ -265,15 +284,11 @@ def calc_instant(details_html, new_score, gender, ev_name):
         return sum(s for _,s in gs) + sum(s for _,s in ye[:1]) + sum(s for _,s in nt) + sum(s for _,s in ct) + sum(s for _,s in ot[:rem])
 
 
-def calc_preview_v5_instant(uid, cur, ded, new_s, det, gender, event_name):
-    """V5口径即时积分：沿用确认预览版结果，并保留通用兜底。
-    注意：1000赛强制起计分的完整口径在后续可继续细化；这里保证已确认案例不被下一次更新覆盖。
-    """
-    # 已确认案例：WTA 洋葱葱葱葱葱葱葱啊 uid=40718，罗马本站93分按用户确认展示为3634
-    if str(uid) == '40718' and gender == 'WS' and event_name == '罗马' and new_s == 93 and ded == 215:
-        return 3634
+def calc_preview_v5_instant(uid, cur, ded, new_s, det, gender, event_name,
+                            cal_cache=None, cur_month=None, cur_year=None, event_overlays=None):
+    """官方赛历口径即时积分：当前站旧分到期后，按强制组和18站规则重选。"""
     if det:
-        return calc_instant(det, new_s, gender, event_name)
+        return calc_instant(det, new_s, gender, event_name, cal_cache, cur_month, cur_year, event_overlays, uid)
     return cur + new_s - ded
 
 def fetch_rank_data(session, csrf, gender_idx):
@@ -306,7 +321,8 @@ def fetch_rank_data(session, csrf, gender_idx):
         } for r in all_rows
     }
 
-def fetch_event_data(session, csrf, iid, gender, event_name, rank_dict):
+def fetch_event_data(session, csrf, iid, gender, event_name, rank_dict,
+                     cal_cache=None, cur_month=None, cur_year=None, event_overlays=None):
     """获取比赛实时数据"""
     # Score
     sd = post_api(session, csrf, iid, 'score')
@@ -359,7 +375,10 @@ def fetch_event_data(session, csrf, iid, gender, event_name, rank_dict):
         ded = int(dm.group(1)) if dm else 0
         
         new_s = r.get('score', 0) or 0
-        inst = calc_preview_v5_instant(uid, cur, ded, new_s, det, gender, event_name)
+        inst = calc_preview_v5_instant(
+            uid, cur, ded, new_s, det, gender, event_name,
+            cal_cache, cur_month, cur_year, event_overlays
+        )
         
         not_participated = False
         today_player = (tr.get('player', '') if tr else '') or ''
@@ -419,7 +438,10 @@ def fetch_event_data(session, csrf, iid, gender, event_name, rank_dict):
         tmp2 = re.sub(r'<del>.*?</del>', '', det2 or '', flags=re.DOTALL)
         dm2 = re.search(rf'【{re.escape(event_name)}\((\d+)\)】', tmp2)
         ded2 = int(dm2.group(1)) if dm2 else 0
-        inst2 = calc_preview_v5_instant(uid2, cur2, ded2, 0, det2, gender, event_name)
+        inst2 = calc_preview_v5_instant(
+            uid2, cur2, ded2, 0, det2, gender, event_name,
+            cal_cache, cur_month, cur_year, event_overlays
+        )
         rows_out.append({
             'user_id': uid2,
             'username': ri2.get('username') or uid2,
@@ -524,12 +546,78 @@ def update_daily_jinx_pick_counts(output, now_dt):
         }, f, ensure_ascii=False, separators=(',', ':'))
     print(f"每日毒奶选人统计快照: {len(snapshots)} 条")
 
+
+def update_current_event_overlays(output, now_dt):
+    existing = official_scoring.load_current_event_overlays()
+    by_key = {}
+    for item in existing:
+        key = (
+            item.get('tour'),
+            item.get('event_name'),
+            int(item.get('year') or 0),
+            item.get('event_id') or '',
+        )
+        if key[0] and key[1] and key[2]:
+            by_key[key] = item
+
+    for group, tour in (('ms', 'ATP'), ('ws', 'WTA')):
+        data = output.get(group) or {}
+        event_name = data.get('event_name') or ''
+        if not event_name:
+            continue
+        meta = data.get('event_meta') or {}
+        year = int(meta.get('year') or now_dt.year)
+        event_id = data.get('event_id') or ''
+        scores = {
+            str(row.get('user_id')): int(row.get('this_event_score') or 0)
+            for row in data.get('rows', [])
+            if row.get('user_id') is not None
+        }
+        by_key[(tour, event_name, year, event_id)] = {
+            'tour': tour,
+            'event_name': event_name,
+            'event_id': event_id,
+            'year': year,
+            'updated_at': output.get('updated_at') or '',
+            'event_meta': meta,
+            'scores': scores,
+        }
+
+    cutoff = now_dt.date() - timedelta(days=90)
+    events = []
+    for item in by_key.values():
+        keep = True
+        try:
+            item_date = datetime.fromisoformat(str(item.get('updated_at', '')).split()[0]).date()
+            keep = item_date >= cutoff
+        except Exception:
+            keep = True
+        if keep:
+            events.append(item)
+    events.sort(key=lambda x: (x.get('tour') or '', int(x.get('year') or 0), x.get('event_name') or ''))
+
+    os.makedirs(os.path.dirname(official_scoring.CURRENT_EVENT_OVERLAYS_PATH), exist_ok=True)
+    with open(official_scoring.CURRENT_EVENT_OVERLAYS_PATH, 'w', encoding='utf-8') as f:
+        json.dump({
+            'updated_at': output.get('updated_at') or '',
+            'events': events,
+        }, f, ensure_ascii=False, separators=(',', ':'))
+    print(f"当前站/待吸收缓存: {len(events)} 站")
+
 def main():
     tz_cn = timezone(timedelta(hours=8))
     now_dt = datetime.now(tz_cn)
     print(f"[{now_dt.strftime('%Y-%m-%d %H:%M:%S')}] 开始更新实时数据...")
     
     session = make_session()
+    print("读取官方赛历...")
+    cal_cache = official_scoring.load_official_calendar()
+    print(f"  官方赛历赛事: {len(cal_cache.get('events', []))} 个")
+    if not official_scoring.has_official_calendar(cal_cache):
+        print("ERROR: 官方赛历缺失，fetch_current 不再使用硬编码赛历兜底")
+        sys.exit(1)
+    event_overlays = official_scoring.load_current_event_overlays()
+    print(f"  当前站/待吸收缓存: {len(event_overlays)} 站")
     
     # 1. 获取活跃比赛
     ms_eid, ws_eid = get_active_events(session)
@@ -569,10 +657,16 @@ def main():
     
     # 5. 实时数据
     print("获取ATP实时数据...")
-    ms_data = fetch_event_data(session, csrf_ms, ms_iid, 'MS', ms_name, ms_rank)
+    ms_data = fetch_event_data(
+        session, csrf_ms, ms_iid, 'MS', ms_name, ms_rank,
+        cal_cache, now_dt.month, now_dt.year, event_overlays
+    )
     
     print("获取WTA实时数据...")
-    ws_data = fetch_event_data(session, csrf_ws, ws_iid, 'WS', ws_name, ws_rank)
+    ws_data = fetch_event_data(
+        session, csrf_ws, ws_iid, 'WS', ws_name, ws_rank,
+        cal_cache, now_dt.month, now_dt.year, event_overlays
+    )
     
     # 6. 今日球员池：从当天赛程页抓实际有比赛的罗马男单/女单正赛球员
     print("获取今日参赛球员（赛程页）...")
@@ -584,10 +678,13 @@ def main():
     # 7. 输出
     now_dt = datetime.now(tz_cn)
     now_str = now_dt.strftime('%Y-%m-%d %H:%M:%S')
+    ms_event_meta = official_scoring.current_event_info(ms_name, 'MS', cal_cache, None, now_dt.month, now_dt.year)
+    ws_event_meta = official_scoring.current_event_info(ws_name, 'WS', cal_cache, None, now_dt.month, now_dt.year)
     output = {
         'updated_at': now_str,
         'ms': {
             'event_id': ms_eid, 'event_name': ms_name,
+            'event_meta': ms_event_meta,
             'today_day': ms_data['today_day'],
             'alive_count': ms_data['alive_count'],
             'filled_count': ms_data['filled_count'],
@@ -598,6 +695,7 @@ def main():
         },
         'ws': {
             'event_id': ws_eid, 'event_name': ws_name,
+            'event_meta': ws_event_meta,
             'today_day': ws_data['today_day'],
             'alive_count': ws_data['alive_count'],
             'filled_count': ws_data['filled_count'],
@@ -612,6 +710,7 @@ def main():
     with open('data/current.json', 'w', encoding='utf-8') as f:
         json.dump(output, f, ensure_ascii=False, separators=(',', ':'))
     update_daily_jinx_pick_counts(output, now_dt)
+    update_current_event_overlays(output, now_dt)
     
     size_kb = os.path.getsize('data/current.json') // 1024
     print(f"[{now_str}] 完成！文件大小: {size_kb} KB")
