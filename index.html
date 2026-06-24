@@ -580,7 +580,6 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
   .manager-detail-table{grid-template-columns:1fr}
 }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
 <div id="hdr">
@@ -705,6 +704,7 @@ const GA_MEASUREMENT_ID='G-E51GZG7C1F';
 const SUPABASE_URL='https://avdnhcwmwdwhsecszlcd.supabase.co';
 const SUPABASE_ANON_KEY='sb_publishable_W7jtbI1juCvm80UvZ3qgJQ_MrGfhwKG';
 const SUPABASE_JS_URL='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+const CHART_JS_URL='https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js';
 const MODULE_VIEWED={};
 const SEARCH_TRACK_TIMERS={};
 const TOP_TAB_BY_PANEL={
@@ -757,8 +757,12 @@ let MANAGER_REMOTE_SYNC_KEY='';
 let MANAGER_REMOTE_CONFIGS=[];
 let MANAGER_REMOTE_STATION_NET_BOARD=[];
 let MANAGER_REMOTE_PUBLIC_SYNC_KEY='';
+let MANAGER_REMOTE_PUBLIC_LOADING=null;
 let MANAGER_PENDING_TRANSFER=null;
 let MANAGER_ANALYTICS_VIEWS={};
+let MANAGER_PREWARM_STARTED=false;
+let SECONDARY_DATA_PREFETCHED=false;
+let CHART_JS_LOADING=null;
 const MANAGER_STORE_KEY='tennis_manager_state_v3';
 const MANAGER_LEDGER_KEY='tennis_manager_ledger_v2';
 const MANAGER_DAILY_SUMMARY_KEY='tennis_manager_daily_summary_v1';
@@ -1058,6 +1062,27 @@ function managerTrackView(view,subview,source){
   }
 }
 
+function runWhenIdle(fn,timeout){
+  if(typeof requestIdleCallback==='function')requestIdleCallback(fn,{timeout:timeout||3000});
+  else setTimeout(fn,0);
+}
+function loadChartJs(){
+  if(window.Chart)return Promise.resolve(window.Chart);
+  if(CHART_JS_LOADING)return CHART_JS_LOADING;
+  CHART_JS_LOADING=new Promise(function(resolve,reject){
+    var s=document.createElement('script');
+    s.src=CHART_JS_URL;
+    s.async=true;
+    s.onload=function(){resolve(window.Chart);};
+    s.onerror=function(){reject(new Error('Chart.js load failed'));};
+    document.head.appendChild(s);
+  }).catch(function(e){
+    trackDataLoadError('chart_js',e);
+    CHART_JS_LOADING=null;
+    throw e;
+  });
+  return CHART_JS_LOADING;
+}
 function managerLocalPreviewEnabled(){
   return location.hostname==='127.0.0.1'||location.hostname==='localhost'||location.protocol==='file:';
 }
@@ -1076,11 +1101,14 @@ async function loadManagerData(){
   MANAGER_DATA_LOADING=(async function(){
     try{
       const active=await managerFetchJson('active_events.json');
-      const photos=await managerFetchJson('player_photos.json').catch(function(){return {fallbacks:{},players:{}};});
-      const eventPairs=await Promise.all((active.events||[]).filter(function(x){return x.active!==false;}).map(async function(item){
+      const eventFiles=(active.events||[]).filter(function(x){return x.active!==false;});
+      const photosPromise=managerFetchJson('player_photos.json').catch(function(){return {fallbacks:{},players:{}};});
+      const eventPairsPromise=Promise.all(eventFiles.map(async function(item){
         const data=await managerFetchJson(item.data_file);
         return [item.tour,data];
       }));
+      const results=await Promise.all([photosPromise,eventPairsPromise]);
+      const photos=results[0],eventPairs=results[1];
       MANAGER_ACTIVE_EVENTS=active;
       MANAGER_EVENT_DATA={};
       eventPairs.forEach(function(pair){MANAGER_EVENT_DATA[pair[0]]=pair[1];});
@@ -1098,6 +1126,16 @@ async function loadManagerData(){
     }
   })();
   return MANAGER_DATA_LOADING;
+}
+function scheduleManagerPrewarm(){
+  if(MANAGER_PREWARM_STARTED)return;
+  MANAGER_PREWARM_STARTED=true;
+  runWhenIdle(function(){
+    loadManagerData().then(function(){
+      if(ACTIVE_TAB==='manager')renderManagerDemo();
+      scheduleSecondaryDataPrefetch();
+    });
+  },1800);
 }
 function managerStorageNamespace(){
   var user=AUTH_USER&&AUTH_USER.id?AUTH_USER.id:'anon';
@@ -1704,7 +1742,7 @@ function managerSetView(view){
   if(managerViewNeedsLogin(view)&&!managerRequireLogin('manager'))return;
   MANAGER_VIEW=view;
   if(view==='mine'&&!MANAGER_MY_VIEW)MANAGER_MY_VIEW='lineup';
-  if(view==='hall'||view==='boards')managerLoadRemotePublicData().then(function(){if(MANAGER_VIEW===view)renderManagerDemo();});
+  if(view==='hall'||view==='boards')managerLoadRemotePublicData().then(function(){if(MANAGER_VIEW===view)renderManagerDemo();}).catch(function(){if(MANAGER_VIEW===view)renderManagerDemo();});
   managerTrackView(view,view==='mine'?MANAGER_MY_VIEW:'','nav');
   renderManagerDemo();
 }
@@ -2378,12 +2416,13 @@ function managerRenderHall(){
   var submitted=managerSubmittedRecord(),mine=submitted?{user:'我的办公室',style:managerCalc().style,cost:submitted.cost,players:managerSanitizeLedgerPlayers(submitted.players||[]).map(managerLedgerPlayerName),note:'已提交，换人 '+MANAGER_TRANSFER_COUNT+'/1。'+submitted.note}:null;
   var useDemoConfigs=managerLocalPreviewEnabled()&&!supabaseConfigured();
   var source=MANAGER_REMOTE_CONFIGS&&MANAGER_REMOTE_CONFIGS.length?MANAGER_REMOTE_CONFIGS:(useDemoConfigs?MANAGER_DEMO_CONFIGS:[]);
+  var loadingPublic=!!MANAGER_REMOTE_PUBLIC_LOADING&&!MANAGER_REMOTE_PUBLIC_SYNC_KEY;
   var q=String(MANAGER_HALL_SEARCH||'').toLowerCase(),configs=(mine?[mine]:[]).concat(source).filter(function(x){
     if(!q)return true;
     return [x.user,x.style,x.note].concat(x.players||[]).join(' ').toLowerCase().includes(q);
   }),pager=managerPaginate(configs,MANAGER_HALL_PAGE,15);
   MANAGER_HALL_PAGE=pager.page;
-  var emptyText=q?'没有搜到匹配的配置。':'暂无真实配置。等本站有人提交后，这里会从 Supabase 展示。';
+  var emptyText=loadingPublic?'正在加载配置大厅...':(q?'没有搜到匹配的配置。':'暂无真实配置。等本站有人提交后，这里会从 Supabase 展示。');
   return '<div class="manager-filter" style="margin-bottom:12px"><label>搜索配置大厅</label><input id="manager-hall-q" placeholder="玩家 / 球员 / 风格" value="'+esc(MANAGER_HALL_SEARCH)+'" autocomplete="off"><div class="manager-note">配置大厅展示本站已经提交的阵容，提交后立即公开完整配置。</div></div><div class="manager-board-grid">'+(pager.items.length?pager.items.map(function(x){return '<div class="manager-board"><h4>'+esc(x.user)+'</h4><div class="manager-sim"><div class="manager-sim-row"><span>阵容风格</span><b>'+esc(x.style)+'</b></div><div class="manager-sim-row"><span>已用额度</span><b>'+x.cost+'</b></div><div class="manager-sim-row"><span>签约球员</span><b>'+esc((x.players||[]).join(' / '))+'</b></div></div><div class="manager-note" style="margin-top:8px">'+esc(x.note||'')+'</div></div>';}).join(''):'<div class="manager-empty">'+emptyText+'</div>')+'</div>'+managerPagerHtml('hall',pager);
 }
 function managerRenderBoards(){
@@ -2397,7 +2436,7 @@ function managerSignedPoints(value){
 function managerRenderStationNetBoard(){
   var list=Array.isArray(MANAGER_REMOTE_STATION_NET_BOARD)?MANAGER_REMOTE_STATION_NET_BOARD:[],pager=managerPaginate(list,MANAGER_STATION_NET_PAGE,10);
   MANAGER_STATION_NET_PAGE=pager.page;
-  if(!pager.items.length)return '<div class="manager-empty">本站净收益榜等待真实结算数据。</div>';
+  if(!pager.items.length)return '<div class="manager-empty">'+((MANAGER_REMOTE_PUBLIC_LOADING&&!MANAGER_REMOTE_PUBLIC_SYNC_KEY)?'正在加载本站净收益榜...':'本站净收益榜等待真实结算数据。')+'</div>';
   var rows=pager.items.map(function(x,i){
     var rank=x.rank||pager.start+i;
     return '<tr><td>'+rank+'</td><td>'+esc(x.user)+'</td><td class="'+(x.net>=0?'g':'r')+'">'+managerSignedPoints(x.net)+'</td><td>'+managerSignedPoints(x.player)+'</td><td>'+managerSignedPoints(x.combo)+'</td></tr>';
@@ -2446,8 +2485,8 @@ function renderManagerDemo(){
   var panelTitle='<div class="manager-panel-title"><span>'+viewTitle+'</span>'+(MANAGER_VIEW==='market'?marketTabs:'')+'</div>';
   var panelHead='<div class="manager-panel-h">'+panelTitle+(MANAGER_VIEW==='market'?managerEventMetaHtml(rules):'')+'</div>';
   var dialog=MANAGER_DIALOG?'<div class="manager-dialog"><div class="manager-dialog-card"><h3>'+esc(MANAGER_DIALOG.title)+'</h3><p>'+esc(MANAGER_DIALOG.msg).replace(/\n/g,'<br>')+'</p><div class="manager-actions">'+(MANAGER_DIALOG.confirmAction?'<button class="manager-clear" data-manager-action="close-dialog">'+esc(MANAGER_DIALOG.cancelLabel||'取消')+'</button><button class="manager-action" data-manager-action="'+esc(MANAGER_DIALOG.confirmAction)+'">'+esc(MANAGER_DIALOG.confirmLabel||'确定')+'</button>':'<button class="manager-action" data-manager-action="close-dialog">知道了</button>')+'</div></div></div>':'';
-  var wechat='<div class="manager-wechat-card"><div class="manager-wechat-copy"><div class="manager-wechat-line main">本游戏每周跟随巡回赛历开新赛事</div><div class="manager-wechat-line">如需 <span class="manager-wechat-em">开售提醒</span>、<span class="manager-wechat-em">换人窗口提醒</span> 请扫码进本游戏官方群</div><div class="manager-wechat-line small">群里有战术讨论、八卦聊天等等等等</div></div><img class="manager-wechat-qr" src="assets/manager/wechat-group-qr.jpg" alt="微信群二维码" loading="lazy" decoding="async"></div>';
-  root.innerHTML='<div class="manager-shell"><div class="manager-hero"><div class="manager-title"><div><div class="manager-title-line"><h2>巡回赛经纪人</h2><button class="manager-clear" data-manager-view="rules">查看规则</button><span class="manager-settle-note">每天09:37结算</span></div><p>组建你的球员阵容，在巡回赛里征战！<br>在公开市场上购买球员，球员成绩越好，你赚的越多，收益按巡回赛积分计算。<br>你不只懂网球，你是在做预算、风险和轮次收益的组合策略。</p></div></div>'+wechat+'<img class="manager-hero-art" src="assets/manager/agent-money-bag.png" alt="" loading="lazy" decoding="async"></div>'+managerRenderMoney(c,rules)+tabs+'<div class="manager-grid '+(showSide?'':'single')+'"><div class="manager-panel">'+panelHead+'<div class="manager-panel-b">'+managerRenderBody()+'</div></div>'+(showSide?managerSidebar(c,rules):'')+'</div>'+dialog+'</div>';
+  var wechat='<div class="manager-wechat-card"><div class="manager-wechat-copy"><div class="manager-wechat-line main">本游戏每周跟随巡回赛历开新赛事</div><div class="manager-wechat-line">如需 <span class="manager-wechat-em">开售提醒</span>、<span class="manager-wechat-em">换人窗口提醒</span> 请扫码进本游戏官方群</div><div class="manager-wechat-line small">群里有战术讨论、八卦聊天等等等等</div></div><img class="manager-wechat-qr" src="assets/manager/wechat-group-qr.jpg" alt="微信群二维码" width="92" height="122" decoding="async" fetchpriority="high"></div>';
+  root.innerHTML='<div class="manager-shell"><div class="manager-hero"><div class="manager-title"><div><div class="manager-title-line"><h2>巡回赛经纪人</h2><button class="manager-clear" data-manager-view="rules">查看规则</button><span class="manager-settle-note">每天09:37结算</span></div><p>组建你的球员阵容，在巡回赛里征战！<br>在公开市场上购买球员，球员成绩越好，你赚的越多，收益按巡回赛积分计算。<br>你不只懂网球，你是在做预算、风险和轮次收益的组合策略。</p></div></div>'+wechat+'<img class="manager-hero-art" src="assets/manager/agent-money-bag.webp" alt="" loading="lazy" decoding="async" fetchpriority="low"></div>'+managerRenderMoney(c,rules)+tabs+'<div class="manager-grid '+(showSide?'':'single')+'"><div class="manager-panel">'+panelHead+'<div class="manager-panel-b">'+managerRenderBody()+'</div></div>'+(showSide?managerSidebar(c,rules):'')+'</div>'+dialog+'</div>';
 }
 
 function trackSupabaseError(operation,err,ignoreMissing){
@@ -2547,41 +2586,56 @@ async function managerLoadRemotePublicData(){
   }
   var key=managerStationKey();
   if(MANAGER_REMOTE_PUBLIC_SYNC_KEY===key)return MANAGER_REMOTE_CONFIGS;
-  const client=await ensureSupabaseClient();
-  try{
-    const res=await client.from('tour_manager_public_configurations').select('*').eq('station_key',key).order('submitted_at',{ascending:false}).limit(300);
-    if(res.error)throw res.error;
-    MANAGER_REMOTE_CONFIGS=(res.data||[]).map(function(x){
-      return {user:x.display_name||'炉友',style:x.lineup_style||'待建仓',cost:x.lineup_cost||0,players:(x.players||[]).map(managerPublicConfigPlayerName).filter(Boolean),note:'预测净值 '+(x.predicted_net||0)};
-    });
-  }catch(e){
-    trackSupabaseError('manager.public_configurations',e,true);
-  }
-  try{
-    const board=await client.from('tour_manager_station_net_leaderboard')
+  if(MANAGER_REMOTE_PUBLIC_LOADING)return MANAGER_REMOTE_PUBLIC_LOADING;
+  MANAGER_REMOTE_PUBLIC_LOADING=(async function(){
+    const client=await ensureSupabaseClient();
+    const configReq=client.from('tour_manager_public_configurations').select('*').eq('station_key',key).order('submitted_at',{ascending:false}).limit(300);
+    const boardReq=client.from('tour_manager_station_net_leaderboard')
       .select('rank_no,display_name,station_net_income,player_settlement_income,combo_bonus')
       .eq('station_key',key)
       .eq('season',managerSeason())
       .order('rank_no',{ascending:true})
       .limit(300);
-    if(board.error)throw board.error;
-    MANAGER_REMOTE_STATION_NET_BOARD=(board.data||[]).map(function(x){
-      return {
-        rank:Number(x.rank_no)||0,
-        user:x.display_name||'炉友',
-        net:Number(x.station_net_income)||0,
-        player:Number(x.player_settlement_income)||0,
-        combo:Number(x.combo_bonus)||0
-      };
-    });
-    MANAGER_STATION_NET_PAGE=1;
-  }catch(e){
-    MANAGER_REMOTE_STATION_NET_BOARD=[];
-    trackSupabaseError('manager.station_net_leaderboard',e,true);
-  }
-  MANAGER_REMOTE_PUBLIC_SYNC_KEY=key;
-  trackManagerEvent('manager_public_data_loaded',{config_count:MANAGER_REMOTE_CONFIGS.length,board_count:MANAGER_REMOTE_STATION_NET_BOARD.length});
-  return MANAGER_REMOTE_CONFIGS;
+    const results=await Promise.allSettled([configReq,boardReq]);
+    const res=results[0].status==='fulfilled'?results[0].value:null;
+    if(res&&res.error)trackSupabaseError('manager.public_configurations',res.error,true);
+    else if(res){
+      MANAGER_REMOTE_CONFIGS=(res.data||[]).map(function(x){
+        return {user:x.display_name||'炉友',style:x.lineup_style||'待建仓',cost:x.lineup_cost||0,players:(x.players||[]).map(managerPublicConfigPlayerName).filter(Boolean),note:'预测净值 '+(x.predicted_net||0)};
+      });
+    }else if(results[0].reason)trackSupabaseError('manager.public_configurations',results[0].reason,true);
+    const board=results[1].status==='fulfilled'?results[1].value:null;
+    if(board&&board.error){
+      MANAGER_REMOTE_STATION_NET_BOARD=[];
+      trackSupabaseError('manager.station_net_leaderboard',board.error,true);
+    }else if(board){
+      MANAGER_REMOTE_STATION_NET_BOARD=(board.data||[]).map(function(x){
+        return {
+          rank:Number(x.rank_no)||0,
+          user:x.display_name||'炉友',
+          net:Number(x.station_net_income)||0,
+          player:Number(x.player_settlement_income)||0,
+          combo:Number(x.combo_bonus)||0
+        };
+      });
+      MANAGER_STATION_NET_PAGE=1;
+    }else if(results[1].reason){
+      MANAGER_REMOTE_STATION_NET_BOARD=[];
+      trackSupabaseError('manager.station_net_leaderboard',results[1].reason,true);
+    }
+    MANAGER_REMOTE_PUBLIC_SYNC_KEY=key;
+    trackManagerEvent('manager_public_data_loaded',{config_count:MANAGER_REMOTE_CONFIGS.length,board_count:MANAGER_REMOTE_STATION_NET_BOARD.length});
+    return MANAGER_REMOTE_CONFIGS;
+  })().finally(function(){MANAGER_REMOTE_PUBLIC_LOADING=null;});
+  return MANAGER_REMOTE_PUBLIC_LOADING;
+}
+function managerSchedulePublicDataPreload(){
+  if(managerLocalPreviewEnabled()||!supabaseConfigured()||MANAGER_REMOTE_PUBLIC_SYNC_KEY===managerStationKey())return;
+  runWhenIdle(function(){
+    managerLoadRemotePublicData().then(function(){
+      if(ACTIVE_TAB==='manager'&&(MANAGER_VIEW==='hall'||MANAGER_VIEW==='boards'))renderManagerDemo();
+    }).catch(function(){});
+  },5000);
 }
 function managerChinaDateKey(value,offsetDays){
   var date=value?new Date(value):new Date();
@@ -2631,11 +2685,13 @@ function managerMaybeShowDailyIncomeDialog(){
 }
 async function managerEnterFlow(){
   await loadManagerData();
-  await managerLoadRemoteState();
-  await managerLoadRemotePublicData();
-  managerMaybeShowDailyIncomeDialog();
   managerTrackView(MANAGER_VIEW,MANAGER_VIEW==='mine'?MANAGER_MY_VIEW:'','entry');
   renderManagerDemo();
+  managerLoadRemoteState().then(function(){
+    managerMaybeShowDailyIncomeDialog();
+    if(ACTIVE_TAB==='manager')renderManagerDemo();
+  });
+  managerSchedulePublicDataPreload();
 }
 async function managerSubmitLineupRemote(c,rules){
   var payload=c.players.map(managerContractPayload);
@@ -3076,14 +3132,8 @@ const CURRENT_REFRESH_MS=10*60*1000;
 
 async function loadData(){
   const t=Date.now();
-  // ── 并行发起全部3个请求，不互相阻塞 ─────────────────────
-  const curPromise=fetch('data/current.json?t='+t).then(r=>r.json());
-  window.__histPromise=fetch('data/history.json?t='+t).then(r=>r.json());
-  window.__bdPromise=fetch('data/breakdown.json?t='+t).then(r=>r.json());
-
-  // ① current 先到先渲染（最小，最快）
   try{
-    const cur=await curPromise;
+    const cur=await fetch('data/current.json?t='+t).then(r=>r.json());
     GDATA=cur;
     MSPOOL=(cur.ms&&cur.ms.today_pool)||[];
     WSPOOL=(cur.ws&&cur.ws.today_pool)||[];
@@ -3093,6 +3143,8 @@ async function loadData(){
     if(ACTIVE_TAB==='jinx')renderDailyJinx();
     if(ACTIVE_TAB==='manager')renderManagerDemo();
     trackModuleView(ACTIVE_TAB);
+    scheduleManagerPrewarm();
+    scheduleSecondaryDataPrefetch();
   }catch(e){
     console.error('实时数据加载失败',e);
     trackDataLoadError('current_json',e);
@@ -3100,38 +3152,35 @@ async function loadData(){
     document.getElementById('loading-ms').textContent='⚠️ 数据加载失败，请刷新页面';
     document.getElementById('loading-ws').textContent='⚠️ 数据加载失败，请刷新页面';
   }
-
-  // ② history 后台加载完自动渲染
-  window.__histPromise.then(function(hist){
-    HIST_DATA=hist;
-    const pref={updated_at:hist.updated_at||'',ms:hist.preference_by_year['2026'].ms,ws:hist.preference_by_year['2026'].ws};
-    PDATA=pref;
-    renderPref('ms',pref);renderPref('ws',pref);
-    renderDisaster('ms');renderDisaster('ws');
-    initFlightSelect();
-  }).catch(function(e){
-    console.warn('历史数据加载失败（非致命）',e);
-    trackDataLoadError('history_json',e);
-    document.getElementById('loading-msp').textContent='⚠️ 历史数据加载失败，请刷新';
-    document.getElementById('loading-wsp').textContent='⚠️ 历史数据加载失败，请刷新';
-  });
-
-  // ③ breakdown 后台加载完，若用户已切到积分构成tab则自动渲染
-  window.__bdPromise.then(function(d){
-    BD_DATA=applyCurrentToBreakdown(d);
-    // 下载完直接预渲染两个panel，无论用户在哪个tab，切过去秒出
-    renderBreakdownPanel('ms',BD_DATA.ms||[]);
-    renderBreakdownPanel('ws',BD_DATA.ws||[]);
-  }).catch(function(e){console.warn('积分构成数据加载失败',e);trackDataLoadError('breakdown_json',e);});
 }
 
 // 统一获取历史数据入口（复用已发起的请求）
 function loadHistData(cb){
   if(HIST_DATA){if(cb)cb(HIST_DATA);return;}
   const p=window.__histPromise;
-  if(p){p.then(function(d){if(cb)cb(d);}).catch(function(e){trackDataLoadError('history_json',e);});return;}
+  if(p){p.then(function(d){HIST_DATA=d;if(cb)cb(d);}).catch(function(e){trackDataLoadError('history_json',e);});return;}
   window.__histPromise=fetch('data/history.json?t='+Date.now()).then(r=>r.json());
-  window.__histPromise.then(function(d){HIST_DATA=d;if(cb)cb(d);});
+  window.__histPromise.then(function(d){HIST_DATA=d;if(cb)cb(d);}).catch(function(e){
+    console.warn('历史数据加载失败（非致命）',e);
+    trackDataLoadError('history_json',e);
+    document.getElementById('loading-msp')&&(document.getElementById('loading-msp').textContent='⚠️ 历史数据加载失败，请刷新');
+    document.getElementById('loading-wsp')&&(document.getElementById('loading-wsp').textContent='⚠️ 历史数据加载失败，请刷新');
+  });
+}
+function scheduleSecondaryDataPrefetch(){
+  if(SECONDARY_DATA_PREFETCHED)return;
+  SECONDARY_DATA_PREFETCHED=true;
+  setTimeout(function(){
+    runWhenIdle(function(){
+      var startSecondary=function(){
+        loadHistData();
+        loadBreakdown(function(){});
+        setTimeout(function(){runWhenIdle(function(){loadChartJs().catch(function(){});},12000);},2000);
+      };
+      if(MANAGER_DATA_LOADED)startSecondary();
+      else loadManagerData().then(startSecondary).catch(startSecondary);
+    },9000);
+  },6000);
 }
 
 async function refreshCurrentOnly(){
@@ -3389,19 +3438,28 @@ function switchTab(t,btn){
   }
   // 积分构成：复用已发起的请求，如果还没加载完就等待
   if(t==='ms-bd'||t==='ws-bd'){
+    loadChartJs().catch(function(){});
     if(BD_DATA){renderBreakdownPanel('ms',BD_DATA.ms||[]);renderBreakdownPanel('ws',BD_DATA.ws||[]);}
     else{loadBreakdown(function(d){if(!d)return;renderBreakdownPanel('ms',d.ms||[]);renderBreakdownPanel('ws',d.ws||[]);});}
   }
-  // 历史相关tab：history还没加载完时等待
-  if((t==='ms-p'||t==='ws-p')&&!HIST_DATA){
-    loadHistData(function(d){
+  // 历史相关tab：按需加载；如果后台已经预取完成，则直接渲染。
+  if(t==='ms-p'||t==='ws-p'){
+    var renderPreferenceFromHistory=function(d){
       var yr=document.getElementById('year-ms-p')?.value||'2026';
       var pref={updated_at:d.updated_at||'',ms:d.preference_by_year[yr]?.ms||[],ws:d.preference_by_year[yr]?.ws||[]};
       PDATA=pref;renderPref('ms',pref);renderPref('ws',pref);
-    });
+    };
+    if(HIST_DATA)renderPreferenceFromHistory(HIST_DATA);
+    else loadHistData(renderPreferenceFromHistory);
   }
-  if((t==='ms-t'||t==='ws-t')&&!HIST_DATA){loadHistData(function(){renderDisaster('ms');renderDisaster('ws');});}
-  if(t==='flight'&&!HIST_DATA){loadHistData(function(){initFlightSelect();});}
+  if(t==='ms-t'||t==='ws-t'){
+    if(HIST_DATA){renderDisaster('ms');renderDisaster('ws');}
+    else loadHistData(function(){renderDisaster('ms');renderDisaster('ws');});
+  }
+  if(t==='flight'){
+    if(HIST_DATA)initFlightSelect();
+    else loadHistData(function(){initFlightSelect();});
+  }
   if(t==='jinx')renderDailyJinx();
   if(t==='manager'){
     if(!AUTH_USER){trackManagerEvent('manager_login_required',{source:'tab'});openAuthModal({reason:'manager',afterLogin:managerEnterFlow});}
@@ -4391,15 +4449,16 @@ function applyCurrentToBreakdown(d){
 }
 
 function loadBreakdown(cb){
-  if(BD_DATA){cb(BD_DATA);return;}
-  // 复用 loadData 里已发起的请求，避免重复下载
+  if(BD_DATA){if(cb)cb(BD_DATA);return Promise.resolve(BD_DATA);}
+  // 复用已发起的请求，避免重复下载
   const p=window.__bdPromise||fetch('data/breakdown.json?t='+Date.now()).then(r=>r.json());
   if(!window.__bdPromise)window.__bdPromise=p;
-  p.then(function(d){BD_DATA=applyCurrentToBreakdown(d);cb(BD_DATA);}).catch(function(e){
+  return p.then(function(d){BD_DATA=applyCurrentToBreakdown(d);if(cb)cb(BD_DATA);return BD_DATA;}).catch(function(e){
     console.error('积分构成加载失败',e);
     trackDataLoadError('breakdown_json',e);
     document.getElementById('bd-loading-ms')&&(document.getElementById('bd-loading-ms').textContent='⚠️ 积分构成数据加载失败，请刷新');
     document.getElementById('bd-loading-ws')&&(document.getElementById('bd-loading-ws').textContent='⚠️ 积分构成数据加载失败，请刷新');
+    return null;
   });
 }
 
@@ -4473,7 +4532,7 @@ function toggleBdExp(row){
   er.querySelector('.bd-exp-cell').innerHTML=buildBdExpHtml(u,'bd-'+g+'-'+idx);
   er.classList.add('open');
   trackRowExpand('breakdown',g==='ms'?'ATP':'WTA','score_breakdown');
-  setTimeout(function(){renderBdPies(u,'bd-'+g+'-'+idx);},60);
+  setTimeout(function(){loadChartJs().then(function(){renderBdPies(u,'bd-'+g+'-'+idx);}).catch(function(){renderBdPies(u,'bd-'+g+'-'+idx);});},60);
 }
 
 function buildBdExpHtml(u,id){
