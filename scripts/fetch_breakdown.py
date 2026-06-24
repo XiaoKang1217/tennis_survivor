@@ -6,12 +6,13 @@
 2. 赛事级别从官方赛历读取（处理升降级）
 3. 使用即时积分（instant_score），加入本站当前得分
 """
-import re, json, time, os, requests
+import re, json, time, os, unicodedata, requests
 from datetime import datetime, timezone, timedelta, date
 
 BASE_URL = "https://www.live-tennis.cn"
 OFFICIAL_CALENDAR_PATH = os.path.join('data', 'official_calendar.json')
 CURRENT_EVENT_OVERLAYS_PATH = os.path.join('data', 'current_event_overlays.json')
+SURVIVOR_EVENTS_PATH = os.path.join('data', 'survivor_events_2026.json')
 
 ATP_GS = {'澳网','法网','温网','美网'}
 ATP_YE = {'都灵'}
@@ -28,6 +29,10 @@ GS_MONTHS = {'澳网': 1, '法网': 6, '温网': 7, '美网': 9}
 YE_EVENTS = {
     'ATP': {'都灵': 11},
     'WTA': {'利雅得': 11},
+}
+
+OFFICIAL_EVENT_ALIAS_OVERRIDES = {
+    ('WTA', 'merida'): {'梅里达'},
 }
 
 # 仅用作 scrape_calendar 里颜色无法判断时的兜底，后续会被动态场地覆盖
@@ -203,8 +208,9 @@ def build_dynamic_info_map_from_calendar_list(cal_cache, cur_year, session):
 
 # ── 官方赛历索引 ──────────────────────────────────────────
 def norm_event_key(s):
-    s = str(s or '').strip().lower()
-    return re.sub(r'\s+', '', s)
+    s = unicodedata.normalize('NFKD', str(s or '').strip().lower())
+    s = ''.join(ch for ch in s if not unicodedata.combining(ch))
+    return re.sub(r'[^0-9a-z\u4e00-\u9fff]+', '', s)
 
 
 def parse_ymd(s):
@@ -230,6 +236,10 @@ def load_official_calendar():
         for k in ('event_key', 'city', 'name', 'level'):
             if rec.get(k):
                 aliases.add(rec[k])
+        norm_aliases = {norm_event_key(alias) for alias in aliases}
+        for (alias_tour, canonical), extras in OFFICIAL_EVENT_ALIAS_OVERRIDES.items():
+            if tour == alias_tour and norm_event_key(canonical) in norm_aliases:
+                aliases.update(extras)
         for alias in aliases:
             key = norm_event_key(alias)
             if key:
@@ -261,6 +271,142 @@ def load_current_event_overlays():
     return rows if isinstance(rows, list) else []
 
 
+def _survivor_tour_from_gender(gender):
+    return 'ATP' if gender in ('MS', 'ATP') else 'WTA'
+
+
+def _survivor_gender_from_tour(tour):
+    return 'MS' if tour == 'ATP' else 'WS'
+
+
+def _survivor_event_rows_from_history():
+    rows = []
+    try:
+        with open(os.path.join('data', 'history.json'), encoding='utf-8') as f:
+            payload = json.load(f)
+    except Exception:
+        return rows
+    flights = payload.get('flights') or {}
+    for year_key, items in flights.items():
+        if not isinstance(items, dict):
+            continue
+        for label in items.keys():
+            m = re.match(r'(\d{4})\s+(.+?)\s+(ATP|WTA)$', str(label))
+            if not m:
+                continue
+            rows.append({
+                'year': int(m.group(1)),
+                'event_name': m.group(2).strip(),
+                'tour': m.group(3),
+                'source': 'history',
+                'status': 'seen',
+            })
+    return rows
+
+
+def fetch_survivor_calendar(year, session):
+    try:
+        html = session.get(f'{BASE_URL}/zh/survivor/calendar/{year}', timeout=20).text
+    except Exception as e:
+        print(f"  ⚠️ 幸存者{year}赛历获取失败: {e}")
+        return []
+    rows, seen = [], set()
+    pattern = re.compile(
+        r'href="https://www\.live-tennis\.cn/zh/survivor/event/([^/]+)/'
+        + str(year) + r'/(MS|WS)/(score|my)"[^>]*>(.*?)</a>', re.S)
+    for eid, gender, mode, txt in pattern.findall(html):
+        name = re.sub(r'<[^>]+>', '', txt)
+        name = name.replace('ATP', '').replace('WTA', '').strip()
+        if not name:
+            continue
+        tour = _survivor_tour_from_gender(gender)
+        key = (year, eid, tour, name)
+        if key in seen:
+            continue
+        seen.add(key)
+        rows.append({
+            'year': year,
+            'event_id': eid,
+            'gender': gender,
+            'tour': tour,
+            'event_name': name,
+            'status': 'finished' if mode == 'score' else 'current',
+            'source': 'survivor_calendar',
+        })
+    return rows
+
+
+def _build_survivor_events_index(rows):
+    by_alias = {}
+    clean_rows = []
+    for row in rows or []:
+        tour = row.get('tour') or _survivor_tour_from_gender(row.get('gender'))
+        try:
+            year = int(row.get('year') or 0)
+        except Exception:
+            year = 0
+        name = row.get('event_name') or row.get('name') or ''
+        if not tour or not year or not name:
+            continue
+        item = dict(row)
+        item.update({'tour': tour, 'year': year, 'event_name': name})
+        clean_rows.append(item)
+        aliases = {name}
+        for alias in row.get('aliases') or []:
+            aliases.add(alias)
+        for alias in aliases:
+            key = norm_event_key(alias)
+            if key:
+                by_alias.setdefault((tour, year, key), []).append(item)
+    return {'events': clean_rows, 'by_alias': by_alias}
+
+
+def load_survivor_events(session=None, year=None):
+    rows = []
+    try:
+        with open(SURVIVOR_EVENTS_PATH, encoding='utf-8') as f:
+            payload = json.load(f)
+        rows.extend(payload.get('events') if isinstance(payload, dict) else payload)
+    except FileNotFoundError:
+        pass
+    except Exception as e:
+        print(f"  ⚠️ 幸存者赛事缓存读取失败: {e}")
+
+    rows.extend(_survivor_event_rows_from_history())
+    if session and year:
+        fetched = fetch_survivor_calendar(year, session)
+        rows.extend(fetched)
+        if fetched:
+            merged = {}
+            for row in rows:
+                tour = row.get('tour') or _survivor_tour_from_gender(row.get('gender'))
+                name = row.get('event_name') or row.get('name') or ''
+                try:
+                    y = int(row.get('year') or 0)
+                except Exception:
+                    y = 0
+                if tour and y and name:
+                    merged[(tour, y, norm_event_key(name), row.get('event_id') or '')] = {
+                        **row, 'tour': tour, 'year': y, 'event_name': name
+                    }
+            os.makedirs(os.path.dirname(SURVIVOR_EVENTS_PATH), exist_ok=True)
+            with open(SURVIVOR_EVENTS_PATH, 'w', encoding='utf-8') as f:
+                json.dump({
+                    'updated_at': datetime.now(timezone(timedelta(hours=8))).strftime('%Y-%m-%d %H:%M:%S'),
+                    'events': sorted(merged.values(), key=lambda x: (
+                        int(x.get('year') or 0), x.get('tour') or '', x.get('event_name') or '', x.get('event_id') or ''
+                    )),
+                }, f, ensure_ascii=False, indent=2)
+            rows = list(merged.values())
+    return _build_survivor_events_index(rows)
+
+
+def survivor_has_event(survivor_events, tour, year, event_name):
+    if not survivor_events or not survivor_events.get('by_alias'):
+        return False
+    return bool(survivor_events['by_alias'].get((tour, int(year), norm_event_key(event_name))))
+
+
 def fallback_type(ev, gender):
     sets = event_selection_sets(gender)
     if ev in sets['gs']:
@@ -274,7 +420,27 @@ def fallback_type(ev, gender):
     return 'A250'
 
 
-def choose_official_record(ev, gender, official_calendar, today, force_year=None):
+def _event_cycle_has_started(rec, today):
+    start = parse_ymd(rec.get('start_date'))
+    if not start:
+        return False
+    if int(rec.get('year') or 0) > start.year and int(rec.get('month') or 0) == 1:
+        cycle_date = date(today.year, 1, 1)
+    else:
+        try:
+            cycle_date = date(today.year, start.month, start.day)
+        except ValueError:
+            cycle_date = date(today.year, start.month, 28)
+    return today >= cycle_date
+
+
+def _copy_with_survivor_flags(rec, **flags):
+    out = dict(rec)
+    out.update(flags)
+    return out
+
+
+def choose_official_record(ev, gender, official_calendar, today, force_year=None, survivor_events=None):
     tour = 'ATP' if gender == 'MS' else 'WTA'
     rows = list((official_calendar or {}).get('by_alias', {}).get((tour, norm_event_key(ev)), []))
     if not rows:
@@ -308,6 +474,27 @@ def choose_official_record(ev, gender, official_calendar, today, force_year=None
                 return max(started_exact, key=lambda rec: parse_ymd(rec.get('start_date')) or date.min)
             return min(exact, key=lambda rec: parse_ymd(rec.get('start_date')) or date.max)
 
+    if survivor_events and survivor_events.get('by_alias'):
+        current_year_has_survivor = survivor_has_event(survivor_events, tour, today.year, ev)
+        this_year = [rec for rec in rows if int(rec.get('year') or 0) == today.year]
+        if current_year_has_survivor and this_year:
+            started_this_year = [rec for rec in this_year if started(rec)]
+            if started_this_year:
+                return _copy_with_survivor_flags(max(started_this_year, key=score),
+                                                 survivor_year_status='current_year_opened')
+            return _copy_with_survivor_flags(min(this_year, key=lambda rec: parse_ymd(rec.get('start_date')) or date.max),
+                                             survivor_year_status='current_year_opened_future')
+
+        prev_year = [rec for rec in rows if int(rec.get('year') or 0) == today.year - 1]
+        if prev_year:
+            rec = max(prev_year, key=score)
+            expired = _event_cycle_has_started(rec, today) and not current_year_has_survivor
+            return _copy_with_survivor_flags(
+                rec,
+                survivor_year_status='previous_year_no_current_survivor',
+                expired_by_survivor_calendar=expired,
+            )
+
     this_year = [rec for rec in rows if int(rec.get('year') or 0) == today.year]
     started_this_year = [rec for rec in this_year if started(rec)]
     if started_this_year:
@@ -325,9 +512,9 @@ def choose_official_record(ev, gender, official_calendar, today, force_year=None
 
 
 # ── 元数据查找 ────────────────────────────────────────────
-def get_meta(ev, gender, official_calendar, dynamic_info_map, cur_month, cur_year, force_year=None):
+def get_meta(ev, gender, official_calendar, dynamic_info_map, cur_month, cur_year, force_year=None, survivor_events=None):
     today = datetime.now(timezone(timedelta(hours=8))).date()
-    rec = choose_official_record(ev, gender, official_calendar, today, force_year=force_year)
+    rec = choose_official_record(ev, gender, official_calendar, today, force_year=force_year, survivor_events=survivor_events)
     if rec:
         return {
             'event_key': rec.get('event_key') or ev,
@@ -338,6 +525,8 @@ def get_meta(ev, gender, official_calendar, dynamic_info_map, cur_month, cur_yea
             'start_date': rec.get('start_date'),
             'end_date': rec.get('end_date'),
             'source': rec.get('source'),
+            'survivor_year_status': rec.get('survivor_year_status'),
+            'expired_by_survivor_calendar': bool(rec.get('expired_by_survivor_calendar')),
         }
 
     g_str = 'ATP' if gender == 'MS' else 'WTA'
@@ -365,14 +554,15 @@ def expiry_ym(meta):
     return meta['year'] + 1, meta['month']
 
 
-def parse_details(det, gender, cal_cache, dynamic_info_map, cur_month, cur_year):
+def parse_details(det, gender, cal_cache, dynamic_info_map, cur_month, cur_year, survivor_events=None):
     if not det: return []
     res = []
     def add(ev, sc, inc, forced):
-        meta = get_meta(ev, gender, cal_cache, dynamic_info_map, cur_month, cur_year)
-        ey, em = expiry_ym(meta) if inc else (0, 0)
-        res.append({'n':ev,'s':sc,'inc':inc,'forced':forced,'meta':meta,
-                    'expiry':f'{ey}年{em}月' if inc else None,'current':False})
+        meta = get_meta(ev, gender, cal_cache, dynamic_info_map, cur_month, cur_year, survivor_events=survivor_events)
+        effective_inc = inc and not meta.get('expired_by_survivor_calendar')
+        ey, em = expiry_ym(meta) if effective_inc else (0, 0)
+        res.append({'n':ev,'s':sc,'inc':effective_inc,'forced':forced,'meta':meta,
+                    'expiry':f'{ey}年{em}月' if effective_inc else None,'current':False})
     for m in re.finditer(r'<b>【([^】(]+)\((\d+)\)】</b>', det):
         add(m.group(1).strip(), int(m.group(2)), True, True)
     for m in re.finditer(r'<del>【([^】(]+)\((\d+)\)】</del>', det):
@@ -432,6 +622,8 @@ def event_payload(e):
         'expiry': e.get('expiry'),
         'start_counting_score': e.get('start_counting_score'),
         'counting_started': e.get('counting_started'),
+        'survivor_year_status': meta.get('survivor_year_status'),
+        'expired_by_survivor_calendar': bool(meta.get('expired_by_survivor_calendar')),
     }
 
 
@@ -500,27 +692,45 @@ def build_live_available_events(parsed_events):
 
 
 def event_absorbed_by_live_details(available, event_name, meta):
-    existing = (available or {}).get(event_name)
-    if not existing:
-        return False
-    existing_meta = existing.get('meta') or {}
-    return int(existing_meta.get('year') or 0) == int((meta or {}).get('year') or 0)
+    wanted = norm_event_key(canonical_event_name(event_name, meta))
+    for existing in (available or {}).values():
+        existing_meta = existing.get('meta') or {}
+        same_name = norm_event_key(existing.get('n')) == norm_event_key(event_name)
+        same_key = norm_event_key(canonical_event_name(existing.get('n'), existing_meta)) == wanted
+        if (same_name or same_key) and int(existing_meta.get('year') or 0) == int((meta or {}).get('year') or 0):
+            return True
+    return False
+
+
+def pop_matching_event(adjusted, event_name, meta):
+    wanted_name = norm_event_key(event_name)
+    wanted_key = norm_event_key(canonical_event_name(event_name, meta))
+    removed = []
+    for name, existing in list(adjusted.items()):
+        existing_meta = existing.get('meta') or {}
+        same_name = norm_event_key(name) == wanted_name
+        same_key = norm_event_key(canonical_event_name(name, existing_meta)) == wanted_key
+        if same_name or same_key:
+            removed.append(adjusted.pop(name))
+    return removed
 
 
 def with_event_candidate(available, gender, event_name, this_event_score,
                          cal_cache, dynamic_info_map, cur_month, cur_year,
-                         source='current', force_year=None, skip_if_absorbed=False):
+                         source='current', force_year=None, skip_if_absorbed=False, survivor_events=None):
     if not event_name:
         return dict(available)
 
     score = int(this_event_score or 0)
-    meta = get_meta(event_name, gender, cal_cache, dynamic_info_map, cur_month, cur_year, force_year=force_year or cur_year)
+    meta = get_meta(event_name, gender, cal_cache, dynamic_info_map, cur_month, cur_year,
+                    force_year=force_year or cur_year, survivor_events=survivor_events)
     forced = is_force_counting_event(event_name, gender, meta)
     start_counting_score = start_counting_score_for_event(event_name, gender, meta, forced)
     adjusted = {name: clone_event(e) for name, e in available.items()}
     if skip_if_absorbed and event_absorbed_by_live_details(adjusted, event_name, meta):
         return adjusted
-    original = adjusted.pop(event_name, None)
+    originals = pop_matching_event(adjusted, event_name, meta)
+    original = originals[0] if originals else None
     if score <= 0 and not forced:
         return adjusted
 
@@ -542,11 +752,11 @@ def with_event_candidate(available, gender, event_name, this_event_score,
 
 
 def with_current_event_candidate(available, gender, event_name, this_event_score,
-                                 cal_cache, dynamic_info_map, cur_month, cur_year):
+                                 cal_cache, dynamic_info_map, cur_month, cur_year, survivor_events=None):
     return with_event_candidate(
         available, gender, event_name, this_event_score,
         cal_cache, dynamic_info_map, cur_month, cur_year,
-        source='current', force_year=cur_year, skip_if_absorbed=False
+        source='current', force_year=cur_year, skip_if_absorbed=False, survivor_events=survivor_events
     )
 
 
@@ -573,18 +783,23 @@ def overlay_events_for_user(overlays, uid, gender, current_event_name=None):
     return res
 
 
-def with_pending_event_candidates(available, pending_events, gender, cal_cache, dynamic_info_map, cur_month, cur_year):
+def with_pending_event_candidates(available, pending_events, gender, cal_cache, dynamic_info_map, cur_month, cur_year, survivor_events=None):
     adjusted = {name: clone_event(e) for name, e in available.items()}
     for rec in pending_events or []:
         adjusted = with_event_candidate(
             adjusted, gender, rec.get('event_name'), rec.get('score', 0),
             cal_cache, dynamic_info_map, cur_month, cur_year,
-            source='pending', force_year=rec.get('year') or cur_year, skip_if_absorbed=True
+            source='pending', force_year=rec.get('year') or cur_year, skip_if_absorbed=True, survivor_events=survivor_events
         )
     return adjusted
 
 
 def select_events_by_rules(values, gender):
+    values = [
+        e for e in values
+        if not (e.get('meta') or {}).get('expired_by_survivor_calendar')
+    ]
+
     def live_included(e):
         return bool(e.get('lt_inc', e.get('inc')))
 
@@ -642,20 +857,21 @@ def sum_events(events):
 
 
 def select_countable_events(parsed_events, gender, event_name, this_event_score, target_score,
-                            cal_cache, dynamic_info_map, cur_month, cur_year, pending_events=None):
-    """Select the ranking composition that best matches instant score.
+                            cal_cache, dynamic_info_map, cur_month, cur_year, pending_events=None,
+                            survivor_events=None):
+    """Select the instant ranking composition.
 
-    LiveTennis details are the baseline ledger. The current event is injected only as
-    a second scenario, then we pick the scenario matching current.json's instant
-    score, preferring the baseline when both totals are valid.
+    LiveTennis details are the historical ledger. Current/pending survivor events
+    are authoritative: when they replace the same canonical event, always use the
+    survivor-current score and then reselect under the official ranking rules.
     """
     baseline_available = build_live_available_events(parsed_events)
     pending_available = with_pending_event_candidates(
-        baseline_available, pending_events, gender, cal_cache, dynamic_info_map, cur_month, cur_year
+        baseline_available, pending_events, gender, cal_cache, dynamic_info_map, cur_month, cur_year, survivor_events
     )
     adjusted_available = with_current_event_candidate(
         pending_available, gender, event_name, this_event_score,
-        cal_cache, dynamic_info_map, cur_month, cur_year
+        cal_cache, dynamic_info_map, cur_month, cur_year, survivor_events
     )
 
     baseline_selected = select_live_included_events(list(baseline_available.values()))
@@ -668,7 +884,11 @@ def select_countable_events(parsed_events, gender, event_name, this_event_score,
     mode = 'baseline'
     selected = baseline_selected
     available = baseline_available
-    if baseline_total != target:
+    if has_event_adjustment:
+        mode = 'event_adjusted_forced'
+        selected = adjusted_selected
+        available = adjusted_available
+    elif baseline_total != target:
         if adjusted_total == target or abs(adjusted_total - target) < abs(baseline_total - target):
             mode = 'event_adjusted' if has_event_adjustment else 'official_recomposed'
             selected = adjusted_selected
@@ -681,10 +901,11 @@ def select_countable_events(parsed_events, gender, event_name, this_event_score,
     return selected, list(available.values()), mode
 
 
-def current_event_info(event_name, gender, cal_cache, dynamic_info_map, cur_month, cur_year):
+def current_event_info(event_name, gender, cal_cache, dynamic_info_map, cur_month, cur_year, survivor_events=None):
     if not event_name:
         return None
-    meta = get_meta(event_name, gender, cal_cache, dynamic_info_map, cur_month, cur_year, force_year=cur_year)
+    meta = get_meta(event_name, gender, cal_cache, dynamic_info_map, cur_month, cur_year,
+                    force_year=cur_year, survivor_events=survivor_events)
     ey, em = expiry_ym(meta)
     forced = is_force_counting_event(event_name, gender, meta)
     return {
@@ -794,7 +1015,8 @@ def fetch_rank_data(session, csrf, gidx):
     return all_rows
 
 
-def build_users(rows, gender, ir_map, cur_map, event_name, cal_cache, dynamic_info_map, cur_month, cur_year, event_overlays=None):
+def build_users(rows, gender, ir_map, cur_map, event_name, cal_cache, dynamic_info_map, cur_month, cur_year,
+                event_overlays=None, survivor_events=None):
     EXPIRY_MONTHS=[]
     m2,y2=cur_month+1,cur_year
     if m2>12: m2=1;y2+=1
@@ -808,10 +1030,11 @@ def build_users(rows, gender, ir_map, cur_map, event_name, cal_cache, dynamic_in
         ci=cur_map.get(uid,{})
         score=ci.get('instant_score',r.get('score',0) or 0)
         this_ev=ci.get('this_event_score',0)
-        evs=parse_details(det,gender,cal_cache,dynamic_info_map,cur_month,cur_year)
+        evs=parse_details(det,gender,cal_cache,dynamic_info_map,cur_month,cur_year,survivor_events)
         pending_events = overlay_events_for_user(event_overlays, uid, gender, current_event_name=event_name)
         included, calc_pool, composition_mode = select_countable_events(
-            evs, gender, event_name, this_ev, score, cal_cache, dynamic_info_map, cur_month, cur_year, pending_events
+            evs, gender, event_name, this_ev, score, cal_cache, dynamic_info_map, cur_month, cur_year,
+            pending_events, survivor_events
         )
 
         ts,te,ss,em2={},{},{},{}
@@ -869,6 +1092,9 @@ def main():
     cal_cache = load_official_calendar()
     dynamic_info_map = None
     print(f"  官方赛历赛事: {len(cal_cache.get('events', []))} 个")
+    print("读取幸存者赛事表...")
+    survivor_events = load_survivor_events(session, cur_year)
+    print(f"  幸存者赛事索引: {len(survivor_events.get('events', []))} 个")
     event_overlays = load_current_event_overlays()
     print(f"  当前站/待吸收缓存: {len(event_overlays)} 站")
 
@@ -893,22 +1119,23 @@ def main():
         print(f"  ⚠️ current.json读取失败: {e}"); ms_ir={}; ws_ir={}; ms_cur={}; ws_cur={}; ms_event=''; ws_event=''
 
     print("构建ATP积分构成...")
-    ms_users=build_users(ms_rows,'MS',ms_ir,ms_cur,ms_event,cal_cache,dynamic_info_map,cur_month,cur_year,event_overlays)
+    ms_users=build_users(ms_rows,'MS',ms_ir,ms_cur,ms_event,cal_cache,dynamic_info_map,cur_month,cur_year,event_overlays,survivor_events)
     print("构建WTA积分构成...")
-    ws_users=build_users(ws_rows,'WS',ws_ir,ws_cur,ws_event,cal_cache,dynamic_info_map,cur_month,cur_year,event_overlays)
+    ws_users=build_users(ws_rows,'WS',ws_ir,ws_cur,ws_event,cal_cache,dynamic_info_map,cur_month,cur_year,event_overlays,survivor_events)
 
     now_str=now.strftime('%Y-%m-%d %H:%M:%S')
     output={
         'updated_at':now_str,
         'calendar_source':'official_calendar',
+        'survivor_events_source':'survivor_calendar/history/cache',
         'event_overlay_count':len(event_overlays),
         'expiry_months':[
             f'{(cur_year + (cur_month+i)//12)}年{((cur_month+i)%12)+1}月'
             for i in range(12)
         ],
         'current_events':{
-            'ms':current_event_info(ms_event,'MS',cal_cache,dynamic_info_map,cur_month,cur_year),
-            'ws':current_event_info(ws_event,'WS',cal_cache,dynamic_info_map,cur_month,cur_year),
+            'ms':current_event_info(ms_event,'MS',cal_cache,dynamic_info_map,cur_month,cur_year,survivor_events),
+            'ws':current_event_info(ws_event,'WS',cal_cache,dynamic_info_map,cur_month,cur_year,survivor_events),
         },
         'ms':ms_users,
         'ws':ws_users

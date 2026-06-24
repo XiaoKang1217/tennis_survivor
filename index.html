@@ -1666,7 +1666,9 @@ function managerPlayerFromContract(x){
     nameEn=replacement.replacementNameEn||raw.name_en||nameEn;
   }
   var rawScores=raw.scores||{};
-  return {id:key,playerKey:key,sourcePlayerKey:meta.substituted_from_player_key||meta.qualifier_replacement_from_player_key||meta.pre_r1_substitution_from_player_key||raw.player_key||key,originalName:originalName,contractId:x.id||'',contract:x,isActive:x.is_active!==false,replacedAt:x.replaced_at||'',earnedPoints:Number(x.earned_points)||0,reachedRound:x.reached_round||'',contractMetadata:meta,tour:tour,name:name,nameEn:nameEn,event:pack.data&&pack.data.event_name||pack.meta.display||managerStationName(),eventKey:x.event_key||pack.meta.eventKey,level:level,drawSize:drawSize,surface:pack.meta&&pack.meta.surface||'grass',rank:raw.rank||null,seed:raw.seed||null,drawPosition:meta.qualifier_replacement_draw_position||meta.replacement_draw_position||raw.draw_position||null,firstRound:meta.first_round||raw.first_round||'',profileId:meta.replacement_profile_id||meta.qualifier_replacement_profile_id||meta.profile_id||raw.profile_id||'',photoUrl:meta.replacement_photo_url||meta.photo_url||meta.profile_image_url||raw.photo_url||raw.profile_image_url||'',fullBodyUrl:meta.full_body_url||meta.body_url||meta.photo_full_url||raw.full_body_url||raw.body_url||raw.photo_full_url||'',isQualifierPlaceholder:false,pathNote:raw.path_note||'',pickCount:1,base:raw.base_score??rawScores.base??50,surfaceScore:raw.surface_score??rawScores.surface??50,draw:raw.draw_score??rawScores.draw??50,form:raw.form_score??rawScores.form??50,manual:raw.manual_score??rawScores.manual??0,total:raw.total_score||raw.total||50,price:price,tier:x.tier||managerTier(price,level,tour,drawSize),breakEven:managerRoundBreakEven(price,level,tour,drawSize),overallElo:raw.overall_elo??null,surfaceElo:raw.surface_elo??null,peakElo:raw.peak_elo??null,peakMonth:raw.peak_month||'',expectedPoints:raw.expected_points??null,expectedRound:raw.expected_round||'',pricingDetail:raw.pricing_detail||null,risk:'后台合同'};
+  var reachedRound=x.reached_round||'',baselineRound=meta.transfer_baseline_round||'';
+  if((!reachedRound||reachedRound==='OUT')&&x.is_transfer&&baselineRound&&baselineRound!=='OUT')reachedRound=baselineRound;
+  return {id:key,playerKey:key,sourcePlayerKey:meta.substituted_from_player_key||meta.qualifier_replacement_from_player_key||meta.pre_r1_substitution_from_player_key||raw.player_key||key,originalName:originalName,contractId:x.id||'',contract:x,isActive:x.is_active!==false,replacedAt:x.replaced_at||'',earnedPoints:Number(x.earned_points)||0,reachedRound:reachedRound,contractMetadata:meta,tour:tour,name:name,nameEn:nameEn,event:pack.data&&pack.data.event_name||pack.meta.display||managerStationName(),eventKey:x.event_key||pack.meta.eventKey,level:level,drawSize:drawSize,surface:pack.meta&&pack.meta.surface||'grass',rank:raw.rank||null,seed:raw.seed||null,drawPosition:meta.qualifier_replacement_draw_position||meta.replacement_draw_position||raw.draw_position||null,firstRound:meta.first_round||raw.first_round||'',profileId:meta.replacement_profile_id||meta.qualifier_replacement_profile_id||meta.profile_id||raw.profile_id||'',photoUrl:meta.replacement_photo_url||meta.photo_url||meta.profile_image_url||raw.photo_url||raw.profile_image_url||'',fullBodyUrl:meta.full_body_url||meta.body_url||meta.photo_full_url||raw.full_body_url||raw.body_url||raw.photo_full_url||'',isQualifierPlaceholder:false,pathNote:raw.path_note||'',pickCount:1,base:raw.base_score??rawScores.base??50,surfaceScore:raw.surface_score??rawScores.surface??50,draw:raw.draw_score??rawScores.draw??50,form:raw.form_score??rawScores.form??50,manual:raw.manual_score??rawScores.manual??0,total:raw.total_score||raw.total||50,price:price,tier:x.tier||managerTier(price,level,tour,drawSize),breakEven:managerRoundBreakEven(price,level,tour,drawSize),overallElo:raw.overall_elo??null,surfaceElo:raw.surface_elo??null,peakElo:raw.peak_elo??null,peakMonth:raw.peak_month||'',expectedPoints:raw.expected_points??null,expectedRound:raw.expected_round||'',pricingDetail:raw.pricing_detail||null,risk:'后台合同'};
 }
 function managerRemoteContracts(){
   return MANAGER_REMOTE_STATE&&Array.isArray(MANAGER_REMOTE_STATE.contracts)?MANAGER_REMOTE_STATE.contracts:[];
@@ -1713,6 +1715,8 @@ function managerPlayerCurrentStats(p){
   if(!Number.isFinite(yesterday))yesterday=0;
   var started=managerEventStarted(p.tour),replaced=contract&&contract.is_active===false,eliminated=managerContractEliminated(contract);
   var reached=contract&&(contract.reached_round||contract.current_round)||p.reachedRound||meta.reached_round||meta.current_round||'';
+  var baselineRound=meta.transfer_baseline_round||'';
+  if((!reached||reached==='OUT')&&contract&&contract.is_transfer&&baselineRound&&baselineRound!=='OUT')reached=baselineRound;
   var status=!submitted?'未提交':(!started?'存活':(replaced?'已换下':(eliminated?'已出局':'存活')));
   var round=!submitted?'未开赛':(!started?'未开赛':(eliminated?'已出局':(reached?managerRoundDisplay(reached,p):'进行中')));
   return {
@@ -2726,6 +2730,15 @@ async function managerTransferRemote(est,rules){
   });
   if(!data)throw new Error('巡回赛经纪人后台未返回换人结果。');
   managerApplyRemoteState(data);
+  MANAGER_REMOTE_PUBLIC_SYNC_KEY='';
+  MANAGER_REMOTE_PUBLIC_LOADING=null;
+  MANAGER_REMOTE_CONFIGS=[];
+  MANAGER_REMOTE_STATION_NET_BOARD=[];
+  if(MANAGER_VIEW==='hall'||MANAGER_VIEW==='boards'){
+    managerLoadRemotePublicData().then(function(){
+      if(ACTIVE_TAB==='manager')renderManagerDemo();
+    }).catch(function(){});
+  }
   return data;
 }
 
@@ -3462,6 +3475,7 @@ function switchTab(t,btn){
   }
   if(t==='jinx')renderDailyJinx();
   if(t==='manager'){
+    trackManagerEvent('manager_entry_attempt',{source:'tab'});
     if(!AUTH_USER){trackManagerEvent('manager_login_required',{source:'tab'});openAuthModal({reason:'manager',afterLogin:managerEnterFlow});}
     else managerEnterFlow();
     renderManagerDemo();

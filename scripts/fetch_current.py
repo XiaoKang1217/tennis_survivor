@@ -274,21 +274,58 @@ def parse_all_scores(details_html):
         if n not in c: c[n] = int(m.group(2))
     return c, nc
 
+def calc_current_deduct_score(details_html, gender, ev_name, cal_cache=None, cur_month=None, cur_year=None,
+                              survivor_events=None):
+    """旧分扣除展示口径：当前站同名旧分 + 已按幸存者赛历到期的旧计分项。"""
+    if not details_html:
+        return 0
+    c, _ = parse_all_scores(details_html)
+    if not c:
+        return 0
+    if not official_scoring.has_official_calendar(cal_cache):
+        return int(c.get(ev_name, 0) or 0)
+
+    cur_month = cur_month or datetime.now(timezone(timedelta(hours=8))).month
+    cur_year = cur_year or datetime.now(timezone(timedelta(hours=8))).year
+    current_meta = official_scoring.get_meta(
+        ev_name, gender, cal_cache, None, cur_month, cur_year,
+        force_year=cur_year, survivor_events=survivor_events
+    ) if ev_name else {}
+    current_name_key = official_scoring.norm_event_key(ev_name)
+    current_event_key = official_scoring.norm_event_key(
+        official_scoring.canonical_event_name(ev_name, current_meta)
+    )
+
+    total = 0
+    for name, score in c.items():
+        meta = official_scoring.get_meta(
+            name, gender, cal_cache, None, cur_month, cur_year,
+            survivor_events=survivor_events
+        )
+        name_key = official_scoring.norm_event_key(name)
+        event_key = official_scoring.norm_event_key(
+            official_scoring.canonical_event_name(name, meta)
+        )
+        same_current = ev_name and (name_key == current_name_key or event_key == current_event_key)
+        if same_current or meta.get('expired_by_survivor_calendar'):
+            total += int(score or 0)
+    return total
+
 def calc_instant(details_html, new_score, gender, ev_name, cal_cache=None, cur_month=None, cur_year=None,
-                 event_overlays=None, uid=None):
+                 event_overlays=None, uid=None, survivor_events=None):
     if official_scoring.has_official_calendar(cal_cache):
         cur_month = cur_month or datetime.now(timezone(timedelta(hours=8))).month
         cur_year = cur_year or datetime.now(timezone(timedelta(hours=8))).year
-        events = official_scoring.parse_details(details_html, gender, cal_cache, None, cur_month, cur_year)
+        events = official_scoring.parse_details(details_html, gender, cal_cache, None, cur_month, cur_year, survivor_events)
         available = official_scoring.build_live_available_events(events)
         pending_events = official_scoring.overlay_events_for_user(
             event_overlays, uid, gender, current_event_name=ev_name
         ) if uid else []
         available = official_scoring.with_pending_event_candidates(
-            available, pending_events, gender, cal_cache, None, cur_month, cur_year
+            available, pending_events, gender, cal_cache, None, cur_month, cur_year, survivor_events
         )
         adjusted = official_scoring.with_current_event_candidate(
-            available, gender, ev_name, new_score, cal_cache, None, cur_month, cur_year
+            available, gender, ev_name, new_score, cal_cache, None, cur_month, cur_year, survivor_events
         )
         selected = official_scoring.select_events_by_rules(list(adjusted.values()), gender)
         return official_scoring.sum_events(selected)
@@ -324,10 +361,10 @@ def calc_instant(details_html, new_score, gender, ev_name, cal_cache=None, cur_m
 
 
 def calc_preview_v5_instant(uid, cur, ded, new_s, det, gender, event_name,
-                            cal_cache=None, cur_month=None, cur_year=None, event_overlays=None):
+                            cal_cache=None, cur_month=None, cur_year=None, event_overlays=None, survivor_events=None):
     """官方赛历口径即时积分：当前站旧分到期后，按强制组和18站规则重选。"""
     if det:
-        return calc_instant(det, new_s, gender, event_name, cal_cache, cur_month, cur_year, event_overlays, uid)
+        return calc_instant(det, new_s, gender, event_name, cal_cache, cur_month, cur_year, event_overlays, uid, survivor_events)
     return cur + new_s - ded
 
 def fetch_rank_data(session, csrf, gender_idx):
@@ -361,7 +398,7 @@ def fetch_rank_data(session, csrf, gender_idx):
     }
 
 def fetch_event_data(session, csrf, iid, gender, event_name, rank_dict,
-                     cal_cache=None, cur_month=None, cur_year=None, event_overlays=None):
+                     cal_cache=None, cur_month=None, cur_year=None, event_overlays=None, survivor_events=None):
     """获取比赛实时数据"""
     # Score
     sd = post_api(session, csrf, iid, 'score')
@@ -409,14 +446,14 @@ def fetch_event_data(session, csrf, iid, gender, event_name, rank_dict,
         cur = ri.get('score', 0) or 0
         det = ri.get('details', '')
         
-        tmp = re.sub(r'<del>.*?</del>', '', det or '', flags=re.DOTALL)
-        dm = re.search(rf'【{re.escape(event_name)}\((\d+)\)】', tmp)
-        ded = int(dm.group(1)) if dm else 0
+        ded = calc_current_deduct_score(
+            det, gender, event_name, cal_cache, cur_month, cur_year, survivor_events
+        )
         
         new_s = r.get('score', 0) or 0
         inst = calc_preview_v5_instant(
             uid, cur, ded, new_s, det, gender, event_name,
-            cal_cache, cur_month, cur_year, event_overlays
+            cal_cache, cur_month, cur_year, event_overlays, survivor_events
         )
         
         not_participated = False
@@ -473,13 +510,13 @@ def fetch_event_data(session, csrf, iid, gender, event_name, rank_dict,
             continue
         cur2 = ri2.get('score', 0) or 0
         det2 = ri2.get('details', '')
-        # 未参赛用户也要扣除去年本站积分：从年度排名 details 中找当前赛事的计入分
-        tmp2 = re.sub(r'<del>.*?</del>', '', det2 or '', flags=re.DOTALL)
-        dm2 = re.search(rf'【{re.escape(event_name)}\((\d+)\)】', tmp2)
-        ded2 = int(dm2.group(1)) if dm2 else 0
+        # 未参赛用户也要扣除当前即时口径下已失效的旧计分项。
+        ded2 = calc_current_deduct_score(
+            det2, gender, event_name, cal_cache, cur_month, cur_year, survivor_events
+        )
         inst2 = calc_preview_v5_instant(
             uid2, cur2, ded2, 0, det2, gender, event_name,
-            cal_cache, cur_month, cur_year, event_overlays
+            cal_cache, cur_month, cur_year, event_overlays, survivor_events
         )
         rows_out.append({
             'user_id': uid2,
@@ -655,6 +692,9 @@ def main():
     if not official_scoring.has_official_calendar(cal_cache):
         print("ERROR: 官方赛历缺失，fetch_current 不再使用硬编码赛历兜底")
         sys.exit(1)
+    print("读取幸存者赛事表...")
+    survivor_events = official_scoring.load_survivor_events(session, now_dt.year)
+    print(f"  幸存者赛事索引: {len(survivor_events.get('events', []))} 个")
     event_overlays = official_scoring.load_current_event_overlays()
     print(f"  当前站/待吸收缓存: {len(event_overlays)} 站")
     
@@ -698,13 +738,13 @@ def main():
     print("获取ATP实时数据...")
     ms_data = fetch_event_data(
         session, csrf_ms, ms_iid, 'MS', ms_name, ms_rank,
-        cal_cache, now_dt.month, now_dt.year, event_overlays
+        cal_cache, now_dt.month, now_dt.year, event_overlays, survivor_events
     )
     
     print("获取WTA实时数据...")
     ws_data = fetch_event_data(
         session, csrf_ws, ws_iid, 'WS', ws_name, ws_rank,
-        cal_cache, now_dt.month, now_dt.year, event_overlays
+        cal_cache, now_dt.month, now_dt.year, event_overlays, survivor_events
     )
     
     # 6. 今日球员池：从当天赛程页抓实际有比赛的罗马男单/女单正赛球员
@@ -717,8 +757,8 @@ def main():
     # 7. 输出
     now_dt = datetime.now(tz_cn)
     now_str = now_dt.strftime('%Y-%m-%d %H:%M:%S')
-    ms_event_meta = official_scoring.current_event_info(ms_name, 'MS', cal_cache, None, now_dt.month, now_dt.year)
-    ws_event_meta = official_scoring.current_event_info(ws_name, 'WS', cal_cache, None, now_dt.month, now_dt.year)
+    ms_event_meta = official_scoring.current_event_info(ms_name, 'MS', cal_cache, None, now_dt.month, now_dt.year, survivor_events)
+    ws_event_meta = official_scoring.current_event_info(ws_name, 'WS', cal_cache, None, now_dt.month, now_dt.year, survivor_events)
     output = {
         'updated_at': now_str,
         'ms': {
