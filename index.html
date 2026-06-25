@@ -754,6 +754,8 @@ let MANAGER_EVENT_DATA={};
 let MANAGER_PHOTO_DATA={fallbacks:{},players:{}};
 let MANAGER_REMOTE_STATE=null;
 let MANAGER_REMOTE_SYNC_KEY='';
+let MANAGER_REMOTE_SYNC_AT=0;
+let MANAGER_REMOTE_LOADING=null;
 let MANAGER_REMOTE_CONFIGS=[];
 let MANAGER_REMOTE_STATION_NET_BOARD=[];
 let MANAGER_REMOTE_PUBLIC_SYNC_KEY='';
@@ -766,6 +768,7 @@ let CHART_JS_LOADING=null;
 const MANAGER_STORE_KEY='tennis_manager_state_v3';
 const MANAGER_LEDGER_KEY='tennis_manager_ledger_v2';
 const MANAGER_DAILY_SUMMARY_KEY='tennis_manager_daily_summary_v1';
+const MANAGER_REMOTE_SYNC_TTL_MS=15000;
 const MANAGER_DEMO_EVENT_META={};
 const MANAGER_LEVEL_CONFIG={
   '250':{label:'250赛',sideGrant:45,grant:90,min:1,max:2,transfers:1,transferDays:2,transferFee:.10},
@@ -1742,6 +1745,13 @@ function managerRequireLogin(reason){
   return false;
 }
 function managerViewNeedsLogin(view){return ['calculator','mine','hall','transfer','ledger','boards'].indexOf(view)>=0;}
+function managerViewNeedsRemoteState(view){return ['market','calculator','mine','transfer','ledger'].indexOf(view)>=0;}
+function managerRefreshRemoteState(force){
+  if(!AUTH_USER||!supabaseConfigured())return;
+  managerLoadRemoteState({force:!!force}).then(function(){
+    if(ACTIVE_TAB==='manager')renderManagerDemo();
+  }).catch(function(){});
+}
 function managerSetView(view){
   if(managerViewNeedsLogin(view)&&!managerRequireLogin('manager'))return;
   MANAGER_VIEW=view;
@@ -1749,6 +1759,7 @@ function managerSetView(view){
   if(view==='hall'||view==='boards')managerLoadRemotePublicData().then(function(){if(MANAGER_VIEW===view)renderManagerDemo();}).catch(function(){if(MANAGER_VIEW===view)renderManagerDemo();});
   managerTrackView(view,view==='mine'?MANAGER_MY_VIEW:'','nav');
   renderManagerDemo();
+  if(managerViewNeedsRemoteState(view))managerRefreshRemoteState(true);
 }
 function managerSetMyView(view){
   if(!managerRequireLogin('manager'))return;
@@ -1756,6 +1767,7 @@ function managerSetMyView(view){
   MANAGER_MY_VIEW=view||'lineup';
   managerTrackView('mine',MANAGER_MY_VIEW,'subnav');
   renderManagerDemo();
+  managerRefreshRemoteState(true);
 }
 function managerAlert(msg,title){MANAGER_DIALOG={title:title||'阵容提示',msg:msg};renderManagerDemo();}
 function managerCloseAlert(){MANAGER_DIALOG=null;MANAGER_PENDING_TRANSFER=null;renderManagerDemo();}
@@ -2562,6 +2574,10 @@ function managerContractPayload(p){
 function managerApplyRemoteState(state){
   if(!state)return;
   MANAGER_REMOTE_STATE=state;
+  if(AUTH_USER){
+    MANAGER_REMOTE_SYNC_KEY=managerStationKey()+'|'+AUTH_USER.id;
+    MANAGER_REMOTE_SYNC_AT=Date.now();
+  }
   var contracts=Array.isArray(state.contracts)?state.contracts:[];
   if(contracts.length){
     var active=contracts.filter(function(x){return x.is_active!==false;});
@@ -2573,15 +2589,21 @@ function managerApplyRemoteState(state){
     MANAGER_TRANSFER_COUNT=Number(state.lineup.transfer_count)||0;
   }
 }
-async function managerLoadRemoteState(){
+async function managerLoadRemoteState(opts){
+  opts=opts||{};
   if(!AUTH_USER||!supabaseConfigured())return null;
   var key=managerStationKey()+'|'+AUTH_USER.id;
-  if(MANAGER_REMOTE_SYNC_KEY===key&&MANAGER_REMOTE_STATE)return MANAGER_REMOTE_STATE;
-  try{
-    const data=await optionalSupabaseRpc('tour_manager_get_my_state',{p_station_key:managerStationKey(),p_season:managerRules().initialSeason||2026});
-    if(data){MANAGER_REMOTE_SYNC_KEY=key;managerApplyRemoteState(data);}
-    return data;
-  }catch(e){return null;}
+  var fresh=MANAGER_REMOTE_SYNC_KEY===key&&MANAGER_REMOTE_STATE&&(Date.now()-MANAGER_REMOTE_SYNC_AT<MANAGER_REMOTE_SYNC_TTL_MS);
+  if(!opts.force&&fresh)return MANAGER_REMOTE_STATE;
+  if(MANAGER_REMOTE_LOADING)return MANAGER_REMOTE_LOADING;
+  MANAGER_REMOTE_LOADING=(async function(){
+    try{
+      const data=await optionalSupabaseRpc('tour_manager_get_my_state',{p_station_key:managerStationKey(),p_season:managerRules().initialSeason||2026});
+      if(data)managerApplyRemoteState(data);
+      return data;
+    }catch(e){return null;}
+  })().finally(function(){MANAGER_REMOTE_LOADING=null;});
+  return MANAGER_REMOTE_LOADING;
 }
 async function managerLoadRemotePublicData(){
   if(managerLocalPreviewEnabled()||!supabaseConfigured()){
@@ -2691,7 +2713,7 @@ async function managerEnterFlow(){
   await loadManagerData();
   managerTrackView(MANAGER_VIEW,MANAGER_VIEW==='mine'?MANAGER_MY_VIEW:'','entry');
   renderManagerDemo();
-  managerLoadRemoteState().then(function(){
+  managerLoadRemoteState({force:true}).then(function(){
     managerMaybeShowDailyIncomeDialog();
     if(ACTIVE_TAB==='manager')renderManagerDemo();
   });
@@ -4221,7 +4243,9 @@ function bdEventCopy(ev){
     surf:ev&&ev.surf||ev&&ev.surface||'hard_out',
     expiry:ev&&ev.expiry||null,
     start_counting_score:ev&&ev.start_counting_score,
-    counting_started:ev&&ev.counting_started
+    counting_started:ev&&ev.counting_started,
+    expired_by_survivor_calendar:!!(ev&&ev.expired_by_survivor_calendar),
+    survivor_year_status:ev&&ev.survivor_year_status||null
   };
 }
 
@@ -4240,7 +4264,7 @@ function bdEventType(ev,g){
 }
 
 function bdSelectedEvents(pool,g){
-  var vals=(pool||[]).map(bdEventCopy);
+  var vals=(pool||[]).map(bdEventCopy).filter(function(e){return !e.expired_by_survivor_calendar;});
   var expKey=function(e){
     var m=String(e.expiry||'').match(/(\d+)年(\d+)月/);
     return m?[Number(m[1]),Number(m[2])]:[9999,99];
