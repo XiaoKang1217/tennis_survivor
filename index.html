@@ -1685,14 +1685,27 @@ function managerReplacedLineupPlayers(){
 function managerLineupPlayers(){
   var map={};
   managerBuildPool().forEach(function(p){map[p.id]=p;if(p.sourcePlayerKey)map[p.sourcePlayerKey]=p;});
-  var contracts=managerRemoteContracts();
+  var contracts=managerRemoteContracts(),activePlayers=[];
   contracts.filter(function(x){return x.is_active!==false;}).forEach(function(x){
     var p=managerPlayerFromContract(x);
     if(!p)return;
+    activePlayers.push(p);
     if(!map[p.id])map[p.id]=p;
     if(p.sourcePlayerKey&&!map[p.sourcePlayerKey])map[p.sourcePlayerKey]=p;
   });
-  return MANAGER_LINEUP.map(function(id){return map[id];}).filter(Boolean);
+  var seen={},out=[];
+  MANAGER_LINEUP.forEach(function(id){
+    var p=map[id];
+    if(!p||seen[p.id])return;
+    seen[p.id]=true;
+    out.push(p);
+  });
+  activePlayers.forEach(function(p){
+    if(!p||seen[p.id])return;
+    seen[p.id]=true;
+    out.push(p);
+  });
+  return out;
 }
 function managerSelected(id){return MANAGER_LINEUP.indexOf(id)>=0;}
 function managerContractForPlayer(p,includeInactive){
@@ -2589,6 +2602,23 @@ function managerApplyRemoteState(state){
     MANAGER_TRANSFER_COUNT=Number(state.lineup.transfer_count)||0;
   }
 }
+async function managerHydrateRemoteContracts(state){
+  if(!state||!state.lineup||!AUTH_USER||!supabaseConfigured())return state;
+  var contracts=Array.isArray(state.contracts)?state.contracts:[],transferCount=Number(state.lineup.transfer_count)||0;
+  if(!transferCount&&!contracts.some(function(x){return x&&x.is_active===false;}))return state;
+  try{
+    const client=await ensureSupabaseClient();
+    const res=await client.from('tour_manager_lineup_players').select('*').eq('lineup_id',state.lineup.id).order('created_at',{ascending:true});
+    if(!res.error&&Array.isArray(res.data)&&res.data.length>=contracts.length){
+      state=Object.assign({},state,{contracts:res.data});
+    }else if(res.error){
+      trackSupabaseError('manager.lineup_players.hydrate',res.error,true);
+    }
+  }catch(e){
+    trackSupabaseError('manager.lineup_players.hydrate',e,true);
+  }
+  return state;
+}
 async function managerLoadRemoteState(opts){
   opts=opts||{};
   if(!AUTH_USER||!supabaseConfigured())return null;
@@ -2598,7 +2628,8 @@ async function managerLoadRemoteState(opts){
   if(MANAGER_REMOTE_LOADING)return MANAGER_REMOTE_LOADING;
   MANAGER_REMOTE_LOADING=(async function(){
     try{
-      const data=await optionalSupabaseRpc('tour_manager_get_my_state',{p_station_key:managerStationKey(),p_season:managerRules().initialSeason||2026});
+      let data=await optionalSupabaseRpc('tour_manager_get_my_state',{p_station_key:managerStationKey(),p_season:managerRules().initialSeason||2026});
+      data=await managerHydrateRemoteContracts(data);
       if(data)managerApplyRemoteState(data);
       return data;
     }catch(e){return null;}
@@ -2721,7 +2752,7 @@ async function managerEnterFlow(){
 }
 async function managerSubmitLineupRemote(c,rules){
   var payload=c.players.map(managerContractPayload);
-  const data=await supabaseRpc('tour_manager_submit_lineup',{
+  let data=await supabaseRpc('tour_manager_submit_lineup',{
     p_station_key:managerStationKey(),
     p_season:2026,
     p_station_grant:rules.stationGrant,
@@ -2736,6 +2767,7 @@ async function managerSubmitLineupRemote(c,rules){
     p_lineup_style:c.style
   });
   if(!data)throw new Error('巡回赛经纪人后台未返回提交结果。');
+  data=await managerHydrateRemoteContracts(data);
   managerApplyRemoteState(data);
   return data;
 }
@@ -2744,13 +2776,14 @@ async function managerTransferRemote(est,rules){
   if(!state||!state.lineup)throw new Error('没有找到已提交阵容。');
   var out=(state.contracts||[]).find(function(x){return x.player_key===est.from.id&&x.is_active!==false;});
   if(!out)throw new Error('没有找到要换下的合同。');
-  const data=await supabaseRpc('tour_manager_transfer_player',{
+  let data=await supabaseRpc('tour_manager_transfer_player',{
     p_lineup_id:state.lineup.id,
     p_out_contract_id:out.id,
     p_in_contract:managerContractPayload(est.to),
     p_fee_rate:rules.transferFee
   });
   if(!data)throw new Error('巡回赛经纪人后台未返回换人结果。');
+  data=await managerHydrateRemoteContracts(data);
   managerApplyRemoteState(data);
   MANAGER_REMOTE_PUBLIC_SYNC_KEY='';
   MANAGER_REMOTE_PUBLIC_LOADING=null;
