@@ -185,6 +185,7 @@ export async function fetchDrawPlayers(event, drawUrl) {
   const html = await fetchText(ajaxUrl);
   return {
     players: parseDrawPlayersFromAjax(html, event, ajaxUrl),
+    walkover_matches: parseDrawWalkoverMatchesFromAjax(html, event, ajaxUrl),
     source_url: ajaxUrl,
     warnings: []
   };
@@ -497,6 +498,209 @@ export function matchRowsForEvent(event, resultRecords, drawUrl = '') {
     });
   }
   return rows;
+}
+
+export function parseDrawWalkoverMatchesFromAjax(html, event, sourceUrl = '') {
+  const cells = parseDrawCellsFromAjax(html, event);
+  if (!cells.length) return [];
+  const playerCells = cells.filter((cell) => cell.player && cell.cell_index > 0);
+  const scoreCells = cells.filter((cell) => cell.is_score && walkoverStatusFromScore(cell.text));
+  const rows = [];
+  const seen = new Set();
+  const stages = roundKeysForEvent(event);
+  const firstStage = stages[0];
+
+  for (const scoreCell of scoreCells) {
+    const winnerCell = findWalkoverWinnerCell(scoreCell, playerCells, event, stages);
+    if (!winnerCell) continue;
+    const reachedRound = stageForCellIndex(winnerCell.cell_index, stages);
+    const matchRound = previousStageKey(reachedRound, stages);
+    if (!matchRound || matchRound === 'OUT') continue;
+    const status = walkoverStatusFromScore(scoreCell.text);
+    const participants = inferWalkoverParticipants({
+      scoreCell,
+      winnerCell,
+      playerCells,
+      event,
+      stages,
+      matchRound,
+      firstStage
+    });
+    const winner = winnerCell.player;
+    const loser = participants.find((player) => player && player.player_key !== winner.player_key) || null;
+    const keyParts = [
+      event.event_key,
+      'draw',
+      status,
+      matchRound,
+      winner.profile_id || winner.player_key,
+      loser?.profile_id || loser?.player_key || scoreCell.row
+    ];
+    const matchKey = keyParts.map((part) => String(part || '').replace(/[^a-zA-Z0-9_|.-]+/g, '-')).join(':');
+    if (seen.has(matchKey)) continue;
+    seen.add(matchKey);
+    rows.push({
+      event_key: event.event_key,
+      match_key: matchKey,
+      tour: event.tour,
+      round_key: matchRound,
+      round_order: roundOrder(event, matchRound),
+      match_order: scoreCell.row * 10 + scoreCell.cell_index,
+      scheduled_at: null,
+      court: null,
+      player1_key: winner.player_key,
+      player1_name: winner.name_zh || winner.name_en,
+      player2_key: loser?.player_key || null,
+      player2_name: loser ? (loser.name_zh || loser.name_en) : null,
+      winner_key: winner.player_key,
+      winner_name: winner.name_zh || winner.name_en,
+      score: scoreCell.text,
+      status,
+      source_url: sourceUrl,
+      raw: {
+        source: 'live-tennis.cn draw ajax',
+        score: scoreCell.text,
+        score_row: scoreCell.row,
+        score_cell_index: scoreCell.cell_index,
+        winner_cell_index: winnerCell.cell_index,
+        reached_round: reachedRound
+      }
+    });
+  }
+  return rows;
+}
+
+function parseDrawCellsFromAjax(html, event) {
+  const part = eventTourPart(event);
+  const partStart = html.search(new RegExp(`<div\\b[^>]*class=["'][^"']*cDrawPart[^"']*["'][^>]*data-id=["']${part}["']`, 'i'));
+  if (partStart < 0) return [];
+  const nextPart = html.slice(partStart + 1).search(/<div\b[^>]*class=["'][^"']*cDrawPart[^"']*["'][^>]*data-id=["']/i);
+  const segment = nextPart >= 0 ? html.slice(partStart, partStart + 1 + nextPart) : html.slice(partStart);
+  const cells = [];
+  for (const row of segment.matchAll(/<tr>\s*<td[^>]*class=["'][^"']*cDrawSeq[^"']*["'][^>]*>\s*(\d+)\s*<\/td>([\s\S]*?)<\/tr>/gi)) {
+    const drawPosition = Number(row[1]);
+    const rowHtml = row[2];
+    const tds = [...rowHtml.matchAll(/<td\b([^>]*)>([\s\S]*?)<\/td>/gi)];
+    for (let i = 0; i < tds.length; i += 1) {
+      const attrs = tds[i][1] || '';
+      const inner = tds[i][2] || '';
+      const cls = attr(attrs, 'class');
+      if (!/cDrawGrid/.test(cls)) continue;
+      const pname = inner.match(/<pname\b([^>]*)>([\s\S]*?)<\/pname>/i);
+      const text = cleanText(inner);
+      let player = null;
+      if (pname) {
+        const pAttrs = pname[1];
+        const pInner = pname[2];
+        const profileId = attr(pAttrs, 'data-id');
+        const nameEn = normalizeName(attr(pAttrs, 'alt'));
+        const nameZh = cleanText(pInner.replace(/<span[^>]*class=["']?entrySign["']?[^>]*>[\s\S]*?<\/span>/i, ''));
+        const isBye = profileId === '0' || /^(bye|轮空)$/i.test(nameEn) || nameZh === '轮空';
+        if (!isBye) {
+          player = {
+            profile_id: profileId || null,
+            name_en: nameEn,
+            name_zh: nameZh || nameEn,
+            player_key: canonicalPlayerKey(event.tour, { name_en: nameEn, name_zh: nameZh || nameEn, profile_id: profileId || null })
+          };
+        }
+      }
+      cells.push({
+        row: drawPosition,
+        cell_index: i + 1,
+        class_name: cls,
+        text,
+        is_score: /cDrawGridScore/.test(cls),
+        player
+      });
+    }
+  }
+  return cells;
+}
+
+function walkoverStatusFromScore(score = '') {
+  const text = String(score || '').trim();
+  if (!text) return '';
+  if (/w\s*\/?\s*o|walkover|不战|退赛|withdraw/i.test(text)) return 'walkover';
+  if (/\bret\.?\b|retired|中退|伤退/i.test(text)) return 'retired';
+  return '';
+}
+
+function stageForCellIndex(cellIndex, stages) {
+  const idx = Math.max(0, Math.min(stages.length - 1, Number(cellIndex || 1) - 1));
+  return stages[idx];
+}
+
+function previousStageKey(roundKey, stages) {
+  const idx = stages.indexOf(roundKey);
+  if (idx <= 0) return idx === 0 ? 'OUT' : null;
+  return stages[idx - 1];
+}
+
+function findWalkoverWinnerCell(scoreCell, playerCells, event, stages) {
+  const bracketSize = bracketSizeFor(event.draw_size);
+  const groupStart = Math.floor((scoreCell.row - 1) / bracketSize) * bracketSize + 1;
+  const groupEnd = groupStart + bracketSize - 1;
+  const candidates = playerCells.filter((cell) => (
+    cell.row >= groupStart
+    && cell.row <= groupEnd
+    && cell.cell_index >= Math.max(2, scoreCell.cell_index - 1)
+    && cell.cell_index <= scoreCell.cell_index + 1
+  ));
+  if (!candidates.length) return null;
+  candidates.sort((a, b) => {
+    const aSame = a.cell_index === scoreCell.cell_index ? 1 : 0;
+    const bSame = b.cell_index === scoreCell.cell_index ? 1 : 0;
+    if (aSame !== bSame) return bSame - aSame;
+    const aStage = stages.indexOf(stageForCellIndex(a.cell_index, stages));
+    const bStage = stages.indexOf(stageForCellIndex(b.cell_index, stages));
+    if (aStage !== bStage) return bStage - aStage;
+    const aDist = Math.abs(a.row - scoreCell.row);
+    const bDist = Math.abs(b.row - scoreCell.row);
+    if (aDist !== bDist) return aDist - bDist;
+    return a.row - b.row;
+  });
+  return candidates[0];
+}
+
+function inferWalkoverParticipants({ scoreCell, winnerCell, playerCells, event, stages, matchRound, firstStage }) {
+  const roundIdx = stages.indexOf(matchRound);
+  if (roundIdx < 0) return [winnerCell.player];
+  const groupSize = Math.pow(2, roundIdx + 1);
+  const halfSize = Math.max(1, groupSize / 2);
+  const groupStart = Math.floor((scoreCell.row - 1) / groupSize) * groupSize + 1;
+  const halves = [
+    [groupStart, groupStart + halfSize - 1],
+    [groupStart + halfSize, groupStart + groupSize - 1]
+  ];
+  const participants = halves.map(([start, end]) => (
+    findParticipantForRound(playerCells, start, end, matchRound, firstStage, stages)
+  )).filter(Boolean);
+  if (!participants.some((player) => player.player_key === winnerCell.player.player_key)) {
+    participants.unshift(winnerCell.player);
+  }
+  const seen = new Set();
+  return participants.filter((player) => {
+    if (!player || seen.has(player.player_key)) return false;
+    seen.add(player.player_key);
+    return true;
+  });
+}
+
+function findParticipantForRound(playerCells, start, end, roundKey, firstStage, stages) {
+  const targetStage = roundKey === 'OUT' ? firstStage : roundKey;
+  const candidates = playerCells.filter((cell) => (
+    cell.row >= start
+    && cell.row <= end
+    && stageForCellIndex(cell.cell_index, stages) === targetStage
+  ));
+  if (!candidates.length) return null;
+  candidates.sort((a, b) => {
+    if (a.cell_index !== b.cell_index) return b.cell_index - a.cell_index;
+    const mid = (start + end) / 2;
+    return Math.abs(a.row - mid) - Math.abs(b.row - mid);
+  });
+  return candidates[0].player;
 }
 
 export function dateRange(startDate, endDate) {

@@ -77,16 +77,44 @@ const WEIGHTS = {
 
 const POINT_TABLES = {
   ATP: {
-    '250': { R128: 0, R64: 0, R32: 0, R16: 25, QF: 50, SF: 100, F: 165, W: 250 },
-    '500': { R128: 0, R64: 0, R32: 0, R16: 50, QF: 100, SF: 200, F: 330, W: 500 },
-    '1000': { R128: 0, R64: 0, R32: 50, R16: 100, QF: 200, SF: 400, F: 650, W: 1000 },
-    slam: { R128: 100, R64: 100, R32: 100, R16: 200, QF: 400, SF: 800, F: 1300, W: 2000 }
+    '250': {
+      28: { R128: 0, R64: 0, R32: 0, R16: 25, QF: 50, SF: 100, F: 165, W: 250 },
+      32: { R128: 0, R64: 0, R32: 0, R16: 25, QF: 50, SF: 100, F: 165, W: 250 },
+      48: { R128: 0, R64: 0, R32: 13, R16: 25, QF: 50, SF: 100, F: 165, W: 250 }
+    },
+    '500': {
+      28: { R128: 0, R64: 0, R32: 0, R16: 50, QF: 100, SF: 200, F: 330, W: 500 },
+      32: { R128: 0, R64: 0, R32: 0, R16: 50, QF: 100, SF: 200, F: 330, W: 500 },
+      48: { R128: 0, R64: 0, R32: 25, R16: 50, QF: 100, SF: 200, F: 330, W: 500 }
+    },
+    '1000': {
+      56: { R128: 0, R64: 10, R32: 50, R16: 100, QF: 200, SF: 400, F: 650, W: 1000 },
+      64: { R128: 0, R64: 10, R32: 50, R16: 100, QF: 200, SF: 400, F: 650, W: 1000 },
+      96: { R128: 10, R64: 30, R32: 50, R16: 100, QF: 200, SF: 400, F: 650, W: 1000 }
+    },
+    slam: {
+      128: { R128: 10, R64: 50, R32: 100, R16: 200, QF: 400, SF: 800, F: 1300, W: 2000 }
+    }
   },
   WTA: {
-    '250': { R128: 0, R64: 0, R32: 1, R16: 30, QF: 54, SF: 98, F: 163, W: 250 },
-    '500': { R128: 0, R64: 0, R32: 1, R16: 60, QF: 108, SF: 195, F: 325, W: 500 },
-    '1000': { R128: 0, R64: 0, R32: 65, R16: 120, QF: 215, SF: 390, F: 650, W: 1000 },
-    slam: { R128: 130, R64: 130, R32: 130, R16: 240, QF: 430, SF: 780, F: 1300, W: 2000 }
+    '250': {
+      28: { R128: 0, R64: 0, R32: 1, R16: 30, QF: 54, SF: 98, F: 163, W: 250 },
+      32: { R128: 0, R64: 0, R32: 1, R16: 30, QF: 54, SF: 98, F: 163, W: 250 },
+      48: { R128: 0, R64: 1, R32: 18, R16: 30, QF: 54, SF: 98, F: 163, W: 250 }
+    },
+    '500': {
+      28: { R128: 0, R64: 0, R32: 1, R16: 60, QF: 108, SF: 195, F: 325, W: 500 },
+      32: { R128: 0, R64: 0, R32: 1, R16: 60, QF: 108, SF: 195, F: 325, W: 500 },
+      48: { R128: 0, R64: 1, R32: 30, R16: 60, QF: 108, SF: 195, F: 325, W: 500 }
+    },
+    '1000': {
+      56: { R128: 0, R64: 10, R32: 65, R16: 120, QF: 215, SF: 390, F: 650, W: 1000 },
+      64: { R128: 0, R64: 10, R32: 65, R16: 120, QF: 215, SF: 390, F: 650, W: 1000 },
+      96: { R128: 10, R64: 35, R32: 65, R16: 120, QF: 215, SF: 390, F: 650, W: 1000 }
+    },
+    slam: {
+      128: { R128: 10, R64: 70, R32: 130, R16: 240, QF: 430, SF: 780, F: 1300, W: 2000 }
+    }
   }
 };
 
@@ -640,10 +668,24 @@ function bracketSizeFor(drawSize = 32) {
   return 128;
 }
 
+function drawBucket(drawSize = 32) {
+  const n = Number(drawSize) || 32;
+  if (n >= 128) return 128;
+  if (n >= 96) return 96;
+  if (n >= 64) return 64;
+  if (n >= 56) return 56;
+  if (n >= 48) return 48;
+  if (n >= 32) return 32;
+  if (n >= 28) return 28;
+  return 32;
+}
+
 function pointsFor(event) {
   const level = String(event.level || '').toLowerCase();
   const key = /slam|grand|大满贯/.test(level) ? 'slam' : String(event.level || '500');
-  return POINT_TABLES[event.tour]?.[key] || POINT_TABLES[event.tour]?.['500'] || POINT_TABLES.WTA['500'];
+  const tables = POINT_TABLES[event.tour]?.[key] || POINT_TABLES[event.tour]?.['500'] || POINT_TABLES.WTA['500'];
+  const bucket = drawBucket(event.draw_size);
+  return tables[bucket] || tables[32] || tables[28] || tables[64] || tables[96] || tables[128] || {};
 }
 
 function surfaceField(surface = '') {

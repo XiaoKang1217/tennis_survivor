@@ -4,6 +4,72 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>签表幸存者之炉网</title>
+<meta name="description" content="签表幸存者之炉网：网球 ATP/WTA 即时排名、签表幸存者、温网签表幸存者、survivor selector、网球积分构成和巡回赛经纪人游戏。">
+<meta name="keywords" content="签表幸存者,网球幸存者,ATP即时排名,WTA即时排名,温网签表幸存者,网球选人游戏,survivor selector,巡回赛经纪人,网球积分构成,温网网球,大满贯网球">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "炉网是什么？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "炉网是为网球爱好者、巡回赛爱好者创立的一站式娱乐网页，设置了「巡回赛经纪人」「每日毒奶」「每日运势」等游戏内容，同时也是「签表幸存者」的数据中心，聚集了众多网球迷。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "巡回赛经纪人是什么？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "在公开市场上购买球员，球员成绩越好，你赚的越多，收益按巡回赛积分计算。巡回赛经纪人是炉网的预算制网球选人游戏，你可以用本金和签约金配置球员阵容，按球员成绩和 combo 收益结算。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "哪里看 ATP 即时排名和 WTA 即时排名？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "炉网的即时排名，是「签表幸存者」游戏玩家的即时排名。实时选人模块展示 ATP即时排名、WTA即时排名、幸存状态、每日赛程和出局风险，适合快速判断今天该选谁。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "网球积分构成怎么查？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "炉网的积分构成，是「签表幸存者」游戏玩家的积分构成。积分构成模块按赛事、场地、等级和失效时间拆分排名分数，帮助理解 ATP/WTA 排名变化和即时扣分逻辑。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "温网和大满贯网球有什么玩法？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "温布尔登大满贯赛事开放后，巡回赛经纪人会同步开售，玩家可以体验组建球队的乐趣。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "用户通常会怎么找到炉网？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "可以搜索签表幸存者、网球幸存者、ATP即时排名、WTA即时排名、温网签表幸存者、网球选人游戏、survivor selector、巡回赛经纪人、网球游戏、温网网球、网球签表。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "签表幸存者和网球幸存者怎么玩？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "炉网提供签表幸存者、网球幸存者和 survivor selector 工具，支持按 ATP、WTA 签表进行每日选人和排名查看。"
+      }
+    }
+  ]
+}
+</script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,"Noto Sans SC","Microsoft YaHei",sans-serif;background:linear-gradient(160deg,#fffbf0,#fff7e6,#fef3c7);min-height:100vh;color:#44321c;font-size:14px}
@@ -62,7 +128,18 @@ body.manager-mode .tab:hover:not(.on){background:rgba(255,255,255,.28)}
 .auth-submit:disabled{opacity:.6;cursor:not-allowed}
 .auth-msg{min-height:18px;margin-top:10px;color:#9a7a40;font-size:12px;line-height:1.5}
 .auth-msg.err{color:#dc2626}.auth-msg.ok{color:#15803d}
+.auth-forgot-banner{margin-top:5px;color:#dc2626;font-size:12px;font-weight:950;line-height:1.5}
 .auth-note{margin-top:8px;color:#9a7a40;font-size:11px;line-height:1.6}
+.auth-forgot-note{color:#dc2626;font-weight:950}
+.seo-faq-link{margin:14px 20px 22px;color:#7a572b;font-size:12px;text-align:center}
+.seo-faq-link button{border:0;background:none;color:#c45f2d;font:inherit;font-weight:950;text-decoration:underline;cursor:pointer}
+.seo-faq-link button:hover{color:#9a3412}
+.seo-faq{max-width:1080px;margin:0 auto 24px;padding:18px 20px;border:1px solid #fde68a;border-radius:10px;background:rgba(255,255,255,.82);color:#5c421f;line-height:1.7;box-shadow:0 2px 10px rgba(245,158,11,.08)}
+.seo-faq h2{font-size:16px;color:#78450a;margin-bottom:10px}
+.seo-faq-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.seo-faq-item{font-size:12px}
+.seo-faq-item h3{color:#78450a;font-size:13px;margin-bottom:3px}
+.seo-faq-item p{margin:0}
 .tbl-wrap{overflow:auto;border-radius:10px;border:1px solid #fde68a;box-shadow:0 2px 12px rgba(245,158,11,.1);max-height:calc(100vh - 260px)}
 table{width:100%;border-collapse:collapse;font-size:13px}
 thead{position:sticky;top:0;z-index:10;background:linear-gradient(135deg,#fef3c7,#fde68a)}
@@ -202,6 +279,7 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 .manager-wechat-copy{display:grid;gap:5px;color:#5c421f;font-weight:900;line-height:1.38}
 .manager-wechat-line{font-size:12px}.manager-wechat-line.main{font-size:13px}.manager-wechat-line.small{font-size:11px;color:#7a572b;font-weight:850}
 .manager-wechat-em{color:#15803d;font-size:15px;font-weight:950;white-space:nowrap}
+.manager-wechat-alert{color:#dc2626;font-size:17px;font-weight:950;line-height:1.32}
 .manager-wechat-qr{width:92px;height:122px;object-fit:contain;background:#fff;border:1px solid rgba(223,202,162,.9);border-radius:10px;padding:4px;box-shadow:0 8px 18px rgba(92,66,24,.12)}
 .manager-hero-art{position:absolute;z-index:0;right:-18px;top:-10px;width:min(570px,34vw);height:calc(100% + 20px);max-width:none;object-fit:cover;object-position:center;border:0;border-radius:0;box-shadow:none;background:transparent;opacity:.98;filter:saturate(1.05) contrast(1.02);pointer-events:none;-webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 20%,#000 100%);mask-image:linear-gradient(90deg,transparent 0%,#000 20%,#000 100%)}
 .manager-meta{display:flex;gap:7px;flex-wrap:wrap}
@@ -327,7 +405,7 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 .manager-lines{list-style:none;display:grid;gap:5px;color:#6c5c46;font-size:12px;line-height:1.55}.manager-lines li{padding-left:12px;position:relative}.manager-lines li:before{content:"";position:absolute;left:0;top:.75em;width:4px;height:4px;border-radius:50%;background:#c45f2d}
 .manager-dialog{position:fixed;inset:0;z-index:420;display:flex;align-items:center;justify-content:center;background:rgba(75,48,21,.34);padding:18px}
 .manager-dialog-card{width:min(420px,100%);background:#fffaf0;border:1px solid #d9984b;border-radius:12px;box-shadow:0 18px 50px rgba(75,48,21,.22);overflow:hidden}
-.manager-dialog-card h3{background:#7a4f24;color:#fff;font-size:16px;padding:13px 15px}.manager-dialog-card p{padding:16px;color:#2f2a22;line-height:1.7;font-size:14px}.manager-dialog-card .manager-actions{padding:0 16px 16px;justify-content:flex-end}
+.manager-dialog-card h3{background:#7a4f24;color:#fff;font-size:16px;padding:13px 15px}.manager-dialog-card p{padding:16px;color:#2f2a22;line-height:1.7;font-size:14px}.manager-dialog-strong{margin:-5px 16px 14px;padding:8px 10px;border-radius:8px;background:#fff3d7;color:#7a4f24;font-size:14px;font-weight:950;line-height:1.55}.manager-dialog-card .manager-actions{padding:0 16px 16px;justify-content:flex-end}
 
 .refresh-bar{display:flex;align-items:center;gap:8px;font-size:11px;color:rgba(255,255,255,.8);margin-top:4px}
 .refresh-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite}
@@ -345,6 +423,9 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
   .sheet-tabs{overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px}
   .sheet-tab{white-space:nowrap;padding:6px 14px;font-size:12px}
   .main{padding:10px}
+  .seo-faq-link{margin:12px 10px 18px}
+  .seo-faq{margin:0 10px 20px;padding:14px}
+  .seo-faq-grid{grid-template-columns:1fr}
   .kpi{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
   .kc{min-width:0;padding:8px}
   .kn{font-size:1.35em}
@@ -581,7 +662,7 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 }
 </style>
 </head>
-<body>
+<body class="manager-mode">
 <div id="hdr">
   <div class="hdt">
     <h1>🎾 签表幸存者之炉网</h1>
@@ -592,8 +673,8 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
     <span id="refresh-info">选人数据每10分钟自动更新；其他模块每天10:00更新</span>
   </div>
   <div class="tabs">
-    <button class="tab on" onclick="switchTab('ms-s',this)" id="tab-ms-s">🎾 ATP 男单</button>
-    <button class="tab" onclick="switchTab('manager',this)" id="tab-manager">💼 巡回赛经纪人</button>
+    <button class="tab on" onclick="switchTab('manager',this)" id="tab-manager">💼 巡回赛经纪人</button>
+    <button class="tab" onclick="switchTab('ms-s',this)" id="tab-ms-s">🎾 ATP 男单</button>
     <button class="tab" onclick="switchTab('ws-s',this)" id="tab-ws-s">🎾 WTA 女单</button>
     <button class="tab" onclick="switchTab('ms-bd',this)" id="tab-breakdown">💹 积分构成</button>
     <button class="tab" onclick="switchTab('ms-p',this)" id="tab-preference">📊 用户偏好</button>
@@ -601,15 +682,16 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
     <button class="tab" onclick="switchTab('flight',this)" id="tab-flight">✈️ 每日航班</button>
     <button class="tab" onclick="switchTab('fortune',this)" id="tab-fortune">🔮 每日运势</button>
     <button class="tab" onclick="switchTab('jinx',this)" id="tab-jinx">🥛 每日毒奶</button>
+    <button class="tab" onclick="switchTab('faq',this)" id="tab-faq">FAQ</button>
   </div>
 </div>
 <div class="main">
 
-<div id="p-ms-s" class="panel on">
+<div id="p-ms-s" class="panel">
   <div class="loading" id="loading-ms">⏳ 加载ATP数据中...</div>
   <div id="content-ms-s" style="display:none"></div>
 </div>
-<div id="p-manager" class="panel"><div class="manager-wrap" id="manager-root"><div class="loading">⏳ 加载巡回赛经纪人...</div></div></div>
+<div id="p-manager" class="panel on"><div class="manager-wrap" id="manager-root"><div class="loading">⏳ 加载巡回赛经纪人...</div></div></div>
 <div id="p-ws-s" class="panel">
   <div class="loading" id="loading-ws">⏳ 加载WTA数据中...</div>
   <div id="content-ws-s" style="display:none"></div>
@@ -651,6 +733,20 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 <div id="p-flight" class="panel"><div class="flight-toolbar"><div style="font-size:15px;font-weight:800;color:#d97706">✈️ 每日航班</div><select class="select-mini" id="flight-year" onchange="initFlightSelect(true)"><option selected>2026</option><option>2025</option><option>2024</option></select><select class="select-mini" id="flight-select" onchange="renderFlights(true)"></select></div><div id="flight-box" class="flight-grid"></div></div>
 <div id="p-fortune" class="panel"><div class="fortune-wrap"><div class="fortune-title">🔮 今日运势抽签</div><div class="fortune-sub">每天选球员愁破头？让神明帮你做选择！</div><div class="fortune-tabs"><button class="ftab on" onclick="setFortune('atp',this)">⚡ ATP 男单</button><button class="ftab" onclick="setFortune('wta',this)">🌸 WTA 女单</button></div><div class="fortune-card" id="fortune-card"><div class="fortune-hint">✨ 今日可选球员已入签筒 ✨</div><div class="fortune-player" id="fortune-player">？？？</div><div class="fattr" id="fortune-attr">未摇签</div><div class="fortune-text" id="fortune-text">点击下方按钮，开始今日运势抽签</div><div class="fortune-yi" id="fortune-yi"></div></div><br><button class="fortune-btn" onclick="drawFortune()">🎋 摇签</button><br><br><div class="fortune-hint">签文仅供娱乐，后果自负 😄</div></div></div></div>
 <div id="p-jinx" class="panel"><div class="jinx-wrap"><div class="jinx-title">🥛 每日毒奶</div><div class="jinx-sub">今天你最希望谁出局？</div><div class="jinx-tabs"><button class="jtab on" id="jinx-tab-atp" onclick="setJinxTour('ATP',this)">⚡ ATP 男单</button><button class="jtab" id="jinx-tab-wta" onclick="setJinxTour('WTA',this)">🌸 WTA 女单</button><button class="jtab" id="jinx-tab-leader" onclick="setJinxLeaderboard(this)">🏆 毒奶榜</button></div><div class="jinx-board" id="jinx-board"><div class="loading">⏳ 等待今日赛程数据...</div></div></div></div>
+<div id="p-faq" class="panel">
+<section class="seo-faq" aria-label="炉网常见问题">
+  <h2>炉网常见问题</h2>
+  <div class="seo-faq-grid">
+    <article class="seo-faq-item"><h3>炉网是什么？</h3><p>炉网是为网球爱好者、巡回赛爱好者创立的一站式娱乐网页，设置了「巡回赛经纪人」「每日毒奶」「每日运势」等游戏内容，同时也是「签表幸存者」的数据中心，聚集了众多网球迷。</p></article>
+    <article class="seo-faq-item"><h3>巡回赛经纪人是什么？</h3><p>在公开市场上购买球员，球员成绩越好，你赚的越多，收益按巡回赛积分计算。巡回赛经纪人是炉网的预算制网球选人游戏，你可以用本金和签约金配置球员阵容，按球员成绩和 combo 收益结算。</p></article>
+    <article class="seo-faq-item"><h3>哪里看 ATP 即时排名和 WTA 即时排名？</h3><p>炉网的即时排名，是「签表幸存者」游戏玩家的即时排名。实时选人模块展示 ATP即时排名、WTA即时排名、幸存状态、每日赛程和出局风险，适合快速判断今天该选谁。</p></article>
+    <article class="seo-faq-item"><h3>网球积分构成怎么查？</h3><p>炉网的积分构成，是「签表幸存者」游戏玩家的积分构成。积分构成模块按赛事、场地、等级和失效时间拆分排名分数，帮助理解 ATP/WTA 排名变化和即时扣分逻辑。</p></article>
+    <article class="seo-faq-item"><h3>温网和大满贯网球有什么玩法？</h3><p>温布尔登大满贯赛事开放后，巡回赛经纪人会同步开售，玩家可以体验组建球队的乐趣。</p></article>
+    <article class="seo-faq-item"><h3>用户通常会怎么找到炉网？</h3><p>可以搜索签表幸存者、网球幸存者、ATP即时排名、WTA即时排名、温网签表幸存者、网球选人游戏、survivor selector、巡回赛经纪人、网球游戏、温网网球、网球签表。</p></article>
+    <article class="seo-faq-item"><h3>签表幸存者和网球幸存者怎么玩？</h3><p>炉网提供签表幸存者、网球幸存者和 survivor selector 工具，支持按 ATP、WTA 签表进行每日选人和排名查看。</p></article>
+  </div>
+</section>
+</div>
 
 <div class="auth-modal" id="auth-modal" aria-hidden="true">
   <div class="auth-card">
@@ -675,6 +771,7 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
         <button class="auth-submit" type="submit">注册并登录</button>
       </form>
       <div class="auth-msg" id="auth-msg"></div>
+      <div class="auth-forgot-banner">忘记密码请去“巡回赛经纪人”扫码进群，联系群主手动处理。</div>
       <div class="auth-note">昵称可以使用中英文和特殊字符，不可为空，且不能和其他账号重复。</div>
     </div>
   </div>
@@ -712,9 +809,9 @@ const TOP_TAB_BY_PANEL={
   'ms-bd':'tab-breakdown','ws-bd':'tab-breakdown',
   'ms-p':'tab-preference','ws-p':'tab-preference',
   'ms-t':'tab-disasters','ws-t':'tab-disasters',
-  flight:'tab-flight',fortune:'tab-fortune',jinx:'tab-jinx',manager:'tab-manager'
+  flight:'tab-flight',fortune:'tab-fortune',jinx:'tab-jinx',manager:'tab-manager',faq:'tab-faq'
 };
-let ACTIVE_TAB='ms-s';
+let ACTIVE_TAB='manager';
 let SUPABASE_CLIENT=null;
 let SUPABASE_LOADING=null;
 let AUTH_USER=null;
@@ -965,7 +1062,7 @@ function tabMeta(tab){
     'ms-bd':'breakdown','ws-bd':'breakdown',
     'ms-p':'preference','ws-p':'preference',
     'ms-t':'disasters','ws-t':'disasters',
-    flight:'daily_flights',fortune:'fortune',jinx:'daily_jinx',manager:'manager_demo'
+    flight:'daily_flights',fortune:'fortune',jinx:'daily_jinx',manager:'manager_demo',faq:'faq'
   }[tab]||tab;
   var eventLabel=(g==='ms'||g==='ws')&&tab.slice(-2)==='-s'?currentEventLabel(g):'';
   return {module:module,tour:tour,event_label:eventLabel};
@@ -1757,7 +1854,7 @@ function managerRequireLogin(reason){
   openAuthModal({reason:reason||'manager',afterLogin:function(){if((reason||'manager')==='manager')managerEnterFlow();else renderManagerDemo();}});
   return false;
 }
-function managerViewNeedsLogin(view){return ['calculator','mine','hall','transfer','ledger','boards'].indexOf(view)>=0;}
+function managerViewNeedsLogin(view){return false;}
 function managerViewNeedsRemoteState(view){return ['market','calculator','mine','transfer','ledger'].indexOf(view)>=0;}
 function managerRefreshRemoteState(force){
   if(!AUTH_USER||!supabaseConfigured())return;
@@ -1775,17 +1872,15 @@ function managerSetView(view){
   if(managerViewNeedsRemoteState(view))managerRefreshRemoteState(true);
 }
 function managerSetMyView(view){
-  if(!managerRequireLogin('manager'))return;
   MANAGER_VIEW='mine';
   MANAGER_MY_VIEW=view||'lineup';
   managerTrackView('mine',MANAGER_MY_VIEW,'subnav');
   renderManagerDemo();
   managerRefreshRemoteState(true);
 }
-function managerAlert(msg,title){MANAGER_DIALOG={title:title||'阵容提示',msg:msg};renderManagerDemo();}
+function managerAlert(msg,title,opts){opts=opts||{};MANAGER_DIALOG={title:title||'阵容提示',msg:msg,strong:opts.strong||''};renderManagerDemo();}
 function managerCloseAlert(){MANAGER_DIALOG=null;MANAGER_PENDING_TRANSFER=null;renderManagerDemo();}
 function managerAdd(id){
-  if(!managerRequireLogin('manager'))return;
   if(managerSubmittedRecord()){trackManagerEvent('manager_lineup_blocked',{reason:'already_submitted'});managerAlert('本站阵容已经提交，不能再直接加人。开赛后的调整请走换人窗口。','阵容已锁定');return;}
   var rules=managerRules(),pick=managerBuildPool().find(function(p){return p.id===id;});
   if(managerSelected(id)){managerRemove(id);return;}
@@ -1797,9 +1892,9 @@ function managerAdd(id){
   trackManagerEvent('manager_lineup_add',{player_tier:pick.tier,player_tour:pick.tour,price_bucket:managerValueBucket(pick.price,[25,50,100,150,250,400,650]),lineup_count_after:MANAGER_LINEUP.length});
   managerSetMsg('已加入阵容。去计算器选择每个人的预计轮次。');managerSaveState();renderManagerDemo();
 }
-function managerRemove(id){if(!managerRequireLogin('manager'))return;if(managerSubmittedRecord()){trackManagerEvent('manager_lineup_blocked',{reason:'submitted_remove'});managerAlert('提交后不能直接移除球员。你可以在换人窗口进行一次调仓。','阵容已锁定');return;}MANAGER_LINEUP=MANAGER_LINEUP.filter(function(x){return x!==id;});delete MANAGER_PREDICTIONS[id];trackManagerEvent('manager_lineup_remove',{lineup_count_after:MANAGER_LINEUP.length});managerSaveState();renderManagerDemo();}
-function managerResetDraft(){if(!managerRequireLogin('manager'))return;if(managerSubmittedRecord()){trackManagerEvent('manager_lineup_blocked',{reason:'submitted_reset'});managerAlert('本站阵容已经提交，不能清空草稿。换人记录会保留在我的收益里。','阵容已锁定');return;}MANAGER_LINEUP=[];MANAGER_PREDICTIONS={};MANAGER_SUNK_COST=0;MANAGER_TRANSFER_COUNT=0;trackManagerEvent('manager_lineup_reset');managerSetMsg('阵容草稿已重置。');managerSaveState();renderManagerDemo();}
-function managerSetPrediction(id,round){if(!managerRequireLogin('manager'))return;MANAGER_PREDICTIONS[id]=round;trackManagerEvent('manager_prediction_set',{round_key:round});managerSaveState();renderManagerDemo();}
+function managerRemove(id){if(managerSubmittedRecord()){trackManagerEvent('manager_lineup_blocked',{reason:'submitted_remove'});managerAlert('提交后不能直接移除球员。你可以在换人窗口进行一次调仓。','阵容已锁定');return;}MANAGER_LINEUP=MANAGER_LINEUP.filter(function(x){return x!==id;});delete MANAGER_PREDICTIONS[id];trackManagerEvent('manager_lineup_remove',{lineup_count_after:MANAGER_LINEUP.length});managerSaveState();renderManagerDemo();}
+function managerResetDraft(){if(managerSubmittedRecord()){trackManagerEvent('manager_lineup_blocked',{reason:'submitted_reset'});managerAlert('本站阵容已经提交，不能清空草稿。换人记录会保留在我的收益里。','阵容已锁定');return;}MANAGER_LINEUP=[];MANAGER_PREDICTIONS={};MANAGER_SUNK_COST=0;MANAGER_TRANSFER_COUNT=0;trackManagerEvent('manager_lineup_reset');managerSetMsg('阵容草稿已重置。');managerSaveState();renderManagerDemo();}
+function managerSetPrediction(id,round){MANAGER_PREDICTIONS[id]=round;trackManagerEvent('manager_prediction_set',{round_key:round});managerSaveState();renderManagerDemo();}
 function managerScoreScenario(players,roundFor){
   var gross=0,champ=0,finals=0,qf=0,jewel=0;
   players.forEach(function(p){
@@ -1846,10 +1941,44 @@ function managerLedgerBelongsToStation(row,stationKey){
   return false;
 }
 function managerRemoteStationWalletDelta(stationKey){
-  var ledger=MANAGER_REMOTE_STATE&&Array.isArray(MANAGER_REMOTE_STATE.ledger)?MANAGER_REMOTE_STATE.ledger:[];
+  var ledger=managerVisibleLedgerRows(MANAGER_REMOTE_STATE&&Array.isArray(MANAGER_REMOTE_STATE.ledger)?MANAGER_REMOTE_STATE.ledger:[]);
   return ledger.filter(function(x){return managerLedgerBelongsToStation(x,stationKey);}).reduce(function(s,x){return s+managerWalletImpactAmount(x);},0);
 }
+function managerHiddenLedgerIds(ledger){
+  var hidden=new Set();
+  (ledger||[]).forEach(function(row){
+    var meta=row&&row.metadata&&typeof row.metadata==='object'?row.metadata:{};
+    if(meta.hide_from_user===true||meta.hidden_from_user===true)hidden.add(String(row.id||''));
+    if(meta.correction_reason==='bye_first_match_loss_duplicate_award'){
+      hidden.add(String(row.id||''));
+      if(meta.correction_for_ledger_id)hidden.add(String(meta.correction_for_ledger_id));
+    }
+  });
+  hidden.delete('');
+  return hidden;
+}
+function managerLedgerRowHidden(row,hiddenIds){
+  var meta=row&&row.metadata&&typeof row.metadata==='object'?row.metadata:{};
+  var type=String(row&&row.type||row&&row.rawStatus||row&&row.status||'');
+  if(hiddenIds&&hiddenIds.has(String(row&&row.id||'')))return true;
+  if(meta.hide_from_user===true||meta.hidden_from_user===true)return true;
+  if(meta.correction_reason==='bye_first_match_loss_duplicate_award')return true;
+  if(meta.voided_reason==='bye_first_match_loss_duplicate_award')return true;
+  if(/player_points_delta|points_delta/i.test(type)
+    && Number(row&&row.amount)>0
+    && String(meta.first_round||'').toUpperCase()==='BYE'
+    && String(meta.bye_first_match_adjusted||'')==='false'
+    && meta.winner_key
+    && meta.player_key
+    && String(meta.winner_key)!==String(meta.player_key))return true;
+  return false;
+}
+function managerVisibleLedgerRows(ledger){
+  var hidden=managerHiddenLedgerIds(ledger);
+  return (ledger||[]).filter(function(row){return !managerLedgerRowHidden(row,hidden);});
+}
 function managerIncomePartsFromRow(row){
+  if(managerLedgerRowHidden(row))return null;
   var type=String(row&&row.type||row&&row.rawStatus||row&&row.status||'');
   if(/station_grant/i.test(type)||/本站签约金/.test(type)||/season_opening|开户/i.test(type))return null;
   if(/lineup_wallet_spend|lineup_purchase_cost|transfer/i.test(type))return null;
@@ -1864,7 +1993,7 @@ function managerIncomePartsFromRow(row){
 function managerStationIncomeSummary(){
   var stationKey=managerStationKey(),rows=[];
   if(MANAGER_REMOTE_STATE&&Array.isArray(MANAGER_REMOTE_STATE.ledger)){
-    rows=MANAGER_REMOTE_STATE.ledger.filter(function(x){return managerLedgerBelongsToStation(x,stationKey);});
+    rows=managerVisibleLedgerRows(MANAGER_REMOTE_STATE.ledger).filter(function(x){return managerLedgerBelongsToStation(x,stationKey);});
   }else{
     rows=(MANAGER_LEDGER||[]).filter(function(x){return managerLedgerBelongsToStation(x,stationKey);});
   }
@@ -1943,8 +2072,9 @@ function managerAllLedger(){
     var state=MANAGER_REMOTE_STATE,lineup=state.lineup||null,contracts=Array.isArray(state.contracts)?state.contracts:[],active=contracts.filter(function(x){return x.is_active!==false;});
     var playerTokens=active.map(managerLedgerPlayerTokenFromContract);
     var allPlayerTokens=contracts.map(managerLedgerPlayerTokenFromContract);
-    var ledger=Array.isArray(state.ledger)?state.ledger:[];
+    var ledger=managerVisibleLedgerRows(Array.isArray(state.ledger)?state.ledger:[]);
     ledger.forEach(function(x){
+      if(managerLedgerRowHidden(x))return;
       var meta=x.metadata&&typeof x.metadata==='object'?x.metadata:{},type=String(x.type||''),amount=Number(x.amount)||0;
       var isWalletSpend=/lineup_wallet_spend/i.test(type),isSubmit=/lineup_submit/i.test(type),isBonus=/submit_bonus/i.test(type),isStationGrant=/station_grant/i.test(type),isSettle=/settle|settlement|points/i.test(type),isTransfer=/transfer/i.test(type);
       if(isWalletSpend)return;
@@ -2047,7 +2177,7 @@ async function managerSubmitLineup(confirmed){
   var submitInfo=managerSubmissionWindowInfo();
   if(submitInfo.status==='closed'){
     trackManagerEvent('manager_submit_blocked',{reason:'submission_closed'});
-    managerAlert('本站阵容提交已截止。提交截止时间为 R1 第一场正赛开始前 15 分钟；本站截止时间：'+submitInfo.label+'。','提交时间已过');
+    managerAlert('本站阵容提交已截止。提交截止时间为 R1 第一场正赛开始前 15 分钟；本站截止时间：'+submitInfo.label+'。','提交时间已过',{strong:'获取准确开赛时间可扫码进群，二维码在标题栏'});
     return;
   }
   if(!c.legal){trackManagerEvent('manager_submit_blocked',{reason:'illegal_lineup',min_players:rules.minPlayers,max_players:rules.maxPlayers});managerAlert('阵容还不合法：需要 '+rules.minPlayers+'-'+rules.maxPlayers+' 人，且总成本不能超过本次起始可用额度 '+c.budget+'。','暂时不能提交');return;}
@@ -2329,7 +2459,6 @@ function managerPricingDetailHtml(p){
 }
 function managerBar(label,value){return '<div class="manager-bar"><span>'+label+'</span><div class="manager-track"><div class="manager-fill" style="width:'+Math.max(4,Math.min(100,Math.round(value)))+'%"></div></div><b>'+Math.round(value)+'</b></div>';}
 function managerToggleDetail(id){
-  if(!managerRequireLogin('manager'))return;
   var opening=MANAGER_DETAIL_ID!==id,pick=managerBuildPool().find(function(p){return p.id===id;});
   MANAGER_DETAIL_ID=opening?id:'';
   if(opening)trackManagerEvent('manager_player_detail',{player_tier:pick&&pick.tier,player_tour:pick&&pick.tour,price_bucket:pick?managerValueBucket(pick.price,[25,50,100,150,250,400,650]):'unknown'});
@@ -2513,9 +2642,9 @@ function renderManagerDemo(){
   var tabs='<div class="manager-tabs"><button class="manager-tab '+(MANAGER_VIEW==='market'?'on':'')+'" data-manager-view="market">球员市场</button><button class="manager-tab '+(MANAGER_VIEW==='calculator'?'on':'')+'" data-manager-view="calculator">收益计算器</button><button class="manager-tab '+(MANAGER_VIEW==='mine'?'on':'')+'" data-manager-view="mine">我的</button><button class="manager-tab '+(MANAGER_VIEW==='hall'?'on':'')+'" data-manager-view="hall">配置大厅</button><button class="manager-tab '+(MANAGER_VIEW==='boards'?'on':'')+'" data-manager-view="boards">榜单</button></div>';
   var panelTitle='<div class="manager-panel-title"><span>'+viewTitle+'</span>'+(MANAGER_VIEW==='market'?marketTabs:'')+'</div>';
   var panelHead='<div class="manager-panel-h">'+panelTitle+(MANAGER_VIEW==='market'?managerEventMetaHtml(rules):'')+'</div>';
-  var dialog=MANAGER_DIALOG?'<div class="manager-dialog"><div class="manager-dialog-card"><h3>'+esc(MANAGER_DIALOG.title)+'</h3><p>'+esc(MANAGER_DIALOG.msg).replace(/\n/g,'<br>')+'</p><div class="manager-actions">'+(MANAGER_DIALOG.confirmAction?'<button class="manager-clear" data-manager-action="close-dialog">'+esc(MANAGER_DIALOG.cancelLabel||'取消')+'</button><button class="manager-action" data-manager-action="'+esc(MANAGER_DIALOG.confirmAction)+'">'+esc(MANAGER_DIALOG.confirmLabel||'确定')+'</button>':'<button class="manager-action" data-manager-action="close-dialog">知道了</button>')+'</div></div></div>':'';
-  var wechat='<div class="manager-wechat-card"><div class="manager-wechat-copy"><div class="manager-wechat-line main">本游戏每周跟随巡回赛历开新赛事</div><div class="manager-wechat-line">如需 <span class="manager-wechat-em">开售提醒</span>、<span class="manager-wechat-em">换人窗口提醒</span> 请扫码进本游戏官方群</div><div class="manager-wechat-line small">群里有战术讨论、八卦聊天等等等等</div></div><img class="manager-wechat-qr" src="assets/manager/wechat-group-qr.jpg" alt="微信群二维码" width="92" height="122" decoding="async" fetchpriority="high"></div>';
-  root.innerHTML='<div class="manager-shell"><div class="manager-hero"><div class="manager-title"><div><div class="manager-title-line"><h2>巡回赛经纪人</h2><button class="manager-clear" data-manager-view="rules">查看规则</button><span class="manager-settle-note">每天09:37结算</span></div><p>组建你的球员阵容，在巡回赛里征战！<br>在公开市场上购买球员，球员成绩越好，你赚的越多，收益按巡回赛积分计算。<br>你不只懂网球，你是在做预算、风险和轮次收益的组合策略。</p></div></div>'+wechat+'<img class="manager-hero-art" src="assets/manager/agent-money-bag.webp" alt="" loading="lazy" decoding="async" fetchpriority="low"></div>'+managerRenderMoney(c,rules)+tabs+'<div class="manager-grid '+(showSide?'':'single')+'"><div class="manager-panel">'+panelHead+'<div class="manager-panel-b">'+managerRenderBody()+'</div></div>'+(showSide?managerSidebar(c,rules):'')+'</div>'+dialog+'</div>';
+  var dialog=MANAGER_DIALOG?'<div class="manager-dialog"><div class="manager-dialog-card"><h3>'+esc(MANAGER_DIALOG.title)+'</h3><p>'+esc(MANAGER_DIALOG.msg).replace(/\n/g,'<br>')+'</p>'+(MANAGER_DIALOG.strong?'<div class="manager-dialog-strong">'+esc(MANAGER_DIALOG.strong).replace(/\n/g,'<br>')+'</div>':'')+'<div class="manager-actions">'+(MANAGER_DIALOG.confirmAction?'<button class="manager-clear" data-manager-action="close-dialog">'+esc(MANAGER_DIALOG.cancelLabel||'取消')+'</button><button class="manager-action" data-manager-action="'+esc(MANAGER_DIALOG.confirmAction)+'">'+esc(MANAGER_DIALOG.confirmLabel||'确定')+'</button>':'<button class="manager-action" data-manager-action="close-dialog">知道了</button>')+'</div></div></div>':'';
+  var wechat='<div class="manager-wechat-card"><div class="manager-wechat-copy"><div class="manager-wechat-alert">温网签表即将公布！本游戏预计周六开放购买，具体时间可进群</div><div class="manager-wechat-line main">本游戏每周跟随巡回赛历开新赛事</div><div class="manager-wechat-line">如需 <span class="manager-wechat-em">开售提醒</span>、<span class="manager-wechat-em">换人窗口提醒</span> 请扫码进本游戏官方群</div></div><img class="manager-wechat-qr" src="assets/manager/wechat-group-qr.jpg" alt="微信群二维码" width="92" height="122" decoding="async" fetchpriority="high"></div>';
+  root.innerHTML='<div class="manager-shell"><div class="manager-hero"><div class="manager-title"><div><div class="manager-title-line"><h2>巡回赛经纪人</h2><button class="manager-clear" data-manager-view="rules">查看规则</button><span class="manager-settle-note">每天09:37结算</span></div><p>组建你的球员阵容，在巡回赛里征战！<br>在公开市场上购买球员，球员成绩越好，你赚的越多，收益按巡回赛积分计算。<br>你不只懂网球，你是在做预算、风险和轮次收益的组合策略。</p></div></div>'+wechat+'<img class="manager-hero-art" src="assets/manager/agent-money-bag.webp" alt="" loading="lazy" decoding="async" fetchpriority="low"></div>'+managerRenderMoney(c,rules)+tabs+'<div class="manager-grid '+(showSide?'':'single')+'"><div class="manager-panel">'+panelHead+'<div class="manager-panel-b">'+managerRenderBody()+'</div></div>'+(showSide?managerSidebar(c,rules):'')+'</div>'+seoFaqLinkHtml()+dialog+'</div>';
 }
 
 function trackSupabaseError(operation,err,ignoreMissing){
@@ -2707,21 +2836,40 @@ function managerChinaDateKey(value,offsetDays){
   return new Date(date.getTime()+8*3600000).toISOString().slice(0,10);
 }
 function managerIncomeLedgerRows(){
-  var ledger=MANAGER_REMOTE_STATE&&Array.isArray(MANAGER_REMOTE_STATE.ledger)?MANAGER_REMOTE_STATE.ledger:[];
-  return ledger.filter(function(x){return /player_points_delta|points_delta/i.test(String(x.type||''));});
+  var ledger=managerVisibleLedgerRows(MANAGER_REMOTE_STATE&&Array.isArray(MANAGER_REMOTE_STATE.ledger)?MANAGER_REMOTE_STATE.ledger:[]);
+  return ledger.map(function(row){
+    var part=managerIncomePartsFromRow(row);
+    if(!part||(part.kind!=='player'&&part.kind!=='combo'))return null;
+    return {row:row,kind:part.kind,amount:part.amount};
+  }).filter(Boolean);
 }
 function managerDailyIncomeSummary(){
   if(!AUTH_USER||!MANAGER_REMOTE_STATE)return null;
   var stationKey=managerStationKey(),todayKey=managerChinaDateKey(),rows=managerIncomeLedgerRows();
-  function amount(x){return Math.max(0,Number(x.amount)||0);}
+  function totals(list){
+    return list.reduce(function(out,x){
+      out[x.kind]+=x.amount;
+      out.total=out.player+out.combo;
+      return out;
+    },{player:0,combo:0,total:0});
+  }
   var todayRows=rows.filter(function(x){
-    return managerLedgerBelongsToStation(x,stationKey)&&managerChinaDateKey(x.created_at||x.updated_at)===todayKey;
+    return managerLedgerBelongsToStation(x.row,stationKey)
+      && managerChinaDateKey(x.row.created_at||x.row.updated_at)===todayKey;
   });
-  var yesterdayIncome=todayRows.reduce(function(s,x){return s+amount(x);},0);
-  var stationTotal=rows.filter(function(x){return managerLedgerBelongsToStation(x,stationKey);}).reduce(function(s,x){return s+amount(x);},0);
-  var careerTotal=rows.reduce(function(s,x){return s+amount(x);},0);
-  if(careerTotal<=0)return null;
-  return {dateKey:todayKey,yesterdayIncome:yesterdayIncome,stationTotal:stationTotal,careerTotal:careerTotal};
+  var stationRows=rows.filter(function(x){return managerLedgerBelongsToStation(x.row,stationKey);});
+  var yesterday=totals(todayRows),station=totals(stationRows),career=totals(rows);
+  if(career.total<=0)return null;
+  return {
+    dateKey:todayKey,
+    yesterdayIncome:yesterday.total,
+    yesterdayPlayer:yesterday.player,
+    yesterdayCombo:yesterday.combo,
+    stationTotal:station.total,
+    stationPlayer:station.player,
+    stationCombo:station.combo,
+    careerTotal:career.total
+  };
 }
 function managerMaybeShowDailyIncomeDialog(){
   if(!AUTH_USER||MANAGER_DIALOG)return false;
@@ -2735,7 +2883,7 @@ function managerMaybeShowDailyIncomeDialog(){
   var name=displayNickname(currentDisplayName(),'你');
   MANAGER_DIALOG={
     title:'昨日收益到账',
-    msg:'亲爱的'+name+'，昨天收益 '+summary.yesterdayIncome+'。\n本站收益一共 '+summary.stationTotal+'。\n参赛以来累计收益 '+summary.careerTotal+'。'
+    msg:'亲爱的'+name+'，昨天收益 '+summary.yesterdayIncome+'，其中球员收益'+summary.yesterdayPlayer+'，combo收益'+summary.yesterdayCombo+'。\n本站收益一共 '+summary.stationTotal+'，其中球员收益'+summary.stationPlayer+'，combo收益'+summary.stationCombo+'。\n参赛以来累计收益 '+summary.careerTotal+'。'
   };
   trackManagerEvent('manager_daily_income_prompt',{income_bucket:managerValueBucket(summary.yesterdayIncome,[10,25,50,100,200,500])});
   return true;
@@ -2869,6 +3017,13 @@ function setAuthMessage(msg,type){
   el.className='auth-msg'+(type?' '+type:'');
 }
 
+function setAuthMessageHtml(html,type){
+  const el=document.getElementById('auth-msg');
+  if(!el)return;
+  el.innerHTML=html||'';
+  el.className='auth-msg'+(type?' '+type:'');
+}
+
 function setAuthBusy(busy){
   document.querySelectorAll('.auth-submit').forEach(b=>b.disabled=!!busy);
 }
@@ -2921,7 +3076,7 @@ function openAuthModal(opts){
   }else if(opts.reason==='jinx_vote'){
     setAuthMessage('登录后可以提交今日毒奶。');
   }else if(opts.reason==='manager'){
-    setAuthMessage('登录炉网账号后才能使用巡回赛经纪人，包括签约、提交阵容、换人和查看个人榜单。');
+    setAuthMessage('登录后可以提交阵容、保存签约、换人和查看个人收益。');
   }
   trackEvent('auth_modal_open',{module:tabMeta(ACTIVE_TAB).module,source:opts.reason||'account'});
   setTimeout(()=>{
@@ -3209,7 +3364,7 @@ async function loadData(){
     if(cur.ms){document.getElementById('tab-ms-s').textContent='🎾 ATP '+(cur.ms.event_name||'')+(cur.ms.today_day?' Day'+cur.ms.today_day:'');renderScore('ms', cur.ms);}
     if(cur.ws){document.getElementById('tab-ws-s').textContent='🎾 WTA '+(cur.ws.event_name||'')+(cur.ws.today_day?' Day'+cur.ws.today_day:'');renderScore('ws', cur.ws);}
     if(ACTIVE_TAB==='jinx')renderDailyJinx();
-    if(ACTIVE_TAB==='manager')renderManagerDemo();
+    if(ACTIVE_TAB==='manager')managerEnterFlow();
     trackModuleView(ACTIVE_TAB);
     scheduleManagerPrewarm();
     scheduleSecondaryDataPrefetch();
@@ -3272,6 +3427,10 @@ async function refreshCurrentOnly(){
 }
 
 setInterval(refreshCurrentOnly, CURRENT_REFRESH_MS);
+
+function seoFaqLinkHtml(){
+  return '<div class="seo-faq-link">想了解签表幸存者、网球选人游戏、ATP/WTA即时排名？<button type="button" onclick="switchTab(\'faq\')">查看 FAQ</button></div>';
+}
 
 // ===== 渲染实时得分 =====
 function renderScore(g, data){
@@ -3531,8 +3690,7 @@ function switchTab(t,btn){
   if(t==='jinx')renderDailyJinx();
   if(t==='manager'){
     trackManagerEvent('manager_entry_attempt',{source:'tab'});
-    if(!AUTH_USER){trackManagerEvent('manager_login_required',{source:'tab'});openAuthModal({reason:'manager',afterLogin:managerEnterFlow});}
-    else managerEnterFlow();
+    managerEnterFlow();
     renderManagerDemo();
   }
 }

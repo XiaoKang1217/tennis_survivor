@@ -46,6 +46,7 @@ for (const entry of events) {
     matches: 0,
     duplicate_matches_dropped: 0,
     completed_matches: 0,
+    draw_walkover_matches: 0,
     windows_updated: false,
     warnings: []
   };
@@ -54,7 +55,9 @@ for (const entry of events) {
     try {
       const parsed = await fetchDrawPlayers(nextEvent, report.draw_url);
       report.draw_players = parsed.players.length;
+      report.draw_walkover_matches = (parsed.walkover_matches || []).length;
       report.warnings.push(...(parsed.warnings || []));
+      entry.drawWalkoverRows = parsed.walkover_matches || [];
       if (parsed.players.length >= Math.max(minDrawPlayers, Math.floor(Number(event.draw_size || 0) * 0.65))) {
         const mergedPlayers = mergeDrawPlayers(nextEvent, parsed.players, parsed.source_url);
         nextEvent = {
@@ -93,7 +96,8 @@ if (!skipSchedule) {
   for (let i = 0; i < refreshedEvents.length; i += 1) {
     const entry = refreshedEvents[i];
     const report = reports[i];
-    const rawRows = matchRowsForEvent(entry.event, resultRecords, report.draw_url || '');
+    const rawRows = matchRowsForEvent(entry.event, resultRecords, report.draw_url || '')
+      .concat(entry.drawWalkoverRows || []);
     const rows = dedupeMatchRows(rawRows);
     const duplicateMatchesDropped = rawRows.length - rows.length;
     const windows = deriveEventWindows(entry.event, rows, fetchedAt);
@@ -172,6 +176,7 @@ for (const report of reports) {
   const bits = [
     `${report.tour}`,
     `draw=${report.draw_players}${report.draw_updated ? '/updated' : ''}`,
+    report.draw_walkover_matches ? `draw_walkovers=${report.draw_walkover_matches}` : '',
     `matches=${report.matches}`,
     `completed=${report.completed_matches}`,
     report.windows_updated ? 'windows=updated' : 'windows=pending'
