@@ -105,9 +105,9 @@ export function normalizeRoundKey(rawRound = '', event = {}) {
   if (/\bR64\b|1\/32|ROUND\s*OF\s*64/.test(raw)) return 'R64';
   if (/\bR32\b|1\/16|ROUND\s*OF\s*32/.test(raw)) return 'R32';
   if (/\bR16\b|1\/8|ROUND\s*OF\s*16/.test(raw)) return 'R16';
-  if (/\bQF\b|QUARTER|1\/4|四分之一|八强/.test(raw)) return 'QF';
+  if (/\bQF\b|QUARTER|¼|1\s*[\/⁄]\s*4|四分之一|八强/.test(raw)) return 'QF';
   if (/\bSF\b|SEMI|半决/.test(raw)) return 'SF';
-  if (/\bF\b|FINAL|决赛/.test(raw)) return 'F';
+  if (/^(?:F|FINAL|决赛|总决赛|冠军赛)$/.test(raw)) return 'F';
   if (/^1R$|ROUND\s*1|第\s*1\s*轮|第一轮|首轮/.test(raw)) return keys[0];
   if (/^2R$|ROUND\s*2|第\s*2\s*轮|第二轮/.test(raw)) return keys[1] || keys[0];
   if (/^3R$|ROUND\s*3|第\s*3\s*轮|第三轮/.test(raw)) return keys[2] || keys[keys.length - 2];

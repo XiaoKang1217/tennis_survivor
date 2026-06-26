@@ -25,6 +25,7 @@ const sync = Boolean(args.sync) && Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY
 const settle = Boolean(args.settle) && Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY);
 const skipDraw = Boolean(args['skip-draw']);
 const skipSchedule = Boolean(args['skip-schedule']);
+const skipDrawWalkovers = Boolean(args['skip-draw-walkovers']);
 const minDrawPlayers = Number(args['min-draw-players'] || 8);
 const fetchedAt = new Date();
 
@@ -55,9 +56,10 @@ for (const entry of events) {
     try {
       const parsed = await fetchDrawPlayers(nextEvent, report.draw_url);
       report.draw_players = parsed.players.length;
-      report.draw_walkover_matches = (parsed.walkover_matches || []).length;
+      const drawWalkoverRows = (parsed.walkover_matches || []).filter((row) => row.status === 'walkover');
+      report.draw_walkover_matches = drawWalkoverRows.length;
       report.warnings.push(...(parsed.warnings || []));
-      entry.drawWalkoverRows = parsed.walkover_matches || [];
+      entry.drawWalkoverRows = drawWalkoverRows;
       if (parsed.players.length >= Math.max(minDrawPlayers, Math.floor(Number(event.draw_size || 0) * 0.65))) {
         const mergedPlayers = mergeDrawPlayers(nextEvent, parsed.players, parsed.source_url);
         nextEvent = {
@@ -74,9 +76,19 @@ for (const entry of events) {
     } catch (error) {
       report.warnings.push(`draw refresh failed: ${error.message}`);
     }
+  } else if (!skipDrawWalkovers && report.draw_url) {
+    try {
+      const parsed = await fetchDrawPlayers(nextEvent, report.draw_url);
+      const drawWalkoverRows = (parsed.walkover_matches || []).filter((row) => row.status === 'walkover');
+      report.draw_walkover_matches = drawWalkoverRows.length;
+      report.warnings.push(...(parsed.warnings || []));
+      entry.drawWalkoverRows = drawWalkoverRows;
+    } catch (error) {
+      report.warnings.push(`draw walkover refresh failed: ${error.message}`);
+    }
   }
 
-  refreshedEvents.push({ item, event: nextEvent });
+  refreshedEvents.push({ item, event: nextEvent, drawWalkoverRows: entry.drawWalkoverRows || [] });
   reports.push(report);
 }
 
@@ -92,30 +104,30 @@ if (!skipSchedule) {
       console.log(`WARN ${date}: result fetch failed: ${error.message}`);
     }
   }
+}
 
-  for (let i = 0; i < refreshedEvents.length; i += 1) {
-    const entry = refreshedEvents[i];
-    const report = reports[i];
-    const rawRows = matchRowsForEvent(entry.event, resultRecords, report.draw_url || '')
-      .concat(entry.drawWalkoverRows || []);
-    const rows = dedupeMatchRows(rawRows);
-    const duplicateMatchesDropped = rawRows.length - rows.length;
-    const windows = deriveEventWindows(entry.event, rows, fetchedAt);
-    entry.event = {
-      ...entry.event,
-      ...windows,
-      transfer_window_note: entry.event.transfer_window_note || '换人窗口为 R1 全部结束后、R2 第一场开始前，由当前站赛程自动更新。',
-      source_urls: mergeSourceUrls(entry.event.source_urls, report.draw_url)
-    };
-    report.matches = rows.length;
-    report.duplicate_matches_dropped = duplicateMatchesDropped;
-    if (duplicateMatchesDropped > 0) {
-      report.warnings.push(`dropped ${duplicateMatchesDropped} duplicate match row(s) before sync`);
-    }
-    report.completed_matches = rows.filter((row) => ['completed', 'walkover', 'retired'].includes(row.status)).length;
-    report.windows_updated = Boolean(windows.main_draw_first_match_at || windows.round2_first_match_at);
-    allMatchRows.push(...rows);
+for (let i = 0; i < refreshedEvents.length; i += 1) {
+  const entry = refreshedEvents[i];
+  const report = reports[i];
+  const scheduleRows = skipSchedule ? [] : matchRowsForEvent(entry.event, resultRecords, report.draw_url || '');
+  const rawRows = scheduleRows.concat(entry.drawWalkoverRows || []);
+  const rows = dedupeMatchRows(rawRows);
+  const duplicateMatchesDropped = rawRows.length - rows.length;
+  const windows = deriveEventWindows(entry.event, rows, fetchedAt);
+  entry.event = {
+    ...entry.event,
+    ...windows,
+    transfer_window_note: entry.event.transfer_window_note || '换人窗口为 R1 全部结束后、R2 第一场开始前，由当前站赛程自动更新。',
+    source_urls: mergeSourceUrls(entry.event.source_urls, report.draw_url)
+  };
+  report.matches = rows.length;
+  report.duplicate_matches_dropped = duplicateMatchesDropped;
+  if (duplicateMatchesDropped > 0) {
+    report.warnings.push(`dropped ${duplicateMatchesDropped} duplicate match row(s) before sync`);
   }
+  report.completed_matches = rows.filter((row) => ['completed', 'walkover', 'retired'].includes(row.status)).length;
+  report.windows_updated = Boolean(windows.main_draw_first_match_at || windows.round2_first_match_at);
+  allMatchRows.push(...rows);
 }
 
 const syncMatchRows = dedupeMatchRows(allMatchRows);
