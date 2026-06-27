@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-20T17:24:39.227Z",
+  "updated_at": "2026-06-26T18:45:00.000Z",
   "fallbacks": {
     "ATP": "assets/manager/players/fallback-atp.svg",
     "WTA": "assets/manager/players/fallback-wta.svg"
@@ -445,6 +445,46 @@
       "status": "ready",
       "storage_path": "assets/manager/players/atp/atp-joao-fonseca.jpg",
       "updated_at": "2026-06-20T17:22:38.658Z"
+    },
+    "WTA|aryna-sabalenka": {
+      "photo_url": "https://static.live-tennis.cn/pic/ts/320760",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/320760",
+      "source": "Live Tennis Wimbledon draw photo",
+      "status": "ready",
+      "storage_path": null,
+      "updated_at": "2026-06-26T18:45:00.000Z"
+    },
+    "WTA|jessica-pegula": {
+      "photo_url": "https://static.live-tennis.cn/pic/ts/316956",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/316956",
+      "source": "Live Tennis Wimbledon draw photo",
+      "status": "ready",
+      "storage_path": null,
+      "updated_at": "2026-06-26T18:45:00.000Z"
+    },
+    "WTA|coco-gauff": {
+      "photo_url": "https://static.live-tennis.cn/pic/ts/328560",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/328560",
+      "source": "Live Tennis Wimbledon draw photo",
+      "status": "ready",
+      "storage_path": null,
+      "updated_at": "2026-06-26T18:45:00.000Z"
+    },
+    "WTA|elena-rybakina": {
+      "photo_url": "https://static.live-tennis.cn/pic/ts/324166",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/324166",
+      "source": "Live Tennis Wimbledon draw photo",
+      "status": "ready",
+      "storage_path": null,
+      "updated_at": "2026-06-26T18:45:00.000Z"
+    },
+    "WTA|madison-keys": {
+      "photo_url": "https://static.live-tennis.cn/pic/ts/316959",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/316959",
+      "source": "Live Tennis Wimbledon draw photo",
+      "status": "ready",
+      "storage_path": null,
+      "updated_at": "2026-06-26T18:45:00.000Z"
     }
   }
 }

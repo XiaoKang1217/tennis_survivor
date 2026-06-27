@@ -16,7 +16,7 @@ import {
 
 const RANKING_URLS = {
   ATP: 'https://www.live-tennis.cn/zh/rank/atp/s/year',
-  WTA: 'https://www.wtatennis.com/rankings/singles'
+  WTA: 'https://www.live-tennis.cn/zh/rank/wta/s/year'
 };
 
 const ELO_URLS = {
@@ -439,7 +439,7 @@ function liveTennisRankingBody() {
   const params = new URLSearchParams({
     draw: '1',
     start: '0',
-    length: '500',
+    length: '1200',
     device: '0'
   });
   LIVE_TENNIS_RANK_COLUMNS.forEach((column, index) => {
@@ -597,12 +597,12 @@ async function loadRankingRows({ tour, args, warnings, rankingDate, snapshotDate
     const data = JSON.parse(await readFile(file, 'utf8'));
     return normalizeRankingRows(data.rows || data, tour, `file://${file}`, rankingDate, snapshotDate);
   }
-  if (tour === 'WTA' && !args['wta-ranking-url']) {
-    return loadWtaRankingRowsFromApi({ args, warnings, rankingDate, snapshotDate });
-  }
   const sourceUrl = args[`${tour.toLowerCase()}-ranking-url`] || RANKING_URLS[tour];
   if (isLiveTennisRankingUrl(sourceUrl)) {
     return loadLiveTennisRankingRows({ tour, sourceUrl, warnings, rankingDate, snapshotDate });
+  }
+  if (tour === 'WTA' && /wtatennis\.com\/rankings/i.test(sourceUrl)) {
+    return loadWtaRankingRowsFromApi({ args, warnings, rankingDate, snapshotDate });
   }
   const html = await loadText({ tour, kind: 'ranking', file, url: sourceUrl, warnings });
   return parseOfficialRankings(html, tour, sourceUrl, rankingDate, snapshotDate, warnings);
@@ -682,7 +682,7 @@ function drawBucket(drawSize = 32) {
 
 function pointsFor(event) {
   const level = String(event.level || '').toLowerCase();
-  const key = /slam|grand|大满贯/.test(level) ? 'slam' : String(event.level || '500');
+  const key = /\bgs\b|slam|grand|大满贯/.test(level) ? 'slam' : String(event.level || '500');
   const tables = POINT_TABLES[event.tour]?.[key] || POINT_TABLES[event.tour]?.['500'] || POINT_TABLES.WTA['500'];
   const bucket = drawBucket(event.draw_size);
   return tables[bucket] || tables[32] || tables[28] || tables[64] || tables[96] || tables[128] || {};
@@ -742,6 +742,97 @@ function findRow(player, maps, tour, aliases = {}) {
     ...aliasVariants(player.player_key, aliases)
   ];
   return maps.byKey.get(key) || candidates.map((candidate) => maps.byName.get(candidate)).find(Boolean) || null;
+}
+
+function sourceOverrideFor(key, overrides = {}) {
+  return overrides[key] || overrides[slugify(key)] || null;
+}
+
+function rankingOverrideRow(player, key, tour, override, snapshotDate) {
+  const ranking = override?.ranking;
+  if (!ranking || ranking.rank == null) return null;
+  return {
+    tour,
+    ranking_type: 'singles',
+    ranking_date: String(ranking.ranking_date || snapshotDate),
+    snapshot_date: snapshotDate,
+    rank: toInt(ranking.rank),
+    player_key: key,
+    name_en: normalizeName(ranking.name_en || player.name_en || player.name_zh),
+    points: toInt(ranking.points),
+    movement: toInt(ranking.movement),
+    source_url: ranking.source_url || 'source_override',
+    raw: {
+      source: 'player_source_overrides',
+      note: ranking.note || null
+    }
+  };
+}
+
+function buildRankEloProxyRows(rankings, elos, aliases, tour, surfaceEloField) {
+  const eloMaps = buildMatchMaps(elos, aliases);
+  const rows = [];
+  for (const ranking of rankings) {
+    const elo = findRow({ name_en: ranking.name_en, player_key: ranking.player_key }, eloMaps, tour, aliases);
+    const overallElo = eloValue(elo, 'overall_elo');
+    if (!Number.isFinite(Number(ranking.rank)) || !Number.isFinite(overallElo)) continue;
+    rows.push({
+      rank: Number(ranking.rank),
+      overall_elo: overallElo,
+      surface_elo: eloValue(elo, surfaceEloField),
+      peak_elo: eloValue(elo, 'peak_elo'),
+      peak_month: elo?.peak_month || null
+    });
+  }
+  return rows.sort((a, b) => a.rank - b.rank);
+}
+
+function weightedAverage(values) {
+  let totalWeight = 0;
+  let totalValue = 0;
+  for (const item of values) {
+    if (!Number.isFinite(Number(item.value)) || !Number.isFinite(Number(item.weight)) || item.weight <= 0) continue;
+    totalWeight += item.weight;
+    totalValue += item.value * item.weight;
+  }
+  return totalWeight ? totalValue / totalWeight : null;
+}
+
+function proxyEloFromRank({ player, ranking, proxyRows, tour, surfaceEloField, snapshotDate }) {
+  const rank = Number(ranking?.rank);
+  if (!Number.isFinite(rank) || !proxyRows.length) return null;
+  const nearest = proxyRows
+    .map((row) => ({ ...row, distance: Math.abs(row.rank - rank) }))
+    .sort((a, b) => a.distance - b.distance)
+    .slice(0, Math.min(9, proxyRows.length));
+  const weighted = nearest.map((row) => ({ ...row, weight: 1 / (1 + row.distance) }));
+  const overallElo = weightedAverage(weighted.map((row) => ({ value: row.overall_elo, weight: row.weight })));
+  const surfaceElo = weightedAverage(weighted.map((row) => ({ value: row.surface_elo, weight: row.weight })));
+  const peakElo = weightedAverage(weighted.map((row) => ({ value: row.peak_elo, weight: row.weight })));
+  if (!Number.isFinite(overallElo)) return null;
+  return {
+    tour,
+    snapshot_date: snapshotDate,
+    player_key: canonicalPlayerKey(tour, player),
+    name_en: normalizeName(player.name_en || player.name_zh),
+    overall_rank: null,
+    overall_elo: round2(overallElo),
+    hard_rank: null,
+    hard_elo: null,
+    clay_rank: null,
+    clay_elo: null,
+    grass_rank: null,
+    grass_elo: round2(Number.isFinite(surfaceElo) ? surfaceElo : overallElo),
+    peak_elo: round2(Number.isFinite(peakElo) ? peakElo : overallElo),
+    peak_month: null,
+    source_url: `rank_proxy:${ranking.source_url || 'official_ranking'}+tennisabstract_distribution:${surfaceEloField}`,
+    raw: {
+      source: 'rank_proxy_from_official_ranking_and_tennis_abstract_distribution',
+      rank,
+      sample_count: nearest.length,
+      sample_rank_range: [nearest[0]?.rank || null, nearest[nearest.length - 1]?.rank || null]
+    }
+  };
 }
 
 function playerBucket(player, event) {
@@ -864,6 +955,137 @@ function breakevenRound(price, pointTable, stages) {
   return '夺冠仍未回本';
 }
 
+function expectedPricingElo(player) {
+  const surface = Number(player.surface_elo);
+  const overall = Number(player.overall_elo);
+  const scores = player.scores || {};
+  const form = Number(scores.form ?? 50);
+  const base = Number(scores.base ?? 50);
+  let elo = 1500;
+  if (Number.isFinite(surface) && Number.isFinite(overall)) {
+    elo = surface * 0.74 + overall * 0.26;
+  } else if (Number.isFinite(surface)) {
+    elo = surface;
+  } else if (Number.isFinite(overall)) {
+    elo = overall;
+  }
+  const formBoost = clamp((form - 50) * 1.4, -70, 70);
+  const baseBoost = clamp((base - 50) * 0.6, -30, 30);
+  return elo + formBoost + baseBoost;
+}
+
+function simulateExpectedPricing(event, players) {
+  const bracketSize = bracketSizeFor(event.draw_size);
+  const stages = ROUND_LABELS_BY_BRACKET[bracketSize];
+  const pointTable = pointsFor(event);
+  const leaves = Array.from({ length: bracketSize }, () => null);
+  const reach = new Map();
+  const eloByKey = new Map();
+
+  for (const player of players || []) {
+    if (!player.draw_position || player.draw_position < 1 || player.draw_position > bracketSize) continue;
+    const key = player.player_key || canonicalPlayerKey(event.tour, player);
+    leaves[player.draw_position - 1] = key;
+    reach.set(key, { [stages[0]]: 1 });
+    eloByKey.set(key, expectedPricingElo(player));
+  }
+
+  let nodes = leaves.map((key) => (key ? new Map([[key, 1]]) : new Map()));
+  for (let round = 0; round < stages.length - 1; round += 1) {
+    const nextStage = stages[round + 1];
+    const nextNodes = [];
+    for (let i = 0; i < nodes.length; i += 2) {
+      const left = nodes[i] || new Map();
+      const right = nodes[i + 1] || new Map();
+      const leftSum = sumMap(left);
+      const rightSum = sumMap(right);
+      const merged = new Map();
+
+      if (leftSum > 0 && rightSum === 0) {
+        for (const [key, prob] of left) addAdvance(merged, reach, key, prob, nextStage);
+      } else if (rightSum > 0 && leftSum === 0) {
+        for (const [key, prob] of right) addAdvance(merged, reach, key, prob, nextStage);
+      } else if (leftSum > 0 && rightSum > 0) {
+        for (const [leftKey, leftProb] of left) {
+          let advanceProb = 0;
+          for (const [rightKey, rightProb] of right) {
+            const p = eloWinProb(eloByKey.get(leftKey), eloByKey.get(rightKey));
+            advanceProb += leftProb * rightProb * p;
+            addAdvance(merged, reach, rightKey, leftProb * rightProb * (1 - p), nextStage);
+          }
+          addAdvance(merged, reach, leftKey, advanceProb, nextStage);
+        }
+      }
+      nextNodes.push(merged);
+    }
+    nodes = nextNodes;
+  }
+
+  const result = new Map();
+  for (const [key, stageReach] of reach) {
+    let expected = pointTable[stages[0]] || 0;
+    for (let i = 1; i < stages.length; i += 1) {
+      const prev = pointTable[stages[i - 1]] || 0;
+      const curr = pointTable[stages[i]] || 0;
+      expected += Math.max(0, curr - prev) * (stageReach[stages[i]] || 0);
+    }
+    result.set(key, {
+      reach: stageReach,
+      expected_points: round2(expected),
+      expected_round: roundFromPoints(expected, pointTable, stages)
+    });
+  }
+  return { stages, pointTable, result };
+}
+
+function interpolate(points, anchors) {
+  const value = Number(points || 0);
+  if (value <= anchors[0].points) return anchors[0].price;
+  for (let i = 1; i < anchors.length; i += 1) {
+    const prev = anchors[i - 1];
+    const curr = anchors[i];
+    if (value <= curr.points) {
+      const span = Math.max(1, curr.points - prev.points);
+      const t = clamp((value - prev.points) / span, 0, 1);
+      const smooth = t * t * (3 - 2 * t);
+      return prev.price + (curr.price - prev.price) * smooth;
+    }
+  }
+  return anchors[anchors.length - 1].price;
+}
+
+function expectedRoundMarketPrice(player, event, simulation) {
+  const key = player.player_key || canonicalPlayerKey(event.tour, player);
+  const result = simulation.result.get(key);
+  const expectedPoints = Number(result?.expected_points ?? player.expected_points ?? 0);
+  const table = pointsFor(event);
+  const minPrice = event.tour === 'WTA' ? 90 : 80;
+  const maxPrice = (table.W || 2000) * 0.65;
+  const anchors = [
+    { points: 0, price: minPrice },
+    { points: table.R128 ?? 10, price: minPrice },
+    { points: table.R64 ?? 50, price: 165 },
+    { points: table.R32 ?? 100, price: 310 },
+    { points: table.R16 ?? 200, price: 470 },
+    { points: table.QF ?? 400, price: 650 },
+    { points: table.SF ?? 800, price: 880 },
+    { points: table.F ?? 1300, price: 1160 },
+    { points: table.W ?? 2000, price: maxPrice }
+  ].sort((a, b) => a.points - b.points);
+  const basePrice = interpolate(expectedPoints, anchors);
+  const scores = player.scores || {};
+  const strength = (Number(scores.base ?? 50) * 0.42)
+    + (Number(scores.surface ?? 50) * 0.38)
+    + (Number(scores.form ?? 50) * 0.20);
+  const modifier = 1 + clamp((strength - 60) / 160, -0.12, 0.15);
+  return {
+    price: roundTo5(clamp(basePrice * modifier, minPrice, maxPrice)),
+    expected_points: round2(expectedPoints),
+    expected_round: result?.expected_round || player.expected_round || roundFromPoints(expectedPoints, table, simulation.stages),
+    effective_elo: round2(expectedPricingElo(player))
+  };
+}
+
 function marketPrice(totalScore, expectedPoints, event) {
   const table = pointsFor(event);
   const winner = table.W || 500;
@@ -875,7 +1097,7 @@ function marketPrice(totalScore, expectedPoints, event) {
   return roundTo5(clamp(raw, minPrice, maxPrice));
 }
 
-function updateEventPrices(event, rankings, elos, warnings, snapshotDate, aliases = {}) {
+function updateEventPrices(event, rankings, elos, warnings, snapshotDate, aliases = {}, sourceOverrides = {}) {
   if (!event.players?.length) {
     return {
       event,
@@ -888,11 +1110,14 @@ function updateEventPrices(event, rankings, elos, warnings, snapshotDate, aliase
   const surfaceEloField = surfaceField(event.surface);
   const rankingMaps = buildMatchMaps(rankings, aliases);
   const eloMaps = buildMatchMaps(elos, aliases);
+  const proxyRows = buildRankEloProxyRows(rankings, elos, aliases, tour, surfaceEloField);
   const sourceWarnings = [];
   const facts = event.players.map((player) => {
     const playerKey = canonicalPlayerKey(tour, player);
-    const ranking = findRow(player, rankingMaps, tour, aliases);
-    const elo = findRow(player, eloMaps, tour, aliases);
+    const override = sourceOverrideFor(playerKey, sourceOverrides);
+    const ranking = rankingOverrideRow(player, playerKey, tour, override, snapshotDate) || findRow(player, rankingMaps, tour, aliases);
+    const directElo = findRow(player, eloMaps, tour, aliases);
+    const elo = directElo || proxyEloFromRank({ player, ranking, proxyRows, tour, surfaceEloField, snapshotDate });
     const overallElo = eloValue(elo, 'overall_elo');
     const surfaceElo = eloValue(elo, surfaceEloField);
     const peakElo = eloValue(elo, 'peak_elo');
@@ -911,7 +1136,8 @@ function updateEventPrices(event, rankings, elos, warnings, snapshotDate, aliase
       peak_elo: peakElo,
       peak_month: peakMonth,
       peak_close_score: peakCloseScore,
-      peak_fresh_score: peakFreshScore
+      peak_fresh_score: peakFreshScore,
+      elo_is_proxy: Boolean(!directElo && elo)
     };
   });
   const factsByKey = new Map(facts.map((fact) => [fact.playerKey, fact]));
@@ -948,7 +1174,7 @@ function updateEventPrices(event, rankings, elos, warnings, snapshotDate, aliase
   const drawBonusScores = scorePercentileMap(drawRawRows, 'draw_bonus', { highGood: true, keyField: 'playerKey' });
   const drawRowsByKey = new Map(drawRawRows.map((row) => [row.playerKey, row]));
 
-  const updatedPlayers = event.players.map((player) => {
+  let updatedPlayers = event.players.map((player) => {
     const key = canonicalPlayerKey(tour, player);
     const fact = factsByKey.get(key) || {};
     const actual = actualSimulation.result.get(key) || {};
@@ -972,6 +1198,7 @@ function updateEventPrices(event, rankings, elos, warnings, snapshotDate, aliase
     let breakeven = breakevenRound(price, actualSimulation.pointTable, actualSimulation.stages);
     const drawFacts = drawRowsByKey.get(key) || {};
     if (!fact.ranking && !player.is_qualifier_placeholder) sourceWarnings.push(`${player.name_en || player.name_zh}: missing official ranking.`);
+    if (fact.elo_is_proxy && !player.is_qualifier_placeholder) sourceWarnings.push(`${player.name_en || player.name_zh}: TA current Elo unavailable; used ranking proxy score.`);
     if (!fact.elo && !player.is_qualifier_placeholder) sourceWarnings.push(`${player.name_en || player.name_zh}: missing TA Elo, used neutral/proxy score.`);
     const computedPricingDetail = {
       formula_version: 'build-prices-v1',
@@ -980,6 +1207,7 @@ function updateEventPrices(event, rankings, elos, warnings, snapshotDate, aliase
       ranking_source: fact.ranking?.source_url || 'missing_official_ranking',
       elo_source: fact.elo?.source_url || 'missing_or_event_proxy',
       surface_elo_field: surfaceEloField,
+      elo_source_kind: fact.elo_is_proxy ? 'rank_proxy' : (fact.elo ? 'tennis_abstract' : 'missing'),
       peak_elo: round2(fact.peak_elo),
       peak_month: fact.peak_month || null,
       peak_close_score: round2(fact.peak_close_score),
@@ -1039,6 +1267,30 @@ function updateEventPrices(event, rankings, elos, warnings, snapshotDate, aliase
       pricing_detail: pricingDetail
     };
   });
+  const expectedPricingSimulation = simulateExpectedPricing({ ...event, players: updatedPlayers }, updatedPlayers);
+  updatedPlayers = updatedPlayers.map((player) => {
+    const result = expectedRoundMarketPrice(player, event, expectedPricingSimulation);
+    const preserveInheritedPrice = player.pre_r1_substitution
+      && player.pricing_detail?.contract_price_policy === 'keep_original_contract_price';
+    const price = preserveInheritedPrice ? player.price : result.price;
+    return {
+      ...player,
+      expected_points: result.expected_points,
+      expected_round: result.expected_round,
+      breakeven_round: breakevenRound(price, expectedPricingSimulation.pointTable, expectedPricingSimulation.stages),
+      price,
+      tier: priceTier(price, event),
+      pricing_detail: {
+        ...(player.pricing_detail || {}),
+        preview_formula_version: 'preview-expected-round-v1',
+        preview_generated_at: new Date().toISOString(),
+        preview_notes: preserveInheritedPrice
+          ? 'Effective Elo bracket simulation was run, but pre-R1 substitution keeps original inherited contract price.'
+          : 'Effective Elo bracket simulation; price is primarily mapped from expected_points/expected_round with a small strength/form modifier.',
+        expected_pricing_effective_elo: result.effective_elo
+      }
+    };
+  });
 
   return {
     event: {
@@ -1046,7 +1298,9 @@ function updateEventPrices(event, rankings, elos, warnings, snapshotDate, aliase
       pricing_formula: {
         ...WEIGHTS,
         formula_version: 'build-prices-v1',
-        generated_at: new Date().toISOString()
+        generated_at: new Date().toISOString(),
+        preview_formula_version: 'preview-expected-round-v1',
+        preview_generated_at: new Date().toISOString()
       },
       players: updatedPlayers
     },
@@ -1057,6 +1311,7 @@ function updateEventPrices(event, rankings, elos, warnings, snapshotDate, aliase
 function snapshotFor(active, events, sourceStatus, warnings) {
   return {
     generated_at: new Date().toISOString(),
+    preview_formula_version: 'preview-expected-round-v1',
     station_key: active.station_key,
     station_name: active.station_name,
     season: active.season,
@@ -1144,6 +1399,8 @@ async function main() {
   const priceStatus = args['price-status'] || 'draft';
   const aliasesFile = args.aliases || 'data/manager/player_aliases.json';
   const aliases = await readJson(aliasesFile).catch(() => ({}));
+  const sourceOverridesFile = args['source-overrides'] || 'data/manager/player_source_overrides.json';
+  const sourceOverrides = await readJson(sourceOverridesFile).catch(() => ({}));
   const strictSources = Boolean(args['strict-sources']);
   const dryRun = Boolean(args['dry-run']) || !process.env.SUPABASE_SERVICE_ROLE_KEY;
   const writeEvents = args['no-write-events'] ? false : true;
@@ -1177,7 +1434,8 @@ async function main() {
       eloRowsByTour.get(tour) || [],
       warnings,
       snapshotDate,
-      aliases
+      aliases,
+      sourceOverrides
     );
     warnings.push(...eventWarnings);
     generatedEvents.push({ ...entry, event });
