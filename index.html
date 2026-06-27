@@ -318,6 +318,16 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 .manager-filter label{font-size:11px;color:#756651;font-weight:950;text-transform:uppercase}
 .manager-filter input,.manager-filter select,.manager-ledger-filters input,.manager-ledger-filters select{width:100%;border:1px solid #d3bd94;background:#fffdf8;border-radius:8px;padding:8px 10px;color:#2f2a22;font-size:13px;outline:none}
 .manager-filter input:focus,.manager-filter select:focus,.manager-ledger-filters input:focus,.manager-ledger-filters select:focus{border-color:#a8783f}
+.manager-transfer-combo{position:relative;display:grid;gap:6px}
+.manager-transfer-input-wrap{position:relative}
+.manager-transfer-input-wrap input{padding-right:38px}
+.manager-transfer-toggle{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:#5c421f;font-size:16px;line-height:1;cursor:pointer;padding:6px}
+.manager-transfer-menu{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:30;max-height:260px;overflow:auto;background:#fffdf8;border:1px solid #d3bd94;border-radius:8px;box-shadow:0 10px 22px rgba(73,48,23,.16);padding:4px}
+.manager-transfer-menu[hidden]{display:none}
+.manager-transfer-option{width:100%;border:0;background:transparent;text-align:left;padding:8px 9px;border-radius:7px;color:#2f2a22;font-weight:850;cursor:pointer;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.manager-transfer-option:hover,.manager-transfer-option.on{background:#fff0d4;color:#8a4a20}
+.manager-transfer-option small{color:#8a6b42;font-weight:900;white-space:nowrap}
+.manager-transfer-empty{padding:8px 9px;color:#756651;font-weight:850}
 .manager-list{display:grid;gap:8px}
 .manager-row{display:grid;grid-template-columns:64px minmax(170px,1.25fr) 104px minmax(240px,1fr) auto;gap:10px;align-items:center;border:1px solid #ead8b7;background:#fffdf8;border-radius:10px;padding:10px}
 .manager-row.sel{border-color:#d9984b;background:#fff3dd}
@@ -876,6 +886,7 @@ let MANAGER_REMOTE_PUBLIC_LOADING=null;
 let MANAGER_PENDING_TRANSFER=null;
 let MANAGER_TRANSFER_TO_QUERY='';
 let MANAGER_TRANSFER_TO_ID='';
+let MANAGER_TRANSFER_MENU_OPEN=false;
 let MANAGER_ANALYTICS_VIEWS={};
 let MANAGER_PREWARM_STARTED=false;
 let SECONDARY_DATA_PREFETCHED=false;
@@ -2670,8 +2681,17 @@ function managerEligibleTransferPool(from){
 function managerTransferOptionLabel(p){
   return managerPlayerDisplayName(p,true)+' · '+p.tour+' · $'+p.price;
 }
+function managerNormalizeTransferSearch(value){
+  return String(value||'').toLowerCase().replace(/[\s·・\-—_()（）[\]【】,，.。:：$]/g,'');
+}
 function managerTransferOptionSearchText(p){
-  return [managerPlayerDisplayName(p,true),p.name,p.nameEn,p.tour,p.tier,p.price,p.event,p.eventKey].filter(Boolean).join(' ').toLowerCase();
+  return [managerPlayerDisplayName(p,true),p.name,p.nameEn,p.tour,p.tier,p.price,p.event,p.eventKey,p.playerKey].filter(Boolean).join(' ').toLowerCase();
+}
+function managerTransferOptionMatches(p,query){
+  var text=String(query||'').trim();
+  if(!text)return true;
+  var hay=managerTransferOptionSearchText(p),needle=text.toLowerCase();
+  return hay.indexOf(needle)>=0||managerNormalizeTransferSearch(hay).indexOf(managerNormalizeTransferSearch(needle))>=0;
 }
 function managerResolveTransferToId(pool,value,preferredId){
   pool=pool||[];
@@ -2683,10 +2703,46 @@ function managerResolveTransferToId(pool,value,preferredId){
     if(exact)return exact.id;
     var byName=pool.find(function(p){return String(managerPlayerDisplayName(p,true)).toLowerCase()===lower||String(p.nameEn||'').toLowerCase()===lower;});
     if(byName)return byName.id;
-    var partial=pool.find(function(p){return managerTransferOptionSearchText(p).indexOf(lower)>=0;});
+    var partial=pool.find(function(p){return managerTransferOptionMatches(p,lower);});
     if(partial)return partial.id;
   }
   return pool[0].id;
+}
+function managerTransferMenuOptions(pool,query,selectedId,limit){
+  var list=(pool||[]).filter(function(p){return managerTransferOptionMatches(p,query);});
+  return list.slice(0,limit||80).map(function(p){
+    var selected=p.id===selectedId;
+    return '<button type="button" class="manager-transfer-option '+(selected?'on':'')+'" data-manager-transfer-pick="'+esc(p.id)+'"><span>'+esc(managerPlayerDisplayName(p,true))+'</span><small>'+esc(p.tour)+' · '+managerMoneyAmount(p.price,'inline')+'</small></button>';
+  }).join('')||'<div class="manager-transfer-empty">没有匹配球员。</div>';
+}
+function managerTransferInputValue(selected,query){
+  if(query)return query;
+  return selected?managerTransferOptionLabel(selected):'';
+}
+function managerCurrentTransferPool(){
+  var fromEl=document.getElementById('manager-transfer-from');
+  var fromPlayer=managerLineupPlayers().find(function(p){return p.id===(fromEl&&fromEl.value);});
+  return managerEligibleTransferPool(fromPlayer);
+}
+function managerUpdateTransferMenu(query){
+  var menu=document.getElementById('manager-transfer-menu'),input=document.getElementById('manager-transfer-to-search');
+  if(!menu||!input)return;
+  var pool=managerCurrentTransferPool();
+  var q=query!==undefined?query:MANAGER_TRANSFER_TO_QUERY;
+  var selectedId=managerResolveTransferToId(pool,q,MANAGER_TRANSFER_TO_ID);
+  menu.innerHTML=managerTransferMenuOptions(pool,q,selectedId,100);
+  menu.hidden=false;
+  input.setAttribute('aria-expanded','true');
+  MANAGER_TRANSFER_MENU_OPEN=true;
+}
+function managerPickTransferTo(id){
+  var pool=managerCurrentTransferPool();
+  var pick=pool.find(function(p){return p.id===id;});
+  if(!pick)return;
+  MANAGER_TRANSFER_TO_ID=pick.id;
+  MANAGER_TRANSFER_TO_QUERY='';
+  MANAGER_TRANSFER_MENU_OPEN=false;
+  renderManagerDemo();
 }
 function managerValidateTransfer(est,rules){
   var reasons=[],submitted=managerSubmittedRecord();
@@ -2956,12 +3012,11 @@ function managerRenderTransfer(){
   var searchValue=MANAGER_TRANSFER_TO_QUERY,preferredToId=MANAGER_TRANSFER_TO_ID&&pool.some(function(p){return p.id===MANAGER_TRANSFER_TO_ID;})?MANAGER_TRANSFER_TO_ID:'';
   var toId=managerResolveTransferToId(pool,searchValue,preferredToId);
   var selectedTo=pool.find(function(p){return p.id===toId;});
-  if(!searchValue&&selectedTo)searchValue=managerTransferOptionLabel(selectedTo);
   var est=managerTransferEstimate(fromId,toId);
   var fromOpts=players.map(function(p){return '<option value="'+esc(p.id)+'" '+(fromId===p.id?'selected':'')+'>'+esc(managerPlayerDisplayName(p,true))+' · $'+p.price+'</option>';}).join('');
-  var toOpts=pool.map(function(p){return '<option value="'+esc(managerTransferOptionLabel(p))+'"></option>';}).join('');
+  var toInput=managerTransferInputValue(selectedTo,searchValue),toMenu=managerTransferMenuOptions(pool,searchValue,toId,100);
   var detail=est?'<div class="manager-sim" style="margin-top:12px"><div class="manager-sim-row"><span>换下合同</span><b>'+esc(managerPlayerDisplayName(est.from,true))+' 原价 $'+est.from.price+'；返还 $'+est.refund+'（'+esc(est.refundNote)+'）</b></div><div class="manager-sim-row"><span>换上合同</span><b>'+esc(managerPlayerDisplayName(est.to,true))+' 扣 $'+est.to.price+'</b></div><div class="manager-sim-row"><span>手续费</span><b>扣 $'+est.fee+'（新球员 '+Math.round(rules.transferFee*100)+'%）</b></div><div class="manager-sim-row"><span>本次合计</span><b>'+(est.delta>=0?'总花费 $':'返还额度 $')+Math.abs(est.delta)+'</b></div><div class="manager-sim-row"><span>'+(est.delta>=0?'扣款拆分':'返还去向')+'</span><b>'+(est.delta>=0?'本站签约金花费 $'+est.stationPay+'；本金花费 $'+est.walletCharge:'退回本金 $'+est.walletRefund)+'</b></div></div>':'';
-  return ruleHtml+'<div class="manager-note" style="margin-top:12px">'+esc(windowLine)+(submitted?'':' 请先提交阵容，当前只做费用预估，不会扣钱。')+'</div><div class="manager-filter" style="margin-top:12px"><label>换下球员</label><select id="manager-transfer-from">'+fromOpts+'</select><label>换上球员</label><input id="manager-transfer-to-search" list="manager-transfer-to-list" placeholder="搜索球员 / ATP / WTA" value="'+esc(searchValue)+'" autocomplete="off"><datalist id="manager-transfer-to-list">'+toOpts+'</datalist>'+detail+'<button class="manager-action warn" data-manager-action="transfer" style="margin-top:10px">检查并换人</button></div>';
+  return ruleHtml+'<div class="manager-note" style="margin-top:12px">'+esc(windowLine)+(submitted?'':' 请先提交阵容，当前只做费用预估，不会扣钱。')+'</div><div class="manager-filter" style="margin-top:12px"><label>换下球员</label><select id="manager-transfer-from">'+fromOpts+'</select><label>换上球员</label><div class="manager-transfer-combo"><div class="manager-transfer-input-wrap"><input id="manager-transfer-to-search" placeholder="搜索球员 / ATP / WTA" value="'+esc(toInput)+'" autocomplete="off" aria-expanded="'+(MANAGER_TRANSFER_MENU_OPEN?'true':'false')+'"><button type="button" class="manager-transfer-toggle" data-manager-action="transfer-toggle" aria-label="展开换上球员列表">▼</button></div><div class="manager-transfer-menu" id="manager-transfer-menu" '+(MANAGER_TRANSFER_MENU_OPEN?'':'hidden')+'>'+toMenu+'</div></div>'+detail+'<button class="manager-action warn" data-manager-action="transfer" style="margin-top:10px">检查并换人</button></div>';
 }
 function managerRenderLedger(){
   if(AUTH_USER&&supabaseConfigured()&&!MANAGER_REMOTE_ALL_LEDGER_SYNC_KEY&&!MANAGER_REMOTE_ALL_LEDGER_LOADING){
@@ -5007,6 +5062,8 @@ document.addEventListener('click',function(e){
   if(tourBtn){managerSetMarketTour(tourBtn.dataset.managerTour||'ATP');return;}
   const ledgerSortBtn=e.target&&e.target.closest?e.target.closest('[data-manager-ledger-sort]'):null;
   if(ledgerSortBtn){managerSetLedgerSort(ledgerSortBtn.dataset.managerLedgerSort||'date');return;}
+  const transferPick=e.target&&e.target.closest?e.target.closest('[data-manager-transfer-pick]'):null;
+  if(transferPick){managerPickTransferTo(transferPick.dataset.managerTransferPick||'');return;}
   const btn=e.target&&e.target.closest?e.target.closest('[data-manager-action]'):null;
   if(!btn)return;
   const id=btn.dataset.managerId||'';
@@ -5015,6 +5072,11 @@ document.addEventListener('click',function(e){
   else if(btn.dataset.managerAction==='detail')managerToggleDetail(id);
   else if(btn.dataset.managerAction==='calc')managerSetView('calculator');
   else if(btn.dataset.managerAction==='reset')managerResetDraft();
+  else if(btn.dataset.managerAction==='transfer-toggle'){
+    MANAGER_TRANSFER_MENU_OPEN=!MANAGER_TRANSFER_MENU_OPEN;
+    if(MANAGER_TRANSFER_MENU_OPEN)managerUpdateTransferMenu('');
+    else renderManagerDemo();
+  }
   else if(btn.dataset.managerAction==='transfer')managerTransfer();
   else if(btn.dataset.managerAction==='confirm-transfer')managerConfirmPendingTransfer();
   else if(btn.dataset.managerAction==='confirm-submit')managerSubmitLineup(true);
@@ -5045,16 +5107,28 @@ document.addEventListener('input',function(e){
   if(id==='manager-q')managerSearchInput(e.target.value,e.isComposing);
   if(id==='manager-hall-q')managerHallSearchInput(e.target.value,e.isComposing);
   if(id==='manager-ledger-q')managerLedgerSearchInput(e.target.value,e.isComposing);
-  if(id==='manager-transfer-to-search'){MANAGER_TRANSFER_TO_QUERY=e.target.value;MANAGER_TRANSFER_TO_ID='';}
+  if(id==='manager-transfer-to-search'){
+    MANAGER_TRANSFER_TO_QUERY=e.target.value;
+    MANAGER_TRANSFER_TO_ID='';
+    managerUpdateTransferMenu(MANAGER_TRANSFER_TO_QUERY);
+  }
 });
 document.addEventListener('keydown',function(e){
   const id=e.target&&e.target.id;
   if(id==='manager-q'&&e.key==='Enter'&&!e.isComposing&&!MANAGER_SEARCH_COMPOSING)managerSearchNow();
   if(id==='manager-transfer-to-search'&&e.key==='Enter'&&!e.isComposing){
-    var fromEl=document.getElementById('manager-transfer-from'),fromPlayer=managerLineupPlayers().find(function(p){return p.id===(fromEl&&fromEl.value);}),pool=managerEligibleTransferPool(fromPlayer);
+    e.preventDefault();
+    var pool=managerCurrentTransferPool();
     MANAGER_TRANSFER_TO_QUERY=e.target.value;
-    MANAGER_TRANSFER_TO_ID=managerResolveTransferToId(pool,MANAGER_TRANSFER_TO_QUERY,'');
-    renderManagerDemo();
+    managerPickTransferTo(managerResolveTransferToId(pool,MANAGER_TRANSFER_TO_QUERY,''));
+  }
+});
+document.addEventListener('focusin',function(e){
+  const id=e.target&&e.target.id;
+  if(id==='manager-transfer-to-search'){
+    MANAGER_TRANSFER_MENU_OPEN=true;
+    if(!MANAGER_TRANSFER_TO_QUERY&&e.target.select)e.target.select();
+    managerUpdateTransferMenu(MANAGER_TRANSFER_TO_QUERY||'');
   }
 });
 document.addEventListener('change',function(e){
@@ -5062,12 +5136,13 @@ document.addEventListener('change',function(e){
   if(tid==='manager-tour'){managerSetMarketTour(target.value);return;}
   if(['manager-price-filter','manager-tier-filter','manager-rank-filter','manager-surface-filter','manager-sort','manager-sort-dir'].indexOf(tid)>=0){MANAGER_MARKET_PAGE=1;renderManagerDemo();return;}
   if(['manager-ledger-station','manager-ledger-start','manager-ledger-end'].indexOf(tid)>=0){managerLedgerFilterChanged();return;}
-  if(tid==='manager-transfer-from'){MANAGER_TRANSFER_TO_QUERY='';MANAGER_TRANSFER_TO_ID='';renderManagerDemo();return;}
+  if(tid==='manager-transfer-from'){MANAGER_TRANSFER_TO_QUERY='';MANAGER_TRANSFER_TO_ID='';MANAGER_TRANSFER_MENU_OPEN=false;renderManagerDemo();return;}
   if(tid==='manager-transfer-to-search'){
-    var fromEl=document.getElementById('manager-transfer-from'),fromPlayer=managerLineupPlayers().find(function(p){return p.id===(fromEl&&fromEl.value);}),pool=managerEligibleTransferPool(fromPlayer);
+    var pool=managerCurrentTransferPool();
     MANAGER_TRANSFER_TO_QUERY=target.value;
     MANAGER_TRANSFER_TO_ID=managerResolveTransferToId(pool,MANAGER_TRANSFER_TO_QUERY,'');
-    renderManagerDemo();
+    MANAGER_TRANSFER_MENU_OPEN=true;
+    managerUpdateTransferMenu(MANAGER_TRANSFER_TO_QUERY);
     return;
   }
   const sel=e.target&&e.target.closest?e.target.closest('[data-manager-pred]'):null;
