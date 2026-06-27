@@ -2026,7 +2026,12 @@ function managerPredictionWarning(players){
 }
 function managerWalletImpactAmount(row){
   var type=String(row&&row.type||row&&row.rawStatus||row&&row.status||'');
+  var meta=row&&row.metadata&&typeof row.metadata==='object'?row.metadata:{};
   if(/station_grant/i.test(type)||/本站签约金/.test(type))return 0;
+  if(/lineup_withdraw_refund/i.test(type)){
+    var walletRefund=Number(meta.wallet_refund??meta.wallet_delta??meta.wallet_used);
+    if(Number.isFinite(walletRefund))return walletRefund;
+  }
   var amount=Number(row&&row.amount);
   if(Number.isFinite(amount))return amount;
   var walletDelta=Number(row&&row.walletDelta);
@@ -2081,11 +2086,13 @@ function managerIncomePartsFromRow(row){
   if(managerLedgerRowHidden(row))return null;
   var type=String(row&&row.type||row&&row.rawStatus||row&&row.status||'');
   if(/station_grant/i.test(type)||/本站签约金/.test(type)||/season_opening|开户/i.test(type))return null;
-  if(/lineup_wallet_spend|lineup_purchase_cost|transfer/i.test(type))return null;
+  if(/lineup_wallet_spend|lineup_purchase_cost|lineup_withdraw_refund|transfer/i.test(type))return null;
   var amount=Number(row&&row.amount);
   if(!Number.isFinite(amount))amount=Number(row&&row.walletDelta);
   if(!Number.isFinite(amount))amount=Number(row&&row.net);
-  if(!Number.isFinite(amount)||amount<=0)return null;
+  if(!Number.isFinite(amount))return null;
+  if(/submit_bonus_reversal|bonus_reversal/i.test(type))return {kind:'other',amount:amount};
+  if(amount<=0)return null;
   if(/player_points_delta|points_delta/i.test(type))return {kind:'player',amount:amount};
   if(/station_combo_bonus|combo/i.test(type))return {kind:'combo',amount:amount};
   return {kind:'other',amount:amount};
@@ -2513,7 +2520,7 @@ async function managerWithdrawLineup(confirmed){
   if(confirmed!==true){
     MANAGER_DIALOG={
       title:'撤回阵容？',
-      msg:'撤回后可以继续修改并重新提交。钱包会写入撤回流水：返还已占用本金，同时扣回提交阵容奖励。',
+      msg:'撤回后可以继续修改并重新提交。钱包会写入撤回流水：返还已花费的本站签约金/本金，同时扣回提交阵容奖励。',
       confirmAction:'confirm-withdraw',
       confirmLabel:'确认撤回',
       cancelLabel:'先不撤'
@@ -2537,7 +2544,7 @@ async function managerWithdrawLineup(confirmed){
   }
   var current=managerSubmittedRecord();
   if(current)current.status='已撤回';
-  MANAGER_LEDGER.push({id:'local-withdraw-'+Date.now(),date:new Date().toISOString().slice(0,10),station:managerStationKey(),stationLabel:managerStationName(),status:'lineup_withdraw_refund',rawStatus:'lineup_withdraw_refund',cost:0,gross:Math.max(0,managerCalc().walletUsed),bonus:0,net:Math.max(0,managerCalc().walletUsed)-10,walletDelta:Math.max(0,managerCalc().walletUsed)-10,players:managerCalc().players.map(managerLedgerPlayerTokenFromPlayer),transfers:[],note:'撤回阵容：返还本金占用，并扣回提交阵容奖励。'});
+  MANAGER_LEDGER.push({id:'local-withdraw-'+Date.now(),date:new Date().toISOString().slice(0,10),station:managerStationKey(),stationLabel:managerStationName(),status:'lineup_withdraw_refund',rawStatus:'lineup_withdraw_refund',cost:0,gross:Math.max(0,managerCalc().spent),bonus:0,net:Math.max(0,managerCalc().spent)-10,walletDelta:Math.max(0,managerCalc().walletUsed)-10,players:managerCalc().players.map(managerLedgerPlayerTokenFromPlayer),transfers:[],note:'撤回阵容：返还本站签约金/本金占用，并扣回提交阵容奖励。'});
   managerSaveLedger();trackManagerEvent('manager_withdraw_success',{mode:'local'});managerSetMsg('阵容已撤回，可以继续修改并重新提交。');renderManagerDemo();
 }
 function managerMoneyAmount(value,cls){
@@ -2548,9 +2555,14 @@ function managerMoneyCards(c,rules){
   var walletSeasonStart=Number.isFinite(Number(c.walletSeasonStart))?c.walletSeasonStart:rules.initialWallet;
   var walletStationStart=Number.isFinite(Number(c.walletStationStart))?c.walletStationStart:c.walletStart;
   var income=c.stationIncome||{player:0,combo:0,other:0,total:0};
+  var submitted=!!managerSubmittedRecord();
+  var stationCurrent=submitted?c.stationRemaining:rules.stationGrant;
+  var pendingStationSpend=!submitted?Math.min(Math.max(0,Number(c.spent)||0),Math.max(0,Number(rules.stationGrant)||0)):0;
+  var stationGrantText='起始值 '+managerMoneyAmount(rules.stationGrant,'inline')+'，当前值 '+managerMoneyAmount(stationCurrent,'inline');
+  if(pendingStationSpend>0)stationGrantText+='，待提交花费 '+managerMoneyAmount(pendingStationSpend,'inline');
   return '<div class="manager-money hot"><b>'+managerMoneyAmount(income.total)+'</b><span>本站总收益<br>球员收益 '+managerMoneyAmount(income.player,'inline')+'，combo收益 '+managerMoneyAmount(income.combo,'inline')+'，其他收益 '+managerMoneyAmount(income.other,'inline')+'<br>所有收益归入本金带走。</span></div>'+
     '<div class="manager-money"><b>'+managerMoneyAmount(c.walletCurrent)+'</b><span>经纪人本金<br>赛季起始值 '+managerMoneyAmount(walletSeasonStart,'inline')+'，本站起始值 '+managerMoneyAmount(walletStationStart,'inline')+'，当前值 '+managerMoneyAmount(c.walletCurrent,'inline')+'<br>所有本金归你，可以带到下一站</span></div>'+
-    '<div class="manager-money"><b>'+managerMoneyAmount(c.stationRemaining)+'</b><span>本站签约金<br>起始值 '+managerMoneyAmount(rules.stationGrant,'inline')+'，当前值 '+managerMoneyAmount(c.stationRemaining,'inline')+'<br>只能本站使用，带不到下一站</span></div>'+
+    '<div class="manager-money"><b>'+managerMoneyAmount(stationCurrent)+'</b><span>本站签约金<br>'+stationGrantText+'<br>只能本站使用，带不到下一站</span></div>'+
     '<div class="manager-money"><b>'+managerMoneyAmount(c.remaining)+'</b><span>剩余可用额度<br>已花费 '+managerMoneyAmount(c.spent,'inline')+'，其中本金 '+managerMoneyAmount(c.walletUsed,'inline')+'</span></div>';
 }
 function managerRenderMoney(c,rules){
