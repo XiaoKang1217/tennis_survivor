@@ -313,6 +313,7 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 .manager-panel-chip.surface.grass{color:#15803d;background:#e7f6d8;border-color:#b9dda0}.manager-panel-chip.surface.clay{color:#c2410c;background:#ffe3d1;border-color:#f3b48e}.manager-panel-chip.surface.hard{color:#2563eb;background:#dbeafe;border-color:#93c5fd}
 .manager-panel-b{padding:14px}
 .manager-market-layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:12px}
+.manager-market-inline-side{display:none}
 .manager-filter{display:grid;gap:9px;background:#fff8e8;border:1px solid #ead8b7;border-radius:10px;padding:12px;align-self:start}
 .manager-filter label{font-size:11px;color:#756651;font-weight:950;text-transform:uppercase}
 .manager-filter input,.manager-filter select,.manager-ledger-filters input,.manager-ledger-filters select{width:100%;border:1px solid #d3bd94;background:#fffdf8;border-radius:8px;padding:8px 10px;color:#2f2a22;font-size:13px;outline:none}
@@ -630,6 +631,10 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
   .manager-wechat-card{justify-self:stretch;max-width:none}
   .manager-grid{grid-template-columns:1fr}
   .manager-side{position:static}
+  .manager-grid.view-market>.manager-side:not(.manager-market-inline-side){display:none}
+  .manager-market-inline-side{display:grid;order:2}
+  .manager-filter{order:1}
+  .manager-market-results{order:3}
   .manager-market-layout{grid-template-columns:1fr}
   .manager-money-grid,.manager-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
   .manager-my-summary-grid,.manager-my-lineup{grid-template-columns:1fr}
@@ -2080,7 +2085,19 @@ function managerLedgerRowHidden(row,hiddenIds){
 }
 function managerVisibleLedgerRows(ledger){
   var hidden=managerHiddenLedgerIds(ledger);
-  return (ledger||[]).filter(function(row){return !managerLedgerRowHidden(row,hidden);});
+  return managerDedupeStationGrantRows((ledger||[]).filter(function(row){return !managerLedgerRowHidden(row,hidden);}));
+}
+function managerDedupeStationGrantRows(rows){
+  // Only the station grant is a one-time station allowance; real wallet actions stay duplicated.
+  var seen={};
+  return (rows||[]).filter(function(row){
+    var type=String(row&&row.type||row&&row.rawStatus||row&&row.status||'');
+    if(!(/station_grant/i.test(type)||/本站签约金发放/.test(type)))return true;
+    var key=[row&&row.user_id||'',row&&row.season||managerSeason(),managerLedgerRowStationKey(row,'')].join('|');
+    if(seen[key])return false;
+    seen[key]=true;
+    return true;
+  });
 }
 function managerIncomePartsFromRow(row){
   if(managerLedgerRowHidden(row))return null;
@@ -2351,7 +2368,7 @@ function managerLedgerRowStationLabel(row,stationKey,fallbackLabel){
 }
 function managerAllLedger(){
   var stationKey=managerStationKey(),stationName=managerStationName(),rows=[];
-  if(MANAGER_REMOTE_ALL_LEDGER_SYNC_KEY)return (MANAGER_REMOTE_ALL_LEDGER||[]).slice().sort(managerLedgerSortFn);
+  if(MANAGER_REMOTE_ALL_LEDGER_SYNC_KEY)return managerDedupeStationGrantRows((MANAGER_REMOTE_ALL_LEDGER||[]).slice().sort(managerLedgerSortFn));
   if(MANAGER_REMOTE_STATE||MANAGER_PREVIOUS_STATE){
     var seen={};
     managerRemoteLedgerContexts().forEach(function(ctx){
@@ -2410,7 +2427,7 @@ function managerAllLedger(){
         }
       }
     });
-    return rows.sort(managerLedgerSortFn);
+    return managerDedupeStationGrantRows(rows.sort(managerLedgerSortFn));
   }
   if(AUTH_USER&&supabaseConfigured())return [];
   rows=(managerDemoLedgerAllowed()?MANAGER_DEMO_LEDGER:[]).concat(MANAGER_LEDGER||[]).map(function(x){return Object.assign({stationLabel:x.station,rawStatus:x.status},x,{status:managerLedgerStatusText(x.status),players:managerSanitizeLedgerPlayers(x.players)});});
@@ -2421,7 +2438,7 @@ function managerAllLedger(){
   if(rec&&!rows.some(function(x){return x.rawStatus==='station_grant_issued'||x.status==='本站签约金发放';})){
     rows.push({id:'local-station-grant',date:rec.date||new Date().toISOString().slice(0,10),station:rec.station||stationKey,stationLabel:rec.station||stationName,level:'',status:'本站签约金发放',rawStatus:'station_grant_issued',cost:0,gross:0,bonus:managerRules().stationGrant,net:managerRules().stationGrant,walletDelta:0,players:[],transfers:[],note:'本站签约金额度，仅本站使用。'});
   }
-  return rows.sort(managerLedgerSortFn);
+  return managerDedupeStationGrantRows(rows.sort(managerLedgerSortFn));
 }
 function managerLedgerStatusText(type){
   var t=String(type||'');
@@ -2710,7 +2727,7 @@ function managerRosterRow(p,submitted,isReplaced){
   var st=managerPlayerCurrentStats(p),status=isReplaced?'已换下':'已锁定';
   return '<div class="manager-roster-row">'+managerPlayerAvatar(p,'small')+'<div class="manager-roster-name">'+esc(managerPlayerDisplayName(p,true))+'<div class="manager-sub">'+p.tier+'档 · '+p.drawSize+'签 · 回本 '+managerBreakEvenDisplay(p.breakEven)+' · 累计收益 '+st.earned+'</div></div><div class="manager-roster-price">'+managerMoneyAmount(p.price,'inline')+'</div>'+(submitted?'<span class="manager-pill">'+status+'</span>':'<button class="manager-clear" data-manager-action="remove" data-manager-id="'+esc(p.id)+'">移除</button>')+'</div>';
 }
-function managerSidebar(c,rules){
+function managerSidebar(c,rules,extraClass){
   var submitted=managerSubmittedRecord();
   var team=managerTeamCurrentStats(c.players,c);
   var replaced=managerReplacedLineupPlayers();
@@ -2722,7 +2739,7 @@ function managerSidebar(c,rules){
   var withdrawAction=submitted&&managerCanWithdrawLineup()?'<button class="manager-clear" data-manager-action="withdraw-lineup" style="width:100%;margin-top:8px">撤回阵容</button>':'';
   var actions=submitted?'<button class="manager-action secondary" data-manager-view="hall" style="width:100%;margin-top:10px">查看配置大厅</button>'+withdrawAction+'<button class="manager-clear" data-manager-my-view="transfer" style="width:100%;margin-top:8px">打开换人窗口（'+MANAGER_TRANSFER_COUNT+'/1）</button><button class="manager-clear" data-manager-my-view="ledger" style="width:100%;margin-top:8px">查看我的收益</button>':'<button class="manager-action secondary" data-manager-action="calc" style="width:100%;margin-top:10px">去计算器测算</button><button class="manager-action" data-manager-action="submit" style="width:100%;margin-top:8px">提交阵容</button>';
   var status=submitted?'<div class="manager-sim-row"><span>提交状态</span><b>已提交，等待开赛/结算</b></div><div class="manager-sim-row"><span>换人机会</span><b>'+MANAGER_TRANSFER_COUNT+'/1</b></div>':'';
-  return '<div class="manager-panel manager-side"><div class="manager-panel-h"><span>我的阵容</span>'+headBtn+'</div><div class="manager-panel-b"><div class="manager-roster">'+rows+'</div><div class="manager-sim"><div class="manager-sim-row"><span>人数</span><b>'+c.players.length+'/'+rules.maxPlayers+'</b></div><div class="manager-sim-hint">本次最少选 '+rules.minPlayers+' 人，最多选 '+rules.maxPlayers+' 人</div>'+status+'<div class="manager-sim-row"><span>总支出</span><b>'+managerSpendBreakdownText(c)+'</b></div><div class="manager-sim-row"><span>目前收益</span><b>累计 '+team.earned+' / 昨天 '+team.yesterday+'</b></div><div class="manager-sim-row"><span>阵容风格</span><b>'+c.style+'</b></div><div class="manager-sim-row"><span>当前预测净收益</span><b>'+c.net+'</b></div><div class="manager-sim-row"><span>可行最高收益</span><b>'+c.max+'</b></div></div>'+actions+'<div class="manager-msg" id="manager-msg">'+esc(MANAGER_LAST_MSG||(submitted?'阵容已锁定。开赛后可以使用一次换人窗口。':'加入阵容后，先去计算器选择预计轮次，再提交。'))+'</div></div></div>';
+  return '<div class="manager-panel manager-side '+(extraClass||'')+'"><div class="manager-panel-h"><span>我的阵容</span>'+headBtn+'</div><div class="manager-panel-b"><div class="manager-roster">'+rows+'</div><div class="manager-sim"><div class="manager-sim-row"><span>人数</span><b>'+c.players.length+'/'+rules.maxPlayers+'</b></div><div class="manager-sim-hint">本次最少选 '+rules.minPlayers+' 人，最多选 '+rules.maxPlayers+' 人</div>'+status+'<div class="manager-sim-row"><span>总支出</span><b>'+managerSpendBreakdownText(c)+'</b></div><div class="manager-sim-row"><span>目前收益</span><b>累计 '+team.earned+' / 昨天 '+team.yesterday+'</b></div><div class="manager-sim-row"><span>阵容风格</span><b>'+c.style+'</b></div><div class="manager-sim-row"><span>当前预测净收益</span><b>'+c.net+'</b></div><div class="manager-sim-row"><span>可行最高收益</span><b>'+c.max+'</b></div></div>'+actions+'<div class="manager-msg" id="'+(extraClass?'manager-msg-inline':'manager-msg')+'">'+esc(MANAGER_LAST_MSG||(submitted?'阵容已锁定。开赛后可以使用一次换人窗口。':'加入阵容后，先去计算器选择预计轮次，再提交。'))+'</div></div></div>';
 }
 function managerInitial(name){return String(name||'?').trim().slice(0,1)||'?';}
 function managerPhotoValue(hit,size){
@@ -2837,7 +2854,7 @@ function managerRenderMarket(){
   var list=managerPoolFiltered(),pack=managerEventPack(MANAGER_TOUR==='WTA'?'WTA':'ATP'),pager=managerPaginate(list,MANAGER_MARKET_PAGE,30);
   MANAGER_MARKET_PAGE=pager.page;
   var emptyMsg=(pack.event&&pack.event.market_message)?pack.event.market_message:'没有符合筛选的球员。';
-  return '<div class="manager-market-layout"><div class="manager-filter"><label>搜索</label><input id="manager-q" placeholder="球员 / 赛事" value="'+esc(managerFilterValue('manager-q',''))+'" autocomplete="off"><label>巡回赛</label><select id="manager-tour" onchange="managerSetMarketTour(this.value)"><option value="ALL">全部</option><option value="ATP" '+managerSelectedAttr('manager-tour','ATP','ATP')+'>ATP</option><option value="WTA" '+managerSelectedAttr('manager-tour','WTA','ATP')+'>WTA</option></select><label>价格</label><select id="manager-price-filter" onchange="managerMarketFilterChanged()"><option value="all">全部价格</option><option value="cheap" '+managerSelectedAttr('manager-price-filter','cheap','all')+'>低价资产（C/D）</option><option value="mid" '+managerSelectedAttr('manager-price-filter','mid','all')+'>中档资产（B）</option><option value="star" '+managerSelectedAttr('manager-price-filter','star','all')+'>高价核心（S/A）</option></select><label>档位</label><select id="manager-tier-filter" onchange="managerMarketFilterChanged()"><option value="all">全部档位</option><option value="S" '+managerSelectedAttr('manager-tier-filter','S','all')+'>S</option><option value="A" '+managerSelectedAttr('manager-tier-filter','A','all')+'>A</option><option value="B" '+managerSelectedAttr('manager-tier-filter','B','all')+'>B</option><option value="C" '+managerSelectedAttr('manager-tier-filter','C','all')+'>C</option><option value="D" '+managerSelectedAttr('manager-tier-filter','D','all')+'>D</option></select><label>排名</label><select id="manager-rank-filter" onchange="managerMarketFilterChanged()"><option value="all">全部排名</option><option value="top10" '+managerSelectedAttr('manager-rank-filter','top10','all')+'>Top 10</option><option value="low" '+managerSelectedAttr('manager-rank-filter','low','all')+'>低排名（50+）/ 冷门</option></select><label>场地</label><select id="manager-surface-filter" onchange="managerMarketFilterChanged()"><option value="all">全部场地能力</option><option value="strong" '+managerSelectedAttr('manager-surface-filter','strong','all')+'>场地评分 ≥78</option><option value="specialist" '+managerSelectedAttr('manager-surface-filter','specialist','all')+'>场地专精</option></select><label>排序</label><select id="manager-sort" onchange="managerMarketFilterChanged()"><option value="price" '+managerSelectedAttr('manager-sort','price','price')+'>所需金币</option><option value="base" '+managerSelectedAttr('manager-sort','base','price')+'>实力</option><option value="surface" '+managerSelectedAttr('manager-sort','surface','price')+'>场地</option><option value="draw" '+managerSelectedAttr('manager-sort','draw','price')+'>签表</option><option value="form" '+managerSelectedAttr('manager-sort','form','price')+'>状态</option></select><label>方向</label><select id="manager-sort-dir" onchange="managerMarketFilterChanged()"><option value="desc" '+managerSelectedAttr('manager-sort-dir','desc','desc')+'>降序</option><option value="asc" '+managerSelectedAttr('manager-sort-dir','asc','desc')+'>升序</option></select><div class="manager-note">筛选和排序是为了做经济约束下的选人：找低价、低排名、场地强、签表软的资产。</div></div><div><div class="manager-list">'+(pager.items.length?pager.items.map(managerPlayerRow).join(''):'<div class="manager-empty">'+esc(emptyMsg)+'</div>')+'</div>'+managerPagerHtml('market',pager)+'</div></div>';
+  return '<div class="manager-market-layout"><div class="manager-filter"><label>搜索</label><input id="manager-q" placeholder="球员 / 赛事" value="'+esc(managerFilterValue('manager-q',''))+'" autocomplete="off"><label>巡回赛</label><select id="manager-tour" onchange="managerSetMarketTour(this.value)"><option value="ALL">全部</option><option value="ATP" '+managerSelectedAttr('manager-tour','ATP','ATP')+'>ATP</option><option value="WTA" '+managerSelectedAttr('manager-tour','WTA','ATP')+'>WTA</option></select><label>价格</label><select id="manager-price-filter" onchange="managerMarketFilterChanged()"><option value="all">全部价格</option><option value="cheap" '+managerSelectedAttr('manager-price-filter','cheap','all')+'>低价资产（C/D）</option><option value="mid" '+managerSelectedAttr('manager-price-filter','mid','all')+'>中档资产（B）</option><option value="star" '+managerSelectedAttr('manager-price-filter','star','all')+'>高价核心（S/A）</option></select><label>档位</label><select id="manager-tier-filter" onchange="managerMarketFilterChanged()"><option value="all">全部档位</option><option value="S" '+managerSelectedAttr('manager-tier-filter','S','all')+'>S</option><option value="A" '+managerSelectedAttr('manager-tier-filter','A','all')+'>A</option><option value="B" '+managerSelectedAttr('manager-tier-filter','B','all')+'>B</option><option value="C" '+managerSelectedAttr('manager-tier-filter','C','all')+'>C</option><option value="D" '+managerSelectedAttr('manager-tier-filter','D','all')+'>D</option></select><label>排名</label><select id="manager-rank-filter" onchange="managerMarketFilterChanged()"><option value="all">全部排名</option><option value="top10" '+managerSelectedAttr('manager-rank-filter','top10','all')+'>Top 10</option><option value="low" '+managerSelectedAttr('manager-rank-filter','low','all')+'>低排名（50+）/ 冷门</option></select><label>场地</label><select id="manager-surface-filter" onchange="managerMarketFilterChanged()"><option value="all">全部场地能力</option><option value="strong" '+managerSelectedAttr('manager-surface-filter','strong','all')+'>场地评分 ≥78</option><option value="specialist" '+managerSelectedAttr('manager-surface-filter','specialist','all')+'>场地专精</option></select><label>排序</label><select id="manager-sort" onchange="managerMarketFilterChanged()"><option value="price" '+managerSelectedAttr('manager-sort','price','price')+'>所需金币</option><option value="base" '+managerSelectedAttr('manager-sort','base','price')+'>实力</option><option value="surface" '+managerSelectedAttr('manager-sort','surface','price')+'>场地</option><option value="draw" '+managerSelectedAttr('manager-sort','draw','price')+'>签表</option><option value="form" '+managerSelectedAttr('manager-sort','form','price')+'>状态</option></select><label>方向</label><select id="manager-sort-dir" onchange="managerMarketFilterChanged()"><option value="desc" '+managerSelectedAttr('manager-sort-dir','desc','desc')+'>降序</option><option value="asc" '+managerSelectedAttr('manager-sort-dir','asc','desc')+'>升序</option></select><div class="manager-note">筛选和排序是为了做经济约束下的选人：找低价、低排名、场地强、签表软的资产。</div></div>'+managerSidebar(managerCalc(),managerRules(),'manager-market-inline-side')+'<div class="manager-market-results"><div class="manager-list">'+(pager.items.length?pager.items.map(managerPlayerRow).join(''):'<div class="manager-empty">'+esc(emptyMsg)+'</div>')+'</div>'+managerPagerHtml('market',pager)+'</div></div>';
 }
 function managerComboBrief(c){
   if(c.comboVersion==='wimbledon_2026')return '多点开花 '+(c.bloomBonus||0)+' / 全员进阶 '+(c.allR16Bonus||0)+' / 双线经营 '+(c.dualBonus||0)+' / 慧眼识珠 '+(c.jewelBonus||0)+' / 冠军经纪 '+(c.champBonus||0)+' / 合计 '+c.bonus+(c.comboRaw>c.bonus?'（封顶 '+c.comboCap+'）':'');
@@ -3066,7 +3083,7 @@ function renderManagerDemo(){
   var panelHead='<div class="manager-panel-h">'+panelTitle+(MANAGER_VIEW==='market'?managerEventMetaHtml(rules):'')+'</div>';
   var dialog=MANAGER_DIALOG?'<div class="manager-dialog"><div class="manager-dialog-card"><h3>'+esc(MANAGER_DIALOG.title)+'</h3><p>'+esc(MANAGER_DIALOG.msg).replace(/\n/g,'<br>')+'</p>'+(MANAGER_DIALOG.strong?'<div class="manager-dialog-strong">'+esc(MANAGER_DIALOG.strong).replace(/\n/g,'<br>')+'</div>':'')+'<div class="manager-actions">'+(MANAGER_DIALOG.confirmAction?'<button class="manager-clear" data-manager-action="close-dialog">'+esc(MANAGER_DIALOG.cancelLabel||'取消')+'</button><button class="manager-action" data-manager-action="'+esc(MANAGER_DIALOG.confirmAction)+'">'+esc(MANAGER_DIALOG.confirmLabel||'确定')+'</button>':'<button class="manager-action" data-manager-action="close-dialog">知道了</button>')+'</div></div></div>':'';
   var wechat='<div class="manager-wechat-card"><div class="manager-wechat-copy"><div class="manager-wechat-alert">温网已开赛！请到市场挑选球员购买。截止时间6.29 17:45</div><div class="manager-wechat-line main">本游戏每周跟随巡回赛历开新赛事</div><div class="manager-wechat-line">如需 <span class="manager-wechat-em">开售提醒</span>、<span class="manager-wechat-em">换人窗口提醒</span> 请扫码进本游戏官方群</div></div><img class="manager-wechat-qr" src="assets/manager/wechat-group-qr.jpg" alt="微信群二维码" width="92" height="122" decoding="async" fetchpriority="high"></div>';
-  root.innerHTML='<div class="manager-shell"><div class="manager-hero"><div class="manager-title"><div><div class="manager-title-line"><h2>巡回赛经纪人</h2><button class="manager-clear" data-manager-view="rules">查看规则</button><span class="manager-settle-note">每天09:37结算</span></div><p>组建你的球员阵容，在巡回赛里征战！<br>在公开市场上购买球员，球员成绩越好，你赚的越多，收益按巡回赛积分计算。<br>你不只懂网球，你是在做预算、风险和轮次收益的组合策略。</p></div></div>'+wechat+'<img class="manager-hero-art" src="assets/manager/agent-money-bag.webp" alt="" loading="lazy" decoding="async" fetchpriority="low"></div>'+managerRenderMoney(c,rules)+tabs+'<div class="manager-grid '+(showSide?'':'single')+'"><div class="manager-panel">'+panelHead+'<div class="manager-panel-b">'+managerRenderBody()+'</div></div>'+(showSide?managerSidebar(c,rules):'')+'</div>'+seoFaqLinkHtml()+dialog+'</div>';
+  root.innerHTML='<div class="manager-shell"><div class="manager-hero"><div class="manager-title"><div><div class="manager-title-line"><h2>巡回赛经纪人</h2><button class="manager-clear" data-manager-view="rules">查看规则</button><span class="manager-settle-note">每天09:37结算</span></div><p>组建你的球员阵容，在巡回赛里征战！<br>在公开市场上购买球员，球员成绩越好，你赚的越多，收益按巡回赛积分计算。<br>你不只懂网球，你是在做预算、风险和轮次收益的组合策略。</p></div></div>'+wechat+'<img class="manager-hero-art" src="assets/manager/agent-money-bag.webp" alt="" loading="lazy" decoding="async" fetchpriority="low"></div>'+managerRenderMoney(c,rules)+tabs+'<div class="manager-grid view-'+MANAGER_VIEW+' '+(showSide?'':'single')+'"><div class="manager-panel">'+panelHead+'<div class="manager-panel-b">'+managerRenderBody()+'</div></div>'+(showSide?managerSidebar(c,rules):'')+'</div>'+seoFaqLinkHtml()+dialog+'</div>';
 }
 
 function trackSupabaseError(operation,err,ignoreMissing){
