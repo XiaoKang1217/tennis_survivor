@@ -50,7 +50,9 @@ Current station selection is still manual: edit `data/manager/active_events.json
    - ATP official media aliases are Cloudflare-protected from direct scripts, so ATP rows stay pending unless already manually cached.
 
 `.github/workflows/update_manager.yml` runs the manager refresh at 06:00 Asia/Shanghai each day:
-`refresh-current-station-data.mjs --write --sync`, then `maybe-build-prices.mjs`, then `apply-qualifier-placements.mjs`, then `apply-pre-r1-substitutions.mjs`, then `refresh-current-station-data.mjs --skip-draw --skip-schedule --sync --settle`, then `validate-station.mjs`.
+`refresh-current-station-data.mjs --write --sync`, then `maybe-build-prices.mjs`, then `apply-qualifier-placements.mjs`, then `apply-pre-r1-substitutions.mjs`, then `settle-current-or-previous-station.mjs`, then `validate-station.mjs`.
+
+`settle-current-or-previous-station.mjs` keeps settlement on `previous_station` while its finals are incomplete. It syncs and settles the previous station first; only after all previous-station finals are completed does it continue to the current active station. This preserves delayed finals and combo settlement during week-to-week station transitions.
 
 All scripts support `--dry-run`. Without `SUPABASE_SERVICE_ROLE_KEY`, dry-run is automatic.
 
