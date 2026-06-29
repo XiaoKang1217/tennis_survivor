@@ -1864,6 +1864,19 @@ function managerContractEliminated(contract){
   var meta=contract&&contract.metadata&&typeof contract.metadata==='object'?contract.metadata:{};
   return !!(meta.is_eliminated||meta.eliminated||String(meta.status||'').toLowerCase()==='eliminated'||meta.status_zh==='出局');
 }
+function managerContractReachedRound(contract,p){
+  var meta=contract&&contract.metadata&&typeof contract.metadata==='object'?contract.metadata:(p&&p.contractMetadata||{});
+  var reached=contract&&(contract.reached_round||contract.current_round)||p&&p.reachedRound||meta.reached_round||meta.current_round||'';
+  var baselineRound=meta.transfer_baseline_round||'';
+  if((!reached||reached==='OUT')&&contract&&contract.is_transfer&&baselineRound&&baselineRound!=='OUT')reached=baselineRound;
+  return reached||'';
+}
+function managerContractRoundDisplay(contract,p,fallback){
+  if(managerContractEliminated(contract))return '已出局';
+  var reached=managerContractReachedRound(contract,p);
+  if(!reached||reached==='OUT')return fallback||'未开赛';
+  return managerRoundDisplay(reached,p);
+}
 function managerPlayerCurrentStats(p){
   var submitted=managerSubmittedRecord(),contract=managerContractForPlayer(p,true),meta=contract&&contract.metadata&&typeof contract.metadata==='object'?contract.metadata:(p.contractMetadata||{});
   var earned=Number(contract&&contract.earned_points);
@@ -1872,11 +1885,8 @@ function managerPlayerCurrentStats(p){
   var yesterday=Number(meta.yesterday_earned??meta.last_settlement_delta??meta.points_delta_yesterday??0);
   if(!Number.isFinite(yesterday))yesterday=0;
   var started=managerEventStarted(p.tour),replaced=contract&&contract.is_active===false,eliminated=managerContractEliminated(contract);
-  var reached=contract&&(contract.reached_round||contract.current_round)||p.reachedRound||meta.reached_round||meta.current_round||'';
-  var baselineRound=meta.transfer_baseline_round||'';
-  if((!reached||reached==='OUT')&&contract&&contract.is_transfer&&baselineRound&&baselineRound!=='OUT')reached=baselineRound;
   var status=!submitted?'未提交':(!started?'存活':(replaced?'已换下':(eliminated?'已出局':'存活')));
-  var round=!submitted?'未开赛':(!started?'未开赛':(eliminated?'已出局':(reached?managerRoundDisplay(reached,p):'进行中')));
+  var round=!submitted?'未开赛':managerContractRoundDisplay(contract,p,'未开赛');
   return {
     earned:earned,
     yesterday:yesterday,
@@ -3406,7 +3416,7 @@ function managerRenderPreviousPlayerCard(p){
   var contract=p.contract||{},meta=contract.metadata&&typeof contract.metadata==='object'?contract.metadata:{};
   var yesterday=Number(meta.yesterday_earned??meta.last_settlement_delta??meta.points_delta_yesterday??0);
   if(!Number.isFinite(yesterday))yesterday=0;
-  var round=p.reachedRound?managerRoundDisplay(p.reachedRound,p):(managerContractEliminated(contract)?'已出局':'进行中');
+  var round=managerContractRoundDisplay(contract,p,'进行中');
   return '<div class="manager-my-card"><div class="manager-my-head"><div class="manager-my-portrait">'+managerPlayerAvatar(p,'fullbody')+'<h4>'+esc(managerPlayerDisplayName(p,true))+'</h4></div><div><div class="manager-sub">'+esc(p.event)+' · '+p.tour+' · '+p.tier+'档 · '+p.drawSize+'签 · 身价 '+managerMoneyAmount(p.price,'inline')+' · '+esc(p.statusLabel)+'</div><div class="manager-player-metrics"><div class="manager-metric-box"><div class="manager-metric-row"><span>累计收益</span><b>'+p.earnedPoints+'</b></div><div class="manager-metric-row"><span>昨天收益</span><b>'+yesterday+'</b></div><div class="manager-metric-row"><span>目前轮次</span><b>'+round+'</b></div><div class="manager-metric-row"><span>合同状态</span><b>'+esc(p.statusLabel)+'</b></div></div></div></div></div></div>';
 }
 function managerRenderPreviousStation(){
