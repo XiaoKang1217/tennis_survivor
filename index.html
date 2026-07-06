@@ -2257,6 +2257,29 @@ function managerLedgerPlayerMapFromContracts(contracts){
   });
   return map;
 }
+function managerComboLedgerDetailTokens(meta,type){
+  if(!/combo/i.test(String(type||'')))return [];
+  meta=meta&&typeof meta==='object'?meta:{};
+  var details=Array.isArray(meta.combo_details)?meta.combo_details:(Array.isArray(meta.comboDetails)?meta.comboDetails:[]);
+  return details.map(function(item){
+    if(!item||typeof item!=='object')return '';
+    var label=String(item.label||item.name||item.key||'Combo').trim();
+    var bonus=Number(item.bonus||item.amount||0);
+    var bonusText=Number.isFinite(bonus)&&bonus?((bonus>0?'+':'')+bonus):'';
+    var players=Array.isArray(item.players)?item.players.map(function(p){
+      if(!p)return '';
+      if(typeof p==='string')return p;
+      return p.name_zh||p.name||p.player_name||p.display_name||p.name_en||'';
+    }).filter(Boolean):[];
+    var round=item.round||item.round_key||item.target_round||'';
+    if(!round&&Array.isArray(item.players)){
+      var first=item.players.find(function(p){return p&&typeof p==='object'&&(p.round||p.round_key||p.target_round);});
+      round=first?(first.round||first.round_key||first.target_round):'';
+    }
+    var extra=players.length||round?'（'+players.join('/')+(players.length&&round?'，':'')+round+'）':'';
+    return label+bonusText+extra;
+  }).filter(Boolean);
+}
 function managerLedgerDisplayAmounts(type,amount,meta,lineup,isSubmit,isSettle,isBonus,isStationGrant){
   type=String(type||'');
   meta=meta&&typeof meta==='object'?meta:{};
@@ -2310,6 +2333,8 @@ function managerLedgerRowsFromRawLedger(ledger,ctx){
         players=managerSanitizeLedgerPlayers([token||meta.player_name||meta.name_zh||meta.name||pKey].filter(Boolean));
       }
     }else if(isTransfer)players=managerSanitizeLedgerPlayers(Array.isArray(meta.players)?meta.players:[meta.out_player||meta.out_name,meta.in_player||meta.in_name].filter(Boolean));
+    var comboPlayers=managerComboLedgerDetailTokens(meta,type);
+    if(comboPlayers.length)players=comboPlayers;
     if(!players.length&&Array.isArray(meta.players))players=managerSanitizeLedgerPlayers(meta.players);
     if(!players.length&&x.lineup_id&&Array.isArray(playerMap[x.lineup_id+'|__players']))players=playerMap[x.lineup_id+'|__players'];
     if(/lineup_purchase_cost|lineup_wallet_spend/i.test(type))purchaseDone[purchaseKey]=true;
@@ -2420,6 +2445,8 @@ function managerAllLedger(){
             players=settledContract?[managerLedgerPlayerTokenFromContract(settledContract)]:[];
           }
         }else if(isTransfer)players=managerSanitizeLedgerPlayers(Array.isArray(meta.players)?meta.players:[meta.out_player||meta.out_name,meta.in_player||meta.in_name].filter(Boolean));
+        var comboPlayers=managerComboLedgerDetailTokens(meta,type);
+        if(comboPlayers.length)players=comboPlayers;
         if(!players.length&&Array.isArray(meta.players))players=managerSanitizeLedgerPlayers(meta.players);
         if(!players.length&&x.lineup_id&&Array.isArray(contractPlayerMap[x.lineup_id+'|__players']))players=contractPlayerMap[x.lineup_id+'|__players'];
         var outName=meta.out_player||meta.out_name;
