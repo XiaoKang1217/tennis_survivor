@@ -28,6 +28,24 @@ const skipSchedule = Boolean(args['skip-schedule']);
 const skipDrawWalkovers = Boolean(args['skip-draw-walkovers']);
 const minDrawPlayers = Number(args['min-draw-players'] || 8);
 const fetchedAt = new Date();
+const WINDOW_FIELDS = [
+  'main_draw_first_match_at',
+  'submission_cutoff_at',
+  'submission_closes_at',
+  'round1_completed_at',
+  'round2_first_match_at',
+  'transfer_window_opens_at',
+  'transfer_window_closes_at'
+];
+
+function mergeDerivedWindows(event, windows) {
+  if (!event.manual_schedule_windows) return windows;
+  const next = { ...windows };
+  for (const field of WINDOW_FIELDS) {
+    if (event[field]) next[field] = event[field];
+  }
+  return next;
+}
 
 const { active, events } = await loadActiveStation(activeFile);
 const drawUrls = await discoverDrawUrls(events, active.season);
@@ -113,7 +131,7 @@ for (let i = 0; i < refreshedEvents.length; i += 1) {
   const rawRows = scheduleRows.concat(entry.drawWalkoverRows || []);
   const rows = dedupeMatchRows(rawRows);
   const duplicateMatchesDropped = rawRows.length - rows.length;
-  const windows = deriveEventWindows(entry.event, rows, fetchedAt);
+  const windows = mergeDerivedWindows(entry.event, deriveEventWindows(entry.event, rows, fetchedAt));
   entry.event = {
     ...entry.event,
     ...windows,

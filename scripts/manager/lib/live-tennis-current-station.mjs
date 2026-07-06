@@ -108,9 +108,33 @@ export function normalizeRoundKey(rawRound = '', event = {}) {
   if (/\bQF\b|QUARTER|¼|1\s*[\/⁄]\s*4|四分之一|八强/.test(raw)) return 'QF';
   if (/\bSF\b|SEMI|半决/.test(raw)) return 'SF';
   if (/^(?:F|FINAL|决赛|总决赛|冠军赛)$/.test(raw)) return 'F';
-  if (/^1R$|ROUND\s*1|第\s*1\s*轮|第一轮|首轮/.test(raw)) return keys[0];
-  if (/^2R$|ROUND\s*2|第\s*2\s*轮|第二轮/.test(raw)) return keys[1] || keys[0];
-  if (/^3R$|ROUND\s*3|第\s*3\s*轮|第三轮/.test(raw)) return keys[2] || keys[keys.length - 2];
+  const numericRound = raw.match(/^(\d+)R$/)
+    || raw.match(/ROUND\s*(\d+)/)
+    || raw.match(/第\s*(\d+)\s*轮/);
+  const chineseRound = raw.match(/第\s*([一二三四五六七八])\s*轮|^(第一轮|第二轮|第三轮|第四轮|第五轮|第六轮|第七轮|第八轮)$/);
+  const chineseRoundMap = {
+    '一': 1,
+    '二': 2,
+    '三': 3,
+    '四': 4,
+    '五': 5,
+    '六': 6,
+    '七': 7,
+    '八': 8,
+    '第一轮': 1,
+    '第二轮': 2,
+    '第三轮': 3,
+    '第四轮': 4,
+    '第五轮': 5,
+    '第六轮': 6,
+    '第七轮': 7,
+    '第八轮': 8
+  };
+  const roundNumber = numericRound
+    ? Number(numericRound[1])
+    : (chineseRound ? chineseRoundMap[chineseRound[1] || chineseRound[2]] : 0);
+  if (roundNumber > 0) return keys[roundNumber - 1] || keys[keys.length - 2];
+  if (/首轮/.test(raw)) return keys[0];
   return keys.find((key) => raw.includes(key)) || keys[0];
 }
 
