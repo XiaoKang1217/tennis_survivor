@@ -1290,6 +1290,21 @@ function managerLoadState(){
     }
   }catch(e){MANAGER_LINEUP=[];MANAGER_PREDICTIONS={};MANAGER_SUNK_COST=0;MANAGER_TRANSFER_COUNT=0;MANAGER_LEDGER=[];}
 }
+function managerResetVolatileAccountState(){
+  MANAGER_LINEUP=[];
+  MANAGER_PREDICTIONS={};
+  MANAGER_LEDGER=[];
+  MANAGER_SUNK_COST=0;
+  MANAGER_TRANSFER_COUNT=0;
+  MANAGER_REMOTE_STATE=null;
+  MANAGER_REMOTE_SYNC_KEY='';
+  MANAGER_REMOTE_SYNC_AT=0;
+  MANAGER_REMOTE_ALL_LEDGER=[];
+  MANAGER_REMOTE_ALL_LEDGER_SYNC_KEY='';
+  MANAGER_PREVIOUS_STATE=null;
+  MANAGER_PREVIOUS_SYNC_KEY='';
+  MANAGER_PENDING_TRANSFER=null;
+}
 function managerSaveState(){try{localStorage.setItem(managerStoreKey(),JSON.stringify({lineup:MANAGER_LINEUP,predictions:MANAGER_PREDICTIONS,sunk_cost:MANAGER_SUNK_COST,transfer_count:MANAGER_TRANSFER_COUNT,transfer_station:managerStationKey(),updated_at:new Date().toISOString()}));}catch(e){}}
 function managerSaveLedger(){try{localStorage.setItem(managerLedgerKey(),JSON.stringify(MANAGER_LEDGER));}catch(e){}}
 function managerActiveEvent(tour){return MANAGER_EVENT_DATA&&MANAGER_EVENT_DATA[tour]||null;}
@@ -3321,6 +3336,10 @@ function managerApplyRemoteState(state){
     MANAGER_LINEUP=managerNormalizeIds(active.map(function(x){return x.player_key;}),managerRules().maxPlayers);
     MANAGER_PREDICTIONS={};
     active.forEach(function(x){MANAGER_PREDICTIONS[x.player_key]=x.predicted_round||'OUT';});
+  }else{
+    MANAGER_LINEUP=[];
+    MANAGER_PREDICTIONS={};
+    MANAGER_SUNK_COST=0;
   }
   if(state.lineup){
     MANAGER_TRANSFER_COUNT=Number(state.lineup.transfer_count)||0;
@@ -3728,6 +3747,7 @@ function managerMaybeShowDailyIncomeDialog(){
 }
 async function managerEnterFlow(){
   await loadManagerData();
+  managerLoadState();
   managerTrackView(MANAGER_VIEW,MANAGER_VIEW==='mine'?MANAGER_MY_VIEW:'','entry');
   renderManagerDemo();
   managerLoadRemoteState({force:true}).then(function(){
@@ -3945,6 +3965,9 @@ function closeAuthModal(){
 }
 
 async function afterAuthChanged(user){
+  var prevUserId=AUTH_USER&&AUTH_USER.id?String(AUTH_USER.id):'';
+  var nextUserId=user&&user.id?String(user.id):'';
+  if(prevUserId!==nextUserId)managerResetVolatileAccountState();
   AUTH_USER=user||null;
   AUTH_PROFILE=null;
   FOLLOWING_IDS=new Set();
