@@ -23,6 +23,10 @@ jobs:
         with:
           node-version: "20"
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
       - run: node scripts/manager/refresh-current-station-data.mjs --write --sync
 
       - run: node scripts/manager/maybe-build-prices.mjs
@@ -35,7 +39,9 @@ jobs:
 
       - run: node scripts/manager/validate-station.mjs
 
+      - run: python scripts/build_data_manifest.py
+
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Auto update tour manager data"
-          file_pattern: "data/manager/active_events.json data/manager/events/*.json data/manager/market_snapshot.json data/manager/player_photos.json"
+          file_pattern: "data/manager/active_events.json data/manager/events/*.json data/manager/market_snapshot.json data/manager/player_photos.json data/manifest.json"

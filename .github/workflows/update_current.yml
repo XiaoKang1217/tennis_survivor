@@ -22,7 +22,9 @@ jobs:
 
       - run: python scripts/fetch_current.py
 
+      - run: python scripts/build_data_manifest.py
+
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Auto update current data"
-          file_pattern: "data/current.json data/daily_jinx_pick_counts.json"
+          file_pattern: "data/current.json data/daily_jinx_pick_counts.json data/manifest.json"
