@@ -1,29 +1,60 @@
 {
   "season": 2026,
-  "station_key": "2026-w27-wimbledon",
-  "station_name": "Wimbledon 2026",
+  "station_key": "2026-w29-bastad-athens",
+  "station_name": "ATP Bastad + WTA Athens",
   "survivor_aligned": true,
   "status": "open",
-  "updated_at": "2026-06-26T12:00:00+08:00",
+  "rules": {
+    "station_grant": 200,
+    "combo_version": "normal_2026_v2",
+    "combo": {
+      "total_cap": 200,
+      "steady": {
+        "min_players": 2,
+        "qf_ratio": 0.5,
+        "gross_rate": 0.08,
+        "cap": 50
+      },
+      "dual_tour": {
+        "QF": 20,
+        "SF": 45,
+        "F": 80
+      },
+      "value_pick": {
+        "tiers": ["C", "D"],
+        "QF": 20,
+        "SF": 45,
+        "F": 80,
+        "W": 125,
+        "max_triggers": 1
+      },
+      "small_budget": {
+        "max_cost": 200,
+        "gross_multipliers": [1, 1.5, 2.5],
+        "bonuses": [20, 50, 90]
+      }
+    }
+  },
+  "updated_at": "2026-07-12T00:00:00+08:00",
   "notes": [
     "经理模块只读取这里声明的 active events，不再从 index.html 硬编码赛站。",
-    "温网签表已由 live-tennis 当前站读取；市场定价按大满贯 128 签积分表生成。",
-    "上一站伊斯特本 + 巴特洪堡保留为我的阵容里的上站比赛入口。"
+    "巴斯塔德与雅典签表由 live-tennis 当前站读取；排名、Elo 与身价由经理模块刷新脚本生成。",
+    "温网尚未全部结算时保留为 previous_station，由结算脚本继续刷新；当前市场只展示巴斯塔德与雅典。"
   ],
   "previous_station": {
-    "station_key": "2026-w25-eastbourne-bad-homburg",
-    "station_name": "ATP Eastbourne + WTA Bad Homburg",
+    "station_key": "2026-w27-wimbledon",
+    "station_name": "Wimbledon 2026",
     "events": [
       {
         "tour": "ATP",
-        "event_key": "atp-2026-w25-eastbourne-lexus-eastbourne-open",
-        "data_file": "events/atp-2026-w25-eastbourne.json",
+        "event_key": "atp-2026-w27-wimbledon",
+        "data_file": "events/atp-2026-w27-wimbledon.json",
         "active": false
       },
       {
         "tour": "WTA",
-        "event_key": "wta-2026-w25-bad-homburg-open",
-        "data_file": "events/wta-2026-w25-bad-homburg.json",
+        "event_key": "wta-2026-w27-wimbledon",
+        "data_file": "events/wta-2026-w27-wimbledon.json",
         "active": false
       }
     ]
@@ -31,14 +62,14 @@
   "events": [
     {
       "tour": "ATP",
-      "event_key": "atp-2026-w27-wimbledon",
-      "data_file": "events/atp-2026-w27-wimbledon.json",
+      "event_key": "atp-2026-w29-bastad-nordea-open",
+      "data_file": "events/atp-2026-w29-bastad.json",
       "active": true
     },
     {
       "tour": "WTA",
-      "event_key": "wta-2026-w27-wimbledon",
-      "data_file": "events/wta-2026-w27-wimbledon.json",
+      "event_key": "wta-2026-w29-athens-open",
+      "data_file": "events/wta-2026-w29-athens.json",
       "active": true
     }
   ]

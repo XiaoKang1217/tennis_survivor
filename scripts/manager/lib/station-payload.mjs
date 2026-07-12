@@ -211,8 +211,21 @@ export function buildStationPayload({ active, events, photoMap = {}, priceVersio
     }
   };
 
+  const configuredGrant = Number(active.rules?.station_grant);
+  const stationConfigRow = {
+    station_key: active.station_key,
+    season: active.season,
+    station_grant: Number.isFinite(configuredGrant) ? Math.max(0, Math.round(configuredGrant)) : null,
+    combo_version: active.rules?.combo_version || 'classic',
+    metadata: {
+      combo: active.rules?.combo || {},
+      source: 'data/manager/active_events.json'
+    }
+  };
+
   return {
     active,
+    stationConfigRow,
     eventRows,
     playerRows: Array.from(playerRowsByKey.values()),
     drawRows,

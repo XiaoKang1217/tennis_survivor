@@ -1,4 +1,14 @@
 {
+  "ATP|max-dahlin": {
+    "ranking": {
+      "rank": 1347,
+      "points": null,
+      "ranking_date": "2026-06-22",
+      "name_en": "Max Dahlin",
+      "source_url": "https://www.itftennis.com/en/players/max-dahlin/800534779/swe/mt/S/overview/",
+      "note": "ITF official profile reports ATP singles ranking No. 1347 on 2026-06-22; used because the ranking feed is truncated at 1200 rows."
+    }
+  },
   "WTA|serena-williams": {
     "ranking": {
       "rank": 129,

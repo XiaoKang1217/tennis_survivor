@@ -345,6 +345,11 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 .manager-sub{font-size:11px;color:#756651;font-weight:850;margin-top:3px;display:flex;gap:5px;flex-wrap:wrap}
 .manager-pill{display:inline-flex;align-items:center;border-radius:999px;background:#f2e2c2;color:#5c421f;padding:2px 7px;font-size:11px;font-weight:900}
 .manager-pill.r{background:#ffe8d7;color:#c2410c}.manager-pill.g{background:#eadfbd;color:#7b5a1e}
+.manager-pill.surface-specialist{border:1px solid transparent}
+.manager-pill.surface-specialist.grass{background:#e7f6d8;color:#357029;border-color:#b9dda0}
+.manager-pill.surface-specialist.clay{background:#ffe3d1;color:#b54720;border-color:#f3b48e}
+.manager-pill.surface-specialist.hard{background:#dbeafe;color:#245f9e;border-color:#93c5fd}
+.manager-pill.surface-specialist.hard-in{background:#e8e4f5;color:#55448c;border-color:#bcb2df}
 .manager-price{font-size:24px;font-weight:950;color:#c45f2d;line-height:1;text-align:right}
 .manager-coin{display:none}
 .manager-price small{font-size:11px;color:#756651;font-weight:800}
@@ -1648,7 +1653,7 @@ function managerRestoreLineupFromSubmittedRecord(){
   return true;
 }
 function managerSurfaceName(s){return ({grass:'草地',clay:'红土',hard_out:'硬地',hard_in:'室内硬地'}[s]||'待接入');}
-function managerSurfaceClass(s){return s==='grass'?'grass':(s==='clay'?'clay':'hard');}
+function managerSurfaceClass(s){return s==='grass'?'grass':(s==='clay'?'clay':(s==='hard_in'?'hard-in':'hard'));}
 function managerLevelName(l){return l==='GS'?'大满贯':((l||'500')+'赛');}
 function managerHashScore(name,salt){var str=(name||'')+'|'+(salt||''),h=0;for(var i=0;i<str.length;i++)h=(h*31+str.charCodeAt(i))%1000003;return h/1000003;}
 function managerSlug(value){return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');}
@@ -1667,6 +1672,8 @@ function managerRules(){
   var minPlayers=cfgs.length?Math.min.apply(null,cfgs.map(function(c){return c.min;})):topCfg.min;
   var maxPlayers=cfgs.length?cfgs.reduce(function(s,c){return s+c.max;},0):topCfg.max;
   var wallet=managerWallet(),stationGrant=cfgs.reduce(function(s,c){return s+c.sideGrant;},0);
+  var configuredGrant=Number(MANAGER_ACTIVE_EVENTS&&MANAGER_ACTIVE_EVENTS.rules&&MANAGER_ACTIVE_EVENTS.rules.station_grant);
+  if(Number.isFinite(configuredGrant)&&configuredGrant>=0)stationGrant=Math.round(configuredGrant);
   return {
     initialWallet:300,
     wallet:wallet,
@@ -2085,6 +2092,8 @@ function managerRoundAtLeast(round,threshold){
   return a>=0&&b>=0&&a>=b;
 }
 function managerComboPolicyForPlayers(players){
+  var configured=MANAGER_ACTIVE_EVENTS&&MANAGER_ACTIVE_EVENTS.rules&&MANAGER_ACTIVE_EVENTS.rules.combo_version;
+  if(configured)return configured;
   var station=managerStationKey();
   if(station==='2026-w27-wimbledon')return 'wimbledon_2026';
   if((players||[]).some(function(p){return /wimbledon/i.test([p.event,p.eventKey].join(' '));}))return 'wimbledon_2026';
@@ -2105,6 +2114,42 @@ function managerClassicComboScenario(gross,rounds){
     {label:'决赛团队',amount:finalBonus,desc:'至少 2 人进决赛 +60'},
     {label:'冠军经纪',amount:champBonus,desc:'至少 1 人夺冠 +40'},
     {label:'慧眼识珠',amount:jewelBonus,desc:'C/D 档进 SF，每人 +30'}
+  ]};
+}
+function managerNormalV2ComboCap(){
+  var configured=Number(MANAGER_ACTIVE_EVENTS&&MANAGER_ACTIVE_EVENTS.rules&&MANAGER_ACTIVE_EVENTS.rules.combo&&MANAGER_ACTIVE_EVENTS.rules.combo.total_cap);
+  return Number.isFinite(configured)&&configured>0?Math.round(configured):200;
+}
+function managerNormalV2ComboScenario(gross,rounds){
+  var players=rounds.map(function(x){return x.player;}),count=players.length,qf=0;
+  rounds.forEach(function(x){if(managerRoundAtLeast(x.round,'QF'))qf++;});
+  var stable=count>=2&&qf/count>=.5?Math.min(50,Math.round(gross*.08)):0;
+  var byTour={ATP:rounds.filter(function(x){return x.player.tour==='ATP';}),WTA:rounds.filter(function(x){return x.player.tour==='WTA';})};
+  function eachTour(threshold){
+    return byTour.ATP.length>0&&byTour.WTA.length>0&&
+      byTour.ATP.some(function(x){return managerRoundAtLeast(x.round,threshold);})&&
+      byTour.WTA.some(function(x){return managerRoundAtLeast(x.round,threshold);});
+  }
+  var dual=eachTour('F')?80:(eachTour('SF')?45:(eachTour('QF')?20:0));
+  var jewel=0;
+  rounds.forEach(function(x){
+    if(x.player.tier!=='C'&&x.player.tier!=='D')return;
+    var value=x.round==='W'?125:(managerRoundAtLeast(x.round,'F')?80:(managerRoundAtLeast(x.round,'SF')?45:(managerRoundAtLeast(x.round,'QF')?20:0)));
+    jewel=Math.max(jewel,value);
+  });
+  var cost=players.reduce(function(sum,p){return sum+(Number(p.price)||0);},0),small=0,stationGrant=managerRules().stationGrant;
+  if(cost>0&&cost<=stationGrant){
+    var multiple=gross/cost;
+    small=multiple>=2.5?90:(multiple>=1.5?50:(multiple>=1?20:0));
+  }
+  var raw=stable+dual+jewel+small;
+  var cap=managerNormalV2ComboCap();
+  var bonus=Math.min(raw,cap);
+  return {gross:gross,stable:stable,finalBonus:dual,champBonus:0,jewelBonus:jewel,smallBusinessBonus:small,dualBonus:dual,bonus:bonus,comboVersion:'normal_2026_v2',comboCap:cap,comboRaw:raw,comboItems:[
+    {label:'稳健经营',amount:stable,desc:'至少2人，50%阵容进QF，毛收益8%，封顶50'},
+    {label:'双线经营',amount:dual,desc:'ATP/WTA各有人进QF/SF/F，最高档+20/+45/+80'},
+    {label:'慧眼识珠',amount:jewel,desc:'一个C/D档球员进QF/SF/F/W，最高档+20/+45/+80/+125'},
+    {label:'小本经营',amount:small,desc:'成本不超过本站签约金，毛收益达到成本1/1.5/2.5倍，最高档+20/+50/+90'}
   ]};
 }
 function managerWimbledonJewelBonus(round){
@@ -2154,7 +2199,10 @@ function managerScoreScenario(players,roundFor){
     gross+=v;
     rounds.push({player:p,round:r,value:v});
   });
-  return managerComboPolicyForPlayers(players)==='wimbledon_2026'?managerWimbledonComboScenario(gross,rounds):managerClassicComboScenario(gross,rounds);
+  var policy=managerComboPolicyForPlayers(players);
+  if(policy==='wimbledon_2026')return managerWimbledonComboScenario(gross,rounds);
+  if(policy==='normal_2026_v2')return managerNormalV2ComboScenario(gross,rounds);
+  return managerClassicComboScenario(gross,rounds);
 }
 function managerBestRoundMap(players){
   var slots=['W','F','SF','SF','QF','QF','QF','QF','R16','R16','R16','R16','R16','R16','R16','R16'],map={};
@@ -2334,7 +2382,7 @@ function managerCalc(){
   var budget=managerBudgetState(rules,spent);
   var stationIncome=managerStationIncomeSummary();
   var legal=players.length>=rules.minPlayers&&players.length<=rules.maxPlayers&&spent<=budget.usableStart;
-  return {players:players,spent:spent,lineupCost:lineupCost,sunkCost:effectiveSunk,budget:budget.usableStart,stationIncome:stationIncome,stationGrant:budget.stationGrant,stationUsed:budget.stationUsed,stationRemaining:budget.stationRemaining,walletStart:budget.walletStart,walletSeasonStart:budget.walletSeasonStart,walletStationStart:budget.walletStationStart,walletCurrent:budget.walletCurrent,walletUsed:budget.walletUsed,remaining:budget.currentAvailable,gross:actual.gross,bonus:actual.bonus,stable:actual.stable,finalBonus:actual.finalBonus,champBonus:actual.champBonus,jewelBonus:actual.jewelBonus,bloomBonus:actual.bloomBonus||0,allR16Bonus:actual.allR16Bonus||0,dualBonus:actual.dualBonus||0,comboVersion:actual.comboVersion,comboCap:actual.comboCap||0,comboRaw:actual.comboRaw??actual.bonus,comboItems:actual.comboItems||[],net:actual.gross+actual.bonus-spent,max:best.gross+best.bonus-spent,maxGross:best.gross,maxBonus:best.bonus,legal:legal,warning:managerPredictionWarning(players),style:managerLineupStyle(players)};
+  return {players:players,spent:spent,lineupCost:lineupCost,sunkCost:effectiveSunk,budget:budget.usableStart,stationIncome:stationIncome,stationGrant:budget.stationGrant,stationUsed:budget.stationUsed,stationRemaining:budget.stationRemaining,walletStart:budget.walletStart,walletSeasonStart:budget.walletSeasonStart,walletStationStart:budget.walletStationStart,walletCurrent:budget.walletCurrent,walletUsed:budget.walletUsed,remaining:budget.currentAvailable,gross:actual.gross,bonus:actual.bonus,stable:actual.stable,finalBonus:actual.finalBonus,champBonus:actual.champBonus,jewelBonus:actual.jewelBonus,bloomBonus:actual.bloomBonus||0,allR16Bonus:actual.allR16Bonus||0,dualBonus:actual.dualBonus||0,smallBusinessBonus:actual.smallBusinessBonus||0,comboVersion:actual.comboVersion,comboCap:actual.comboCap||0,comboRaw:actual.comboRaw??actual.bonus,comboItems:actual.comboItems||[],net:actual.gross+actual.bonus-spent,max:best.gross+best.bonus-spent,maxGross:best.gross,maxBonus:best.bonus,legal:legal,warning:managerPredictionWarning(players),style:managerLineupStyle(players)};
 }
 function managerLineupStyle(players){
   if(!players.length)return '待建仓';
@@ -3145,7 +3193,7 @@ function managerPlayerDetail(p){
 }
 function managerPlayerRow(p){
   var sel=managerSelected(p.id);
-  var specialist=managerSurfaceSpecialist(p)?'<span class="manager-pill g">场地专精</span>':'';
+  var specialist=managerSurfaceSpecialist(p)?'<span class="manager-pill surface-specialist '+managerSurfaceClass(p.surface)+'">场地专精</span>':'';
   return '<div class="manager-row '+(sel?'sel':'')+'">'+managerPlayerAvatar(p)+'<div class="manager-row-main">'+managerPlayerTitleHtml(p)+'<div class="manager-sub"><span class="manager-pill">'+p.tier+'档</span>'+specialist+'<span class="manager-pill r">模型预计 '+managerMostLikelyRoundDisplay(p)+'及以上</span></div></div><div class="manager-price">'+managerMoneyAmount(p.price,'compact')+'</div><div class="manager-bars">'+managerBar('实力',p.base)+managerBar('场地',p.surfaceScore)+managerBar('签表',p.draw)+managerBar('状态',p.form)+'</div><div class="manager-actions"><button class="manager-clear" data-manager-action="detail" data-manager-id="'+esc(p.id)+'">'+(MANAGER_DETAIL_ID===p.id?'收起':'详情')+'</button><button class="manager-action '+(sel?'secondary':'')+'" data-manager-action="'+(sel?'calc':'add')+'" data-manager-id="'+esc(p.id)+'">'+(sel?'去测算':'加入阵容')+'</button></div>'+(MANAGER_DETAIL_ID===p.id?managerPlayerDetail(p):'')+'</div>';
 }
 function managerRenderMarket(){
@@ -3156,6 +3204,7 @@ function managerRenderMarket(){
 }
 function managerComboBrief(c){
   if(c.comboVersion==='wimbledon_2026')return '多点开花 '+(c.bloomBonus||0)+' / 全员进阶 '+(c.allR16Bonus||0)+' / 双线经营 '+(c.dualBonus||0)+' / 慧眼识珠 '+(c.jewelBonus||0)+' / 冠军经纪 '+(c.champBonus||0)+' / 合计 '+c.bonus+(c.comboRaw>c.bonus?'（封顶 '+c.comboCap+'）':'');
+  if(c.comboVersion==='normal_2026_v2')return '稳健经营 '+(c.stable||0)+' / 双线经营 '+(c.dualBonus||0)+' / 慧眼识珠 '+(c.jewelBonus||0)+' / 小本经营 '+(c.smallBusinessBonus||0)+' / 合计 '+c.bonus+(c.comboRaw>c.bonus?'（封顶 '+c.comboCap+'）':'');
   return '稳健 '+c.stable+' / 决赛团队 '+c.finalBonus+' / 冠军经纪 '+c.champBonus+' / 慧眼识珠 '+c.jewelBonus;
 }
 function managerSpendBreakdownText(c){
@@ -3174,9 +3223,26 @@ function managerWimbledonComboRulesHtml(){
 function managerWimbledonComboRuleCard(){
   return '<div class="manager-rule-card manager-combo-rule-card"><b>温网 Combo</b>'+managerWimbledonComboRulesHtml()+'</div>';
 }
+function managerNormalV2ComboRulesHtml(){
+  return managerComboRuleSection('稳健经营',['阵容至少 2 人才触发。','至少 50% 阵容进入 8 强，奖励毛收益的 8%，封顶 50。'])+
+    managerComboRuleSection('双线经营',['阵容里 ATP/WTA 都有人。','ATP/WTA 各至少 1 人进入 QF/SF/F：+20/+45/+80。','只取最高档。'])+
+    managerComboRuleSection('慧眼识珠',['一个 C/D 档球员进入 QF/SF/F/W：+20/+45/+80/+125。','每个阵容最多触发 1 次，只取最高档。'])+
+    managerComboRuleSection('小本经营',['阵容成本不超过本站签约金 '+managerMoneyAmount(managerRules().stationGrant,'inline')+'。','毛收益达到阵容成本的 1/1.5/2.5 倍：+20/+50/+90。','只取最高档。'])+
+    managerComboRuleSection('本站 Combo 总额封顶 '+managerNormalV2ComboCap(),[]);
+}
+function managerNormalV2ComboRuleCard(){
+  return '<div class="manager-rule-card manager-combo-rule-card"><b>本站 Combo</b>'+managerNormalV2ComboRulesHtml()+'</div>';
+}
+function managerCurrentComboRuleCard(){
+  var policy=managerComboPolicyForPlayers(managerLineupPlayers());
+  if(policy==='normal_2026_v2')return managerNormalV2ComboRuleCard();
+  if(policy==='wimbledon_2026')return managerWimbledonComboRuleCard();
+  return managerRuleCard('本站 Combo',['稳健：60% 阵容进 8 强，毛收益 +8%，封顶 80。','决赛团队：至少 2 人进决赛，+60。','冠军经纪：至少 1 人夺冠，+40。','慧眼识珠：C/D 档进 4 强，每人 +30。']);
+}
 function managerCalculatorComboRulesHtml(c){
-  if(c.comboVersion!=='wimbledon_2026')return '';
-  return '<div style="margin-top:12px">'+managerWimbledonComboRuleCard()+'</div>';
+  if(c.comboVersion==='normal_2026_v2')return '<div style="margin-top:12px">'+managerNormalV2ComboRuleCard()+'</div>';
+  if(c.comboVersion==='wimbledon_2026')return '<div style="margin-top:12px">'+managerWimbledonComboRuleCard()+'</div>';
+  return '';
 }
 function managerRenderCalculator(){
   var c=managerCalc(),rows=c.players.map(function(p){var val=MANAGER_PREDICTIONS[p.id]||'OUT',rv=managerRoundValue(val,p.level,p.tour,p.drawSize);return '<tr><td><b>'+esc(managerPlayerDisplayName(p,true))+'</b><div class="manager-sub">'+p.tour+' · '+p.tier+'档 · '+p.drawSize+'签 · 身价 '+managerMoneyAmount(p.price,'inline')+'</div></td><td><select data-manager-pred="'+esc(p.id)+'">'+managerRoundOptions(p).map(function(r){return '<option value="'+r.key+'" '+(val===r.key?'selected':'')+'>'+r.label+' / +'+managerRoundValue(r.key,p.level,p.tour,p.drawSize)+'</option>';}).join('')+'</select></td><td>'+rv+'</td><td>'+(rv-p.price)+'</td><td>'+managerBreakEvenDisplay(p.breakEven)+'</td></tr>';}).join('');
@@ -3268,18 +3334,18 @@ function managerRenderRules(){
     '<details open><summary>一、货币系统与获取渠道</summary><div class="rule-body"><div class="manager-rule-grid">'+
       managerRuleCard('真实可用额度',['本站可签约额度 = 经纪人钱包 + 本站签约金。','签约时优先消耗本站签约金。','超出部分占用经纪人钱包。'])+
       managerRuleCard('经纪人钱包',['新赛季初始 300。','可跨站结转。','提交奖励、球员净收益进入钱包。'])+
-      managerRuleCard('本站签约金',['视该站阵容、签表、赛事等级确定。','每一站数据由模型精准计算后定价。','温网本站签约金 2500。','未使用部分本站结束后作废。'])+
+      managerRuleCard('本站签约金',['视该站阵容、签表、赛事等级确定。','每一站数据由模型精准计算后定价。','本站签约金 '+managerMoneyAmount(managerRules().stationGrant,'inline')+'。','未使用部分本站结束后作废。'])+
       managerRuleCard('获取渠道',['开户 +300。','提交阵容 +10。','球员收益按积分表逐日/最终结算。'])+
     '</div></div></details>'+
     '<details open><summary>二、买人数量、提交截止、换人窗口和收益表</summary><div class="rule-body"><div class="manager-rule-grid">'+
       managerRuleCard('买人数量',['250：1-2 人。','500：1-2 人。','1000：2-3 人。','大满贯：2-4 人。',current])+
-      managerRuleCard('提交截止',['每站阵容提交截止为 R1 第一场正赛开始前 15 分钟。','本站截止时间：'+managerSubmissionWindowInfo().label+'。','温网提交截止：06/29 17:45。','超过截止后提交会被前端和后台同时拦截。'])+
+      managerRuleCard('提交截止',['每站阵容提交截止为 R1 第一场正赛开始前 15 分钟。','本站截止时间：'+managerSubmissionWindowInfo().label+'。','超过截止后提交会被前端和后台同时拦截。'])+
       managerRuleCard('换人窗口',transferLines)+
       managerRuleCard('身价公式',['基础实力 35%。','场地适配 25%。','签表路径 20%。','近期状态 15%。','人工校正 5%，Demo 中为 0。'])+
     '</div>'+managerRewardTable()+'</div></details>'+
     '<details open><summary>三、每日结算、Combo 与策略边界</summary><div class="rule-body"><div class="manager-rule-grid">'+
       managerRuleCard('每日结算',['每天抓取昨天完赛结果。','同一合同按新到达轮次补差额，不重复发放。','结算同步到我的阵容、配置大厅和公共榜单。','最终净收益 = 累计积分收益 + Combo - 成本。'])+
-      managerWimbledonComboRuleCard()+
+      managerCurrentComboRuleCard()+
       managerRuleCard('上一站 Combo',['伊斯特本 + 巴特洪堡仍按旧规则结算。','稳健：60% 阵容进 8 强，毛收益 +8%，封顶 80。','决赛团队：至少 2 人进决赛，+60。','冠军经纪：至少 1 人夺冠，+40。','慧眼识珠：C/D 档进 4 强，每人 +30。'])+
       managerRuleCard('退赛替补',['球员 R1 开打后退赛，按实际赛果结算。','球员 R1 上场前退赛且签位被替补顶替，购买该球员的合同统一替换为顶替签位的新球员。','替补记录写入后台替补表和我的收益备注。'])+
       managerRuleCard('策略流派',['巨星核心流。','均衡基金流。','冷门伯乐流。','场地专家流。','调仓止损流。','大满贯攒钱流。'])+
@@ -3322,7 +3388,8 @@ function managerRenderStationNetBoard(){
   var meta=managerPublicBoardStationMeta();
   var list=Array.isArray(MANAGER_REMOTE_STATION_NET_BOARD)?MANAGER_REMOTE_STATION_NET_BOARD:[],pager=managerPaginate(list,MANAGER_STATION_NET_PAGE,10);
   MANAGER_STATION_NET_PAGE=pager.page;
-  var note='<div class="manager-note" style="margin-bottom:10px">当前展示：'+esc(meta.stationName)+'。'+(meta.isPrevious?'温网尚未开赛，先展示上一站结算榜；温网开赛后自动切换为温网。':'当前站已开赛，展示当前站结算榜。')+'</div>';
+  var currentStationName=managerStationName();
+  var note='<div class="manager-note" style="margin-bottom:10px">当前展示：'+esc(meta.stationName)+'。'+(meta.isPrevious?esc(currentStationName)+'尚未开赛，先展示上一站结算榜；开赛后自动切换为'+esc(currentStationName)+'。':'当前站已开赛，展示当前站结算榜。')+'</div>';
   if(!pager.items.length)return note+'<div class="manager-empty">'+((MANAGER_REMOTE_PUBLIC_LOADING&&!MANAGER_REMOTE_PUBLIC_SYNC_KEY)?'正在加载本站净收益榜...':esc(meta.stationName)+' 净收益榜等待真实结算数据。')+'</div>';
   var rows=pager.items.map(function(x,i){
     var rank=x.rank||pager.start+i;
@@ -3383,7 +3450,11 @@ function renderManagerDemo(){
   var panelTitle='<div class="manager-panel-title"><span>'+viewTitle+'</span>'+(MANAGER_VIEW==='market'?marketTabs:'')+'</div>';
   var panelHead='<div class="manager-panel-h">'+panelTitle+(MANAGER_VIEW==='market'?managerEventMetaHtml(rules):'')+'</div>';
   var dialog=MANAGER_DIALOG?'<div class="manager-dialog"><div class="manager-dialog-card"><h3>'+esc(MANAGER_DIALOG.title)+'</h3><p>'+esc(MANAGER_DIALOG.msg).replace(/\n/g,'<br>')+'</p>'+(MANAGER_DIALOG.strong?'<div class="manager-dialog-strong">'+esc(MANAGER_DIALOG.strong).replace(/\n/g,'<br>')+'</div>':'')+'<div class="manager-actions">'+(MANAGER_DIALOG.confirmAction?'<button class="manager-clear" data-manager-action="close-dialog">'+esc(MANAGER_DIALOG.cancelLabel||'取消')+'</button><button class="manager-action" data-manager-action="'+esc(MANAGER_DIALOG.confirmAction)+'">'+esc(MANAGER_DIALOG.confirmLabel||'确定')+'</button>':'<button class="manager-action" data-manager-action="close-dialog">知道了</button>')+'</div></div></div>':'';
-  var wechat='<div class="manager-wechat-card"><div class="manager-wechat-copy"><div class="manager-wechat-alert">温网已截止提交！请等待换人窗口，窗口期为7.1 8:00-17:45</div><div class="manager-wechat-line main">本游戏每周跟随巡回赛历开新赛事</div><div class="manager-wechat-line">如需 <span class="manager-wechat-em">开售提醒</span>、<span class="manager-wechat-em">换人窗口提醒</span> 请扫码进本游戏官方群</div></div><img class="manager-wechat-qr" src="assets/manager/wechat-group-qr.jpg" alt="微信群二维码" width="92" height="122" loading="eager" decoding="async" fetchpriority="high"></div>';
+  var submissionWindow=managerSubmissionWindowInfo();
+  var stationNotice=submissionWindow.status==='open'
+    ?managerStationName()+'已开售！阵容提交截止：'+submissionWindow.label
+    :(submissionWindow.status==='closed'?managerStationName()+'已截止提交，请等待换人窗口。':managerStationName()+'开售时间待确认。');
+  var wechat='<div class="manager-wechat-card"><div class="manager-wechat-copy"><div class="manager-wechat-alert">'+esc(stationNotice)+'</div><div class="manager-wechat-line main">本游戏每周跟随巡回赛历开新赛事</div><div class="manager-wechat-line">如需 <span class="manager-wechat-em">开售提醒</span>、<span class="manager-wechat-em">换人窗口提醒</span> 请扫码进本游戏官方群</div></div><img class="manager-wechat-qr" src="assets/manager/wechat-group-qr.jpg" alt="微信群二维码" width="92" height="122" loading="eager" decoding="async" fetchpriority="high"></div>';
   var qaBanner=managerLocalQaMode()?'<div class="manager-note" style="margin-bottom:10px"><b>本地换人测试模式：</b>提交和换人窗口均已开放；所有操作只保存在当前浏览器，不会写入线上 Supabase。</div>':'';
   root.innerHTML='<div class="manager-shell">'+qaBanner+'<div class="manager-hero"><div class="manager-title"><div><div class="manager-title-line"><h2>巡回赛经纪人</h2><button class="manager-clear" data-manager-view="rules">查看规则</button><span class="manager-settle-note">每天09:37结算</span></div><p>组建你的球员阵容，在巡回赛里征战！<br>在公开市场上购买球员，球员成绩越好，你赚的越多，收益按巡回赛积分计算。<br>你不只懂网球，你是在做预算、风险和轮次收益的组合策略。</p></div></div>'+wechat+'<img class="manager-hero-art" src="assets/manager/agent-money-bag.webp" alt="" loading="lazy" decoding="async" fetchpriority="low"></div>'+managerRenderMoney(c,rules)+tabs+'<div class="manager-grid view-'+MANAGER_VIEW+' '+(showSide?'':'single')+'"><div class="manager-panel">'+panelHead+'<div class="manager-panel-b">'+managerRenderBody()+'</div></div>'+(showSide?managerSidebar(c,rules):'')+'</div>'+seoFaqLinkHtml()+dialog+'</div>';
 }
@@ -3615,7 +3686,7 @@ function managerRenderPreviousStation(){
   var earned=contracts.reduce(function(s,x){return s+(Number(x.earned_points)||0);},0);
   var currentRows=active.map(managerRenderPreviousPlayerCard).join('');
   var replacedRows=replaced.map(managerRenderPreviousPlayerCard).join('');
-  return '<div class="manager-status-line">上站比赛：'+esc(prev.station_name||'上站比赛')+'。这里保留旧站阵容，只读展示，不影响温网市场和新站提交。</div><div class="manager-my-summary-grid"><div class="manager-my-highlight"><h4>上站阵容汇总</h4><div class="manager-kv"><div><span>合同数</span><b>'+players.length+' 人</b></div><div><span>当前阵容</span><b>'+active.length+' 人</b></div><div><span>换下球员</span><b>'+replaced.length+' 人</b></div><div><span>累计收益</span><b>'+earned+'</b></div></div></div></div><div class="manager-roster-title">当前阵容</div><div class="manager-my-lineup">'+(currentRows||'<div class="manager-empty">暂无当前阵容。</div>')+'</div>'+(replacedRows?'<div class="manager-roster-title" style="margin-top:14px">换下球员</div><div class="manager-my-lineup">'+replacedRows+'</div>':'');
+  return '<div class="manager-status-line">上站比赛：'+esc(prev.station_name||'上站比赛')+'。这里保留旧站阵容，只读展示，不影响'+esc(managerStationName())+'市场和新站提交。</div><div class="manager-my-summary-grid"><div class="manager-my-highlight"><h4>上站阵容汇总</h4><div class="manager-kv"><div><span>合同数</span><b>'+players.length+' 人</b></div><div><span>当前阵容</span><b>'+active.length+' 人</b></div><div><span>换下球员</span><b>'+replaced.length+' 人</b></div><div><span>累计收益</span><b>'+earned+'</b></div></div></div></div><div class="manager-roster-title">当前阵容</div><div class="manager-my-lineup">'+(currentRows||'<div class="manager-empty">暂无当前阵容。</div>')+'</div>'+(replacedRows?'<div class="manager-roster-title" style="margin-top:14px">换下球员</div><div class="manager-my-lineup">'+replacedRows+'</div>':'');
 }
 async function managerLoadRemoteState(opts){
   opts=opts||{};
@@ -4180,7 +4251,7 @@ function authErrorText(err){
   if(/submission_window_pending/i.test(msg))return '本站提交截止时间待赛程确认，请等待赛程更新后再提交。';
   if(/submission_window_not_open/i.test(msg))return '本站阵容提交还没有开始。';
   if(/submission_window_closed/i.test(msg))return '本站阵容提交已截止。';
-  if(/station_not_found/i.test(msg))return '后端还没同步当前赛站数据，所以暂时不能提交。请先同步温网经纪人数据后再试。';
+  if(/station_not_found/i.test(msg))return '后端还没同步当前赛站数据，所以暂时不能提交。请先同步'+managerStationName()+'经纪人数据后再试。';
   if(/lineup_not_submitted/i.test(msg))return '没有找到可撤回的已提交阵容。';
   if(/lineup_with_activity/i.test(msg))return '阵容已经产生比赛收益或换人记录，不能撤回。';
   if(/insufficient_wallet_for_withdraw/i.test(msg))return '钱包余额不足以扣回提交奖励，暂时不能撤回。';

@@ -1059,20 +1059,30 @@ function expectedRoundMarketPrice(player, event, simulation) {
   const result = simulation.result.get(key);
   const expectedPoints = Number(result?.expected_points ?? player.expected_points ?? 0);
   const table = pointsFor(event);
-  const minPrice = event.tour === 'WTA' ? 90 : 80;
-  const maxPrice = (table.W || 2000) * 0.65;
-  const anchors = [
-    { points: 0, price: minPrice },
-    { points: table.R128 ?? 10, price: minPrice },
-    { points: table.R64 ?? 50, price: 165 },
-    { points: table.R32 ?? 100, price: 310 },
-    { points: table.R16 ?? 200, price: 470 },
-    { points: table.QF ?? 400, price: 650 },
-    { points: table.SF ?? 800, price: 880 },
-    { points: table.F ?? 1300, price: 1160 },
-    { points: table.W ?? 2000, price: maxPrice }
-  ].sort((a, b) => a.points - b.points);
-  const basePrice = interpolate(expectedPoints, anchors);
+  const winnerPoints = table.W || 2000;
+  const isGrandSlam = /^(?:GS|SLAM)$/i.test(String(event.level || '')) || winnerPoints >= 2000;
+  const minPrice = isGrandSlam
+    ? (event.tour === 'WTA' ? 90 : 80)
+    : Math.max(15, winnerPoints * (event.tour === 'WTA' ? 0.06 : 0.05));
+  const maxPrice = winnerPoints * 0.65;
+  let basePrice;
+  if (isGrandSlam) {
+    const anchors = [
+      { points: 0, price: minPrice },
+      { points: table.R128 ?? 10, price: minPrice },
+      { points: table.R64 ?? 50, price: 165 },
+      { points: table.R32 ?? 100, price: 310 },
+      { points: table.R16 ?? 200, price: 470 },
+      { points: table.QF ?? 400, price: 650 },
+      { points: table.SF ?? 800, price: 880 },
+      { points: table.F ?? 1300, price: 1160 },
+      { points: winnerPoints, price: maxPrice }
+    ].sort((a, b) => a.points - b.points);
+    basePrice = interpolate(expectedPoints, anchors);
+  } else {
+    const expectedShare = clamp(expectedPoints / Math.max(1, winnerPoints), 0, 1);
+    basePrice = minPrice + (maxPrice - minPrice) * (expectedShare ** 0.68);
+  }
   const scores = player.scores || {};
   const strength = (Number(scores.base ?? 50) * 0.42)
     + (Number(scores.surface ?? 50) * 0.38)
@@ -1282,11 +1292,11 @@ function updateEventPrices(event, rankings, elos, warnings, snapshotDate, aliase
       tier: priceTier(price, event),
       pricing_detail: {
         ...(player.pricing_detail || {}),
-        preview_formula_version: 'preview-expected-round-v1',
+        preview_formula_version: 'preview-expected-round-v2',
         preview_generated_at: new Date().toISOString(),
         preview_notes: preserveInheritedPrice
           ? 'Effective Elo bracket simulation was run, but pre-R1 substitution keeps original inherited contract price.'
-          : 'Effective Elo bracket simulation; price is primarily mapped from expected_points/expected_round with a small strength/form modifier.',
+          : 'Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.',
         expected_pricing_effective_elo: result.effective_elo
       }
     };
@@ -1299,7 +1309,7 @@ function updateEventPrices(event, rankings, elos, warnings, snapshotDate, aliase
         ...WEIGHTS,
         formula_version: 'build-prices-v1',
         generated_at: new Date().toISOString(),
-        preview_formula_version: 'preview-expected-round-v1',
+        preview_formula_version: 'preview-expected-round-v2',
         preview_generated_at: new Date().toISOString()
       },
       players: updatedPlayers
@@ -1311,7 +1321,7 @@ function updateEventPrices(event, rankings, elos, warnings, snapshotDate, aliase
 function snapshotFor(active, events, sourceStatus, warnings) {
   return {
     generated_at: new Date().toISOString(),
-    preview_formula_version: 'preview-expected-round-v1',
+    preview_formula_version: 'preview-expected-round-v2',
     station_key: active.station_key,
     station_name: active.station_name,
     season: active.season,

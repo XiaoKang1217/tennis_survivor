@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-26T18:45:00.000Z",
+  "updated_at": "2026-07-12T03:05:26.848Z",
   "fallbacks": {
     "ATP": "assets/manager/players/fallback-atp.svg",
     "WTA": "assets/manager/players/fallback-wta.svg"
@@ -485,6 +485,437 @@
       "status": "ready",
       "storage_path": null,
       "updated_at": "2026-06-26T18:45:00.000Z"
+    },
+    "ATP|andrey-rublev": {
+      "photo_url": "assets/manager/players/atp/atp-andrey-rublev.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/RE44",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/atp/atp-andrey-rublev.jpg",
+      "updated_at": "2026-07-12T03:02:40.592Z"
+    },
+    "ATP|nicolai-budkov-kjaer": {
+      "photo_url": "assets/manager/players/atp/atp-nicolai-budkov-kjaer.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/B0U4",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/atp/atp-nicolai-budkov-kjaer.jpg",
+      "updated_at": "2026-07-12T03:02:42.714Z"
+    },
+    "ATP|andrea-pellegrino": {
+      "photo_url": "assets/manager/players/atp/atp-andrea-pellegrino.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/PH64",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/atp/atp-andrea-pellegrino.jpg",
+      "updated_at": "2026-07-12T03:02:45.289Z"
+    },
+    "ATP|jesper-de-jong": {
+      "photo_url": "assets/manager/players/atp/atp-jesper-de-jong.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/D0C1",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/atp/atp-jesper-de-jong.jpg",
+      "updated_at": "2026-07-12T03:02:48.074Z"
+    },
+    "ATP|vilius-gaubas": {
+      "photo_url": "assets/manager/players/atp/atp-vilius-gaubas.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/G0FW",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/atp/atp-vilius-gaubas.jpg",
+      "updated_at": "2026-07-12T03:02:50.538Z"
+    },
+    "ATP|max-dahlin": {
+      "photo_url": "assets/manager/players/atp/atp-max-dahlin.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/D0I5",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/atp/atp-max-dahlin.jpg",
+      "updated_at": "2026-07-12T03:02:53.945Z"
+    },
+    "ATP|sebastian-baez": {
+      "photo_url": "assets/manager/players/atp/atp-sebastian-baez.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/B0BI",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/atp/atp-sebastian-baez.jpg",
+      "updated_at": "2026-07-12T03:02:57.638Z"
+    },
+    "ATP|alejandro-tabilo": {
+      "photo_url": "assets/manager/players/atp/atp-alejandro-tabilo.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/TE30",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/atp/atp-alejandro-tabilo.jpg",
+      "updated_at": "2026-07-12T03:03:00.877Z"
+    },
+    "ATP|facundo-diaz-acosta": {
+      "photo_url": "assets/manager/players/atp/atp-facundo-diaz-acosta.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/D0CG",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/atp/atp-facundo-diaz-acosta.jpg",
+      "updated_at": "2026-07-12T03:03:03.386Z"
+    },
+    "ATP|qualifier-12": {
+      "photo_url": "assets/manager/players/fallback-atp.svg",
+      "photo_source": "qualifier placeholder",
+      "status": "missing",
+      "storage_path": null,
+      "updated_at": "2026-07-12T03:03:03.387Z"
+    },
+    "ATP|jan-choinski": {
+      "photo_url": "assets/manager/players/atp/atp-jan-choinski.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/CH12",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/atp/atp-jan-choinski.jpg",
+      "updated_at": "2026-07-12T03:03:05.867Z"
+    },
+    "ATP|nikoloz-basilashvili": {
+      "photo_url": "assets/manager/players/atp/atp-nikoloz-basilashvili.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/BG23",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/atp/atp-nikoloz-basilashvili.jpg",
+      "updated_at": "2026-07-12T03:03:09.040Z"
+    },
+    "ATP|sebastian-ofner": {
+      "photo_url": "assets/manager/players/atp/atp-sebastian-ofner.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/O513",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/atp/atp-sebastian-ofner.jpg",
+      "updated_at": "2026-07-12T03:03:11.863Z"
+    },
+    "ATP|botic-van-de-zandschulp": {
+      "photo_url": "assets/manager/players/atp/atp-botic-van-de-zandschulp.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/V812",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/atp/atp-botic-van-de-zandschulp.jpg",
+      "updated_at": "2026-07-12T03:03:14.678Z"
+    },
+    "ATP|qualifier-18": {
+      "photo_url": "assets/manager/players/fallback-atp.svg",
+      "photo_source": "qualifier placeholder",
+      "status": "missing",
+      "storage_path": null,
+      "updated_at": "2026-07-12T03:03:14.678Z"
+    },
+    "ATP|adolfo-daniel-vallejo": {
+      "photo_url": "assets/manager/players/atp/atp-adolfo-daniel-vallejo.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/V0DP",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/atp/atp-adolfo-daniel-vallejo.jpg",
+      "updated_at": "2026-07-12T03:03:17.085Z"
+    },
+    "ATP|qualifier-20": {
+      "photo_url": "assets/manager/players/fallback-atp.svg",
+      "photo_source": "qualifier placeholder",
+      "status": "missing",
+      "storage_path": null,
+      "updated_at": "2026-07-12T03:03:17.085Z"
+    },
+    "ATP|stefano-travaglia": {
+      "photo_url": "assets/manager/players/atp/atp-stefano-travaglia.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/TA12",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/atp/atp-stefano-travaglia.jpg",
+      "updated_at": "2026-07-12T03:03:19.704Z"
+    },
+    "ATP|qualifier-22": {
+      "photo_url": "assets/manager/players/fallback-atp.svg",
+      "photo_source": "qualifier placeholder",
+      "status": "missing",
+      "storage_path": null,
+      "updated_at": "2026-07-12T03:03:19.704Z"
+    },
+    "ATP|mariano-navone": {
+      "photo_url": "assets/manager/players/atp/atp-mariano-navone.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/N0BS",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/atp/atp-mariano-navone.jpg",
+      "updated_at": "2026-07-12T03:03:22.632Z"
+    },
+    "ATP|nuno-borges": {
+      "photo_url": "assets/manager/players/atp/atp-nuno-borges.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/BT72",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/atp/atp-nuno-borges.jpg",
+      "updated_at": "2026-07-12T03:03:24.879Z"
+    },
+    "ATP|moise-kouame": {
+      "photo_url": "assets/manager/players/atp/atp-moise-kouame.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/K0O4",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/atp/atp-moise-kouame.jpg",
+      "updated_at": "2026-07-12T03:03:27.290Z"
+    },
+    "ATP|dalibor-svrcina": {
+      "photo_url": "assets/manager/players/atp/atp-dalibor-svrcina.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/S0GD",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/atp/atp-dalibor-svrcina.jpg",
+      "updated_at": "2026-07-12T03:03:29.440Z"
+    },
+    "ATP|grigor-dimitrov": {
+      "photo_url": "assets/manager/players/atp/atp-grigor-dimitrov.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/D875",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/atp/atp-grigor-dimitrov.jpg",
+      "updated_at": "2026-07-12T03:03:32.027Z"
+    },
+    "ATP|hugo-gaston": {
+      "photo_url": "assets/manager/players/atp/atp-hugo-gaston.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/G09O",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/atp/atp-hugo-gaston.jpg",
+      "updated_at": "2026-07-12T03:03:35.445Z"
+    },
+    "ATP|luciano-darderi": {
+      "photo_url": "assets/manager/players/atp/atp-luciano-darderi.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/D0FJ",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/atp/atp-luciano-darderi.jpg",
+      "updated_at": "2026-07-12T03:03:37.544Z"
+    },
+    "WTA|ajla-tomljanovic": {
+      "photo_url": "assets/manager/players/wta/wta-ajla-tomljanovic.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/315232",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-ajla-tomljanovic.jpg",
+      "updated_at": "2026-07-12T03:03:44.368Z"
+    },
+    "WTA|sapfo-sakellaridi": {
+      "photo_url": "assets/manager/players/wta/wta-sapfo-sakellaridi.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/327193",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-sapfo-sakellaridi.jpg",
+      "updated_at": "2026-07-12T03:03:47.323Z"
+    },
+    "WTA|qualifier-4": {
+      "photo_url": "assets/manager/players/fallback-wta.svg",
+      "photo_source": "qualifier placeholder",
+      "status": "missing",
+      "storage_path": null,
+      "updated_at": "2026-07-12T03:03:47.323Z"
+    },
+    "WTA|marianne-argyrokastriti": {
+      "photo_url": "assets/manager/players/wta/wta-marianne-argyrokastriti.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/327469",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-marianne-argyrokastriti.jpg",
+      "updated_at": "2026-07-12T03:03:50.965Z"
+    },
+    "WTA|qualifier-6": {
+      "photo_url": "assets/manager/players/fallback-wta.svg",
+      "photo_source": "qualifier placeholder",
+      "status": "missing",
+      "storage_path": null,
+      "updated_at": "2026-07-12T03:03:50.965Z"
+    },
+    "WTA|sara-bejlek": {
+      "photo_url": "assets/manager/players/wta/wta-sara-bejlek.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/330375",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-sara-bejlek.jpg",
+      "updated_at": "2026-07-12T03:03:56.866Z"
+    },
+    "WTA|barbora-krejcikova": {
+      "photo_url": "assets/manager/players/wta/wta-barbora-krejcikova.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/318314",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-barbora-krejcikova.jpg",
+      "updated_at": "2026-07-12T03:04:01.336Z"
+    },
+    "WTA|viktoriya-tomova": {
+      "photo_url": "assets/manager/players/wta/wta-viktoriya-tomova.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/317584",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-viktoriya-tomova.jpg",
+      "updated_at": "2026-07-12T03:04:05.059Z"
+    },
+    "WTA|carole-monnet": {
+      "photo_url": "assets/manager/players/wta/wta-carole-monnet.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/325991",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-carole-monnet.jpg",
+      "updated_at": "2026-07-12T03:04:09.752Z"
+    },
+    "WTA|rebeka-masarova": {
+      "photo_url": "assets/manager/players/wta/wta-rebeka-masarova.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/322087",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-rebeka-masarova.jpg",
+      "updated_at": "2026-07-12T03:04:14.220Z"
+    },
+    "WTA|martha-matoula": {
+      "photo_url": "assets/manager/players/wta/wta-martha-matoula.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/321132",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-martha-matoula.jpg",
+      "updated_at": "2026-07-12T03:04:19.478Z"
+    },
+    "WTA|qualifier-14": {
+      "photo_url": "assets/manager/players/fallback-wta.svg",
+      "photo_source": "qualifier placeholder",
+      "status": "missing",
+      "storage_path": null,
+      "updated_at": "2026-07-12T03:04:19.478Z"
+    },
+    "WTA|zheng-qinwen": {
+      "photo_url": "assets/manager/players/wta/wta-zheng-qinwen.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/328120",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-zheng-qinwen.jpg",
+      "updated_at": "2026-07-12T03:04:22.553Z"
+    },
+    "WTA|jessica-bouzas-maneiro": {
+      "photo_url": "assets/manager/players/wta/wta-jessica-bouzas-maneiro.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/328139",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-jessica-bouzas-maneiro.jpg",
+      "updated_at": "2026-07-12T03:04:27.307Z"
+    },
+    "WTA|magda-linette": {
+      "photo_url": "assets/manager/players/wta/wta-magda-linette.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/315130",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-magda-linette.jpg",
+      "updated_at": "2026-07-12T03:04:32.526Z"
+    },
+    "WTA|hontama-mai": {
+      "photo_url": "assets/manager/players/wta/wta-hontama-mai.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/324750",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-hontama-mai.jpg",
+      "updated_at": "2026-07-12T03:04:37.023Z"
+    },
+    "WTA|valentini-grammatikopoulou": {
+      "photo_url": "assets/manager/players/wta/wta-valentini-grammatikopoulou.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/319250",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-valentini-grammatikopoulou.jpg",
+      "updated_at": "2026-07-12T03:04:42.539Z"
+    },
+    "WTA|alycia-parks": {
+      "photo_url": "assets/manager/players/wta/wta-alycia-parks.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/326007",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-alycia-parks.jpg",
+      "updated_at": "2026-07-12T03:04:46.551Z"
+    },
+    "WTA|qualifier-21": {
+      "photo_url": "assets/manager/players/fallback-wta.svg",
+      "photo_source": "qualifier placeholder",
+      "status": "missing",
+      "storage_path": null,
+      "updated_at": "2026-07-12T03:04:46.551Z"
+    },
+    "WTA|harriet-dart": {
+      "photo_url": "assets/manager/players/wta/wta-harriet-dart.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/319489",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-harriet-dart.jpg",
+      "updated_at": "2026-07-12T03:04:50.876Z"
+    },
+    "WTA|polina-kudermetova": {
+      "photo_url": "assets/manager/players/wta/wta-polina-kudermetova.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/328897",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-polina-kudermetova.jpg",
+      "updated_at": "2026-07-12T03:04:55.307Z"
+    },
+    "WTA|maria-sakkari": {
+      "photo_url": "assets/manager/players/wta/wta-maria-sakkari.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/318312",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-maria-sakkari.jpg",
+      "updated_at": "2026-07-12T03:04:59.519Z"
+    },
+    "WTA|tereza-valentova": {
+      "photo_url": "assets/manager/players/wta/wta-tereza-valentova.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/330808",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-tereza-valentova.jpg",
+      "updated_at": "2026-07-12T03:05:04.767Z"
+    },
+    "WTA|sofia-costoulas": {
+      "photo_url": "assets/manager/players/wta/wta-sofia-costoulas.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/330451",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-sofia-costoulas.jpg",
+      "updated_at": "2026-07-12T03:05:10.370Z"
+    },
+    "WTA|anna-blinkova": {
+      "photo_url": "assets/manager/players/wta/wta-anna-blinkova.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/324267",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-anna-blinkova.jpg",
+      "updated_at": "2026-07-12T03:05:14.001Z"
+    },
+    "WTA|aliaksandra-sasnovich": {
+      "photo_url": "assets/manager/players/wta/wta-aliaksandra-sasnovich.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/317790",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-aliaksandra-sasnovich.jpg",
+      "updated_at": "2026-07-12T03:05:17.626Z"
+    },
+    "WTA|qualifier-29": {
+      "photo_url": "assets/manager/players/fallback-wta.svg",
+      "photo_source": "qualifier placeholder",
+      "status": "missing",
+      "storage_path": null,
+      "updated_at": "2026-07-12T03:05:17.626Z"
+    },
+    "WTA|alina-korneeva": {
+      "photo_url": "assets/manager/players/wta/wta-alina-korneeva.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/331330",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-alina-korneeva.jpg",
+      "updated_at": "2026-07-12T03:05:22.437Z"
+    },
+    "WTA|maria-timofeeva": {
+      "photo_url": "assets/manager/players/wta/wta-maria-timofeeva.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/328896",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-maria-timofeeva.jpg",
+      "updated_at": "2026-07-12T03:05:26.848Z"
     }
   }
 }

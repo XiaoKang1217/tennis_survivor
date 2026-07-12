@@ -33,6 +33,7 @@ if (dryRun) {
 
 const client = new SupabaseRestClient({ dryRun: false });
 
+await client.upsert('tour_manager_station_configs', [payload.stationConfigRow], 'station_key,season');
 await client.upsert('tour_manager_events', payload.eventRows, 'event_key');
 await client.upsert('tour_manager_players', payload.playerRows, 'tour,player_key');
 await client.upsert('tour_manager_draw_entries', payload.drawRows, 'event_key,draw_version,draw_position');
@@ -56,4 +57,3 @@ await client.upsert(
 
 console.log(`Synced station ${active.station_key}`);
 console.log(`events=${payload.eventRows.length} players=${payload.playerRows.length} draw_entries=${payload.drawRows.length} market_players=${payload.eventPlayerRows.length} price_rows=${payload.priceRows.length}`);
-
