@@ -856,7 +856,7 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 }
 </style>
 <link rel="stylesheet" href="assets/theme/full-site-badge-themes.css?v=20260712-1">
-<link rel="stylesheet" href="assets/manager/badges/ui-v5/badge-ui.css?v=20260712-9">
+<link rel="stylesheet" href="assets/manager/badges/ui-v5/badge-ui.css?v=20260712-10">
 </head>
 <body class="manager-mode">
 <div id="hdr">
@@ -1092,6 +1092,8 @@ let MANAGER_ANALYTICS_VIEWS={};
 let MANAGER_PREWARM_STARTED=false;
 let SECONDARY_DATA_PREFETCHED=false;
 let CHART_JS_LOADING=null;
+let MANAGER_BADGE_PREVIEW_SCROLL=0;
+let MANAGER_RENDER_DEFERRED_FOR_SEARCH=false;
 const MANAGER_STORE_KEY='tennis_manager_state_v3';
 const MANAGER_LEDGER_KEY='tennis_manager_ledger_v2';
 const MANAGER_DAILY_SUMMARY_KEY='tennis_manager_daily_summary_v1';
@@ -1133,6 +1135,7 @@ const MANAGER_BADGE_VISUAL_META={
   luwang_friend:{label:'炉网挚友',icon:'assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp',nameplate:'assets/manager/badges/ui-v5/optimized/luwang-nameplate-640.webp',header:'assets/manager/badges/ui-v5/optimized/luwang-card-header-960.webp',surface:'assets/manager/badges/ui-v5/optimized/luwang-surface.webp'},
   wimbledon_2026:{label:'温网限定',icon:'assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp',nameplate:'assets/manager/badges/ui-v5/optimized/wimbledon-nameplate-640.webp',header:'assets/manager/badges/ui-v5/optimized/wimbledon-card-header-960.webp',surface:'assets/manager/badges/ui-v5/optimized/wimbledon-surface.webp'}
 };
+const MANAGER_BADGE_ASSET_VERSION='20260712-2';
 const MANAGER_BADGE_PRELOADED_ASSETS=new Set();
 const MANAGER_POINT_TABLES={
   ATP:{
@@ -2092,18 +2095,17 @@ function managerSearchInput(v,isComposing){
   MANAGER_MARKET_PAGE=1;
   MANAGER_SEARCH=v||'';
   clearTimeout(MANAGER_SEARCH_TIMER);
-  MANAGER_SEARCH_TIMER=setTimeout(function(){trackManagerEvent('manager_market_search',{has_query:MANAGER_SEARCH.trim()?'yes':'no'});renderManagerDemo();},550);
 }
 function managerSearchCompose(active,el){MANAGER_SEARCH_COMPOSING=!!active;if(!active)setTimeout(function(){managerSearchInput(el&&el.value||'',false);},0);}
-function managerSearchNow(){clearTimeout(MANAGER_SEARCH_TIMER);MANAGER_MARKET_PAGE=1;trackManagerEvent('manager_market_search',{has_query:MANAGER_SEARCH.trim()?'yes':'no'});renderManagerDemo();}
+function managerSearchNow(){clearTimeout(MANAGER_SEARCH_TIMER);MANAGER_MARKET_PAGE=1;trackManagerEvent('manager_market_search',{has_query:MANAGER_SEARCH.trim()?'yes':'no'});renderManagerDemo(true);}
 function managerHallSearchInput(v,isComposing){
   if(isComposing||MANAGER_HALL_SEARCH_COMPOSING)return;
   MANAGER_HALL_PAGE=1;
   MANAGER_HALL_SEARCH=v||'';
   clearTimeout(MANAGER_HALL_SEARCH_TIMER);
-  MANAGER_HALL_SEARCH_TIMER=setTimeout(function(){trackManagerEvent('manager_hall_search',{has_query:MANAGER_HALL_SEARCH.trim()?'yes':'no'});renderManagerDemo();},350);
 }
 function managerHallSearchCompose(active,el){MANAGER_HALL_SEARCH_COMPOSING=!!active;if(!active)setTimeout(function(){managerHallSearchInput(el&&el.value||'',false);},0);}
+function managerHallSearchNow(){clearTimeout(MANAGER_HALL_SEARCH_TIMER);MANAGER_HALL_PAGE=1;trackManagerEvent('manager_hall_search',{has_query:MANAGER_HALL_SEARCH.trim()?'yes':'no'});renderManagerDemo(true);}
 function managerLedgerSearchInput(v,isComposing){if(isComposing||MANAGER_LEDGER_SEARCH_COMPOSING)return;MANAGER_LEDGER_PAGE=1;MANAGER_LEDGER_SEARCH=v||'';clearTimeout(MANAGER_LEDGER_SEARCH_TIMER);MANAGER_LEDGER_SEARCH_TIMER=setTimeout(function(){trackManagerEvent('manager_ledger_search',{has_query:MANAGER_LEDGER_SEARCH.trim()?'yes':'no'});renderManagerDemo();},350);}
 function managerLedgerSearchCompose(active,el){MANAGER_LEDGER_SEARCH_COMPOSING=!!active;if(!active)setTimeout(function(){managerLedgerSearchInput(el&&el.value||'',false);},0);}
 function managerLedgerFilterChanged(){MANAGER_LEDGER_PAGE=1;renderManagerDemo();}
@@ -3560,7 +3562,7 @@ function managerBadgeCardHtml(badge,owned,equipped,source){
     action=equipped?'<button class="manager-clear" data-manager-action="unequip-badge">取消佩戴</button>':'<button class="manager-action" data-manager-action="equip-badge" data-badge-key="'+esc(badge.badge_key)+'">佩戴</button>';
   }
   var priceHtml=saleStatus==='coming_soon'?'<div class="manager-badge-price is-status"><small>开放状态</small><strong>敬请期待</strong></div>':'<div class="manager-badge-price"><small>经纪人本金</small><strong>$'+Math.round(Number(badge.price)||0)+'</strong></div>';
-  return '<article'+managerBadgeClassAttr(badge,'manager-badge-card')+'><div class="manager-badge-card-flags"><span class="manager-badge-category">'+esc(badge.category_label)+'</span><span class="manager-badge-owned '+(owned?'is-owned':'')+'">'+(owned?'已拥有':'未拥有')+'</span></div><div class="manager-badge-card-art"><img class="manager-badge-art" src="'+esc(visual.icon||badge.image_url||badge.thumb_url)+'" alt="'+esc(badge.title)+'" loading="lazy" decoding="async"></div><div class="manager-badge-card-copy"><div class="manager-badge-serial">'+esc(badge.serial_number||badge.badge_key)+'</div><h4>'+esc(badge.formal_name||badge.title)+'</h4><div class="manager-badge-desc">'+esc(badge.description||'佩戴后会在炉网多个位置展示。')+'</div><div class="manager-badge-motifs">'+motifs+'</div><div class="manager-badge-card-footer">'+priceHtml+'<div class="manager-badge-actions"><button class="manager-clear" data-manager-action="preview-badge" data-badge-key="'+esc(badge.badge_key)+'">实装预览</button>'+action+'</div></div></div></article>';
+  return '<article'+managerBadgeClassAttr(badge,'manager-badge-card')+'><div class="manager-badge-card-flags"><span class="manager-badge-category">'+esc(badge.category_label)+'</span><span class="manager-badge-owned '+(owned?'is-owned':'')+'">'+(owned?'已拥有':'未拥有')+'</span></div><div class="manager-badge-card-art"><img class="manager-badge-art" src="'+esc(managerBadgeAssetUrl(visual.icon||badge.image_url||badge.thumb_url))+'" alt="'+esc(badge.title)+'" loading="lazy" decoding="async" onerror="managerBadgeImageRetry(this)"></div><div class="manager-badge-card-copy"><div class="manager-badge-serial">'+esc(badge.serial_number||badge.badge_key)+'</div><h4>'+esc(badge.formal_name||badge.title)+'</h4><div class="manager-badge-desc">'+esc(badge.description||'佩戴后会在炉网多个位置展示。')+'</div><div class="manager-badge-motifs">'+motifs+'</div><div class="manager-badge-card-footer">'+priceHtml+'<div class="manager-badge-actions"><button class="manager-clear" data-manager-action="preview-badge" data-badge-key="'+esc(badge.badge_key)+'">实装预览</button>'+action+'</div></div></div></article>';
 }
 
 function managerOpenBadgePreview(badgeKey){
@@ -3569,6 +3571,7 @@ function managerOpenBadgePreview(badgeKey){
   managerPreloadBadgeVisuals(badge);
   MANAGER_BADGE_PREVIEW_KEY=badge.badge_key;
   MANAGER_BADGE_PREVIEW_SCENE='hall';
+  MANAGER_BADGE_PREVIEW_SCROLL=0;
   var theme=managerBadgeThemeKey(badge);
   if(window.LuwangFullSiteTheme&&theme)window.LuwangFullSiteTheme.set(theme,{persist:false});
   renderManagerDemo();
@@ -3577,8 +3580,22 @@ function managerOpenBadgePreview(badgeKey){
 function managerCloseBadgePreview(){
   MANAGER_BADGE_PREVIEW_KEY='';
   MANAGER_BADGE_PREVIEW_SCENE='hall';
+  MANAGER_BADGE_PREVIEW_SCROLL=0;
   managerSyncFullSiteTheme(managerCurrentUserBadge());
   renderManagerDemo();
+}
+
+function managerSetBadgePreviewScene(scene){
+  var dialog=document.querySelector('.manager-badge-preview-dialog');
+  MANAGER_BADGE_PREVIEW_SCROLL=dialog?dialog.scrollTop:MANAGER_BADGE_PREVIEW_SCROLL;
+  var pageScroll=window.scrollY||document.documentElement.scrollTop||0;
+  MANAGER_BADGE_PREVIEW_SCENE=scene||'hall';
+  renderManagerDemo();
+  requestAnimationFrame(function(){
+    var nextDialog=document.querySelector('.manager-badge-preview-dialog');
+    if(nextDialog)nextDialog.scrollTop=MANAGER_BADGE_PREVIEW_SCROLL;
+    window.scrollTo(0,pageScroll);
+  });
 }
 
 function managerBadgePreviewHtml(){
@@ -3595,7 +3612,7 @@ function managerBadgePreviewHtml(){
   var tabs=[['hall','配置大厅'],['lineup','我的阵容'],['board','榜单'],['header','顶部 banner']];
   var motifHtml=(badge.motifs||[]).map(function(item){return '<span>'+esc(item)+'</span>';}).join('');
   var previewPrice=badge.sale_status==='coming_soon'?'敬请期待':'经纪人本金 $'+Math.round(Number(badge.price)||0);
-  return '<div class="manager-badge-preview-overlay" data-badge="'+esc(theme)+'"><div class="manager-badge-preview-dialog"><section class="manager-badge-preview-hero"><img src="'+esc(visual.icon||badge.image_url||badge.thumb_url)+'" alt="'+esc(badge.title)+'"><div><span class="manager-badge-preview-category">'+esc(badge.category_label)+'</span><h2>'+esc(badge.formal_name||badge.title)+'</h2><p>'+esc(badge.description)+'</p><div class="manager-badge-preview-motifs">'+motifHtml+'</div></div><button class="manager-badge-preview-close" aria-label="关闭" data-manager-action="close-badge-preview">×</button></section><div class="manager-badge-preview-main"><article class="manager-badge-preview-story"><h3>徽章故事</h3><p>'+esc(badge.story||badge.description)+'</p><div class="manager-badge-preview-data"><div><small>典藏编号</small><b>'+esc(badge.serial_number||badge.badge_key)+'</b></div><div><small>收藏属性</small><b>永久拥有 · 全站同步</b></div><div><small>典藏价格</small><b>'+esc(previewPrice)+'</b></div><div><small>动态昵称</small><b>随当前登录用户自动替换</b></div></div></article><section class="manager-badge-preview-scenes"><div class="manager-badge-preview-scenes-head"><div><h3>实装预览</h3><p>配置大厅、我的阵容、榜单和顶部身份使用同一套公开佩戴状态。</p></div><div class="manager-badge-preview-tabs">'+tabs.map(function(item){return '<button class="'+(MANAGER_BADGE_PREVIEW_SCENE===item[0]?'on':'')+'" data-manager-action="preview-scene" data-scene="'+item[0]+'">'+item[1]+'</button>';}).join('')+'</div></div><div class="manager-badge-preview-stage">'+(scenes[MANAGER_BADGE_PREVIEW_SCENE]||config)+'</div></section></div></div></div>';
+  return '<div class="manager-badge-preview-overlay" data-badge="'+esc(theme)+'"><div class="manager-badge-preview-dialog"><section class="manager-badge-preview-hero"><img src="'+esc(managerBadgeAssetUrl(visual.icon||badge.image_url||badge.thumb_url))+'" alt="'+esc(badge.title)+'" onerror="managerBadgeImageRetry(this)"><div><span class="manager-badge-preview-category">'+esc(badge.category_label)+'</span><h2>'+esc(badge.formal_name||badge.title)+'</h2><p>'+esc(badge.description)+'</p><div class="manager-badge-preview-motifs">'+motifHtml+'</div></div><button class="manager-badge-preview-close" aria-label="关闭" data-manager-action="close-badge-preview">×</button></section><div class="manager-badge-preview-main"><article class="manager-badge-preview-story"><h3>徽章故事</h3><p>'+esc(badge.story||badge.description)+'</p><div class="manager-badge-preview-data"><div><small>典藏编号</small><b>'+esc(badge.serial_number||badge.badge_key)+'</b></div><div><small>收藏属性</small><b>永久拥有 · 全站同步</b></div><div><small>典藏价格</small><b>'+esc(previewPrice)+'</b></div><div><small>动态昵称</small><b>随当前登录用户自动替换</b></div></div></article><section class="manager-badge-preview-scenes"><div class="manager-badge-preview-scenes-head"><div><h3>实装预览</h3><p>配置大厅、我的阵容、榜单和顶部身份使用同一套公开佩戴状态。</p></div><div class="manager-badge-preview-tabs">'+tabs.map(function(item){return '<button class="'+(MANAGER_BADGE_PREVIEW_SCENE===item[0]?'on':'')+'" data-manager-action="preview-scene" data-scene="'+item[0]+'">'+item[1]+'</button>';}).join('')+'</div></div><div class="manager-badge-preview-stage">'+(scenes[MANAGER_BADGE_PREVIEW_SCENE]||config)+'</div></section></div></div></div>';
 }
 function managerRenderShop(){
   var badges=managerBadgeCatalog(),owned=managerOwnedBadgeMap(),active=managerCurrentUserBadge();
@@ -3776,8 +3793,16 @@ function managerEventMetaHtml(rules){
   return '<div class="manager-panel-meta"><span class="manager-panel-chip">'+esc(managerEventShortName(pack))+'</span><span class="manager-panel-chip surface '+managerSurfaceClass(pack.meta.surface)+'">'+managerSurfaceName(pack.meta.surface)+'</span><span class="manager-panel-chip">'+managerLevelName(pack.meta.level)+'</span><span class="manager-panel-chip">'+(pack.meta.drawSize||32)+'签</span><span class="manager-panel-chip">'+cfg.min+'-'+cfg.max+' 人阵容</span><span class="manager-panel-chip">换人 1 次 · 手续费 '+Math.round(cfg.transferFee*100)+'%</span></div>';
 }
 function managerRenderBody(){if(MANAGER_VIEW==='calculator')return managerRenderCalculator();if(MANAGER_VIEW==='mine')return managerRenderMine();if(MANAGER_VIEW==='hall')return managerRenderHall();if(MANAGER_VIEW==='transfer')return managerRenderTransfer();if(MANAGER_VIEW==='ledger')return managerRenderLedger();if(MANAGER_VIEW==='rules')return managerRenderRules();if(MANAGER_VIEW==='boards')return managerRenderBoardsPage();if(MANAGER_VIEW==='shop')return managerRenderShop();return managerRenderMarket();}
-function renderManagerDemo(){
+function renderManagerDemo(force){
   var root=document.getElementById('manager-root');if(!root)return;
+  var active=document.activeElement,activeId=active&&active.id;
+  if(!force&&(activeId==='manager-q'||activeId==='manager-hall-q')){
+    MANAGER_RENDER_DEFERRED_FOR_SEARCH=true;
+    return;
+  }
+  MANAGER_RENDER_DEFERRED_FOR_SEARCH=false;
+  var oldPreviewDialog=root.querySelector('.manager-badge-preview-dialog');
+  if(oldPreviewDialog)MANAGER_BADGE_PREVIEW_SCROLL=oldPreviewDialog.scrollTop;
   if(!MANAGER_DATA_LOADED){
     root.innerHTML='<div class="manager-shell"><div class="manager-panel"><div class="manager-panel-b"><div class="manager-empty">正在加载巡回赛经纪人赛站数据...</div></div></div></div>';
     loadManagerData().then(function(){renderManagerDemo();});
@@ -3807,6 +3832,12 @@ function renderManagerDemo(){
   var qaBanner=managerLocalQaMode()?'<div class="manager-note" style="margin-bottom:10px"><b>本地换人测试模式：</b>提交和换人窗口均已开放；所有操作只保存在当前浏览器，不会写入线上 Supabase。</div>':'';
   var badgePreview=managerBadgePreviewHtml();
   root.innerHTML='<div class="manager-shell">'+qaBanner+'<div class="manager-hero"><div class="manager-title"><div><div class="manager-title-line"><h2>巡回赛经纪人</h2><button class="manager-clear" data-manager-view="rules">查看规则</button><span class="manager-settle-note">每天09:37结算</span></div><p>组建你的球员阵容，在巡回赛里征战！<br>在公开市场上购买球员，球员成绩越好，你赚的越多，收益按巡回赛积分计算。<br>你不只懂网球，你是在做预算、风险和轮次收益的组合策略。</p></div></div>'+wechat+'<img class="manager-hero-art" src="assets/manager/agent-money-bag.webp" alt="" loading="lazy" decoding="async" fetchpriority="low"></div>'+managerRenderMoney(c,rules)+tabs+'<div class="manager-grid view-'+MANAGER_VIEW+' '+(showSide?'':'single')+'"><div class="manager-panel">'+panelHead+'<div class="manager-panel-b">'+managerRenderBody()+'</div></div>'+(showSide?managerSidebar(c,rules):'')+'</div>'+seoFaqLinkHtml()+dialog+badgePreview+'</div>';
+  if(badgePreview&&MANAGER_BADGE_PREVIEW_SCROLL){
+    requestAnimationFrame(function(){
+      var nextPreviewDialog=document.querySelector('.manager-badge-preview-dialog');
+      if(nextPreviewDialog)nextPreviewDialog.scrollTop=MANAGER_BADGE_PREVIEW_SCROLL;
+    });
+  }
 }
 
 function trackSupabaseError(operation,err,ignoreMissing){
@@ -4633,13 +4664,26 @@ function managerBadgeFromRow(row){
   });
 }
 
+function managerBadgeAssetUrl(src,retry){
+  src=String(src||'');
+  if(!src||src.indexOf('/ui-v5/optimized/')<0)return src;
+  var clean=src.replace(/([?&])v=[^&]*/g,'').replace(/[?&]$/,'');
+  return clean+(clean.indexOf('?')>=0?'&':'?')+'v='+MANAGER_BADGE_ASSET_VERSION+(retry?'-retry':'');
+}
+
+function managerBadgeImageRetry(img){
+  if(!img||img.dataset.badgeRetry==='1'){if(img)img.classList.add('manager-badge-image-failed');return;}
+  img.dataset.badgeRetry='1';
+  img.src=managerBadgeAssetUrl(img.getAttribute('src')||'',true);
+}
+
 function managerBadgeThumbHtml(badge,cls){
   badge=managerNormalizeBadge(badge);
   if(!badge)return '';
   var theme=managerBadgeThemeKey(badge),visual=MANAGER_BADGE_VISUAL_META[theme]||{};
   var src=visual.icon||badge.thumb_url||'';
   if(!src)return '';
-  return '<img class="badge-identity__icon manager-badge-thumb '+esc(cls||'')+'" src="'+esc(src)+'" alt="'+esc(visual.label||badge.title)+'" loading="lazy" decoding="async" onerror="this.remove()">';
+  return '<img class="badge-identity__icon manager-badge-thumb '+esc(cls||'')+'" src="'+esc(managerBadgeAssetUrl(src))+'" alt="'+esc(visual.label||badge.title)+'" loading="lazy" decoding="async" onerror="managerBadgeImageRetry(this)">';
 }
 
 function managerBadgeThemeKey(badge){
@@ -4661,12 +4705,17 @@ function managerBadgeThemeKey(badge){
 
 function managerPreloadBadgeVisuals(badge){
   var visual=MANAGER_BADGE_VISUAL_META[managerBadgeThemeKey(badge)]||{};
-  [visual.icon,visual.nameplate,visual.header,visual.surface].filter(Boolean).forEach(function(src){
+  [visual.icon,visual.nameplate,visual.header,visual.surface].filter(Boolean).map(function(src){return managerBadgeAssetUrl(src);}).forEach(function(src){
     if(MANAGER_BADGE_PRELOADED_ASSETS.has(src))return;
     MANAGER_BADGE_PRELOADED_ASSETS.add(src);
     var img=new Image();
     img.decoding='async';
     img.fetchPriority='high';
+    img.onerror=function(){
+      if(img.dataset.badgeRetry==='1')return;
+      img.dataset.badgeRetry='1';
+      img.src=managerBadgeAssetUrl(src,true);
+    };
     img.src=src;
   });
 }
@@ -4704,10 +4753,10 @@ function managerUserNameWithBadge(name,badge,opts){
   var visual=MANAGER_BADGE_VISUAL_META[theme]||{};
   var variant=opts.login?'login':(opts.sidebar?'sidebar':(opts.card||opts.prominent?'card':'row'));
   var label=visual.label||badge.title||'徽章';
-  var icon=visual.icon||badge.thumb_url||badge.image_url||'';
+  var icon=managerBadgeAssetUrl(visual.icon||badge.thumb_url||badge.image_url||'');
   var cls='badge-identity badge-identity--'+variant+' manager-user-badge-line';
   var priority=(opts.login||opts.sidebar)?' loading="eager" fetchpriority="high"':' loading="lazy"';
-  return '<span class="'+esc(cls)+'"'+(theme?' data-badge="'+esc(theme)+'"':'')+' title="'+esc(label+' · '+displayNickname(name,'炉友'))+'">'+(icon?'<img class="badge-identity__icon" src="'+esc(icon)+'" alt="'+esc(label)+'"'+priority+' decoding="async">':'')+'<span class="badge-identity__plate"><span class="badge-identity__name">'+display+'</span></span></span>';
+  return '<span class="'+esc(cls)+'"'+(theme?' data-badge="'+esc(theme)+'"':'')+' title="'+esc(label+' · '+displayNickname(name,'炉友'))+'">'+(icon?'<img class="badge-identity__icon" src="'+esc(icon)+'" alt="'+esc(label)+'"'+priority+' decoding="async" onerror="managerBadgeImageRetry(this)">':'')+'<span class="badge-identity__plate"><span class="badge-identity__name">'+display+'</span></span></span>';
 }
 
 function managerBadgeHeroHtml(name,badge,opts){
@@ -6259,7 +6308,7 @@ document.addEventListener('click',function(e){
   else if(btn.dataset.managerAction==='page-wallet-board')managerSetWalletBoardPage(btn.dataset.managerPage);
   else if(btn.dataset.managerAction==='page-ledger')managerSetLedgerPage(btn.dataset.managerPage);
   else if(btn.dataset.managerAction==='filter-badges'){MANAGER_BADGE_FILTER=btn.dataset.filter||'all';renderManagerDemo();}
-  else if(btn.dataset.managerAction==='preview-scene'){MANAGER_BADGE_PREVIEW_SCENE=btn.dataset.scene||'hall';renderManagerDemo();}
+  else if(btn.dataset.managerAction==='preview-scene')managerSetBadgePreviewScene(btn.dataset.scene||'hall');
   else if(btn.dataset.managerAction==='preview-badge')managerOpenBadgePreview(btn.dataset.badgeKey);
   else if(btn.dataset.managerAction==='close-badge-preview')managerCloseBadgePreview();
   else if(btn.dataset.managerAction==='buy-badge')managerRequestBadgePurchase(btn.dataset.badgeKey);
@@ -6298,6 +6347,7 @@ document.addEventListener('input',function(e){
 document.addEventListener('keydown',function(e){
   const id=e.target&&e.target.id;
   if(id==='manager-q'&&e.key==='Enter'&&!e.isComposing&&!MANAGER_SEARCH_COMPOSING)managerSearchNow();
+  if(id==='manager-hall-q'&&e.key==='Enter'&&!e.isComposing&&!MANAGER_HALL_SEARCH_COMPOSING)managerHallSearchNow();
   if(id==='manager-transfer-to-search'&&e.key==='Enter'&&!e.isComposing){
     e.preventDefault();
     var pool=managerCurrentTransferPool();
@@ -6313,8 +6363,16 @@ document.addEventListener('focusin',function(e){
     managerUpdateTransferMenu(MANAGER_TRANSFER_TO_QUERY||'');
   }
 });
+document.addEventListener('focusout',function(e){
+  const id=e.target&&e.target.id;
+  if((id==='manager-q'||id==='manager-hall-q')&&MANAGER_RENDER_DEFERRED_FOR_SEARCH){
+    setTimeout(function(){if(MANAGER_RENDER_DEFERRED_FOR_SEARCH)renderManagerDemo(true);},0);
+  }
+});
 document.addEventListener('change',function(e){
   const target=e.target,tid=target&&target.id;
+  if(tid==='manager-q'&&!MANAGER_SEARCH_COMPOSING){managerSearchNow();return;}
+  if(tid==='manager-hall-q'&&!MANAGER_HALL_SEARCH_COMPOSING){managerHallSearchNow();return;}
   if(tid==='manager-tour'){managerSetMarketTour(target.value);return;}
   if(['manager-price-filter','manager-tier-filter','manager-rank-filter','manager-surface-filter','manager-sort','manager-sort-dir'].indexOf(tid)>=0){MANAGER_MARKET_PAGE=1;renderManagerDemo();return;}
   if(['manager-ledger-station','manager-ledger-start','manager-ledger-end'].indexOf(tid)>=0){managerLedgerFilterChanged();return;}
