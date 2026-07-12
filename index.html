@@ -1307,6 +1307,11 @@ async function loadJson(path,options){
 function managerLocalPreviewEnabled(){
   return dataLocalPreviewEnabled();
 }
+function managerLocalQaMode(){
+  try{
+    return managerLocalPreviewEnabled()&&new URLSearchParams(location.search).get('manager_test')==='1';
+  }catch(e){return false;}
+}
 function managerDataPath(file){
   return 'data/manager/'+file.replace(/^data\/manager\//,'');
 }
@@ -1435,6 +1440,7 @@ function managerEarliestDate(values){
   return list[0]||null;
 }
 function managerSubmissionWindowInfo(){
+  if(managerLocalQaMode())return {status:'open',cutoff:new Date(Date.now()+86400000),label:'本地测试：已开放'};
   var packs=managerContestPacks(),cutoff=managerEarliestDate(packs.map(function(pack){
     var e=pack.event||{};
     return e.submission_cutoff_at||e.submission_closes_at||null;
@@ -1444,6 +1450,10 @@ function managerSubmissionWindowInfo(){
 }
 function managerTransferWindowInfo(tour){
   var pack=managerEventPack(tour||MANAGER_TOUR||'ATP'),e=pack.event||{};
+  if(managerLocalQaMode()){
+    var qaNow=new Date();
+    return {status:'open',open:new Date(qaNow.getTime()-3600000),close:new Date(qaNow.getTime()+86400000),label:'本地测试：已开放',tour:pack.tour,event:pack};
+  }
   var open=e.transfer_window_opens_at||e.round1_completed_at||null;
   var close=e.transfer_window_closes_at||e.round2_first_match_at||null;
   var openDate=managerDateValue(open),closeDate=managerDateValue(close);
@@ -1582,7 +1592,7 @@ function managerSubmittedRecord(){
     if(l.status==='cancelled')return null;
     return {id:l.id,date:String(l.submitted_at||'').slice(0,10),station:l.station_key||managerStationKey(),level:(managerRules().levels||[]).join('/'),status:'已提交',cost:l.lineup_cost||0,gross:l.predicted_gross||0,bonus:l.predicted_bonus||0,net:l.predicted_net||0,walletDelta:l.submission_bonus||10,players:contracts.filter(function(x){return x.is_active!==false;}).map(managerLedgerPlayerTokenFromContract),transfers:['后台记录'],note:'已由 Supabase 记录并锁定'};
   }
-  if(AUTH_USER&&supabaseConfigured())return null;
+  if(AUTH_USER&&supabaseConfigured()&&!managerLocalQaMode())return null;
   var station=managerStationKey();return (MANAGER_LEDGER||[]).find(function(x){return x.station===station&&x.status==='已提交';})||null;
 }
 function managerLedgerPlayerName(text){
@@ -1672,7 +1682,7 @@ function managerRules(){
   };
 }
 function managerDemoLedgerAllowed(){
-  return managerLocalPreviewEnabled()&&!managerSupabaseMode();
+  return managerLocalPreviewEnabled()&&!managerSupabaseMode()&&!managerLocalQaMode();
 }
 function managerWallet(){
   if(MANAGER_REMOTE_STATE&&MANAGER_REMOTE_STATE.wallet&&Number.isFinite(Number(MANAGER_REMOTE_STATE.wallet.balance)))return Number(MANAGER_REMOTE_STATE.wallet.balance);
@@ -2012,6 +2022,7 @@ function managerTeamCurrentStats(players,c){
 }
 function managerSetMsg(msg,isErr){MANAGER_LAST_MSG=msg||'';setTimeout(function(){var el=document.getElementById('manager-msg');if(el){el.textContent=MANAGER_LAST_MSG;el.classList.toggle('r',!!isErr);}},0);}
 function managerRequireLogin(reason){
+  if(managerLocalQaMode())return true;
   if(AUTH_USER)return true;
   trackManagerEvent('manager_login_required',{source:reason||'manager'});
   openAuthModal({reason:reason||'manager',afterLogin:function(){if((reason||'manager')==='manager')managerEnterFlow();else renderManagerDemo();}});
@@ -2261,6 +2272,7 @@ function managerStationIncomeSummary(){
 }
 function managerBudgetState(rules,spent){
   var lineup=MANAGER_REMOTE_STATE&&MANAGER_REMOTE_STATE.lineup?MANAGER_REMOTE_STATE.lineup:null;
+  var localLineup=!lineup?managerSubmittedRecord():null;
   var stationKey=lineup&&lineup.station_key||managerStationKey();
   var stationGrant=rules.stationGrant;
   var stationUsed=Math.min(spent,stationGrant);
@@ -2281,10 +2293,18 @@ function managerBudgetState(rules,spent){
     walletStationStart=Math.max(0,walletCurrent-managerRemoteStationWalletDelta(stationKey));
     usableStart=walletStationStart+stationGrant;
     currentAvailable=walletCurrent+Math.max(0,stationGrant-stationUsed);
-  }else if(managerSubmittedRecord()){
+  }else if(localLineup){
+    stationGrant=Number(localLineup.stationGrant)||stationGrant;
+    if(Number.isFinite(Number(localLineup.stationGrantUsed)))stationUsed=Math.max(0,Number(localLineup.stationGrantUsed));
+    if(Number.isFinite(Number(localLineup.walletUsed)))walletUsed=Math.max(0,Number(localLineup.walletUsed));
     var localBonus=10;
-    walletStationStart=Math.max(0,walletCurrent-localBonus);
-    walletCurrent=Math.max(0,walletCurrent-walletUsed);
+    if(Number.isFinite(Number(localLineup.walletBalance))){
+      walletStationStart=Number.isFinite(Number(localLineup.walletStationStart))?Math.max(0,Number(localLineup.walletStationStart)):Math.max(0,Number(localLineup.walletBalance)+walletUsed-localBonus);
+      walletCurrent=Math.max(0,Number(localLineup.walletBalance));
+    }else{
+      walletStationStart=Math.max(0,walletCurrent-localBonus);
+      walletCurrent=Math.max(0,walletCurrent-walletUsed);
+    }
     usableStart=walletStationStart+stationGrant;
     currentAvailable=walletCurrent+Math.max(0,stationGrant-stationUsed);
   }
@@ -2314,7 +2334,7 @@ function managerCalc(){
   var budget=managerBudgetState(rules,spent);
   var stationIncome=managerStationIncomeSummary();
   var legal=players.length>=rules.minPlayers&&players.length<=rules.maxPlayers&&spent<=budget.usableStart;
-  return {players:players,spent:spent,lineupCost:lineupCost,sunkCost:effectiveSunk,budget:budget.usableStart,stationIncome:stationIncome,stationUsed:budget.stationUsed,stationRemaining:budget.stationRemaining,walletStart:budget.walletStart,walletSeasonStart:budget.walletSeasonStart,walletStationStart:budget.walletStationStart,walletCurrent:budget.walletCurrent,walletUsed:budget.walletUsed,remaining:budget.currentAvailable,gross:actual.gross,bonus:actual.bonus,stable:actual.stable,finalBonus:actual.finalBonus,champBonus:actual.champBonus,jewelBonus:actual.jewelBonus,bloomBonus:actual.bloomBonus||0,allR16Bonus:actual.allR16Bonus||0,dualBonus:actual.dualBonus||0,comboVersion:actual.comboVersion,comboCap:actual.comboCap||0,comboRaw:actual.comboRaw??actual.bonus,comboItems:actual.comboItems||[],net:actual.gross+actual.bonus-spent,max:best.gross+best.bonus-spent,maxGross:best.gross,maxBonus:best.bonus,legal:legal,warning:managerPredictionWarning(players),style:managerLineupStyle(players)};
+  return {players:players,spent:spent,lineupCost:lineupCost,sunkCost:effectiveSunk,budget:budget.usableStart,stationIncome:stationIncome,stationGrant:budget.stationGrant,stationUsed:budget.stationUsed,stationRemaining:budget.stationRemaining,walletStart:budget.walletStart,walletSeasonStart:budget.walletSeasonStart,walletStationStart:budget.walletStationStart,walletCurrent:budget.walletCurrent,walletUsed:budget.walletUsed,remaining:budget.currentAvailable,gross:actual.gross,bonus:actual.bonus,stable:actual.stable,finalBonus:actual.finalBonus,champBonus:actual.champBonus,jewelBonus:actual.jewelBonus,bloomBonus:actual.bloomBonus||0,allR16Bonus:actual.allR16Bonus||0,dualBonus:actual.dualBonus||0,comboVersion:actual.comboVersion,comboCap:actual.comboCap||0,comboRaw:actual.comboRaw??actual.bonus,comboItems:actual.comboItems||[],net:actual.gross+actual.bonus-spent,max:best.gross+best.bonus-spent,maxGross:best.gross,maxBonus:best.bonus,legal:legal,warning:managerPredictionWarning(players),style:managerLineupStyle(players)};
 }
 function managerLineupStyle(players){
   if(!players.length)return '待建仓';
@@ -2466,6 +2486,14 @@ function managerLedgerRowsFromRawLedger(ledger,ctx){
     var outName=meta.out_player||meta.out_name;
     var inName=meta.in_player||meta.in_name;
     var transfers=Array.isArray(meta.transfers)?meta.transfers:(isTransfer?[outName&&inName?outName+' → '+inName:(x.description||'换人')]:[]);
+    if(isTransfer){
+      var stationRefund=Number(meta.transfer_station_grant_refund??meta.transfer_station_grant_released)||0;
+      var principalRefund=Number(meta.transfer_principal_refund??meta.transfer_wallet_refund)||0;
+      var refundParts=[];
+      if(stationRefund>0)refundParts.push('本站签约金 +'+stationRefund);
+      if(principalRefund>0)refundParts.push('本金 +'+principalRefund);
+      if(refundParts.length)transfers=transfers.concat(['返还去向：'+refundParts.join('，')]);
+    }
     var amounts=managerLedgerDisplayAmounts(type,amount,meta,lineup,isSubmit,isSettle,isBonus,isStationGrant);
     rows.push({
       id:x.id||('remote-'+rows.length),
@@ -2683,7 +2711,7 @@ async function managerSubmitLineup(confirmed){
     return;
   }
   MANAGER_DIALOG=null;
-  if(managerSupabaseMode()){
+  if(managerSupabaseWriteMode()){
     try{
       await managerSubmitLineupRemote(c,rules);
       trackManagerEvent('manager_submit_success',{mode:'supabase',lineup_count:c.players.length});
@@ -2697,7 +2725,7 @@ async function managerSubmitLineup(confirmed){
     return;
   }
   var submitIso=new Date().toISOString();
-  var rec={id:'local-'+Date.now(),date:submitIso.slice(0,10),sortTime:submitIso,station:packs.map(managerPackLabel).join(' + '),level:rules.levels.join('/'),status:'已提交',cost:c.spent,gross:c.gross,bonus:c.bonus,net:c.net,walletDelta:10,players:c.players.map(managerLedgerPlayerTokenFromPlayer),transfers:['未调仓'],note:'阵容提交奖励 +10 钱包；本站签约金优先占用，钱包占用 '+c.walletUsed+'；比赛收益待结算'};
+  var rec={id:'local-'+Date.now(),date:submitIso.slice(0,10),sortTime:submitIso,station:managerStationKey(),stationLabel:managerStationName(),level:rules.levels.join('/'),status:'已提交',cost:c.spent,gross:c.gross,bonus:c.bonus,net:c.net,walletDelta:10,stationGrant:rules.stationGrant,stationGrantUsed:c.stationUsed,walletUsed:c.walletUsed,walletStationStart:c.walletCurrent,walletBalance:Math.max(0,c.walletCurrent-c.walletUsed+10),players:c.players.map(managerLedgerPlayerTokenFromPlayer),transfers:['未调仓'],note:'阵容提交奖励 +10 钱包；本站签约金优先占用，钱包占用 '+c.walletUsed+'；比赛收益待结算'};
   MANAGER_LEDGER.push(rec);managerSaveLedger();trackManagerEvent('manager_submit_success',{mode:'local',lineup_count:c.players.length});managerSetMsg('阵容已提交，+10 钱包奖励已记入我的收益。我的工作区已切换为赛后/换人状态。');MANAGER_VIEW='mine';MANAGER_MY_VIEW='lineup';renderManagerDemo();
 }
 async function managerWithdrawLineup(confirmed){
@@ -2718,7 +2746,7 @@ async function managerWithdrawLineup(confirmed){
     return;
   }
   MANAGER_DIALOG=null;
-  if(managerSupabaseMode()){
+  if(managerSupabaseWriteMode()){
     try{
       await managerWithdrawLineupRemote();
       trackManagerEvent('manager_withdraw_success',{mode:'supabase'});
@@ -2767,11 +2795,11 @@ function managerTransferFunding(delta,c){
     stationDelta=Math.min(total,stationRemaining);
     walletUsedDelta=Math.max(0,total-stationDelta);
   }else{
-    var refund=-total,walletRelease=Math.min(refund,oldWalletUsed);
+    var refund=-total,stationRelease=Math.min(refund,oldStationUsed),refundRemaining=refund-stationRelease,walletRelease=Math.min(refundRemaining,oldWalletUsed);
+    stationDelta=-stationRelease;
     walletUsedDelta=-walletRelease;
-    stationDelta=0;
   }
-  var walletDelta=total>=0?-walletUsedDelta:-total,nextCost=Math.max(0,oldCost+total);
+  var walletDelta=total>=0?-walletUsedDelta:Math.max(0,-total-Math.max(0,-stationDelta)),nextCost=Math.max(0,oldCost+total);
   var nextStationUsed=Math.max(0,oldStationUsed+stationDelta),nextWalletUsed=Math.max(0,oldWalletUsed+walletUsedDelta);
   var walletAfter=Math.max(0,walletCurrent+walletDelta),stationRemainingAfter=Math.max(0,stationGrant-nextStationUsed);
   return {
@@ -2794,7 +2822,7 @@ function managerTransferFunding(delta,c){
 function managerTransferFundingText(est){
   if(!est)return '';
   if(est.delta>=0)return '其中本站签约金花费 $'+est.stationPay+'，本金花费 $'+est.walletCharge+'。';
-  return '返还去向：退回本金 $'+est.walletRefund+'。';
+  return '返还去向：退回本站签约金 $'+est.stationReleased+'，退回本金 $'+est.walletRefund+'。';
 }
 function managerTransferEstimate(fromId,toId){
   var players=managerLineupPlayers(),from=players.find(function(p){return p.id===fromId;}),to=managerBuildPool().find(function(p){return p.id===toId;}),rules=managerRules(),c=managerCalc();
@@ -2922,13 +2950,21 @@ function managerConfirmTransfer(est,rules){
   };
   renderManagerDemo();
 }
+function managerTransferSuccessMessage(est){
+  var route=est.delta>=0
+    ?'本站签约金支付 $'+est.stationPay+'，本金支付 $'+est.walletCharge+'。'
+    :'退回本站签约金 $'+est.stationReleased+'，退回本金 $'+est.walletRefund+'。';
+  return '已将 '+managerPlayerDisplayName(est.from,true)+' 换成 '+managerPlayerDisplayName(est.to,true)+'。\n'
+    +(est.delta>=0?'本次净花费 $'+est.delta+'。':'本次净返还 $'+Math.abs(est.delta)+'。')+'\n'
+    +route+'\n本站换人次数 1/1 已用。';
+}
 async function managerTransferCommit(est,rules){
-  if(managerSupabaseMode()){
+  if(managerSupabaseWriteMode()){
     try{
       await managerTransferRemote(est,rules);
       trackManagerEvent('manager_transfer_success',{mode:'supabase',delta_bucket:managerValueBucket(Math.abs(est.delta),[25,50,100,150,250,400,650])});
-      managerSetMsg('换人已由 Supabase 记录，净花费按本站签约金优先、本金补足；净返还统一退回本金。');
-      renderManagerDemo();
+      managerSetMsg('换人已由 Supabase 记录：净返还优先退回本站签约金，超出已占用签约金的部分再退回本金。');
+      managerAlert(managerTransferSuccessMessage(est),'换人成功');
     }catch(e){
       console.error(e);
       trackManagerEvent('manager_transfer_error',{mode:'supabase',error_type:errorType(e)});
@@ -2945,17 +2981,20 @@ async function managerTransferCommit(est,rules){
   MANAGER_PREDICTIONS[toId]=MANAGER_PREDICTIONS[toId]||est.to.breakEven;
   var rec=managerSubmittedRecord();
   if(rec){
-    rec.transfers=[managerPlayerDisplayName(est.from,true)+' → '+managerPlayerDisplayName(est.to,true)+'，返还 '+est.refund+'，新约 '+est.to.price+'，手续费 '+est.fee];
+    rec.transfers=[managerPlayerDisplayName(est.from,true)+' → '+managerPlayerDisplayName(est.to,true)+'，返还 '+est.refund+'，新约 '+est.to.price+'，手续费 '+est.fee,'返还去向：本站签约金 +'+est.stationReleased+'，本金 +'+est.walletRefund];
     rec.cost=est.newSpent;
+    rec.stationGrantUsed=est.stationUsedAfter;
+    rec.walletUsed=est.walletUsedAfter;
+    rec.walletBalance=Math.max(0,(Number(rec.walletBalance)||0)+est.walletDelta);
     managerSaveLedger();
   }
   var transferIso=new Date().toISOString();
-  MANAGER_LEDGER.push({id:'local-transfer-'+Date.now(),date:transferIso.slice(0,10),sortTime:transferIso,station:managerStationKey(),stationLabel:managerStationName(),status:'transfer_delta',rawStatus:'transfer_delta',cost:Math.max(0,est.delta),gross:Math.max(0,-est.delta),bonus:0,net:-est.delta,walletDelta:Number(est.walletDelta)||0,players:[managerLedgerPlayerTokenFromPlayer(est.from),managerLedgerPlayerTokenFromPlayer(est.to)],transfers:[managerPlayerDisplayName(est.from,true)+' → '+managerPlayerDisplayName(est.to,true)],note:'换人窗口调仓：返还 '+est.refund+'，新约 '+est.to.price+'，手续费 '+est.fee+'。'});
+  MANAGER_LEDGER.push({id:'local-transfer-'+Date.now(),date:transferIso.slice(0,10),sortTime:transferIso,station:managerStationKey(),stationLabel:managerStationName(),status:'transfer_delta',rawStatus:'transfer_delta',cost:Math.max(0,est.delta),gross:Math.max(0,-est.delta),bonus:0,net:-est.delta,walletDelta:Number(est.walletDelta)||0,players:[managerLedgerPlayerTokenFromPlayer(est.from),managerLedgerPlayerTokenFromPlayer(est.to)],transfers:[managerPlayerDisplayName(est.from,true)+' → '+managerPlayerDisplayName(est.to,true),'返还去向：本站签约金 +'+est.stationReleased+'，本金 +'+est.walletRefund],metadata:{transfer_refund_destination_policy:'station_grant_first_then_principal',transfer_station_grant_refund:est.stationReleased,transfer_principal_refund:est.walletRefund},note:'换人窗口调仓：返还 '+est.refund+'，新约 '+est.to.price+'，手续费 '+est.fee+'；净返还先退本站签约金，剩余退本金。'});
   managerSaveLedger();
   managerSetMsg('已模拟换人：'+managerPlayerDisplayName(est.from,true)+' → '+managerPlayerDisplayName(est.to,true)+'，总花费 '+est.delta+'，'+managerTransferFundingText(est)+'本站换人 1/1 已用。');
   trackManagerEvent('manager_transfer_success',{mode:'local',delta_bucket:managerValueBucket(Math.abs(est.delta),[25,50,100,150,250,400,650])});
   managerSaveState();
-  renderManagerDemo();
+  managerAlert(managerTransferSuccessMessage(est),'换人成功');
 }
 async function managerTransfer(){
   if(!managerRequireLogin('manager'))return;
@@ -3149,7 +3188,7 @@ function managerRenderTransfer(){
   var tour=players[0]?players[0].tour:(MANAGER_TOUR||'ATP'),windowLine=managerTransferWindowLines().join('；');
   var windowItems=managerTransferWindowLines().map(function(line){return '<li>'+esc(line)+'。</li>';}).join('');
   var crossText=managerCrossTourTransferEnabled()?'ATP/WTA 同一窗口开放，ATP/WTA 可以互换。':'ATP/WTA 分开判断；如果窗口一致，就同一时间开放。';
-  var ruleHtml='<div class="manager-rule-grid"><div class="manager-rule-card"><b>窗口时间</b><ul class="manager-lines"><li>换人窗口期为 R1 所有比赛结束后，R2 所有比赛开始前。</li>'+windowItems+'<li>'+crossText+'</li><li>新球员下一场必须还没开赛。</li></ul></div><div class="manager-rule-card"><b>换人次数</b><ul class="manager-lines"><li>每站只允许换 1 次。</li><li>当前已用 '+MANAGER_TRANSFER_COUNT+'/1。</li><li>换人记录会进入我的收益。</li><li>换入前已取得的轮次只作基准，不追发此前奖金。</li></ul></div><div class="manager-rule-card"><b>扣费规则</b><ul class="manager-lines"><li>换人花费 = 新球员花费 + 换人手续费 - 换下球员返还的钱。</li><li>原球员未出局，退回 70% 原成本；原球员已出局，花费成本不退。</li><li>如果本次换人为净返还，统一退回经纪人本金。</li><li>手续费按新球员价格计算：250/500 为 10%，1000/大满贯为 15%。</li></ul></div></div>';
+  var ruleHtml='<div class="manager-rule-grid"><div class="manager-rule-card"><b>窗口时间</b><ul class="manager-lines"><li>换人窗口期为 R1 所有比赛结束后，R2 所有比赛开始前。</li>'+windowItems+'<li>'+crossText+'</li><li>新球员下一场必须还没开赛。</li></ul></div><div class="manager-rule-card"><b>换人次数</b><ul class="manager-lines"><li>每站只允许换 1 次。</li><li>当前已用 '+MANAGER_TRANSFER_COUNT+'/1。</li><li>换人记录会进入我的收益。</li><li>换入前已取得的轮次只作基准，不追发此前奖金。</li></ul></div><div class="manager-rule-card"><b>扣费规则</b><ul class="manager-lines"><li>换人花费 = 新球员花费 + 换人手续费 - 换下球员返还的钱。</li><li>原球员未出局，退回 70% 原成本；原球员已出局，花费成本不退。</li><li>如果本次换人为净返还，优先退回本站签约金额度；超过已占用签约金的部分再退回本金。</li><li>手续费按新球员价格计算：250/500 为 10%，1000/大满贯为 15%。</li></ul></div></div>';
   if(!players.length)return ruleHtml+'<div class="manager-empty" style="margin-top:12px">先建立并提交阵容，开赛后的换人窗口会在这里操作。</div>';
   var fromId=managerFilterValue('manager-transfer-from',players[0].id),fromPlayer=players.find(function(p){return p.id===fromId;})||players[0];
   fromId=fromPlayer.id;
@@ -3160,7 +3199,7 @@ function managerRenderTransfer(){
   var est=managerTransferEstimate(fromId,toId);
   var fromOpts=players.map(function(p){return '<option value="'+esc(p.id)+'" '+(fromId===p.id?'selected':'')+'>'+esc(managerPlayerDisplayName(p,true))+' · $'+p.price+'</option>';}).join('');
   var toInput=managerTransferInputValue(selectedTo,searchValue),toMenu=managerTransferMenuOptions(pool,searchValue,toId,100);
-  var detail=est?'<div class="manager-sim" style="margin-top:12px"><div class="manager-sim-row"><span>换下合同</span><b>'+esc(managerPlayerDisplayName(est.from,true))+' 原价 $'+est.from.price+'；返还 $'+est.refund+'（'+esc(est.refundNote)+'）</b></div><div class="manager-sim-row"><span>换上合同</span><b>'+esc(managerPlayerDisplayName(est.to,true))+' 扣 $'+est.to.price+'</b></div><div class="manager-sim-row"><span>手续费</span><b>扣 $'+est.fee+'（新球员 '+Math.round(rules.transferFee*100)+'%）</b></div><div class="manager-sim-row"><span>本次合计</span><b>'+(est.delta>=0?'总花费 $':'返还额度 $')+Math.abs(est.delta)+'</b></div><div class="manager-sim-row"><span>'+(est.delta>=0?'扣款拆分':'返还去向')+'</span><b>'+(est.delta>=0?'本站签约金花费 $'+est.stationPay+'；本金花费 $'+est.walletCharge:'退回本金 $'+est.walletRefund)+'</b></div></div>':'';
+  var detail=est?'<div class="manager-sim" style="margin-top:12px"><div class="manager-sim-row"><span>换下合同</span><b>'+esc(managerPlayerDisplayName(est.from,true))+' 原价 $'+est.from.price+'；返还 $'+est.refund+'（'+esc(est.refundNote)+'）</b></div><div class="manager-sim-row"><span>换上合同</span><b>'+esc(managerPlayerDisplayName(est.to,true))+' 扣 $'+est.to.price+'</b></div><div class="manager-sim-row"><span>手续费</span><b>扣 $'+est.fee+'（新球员 '+Math.round(rules.transferFee*100)+'%）</b></div><div class="manager-sim-row"><span>本次合计</span><b>'+(est.delta>=0?'总花费 $':'返还额度 $')+Math.abs(est.delta)+'</b></div><div class="manager-sim-row"><span>'+(est.delta>=0?'扣款拆分':'返还去向')+'</span><b>'+(est.delta>=0?'本站签约金花费 $'+est.stationPay+'；本金花费 $'+est.walletCharge:'退回本站签约金 $'+est.stationReleased+'；退回本金 $'+est.walletRefund)+'</b></div></div>':'';
   return ruleHtml+'<div class="manager-note" style="margin-top:12px">'+esc(windowLine)+(submitted?'':' 请先提交阵容，当前只做费用预估，不会扣钱。')+'</div><div class="manager-filter" style="margin-top:12px"><label>换下球员</label><select id="manager-transfer-from">'+fromOpts+'</select><label>换上球员</label><div class="manager-transfer-combo"><div class="manager-transfer-input-wrap"><input id="manager-transfer-to-search" placeholder="搜索球员 / ATP / WTA" value="'+esc(toInput)+'" autocomplete="off" aria-expanded="'+(MANAGER_TRANSFER_MENU_OPEN?'true':'false')+'"><button type="button" class="manager-transfer-toggle" data-manager-action="transfer-toggle" aria-label="展开换上球员列表">▼</button></div><div class="manager-transfer-menu" id="manager-transfer-menu" '+(MANAGER_TRANSFER_MENU_OPEN?'':'hidden')+'>'+toMenu+'</div></div>'+detail+'<button class="manager-action warn" data-manager-action="transfer" style="margin-top:10px">检查并换人</button></div>';
 }
 function managerRenderLedger(){
@@ -3345,7 +3384,8 @@ function renderManagerDemo(){
   var panelHead='<div class="manager-panel-h">'+panelTitle+(MANAGER_VIEW==='market'?managerEventMetaHtml(rules):'')+'</div>';
   var dialog=MANAGER_DIALOG?'<div class="manager-dialog"><div class="manager-dialog-card"><h3>'+esc(MANAGER_DIALOG.title)+'</h3><p>'+esc(MANAGER_DIALOG.msg).replace(/\n/g,'<br>')+'</p>'+(MANAGER_DIALOG.strong?'<div class="manager-dialog-strong">'+esc(MANAGER_DIALOG.strong).replace(/\n/g,'<br>')+'</div>':'')+'<div class="manager-actions">'+(MANAGER_DIALOG.confirmAction?'<button class="manager-clear" data-manager-action="close-dialog">'+esc(MANAGER_DIALOG.cancelLabel||'取消')+'</button><button class="manager-action" data-manager-action="'+esc(MANAGER_DIALOG.confirmAction)+'">'+esc(MANAGER_DIALOG.confirmLabel||'确定')+'</button>':'<button class="manager-action" data-manager-action="close-dialog">知道了</button>')+'</div></div></div>':'';
   var wechat='<div class="manager-wechat-card"><div class="manager-wechat-copy"><div class="manager-wechat-alert">温网已截止提交！请等待换人窗口，窗口期为7.1 8:00-17:45</div><div class="manager-wechat-line main">本游戏每周跟随巡回赛历开新赛事</div><div class="manager-wechat-line">如需 <span class="manager-wechat-em">开售提醒</span>、<span class="manager-wechat-em">换人窗口提醒</span> 请扫码进本游戏官方群</div></div><img class="manager-wechat-qr" src="assets/manager/wechat-group-qr.jpg" alt="微信群二维码" width="92" height="122" loading="eager" decoding="async" fetchpriority="high"></div>';
-  root.innerHTML='<div class="manager-shell"><div class="manager-hero"><div class="manager-title"><div><div class="manager-title-line"><h2>巡回赛经纪人</h2><button class="manager-clear" data-manager-view="rules">查看规则</button><span class="manager-settle-note">每天09:37结算</span></div><p>组建你的球员阵容，在巡回赛里征战！<br>在公开市场上购买球员，球员成绩越好，你赚的越多，收益按巡回赛积分计算。<br>你不只懂网球，你是在做预算、风险和轮次收益的组合策略。</p></div></div>'+wechat+'<img class="manager-hero-art" src="assets/manager/agent-money-bag.webp" alt="" loading="lazy" decoding="async" fetchpriority="low"></div>'+managerRenderMoney(c,rules)+tabs+'<div class="manager-grid view-'+MANAGER_VIEW+' '+(showSide?'':'single')+'"><div class="manager-panel">'+panelHead+'<div class="manager-panel-b">'+managerRenderBody()+'</div></div>'+(showSide?managerSidebar(c,rules):'')+'</div>'+seoFaqLinkHtml()+dialog+'</div>';
+  var qaBanner=managerLocalQaMode()?'<div class="manager-note" style="margin-bottom:10px"><b>本地换人测试模式：</b>提交和换人窗口均已开放；所有操作只保存在当前浏览器，不会写入线上 Supabase。</div>':'';
+  root.innerHTML='<div class="manager-shell">'+qaBanner+'<div class="manager-hero"><div class="manager-title"><div><div class="manager-title-line"><h2>巡回赛经纪人</h2><button class="manager-clear" data-manager-view="rules">查看规则</button><span class="manager-settle-note">每天09:37结算</span></div><p>组建你的球员阵容，在巡回赛里征战！<br>在公开市场上购买球员，球员成绩越好，你赚的越多，收益按巡回赛积分计算。<br>你不只懂网球，你是在做预算、风险和轮次收益的组合策略。</p></div></div>'+wechat+'<img class="manager-hero-art" src="assets/manager/agent-money-bag.webp" alt="" loading="lazy" decoding="async" fetchpriority="low"></div>'+managerRenderMoney(c,rules)+tabs+'<div class="manager-grid view-'+MANAGER_VIEW+' '+(showSide?'':'single')+'"><div class="manager-panel">'+panelHead+'<div class="manager-panel-b">'+managerRenderBody()+'</div></div>'+(showSide?managerSidebar(c,rules):'')+'</div>'+seoFaqLinkHtml()+dialog+'</div>';
 }
 
 function trackSupabaseError(operation,err,ignoreMissing){
@@ -3410,6 +3450,9 @@ async function optionalSupabaseRpc(name,args){
 
 function managerSupabaseMode(){
   return !!(AUTH_USER&&supabaseConfigured());
+}
+function managerSupabaseWriteMode(){
+  return managerSupabaseMode()&&!managerLocalQaMode();
 }
 function managerContractPayload(p){
   return {event_key:p.eventKey||managerEventPack(p.tour).meta.eventKey||'',player_key:p.playerKey||p.id,tour:p.tour,name:p.name,name_en:p.nameEn||'',price:p.price,tier:p.tier,predicted_round:MANAGER_PREDICTIONS[p.id]||'OUT'};
@@ -3576,6 +3619,7 @@ function managerRenderPreviousStation(){
 }
 async function managerLoadRemoteState(opts){
   opts=opts||{};
+  if(managerLocalQaMode())return null;
   if(!AUTH_USER||!supabaseConfigured())return null;
   var key=managerStationKey()+'|'+AUTH_USER.id;
   var fresh=MANAGER_REMOTE_SYNC_KEY===key&&MANAGER_REMOTE_STATE&&(Date.now()-MANAGER_REMOTE_SYNC_AT<MANAGER_REMOTE_SYNC_TTL_MS);
@@ -3593,6 +3637,7 @@ async function managerLoadRemoteState(opts){
 }
 async function managerLoadCareerLedger(opts){
   opts=opts||{};
+  if(managerLocalQaMode())return [];
   if(!AUTH_USER||!supabaseConfigured())return [];
   var key=AUTH_USER.id+'|career|'+managerSeason();
   if(!opts.force&&MANAGER_REMOTE_ALL_LEDGER_SYNC_KEY===key&&MANAGER_REMOTE_ALL_LEDGER.length)return MANAGER_REMOTE_ALL_LEDGER;
