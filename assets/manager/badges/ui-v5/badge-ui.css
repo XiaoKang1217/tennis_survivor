@@ -1,12 +1,12 @@
 /* Final badge UI skin. Business state and interactions remain in index.html. */
-[data-badge="sinner_fox"]{--badge-icon-art:url("sinner-badge.png");--badge-nameplate-art:url("sinner-nameplate.png");--badge-card-header:url("sinner-card-header-4x.png");--badge-surface-art:url("sinner-surface.png");--badge-a:#8d2f0e;--badge-b:#cf5d22;--badge-c:#e99545;--badge-plaque-text:#83451f;--badge-body-text:#652c15;--badge-border-final:#d99a53}
-[data-badge="alcaraz_duck"]{--badge-icon-art:url("alcaraz-badge-final-hq.png");--badge-nameplate-art:url("alcaraz-nameplate.png");--badge-card-header:url("alcaraz-card-header-4x.png");--badge-surface-art:url("alcaraz-theme-strip.png");--badge-a:#a3578f;--badge-b:#df777d;--badge-c:#eda367;--badge-plaque-text:#794660;--badge-body-text:#70415f;--badge-border-final:#d59bc0}
-[data-badge="djoko_goat"]{--badge-icon-art:url("djokovic-badge.png");--badge-nameplate-art:url("djokovic-nameplate.png");--badge-card-header:url("djokovic-card-header-4x.png");--badge-surface-art:url("djokovic-surface.png");--badge-a:#171044;--badge-b:#172e67;--badge-c:#0b1d43;--badge-plaque-text:#f6dfa2;--badge-body-text:#153867;--badge-border-final:#c9a14b}
-[data-badge="rublev_cat"]{--badge-icon-art:url("lubu-badge.png");--badge-nameplate-art:url("lubu-nameplate.png");--badge-card-header:url("lubu-card-header-4x.png");--badge-surface-art:url("lubu-surface.png");--badge-a:#061d48;--badge-b:#123b78;--badge-c:#245c9c;--badge-plaque-text:#ffe8ad;--badge-body-text:#173e70;--badge-border-final:#c49b49}
-[data-badge="zheng_queen"]{--badge-icon-art:url("zheng-badge.png");--badge-nameplate-art:url("zheng-nameplate.png");--badge-card-header:url("zheng-card-header-4x.png");--badge-surface-art:url("zheng-surface.png");--badge-a:#35103f;--badge-b:#64205e;--badge-c:#8f426e;--badge-plaque-text:#ffe5a2;--badge-body-text:#642863;--badge-border-final:#c39452}
-[data-badge="wang_mermaid"]{--badge-icon-art:url("mermaid-badge.png");--badge-nameplate-art:url("mermaid-nameplate.png");--badge-card-header:url("mermaid-card-header-4x.png");--badge-surface-art:url("mermaid-surface.png");--badge-a:#176f7e;--badge-b:#38a7ad;--badge-c:#80d3cf;--badge-plaque-text:#347985;--badge-body-text:#1e7180;--badge-border-final:#78bec1}
-[data-badge="luwang_friend"]{--badge-icon-art:url("luwang-badge.png");--badge-nameplate-art:url("luwang-nameplate.png");--badge-card-header:url("luwang-card-header-4x.png");--badge-surface-art:url("luwang-surface.png");--badge-a:#a65d15;--badge-b:#d9922c;--badge-c:#f0c35f;--badge-plaque-text:#87551f;--badge-body-text:#7a4d20;--badge-border-final:#d6a34e}
-[data-badge="wimbledon_2026"]{--badge-icon-art:url("wimbledon-badge.png");--badge-nameplate-art:url("wimbledon-nameplate.png");--badge-card-header:url("wimbledon-card-header-4x.png");--badge-surface-art:url("wimbledon-surface.png");--badge-a:#263b22;--badge-b:#48603a;--badge-c:#8d8959;--badge-plaque-text:#39482b;--badge-body-text:#3e5634;--badge-border-final:#9f9a62}
+[data-badge="sinner_fox"]{--badge-icon-art:url("optimized/sinner-badge-640.webp");--badge-nameplate-art:url("optimized/sinner-nameplate-640.webp");--badge-card-header:url("optimized/sinner-card-header-960.webp");--badge-surface-art:url("optimized/sinner-surface.webp");--badge-a:#8d2f0e;--badge-b:#cf5d22;--badge-c:#e99545;--badge-plaque-text:#83451f;--badge-body-text:#652c15;--badge-border-final:#d99a53}
+[data-badge="alcaraz_duck"]{--badge-icon-art:url("optimized/alcaraz-badge-final-hq-640.webp");--badge-nameplate-art:url("optimized/alcaraz-nameplate-640.webp");--badge-card-header:url("optimized/alcaraz-card-header-960.webp");--badge-surface-art:url("optimized/alcaraz-theme-strip.webp");--badge-a:#a3578f;--badge-b:#df777d;--badge-c:#eda367;--badge-plaque-text:#794660;--badge-body-text:#70415f;--badge-border-final:#d59bc0}
+[data-badge="djoko_goat"]{--badge-icon-art:url("optimized/djokovic-badge-640.webp");--badge-nameplate-art:url("optimized/djokovic-nameplate-640.webp");--badge-card-header:url("optimized/djokovic-card-header-960.webp");--badge-surface-art:url("optimized/djokovic-surface.webp");--badge-a:#171044;--badge-b:#172e67;--badge-c:#0b1d43;--badge-plaque-text:#f6dfa2;--badge-body-text:#153867;--badge-border-final:#c9a14b}
+[data-badge="rublev_cat"]{--badge-icon-art:url("optimized/lubu-badge-640.webp");--badge-nameplate-art:url("optimized/lubu-nameplate-640.webp");--badge-card-header:url("optimized/lubu-card-header-960.webp");--badge-surface-art:url("optimized/lubu-surface.webp");--badge-a:#061d48;--badge-b:#123b78;--badge-c:#245c9c;--badge-plaque-text:#ffe8ad;--badge-body-text:#173e70;--badge-border-final:#c49b49}
+[data-badge="zheng_queen"]{--badge-icon-art:url("optimized/zheng-badge-640.webp");--badge-nameplate-art:url("optimized/zheng-nameplate-640.webp");--badge-card-header:url("optimized/zheng-card-header-960.webp");--badge-surface-art:url("optimized/zheng-surface.webp");--badge-a:#35103f;--badge-b:#64205e;--badge-c:#8f426e;--badge-plaque-text:#ffe5a2;--badge-body-text:#642863;--badge-border-final:#c39452}
+[data-badge="wang_mermaid"]{--badge-icon-art:url("optimized/mermaid-badge-640.webp");--badge-nameplate-art:url("optimized/mermaid-nameplate-640.webp");--badge-card-header:url("optimized/mermaid-card-header-960.webp");--badge-surface-art:url("optimized/mermaid-surface.webp");--badge-a:#176f7e;--badge-b:#38a7ad;--badge-c:#80d3cf;--badge-plaque-text:#347985;--badge-body-text:#1e7180;--badge-border-final:#78bec1}
+[data-badge="luwang_friend"]{--badge-icon-art:url("optimized/luwang-badge-640.webp");--badge-nameplate-art:url("optimized/luwang-nameplate-640.webp");--badge-card-header:url("optimized/luwang-card-header-960.webp");--badge-surface-art:url("optimized/luwang-surface.webp");--badge-a:#a65d15;--badge-b:#d9922c;--badge-c:#f0c35f;--badge-plaque-text:#87551f;--badge-body-text:#7a4d20;--badge-border-final:#d6a34e}
+[data-badge="wimbledon_2026"]{--badge-icon-art:url("optimized/wimbledon-badge-640.webp");--badge-nameplate-art:url("optimized/wimbledon-nameplate-640.webp");--badge-card-header:url("optimized/wimbledon-card-header-960.webp");--badge-surface-art:url("optimized/wimbledon-surface.webp");--badge-a:#263b22;--badge-b:#48603a;--badge-c:#8d8959;--badge-plaque-text:#39482b;--badge-body-text:#3e5634;--badge-border-final:#9f9a62}
 
 .badge-identity,.manager-user-badge-line{--badge-icon-size:58px;--badge-plate-width:190px;--badge-plate-height:52px;position:relative;width:calc(var(--badge-icon-size) + var(--badge-plate-width) - 14px);max-width:100%;height:var(--badge-icon-size);min-height:var(--badge-icon-size);display:flex;align-items:center;gap:0;padding:0 0 0 calc(var(--badge-icon-size) - 14px);isolation:isolate;vertical-align:middle}
 .badge-identity::before,.badge-identity::after,.badge-identity__plate::before,.badge-identity__plate::after{display:none!important}
@@ -212,9 +212,9 @@
 .jinx-leader-table th:nth-child(3),.jinx-leader-table td:nth-child(3){width:100px!important;text-align:right!important}
 .jinx-leader-table th:last-child,.jinx-leader-table td:last-child{width:70px!important;text-align:right!important}
 
-.manager-badge-hero-name b{width:88%;max-width:88%;overflow:visible;text-overflow:clip;white-space:normal;word-break:break-word;line-height:1.05;text-align:center}
+.manager-badge-hero-name b{width:88%;max-width:88%;overflow:visible;text-overflow:clip;white-space:nowrap;word-break:normal;line-height:1;text-align:center}
 .manager-badge-hero-name.is-long b{font-size:clamp(12px,1.08vw,16px)}
-.manager-badge-hero-name.is-very-long b{font-size:clamp(10px,.94vw,14px);word-break:break-all}
+.manager-badge-hero-name.is-very-long b{font-size:clamp(9px,.84vw,13px)}
 [data-badge="alcaraz_duck"] .manager-badge-hero-name b,.manager-badge-hero-name[data-badge="alcaraz_duck"] b{width:94%;max-width:94%}
 
 /* A complete neutral skin for public configuration cards whose owner has no badge. */
@@ -305,7 +305,7 @@
 .manager-badge-preview-section .manager-rank-table td:nth-child(3){color:#20a15a!important;font-size:16px!important;font-weight:800!important}
 
 /* Shop cards follow the approved catalog demo while retaining each badge's art direction. */
-.manager-badge-filters{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin:0 0 18px;overflow-x:auto}
+.manager-badge-filters{display:grid;grid-template-columns:repeat(4,minmax(0,auto));align-items:center;justify-content:end;gap:8px;margin:0 0 18px}
 .manager-badge-filters button{flex:0 0 auto;cursor:pointer;padding:10px 16px;color:#735f51;border:1px solid rgba(108,71,43,.16);border-radius:999px;background:rgba(255,253,248,.78);font-size:13px;font-weight:700;line-height:normal;transition:.2s ease}
 .manager-badge-filters button:hover{transform:translateY(-1px);border-color:rgba(142,89,43,.35)}
 .manager-badge-filters button.on{color:#fff;border-color:transparent;background:linear-gradient(135deg,#6c342e,#a5683c);box-shadow:0 7px 16px rgba(100,52,39,.18)}
@@ -353,3 +353,15 @@
 
 @media(max-width:900px){.manager-badge-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.manager-badge-preview-main{grid-template-columns:1fr}.manager-badge-preview-hero{grid-template-columns:210px 1fr;padding:32px}.manager-badge-preview-hero>img{width:200px;height:200px}}
 @media(max-width:620px){.manager-badge-grid{grid-template-columns:minmax(0,1fr)!important}.manager-badge-card-footer{align-items:stretch;flex-direction:column}.manager-badge-card .manager-badge-actions{justify-content:stretch!important}.manager-badge-card .manager-badge-actions button{flex:1}.manager-badge-preview-hero{grid-template-columns:1fr;padding:30px 22px;text-align:center}.manager-badge-preview-hero>img{width:190px;height:190px;margin:auto}.manager-badge-preview-motifs{justify-content:center}.manager-badge-preview-main{padding:28px 18px 34px;gap:28px}.manager-badge-preview-data{grid-template-columns:1fr}.manager-badge-preview-scenes-head{align-items:flex-start;flex-direction:column}.manager-badge-preview-tabs{width:100%;justify-content:flex-start;overflow-x:auto;flex-wrap:nowrap}.manager-badge-preview-stage{padding:12px}}
+
+@media(max-width:768px){
+  .manager-badge-filters{grid-template-columns:repeat(4,minmax(0,1fr));justify-content:stretch;gap:5px;margin-bottom:14px}
+  .manager-badge-filters button{min-width:0;padding:8px 4px;font-size:11px;white-space:nowrap}
+  .manager-boards-page .manager-station-board-table{min-width:560px!important}
+  .manager-boards-page .manager-wallet-board-table{min-width:390px!important}
+  .manager-boards-page .manager-rank-table th:nth-child(2),
+  .manager-boards-page .manager-rank-table td:nth-child(2){width:138px!important;min-width:138px!important;max-width:138px!important}
+  .manager-boards-page .manager-rank-table .manager-user-name-plain{min-width:0!important;max-width:124px!important;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .manager-boards-page .manager-rank-table .badge-identity--row{--badge-icon-size:40px;--badge-plate-width:112px;--badge-plate-height:32px;width:138px;max-width:138px;padding-left:31px}
+  .manager-boards-page .manager-rank-table .badge-identity--row .badge-identity__name{font-size:11px}
+}
