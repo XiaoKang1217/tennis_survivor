@@ -1,0 +1,290 @@
+/*
+ * 炉网八徽章 · 全站换肤层 v1
+ *
+ * 设计原则：
+ * 1. 不修改 badge-* / manager-user-badge-line 等既有徽章组件；
+ * 2. 只为页面画布、导航、普通卡片、表格、表单、弹窗和业务模块换色；
+ * 3. 每套主题使用低饱和底色，徽章依然是视觉焦点；
+ * 4. body[data-site-theme] 是唯一主题入口。
+ */
+
+body.luwang-site-skin {
+  --site-canvas: #f1f1e7;
+  --site-canvas-glow: #fffdf5;
+  --site-surface: #fcfbf4;
+  --site-surface-raised: #fffef9;
+  --site-surface-muted: #e5e6d2;
+  --site-surface-strong: #c9cba3;
+  --site-text: #35412d;
+  --site-text-strong: #25311f;
+  --site-muted: #69705b;
+  --site-accent: #67764c;
+  --site-accent-2: #b89d55;
+  --site-accent-deep: #36452f;
+  --site-accent-soft: #dfe2ca;
+  --site-border: #b9ad78;
+  --site-border-soft: rgba(65, 83, 49, .20);
+  --site-on-accent: #fffbea;
+  --site-success: #527a4f;
+  --site-danger: #aa5148;
+  --site-warning: #b77a34;
+  --site-shadow-color: rgba(49, 61, 41, .13);
+  --site-shadow: 0 12px 32px var(--site-shadow-color);
+  --site-shadow-soft: 0 4px 16px color-mix(in srgb, var(--site-shadow-color) 72%, transparent);
+  --site-focus: 0 0 0 3px color-mix(in srgb, var(--site-accent) 22%, transparent);
+  color: var(--site-text);
+  background:
+    radial-gradient(circle at 8% 2%, color-mix(in srgb, var(--site-accent-soft) 78%, transparent), transparent 30rem),
+    radial-gradient(circle at 92% 18%, color-mix(in srgb, var(--site-accent-2) 12%, transparent), transparent 27rem),
+    linear-gradient(155deg, var(--site-canvas-glow), var(--site-canvas) 68%);
+  transition: color .28s ease, background .42s ease;
+}
+
+/* 辛纳狐：赤陶、奶油、少量松石绿。 */
+body.luwang-site-skin[data-site-theme="sinner_fox"] {
+  --site-canvas:#f7eee4; --site-canvas-glow:#fff9f1; --site-surface:#fffaf4; --site-surface-raised:#fffdf9;
+  --site-surface-muted:#f2dfcb; --site-surface-strong:#e8c099; --site-text:#4f3023; --site-text-strong:#382017; --site-muted:#806457;
+  --site-accent:#c45f2d; --site-accent-2:#db8a4b; --site-accent-deep:#71321e; --site-accent-soft:#f1d2b8;
+  --site-border:#d9a36d; --site-border-soft:rgba(158,83,40,.22); --site-on-accent:#fff9ee; --site-success:#3c7968; --site-danger:#b24b3d; --site-warning:#b86b2c;
+  --site-shadow-color:rgba(104,52,27,.13);
+}
+
+/* 阿卡鸭：粉紫晚霞、珊瑚、香槟金。 */
+body.luwang-site-skin[data-site-theme="alcaraz_duck"] {
+  --site-canvas:#f7edf0; --site-canvas-glow:#fff8f4; --site-surface:#fffaf8; --site-surface-raised:#fffdfb;
+  --site-surface-muted:#f1dce2; --site-surface-strong:#e4b4bf; --site-text:#513342; --site-text-strong:#392331; --site-muted:#816472;
+  --site-accent:#b85f7e; --site-accent-2:#e58a72; --site-accent-deep:#704163; --site-accent-soft:#efd2dc;
+  --site-border:#d9a4a7; --site-border-soft:rgba(148,72,105,.20); --site-on-accent:#fff8f2; --site-success:#43806f; --site-danger:#ba4d58; --site-warning:#bf713f;
+  --site-shadow-color:rgba(94,50,76,.13);
+}
+
+/* 德约GOAT：深海军蓝、象牙白、古金。 */
+body.luwang-site-skin[data-site-theme="djoko_goat"] {
+  --site-canvas:#edf1f7; --site-canvas-glow:#faf9f3; --site-surface:#fbfcfd; --site-surface-raised:#fffefa;
+  --site-surface-muted:#dfe7f1; --site-surface-strong:#b9c8db; --site-text:#172b45; --site-text-strong:#0c1c31; --site-muted:#607086;
+  --site-accent:#28527f; --site-accent-2:#b99856; --site-accent-deep:#0e2545; --site-accent-soft:#d8e2ef;
+  --site-border:#a99a73; --site-border-soft:rgba(24,59,99,.18); --site-on-accent:#fff8df; --site-success:#3a7866; --site-danger:#ae4a4a; --site-warning:#ae7531;
+  --site-shadow-color:rgba(17,42,76,.14);
+}
+
+/* 卢布喵：夜蓝、雾蓝、暖金。 */
+body.luwang-site-skin[data-site-theme="rublev_cat"] {
+  --site-canvas:#edf4f8; --site-canvas-glow:#f9fcfd; --site-surface:#fbfdfe; --site-surface-raised:#ffffff;
+  --site-surface-muted:#dceaf2; --site-surface-strong:#b6d2e2; --site-text:#17364e; --site-text-strong:#0c263a; --site-muted:#5c7384;
+  --site-accent:#2a6994; --site-accent-2:#c2a05b; --site-accent-deep:#123f69; --site-accent-soft:#d5e7f1;
+  --site-border:#9ebbd0; --site-border-soft:rgba(26,82,122,.20); --site-on-accent:#fff9e7; --site-success:#367965; --site-danger:#b14f49; --site-warning:#ad7430;
+  --site-shadow-color:rgba(18,63,105,.13);
+}
+
+/* 郑钦文Queen：帝王紫、暖白、王冠金。 */
+body.luwang-site-skin[data-site-theme="zheng_queen"] {
+  --site-canvas:#f3edf5; --site-canvas-glow:#fff9f7; --site-surface:#fdf9fd; --site-surface-raised:#fffdfd;
+  --site-surface-muted:#e9dceb; --site-surface-strong:#d0b5d5; --site-text:#422846; --site-text-strong:#2e1734; --site-muted:#745f77;
+  --site-accent:#7a3e79; --site-accent-2:#c39e55; --site-accent-deep:#4b2455; --site-accent-soft:#e7d1e6;
+  --site-border:#bda0be; --site-border-soft:rgba(102,44,104,.20); --site-on-accent:#fff7df; --site-success:#477b68; --site-danger:#b24d5a; --site-warning:#b47835;
+  --site-shadow-color:rgba(74,36,85,.14);
+}
+
+/* 王欣瑜美人鱼：珍珠白、海水青、贝壳紫。 */
+body.luwang-site-skin[data-site-theme="wang_mermaid"] {
+  --site-canvas:#ebf6f5; --site-canvas-glow:#fbffff; --site-surface:#f9fdfd; --site-surface-raised:#ffffff;
+  --site-surface-muted:#d8eceb; --site-surface-strong:#aed7d6; --site-text:#183f48; --site-text-strong:#0c2c33; --site-muted:#58767a;
+  --site-accent:#2b8f96; --site-accent-2:#b59bc5; --site-accent-deep:#17636f; --site-accent-soft:#cfe9e7;
+  --site-border:#93c4c3; --site-border-soft:rgba(26,111,119,.19); --site-on-accent:#fffdf4; --site-success:#347b68; --site-danger:#b45453; --site-warning:#b27b3e;
+  --site-shadow-color:rgba(20,85,94,.13);
+}
+
+/* 炉网挚友：蜂蜜、麦穗金、橄榄绿。 */
+body.luwang-site-skin[data-site-theme="luwang_friend"] {
+  --site-canvas:#f5f0e3; --site-canvas-glow:#fffcf4; --site-surface:#fdfbf5; --site-surface-raised:#fffefa;
+  --site-surface-muted:#ebe2c9; --site-surface-strong:#d7c18f; --site-text:#493d28; --site-text-strong:#312915; --site-muted:#766a4e;
+  --site-accent:#957536; --site-accent-2:#b58b3e; --site-accent-deep:#596032; --site-accent-soft:#e5ddbd;
+  --site-border:#c8b273; --site-border-soft:rgba(108,96,49,.21); --site-on-accent:#fffbed; --site-success:#567a4d; --site-danger:#aa5546; --site-warning:#aa7131;
+  --site-shadow-color:rgba(83,71,34,.13);
+}
+
+/* 温网限定：草地绿、博物馆象牙、古典金。 */
+body.luwang-site-skin[data-site-theme="wimbledon_2026"] {
+  --site-canvas:#f1f1e7; --site-canvas-glow:#fffdf5; --site-surface:#fcfbf4; --site-surface-raised:#fffef9;
+  --site-surface-muted:#e5e6d2; --site-surface-strong:#c9cba3; --site-text:#35412d; --site-text-strong:#25311f; --site-muted:#69705b;
+  --site-accent:#67764c; --site-accent-2:#b89d55; --site-accent-deep:#36452f; --site-accent-soft:#dfe2ca;
+  --site-border:#b9ad78; --site-border-soft:rgba(65,83,49,.20); --site-on-accent:#fffbea; --site-success:#527a4f; --site-danger:#aa5148; --site-warning:#a77635;
+  --site-shadow-color:rgba(49,61,41,.13);
+}
+
+/* ---------- 全站骨架 ---------- */
+body.manager-mode.luwang-site-skin { background-color: var(--site-canvas); }
+body.manager-mode.luwang-site-skin .main { background: transparent; }
+body.manager-mode.luwang-site-skin .manager-shell {
+  color: var(--site-text);
+  background:
+    linear-gradient(color-mix(in srgb, var(--site-canvas) 92%, transparent), color-mix(in srgb, var(--site-canvas-glow) 88%, transparent)),
+    radial-gradient(circle at 86% 4%, color-mix(in srgb, var(--site-accent-soft) 66%, transparent), transparent 32rem);
+}
+
+body.luwang-site-skin #hdr {
+  color: var(--site-on-accent);
+  background:
+    linear-gradient(110deg, var(--site-accent-deep), color-mix(in srgb, var(--site-accent) 86%, var(--site-accent-deep)) 58%, color-mix(in srgb, var(--site-accent-2) 62%, var(--site-accent)));
+  box-shadow: 0 6px 24px color-mix(in srgb, var(--site-accent-deep) 26%, transparent);
+}
+body.luwang-site-skin #hdr h1 { color: var(--site-on-accent); }
+body.luwang-site-skin .tab { border-color: color-mix(in srgb, var(--site-on-accent) 48%, transparent); background: color-mix(in srgb, var(--site-on-accent) 13%, transparent); color: var(--site-on-accent); }
+body.luwang-site-skin .tab:hover:not(.on) { background: color-mix(in srgb, var(--site-on-accent) 24%, transparent); }
+body.luwang-site-skin .tab.on { color: var(--site-accent-deep); border-color: var(--site-surface-raised); background: var(--site-surface-raised); box-shadow: 0 4px 14px color-mix(in srgb, var(--site-accent-deep) 22%, transparent); }
+body.luwang-site-skin .auth-chip { border-color: color-mix(in srgb, var(--site-on-accent) 50%, transparent); background: color-mix(in srgb, var(--site-on-accent) 13%, transparent); color: var(--site-on-accent); }
+
+/* ---------- 通用按钮、筛选器与输入框 ---------- */
+body.luwang-site-skin :where(.sheet-tab,.fbtn,.ftab,.jtab,.select-mini,.pick-stat-more) {
+  color: var(--site-muted); border-color: var(--site-border); background: var(--site-surface-raised);
+}
+body.luwang-site-skin :where(.sheet-tab,.fbtn,.ftab,.jtab).on {
+  color: var(--site-on-accent); border-color: transparent; background: linear-gradient(135deg,var(--site-accent),var(--site-accent-deep)); box-shadow: 0 5px 16px color-mix(in srgb,var(--site-accent-deep) 20%,transparent);
+}
+body.luwang-site-skin :where(.sheet-tab,.fbtn,.ftab,.jtab,.pick-stat-more):hover:not(.on) { color: var(--site-accent-deep); border-color: var(--site-accent); }
+body.luwang-site-skin :where(.toolbar input,.auth-form input,.jinx-form textarea,.bd-toolbar input,.manager-filter input,.manager-filter select,.manager-ledger-filters input,.manager-ledger-filters select,.manager-calc-table select) {
+  color: var(--site-text-strong); border-color: var(--site-border); background: var(--site-surface-raised);
+}
+body.luwang-site-skin :where(.toolbar input,.auth-form input,.jinx-form textarea,.bd-toolbar input,.manager-filter input,.manager-filter select,.manager-ledger-filters input,.manager-ledger-filters select,.manager-calc-table select):focus {
+  outline: none; border-color: var(--site-accent); box-shadow: var(--site-focus);
+}
+
+/* ---------- 经纪人首页 ---------- */
+body.luwang-site-skin .manager-hero {
+  color: var(--site-text-strong);
+  border-color: var(--site-border);
+  background:
+    radial-gradient(circle at 76% 18%, color-mix(in srgb,var(--site-accent-2) 26%,transparent), transparent 24rem),
+    linear-gradient(120deg,var(--site-surface-raised),var(--site-accent-soft) 70%,var(--site-surface-muted));
+  box-shadow: var(--site-shadow);
+}
+body.luwang-site-skin .manager-hero::after { background: linear-gradient(90deg,color-mix(in srgb,var(--site-surface-raised) 97%,transparent),color-mix(in srgb,var(--site-accent-soft) 74%,transparent) 54%,transparent 100%); }
+body.luwang-site-skin .manager-title p,
+body.luwang-site-skin .manager-settle-note,
+body.luwang-site-skin .manager-wechat-copy,
+body.luwang-site-skin .manager-wechat-line.small { color: var(--site-muted); }
+body.luwang-site-skin .manager-title h2 { color: var(--site-text-strong); }
+body.luwang-site-skin .manager-wechat-card { color: var(--site-text); border-color: color-mix(in srgb,var(--site-border) 65%,white); background: color-mix(in srgb,var(--site-surface-raised) 72%,transparent); box-shadow: inset 0 0 0 1px var(--site-border-soft); }
+body.luwang-site-skin .manager-wechat-qr { border-color: var(--site-border); box-shadow: var(--site-shadow-soft); }
+body.luwang-site-skin .manager-wechat-em { color: var(--site-success); }
+body.luwang-site-skin .manager-wechat-alert { color: var(--site-danger); }
+
+body.luwang-site-skin .manager-money,
+body.luwang-site-skin .manager-panel,
+body.luwang-site-skin .manager-my-highlight,
+body.luwang-site-skin .manager-my-card,
+body.luwang-site-skin .manager-rule-card,
+body.luwang-site-skin .manager-board {
+  color: var(--site-text); border-color: var(--site-border-soft); background: var(--site-surface-raised); box-shadow: var(--site-shadow-soft);
+}
+body.luwang-site-skin .manager-money.hot { border-color: var(--site-accent-2); }
+body.luwang-site-skin .manager-money b,
+body.luwang-site-skin .manager-money.hot b,
+body.luwang-site-skin .manager-money-amount,
+body.luwang-site-skin .manager-money-amount .manager-dollar { color: var(--site-accent-deep)!important; text-shadow: 1px 1px 0 color-mix(in srgb,var(--site-on-accent) 78%,transparent); }
+body.luwang-site-skin .manager-money > span { color: var(--site-muted); }
+
+body.luwang-site-skin .manager-panel-h,
+body.luwang-site-skin .manager-rules summary,
+body.luwang-site-skin :where(.manager-calc-table,.manager-ledger-table,.manager-reward-table) th {
+  color: var(--site-text-strong); border-color: var(--site-border-soft); background: linear-gradient(105deg,var(--site-surface-muted),color-mix(in srgb,var(--site-surface-muted) 58%,var(--site-surface-raised)));
+}
+body.luwang-site-skin .manager-panel-chip { color: var(--site-muted); border-color: var(--site-border); background: var(--site-surface-raised); }
+body.luwang-site-skin .manager-panel-chip.surface.grass { color: var(--site-success); background: color-mix(in srgb,var(--site-success) 10%,var(--site-surface-raised)); border-color: color-mix(in srgb,var(--site-success) 38%,var(--site-border)); }
+
+body.luwang-site-skin :where(.manager-tab,.manager-tour-tab,.manager-subtab,.manager-clear) { color: var(--site-text); border-color: var(--site-border); background: var(--site-surface-raised); }
+body.luwang-site-skin :where(.manager-tab,.manager-tour-tab,.manager-subtab).on { color: var(--site-on-accent); border-color: var(--site-accent-deep); background: linear-gradient(135deg,var(--site-accent),var(--site-accent-deep)); }
+body.luwang-site-skin .manager-action { color: var(--site-on-accent); background: var(--site-accent-deep); }
+body.luwang-site-skin .manager-action.secondary { background: color-mix(in srgb,var(--site-accent) 70%,#63528e); }
+body.luwang-site-skin .manager-action.warn { background: var(--site-warning); }
+
+body.luwang-site-skin .manager-filter,
+body.luwang-site-skin .manager-sim,
+body.luwang-site-skin .manager-status-line,
+body.luwang-site-skin .manager-empty,
+body.luwang-site-skin .manager-detail,
+body.luwang-site-skin .manager-metric-box,
+body.luwang-site-skin .manager-dialog-strong {
+  color: var(--site-text); border-color: var(--site-border-soft); background: color-mix(in srgb,var(--site-surface-muted) 52%,var(--site-surface-raised));
+}
+body.luwang-site-skin .manager-filter label,
+body.luwang-site-skin :where(.manager-sub,.manager-origin,.manager-note,.manager-lines,.manager-msg,.manager-sim-hint,.manager-pager,.manager-roster-title) { color: var(--site-muted); }
+body.luwang-site-skin :where(.manager-row,.manager-roster-row,.manager-detail-item,.manager-detail-stat) { color: var(--site-text); border-color: var(--site-border-soft); background: var(--site-surface-raised); }
+body.luwang-site-skin .manager-row.sel { border-color: var(--site-accent-2); background: color-mix(in srgb,var(--site-accent-soft) 48%,var(--site-surface-raised)); }
+body.luwang-site-skin .manager-avatar { color: var(--site-accent-deep); border-color: var(--site-border); background: linear-gradient(135deg,var(--site-surface-muted),var(--site-surface-raised)); }
+body.luwang-site-skin :where(.manager-name,.manager-roster-name,.manager-detail-stat b,.manager-my-card h4,.manager-my-portrait h4) { color: var(--site-text-strong); }
+body.luwang-site-skin :where(.manager-price,.manager-roster-price,.manager-sim-row b,.manager-board em,.manager-my-highlight b,.manager-my-card b) { color: var(--site-accent-deep); }
+body.luwang-site-skin .manager-pill { color: var(--site-text); background: var(--site-surface-muted); }
+body.luwang-site-skin .manager-track { background: color-mix(in srgb,var(--site-surface-strong) 46%,var(--site-surface-raised)); }
+body.luwang-site-skin .manager-fill { background: linear-gradient(90deg,var(--site-accent),var(--site-accent-2)); }
+body.luwang-site-skin .manager-dialog { background: color-mix(in srgb,var(--site-accent-deep) 36%,transparent); }
+body.luwang-site-skin .manager-dialog-card { border-color: var(--site-border); background: var(--site-surface-raised); box-shadow: 0 18px 50px color-mix(in srgb,var(--site-accent-deep) 26%,transparent); }
+body.luwang-site-skin .manager-dialog-card h3 { color: var(--site-on-accent); background: var(--site-accent-deep); }
+
+/* ---------- 实时榜单、偏好、积分构成 ---------- */
+body.luwang-site-skin :where(.kc,.sc,.exp-sec,.bd-sbadge,.bd-card,.flight-card,.seo-faq,.fortune-card) { color: var(--site-text); border-color: var(--site-border-soft); background: var(--site-surface-raised); box-shadow: var(--site-shadow-soft); }
+body.luwang-site-skin :where(.kl,.scs,.psr,.nf,.dev-note,.fortune-sub,.fortune-hint,.fortune-yi,.bd-loading,.bd-chart-sub,.bd-legend-pct,.bd-bar-month,.bd-bar-events,.bd-bar-zero,.bd-surf-pct) { color: var(--site-muted); }
+body.luwang-site-skin :where(.tu,.tp,.tw,.psp,.exp-sub-t,.bd-name,.bd-exp-title,.bd-chart-total,.bd-legend-name,.bd-ev-group-hdr,.bd-surf-lbl,.bd-surf-val) { color: var(--site-text); }
+body.luwang-site-skin :where(.tbl-wrap,.bd-tbl-wrap) { border-color: var(--site-border); box-shadow: var(--site-shadow-soft); background: var(--site-surface-raised); }
+body.luwang-site-skin :where(thead,.bd-tbl thead) { background: linear-gradient(105deg,var(--site-surface-muted),color-mix(in srgb,var(--site-accent-soft) 66%,var(--site-surface-raised))); }
+body.luwang-site-skin :where(th,.bd-tbl th) { color: var(--site-text-strong); border-color: var(--site-border); }
+body.luwang-site-skin :where(td,.bd-tbl td,.st td) { color: var(--site-text); border-color: color-mix(in srgb,var(--site-border-soft) 72%,transparent); }
+body.luwang-site-skin :where(tr.pref-row,tr[data-status],.bd-main-row):hover td { background: color-mix(in srgb,var(--site-accent-soft) 44%,transparent)!important; }
+body.luwang-site-skin :where(.exp-row,.bd-exp-row,.sdr-row) { background: color-mix(in srgb,var(--site-surface-muted) 42%,var(--site-surface-raised))!important; }
+body.luwang-site-skin :where(.exp-inner,.bd-exp-inner,.sdr-cell) { border-color: var(--site-border); }
+body.luwang-site-skin :where(.et,.exp-tag,.day-item,.bd-forced) { color: var(--site-text); border-color: var(--site-border); background: var(--site-accent-soft); }
+body.luwang-site-skin .bd-bar-track,
+body.luwang-site-skin .bd-surf-track { background: color-mix(in srgb,var(--site-surface-strong) 38%,var(--site-surface-raised)); }
+body.luwang-site-skin .bd-bar-fill { background: linear-gradient(90deg,var(--site-accent),var(--site-accent-2)); }
+body.luwang-site-skin :where(.bd-score,.bd-legend-val,.bd-ev-score,.bd-bar-score-out) { color: var(--site-accent-deep); }
+
+/* ---------- 每日运势、毒奶、航班与 FAQ ---------- */
+body.luwang-site-skin .fortune-title,
+body.luwang-site-skin .fortune-player,
+body.luwang-site-skin .flight-day,
+body.luwang-site-skin .seo-faq h2,
+body.luwang-site-skin .seo-faq-item h3 { color: var(--site-accent-deep); }
+body.luwang-site-skin .fortune-text { color: var(--site-text); border-left-color: var(--site-accent); background: color-mix(in srgb,var(--site-accent-soft) 42%,var(--site-surface-raised)); }
+body.luwang-site-skin .fortune-btn,
+body.luwang-site-skin .auth-submit { color: var(--site-on-accent); background: linear-gradient(135deg,var(--site-accent),var(--site-accent-deep)); box-shadow: 0 5px 16px color-mix(in srgb,var(--site-accent-deep) 22%,transparent); }
+body.luwang-site-skin :where(.flight-pill,.fattr) { color: var(--site-text); border-color: var(--site-border); background: var(--site-accent-soft); }
+
+body.luwang-site-skin .jinx-board,
+body.luwang-site-skin .jinx-leader-card { border-color: color-mix(in srgb,var(--site-danger) 38%,var(--site-border)); background: var(--site-surface-raised); box-shadow: var(--site-shadow-soft); }
+body.luwang-site-skin .jinx-hero { background: linear-gradient(135deg,color-mix(in srgb,var(--site-danger) 76%,var(--site-accent-deep)),var(--site-danger),color-mix(in srgb,var(--site-warning) 72%,var(--site-accent))); }
+body.luwang-site-skin :where(.jinx-body,.jinx-leader-head) { background: var(--site-surface-raised); }
+body.luwang-site-skin .jinx-leader-head { color: var(--site-danger); border-color: color-mix(in srgb,var(--site-danger) 32%,var(--site-border)); }
+body.luwang-site-skin .jinx-player,
+body.luwang-site-skin .jinx-bar { color: var(--site-text); border-color: color-mix(in srgb,var(--site-danger) 30%,var(--site-border)); background: color-mix(in srgb,var(--site-danger) 6%,var(--site-surface-raised)); }
+body.luwang-site-skin .jinx-status,
+body.luwang-site-skin .jinx-count,
+body.luwang-site-skin .jinx-msg,
+body.luwang-site-skin .jinx-leader-meta { color: var(--site-muted); }
+body.luwang-site-skin .jinx-submit { color: var(--site-on-accent); background: linear-gradient(135deg,var(--site-danger),color-mix(in srgb,var(--site-warning) 70%,var(--site-danger))); }
+body.luwang-site-skin .jinx-leader-table th { color: var(--site-text-strong); background: var(--site-accent-soft); border-color: var(--site-border); }
+body.luwang-site-skin .jinx-leader-table td { color: var(--site-text); border-color: var(--site-border-soft); }
+
+body.luwang-site-skin .seo-faq { color: var(--site-text); }
+body.luwang-site-skin .seo-faq-link { color: var(--site-muted); }
+body.luwang-site-skin .seo-faq-link button { color: var(--site-accent-deep); }
+
+/* ---------- 登录弹窗 ---------- */
+body.luwang-site-skin .auth-modal { background: color-mix(in srgb,var(--site-accent-deep) 38%,transparent); }
+body.luwang-site-skin .auth-card { border-color: var(--site-border); background: var(--site-surface-raised); box-shadow: 0 18px 60px color-mix(in srgb,var(--site-accent-deep) 28%,transparent); }
+body.luwang-site-skin .auth-head { color: var(--site-on-accent); background: linear-gradient(135deg,var(--site-accent),var(--site-accent-deep)); }
+body.luwang-site-skin .auth-close { color: var(--site-accent-deep); background: color-mix(in srgb,var(--site-on-accent) 84%,transparent); }
+body.luwang-site-skin .auth-tab { color: var(--site-muted); border-color: var(--site-border); background: var(--site-surface-raised); }
+body.luwang-site-skin .auth-tab.on { color: var(--site-on-accent); border-color: var(--site-accent); background: var(--site-accent); }
+body.luwang-site-skin :where(.auth-form label,.auth-note,.auth-msg) { color: var(--site-muted); }
+
+/* 键盘可见焦点。 */
+body.luwang-site-skin :where(button,input,select,textarea):focus-visible { outline: 2px solid var(--site-accent-2); outline-offset: 2px; }
+
+@media (max-width:768px) {
+  body.luwang-site-skin .toolbar { background: color-mix(in srgb,var(--site-surface-raised) 88%,transparent); border: 1px solid var(--site-border-soft); }
+  body.luwang-site-skin .manager-hero { background: linear-gradient(145deg,var(--site-surface-raised),var(--site-accent-soft)); }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  body.luwang-site-skin, body.luwang-site-skin * { transition-duration:.01ms!important; animation-duration:.01ms!important; animation-iteration-count:1!important; }
+}

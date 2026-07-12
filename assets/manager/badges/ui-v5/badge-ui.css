@@ -1,0 +1,355 @@
+/* Final badge UI skin. Business state and interactions remain in index.html. */
+[data-badge="sinner_fox"]{--badge-icon-art:url("sinner-badge.png");--badge-nameplate-art:url("sinner-nameplate.png");--badge-card-header:url("sinner-card-header-4x.png");--badge-surface-art:url("sinner-surface.png");--badge-a:#8d2f0e;--badge-b:#cf5d22;--badge-c:#e99545;--badge-plaque-text:#83451f;--badge-body-text:#652c15;--badge-border-final:#d99a53}
+[data-badge="alcaraz_duck"]{--badge-icon-art:url("alcaraz-badge-final-hq.png");--badge-nameplate-art:url("alcaraz-nameplate.png");--badge-card-header:url("alcaraz-card-header-4x.png");--badge-surface-art:url("alcaraz-theme-strip.png");--badge-a:#a3578f;--badge-b:#df777d;--badge-c:#eda367;--badge-plaque-text:#794660;--badge-body-text:#70415f;--badge-border-final:#d59bc0}
+[data-badge="djoko_goat"]{--badge-icon-art:url("djokovic-badge.png");--badge-nameplate-art:url("djokovic-nameplate.png");--badge-card-header:url("djokovic-card-header-4x.png");--badge-surface-art:url("djokovic-surface.png");--badge-a:#171044;--badge-b:#172e67;--badge-c:#0b1d43;--badge-plaque-text:#f6dfa2;--badge-body-text:#153867;--badge-border-final:#c9a14b}
+[data-badge="rublev_cat"]{--badge-icon-art:url("lubu-badge.png");--badge-nameplate-art:url("lubu-nameplate.png");--badge-card-header:url("lubu-card-header-4x.png");--badge-surface-art:url("lubu-surface.png");--badge-a:#061d48;--badge-b:#123b78;--badge-c:#245c9c;--badge-plaque-text:#ffe8ad;--badge-body-text:#173e70;--badge-border-final:#c49b49}
+[data-badge="zheng_queen"]{--badge-icon-art:url("zheng-badge.png");--badge-nameplate-art:url("zheng-nameplate.png");--badge-card-header:url("zheng-card-header-4x.png");--badge-surface-art:url("zheng-surface.png");--badge-a:#35103f;--badge-b:#64205e;--badge-c:#8f426e;--badge-plaque-text:#ffe5a2;--badge-body-text:#642863;--badge-border-final:#c39452}
+[data-badge="wang_mermaid"]{--badge-icon-art:url("mermaid-badge.png");--badge-nameplate-art:url("mermaid-nameplate.png");--badge-card-header:url("mermaid-card-header-4x.png");--badge-surface-art:url("mermaid-surface.png");--badge-a:#176f7e;--badge-b:#38a7ad;--badge-c:#80d3cf;--badge-plaque-text:#347985;--badge-body-text:#1e7180;--badge-border-final:#78bec1}
+[data-badge="luwang_friend"]{--badge-icon-art:url("luwang-badge.png");--badge-nameplate-art:url("luwang-nameplate.png");--badge-card-header:url("luwang-card-header-4x.png");--badge-surface-art:url("luwang-surface.png");--badge-a:#a65d15;--badge-b:#d9922c;--badge-c:#f0c35f;--badge-plaque-text:#87551f;--badge-body-text:#7a4d20;--badge-border-final:#d6a34e}
+[data-badge="wimbledon_2026"]{--badge-icon-art:url("wimbledon-badge.png");--badge-nameplate-art:url("wimbledon-nameplate.png");--badge-card-header:url("wimbledon-card-header-4x.png");--badge-surface-art:url("wimbledon-surface.png");--badge-a:#263b22;--badge-b:#48603a;--badge-c:#8d8959;--badge-plaque-text:#39482b;--badge-body-text:#3e5634;--badge-border-final:#9f9a62}
+
+.badge-identity,.manager-user-badge-line{--badge-icon-size:58px;--badge-plate-width:190px;--badge-plate-height:52px;position:relative;width:calc(var(--badge-icon-size) + var(--badge-plate-width) - 14px);max-width:100%;height:var(--badge-icon-size);min-height:var(--badge-icon-size);display:flex;align-items:center;gap:0;padding:0 0 0 calc(var(--badge-icon-size) - 14px);isolation:isolate;vertical-align:middle}
+.badge-identity::before,.badge-identity::after,.badge-identity__plate::before,.badge-identity__plate::after{display:none!important}
+.badge-identity__icon,.manager-badge-thumb{position:absolute;left:0;z-index:4;width:var(--badge-icon-size);height:var(--badge-icon-size);flex:0 0 var(--badge-icon-size);padding:0;border:0;border-radius:50%;background:transparent;object-fit:cover;clip-path:circle(49.2% at 50% 50%);box-shadow:none;filter:drop-shadow(0 4px 7px rgba(43,24,48,.26))}
+.badge-identity__plate{position:relative;z-index:2;width:var(--badge-plate-width);height:var(--badge-plate-height);min-height:0;display:flex;align-items:center;justify-content:center;margin:0;padding:5px 15px 5px 25px;overflow:visible;color:var(--badge-plaque-text,#fff4d7);border:0;border-radius:0;background:var(--badge-nameplate-art) center/100% 100% no-repeat;box-shadow:none;font-family:"Songti SC","STSong","SimSun",serif;text-shadow:0 1px 1px rgba(255,255,255,.3),0 2px 3px rgba(42,22,38,.42)}
+.badge-identity__name{position:relative;z-index:2;width:82%;overflow:hidden;font-size:15px;font-weight:900;line-height:1;letter-spacing:0;text-align:center;text-overflow:ellipsis;white-space:nowrap}
+.badge-identity--login{--badge-icon-size:50px;--badge-plate-width:174px;--badge-plate-height:46px}.badge-identity--login .badge-identity__name{font-size:14px}
+.badge-identity--row{--badge-icon-size:62px;--badge-plate-width:196px;--badge-plate-height:50px}.badge-identity--row .badge-identity__name{font-size:15px}
+.badge-identity--card,.badge-identity--sidebar{--badge-icon-size:66px;--badge-plate-width:210px;--badge-plate-height:58px}.badge-identity--card .badge-identity__name,.badge-identity--sidebar .badge-identity__name{font-size:16px}
+
+.auth-chip.badged{width:auto;max-width:300px;min-height:54px;padding:2px 30px 2px 4px;overflow:visible;color:#fff9ef;border:1px solid color-mix(in srgb,var(--badge-border-final) 76%,white 24%);border-radius:10px;background:linear-gradient(90deg,rgba(28,15,40,.28),rgba(28,15,40,.06)),var(--badge-surface-art) center/cover no-repeat;box-shadow:inset 0 1px rgba(255,255,255,.28),0 8px 18px rgba(49,27,55,.2)}
+.auth-chip.badged:hover{filter:brightness(1.04);transform:translateY(-1px)}
+.header-badge-login{position:relative;display:flex;align-items:center;min-width:0}.header-badge-login__caret{position:absolute;right:-18px;color:#fff8e9;font-size:13px}
+
+.manager-rank-table,.jinx-leader-table{border-collapse:separate;border-spacing:0 8px}
+.manager-rank-table tbody td,.jinx-leader-table tbody td{min-height:70px;height:70px;vertical-align:middle}
+.manager-rank-table tbody tr.manager-badge-themed td,.manager-rank-table tbody tr.badge-themed-row td,.jinx-leader-table tbody tr.manager-badge-themed td,.jinx-leader-table tbody tr.badge-themed-row td{position:relative;z-index:1;color:#523f36;border-top-color:color-mix(in srgb,var(--badge-border-final) 48%,#ead8b7 52%);border-bottom-color:color-mix(in srgb,var(--badge-border-final) 48%,#ead8b7 52%);background:linear-gradient(90deg,rgba(255,251,243,.82),rgba(255,247,239,.72),rgba(250,241,244,.79)),var(--badge-surface-art) center/cover no-repeat!important}
+.manager-rank-table tbody tr.manager-badge-themed td:nth-child(2),.manager-rank-table tbody tr.badge-themed-row td:nth-child(2),.jinx-leader-table tbody tr.manager-badge-themed td:nth-child(2),.jinx-leader-table tbody tr.badge-themed-row td:nth-child(2){min-width:270px;background:linear-gradient(90deg,rgba(255,251,243,.42),rgba(255,247,239,.74)),var(--badge-surface-art) center/cover no-repeat!important}
+.manager-rank-table tbody tr.manager-badge-themed td:nth-child(2)::before,.manager-rank-table tbody tr.badge-themed-row td:nth-child(2)::before,.jinx-leader-table tbody tr.manager-badge-themed td:nth-child(2)::before,.jinx-leader-table tbody tr.badge-themed-row td:nth-child(2)::before{display:none}
+.manager-rank-table tbody tr.manager-badge-themed td:nth-child(2)::after,.manager-rank-table tbody tr.badge-themed-row td:nth-child(2)::after,.jinx-leader-table tbody tr.manager-badge-themed td:nth-child(2)::after,.jinx-leader-table tbody tr.badge-themed-row td:nth-child(2)::after{content:"";position:absolute;inset:0;z-index:-1;display:block;opacity:0;pointer-events:none;background:linear-gradient(105deg,transparent 14%,rgba(255,255,255,.5) 42%,transparent 68%);transform:translateX(-85%)}
+.manager-rank-table tbody tr.manager-badge-themed:hover,.jinx-leader-table tbody tr.manager-badge-themed:hover{transform:translateY(-1px)}
+.manager-rank-table tbody tr.manager-badge-themed:hover td:nth-child(2)::after,.jinx-leader-table tbody tr.manager-badge-themed:hover td:nth-child(2)::after{animation:badge-ui-sweep 1.8s ease-out}
+[data-badge="alcaraz_duck"].manager-badge-themed:hover td:nth-child(2){animation:badge-ui-ripple 1.9s ease-out}
+[data-badge="djoko_goat"].manager-badge-themed:hover td:nth-child(2){animation:badge-ui-laurel 2.2s ease-in-out}
+[data-badge="rublev_cat"].manager-badge-themed:hover td:nth-child(2){animation:badge-ui-spark 1.6s steps(4,end)}
+[data-badge="zheng_queen"].manager-badge-themed:hover td:nth-child(2){animation:badge-ui-crown 2s ease-in-out}
+[data-badge="wang_mermaid"].manager-badge-themed:hover td:nth-child(2){animation:badge-ui-wave 2.4s ease-in-out}
+[data-badge="luwang_friend"].manager-badge-themed:hover td:nth-child(2){animation:badge-ui-heart 1.7s ease-in-out}
+[data-badge="wimbledon_2026"].manager-badge-themed:hover td:nth-child(2){animation:badge-ui-grass 2.1s ease-in-out}
+
+.manager-hall-card.manager-badge-themed,.manager-hall-card.badge-themed-card{position:relative;min-height:0;padding:0 0 12px;overflow:hidden;border:2px solid var(--badge-border-final);border-radius:10px;background:#fffaf1;box-shadow:0 13px 26px rgba(64,33,74,.18)}
+.manager-hall-card.manager-badge-themed::before,.manager-hall-card.manager-badge-themed::after,.manager-hall-card.badge-themed-card::before,.manager-hall-card.badge-themed-card::after{display:none}
+.manager-hall-card-top{position:relative;width:100%;min-height:0;aspect-ratio:1212/572;display:block;margin:0;padding:0;overflow:hidden;border:0;border-bottom:1px solid var(--badge-border-final);background:var(--badge-card-header) center/cover no-repeat;box-shadow:none}
+.manager-hall-card-top::before,.manager-hall-card-top::after{display:none!important}
+.manager-badge-hero-name{position:absolute;top:50%;right:2%;z-index:3;width:56%;height:44%;display:flex;align-items:center;justify-content:center;padding:7% 9%;color:var(--badge-plaque-text);background:var(--badge-nameplate-art) center/100% 100% no-repeat;transform:translateY(-50%);filter:drop-shadow(0 5px 8px rgba(36,20,36,.2));font-family:"Songti SC","STSong","SimSun",serif;text-shadow:0 1px 1px rgba(255,255,255,.32),0 2px 3px rgba(45,24,40,.4)}
+.manager-badge-hero-name b{width:80%;overflow:hidden;font-size:clamp(14px,1.35vw,19px);line-height:1;letter-spacing:0;text-align:center;text-overflow:ellipsis;white-space:nowrap}
+[data-badge="alcaraz_duck"] .manager-badge-hero-name,.manager-badge-hero-name[data-badge="alcaraz_duck"]{top:44%;right:4%;width:49%;height:42%;padding:5% 8%;color:#633b60;background:none;filter:none;text-shadow:0 1px #fff7ed}
+.manager-badge-hero-name--plain{position:static;width:auto;height:auto;padding:9px 14px;color:#5c421f;border-radius:8px;background:rgba(255,250,240,.9);transform:none}
+.manager-hall-card .manager-hall-metrics{margin:10px 12px;border-color:rgba(218,164,87,.48);background:linear-gradient(120deg,#fffdf8,#fff2e8)}
+.manager-hall-card .manager-hall-players,.manager-hall-card>.manager-note{margin-right:12px;margin-left:12px}
+
+.manager-panel.manager-side.manager-badge-themed{position:sticky;overflow:hidden;border:1px solid var(--badge-border-final);border-radius:13px;background:#fffdf9;box-shadow:0 14px 32px rgba(67,35,73,.14)}
+.manager-panel.manager-side.manager-badge-themed::before,.manager-panel.manager-side.manager-badge-themed::after{display:none}
+.manager-panel.manager-side.manager-badge-themed .manager-panel-h{position:relative;width:100%;min-height:0;aspect-ratio:1212/572;display:block;padding:0;overflow:hidden;color:#fff8eb;border:0;border-bottom:1px solid var(--badge-border-final);background:var(--badge-card-header) center/cover no-repeat}
+.manager-panel.manager-side.manager-badge-themed .manager-panel-h::before,.manager-panel.manager-side.manager-badge-themed .manager-panel-h::after{display:none}
+.manager-panel.manager-side.manager-badge-themed .manager-sidebar-owner{display:block}
+.manager-panel.manager-side.manager-badge-themed .manager-panel-h .manager-sidebar-owner{position:static;z-index:auto}
+.manager-panel.manager-side.manager-badge-themed .manager-panel-h .manager-badge-hero-name{position:absolute;top:50%;right:2%;z-index:4;width:56%;height:44%;padding:7% 9%;transform:translateY(-50%)}
+.manager-panel.manager-side.manager-badge-themed .manager-panel-h .manager-badge-hero-name[data-badge="alcaraz_duck"]{top:44%;right:4%;width:49%;height:42%;padding:5% 8%}
+.manager-panel.manager-side.manager-badge-themed .manager-sidebar-title{position:absolute;top:11px;left:13px;z-index:5;color:#fff8eb;font-size:12px;text-shadow:0 2px 4px rgba(31,17,38,.72)}
+.manager-panel.manager-side.manager-badge-themed .manager-panel-h>.manager-clear{position:absolute;top:9px;right:9px;z-index:6;color:#fff8eb;border-color:rgba(255,239,204,.55);background:rgba(43,24,48,.3)}
+.manager-panel.manager-side.manager-badge-themed .manager-panel-b{padding:14px;background:linear-gradient(180deg,#fffdf9,#fff8ed)}
+.manager-panel.manager-side.manager-badge-themed .manager-roster{padding:0;border:0;background:transparent}
+.manager-panel.manager-side.manager-badge-themed .manager-roster-row{min-height:76px;margin-bottom:8px;padding:8px;border:1px solid rgba(218,164,87,.5);border-radius:11px;background:linear-gradient(100deg,#fffaf1,#fff3ec)}
+.manager-panel.manager-side.manager-badge-themed .manager-sim{margin-top:12px;padding:12px;border:1px solid rgba(218,164,87,.5);border-radius:11px;background:linear-gradient(140deg,#fff9ed,#f8eefb)}
+
+.manager-badge-board-shell[data-badge] .manager-rules>details>summary{color:#fff8e8;border-color:var(--badge-border-final);background:linear-gradient(90deg,rgba(20,13,35,.3),rgba(20,13,35,.06)),var(--badge-surface-art) center/cover no-repeat;text-shadow:0 1px 2px rgba(32,18,34,.58)}
+
+.manager-badge-grid{grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+.manager-badge-card{position:relative;display:grid;grid-template-columns:108px minmax(0,1fr);gap:10px 12px;padding:14px;overflow:hidden;border:1px solid var(--badge-border-final);border-radius:10px;background:linear-gradient(120deg,rgba(255,251,242,.88),rgba(255,247,239,.78)),var(--badge-surface-art) center/cover no-repeat;box-shadow:0 10px 22px rgba(75,42,63,.12)}
+.manager-badge-card::before,.manager-badge-card::after{display:none}.manager-badge-card-art{width:104px;height:104px;display:grid;place-items:center}
+.manager-badge-card img.manager-badge-art{width:100px;height:100px;padding:0;object-fit:cover;border:0;border-radius:50%;clip-path:circle(49.2% at 50% 50%);background:transparent;filter:drop-shadow(0 5px 8px rgba(47,25,48,.24))}
+.manager-badge-card-copy{min-width:0}.manager-badge-card h4{margin:6px 0 2px;color:var(--badge-body-text)}.manager-badge-card .manager-badge-sub{margin:0 0 7px;color:var(--badge-body-text);opacity:.78}.manager-badge-card .manager-badge-desc{min-height:0;margin:0;color:#6c5c52}.manager-badge-card .badge-identity{grid-column:1/-1;justify-self:center}.manager-badge-card .manager-badge-actions{grid-column:1/-1;margin:0}
+
+@keyframes badge-ui-sweep{from{opacity:0;transform:translateX(-85%)}35%{opacity:.75}to{opacity:0;transform:translateX(115%)}}
+@keyframes badge-ui-ripple{0%,100%{filter:saturate(1)}50%{filter:saturate(1.18) brightness(1.04)}}
+@keyframes badge-ui-laurel{0%,100%{box-shadow:inset 0 0 0 rgba(235,194,94,0)}50%{box-shadow:inset 0 0 24px rgba(235,194,94,.24)}}
+@keyframes badge-ui-spark{0%,100%{filter:brightness(1)}45%{filter:brightness(1.12)}55%{filter:brightness(1.03)}}
+@keyframes badge-ui-crown{0%,100%{filter:saturate(1)}50%{filter:saturate(1.16) drop-shadow(0 0 5px rgba(229,184,83,.28))}}
+@keyframes badge-ui-wave{0%,100%{background-position:center}50%{background-position:54% center}}
+@keyframes badge-ui-heart{0%,100%{filter:brightness(1)}45%{filter:brightness(1.08)}55%{filter:brightness(1.02)}65%{filter:brightness(1.08)}}
+@keyframes badge-ui-grass{0%,100%{filter:saturate(1)}50%{filter:saturate(1.12) brightness(1.035)}}
+
+@media(prefers-reduced-motion:reduce){.manager-rank-table tbody tr.manager-badge-themed:hover td:nth-child(2)::after,.jinx-leader-table tbody tr.manager-badge-themed:hover td:nth-child(2)::after,[data-badge].manager-badge-themed:hover td:nth-child(2){animation:none!important}}
+@media(max-width:900px){.manager-panel.manager-side.manager-badge-themed{position:static}}
+@media(max-width:768px){.auth-chip.badged{max-width:238px;min-height:48px}.badge-identity--login{--badge-icon-size:44px;--badge-plate-width:155px;--badge-plate-height:42px}.badge-identity--row{--badge-icon-size:52px;--badge-plate-width:170px;--badge-plate-height:45px}.badge-identity__name{font-size:13px}.manager-rank-table tbody tr.manager-badge-themed td:nth-child(2),.jinx-leader-table tbody tr.manager-badge-themed td:nth-child(2){min-width:220px}.manager-badge-grid{grid-template-columns:1fr}}
+@media(max-width:520px){.auth-chip.badged{max-width:202px;padding-right:24px}.badge-identity--login{--badge-icon-size:40px;--badge-plate-width:132px;--badge-plate-height:38px}.badge-identity--login .badge-identity__name{font-size:12px}.manager-badge-hero-name b{font-size:14px}}
+
+/* Demo source alignment: these rules intentionally win over legacy site styles. */
+#hdr .site-brand{min-width:0;display:grid;gap:3px;margin-right:auto}
+#hdr .site-brand h1{margin:0}
+#hdr .site-brand .upd{display:block;color:rgba(255,255,255,.82);font-size:11px;line-height:1.25}
+#hdr .site-account{display:grid;justify-items:center;gap:3px;margin-left:auto}
+#hdr .site-account .dev{margin:0;color:rgba(255,255,255,.86);font-size:11px;line-height:1.2;white-space:nowrap}
+#hdr.badge-login-header{background:linear-gradient(135deg,#f59e0b,#f97316,#ef4444)}
+#hdr.badge-login-header .hdt.login-bar{
+  min-height:76px;
+  display:grid;
+  grid-template-columns:minmax(300px,1fr) auto;
+  align-items:center;
+  gap:20px;
+  padding:8px 24px;
+  overflow:hidden;
+  color:#fff9ef;
+  border:1px solid color-mix(in srgb,var(--badge-border-final) 72%,#f5dfa6 28%);
+  border-radius:12px;
+  background:linear-gradient(90deg,rgba(74,40,96,.36),rgba(221,104,112,.10)),var(--badge-surface-art) center/cover no-repeat;
+  box-shadow:inset 0 1px rgba(255,255,255,.35),0 10px 22px rgba(66,34,77,.16);
+}
+#hdr.badge-login-header[data-badge="alcaraz_duck"] .hdt.login-bar{
+  border:5px solid transparent;
+  border-image-source:var(--badge-card-header);
+  border-image-slice:70;
+  border-image-width:5px;
+  border-image-repeat:stretch;
+}
+#hdr.badge-login-header .hdt.login-bar .site-brand{justify-self:start}
+#hdr.badge-login-header .hdt.login-bar .site-brand h1{display:block;color:#fff9ef;font-size:1.2em;text-shadow:0 2px 6px rgba(0,0,0,.28)}
+#hdr.badge-login-header .hdt.login-bar .site-brand .upd{color:rgba(255,249,239,.82);font-size:11px;font-weight:600;white-space:nowrap}
+#hdr.badge-login-header .hdt.login-bar .site-account{width:280px;justify-self:end;justify-items:center;gap:2px}
+#hdr.badge-login-header .hdt.login-bar .dev{
+  width:170px;
+  margin:0 59px 0 0;
+  justify-self:end;
+  color:#fff8e7;
+  font-size:11px;
+  font-weight:700;
+  line-height:1.2;
+  text-align:center;
+  white-space:nowrap;
+}
+#hdr.badge-login-header .hdt.login-bar .auth-chip.badged{width:280px;max-width:100%;min-height:58px;justify-self:end;justify-content:center;padding:0;overflow:visible;border:0;background:transparent;box-shadow:none}
+#hdr.badge-login-header .badge-identity--login{--badge-icon-size:58px;--badge-plate-width:170px;--badge-plate-height:38px;width:270px;justify-content:flex-start;padding-left:46px}
+#hdr.badge-login-header .badge-identity--login .badge-identity__name{font-size:16px}
+#hdr.badge-login-header .header-badge-login{width:100%;justify-content:center}
+#hdr.badge-login-header .header-badge-login__caret{right:0}
+
+.manager-boards-page .manager-rank-table,
+.jinx-leader-table{width:100%;border-collapse:collapse!important;border-spacing:0!important;table-layout:fixed}
+.manager-badge-board-shell:not([data-badge]){--badge-surface-art:linear-gradient(110deg,#7d4325,#bf7530 56%,#8c4c2e);--badge-border-final:#c59154}
+.manager-demo-boards{display:grid!important;gap:18px;background:transparent!important;box-shadow:none!important}
+.manager-demo-board{overflow:hidden;border:1px solid color-mix(in srgb,var(--badge-border-final) 48%,#d9b67b 52%);border-radius:12px;background:rgba(255,253,248,.94);box-shadow:0 10px 24px rgba(76,45,60,.08)}
+.manager-demo-board>summary{
+  min-height:64px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:16px!important;
+  padding:10px 18px!important;
+  color:#fff9ef!important;
+  border:1px solid color-mix(in srgb,var(--badge-border-final) 70%,#f2d999 30%)!important;
+  border-radius:0!important;
+  background:linear-gradient(90deg,rgba(24,17,42,.38),rgba(24,17,42,.08)),var(--badge-surface-art) center/100% 100% no-repeat!important;
+  box-shadow:inset 0 0 0 2px rgba(255,239,199,.16)!important;
+  list-style:none!important;
+}
+.manager-demo-board>summary::-webkit-details-marker{display:none}
+.manager-demo-board>summary>span{display:grid;gap:3px}
+.manager-demo-board>summary b{color:#fff9ef;font-family:"Songti SC","STSong",serif;font-size:18px;font-weight:900;text-shadow:0 2px 4px rgba(26,17,42,.45)}
+.manager-demo-board>summary small{color:rgba(255,255,255,.76);font-size:10px;font-weight:600}
+.manager-demo-board>summary em{padding:6px 10px;color:#fff9ef;border:1px solid rgba(255,239,198,.45);border-radius:999px;background:rgba(49,27,71,.18);font-size:11px;font-style:normal;font-weight:800}
+.manager-demo-board>.rule-body{padding:0!important;border:0!important;background:#fffdf8!important}
+.manager-demo-board .manager-table-scroll{margin:0!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+.manager-demo-board .manager-pager{padding:10px 14px}
+.manager-boards-page .manager-rank-table thead,
+.jinx-leader-table thead{background:transparent}
+.manager-boards-page .manager-rank-table th,
+.jinx-leader-table th{height:42px;padding:8px 14px!important;color:#6b4b35!important;background:linear-gradient(90deg,#fff0d1,#f7e1c8)!important;border:0!important;border-bottom:1px solid rgba(187,126,58,.32)!important;font-size:11px!important;font-weight:800!important;text-align:left!important}
+.manager-boards-page .manager-rank-table td,
+.jinx-leader-table td{height:70px!important;min-height:70px!important;padding:7px 14px!important;color:#523f36;border:0!important;border-bottom:1px solid rgba(190,130,67,.2)!important;border-radius:0!important;background:#fffdf8!important;box-shadow:none!important;font-size:12px;vertical-align:middle}
+.manager-boards-page .manager-rank-table th:first-child,
+.manager-boards-page .manager-rank-table td:first-child{width:80px!important;text-align:center!important}
+.manager-boards-page .manager-rank-table th:nth-child(2),
+.manager-boards-page .manager-rank-table td:nth-child(2){width:38%!important;min-width:0!important}
+.manager-boards-page .manager-rank-table tbody tr.manager-badge-themed,
+.manager-boards-page .manager-rank-table tbody tr.badge-themed-row,
+.jinx-leader-table tbody tr.manager-badge-themed,
+.jinx-leader-table tbody tr.badge-themed-row{
+  background:linear-gradient(90deg,rgba(255,251,242,.82),rgba(255,247,237,.72),rgba(249,238,242,.80)),var(--badge-surface-art) center/100% 100% no-repeat!important;
+  box-shadow:inset 0 0 0 2px rgba(211,158,92,.18)!important;
+}
+.manager-boards-page .manager-rank-table tbody tr.manager-badge-themed::before,
+.manager-boards-page .manager-rank-table tbody tr.manager-badge-themed::after,
+.manager-boards-page .manager-rank-table tbody tr.badge-themed-row::before,
+.manager-boards-page .manager-rank-table tbody tr.badge-themed-row::after,
+.jinx-leader-table tbody tr.manager-badge-themed::before,
+.jinx-leader-table tbody tr.manager-badge-themed::after,
+.jinx-leader-table tbody tr.badge-themed-row::before,
+.jinx-leader-table tbody tr.badge-themed-row::after{display:none!important;content:none!important}
+.manager-boards-page .manager-rank-table tbody tr.manager-badge-themed td,
+.manager-boards-page .manager-rank-table tbody tr.badge-themed-row td,
+.jinx-leader-table tbody tr.manager-badge-themed td,
+.jinx-leader-table tbody tr.badge-themed-row td{background:transparent!important;border-bottom-color:rgba(184,112,126,.28)!important}
+.manager-boards-page .manager-rank-table tbody tr.manager-badge-themed td:nth-child(2),
+.manager-boards-page .manager-rank-table tbody tr.badge-themed-row td:nth-child(2),
+.jinx-leader-table tbody tr.manager-badge-themed td:nth-child(2),
+.jinx-leader-table tbody tr.badge-themed-row td:nth-child(2){background:transparent!important}
+.manager-boards-page .manager-rank-table tbody tr.manager-badge-themed td:nth-child(2)::after,
+.manager-boards-page .manager-rank-table tbody tr.badge-themed-row td:nth-child(2)::after,
+.jinx-leader-table tbody tr.manager-badge-themed td:nth-child(2)::after,
+.jinx-leader-table tbody tr.badge-themed-row td:nth-child(2)::after{display:none!important}
+.manager-rank-medal{width:30px!important;height:30px!important;display:inline-grid!important;place-items:center;border:1px solid #d8ab69!important;border-radius:50%!important;background:linear-gradient(145deg,#fff2ba,#e6a95b)!important;box-shadow:inset 0 0 0 3px rgba(255,255,255,.34)!important;color:#6e3e28!important;font-size:13px!important;font-weight:900!important;text-shadow:none!important}
+.manager-rank-medal.rank-2{border-color:#aab5bf!important;background:linear-gradient(145deg,#f8fbfd,#b8c5d0)!important;color:#475569!important}
+.manager-rank-medal.rank-3{border-color:#b8733e!important;background:linear-gradient(145deg,#ffd5ad,#bd6a31)!important;color:#713516!important}
+.manager-rank-number{display:inline-block;min-width:30px;color:#523f36;font-size:13px;font-weight:700;text-align:center}
+.manager-boards-page .badge-identity--row,
+.jinx-leader-table .badge-identity--row{--badge-icon-size:58px;--badge-plate-width:166px;--badge-plate-height:34px;width:min(100%,360px);padding-left:45px}
+.manager-boards-page .badge-identity--row .badge-identity__name,
+.jinx-leader-table .badge-identity--row .badge-identity__name{font-size:15px}
+.manager-boards-page .manager-rank-table tbody td:nth-child(3){color:#20a15a!important;font-size:16px!important;font-weight:800!important}
+.jinx-leader-table th:first-child,.jinx-leader-table td:first-child{width:60px!important;text-align:center!important}
+.jinx-leader-table th:nth-child(2),.jinx-leader-table td:nth-child(2){width:auto!important;min-width:0!important}
+.jinx-leader-table th:nth-child(3),.jinx-leader-table td:nth-child(3){width:100px!important;text-align:right!important}
+.jinx-leader-table th:last-child,.jinx-leader-table td:last-child{width:70px!important;text-align:right!important}
+
+.manager-badge-hero-name b{width:88%;max-width:88%;overflow:visible;text-overflow:clip;white-space:normal;word-break:break-word;line-height:1.05;text-align:center}
+.manager-badge-hero-name.is-long b{font-size:clamp(12px,1.08vw,16px)}
+.manager-badge-hero-name.is-very-long b{font-size:clamp(10px,.94vw,14px);word-break:break-all}
+[data-badge="alcaraz_duck"] .manager-badge-hero-name b,.manager-badge-hero-name[data-badge="alcaraz_duck"] b{width:94%;max-width:94%}
+
+/* A complete neutral skin for public configuration cards whose owner has no badge. */
+.manager-hall-card:not(.manager-badge-themed){overflow:hidden;border:1px solid color-mix(in srgb,var(--site-border,#d9c6a0) 68%,#c8d4df 32%);border-radius:12px;background:var(--site-surface-raised,#fffdf9);box-shadow:0 10px 24px rgba(55,63,76,.09)}
+.manager-hall-card:not(.manager-badge-themed) .manager-hall-card-top{
+  position:relative;
+  width:100%;
+  min-height:150px;
+  aspect-ratio:1212/420;
+  overflow:hidden;
+  border-bottom:1px solid color-mix(in srgb,var(--site-border,#d9c6a0) 64%,transparent);
+  background:
+    radial-gradient(circle at 18% 30%,color-mix(in srgb,var(--site-accent-soft,#e8dfca) 78%,transparent),transparent 24%),
+    linear-gradient(112deg,color-mix(in srgb,var(--site-surface-raised,#fffdf9) 94%,transparent),color-mix(in srgb,var(--site-accent-soft,#e8dfca) 58%,#f7f8f8 42%)),
+    repeating-linear-gradient(135deg,rgba(113,92,62,.035) 0 1px,transparent 1px 14px);
+}
+.manager-hall-card:not(.manager-badge-themed) .manager-hall-card-top::before{content:""!important;display:block!important;position:absolute;inset:14px;border:1px solid color-mix(in srgb,var(--site-border,#d9c6a0) 46%,transparent);border-radius:10px;pointer-events:none}
+.manager-hall-card:not(.manager-badge-themed) .manager-hall-card-top::after{content:""!important;display:block!important;position:absolute;right:-40px;bottom:-70px;width:230px;height:150px;border:1px solid color-mix(in srgb,var(--site-accent,#8a744d) 22%,transparent);border-radius:50%;transform:rotate(-18deg);pointer-events:none}
+.manager-hall-card:not(.manager-badge-themed) .manager-badge-hero-name--plain{position:absolute;top:50%;left:50%;z-index:2;width:min(72%,300px);height:auto;display:flex;align-items:center;justify-content:center;padding:12px 20px;color:var(--site-text-strong,#493823);border:1px solid color-mix(in srgb,var(--site-border,#d9c6a0) 72%,#fff 28%);border-radius:6px;background:color-mix(in srgb,var(--site-surface-raised,#fffdf9) 88%,transparent);box-shadow:0 8px 20px rgba(74,62,47,.1);transform:translate(-50%,-50%);font-family:"Songti SC","STSong",serif;font-size:17px;font-weight:900;text-align:center}
+.manager-hall-card:not(.manager-badge-themed) .manager-badge-hero-name--plain{flex-direction:column;gap:3px}
+.manager-hall-card:not(.manager-badge-themed) .manager-badge-hero-name--plain small{color:var(--site-muted,#7c6f5b);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans SC",sans-serif;font-size:9px;font-weight:800;letter-spacing:0}
+.manager-hall-card:not(.manager-badge-themed) .manager-badge-hero-name--plain b{max-width:100%;overflow:hidden;color:var(--site-text-strong,#493823);font-size:17px;text-overflow:ellipsis;white-space:nowrap}
+
+/* In-shop full preview. It reuses production identity, row and card components. */
+.manager-badge-preview-overlay{position:fixed;inset:0;z-index:1200;display:grid;place-items:center;padding:24px;background:rgba(31,20,38,.68);backdrop-filter:blur(6px)}
+.manager-badge-preview-dialog{width:min(1120px,96vw);max-height:92vh;overflow:auto;border:1px solid var(--badge-border-final);border-radius:12px;background:var(--site-surface-raised,#fffdf9);box-shadow:0 28px 80px rgba(22,14,29,.42)}
+.manager-badge-preview-title{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:14px 18px;color:var(--site-text-strong,#3d2b30);border-bottom:1px solid var(--site-border-soft,rgba(120,90,70,.2));background:color-mix(in srgb,var(--site-surface-raised,#fffdf9) 94%,transparent);backdrop-filter:blur(12px)}
+.manager-badge-preview-title h3{margin:0 0 3px;font-size:18px}.manager-badge-preview-title p{margin:0;color:var(--site-muted,#786a60);font-size:11px}
+.manager-badge-preview-login{min-height:92px;display:grid;grid-template-columns:minmax(260px,1fr) auto;align-items:center;gap:20px;margin:16px;padding:14px 20px;color:#fff9ef;border:1px solid var(--badge-border-final);border-radius:10px;background:linear-gradient(90deg,rgba(31,19,45,.42),rgba(31,19,45,.08)),var(--badge-surface-art) center/cover no-repeat;box-shadow:inset 0 0 0 2px rgba(255,239,199,.14)}
+.manager-badge-preview-login>div:first-child{display:grid;gap:4px}.manager-badge-preview-login>div:first-child>b{font-size:18px}.manager-badge-preview-login>div:first-child>small{color:rgba(255,255,255,.78);font-size:10px}
+.manager-badge-preview-account{display:grid;justify-items:end;gap:2px}.manager-badge-preview-account>small{color:rgba(255,255,255,.82);font-size:10px;font-weight:700}
+.manager-badge-preview-section{margin:0 16px 16px;overflow:hidden;border:1px solid color-mix(in srgb,var(--badge-border-final) 44%,#dfc8a7 56%);border-radius:10px;background:#fffdf8}.manager-badge-preview-section>h4{margin:0;padding:9px 14px;color:#fff9ef;background:linear-gradient(90deg,rgba(31,19,45,.44),rgba(31,19,45,.08)),var(--badge-surface-art) center/cover no-repeat}
+.manager-badge-preview-product{display:grid;grid-template-columns:minmax(360px,1fr) 330px;align-items:start;gap:18px;padding:0 16px 18px}.manager-badge-preview-config{max-width:620px}
+.manager-badge-preview-sidebar{overflow:hidden;border:1px solid var(--badge-border-final);border-radius:11px;background:#fffdf9;box-shadow:0 12px 26px rgba(50,29,52,.14)}
+.manager-badge-preview-sidebar-head{position:relative;aspect-ratio:1212/572;background:var(--badge-card-header) center/cover no-repeat}.manager-badge-preview-sidebar-head .manager-badge-hero-name{position:absolute}
+.manager-badge-preview-sidebar-body{display:grid;gap:8px;padding:13px;color:var(--badge-body-text,#513d32)}.manager-badge-preview-sidebar-body>b{font-size:14px}.manager-badge-preview-sidebar-body>span{padding-bottom:7px;border-bottom:1px dashed rgba(190,150,100,.35);font-size:11px}
+
+@media(max-width:900px){
+  #hdr.badge-login-header .hdt.login-bar{grid-template-columns:minmax(230px,1fr) auto;gap:10px;padding:7px 12px}
+  #hdr.badge-login-header .hdt.login-bar .site-account{width:250px}
+  #hdr.badge-login-header .hdt.login-bar .dev{width:170px;margin-right:32px}
+  #hdr.badge-login-header .hdt.login-bar .auth-chip.badged{width:250px}
+  #hdr.badge-login-header .badge-identity--login{width:245px}
+  .manager-badge-preview-product{grid-template-columns:1fr}
+}
+@media(max-width:680px){
+  #hdr.badge-login-header .hdt.login-bar{min-height:68px;grid-template-columns:minmax(0,1fr) auto;padding:7px 10px}
+  #hdr.badge-login-header .hdt.login-bar .site-brand .upd{display:block;font-size:10px;white-space:normal}
+  #hdr.badge-login-header .hdt.login-bar .site-account{width:210px}
+  #hdr.badge-login-header .hdt.login-bar .dev{width:142px;margin-right:30px;font-size:9px}
+  #hdr.badge-login-header .hdt.login-bar .auth-chip.badged{width:210px;grid-column:auto;justify-self:end}
+  #hdr.badge-login-header .badge-identity--login{--badge-icon-size:46px;--badge-plate-width:142px;--badge-plate-height:36px;width:205px;padding-left:36px}
+  #hdr.badge-login-header .badge-identity--login .badge-identity__name{font-size:12px}
+  .manager-demo-board>summary{min-height:58px!important;padding:9px 11px!important}
+  .manager-demo-board>summary b{font-size:15px}
+  .manager-demo-board>summary em{display:none}
+  .manager-badge-preview-overlay{padding:8px}.manager-badge-preview-login{grid-template-columns:1fr;margin:10px;padding:12px}.manager-badge-preview-account{justify-items:start}.manager-badge-preview-product{padding:0 10px 10px}.manager-badge-preview-section{margin:0 10px 10px}
+}
+
+/* Board alignment: names read from the left, values compare from the right. */
+.manager-boards-page .manager-rank-table th:nth-child(2),
+.manager-boards-page .manager-rank-table td:nth-child(2),
+.manager-badge-preview-section .manager-rank-table th:nth-child(2),
+.manager-badge-preview-section .manager-rank-table td:nth-child(2){text-align:left!important}
+.manager-boards-page .manager-station-board-table th:nth-child(n+3),
+.manager-boards-page .manager-station-board-table td:nth-child(n+3),
+.manager-badge-preview-section .manager-station-board-table th:nth-child(n+3),
+.manager-badge-preview-section .manager-station-board-table td:nth-child(n+3),
+.manager-boards-page .manager-wallet-board-table th:nth-child(3),
+.manager-boards-page .manager-wallet-board-table td:nth-child(3){text-align:right!important}
+.manager-boards-page .manager-rank-table .manager-user-name-plain,
+.manager-badge-preview-section .manager-rank-table .manager-user-name-plain{min-width:0!important;min-height:0!important;display:inline!important;padding:0!important;color:#5b4b42!important;border:0!important;border-radius:0!important;background:none!important;box-shadow:none!important;font-weight:500!important}
+.manager-boards-page .manager-rank-table .manager-user-name-plain::before,
+.manager-boards-page .manager-rank-table .manager-user-name-plain::after,
+.manager-badge-preview-section .manager-rank-table .manager-user-name-plain::before,
+.manager-badge-preview-section .manager-rank-table .manager-user-name-plain::after{display:none!important;content:none!important}
+.manager-badge-preview-section .manager-rank-table{width:100%;border-collapse:collapse!important;table-layout:fixed}
+.manager-badge-preview-section .manager-rank-table th{height:42px;padding:8px 14px!important;color:#6b4b35!important;border:0!important;border-bottom:1px solid rgba(187,126,58,.32)!important;background:linear-gradient(90deg,#fff0d1,#f7e1c8)!important;font-size:11px!important}
+.manager-badge-preview-section .manager-rank-table td{height:70px!important;padding:7px 14px!important;color:#523f36!important;border:0!important;border-bottom:1px solid rgba(190,130,67,.2)!important;background:#fffdf8!important;box-shadow:none!important}
+.manager-badge-preview-section .manager-rank-table th:first-child,
+.manager-badge-preview-section .manager-rank-table td:first-child{width:80px;text-align:center!important}
+.manager-badge-preview-section .manager-rank-table th:nth-child(2),
+.manager-badge-preview-section .manager-rank-table td:nth-child(2){width:38%}
+.manager-badge-preview-section .manager-rank-table tr.manager-badge-themed{background:linear-gradient(90deg,rgba(255,251,242,.82),rgba(255,247,237,.72),rgba(249,238,242,.8)),var(--badge-surface-art) center/100% 100% no-repeat!important}
+.manager-badge-preview-section .manager-rank-table tr.manager-badge-themed::before,
+.manager-badge-preview-section .manager-rank-table tr.manager-badge-themed::after{display:none!important;content:none!important}
+.manager-badge-preview-section .manager-rank-table tr.manager-badge-themed td{background:transparent!important}
+.manager-badge-preview-section .manager-rank-table td:nth-child(3){color:#20a15a!important;font-size:16px!important;font-weight:800!important}
+
+/* Shop cards follow the approved catalog demo while retaining each badge's art direction. */
+.manager-badge-filters{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin:0 0 18px;overflow-x:auto}
+.manager-badge-filters button{flex:0 0 auto;cursor:pointer;padding:10px 16px;color:#735f51;border:1px solid rgba(108,71,43,.16);border-radius:999px;background:rgba(255,253,248,.78);font-size:13px;font-weight:700;line-height:normal;transition:.2s ease}
+.manager-badge-filters button:hover{transform:translateY(-1px);border-color:rgba(142,89,43,.35)}
+.manager-badge-filters button.on{color:#fff;border-color:transparent;background:linear-gradient(135deg,#6c342e,#a5683c);box-shadow:0 7px 16px rgba(100,52,39,.18)}
+.manager-badge-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;justify-content:start!important;gap:18px!important}
+.manager-badge-card{--accent:var(--badge-primary,#b86845);--deep:var(--badge-body-text,#542f38);--soft:var(--badge-card-tint,#f9d9ca);--glow:var(--badge-glow,rgba(223,144,101,.35));position:relative!important;isolation:isolate;min-width:0;min-height:520px!important;display:flex!important;flex-direction:column!important;gap:0!important;padding:0!important;overflow:hidden!important;border:1px solid color-mix(in srgb,var(--accent) 34%,transparent)!important;border-radius:24px!important;background:linear-gradient(160deg,color-mix(in srgb,var(--soft) 54%,white) 0,rgba(255,253,249,.94) 54%,#fffaf4 100%),var(--badge-surface-art) center top/cover no-repeat!important;box-shadow:0 12px 35px rgba(67,42,27,.08)!important;transition:transform .25s ease,box-shadow .25s ease}
+.manager-badge-card:hover{transform:translateY(-6px);box-shadow:0 22px 45px var(--glow)!important}
+.manager-badge-card::before{content:""!important;position:absolute!important;z-index:-1;top:-95px!important;right:-80px!important;bottom:auto!important;left:auto!important;width:260px!important;height:260px!important;display:block!important;pointer-events:none!important;border-radius:50%;background:radial-gradient(circle,var(--glow),transparent 68%)!important}
+.manager-badge-card::after{display:none!important}
+.manager-badge-card-flags{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:18px 18px 0}
+.manager-badge-category{padding:6px 10px;color:var(--deep);border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);border-radius:999px;background:rgba(255,255,255,.55);font-size:11px;font-weight:800;letter-spacing:.08em}
+.manager-badge-owned{color:color-mix(in srgb,var(--deep) 82%,white);font-size:12px;font-weight:800}.manager-badge-owned::before{content:"◇";margin-right:6px;color:var(--accent);font-size:9px}.manager-badge-owned.is-owned::before{content:"◆"}
+.manager-badge-card-art{position:relative;z-index:2;width:100%!important;min-height:204px!important;height:204px!important;display:grid!important;place-items:center!important}
+.manager-badge-card-art::before{content:"";position:absolute;width:154px;height:154px;border:1px solid color-mix(in srgb,var(--accent) 25%,transparent);border-radius:50%;box-shadow:0 0 0 13px rgba(255,255,255,.22),0 0 0 14px color-mix(in srgb,var(--accent) 10%,transparent)}
+.manager-badge-card img.manager-badge-art{width:174px!important;height:174px!important;object-fit:contain!important;border:0!important;border-radius:50%!important;background:transparent!important;filter:drop-shadow(0 14px 17px rgba(62,36,57,.22))!important}
+.manager-badge-card-copy{position:relative;z-index:2;display:flex;flex:1;flex-direction:column;padding:0 20px 20px!important}
+.manager-badge-serial{margin:0 0 7px;color:var(--accent);font:700 11px/1 Georgia,serif;letter-spacing:.16em}
+.manager-badge-card h4{min-height:54px;margin:0!important;color:var(--deep)!important;font:700 23px/1.28 Georgia,"Songti SC",serif!important}
+.manager-badge-card .manager-badge-desc{min-height:70px!important;margin:10px 0 14px!important;color:#65544a!important;font-size:14px!important;line-height:1.7!important}
+.manager-badge-motifs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 18px}.manager-badge-motifs span{padding:5px 8px;color:color-mix(in srgb,var(--deep) 88%,white);border-radius:8px;background:color-mix(in srgb,var(--soft) 52%,white);font-size:11px;font-weight:700}
+.manager-badge-card-footer{position:relative;z-index:2;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-top:auto;padding-top:15px;border-top:1px solid color-mix(in srgb,var(--accent) 18%,transparent)}
+.manager-badge-card .manager-badge-price{display:block!important;color:var(--deep)!important}.manager-badge-card .manager-badge-price small{display:block;color:#8b786b;font-size:10px}.manager-badge-card .manager-badge-price strong{color:var(--deep);font:750 24px/1.1 Georgia,serif}
+.manager-badge-card .manager-badge-actions{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:7px!important;margin:0!important;padding-top:0!important;border-top:0!important}.manager-badge-card .manager-badge-actions button{min-height:0;padding:9px 12px;border-radius:11px;font-size:12px;font-weight:800;white-space:nowrap}.manager-badge-card .manager-badge-state{padding:9px 11px;color:var(--deep);border-radius:11px;background:color-mix(in srgb,var(--soft) 65%,white);font-size:12px;font-weight:800;white-space:nowrap}
+
+.manager-demo-board>summary>span{position:static!important;flex:0 1 auto!important;width:auto!important;margin-right:auto!important;transform:none!important;text-align:left!important}
+.manager-demo-board>summary>em{flex:0 0 auto!important;margin-left:auto!important;text-align:right!important}
+.manager-demo-board>summary::before,.manager-demo-board>summary::after{display:none!important;content:none!important}
+
+/* Full implementation preview: story on the left, four real UI scenes on the right. */
+.manager-badge-preview-dialog{width:min(1180px,calc(100vw - 30px));max-height:calc(100vh - 30px);overflow:auto;border:0;border-radius:28px;background:#fffaf4;box-shadow:0 34px 100px rgba(35,21,22,.35)}
+.manager-badge-preview-hero{position:relative;isolation:isolate;min-height:300px;display:grid;grid-template-columns:280px 1fr;gap:42px;align-items:center;overflow:hidden;padding:34px 54px;color:#fff;background:linear-gradient(116deg,rgba(28,19,37,.58),rgba(28,19,37,.14)),var(--badge-surface-art) center/cover no-repeat}
+.manager-badge-preview-hero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(22,16,30,.24),transparent 62%);pointer-events:none}
+.manager-badge-preview-hero>img{width:250px;height:250px;object-fit:contain;filter:drop-shadow(0 24px 28px rgba(0,0,0,.34))}
+.manager-badge-preview-hero>div{position:relative;z-index:1}.manager-badge-preview-category{display:inline-flex;padding:7px 11px;border:1px solid rgba(255,255,255,.28);border-radius:999px;background:rgba(255,255,255,.09);font-size:12px;font-weight:800}
+.manager-badge-preview-hero h2{margin:15px 0 9px;color:#fff;font:700 clamp(30px,4vw,48px)/1.14 Georgia,"Songti SC",serif;text-shadow:0 3px 12px rgba(0,0,0,.28)}
+.manager-badge-preview-hero p{max-width:690px;margin:0;color:rgba(255,255,255,.82);font-size:15px;line-height:1.8}
+.manager-badge-preview-motifs{display:flex;flex-wrap:wrap;gap:8px;margin-top:17px}.manager-badge-preview-motifs span{padding:7px 10px;border:1px solid rgba(255,255,255,.2);border-radius:9px;background:rgba(255,255,255,.08);font-size:12px}
+.manager-badge-preview-close{position:absolute;top:18px;right:18px;z-index:4;width:42px;height:42px;display:grid;place-items:center;cursor:pointer;color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:50%;background:rgba(35,25,34,.38);font-size:25px;line-height:1;backdrop-filter:blur(8px)}
+.manager-badge-preview-main{display:grid;grid-template-columns:.78fr 1.22fr;gap:38px;padding:38px 44px 46px}
+.manager-badge-preview-story h3,.manager-badge-preview-scenes h3{margin:0 0 12px;color:#3f302a;font:700 22px Georgia,"Songti SC",serif}.manager-badge-preview-story>p{margin:0;color:#635248;font-size:15px;line-height:2}
+.manager-badge-preview-data{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:24px}.manager-badge-preview-data>div{padding:13px 14px;border:1px solid rgba(108,71,43,.16);border-radius:13px;background:#fffdf9}.manager-badge-preview-data small{display:block;color:#907b6d;font-size:10px}.manager-badge-preview-data b{color:#514139;font-size:13px}
+.manager-badge-preview-scenes-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:13px}.manager-badge-preview-scenes-head p{margin:0;color:#897367;font-size:12px;line-height:1.5}
+.manager-badge-preview-tabs{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px}.manager-badge-preview-tabs button{cursor:pointer;padding:7px 10px;color:#7d695d;border:1px solid rgba(108,71,43,.16);border-radius:9px;background:#fffdf9;font-size:11px;font-weight:800}.manager-badge-preview-tabs button.on{color:#fff;border-color:transparent;background:var(--badge-body-text,#60445d)}
+.manager-badge-preview-stage{min-height:400px;display:grid;place-items:center;overflow:auto;padding:24px;border:1px solid color-mix(in srgb,var(--badge-border-final) 22%,transparent);border-radius:18px;background:linear-gradient(145deg,color-mix(in srgb,var(--badge-card-tint,#efe2d8) 42%,white),#fffdf9)}
+.manager-badge-preview-stage>.manager-hall-card{width:min(100%,560px);margin:auto}.manager-badge-preview-stage>.manager-badge-preview-sidebar{width:min(100%,420px);margin:auto}.manager-badge-preview-stage>.manager-badge-preview-section{width:100%;margin:0}.manager-badge-preview-stage>.manager-badge-preview-login{width:100%;margin:0}
+
+@media(max-width:900px){.manager-badge-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.manager-badge-preview-main{grid-template-columns:1fr}.manager-badge-preview-hero{grid-template-columns:210px 1fr;padding:32px}.manager-badge-preview-hero>img{width:200px;height:200px}}
+@media(max-width:620px){.manager-badge-grid{grid-template-columns:minmax(0,1fr)!important}.manager-badge-card-footer{align-items:stretch;flex-direction:column}.manager-badge-card .manager-badge-actions{justify-content:stretch!important}.manager-badge-card .manager-badge-actions button{flex:1}.manager-badge-preview-hero{grid-template-columns:1fr;padding:30px 22px;text-align:center}.manager-badge-preview-hero>img{width:190px;height:190px;margin:auto}.manager-badge-preview-motifs{justify-content:center}.manager-badge-preview-main{padding:28px 18px 34px;gap:28px}.manager-badge-preview-data{grid-template-columns:1fr}.manager-badge-preview-scenes-head{align-items:flex-start;flex-direction:column}.manager-badge-preview-tabs{width:100%;justify-content:flex-start;overflow-x:auto;flex-wrap:nowrap}.manager-badge-preview-stage{padding:12px}}

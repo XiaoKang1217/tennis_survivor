@@ -104,8 +104,10 @@ body.manager-mode .tab:hover:not(.on){background:rgba(255,255,255,.28)}
 .fbtn{padding:5px 12px;border-radius:20px;border:2px solid #fde68a;background:#fff;color:#9a7a40;cursor:pointer;font-size:12px;font-weight:600;transition:all .2s}
 .fbtn.on{border-color:#f59e0b;background:#f59e0b;color:#fff}
 .fbtn:hover:not(.on){border-color:#f97316;color:#f97316}
-.auth-chip{border:1px solid rgba(255,255,255,.55);background:rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:4px 10px;font-size:11px;font-weight:800;cursor:pointer;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.auth-chip{border:1px solid rgba(255,255,255,.55);background:rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:4px 10px;font-size:11px;font-weight:800;cursor:pointer;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-flex;align-items:center;gap:5px;vertical-align:middle}
 .auth-chip:hover{background:rgba(255,255,255,.3)}
+.auth-chip.badged{border:0;background:transparent;padding:0;min-width:0;min-height:40px;max-width:282px;overflow:visible;box-shadow:none;border-radius:0}
+.auth-chip.badged:hover{filter:brightness(1.04);transform:translateY(-1px)}
 .follow-btn{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;margin-right:6px;border:1px solid #fde68a;border-radius:50%;background:#fffaf0;color:#c9a96b;font-size:15px;line-height:1;cursor:pointer;vertical-align:middle;transition:all .15s}
 .follow-btn:hover{border-color:#f59e0b;color:#f59e0b;transform:translateY(-1px)}
 .follow-btn.on{background:#fef3c7;border-color:#f59e0b;color:#f59e0b;box-shadow:0 2px 8px rgba(245,158,11,.2)}
@@ -259,7 +261,7 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 .jinx-leader-table td{padding:8px;border-bottom:1px solid #ffedd5;color:#44321c}
 .jinx-leader-table tr:last-child td{border-bottom:0}
 .jinx-leader-rank{width:44px;text-align:center!important;color:#7c3aed!important;font-weight:900}
-.jinx-leader-user{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.jinx-leader-user{overflow:visible;white-space:normal}
 .jinx-leader-score{text-align:right!important;color:#ea580c!important;font-weight:900;white-space:nowrap}
 .jinx-leader-hit{text-align:right!important;color:#9a7a40!important;white-space:nowrap}
 .exp-tag{background:#fef3c7;border:1px solid #fcd34d;border-radius:12px;padding:2px 8px;font-size:12px;color:#78450a;white-space:nowrap;display:inline-block;margin:2px}
@@ -414,6 +416,154 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 .manager-rule-card,.manager-board{border:1px solid #ead8b7;background:#fffaf0;border-radius:10px;padding:11px}
 .manager-rule-card b,.manager-board h4{display:block;color:#5c421f;font-size:13px;margin-bottom:7px}.manager-rule-card span{display:block;color:#6c5c46;font-size:12px;line-height:1.6}
 .manager-board ol{list-style:none;display:grid;gap:6px;counter-reset:mgr}.manager-board li{counter-increment:mgr;display:grid;grid-template-columns:24px 1fr auto;gap:7px;align-items:center;font-size:12px;color:#2f2a22}.manager-board li:before{content:counter(mgr);display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#f2e2c2;color:#7a4f24;font-weight:950}.manager-board em{font-style:normal;color:#c45f2d;font-weight:950}
+.manager-user-name-plain{position:relative;display:inline-flex;align-items:center;min-height:32px;max-width:100%;padding:0 14px;border:1px solid rgba(223,202,162,.9);border-radius:9px 16px 16px 9px;background:linear-gradient(90deg,#fff4dd,#fffaf0 72%,#fffdf8);color:#5c421f;font-weight:950;box-shadow:inset 0 1px 0 rgba(255,255,255,.78),0 4px 12px rgba(122,79,36,.08);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.manager-user-name-plain:after{content:"";width:7px;height:7px;margin-left:10px;border-top:1px solid rgba(122,79,36,.36);border-right:1px solid rgba(122,79,36,.36);transform:rotate(45deg);flex:0 0 auto}
+.badge-identity,.manager-user-badge-line{--badge-icon-size:56px;--badge-plate-height:34px;position:relative;display:inline-flex;align-items:center;min-height:calc(var(--badge-icon-size) + 6px);max-width:100%;gap:0;color:#6a4a2f;vertical-align:middle;isolation:isolate;padding-right:8px}
+.badge-identity:before{content:"";position:absolute;left:calc(var(--badge-icon-size)*.48);right:0;top:50%;height:calc(var(--badge-plate-height) + 8px);transform:translateY(-50%);border-radius:8px 14px 14px 8px;background:linear-gradient(90deg,color-mix(in srgb,var(--badge-primary,#ba8a3b) 92%,#2b1608 8%),color-mix(in srgb,var(--badge-secondary,#dcc47d) 82%,#fff2c3 18%) 68%,color-mix(in srgb,var(--badge-primary,#ba8a3b) 80%,#4a260d 20%));border:1px solid color-mix(in srgb,var(--badge-secondary,#dcc47d) 72%,#fff 28%);box-shadow:inset 0 1px 0 rgba(255,255,255,.42),inset 0 -2px 0 rgba(45,22,4,.18),0 6px 14px rgba(67,37,12,.18);z-index:-1;pointer-events:none}
+.badge-identity:after{content:"";position:absolute;left:calc(var(--badge-icon-size)*.72);right:12px;top:50%;height:calc(var(--badge-plate-height) - 6px);transform:translateY(-50%);border-radius:6px 12px 12px 6px;background:linear-gradient(120deg,rgba(255,255,255,.26),rgba(255,255,255,0) 42%),repeating-linear-gradient(135deg,rgba(255,255,255,.08) 0 1px,rgba(255,255,255,0) 1px 9px);opacity:.75;z-index:-1;pointer-events:none}
+.badge-identity__icon,.manager-badge-thumb{width:var(--badge-icon-size);height:var(--badge-icon-size);object-fit:cover;border-radius:50%;box-shadow:0 5px 13px rgba(28,17,8,.24),0 0 0 3px color-mix(in srgb,var(--badge-secondary,#d6a34f) 62%,white 38%),inset 0 0 0 1px rgba(255,255,255,.5);border:1px solid rgba(76,40,9,.35);background:#fff;flex:0 0 auto;z-index:3}
+.badge-identity__banner{position:relative;display:inline-flex;align-items:center;justify-content:center;min-height:var(--badge-plate-height);max-width:150px;margin-left:-7px;padding:0 17px 0 20px;color:var(--badge-ink,#fffaf0);font-weight:950;font-size:14px;letter-spacing:0;text-shadow:0 1px 1px rgba(35,18,6,.42);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:0 1 auto;z-index:2}
+.badge-identity__banner:before{content:"";position:absolute;left:10px;right:2px;top:5px;height:1px;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.58),rgba(255,255,255,0));pointer-events:none}
+.badge-identity__banner:after{content:"";position:absolute;right:2px;top:50%;width:7px;height:7px;transform:translateY(-50%) rotate(45deg);border-top:1px solid rgba(255,246,220,.55);border-right:1px solid rgba(255,246,220,.55);pointer-events:none}
+.badge-identity__username{color:#6a4a2f;font-size:15px;font-weight:900;line-height:1;min-width:0;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-left:12px;text-shadow:0 1px 0 rgba(255,255,255,.55);z-index:2}
+.badge-identity--compact{--badge-icon-size:42px;--badge-plate-height:28px;min-height:48px;padding-right:6px}.badge-identity--compact .badge-identity__banner{font-size:12px;max-width:122px;padding-left:17px;padding-right:12px}.badge-identity--compact .badge-identity__username{font-size:13px;max-width:116px;margin-left:8px}
+.badge-identity--login{--badge-icon-size:42px;--badge-plate-height:30px;min-height:44px;padding-right:8px}.badge-identity--login .badge-identity__banner{font-size:12px;max-width:112px;padding-left:17px;padding-right:12px}.badge-identity--login .badge-identity__username{font-size:13px;color:#fff9f0;max-width:98px;text-shadow:0 1px 1px rgba(49,23,5,.42)}
+.badge-identity--prominent{--badge-icon-size:68px;--badge-plate-height:40px;min-height:76px;padding-right:10px}.badge-identity--prominent .badge-identity__banner{font-size:17px;max-width:180px;padding-left:22px;padding-right:18px}.badge-identity--prominent .badge-identity__username{font-size:15px;max-width:130px;margin-left:12px}
+.manager-board .badge-identity--prominent{margin-bottom:10px}
+[data-badge="sinner_fox"]{--badge-primary:#ad3d0a;--badge-secondary:#e57620;--badge-accent:#f7c28e;--badge-ink:#fff6ee;--badge-row-bg:linear-gradient(90deg,rgba(178,61,10,.22),rgba(232,139,57,.1) 58%,rgba(255,250,240,.62) 100%);--badge-card-bg:linear-gradient(135deg,rgba(255,138,77,.22),rgba(255,250,240,.72) 54%,rgba(255,255,255,0));--badge-glow:rgba(194,74,15,.24)}
+[data-badge="alcaraz_duck"]{--badge-primary:#d78f16;--badge-secondary:#f1c765;--badge-accent:#fff0b5;--badge-ink:#6f4300;--badge-row-bg:linear-gradient(90deg,rgba(230,166,38,.22),rgba(242,212,129,.12) 58%,rgba(255,250,240,.64) 100%);--badge-card-bg:linear-gradient(135deg,rgba(255,222,142,.24),rgba(255,250,240,.72) 54%,rgba(255,255,255,0));--badge-glow:rgba(216,151,23,.24)}
+[data-badge="djoko_goat"]{--badge-primary:#122f5d;--badge-secondary:#c99736;--badge-accent:#f5e3ad;--badge-ink:#fff7de;--badge-row-bg:linear-gradient(90deg,rgba(23,59,112,.22),rgba(210,168,75,.12) 58%,rgba(255,250,240,.62) 100%);--badge-card-bg:linear-gradient(135deg,rgba(34,60,99,.2),rgba(255,250,240,.74) 54%,rgba(255,255,255,0));--badge-glow:rgba(23,59,112,.24)}
+[data-badge="rublev_cat"]{--badge-primary:#154280;--badge-secondary:#d0a23a;--badge-accent:#f6e2ac;--badge-ink:#fff8e9;--badge-row-bg:linear-gradient(90deg,rgba(28,77,146,.22),rgba(214,173,73,.12) 58%,rgba(255,250,240,.62) 100%);--badge-card-bg:linear-gradient(135deg,rgba(47,87,152,.2),rgba(255,250,240,.74) 54%,rgba(255,255,255,0));--badge-glow:rgba(28,77,146,.24)}
+[data-badge="zheng_queen"]{--badge-primary:#612366;--badge-secondary:#bd7f28;--badge-accent:#f0e2af;--badge-ink:#fff7e7;--badge-row-bg:linear-gradient(90deg,rgba(107,47,111,.22),rgba(200,146,52,.12) 58%,rgba(255,250,240,.62) 100%);--badge-card-bg:linear-gradient(135deg,rgba(144,70,151,.2),rgba(255,250,240,.74) 54%,rgba(255,255,255,0));--badge-glow:rgba(107,47,111,.24)}
+[data-badge="wang_mermaid"]{--badge-primary:#227b92;--badge-secondary:#68bbc5;--badge-accent:#eaf8fb;--badge-ink:#fffdf7;--badge-row-bg:linear-gradient(90deg,rgba(47,138,162,.22),rgba(123,201,209,.12) 58%,rgba(255,250,240,.62) 100%);--badge-card-bg:linear-gradient(135deg,rgba(126,210,217,.22),rgba(255,250,240,.74) 54%,rgba(255,255,255,0));--badge-glow:rgba(47,138,162,.24)}
+[data-badge="luwang_friend"]{--badge-primary:#a97425;--badge-secondary:#d8b760;--badge-accent:#fbf2d8;--badge-ink:#fffaf0;--badge-row-bg:linear-gradient(90deg,rgba(186,138,59,.22),rgba(220,196,125,.12) 58%,rgba(255,250,240,.62) 100%);--badge-card-bg:linear-gradient(135deg,rgba(226,201,150,.24),rgba(255,250,240,.74) 54%,rgba(255,255,255,0));--badge-glow:rgba(186,138,59,.24)}
+[data-badge="wimbledon_2026"]{--badge-primary:#43572c;--badge-secondary:#869a4b;--badge-accent:#edf3e0;--badge-ink:#fffdf8;--badge-row-bg:linear-gradient(90deg,rgba(80,97,58,.22),rgba(139,159,93,.12) 58%,rgba(255,250,240,.62) 100%);--badge-card-bg:linear-gradient(135deg,rgba(157,176,119,.22),rgba(255,250,240,.74) 54%,rgba(255,255,255,0));--badge-glow:rgba(80,97,58,.24)}
+.manager-badge-themed{position:relative;overflow:hidden}
+.manager-badge-themed>*{position:relative;z-index:1}
+.manager-badge-themed[data-badge]:before{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;background:var(--badge-card-bg),linear-gradient(180deg,#fffaf0,#fffdf8);opacity:1}
+.manager-badge-themed[data-badge]:after{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;background:radial-gradient(circle at 92% 8%,var(--badge-glow,rgba(186,138,59,.18)),transparent 28%),repeating-linear-gradient(135deg,rgba(122,79,36,.045) 0 1px,transparent 1px 12px);mix-blend-mode:multiply;opacity:.7}
+.manager-board.manager-badge-themed,.manager-panel.manager-badge-themed,.manager-roster-row.manager-badge-themed,.manager-my-card.manager-badge-themed,.manager-badge-card.manager-badge-themed{border-color:color-mix(in srgb,var(--badge-secondary,#dcc47d) 62%,#ead8b7 38%);box-shadow:0 8px 24px rgba(134,93,37,.14);border-radius:12px}
+.manager-roster-row.manager-badge-themed{background:var(--badge-row-bg),#fffaf0}
+.manager-panel.manager-badge-themed .manager-panel-h{background:linear-gradient(90deg,color-mix(in srgb,var(--badge-primary,#ba8a3b) 22%,#f2e2c2 78%),#f2e2c2)}
+.manager-panel[data-badge] .manager-roster-row{background:var(--badge-row-bg),#fffaf0;border-color:color-mix(in srgb,var(--badge-secondary,#dcc47d) 35%,#ead8b7 65%)}
+.manager-board.manager-badge-themed h4{margin:-2px 0 10px;padding:2px 0 8px;border-bottom:1px solid color-mix(in srgb,var(--badge-secondary,#dcc47d) 32%,#ead8b7 68%)}
+.manager-rank-table,.jinx-leader-table{border-collapse:separate;border-spacing:0 8px}
+.manager-rank-table tbody tr,.jinx-leader-table tbody tr{background:transparent;transition:transform .2s ease,filter .2s ease}
+.manager-rank-table tbody tr:hover,.jinx-leader-table tbody tr:hover{transform:translateY(-1px);filter:brightness(1.018)}
+.manager-rank-table tbody td,.jinx-leader-table tbody td{background:linear-gradient(90deg,#fff5df 0%,#fff7eb 42%,rgba(255,250,240,.72) 72%,#fffdf8 100%)!important;border-top:1px solid #ecd5aa;border-bottom:1px solid #ecd5aa;box-shadow:0 7px 18px rgba(120,85,36,.09);height:62px;vertical-align:middle}
+.manager-rank-table tbody td:first-child,.jinx-leader-table tbody td:first-child{width:84px;border-left:1px solid #ecd5aa;border-radius:13px 0 0 13px;text-align:center;font-weight:950;color:#7a4f24}
+.manager-rank-table tbody td:last-child,.jinx-leader-table tbody td:last-child{border-right:1px solid #ecd5aa;border-radius:0 13px 13px 0}
+.manager-rank-table tbody tr.manager-badge-themed td,.jinx-leader-table tbody tr.manager-badge-themed td{background:var(--badge-row-bg),linear-gradient(90deg,#fff5df,#fffdf8)!important;border-color:color-mix(in srgb,var(--badge-secondary,#dcc47d) 46%,#ead8b7 54%)}
+.manager-rank-table tbody tr.manager-badge-themed td:first-child,.jinx-leader-table tbody tr.manager-badge-themed td:first-child{border-left-color:color-mix(in srgb,var(--badge-secondary,#dcc47d) 48%,#ead8b7 52%)}
+.manager-rank-table tbody tr.manager-badge-themed td:last-child,.jinx-leader-table tbody tr.manager-badge-themed td:last-child{border-right-color:color-mix(in srgb,var(--badge-secondary,#dcc47d) 48%,#ead8b7 52%)}
+.manager-rank-table tbody td:nth-child(2),.jinx-leader-table tbody td:nth-child(2){min-width:220px;font-weight:900;color:#53351d}
+.manager-ledger-table .badge-identity,.jinx-leader-table .badge-identity{--badge-icon-size:60px;--badge-plate-height:36px;max-width:min(560px,100%)}
+.manager-sidebar-owner{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;min-width:0}
+.manager-sidebar-title{font-size:13px;font-weight:950;color:#5c421f}
+.manager-panel.manager-side.manager-badge-themed .manager-panel-h{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;min-height:124px;padding:16px;background:linear-gradient(135deg,color-mix(in srgb,var(--badge-primary,#ba8a3b) 82%,#3b1b09 18%),color-mix(in srgb,var(--badge-secondary,#dcc47d) 60%,#fff2c7 40%));overflow:hidden}
+.manager-panel.manager-side.manager-badge-themed .manager-panel-h:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 12% 10%,rgba(255,255,255,.24),transparent 24%),radial-gradient(circle at 94% 0,var(--badge-glow,rgba(186,138,59,.24)),transparent 32%),repeating-linear-gradient(135deg,rgba(255,255,255,.08) 0 1px,transparent 1px 12px);pointer-events:none}
+.manager-panel.manager-side.manager-badge-themed .manager-panel-h>*{position:relative;z-index:1}
+.manager-panel.manager-side.manager-badge-themed .manager-sidebar-title{color:#fff7e8;text-shadow:0 1px 1px rgba(57,25,5,.42)}
+.manager-panel.manager-side.manager-badge-themed .manager-panel-h .manager-clear{background:rgba(255,250,240,.9);border-color:rgba(255,232,174,.86)}
+.manager-panel.manager-side.manager-badge-themed .badge-identity--prominent{--badge-icon-size:64px;--badge-plate-height:38px;filter:drop-shadow(0 8px 12px rgba(35,18,6,.24))}
+.manager-panel.manager-side.manager-badge-themed{border:1px solid color-mix(in srgb,var(--badge-secondary,#dcc47d) 62%,#e7b76f 38%);border-radius:14px;box-shadow:0 16px 34px rgba(143,75,24,.18);overflow:hidden;background:#fff8ea}
+.manager-panel.manager-side.manager-badge-themed .manager-panel-b{background:linear-gradient(180deg,#fff5e2,#fffdf8);padding:16px}
+.manager-panel.manager-side.manager-badge-themed .manager-roster{border:1px dashed color-mix(in srgb,var(--badge-secondary,#dcc47d) 58%,#d8b760 42%);border-radius:12px;background:rgba(255,253,248,.62);padding:10px}
+.manager-panel.manager-side.manager-badge-themed .manager-sim{margin-top:10px;border:1px solid rgba(223,202,162,.82);border-radius:12px;background:rgba(255,253,248,.8);padding:10px 12px}
+.manager-panel.manager-side.manager-badge-themed .manager-sim-row{border-bottom:1px dashed rgba(223,202,162,.72)}
+.manager-panel.manager-side.manager-badge-themed .manager-sim-row:last-child{border-bottom:0}
+.manager-badge-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.manager-badge-card{border:1px solid #ead8b7;background:#fffaf0;border-radius:12px;padding:0;display:grid;gap:0;box-shadow:0 10px 22px rgba(122,79,36,.08);overflow:hidden}
+.manager-badge-card img.manager-badge-art{width:100%;height:168px;aspect-ratio:auto;object-fit:cover;object-position:center 42%;border:0;border-radius:0;background:#fff}
+.manager-badge-card h4{margin:12px 14px 1px;color:#3d2b18;font-size:17px;line-height:1.25}
+.manager-badge-sub{margin:0 14px 8px;font-size:12px;color:#8a6b41;font-weight:900}
+.manager-badge-card .badge-identity--prominent{margin:-28px 12px 8px;max-width:calc(100% - 24px);filter:drop-shadow(0 8px 12px rgba(64,35,12,.18))}
+.manager-badge-desc{font-size:12px;color:#6c5c46;line-height:1.55;margin:0 14px 12px;min-height:38px}
+.manager-badge-price{font-family:Impact,"Cooper Black","Arial Black","Noto Sans SC",sans-serif;color:#c45f2d;font-size:24px;letter-spacing:.2px;text-shadow:1px 1px 0 #fff3bf}
+.manager-badge-price.is-status{font-family:"Noto Sans SC","PingFang SC",sans-serif;font-size:16px;line-height:1.25;text-shadow:none}
+.manager-badge-price.is-status strong{display:block;margin-top:3px;font-size:18px;color:var(--badge-username,#6b4527)}
+.manager-badge-state{display:inline-flex;align-items:center;justify-content:center;width:max-content;border-radius:999px;background:#f2e2c2;color:#5c421f;font-size:12px;font-weight:950;padding:4px 9px}
+.manager-badge-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 14px 14px;padding-top:10px;border-top:1px solid rgba(223,202,162,.72)}
+.manager-hall-card{padding:0;min-height:190px}
+.manager-hall-card h4,.manager-hall-card .manager-sim,.manager-hall-card .manager-note{position:relative;z-index:1}
+.manager-hall-card-top{position:relative;min-height:118px;margin:-11px -11px 10px;padding:14px 14px 10px;display:flex;align-items:flex-end;background:linear-gradient(135deg,color-mix(in srgb,var(--badge-primary,#ba8a3b) 82%,#3b1b09 18%),color-mix(in srgb,var(--badge-secondary,#dcc47d) 62%,#fff2c7 38%));border-bottom:1px solid color-mix(in srgb,var(--badge-secondary,#dcc47d) 68%,#fff 32%);box-shadow:inset 0 1px 0 rgba(255,255,255,.32);overflow:hidden}
+.manager-hall-card-top:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 12% 14%,rgba(255,255,255,.24),transparent 24%),radial-gradient(circle at 96% 0,var(--badge-glow,rgba(186,138,59,.24)),transparent 30%),repeating-linear-gradient(135deg,rgba(255,255,255,.08) 0 1px,transparent 1px 12px);pointer-events:none}
+.manager-hall-card-top .badge-identity{filter:drop-shadow(0 8px 12px rgba(35,18,6,.24))}
+.manager-hall-card-top .manager-user-name-plain{min-height:42px;min-width:132px;padding:0 18px;background:linear-gradient(90deg,rgba(255,250,240,.95),rgba(255,245,222,.86));border-color:rgba(255,232,174,.9);box-shadow:0 8px 18px rgba(63,35,10,.2),inset 0 1px 0 rgba(255,255,255,.8);font-size:15px}
+.manager-hall-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin:0 0 10px;border:1px solid rgba(223,202,162,.78);border-radius:10px;overflow:hidden;background:rgba(255,253,248,.72)}
+.manager-hall-metric{padding:9px 8px;border-right:1px solid rgba(223,202,162,.78);min-width:0}
+.manager-hall-metric:last-child{border-right:0}
+.manager-hall-metric span{display:block;color:#756651;font-size:11px;font-weight:850;margin-bottom:4px}
+.manager-hall-metric b{display:block;color:#5c421f;font-size:13px;line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.manager-hall-players{display:flex;flex-wrap:wrap;gap:5px}
+.manager-hall-players .manager-pill{background:rgba(255,248,232,.88);border:1px solid rgba(223,202,162,.9)}
+.manager-rank-table{border-collapse:separate;border-spacing:0 8px}
+.manager-rank-medal{display:inline-flex;align-items:center;justify-content:center;width:31px;height:31px;border-radius:9px 9px 11px 11px;background:linear-gradient(180deg,#f8d66b,#bf7422);border:1px solid #8a4a20;color:#fff8de;font-weight:950;font-size:15px;box-shadow:inset 0 1px 0 rgba(255,255,255,.52),0 3px 8px rgba(95,54,17,.18);text-shadow:0 1px 1px rgba(65,35,9,.45)}
+.manager-rank-medal.rank-1{background:linear-gradient(180deg,#fff0a9,#d18a20);color:#7a3b0d}
+.manager-rank-medal.rank-2{background:linear-gradient(180deg,#edf2f7,#a6b2bd);color:#475569;border-color:#8f9ca7}
+.manager-rank-medal.rank-3{background:linear-gradient(180deg,#ffd0a4,#b76325);color:#7c2d12;border-color:#9a4f21}
+.manager-boards-page{display:grid;gap:14px}
+.manager-boards-note{border:1px solid rgba(223,202,162,.9);background:linear-gradient(90deg,#fff7e8,#fffdf8);border-radius:12px;padding:10px 13px;color:#6c5c46;font-size:12px;font-weight:850;box-shadow:0 6px 16px rgba(122,79,36,.06)}
+.manager-boards-page .manager-rules{gap:14px}
+.manager-boards-page .manager-rules details{border:1px solid #efc48d;border-radius:17px;background:linear-gradient(180deg,#fff8ea,#fffdf8);box-shadow:0 14px 32px rgba(143,75,24,.11);overflow:hidden}
+.manager-boards-page .manager-rules summary{position:relative;display:flex;align-items:center;justify-content:center;gap:12px;min-height:48px;padding:12px 16px;background:linear-gradient(180deg,#b9240b,#e45513 82%,#d8420c);color:#fff6d8;text-align:center;font-size:17px;font-weight:950;text-shadow:0 1px 1px rgba(67,23,6,.45);box-shadow:inset 0 1px 0 rgba(255,224,169,.38);letter-spacing:0}
+.manager-boards-page .manager-rules summary::-webkit-details-marker{display:none}
+.manager-boards-page .manager-rules summary:before,.manager-boards-page .manager-rules summary:after{content:"";width:48px;height:12px;background:linear-gradient(90deg,rgba(255,231,168,0),rgba(255,231,168,.86));opacity:.9;mask:linear-gradient(90deg,#000 0 70%,transparent)}
+.manager-boards-page .manager-rules summary:after{transform:scaleX(-1)}
+.manager-boards-page .manager-rules .rule-body{padding:14px 16px 16px;background:linear-gradient(180deg,#fff5e2,#fffaf0 38%,#fffdf8);color:#4c3d2a}
+.manager-boards-page .manager-table-scroll{padding:0 2px;overflow-x:auto}
+.manager-boards-page .manager-ledger-table th,.manager-boards-page .jinx-leader-table th{background:transparent;color:#88451d;border-bottom:0;padding:8px 14px 5px;font-size:12px;font-weight:950}
+.manager-boards-page .manager-ledger-table thead,.manager-boards-page .jinx-leader-table thead{background:transparent}
+.manager-boards-page .manager-rank-table tbody td:nth-child(3),.manager-boards-page .manager-rank-table tbody td:last-child{font-size:15px;font-weight:950}
+.manager-boards-page .manager-rank-table tbody td:nth-child(3){color:#b64617}
+.manager-boards-page .manager-rank-table .manager-user-name-plain{min-width:172px;min-height:36px;padding:0 18px;background:linear-gradient(90deg,#fff0d6,#fff8ea 68%,rgba(255,255,255,.78));border-color:#efcf9a;color:#613315}
+.manager-boards-page .manager-rank-table .manager-user-name-plain:before{content:"";width:10px;height:10px;margin-right:8px;border-radius:50%;background:linear-gradient(180deg,#f8d66b,#bd7421);box-shadow:inset 0 1px 0 rgba(255,255,255,.55)}
+.manager-boards-page .manager-rank-table .badge-identity__username{font-style:italic;color:#6d3f1f}
+.manager-boards-page .manager-board-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.manager-boards-page .manager-board{border-color:#efcf9a;background:linear-gradient(180deg,#fff8ea,#fffdf8);box-shadow:0 8px 18px rgba(122,79,36,.07)}
+:root{--lw-text-main:#5f3f25;--lw-text-soft:#806143;--lw-bg-cream:#fff7e7;--lw-card-bg:#fffaf0;--lw-border:#e8d2ae;--lw-shadow:0 6px 18px rgba(132,87,31,.12);--lw-radius-card:16px;--lw-radius-pill:999px}
+[data-badge="sinner_fox"]{--badge-name:"辛纳狐";--badge-primary:#9A3B12;--badge-secondary:#D86B2B;--badge-tertiary:#672A0E;--badge-accent:#F4B56F;--badge-soft:#FFE1C4;--badge-text:#FFF2DE;--badge-username:#5A2A12;--badge-nameplate:url("/badges/nameplates/sinner_fox.svg");--badge-pattern:url("/badges/patterns/sinner_fox.svg");--badge-row-bg:linear-gradient(90deg,rgba(154,59,18,.18),rgba(216,107,43,.07),transparent 86%)}
+[data-badge="alcaraz_duck"]{--badge-name:"阿卡鸭";--badge-primary:#D98925;--badge-secondary:#F5BD63;--badge-tertiary:#B9602A;--badge-accent:#FFE6AD;--badge-soft:#FFF1D6;--badge-text:#6B4100;--badge-username:#67461A;--badge-nameplate:url("/badges/nameplates/alcaraz_duck.svg");--badge-pattern:url("/badges/patterns/alcaraz_duck.svg");--badge-row-bg:linear-gradient(90deg,rgba(217,138,34,.18),rgba(245,189,99,.09),transparent 86%)}
+[data-badge="djoko_goat"]{--badge-name:"德约GOAT";--badge-primary:#17365F;--badge-secondary:#D6A94E;--badge-tertiary:#0B223F;--badge-accent:#F3DF9A;--badge-soft:#EAF0F8;--badge-text:#FFF6D8;--badge-username:#17365F;--badge-nameplate:url("/badges/nameplates/djoko_goat.svg");--badge-pattern:url("/badges/patterns/djoko_goat.svg");--badge-row-bg:linear-gradient(90deg,rgba(23,54,95,.18),rgba(214,169,78,.08),transparent 86%)}
+[data-badge="rublev_cat"]{--badge-name:"卢布喵";--badge-primary:#1F4F8A;--badge-secondary:#D0A24A;--badge-tertiary:#0D274B;--badge-accent:#F3DFAD;--badge-soft:#EAF3FF;--badge-text:#FFF8E5;--badge-username:#17355D;--badge-nameplate:url("/badges/nameplates/rublev_cat.svg");--badge-pattern:url("/badges/patterns/rublev_cat.svg");--badge-row-bg:linear-gradient(90deg,rgba(31,79,138,.18),rgba(208,162,74,.08),transparent 86%)}
+[data-badge="zheng_queen"]{--badge-name:"郑钦文Queen";--badge-primary:#6E2D73;--badge-secondary:#C89A3D;--badge-tertiary:#3F1844;--badge-accent:#F2DF9B;--badge-soft:#F2E5F5;--badge-text:#FFF5DD;--badge-username:#5C2762;--badge-nameplate:url("/badges/nameplates/zheng_queen.svg");--badge-pattern:url("/badges/patterns/zheng_queen.svg");--badge-row-bg:linear-gradient(90deg,rgba(110,45,115,.18),rgba(200,154,61,.08),transparent 86%)}
+[data-badge="wang_mermaid"]{--badge-name:"王欣瑜美人鱼";--badge-primary:#258AA1;--badge-secondary:#69C7CF;--badge-tertiary:#126575;--badge-accent:#DFF9FB;--badge-soft:#E7FAFC;--badge-text:#F8FFFF;--badge-username:#1B6675;--badge-nameplate:url("/badges/nameplates/wang_mermaid.svg");--badge-pattern:url("/badges/patterns/wang_mermaid.svg");--badge-row-bg:linear-gradient(90deg,rgba(37,138,161,.18),rgba(105,199,207,.08),transparent 86%)}
+[data-badge="luwang_friend"]{--badge-name:"炉网挚友";--badge-primary:#B78034;--badge-secondary:#D8BA74;--badge-tertiary:#79511F;--badge-accent:#FFF0C8;--badge-soft:#FFF7E1;--badge-text:#FFF9EA;--badge-username:#6A4A24;--badge-nameplate:url("/badges/nameplates/luwang_friend.svg");--badge-pattern:url("/badges/patterns/luwang_friend.svg");--badge-row-bg:linear-gradient(90deg,rgba(183,128,52,.18),rgba(216,186,116,.08),transparent 86%)}
+[data-badge="wimbledon_2026"]{--badge-name:"温网限定";--badge-primary:#465F35;--badge-secondary:#8460A8;--badge-tertiary:#253A1E;--badge-accent:#E7EFD9;--badge-soft:#EEF5E4;--badge-text:#FFFDF3;--badge-username:#3B512D;--badge-nameplate:url("/badges/nameplates/wimbledon_2026.svg");--badge-pattern:url("/badges/patterns/wimbledon_2026.svg");--badge-row-bg:linear-gradient(90deg,rgba(70,95,53,.18),rgba(132,96,168,.08),transparent 86%)}
+.badge-identity,.manager-user-badge-line{position:relative;display:inline-flex;align-items:center;gap:8px;max-width:100%;min-height:auto;padding-right:0;color:var(--lw-text-main);vertical-align:middle;white-space:nowrap;isolation:isolate}
+.badge-identity:before,.badge-identity:after{display:none}
+.badge-identity__icon,.manager-badge-thumb{width:46px;height:46px;flex:0 0 46px;border-radius:999px;object-fit:cover;background:#fff8ef;border:2px solid color-mix(in srgb,var(--badge-secondary,#d8ba74) 62%,white 38%);box-shadow:0 4px 10px rgba(107,64,20,.22);z-index:2}
+.badge-identity__nameplate{position:relative;display:inline-flex;align-items:center;justify-content:center;min-width:124px;height:30px;padding:0 16px;box-sizing:border-box;color:var(--badge-text,#fff9ea);font-weight:900;font-size:13px;line-height:1;letter-spacing:0;text-shadow:0 1px 1px rgba(0,0,0,.22);background-image:var(--badge-nameplate);background-size:100% 100%;background-repeat:no-repeat;background-position:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.badge-identity__username{min-width:0;max-width:126px;overflow:hidden;text-overflow:ellipsis;color:var(--badge-username,#6a4a24);font-size:14px;font-weight:800;line-height:1.1;margin-left:0;text-shadow:none}
+.badge-identity--table .badge-identity__icon{width:46px;height:46px;flex-basis:46px}.badge-identity--table .badge-identity__nameplate{min-width:124px;height:30px;font-size:13px}.badge-identity--table .badge-identity__username{max-width:128px}
+.badge-identity--card .badge-identity__icon,.badge-identity--prominent .badge-identity__icon{width:58px;height:58px;flex-basis:58px}.badge-identity--card .badge-identity__nameplate,.badge-identity--prominent .badge-identity__nameplate{min-width:142px;height:34px;font-size:14px}.badge-identity--card .badge-identity__username,.badge-identity--prominent .badge-identity__username{max-width:140px;font-size:15px}
+.badge-identity--sidebar .badge-identity__icon,.badge-identity--compact .badge-identity__icon{width:40px;height:40px;flex-basis:40px}.badge-identity--sidebar .badge-identity__nameplate,.badge-identity--compact .badge-identity__nameplate{min-width:112px;height:28px;font-size:12px;padding:0 12px}.badge-identity--sidebar .badge-identity__username,.badge-identity--compact .badge-identity__username{max-width:96px;font-size:13px}
+.badge-identity--login .badge-identity__icon{width:38px;height:38px;flex-basis:38px}.badge-identity--login .badge-identity__nameplate{min-width:92px;height:26px;padding:0 10px;font-size:12px}.badge-identity--login .badge-identity__username{max-width:82px;font-size:13px;color:#fff8eb}
+.header-login-badge[data-badge]{display:inline-flex;align-items:center;gap:6px;min-height:40px;max-width:260px;padding:3px 9px 3px 5px;border-radius:999px;background:linear-gradient(90deg,color-mix(in srgb,var(--badge-primary,#9A3B12) 74%,#d36221 26%),color-mix(in srgb,var(--badge-secondary,#D86B2B) 58%,#ec9b43 42%));box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 6px 16px rgba(94,50,16,.18);border:1px solid rgba(255,232,190,.55)}
+.header-login-badge__caret{width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid rgba(255,248,235,.95);margin-left:2px;flex:0 0 auto}
+.manager-rank-table tbody tr.manager-badge-themed,.manager-rank-table tbody tr.badge-themed-row,.jinx-leader-table tbody tr.manager-badge-themed,.jinx-leader-table tbody tr.badge-themed-row{position:relative;overflow:hidden;background:var(--badge-row-bg);border-radius:14px;isolation:isolate;transition:transform .2s ease,filter .2s ease}
+.manager-rank-table tbody tr.manager-badge-themed:hover,.manager-rank-table tbody tr.badge-themed-row:hover,.jinx-leader-table tbody tr.manager-badge-themed:hover,.jinx-leader-table tbody tr.badge-themed-row:hover{transform:translateY(-1px);filter:brightness(1.018)}
+.manager-rank-table tbody tr.manager-badge-themed td,.manager-rank-table tbody tr.badge-themed-row td,.jinx-leader-table tbody tr.manager-badge-themed td,.jinx-leader-table tbody tr.badge-themed-row td{position:relative;z-index:1;background:var(--badge-row-bg),rgba(255,250,240,.82)!important;border-color:color-mix(in srgb,var(--badge-secondary,#d8ba74) 38%,var(--lw-border) 62%)}
+.manager-rank-table tbody tr.manager-badge-themed td:nth-child(2),.manager-rank-table tbody tr.badge-themed-row td:nth-child(2),.jinx-leader-table tbody tr.manager-badge-themed td:nth-child(2),.jinx-leader-table tbody tr.badge-themed-row td:nth-child(2){background:var(--badge-row-bg),rgba(255,250,240,.72)!important}
+.manager-rank-table tbody tr.manager-badge-themed td:nth-child(2):before,.manager-rank-table tbody tr.badge-themed-row td:nth-child(2):before,.jinx-leader-table tbody tr.manager-badge-themed td:nth-child(2):before,.jinx-leader-table tbody tr.badge-themed-row td:nth-child(2):before{content:"";position:absolute;inset:0;z-index:-1;opacity:.14;pointer-events:none;background-image:var(--badge-pattern);background-size:420px 84px;background-repeat:repeat-x;background-position:right center}
+.manager-rank-table tbody tr.manager-badge-themed td:nth-child(2):after,.manager-rank-table tbody tr.badge-themed-row td:nth-child(2):after,.jinx-leader-table tbody tr.manager-badge-themed td:nth-child(2):after,.jinx-leader-table tbody tr.badge-themed-row td:nth-child(2):after{content:"";position:absolute;top:0;left:-34%;z-index:-1;width:34%;height:100%;pointer-events:none;opacity:0;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--badge-accent,#f4b56f) 46%,transparent),transparent)}
+.manager-rank-table tbody tr.manager-badge-themed:hover td:nth-child(2):after,.manager-rank-table tbody tr.badge-themed-row:hover td:nth-child(2):after,.jinx-leader-table tbody tr.manager-badge-themed:hover td:nth-child(2):after,.jinx-leader-table tbody tr.badge-themed-row:hover td:nth-child(2):after{animation:badgeSweep 1.8s ease-out}
+.manager-rank-table tbody td,.jinx-leader-table tbody td{min-height:58px;height:58px}
+.manager-ledger-table .badge-identity,.jinx-leader-table .badge-identity{max-width:min(560px,100%)}
+.manager-hall-card.manager-badge-themed,.manager-hall-card.badge-themed-card{position:relative;overflow:hidden;border-radius:16px;border:1px solid color-mix(in srgb,var(--badge-secondary,#d8ba74) 42%,var(--lw-border) 58%);background:linear-gradient(180deg,color-mix(in srgb,var(--badge-secondary,#d8ba74) 12%,#fff8e8 88%),#fffaf0);box-shadow:var(--lw-shadow);isolation:isolate}
+.manager-hall-card.manager-badge-themed:before,.manager-hall-card.badge-themed-card:before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.13;background-image:var(--badge-pattern);background-size:440px 88px;background-repeat:repeat;background-position:right top}
+.manager-hall-card.manager-badge-themed>*{position:relative;z-index:1}
+.manager-hall-card-top{min-height:72px;margin:0;padding:10px 12px;display:flex;align-items:center;gap:12px;background:transparent;border-bottom:1px solid color-mix(in srgb,var(--badge-secondary,#d8ba74) 28%,var(--lw-border) 72%);box-shadow:none;overflow:visible}
+.manager-hall-card-top:before{display:none}.manager-hall-card-top .badge-identity{filter:none}
+.manager-hall-card .manager-hall-metrics{margin:10px 12px}.manager-hall-card .manager-hall-players,.manager-hall-card>.manager-note{margin-left:12px;margin-right:12px}.manager-hall-card>.manager-note{margin-bottom:12px}
+.manager-panel.manager-side.manager-badge-themed{position:relative;overflow:hidden;border-radius:14px;border:1px solid color-mix(in srgb,var(--badge-secondary,#d8ba74) 42%,var(--lw-border) 58%);background:linear-gradient(180deg,#fff8e8,#fffaf0);box-shadow:var(--lw-shadow);isolation:isolate}
+.manager-panel.manager-side.manager-badge-themed:before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.12;background-image:var(--badge-pattern);background-size:420px 84px;background-repeat:repeat;background-position:right top}
+.manager-panel.manager-side.manager-badge-themed>*{position:relative;z-index:1}
+.manager-panel.manager-side.manager-badge-themed .manager-panel-h{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;min-height:72px;padding:10px 12px;background:var(--badge-row-bg),rgba(255,250,240,.82);overflow:visible;border-bottom:1px solid color-mix(in srgb,var(--badge-secondary,#d8ba74) 34%,var(--lw-border) 66%)}
+.manager-panel.manager-side.manager-badge-themed .manager-panel-h:before{display:none}.manager-panel.manager-side.manager-badge-themed .manager-sidebar-title{color:var(--badge-username,#5f3f25);text-shadow:none}
+.manager-panel.manager-side.manager-badge-themed .manager-panel-b{background:linear-gradient(180deg,rgba(255,250,240,.84),#fffdf8);padding:14px}.manager-panel.manager-side.manager-badge-themed .manager-roster{border:1px solid color-mix(in srgb,var(--badge-secondary,#d8ba74) 32%,#ead8b7 68%);border-radius:14px;background:rgba(255,253,248,.62);padding:9px}
+@keyframes badgeSweep{0%{transform:translateX(-45%);opacity:0}35%{opacity:.36}100%{transform:translateX(145%);opacity:0}}
+@media (prefers-reduced-motion:reduce){.manager-rank-table tbody tr.manager-badge-themed:hover td:nth-child(2):after,.manager-rank-table tbody tr.badge-themed-row:hover td:nth-child(2):after,.jinx-leader-table tbody tr.manager-badge-themed:hover td:nth-child(2):after,.jinx-leader-table tbody tr.badge-themed-row:hover td:nth-child(2):after{animation:none!important}}
 .manager-note{font-size:12px;color:#6c5c46;line-height:1.6}
 .manager-pager{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px;flex-wrap:wrap;color:#756651;font-size:12px;font-weight:900}
 .manager-pager .manager-clear{padding:6px 10px}
@@ -423,6 +573,16 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 .manager-dialog{position:fixed;inset:0;z-index:420;display:flex;align-items:center;justify-content:center;background:rgba(75,48,21,.34);padding:18px}
 .manager-dialog-card{width:min(420px,100%);background:#fffaf0;border:1px solid #d9984b;border-radius:12px;box-shadow:0 18px 50px rgba(75,48,21,.22);overflow:hidden}
 .manager-dialog-card h3{background:#7a4f24;color:#fff;font-size:16px;padding:13px 15px}.manager-dialog-card p{padding:16px;color:#2f2a22;line-height:1.7;font-size:14px}.manager-dialog-strong{margin:-5px 16px 14px;padding:8px 10px;border-radius:8px;background:#fff3d7;color:#7a4f24;font-size:14px;font-weight:950;line-height:1.55}.manager-dialog-card .manager-actions{padding:0 16px 16px;justify-content:flex-end}
+.badge-grant-notice{position:fixed;inset:0;z-index:920;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(23,31,16,.56);backdrop-filter:blur(5px)}
+.badge-grant-notice__card{position:relative;width:min(520px,100%);overflow:hidden;border:1px solid #a8a96a;border-radius:16px;background:linear-gradient(155deg,#fffdf4,#f2f2df);box-shadow:0 26px 70px rgba(30,42,20,.34)}
+.badge-grant-notice__hero{display:grid;grid-template-columns:116px minmax(0,1fr);align-items:center;gap:18px;padding:22px;background:linear-gradient(135deg,#344628,#75804d);color:#fffdf2}
+.badge-grant-notice__hero img{width:116px;height:116px;object-fit:cover;border-radius:50%;background:#f7f2d9;box-shadow:0 0 0 2px rgba(239,226,167,.82);filter:drop-shadow(0 10px 18px rgba(12,19,8,.36))}
+.badge-grant-notice__hero small{display:block;margin-bottom:7px;color:#e8edcf;font-size:12px;font-weight:900}
+.badge-grant-notice__hero h3{margin:0;font-family:"Noto Serif SC","Songti SC",serif;font-size:25px;line-height:1.25;letter-spacing:0}
+.badge-grant-notice__copy{padding:22px 24px 12px;color:#403c30;font-size:15px;line-height:1.8}
+.badge-grant-notice__actions{display:flex;justify-content:flex-end;gap:10px;padding:8px 24px 24px}
+.badge-grant-notice__actions button{min-height:40px;padding:9px 18px}
+@media(max-width:560px){.badge-grant-notice__hero{grid-template-columns:84px minmax(0,1fr);gap:12px;padding:18px}.badge-grant-notice__hero img{width:84px;height:84px}.badge-grant-notice__hero h3{font-size:20px}.badge-grant-notice__copy{padding:18px 18px 10px}.badge-grant-notice__actions{padding:8px 18px 18px}}
 
 .refresh-bar{display:flex;align-items:center;gap:8px;font-size:11px;color:rgba(255,255,255,.8);margin-top:4px}
 .refresh-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite}
@@ -449,6 +609,13 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
   .toolbar{position:sticky;top:88px;background:#fff7e6cc;z-index:20;padding:6px;border-radius:10px;backdrop-filter:blur(6px)}
   .toolbar input{width:130px;flex:1}
   .auth-chip{max-width:110px}
+  .auth-chip.badged{max-width:220px;min-height:40px}
+  .auth-chip.badged .header-login-badge{max-width:220px}
+  .auth-chip.badged .badge-identity__username{display:none}
+  .manager-boards-page .manager-rules summary{font-size:15px;min-height:44px}
+  .manager-boards-page .manager-rules summary:before,.manager-boards-page .manager-rules summary:after{width:24px}
+  .manager-boards-page .manager-board-grid{grid-template-columns:1fr}
+  .manager-boards-page .manager-rank-table .manager-user-name-plain{min-width:150px}
   .follow-btn{width:22px;height:22px;margin-right:4px;font-size:14px}
   .tbl-wrap{max-height:none;border-radius:8px}
   table{font-size:12px;min-width:820px}
@@ -472,6 +639,12 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
   .jinx-leader-table{font-size:11px;min-width:0!important}
   .jinx-leader-table th,.jinx-leader-table td{padding:7px 6px}
   .jinx-leader-rank{width:38px}
+  .jinx-leader-table .manager-user-badge-line .badge-identity__icon{width:38px;height:38px;flex-basis:38px}
+  .jinx-leader-table .manager-user-badge-line .badge-identity__nameplate{min-width:96px;height:27px}
+  .manager-ledger-table .manager-user-badge-line .badge-identity__icon{width:42px;height:42px;flex-basis:42px}
+  .manager-ledger-table .manager-user-badge-line .badge-identity__nameplate{min-width:104px;height:28px}
+  .manager-user-badge-line .badge-identity__username{max-width:96px}
+  .manager-badge-grid{grid-template-columns:1fr}
   .flight-grid{grid-template-columns:1fr}
 }
 
@@ -682,12 +855,20 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
   .manager-detail-table{grid-template-columns:1fr}
 }
 </style>
+<link rel="stylesheet" href="assets/theme/full-site-badge-themes.css?v=20260712-1">
+<link rel="stylesheet" href="assets/manager/badges/ui-v5/badge-ui.css?v=20260712-8">
 </head>
 <body class="manager-mode">
 <div id="hdr">
   <div class="hdt">
-    <h1>🎾 签表幸存者之炉网</h1>
-    <div class="upd-wrap"><span class="upd" id="upd-time">加载中...</span><button class="auth-chip" id="auth-chip" onclick="openAuthModal()">登录</button><span class="dev">开发者：Candice·卢布列娃</span></div>
+    <div class="site-brand">
+      <h1>🎾 签表幸存者之炉网</h1>
+      <span class="upd" id="upd-time">加载中...</span>
+    </div>
+    <div class="site-account">
+      <button class="auth-chip" id="auth-chip" onclick="openAuthModal()">登录</button>
+      <span class="dev">开发者：Candice·卢布列娃</span>
+    </div>
   </div>
   <div class="refresh-bar">
     <div class="refresh-dot" id="rdot"></div>
@@ -839,9 +1020,11 @@ let AUTH_USER=null;
 let AUTH_PROFILE=null;
 let AUTH_AFTER_LOGIN=null;
 let FOLLOWING_IDS=new Set();
-let MANAGER_VIEW='market';
+const MANAGER_LOCAL_PREVIEW_PARAMS=new URLSearchParams(location.search);
+const MANAGER_LOCAL_PREVIEW_VIEW=MANAGER_LOCAL_PREVIEW_PARAMS.get('manager-view')||'';
+let MANAGER_VIEW=managerLocalPreviewEnabled()&&['market','calculator','mine','hall','boards','shop'].includes(MANAGER_LOCAL_PREVIEW_VIEW)?MANAGER_LOCAL_PREVIEW_VIEW:'market';
 let MANAGER_TOUR='ATP';
-let MANAGER_MY_VIEW='lineup';
+let MANAGER_MY_VIEW=managerLocalPreviewEnabled()&&['lineup','previous','transfer','ledger','badges'].includes(MANAGER_LOCAL_PREVIEW_PARAMS.get('manager-my-view'))?MANAGER_LOCAL_PREVIEW_PARAMS.get('manager-my-view'):'lineup';
 let MANAGER_LINEUP=[];
 let MANAGER_PREDICTIONS={};
 let MANAGER_LEDGER=[];
@@ -849,6 +1032,7 @@ let MANAGER_SUNK_COST=0;
 let MANAGER_LAST_MSG='';
 let MANAGER_DETAIL_ID='';
 let MANAGER_DIALOG=null;
+let MANAGER_PENDING_BADGE_ACTION=null;
 let MANAGER_SEARCH='';
 let MANAGER_SEARCH_TIMER=null;
 let MANAGER_SEARCH_COMPOSING=false;
@@ -888,7 +1072,19 @@ let MANAGER_REMOTE_STATION_NET_BOARD=[];
 let MANAGER_REMOTE_WALLET_BOARD=[];
 let MANAGER_REMOTE_PUBLIC_SYNC_KEY='';
 let MANAGER_REMOTE_PUBLIC_LOADING=null;
+let MANAGER_BADGES=[];
+let MANAGER_MY_BADGES=[];
+let MANAGER_ACTIVE_BADGE=null;
+let MANAGER_ACTIVE_BADGES=[];
+let MANAGER_ACTIVE_BADGE_BY_USER={};
+let MANAGER_ACTIVE_BADGE_BY_NAME={};
+let MANAGER_ACTIVE_BADGES_LOADING=null;
+let MANAGER_BADGE_PREVIEW_KEY='';
+let MANAGER_BADGE_PREVIEW_SCENE='hall';
+let MANAGER_BADGE_FILTER='all';
 let MANAGER_PENDING_TRANSFER=null;
+let MANAGER_BADGE_GRANT_NOTICE=null;
+let MANAGER_BADGE_GRANT_NOTICE_CHECKED_USER='';
 let MANAGER_TRANSFER_TO_QUERY='';
 let MANAGER_TRANSFER_TO_ID='';
 let MANAGER_TRANSFER_MENU_OPEN=false;
@@ -906,6 +1102,36 @@ const MANAGER_LEVEL_CONFIG={
   '500':{label:'500赛',sideGrant:65,grant:130,min:1,max:2,transfers:1,transferDays:2,transferFee:.10},
   '1000':{label:'1000赛',sideGrant:120,grant:240,min:2,max:3,transfers:1,transferDays:3,transferFee:.15},
   'GS':{label:'大满贯',sideGrant:1250,grant:2500,min:2,max:4,transfers:1,transferDays:3,transferFee:.15}
+};
+const MANAGER_BADGE_FALLBACKS=[
+  {badge_key:'sinner-fox',title:'辛纳狐',formal_name:'辛纳·赤焰狐心',subtitle:'球员纪念',category:'player',category_label:'球员纪念',serial_number:'LW-2026-01',description:'他以赤狐般的敏锐穿过冰蓝浪涌，把炽热天赋藏进近乎冷静的每一次击球。',motifs:['赤狐','冰蓝浪涌','冷静炽热'],available_from:'2026-07-12',available_until:'',price:2999,sale_status:'for_sale',image_url:'assets/manager/badges/ui-v5/sinner-badge.png',thumb_url:'assets/manager/badges/ui-v5/sinner-badge.png',rarity:'limited',sort_order:10},
+  {badge_key:'alcaraz-duck',title:'阿卡鸭',formal_name:'阿卡·星辉少年冠',subtitle:'球员纪念',category:'player',category_label:'球员纪念',serial_number:'LW-2026-02',description:'他把晚霞般的热烈带进每一次奔跑，连身旁的小黄鸭也像在替少年喝彩。',motifs:['星辉','少年锋芒','小黄鸭'],available_from:'2026-07-12',available_until:'',price:2999,sale_status:'for_sale',image_url:'assets/manager/badges/ui-v5/alcaraz-badge-final-hq.png',thumb_url:'assets/manager/badges/ui-v5/alcaraz-badge-final-hq.png',rarity:'limited',sort_order:20},
+  {badge_key:'djoko-goat',title:'德约GOAT',formal_name:'德约·24冠回环',subtitle:'球员纪念',category:'player',category_label:'球员纪念',serial_number:'LW-2026-03',description:'二十四座大满贯沿时间成环，他站在四种场地中央，把漫长岁月变成秩序。',motifs:['24冠','四大满贯','时间回环'],available_from:'2026-07-12',available_until:'',price:2999,sale_status:'for_sale',image_url:'assets/manager/badges/ui-v5/djokovic-badge.png',thumb_url:'assets/manager/badges/ui-v5/djokovic-badge.png',rarity:'limited',sort_order:30},
+  {badge_key:'rublev-cat',title:'卢布喵',formal_name:'卢布·喵喵王子',subtitle:'球员纪念',category:'player',category_label:'球员纪念',serial_number:'LW-2026-04',description:'他把赛场上的锋利留给每一拍，把不设防的温柔留给猫与真心。',motifs:['蓝金宫廷','猫爪','率真'],available_from:'2026-07-12',available_until:'',price:1999,sale_status:'for_sale',image_url:'assets/manager/badges/ui-v5/lubu-badge.png',thumb_url:'assets/manager/badges/ui-v5/lubu-badge.png',rarity:'limited',sort_order:40},
+  {badge_key:'zheng-queen',title:'郑钦文Queen',formal_name:'郑钦文·女王风范',subtitle:'球员纪念',category:'player',category_label:'球员纪念',serial_number:'LW-2026-05',description:'她在紫金光芒中举起拳头，王冠不是装饰，而是一步步赢来的自我确信。',motifs:['紫金','王冠','中国力量'],available_from:'2026-07-12',available_until:'',price:1999,sale_status:'for_sale',image_url:'assets/manager/badges/ui-v5/zheng-badge.png',thumb_url:'assets/manager/badges/ui-v5/zheng-badge.png',rarity:'limited',sort_order:50},
+  {badge_key:'wang-xinyu-mermaid',title:'王欣瑜美人鱼',formal_name:'王欣瑜·美人鱼',subtitle:'球员纪念',category:'player',category_label:'球员纪念',serial_number:'LW-2026-06',description:'她从珍珠与海浪间回望，柔美不是退让，而是另一种流动的力量。',motifs:['珍珠','海浪','流动锋芒'],available_from:'2026-07-12',available_until:'',price:1999,sale_status:'for_sale',image_url:'assets/manager/badges/ui-v5/mermaid-badge.png',thumb_url:'assets/manager/badges/ui-v5/mermaid-badge.png',rarity:'limited',sort_order:60},
+  {badge_key:'luwang-friend',title:'炉网挚友',formal_name:'炉网挚友·时间共振章',subtitle:'炉友纪念',category:'community',category_label:'炉友纪念',serial_number:'LW-FOREVER-01',description:'四季围绕同一团炉火流转，陪伴让每一站比赛都在时间里留下回声。',motifs:['四季','炉火网球','长久陪伴'],available_from:'',available_until:'',price:0,sale_status:'coming_soon',image_url:'assets/manager/badges/ui-v5/luwang-badge.png',thumb_url:'assets/manager/badges/ui-v5/luwang-badge.png',rarity:'limited',sort_order:70},
+  {badge_key:'wimbledon-2026',title:'温网限定',formal_name:'2026温网限定·仲夏草地书',subtitle:'赛事限定',category:'event',category_label:'赛事限定',serial_number:'W26-LIMITED',description:'草地、白衣、草莓与伦敦天际被写进一册仲夏限定，只在这一年的夏天翻开。',motifs:['草地','草莓','仲夏典藏'],available_from:'2026-06-29',available_until:'',price:1999,sale_status:'for_sale',image_url:'assets/manager/badges/ui-v5/wimbledon-badge.png',thumb_url:'assets/manager/badges/ui-v5/wimbledon-badge.png',rarity:'limited',sort_order:80}
+];
+const MANAGER_BADGE_STORIES={
+  'alcaraz-duck':'星辉落在粉紫色的球场上，他挥拍时仍带着少年最明亮的笑意。小黄鸭守在身旁，像把天真、勇气与旺盛生命力一同留进徽章里。他并不掩饰对胜利的渴望，也从不丢掉享受网球的本能；正是这种毫无保留的热烈，让他的冠军之路始终像破晓一样新鲜。',
+  'rublev-cat':'蓝金宫廷环抱着他，猫耳、猫爪与小小的守护者藏在华丽纹章之间。赛场上的他用重击表达决心，场外的他却保留着近乎笨拙的真诚。这枚徽章最动人的地方，不是王子的冠冕，而是锋芒之下那颗从未学会伪装的柔软之心。',
+  'djoko-goat':'四种场地在徽章中彼此相连，二十四枚冠军刻度沿金色轨道循环不息。他站在回环中央，像站在自己跨越时代的全部答案之中。那些数字并不只代表胜利，也代表一次次重返、修正与坚持；真正令它动人的，是他把漫长职业生涯活成了近乎精密的意志。',
+  'wang-xinyu-mermaid':'珍珠、贝壳与海水青包围着她，鱼尾在浪纹中舒展，球拍则把童话重新牵回赛场。她的美从不依赖静止：长线条、轻盈步伐与突然加速，让温柔拥有了锋面。这枚徽章记录的，是她在浪潮里保持优雅，也保持向前的力量。',
+  'luwang-friend':'春花、盛夏、秋叶与冬雪环绕同一枚燃烧的网球，四季在这里不是背景，而是一同走过的时间。它不属于某一场胜利，而属于每一次守候、讨论与共同心跳。真正让人珍惜的，是多年以后再看见它，仍能想起那些与炉友一起等待比赛开始的夜晚。',
+  'wimbledon-2026':'象牙色书页上铺开温布尔登的草地，白衣球员跃起击球，草莓、花叶与伦敦轮廓沿金边生长。它像一本只在仲夏开放的收藏册，把礼仪、传统与短暂盛夏同时封存。最动人的不是“限定”，而是人们明知夏天会结束，仍愿意认真记住这一年的每一片草。',
+  'zheng-queen':'紫金冠冕、城市天际与向外绽放的光芒把她推向画面中央。她握拍而立、拳头收紧，目光里没有等待加冕的犹疑。女王风范并非高高在上，而是她一次次在压力中选择进攻、选择相信自己；这枚徽章所纪念的，正是力量被她握在手中的瞬间。',
+  'sinner-fox':'赤狐站在冰蓝浪涌与金色枝叶之间，火焰般的毛色映着沉静的目光。他很少用喧哗证明自己，只让速度、精准与稳定替他发声。最打动人的，是炽热与克制同时存在：天赋在燃烧，心却始终安静地指向下一分。'
+};
+const MANAGER_BADGE_VISUAL_META={
+  sinner_fox:{label:'辛纳狐',icon:'assets/manager/badges/ui-v5/sinner-badge.png',nameplate:'assets/manager/badges/ui-v5/sinner-nameplate.png',header:'assets/manager/badges/ui-v5/sinner-card-header-4x.png',surface:'assets/manager/badges/ui-v5/sinner-surface.png'},
+  alcaraz_duck:{label:'阿卡鸭',icon:'assets/manager/badges/ui-v5/alcaraz-badge-final-hq.png',nameplate:'assets/manager/badges/ui-v5/alcaraz-nameplate.png',header:'assets/manager/badges/ui-v5/alcaraz-card-header-4x.png',surface:'assets/manager/badges/ui-v5/alcaraz-theme-strip.png'},
+  djoko_goat:{label:'德约GOAT',icon:'assets/manager/badges/ui-v5/djokovic-badge.png',nameplate:'assets/manager/badges/ui-v5/djokovic-nameplate.png',header:'assets/manager/badges/ui-v5/djokovic-card-header-4x.png',surface:'assets/manager/badges/ui-v5/djokovic-surface.png'},
+  rublev_cat:{label:'卢布喵',icon:'assets/manager/badges/ui-v5/lubu-badge.png',nameplate:'assets/manager/badges/ui-v5/lubu-nameplate.png',header:'assets/manager/badges/ui-v5/lubu-card-header-4x.png',surface:'assets/manager/badges/ui-v5/lubu-surface.png'},
+  zheng_queen:{label:'郑钦文 Queen',icon:'assets/manager/badges/ui-v5/zheng-badge.png',nameplate:'assets/manager/badges/ui-v5/zheng-nameplate.png',header:'assets/manager/badges/ui-v5/zheng-card-header-4x.png',surface:'assets/manager/badges/ui-v5/zheng-surface.png'},
+  wang_mermaid:{label:'王欣瑜 美人鱼',icon:'assets/manager/badges/ui-v5/mermaid-badge.png',nameplate:'assets/manager/badges/ui-v5/mermaid-nameplate.png',header:'assets/manager/badges/ui-v5/mermaid-card-header-4x.png',surface:'assets/manager/badges/ui-v5/mermaid-surface.png'},
+  luwang_friend:{label:'炉网挚友',icon:'assets/manager/badges/ui-v5/luwang-badge.png',nameplate:'assets/manager/badges/ui-v5/luwang-nameplate.png',header:'assets/manager/badges/ui-v5/luwang-card-header-4x.png',surface:'assets/manager/badges/ui-v5/luwang-surface.png'},
+  wimbledon_2026:{label:'温网限定',icon:'assets/manager/badges/ui-v5/wimbledon-badge.png',nameplate:'assets/manager/badges/ui-v5/wimbledon-nameplate.png',header:'assets/manager/badges/ui-v5/wimbledon-card-header-4x.png',surface:'assets/manager/badges/ui-v5/wimbledon-surface.png'}
 };
 const MANAGER_POINT_TABLES={
   ATP:{
@@ -1406,6 +1632,10 @@ function managerResetVolatileAccountState(){
   MANAGER_REMOTE_ALL_LEDGER_SYNC_KEY='';
   MANAGER_PREVIOUS_STATE=null;
   MANAGER_PREVIOUS_SYNC_KEY='';
+  MANAGER_MY_BADGES=[];
+  MANAGER_ACTIVE_BADGE=null;
+  MANAGER_BADGE_GRANT_NOTICE=null;
+  MANAGER_BADGE_GRANT_NOTICE_CHECKED_USER='';
   MANAGER_PENDING_TRANSFER=null;
 }
 function managerSaveState(){try{localStorage.setItem(managerStoreKey(),JSON.stringify({lineup:MANAGER_LINEUP,predictions:MANAGER_PREDICTIONS,sunk_cost:MANAGER_SUNK_COST,transfer_count:MANAGER_TRANSFER_COUNT,transfer_station:managerStationKey(),updated_at:new Date().toISOString()}));}catch(e){}}
@@ -2036,7 +2266,7 @@ function managerRequireLogin(reason){
   return false;
 }
 function managerViewNeedsLogin(view){return false;}
-function managerViewNeedsRemoteState(view){return ['market','calculator','mine','transfer','ledger'].indexOf(view)>=0;}
+function managerViewNeedsRemoteState(view){return ['market','calculator','mine','transfer','ledger','shop'].indexOf(view)>=0;}
 function managerRefreshRemoteState(force){
   if(!AUTH_USER||!supabaseConfigured())return;
   managerLoadRemoteState({force:!!force}).then(function(){
@@ -2060,7 +2290,7 @@ function managerSetMyView(view){
   managerRefreshRemoteState(true);
 }
 function managerAlert(msg,title,opts){opts=opts||{};MANAGER_DIALOG={title:title||'阵容提示',msg:msg,strong:opts.strong||''};renderManagerDemo();}
-function managerCloseAlert(){MANAGER_DIALOG=null;MANAGER_PENDING_TRANSFER=null;renderManagerDemo();}
+function managerCloseAlert(){MANAGER_DIALOG=null;MANAGER_PENDING_TRANSFER=null;MANAGER_PENDING_BADGE_ACTION=null;renderManagerDemo();}
 function managerAdd(id){
   if(managerSubmittedRecord()){trackManagerEvent('manager_lineup_blocked',{reason:'already_submitted'});managerAlert('本站阵容已经提交，不能再直接加人。开赛后的调整请走换人窗口。','阵容已锁定');return;}
   var rules=managerRules(),pick=managerBuildPool().find(function(p){return p.id===id;});
@@ -2463,10 +2693,16 @@ function managerLedgerDisplayAmounts(type,amount,meta,lineup,isSubmit,isSettle,i
   var isWalletSpend=/lineup_wallet_spend/i.test(type);
   var isWithdrawRefund=/lineup_withdraw_refund/i.test(type);
   var isBonusReversal=/submit_bonus_reversal|bonus_reversal/i.test(type);
+  var isBadgePurchase=/badge_purchase/i.test(type);
   if(isWalletSpend){
     var totalCost=Number(meta.lineup_cost??meta.cost);
     if(!Number.isFinite(totalCost)||totalCost<=0)totalCost=Math.abs(amount);
     return {cost:totalCost,gross:0,bonus:0,net:-totalCost};
+  }
+  if(isBadgePurchase){
+    var badgePrice=Number(meta.price??meta.cost??Math.abs(amount));
+    if(!Number.isFinite(badgePrice)||badgePrice<=0)badgePrice=Math.abs(amount);
+    return {cost:badgePrice,gross:0,bonus:0,net:-badgePrice};
   }
   if(isBonusReversal)return {cost:Math.abs(amount),gross:0,bonus:0,net:amount};
   if(isWithdrawRefund)return {cost:0,gross:Math.max(0,amount),bonus:0,net:amount};
@@ -2511,6 +2747,7 @@ function managerLedgerRowsFromRawLedger(ledger,ctx){
     }else if(isTransfer)players=managerSanitizeLedgerPlayers(Array.isArray(meta.players)?meta.players:[meta.out_player||meta.out_name,meta.in_player||meta.in_name].filter(Boolean));
     var comboPlayers=managerComboLedgerDetailTokens(meta,type);
     if(comboPlayers.length)players=comboPlayers;
+    if(/badge_purchase/i.test(type))players=managerSanitizeLedgerPlayers([meta.badge_title||meta.title||meta.badge_key].filter(Boolean));
     if(!players.length&&Array.isArray(meta.players))players=managerSanitizeLedgerPlayers(meta.players);
     if(!players.length&&x.lineup_id&&Array.isArray(playerMap[x.lineup_id+'|__players']))players=playerMap[x.lineup_id+'|__players'];
     if(/lineup_purchase_cost|lineup_wallet_spend/i.test(type))purchaseDone[purchaseKey]=true;
@@ -2631,6 +2868,7 @@ function managerAllLedger(){
         }else if(isTransfer)players=managerSanitizeLedgerPlayers(Array.isArray(meta.players)?meta.players:[meta.out_player||meta.out_name,meta.in_player||meta.in_name].filter(Boolean));
         var comboPlayers=managerComboLedgerDetailTokens(meta,type);
         if(comboPlayers.length)players=comboPlayers;
+        if(/badge_purchase/i.test(type))players=managerSanitizeLedgerPlayers([meta.badge_title||meta.title||meta.badge_key].filter(Boolean));
         if(!players.length&&Array.isArray(meta.players))players=managerSanitizeLedgerPlayers(meta.players);
         if(!players.length&&x.lineup_id&&Array.isArray(contractPlayerMap[x.lineup_id+'|__players']))players=contractPlayerMap[x.lineup_id+'|__players'];
         var outName=meta.out_player||meta.out_name;
@@ -2688,6 +2926,7 @@ function managerLedgerStatusText(type){
   if(/lineup_withdraw_refund/i.test(t))return '签约球员撤回';
   if(/submit_bonus_reversal|bonus_reversal/i.test(t))return '撤回提交奖励';
   if(/submit_bonus/i.test(t))return '提交阵容奖励';
+  if(/badge_purchase/i.test(t))return '购买徽章';
   if(/transfer/i.test(t))return '换人调仓';
   if(/settle|settlement|points/i.test(t))return '每日收益结算';
   if(/low_income|sponsor|低保/i.test(t))return '低保赞助';
@@ -3074,15 +3313,22 @@ function managerSidebar(c,rules,extraClass){
   var submitted=managerSubmittedRecord();
   var team=managerTeamCurrentStats(c.players,c);
   var replaced=managerReplacedLineupPlayers();
+  var ownerBadge=managerCurrentUserBadge();
+  var ownerName=currentDisplayName()||(managerPreviewBadge()?'预览用户':'我的阵容');
   var activeRows=c.players.map(function(p){return managerRosterRow(p,submitted,false);}).join('');
   var replacedRows=replaced.map(function(p){return managerRosterRow(p,true,true);}).join('');
   var rows=activeRows?'<div class="manager-roster-title">当前阵容</div>'+activeRows:'<div class="manager-empty">还没签人。先在市场加入 '+rules.minPlayers+'-'+rules.maxPlayers+' 名球员。</div>';
   if(replacedRows)rows+='<div class="manager-roster-title">换下球员</div>'+replacedRows;
-  var headBtn=submitted?'<button class="manager-clear" data-manager-view="hall">配置大厅</button>':'<button class="manager-clear" data-manager-action="reset">清空</button>';
+  var headBtn=submitted?'':'<button class="manager-clear" data-manager-action="reset">清空</button>';
   var withdrawAction=submitted&&managerCanWithdrawLineup()?'<button class="manager-clear" data-manager-action="withdraw-lineup" style="width:100%;margin-top:8px">撤回阵容</button>':'';
-  var actions=submitted?'<button class="manager-action secondary" data-manager-view="hall" style="width:100%;margin-top:10px">查看配置大厅</button>'+withdrawAction+'<button class="manager-clear" data-manager-my-view="transfer" style="width:100%;margin-top:8px">打开换人窗口（'+MANAGER_TRANSFER_COUNT+'/1）</button><button class="manager-clear" data-manager-my-view="ledger" style="width:100%;margin-top:8px">查看我的收益</button>':'<button class="manager-action secondary" data-manager-action="calc" style="width:100%;margin-top:10px">去计算器测算</button><button class="manager-action" data-manager-action="submit" style="width:100%;margin-top:8px">提交阵容</button>';
+  var actions=submitted?withdrawAction+'<button class="manager-clear" data-manager-my-view="transfer" style="width:100%;margin-top:8px">打开换人窗口（'+MANAGER_TRANSFER_COUNT+'/1）</button><button class="manager-clear" data-manager-my-view="ledger" style="width:100%;margin-top:8px">查看我的收益</button>':'<button class="manager-action secondary" data-manager-action="calc" style="width:100%;margin-top:10px">去计算器测算</button><button class="manager-action" data-manager-action="submit" style="width:100%;margin-top:8px">提交阵容</button>';
   var status=submitted?'<div class="manager-sim-row"><span>提交状态</span><b>已提交，等待开赛/结算</b></div><div class="manager-sim-row"><span>换人机会</span><b>'+MANAGER_TRANSFER_COUNT+'/1</b></div>':'';
-  return '<div class="manager-panel manager-side '+(extraClass||'')+'"><div class="manager-panel-h"><span>我的阵容</span>'+headBtn+'</div><div class="manager-panel-b"><div class="manager-roster">'+rows+'</div><div class="manager-sim"><div class="manager-sim-row"><span>人数</span><b>'+c.players.length+'/'+rules.maxPlayers+'</b></div><div class="manager-sim-hint">本次最少选 '+rules.minPlayers+' 人，最多选 '+rules.maxPlayers+' 人</div>'+status+'<div class="manager-sim-row"><span>总支出</span><b>'+managerSpendBreakdownText(c)+'</b></div><div class="manager-sim-row"><span>目前收益</span><b>累计 '+team.earned+' / 昨天 '+team.yesterday+'</b></div><div class="manager-sim-row"><span>阵容风格</span><b>'+c.style+'</b></div><div class="manager-sim-row"><span>当前预测净收益</span><b>'+c.net+'</b></div><div class="manager-sim-row"><span>可行最高收益</span><b>'+c.max+'</b></div></div>'+actions+'<div class="manager-msg" id="'+(extraClass?'manager-msg-inline':'manager-msg')+'">'+esc(MANAGER_LAST_MSG||(submitted?'阵容已锁定。开赛后可以使用一次换人窗口。':'加入阵容后，先去计算器选择预计轮次，再提交。'))+'</div></div></div>';
+  var ownerHtml=ownerBadge?managerBadgeHeroHtml(ownerName,ownerBadge,{sidebar:true}):'';
+  var sideClasses=['manager-panel manager-side my-lineup-panel badge-themed-sidebar-panel',extraClass||''].filter(Boolean).join(' ');
+  var panelAttr=managerBadgeClassAttr(ownerBadge,sideClasses);
+  if(!panelAttr)panelAttr=' class="'+esc(sideClasses)+'"';
+  var headClass='manager-panel-h my-lineup-badge-header badge-sidebar-header'+(ownerBadge?' badged-lineup-panel__identity':'');
+  return '<div'+panelAttr+'><div class="'+esc(headClass)+'"><div class="manager-sidebar-owner"><span class="manager-sidebar-title">我的阵容</span>'+ownerHtml+'</div>'+headBtn+'</div><div class="manager-panel-b"><div class="manager-roster">'+rows+'</div><div class="manager-sim"><div class="manager-sim-row"><span>人数</span><b>'+c.players.length+'/'+rules.maxPlayers+'</b></div><div class="manager-sim-hint">本次最少选 '+rules.minPlayers+' 人，最多选 '+rules.maxPlayers+' 人</div>'+status+'<div class="manager-sim-row"><span>总支出</span><b>'+managerSpendBreakdownText(c)+'</b></div><div class="manager-sim-row"><span>目前收益</span><b>累计 '+team.earned+' / 昨天 '+team.yesterday+'</b></div><div class="manager-sim-row"><span>阵容风格</span><b>'+c.style+'</b></div><div class="manager-sim-row"><span>当前预测净收益</span><b>'+c.net+'</b></div><div class="manager-sim-row"><span>可行最高收益</span><b>'+c.max+'</b></div></div>'+actions+'<div class="manager-msg" id="'+(extraClass?'manager-msg-inline':'manager-msg')+'">'+esc(MANAGER_LAST_MSG||(submitted?'阵容已锁定。开赛后可以使用一次换人窗口。':'加入阵容后，先去计算器选择预计轮次，再提交。'))+'</div></div></div>';
 }
 function managerInitial(name){return String(name||'?').trim().slice(0,1)||'?';}
 function managerPhotoValue(hit,size){
@@ -3298,9 +3544,74 @@ function managerRenderMyLineup(){
   var replacedRows=replaced.map(function(p){return managerMyPlayerCard(p,true);}).join('');
   return '<div class="manager-status-line">'+esc(statusLine)+'</div>'+managerWithdrawLineupHtml()+'<div class="manager-my-summary-grid"><div class="manager-my-highlight"><h4>队伍目前收益</h4><div class="manager-kv"><div><span>总支出</span><b>'+managerSpendBreakdownText(c)+'</b></div><div><span>累计收益</span><b>'+team.earned+'</b></div><div><span>昨天收益</span><b>'+team.yesterday+'</b></div><div><span>目前存活</span><b>'+team.alive+' 人</b></div><div><span>预计最高收益</span><b>'+team.max+'</b></div></div></div><div class="manager-my-highlight"><h4>当前预测</h4><div class="manager-kv"><div><span>毛收益</span><b>'+c.gross+'</b></div><div><span>奖励</span><b>'+c.bonus+'</b></div><div><span>成本</span><b>'+c.spent+'</b></div><div><span>当前预测净收益</span><b>'+c.net+'</b></div><div><span>阵容风格</span><b>'+esc(c.style)+'</b></div></div></div></div><div class="manager-roster-title">当前阵容</div><div class="manager-my-lineup">'+currentRows+'</div>'+(replacedRows?'<div class="manager-roster-title" style="margin-top:14px">换下球员</div><div class="manager-my-lineup">'+replacedRows+'</div>':'');
 }
+function managerBadgeCardHtml(badge,owned,equipped,source){
+  badge=managerNormalizeBadge(badge);
+  if(!badge)return '';
+  var theme=managerBadgeThemeKey(badge),visual=MANAGER_BADGE_VISUAL_META[theme]||{};
+  var saleStatus=badge.sale_status||'for_sale';
+  var motifs=(badge.motifs||[]).map(function(item){return '<span>'+esc(item)+'</span>';}).join('');
+  var action='';
+  if(source==='shop'){
+    if(owned)action=equipped?'<span class="manager-badge-state">佩戴中</span>':'<button class="manager-clear" data-manager-action="equip-badge" data-badge-key="'+esc(badge.badge_key)+'">佩戴</button>';
+    else if(saleStatus==='coming_soon')action='<span class="manager-badge-state">敬请期待</span>';
+    else action='<button class="manager-action" data-manager-action="buy-badge" data-badge-key="'+esc(badge.badge_key)+'">购买徽章</button>';
+  }else{
+    action=equipped?'<button class="manager-clear" data-manager-action="unequip-badge">取消佩戴</button>':'<button class="manager-action" data-manager-action="equip-badge" data-badge-key="'+esc(badge.badge_key)+'">佩戴</button>';
+  }
+  var priceHtml=saleStatus==='coming_soon'?'<div class="manager-badge-price is-status"><small>开放状态</small><strong>敬请期待</strong></div>':'<div class="manager-badge-price"><small>经纪人本金</small><strong>$'+Math.round(Number(badge.price)||0)+'</strong></div>';
+  return '<article'+managerBadgeClassAttr(badge,'manager-badge-card')+'><div class="manager-badge-card-flags"><span class="manager-badge-category">'+esc(badge.category_label)+'</span><span class="manager-badge-owned '+(owned?'is-owned':'')+'">'+(owned?'已拥有':'未拥有')+'</span></div><div class="manager-badge-card-art"><img class="manager-badge-art" src="'+esc(visual.icon||badge.image_url||badge.thumb_url)+'" alt="'+esc(badge.title)+'" loading="lazy" decoding="async"></div><div class="manager-badge-card-copy"><div class="manager-badge-serial">'+esc(badge.serial_number||badge.badge_key)+'</div><h4>'+esc(badge.formal_name||badge.title)+'</h4><div class="manager-badge-desc">'+esc(badge.description||'佩戴后会在炉网多个位置展示。')+'</div><div class="manager-badge-motifs">'+motifs+'</div><div class="manager-badge-card-footer">'+priceHtml+'<div class="manager-badge-actions"><button class="manager-clear" data-manager-action="preview-badge" data-badge-key="'+esc(badge.badge_key)+'">实装预览</button>'+action+'</div></div></div></article>';
+}
+
+function managerOpenBadgePreview(badgeKey){
+  var badge=managerFindBadge(badgeKey);
+  if(!badge)return;
+  MANAGER_BADGE_PREVIEW_KEY=badge.badge_key;
+  MANAGER_BADGE_PREVIEW_SCENE='hall';
+  var theme=managerBadgeThemeKey(badge);
+  if(window.LuwangFullSiteTheme&&theme)window.LuwangFullSiteTheme.set(theme,{persist:false});
+  renderManagerDemo();
+}
+
+function managerCloseBadgePreview(){
+  MANAGER_BADGE_PREVIEW_KEY='';
+  MANAGER_BADGE_PREVIEW_SCENE='hall';
+  managerSyncFullSiteTheme(managerCurrentUserBadge());
+  renderManagerDemo();
+}
+
+function managerBadgePreviewHtml(){
+  if(!MANAGER_BADGE_PREVIEW_KEY)return '';
+  var badge=managerFindBadge(MANAGER_BADGE_PREVIEW_KEY),theme=managerBadgeThemeKey(badge),name=currentDisplayName()||'尊贵的娃老师',visual=MANAGER_BADGE_VISUAL_META[theme]||{};
+  if(!badge||!theme)return '';
+  var identity=managerUserNameWithBadge(name,badge,{login:true});
+  var boardRow='<tr'+managerBadgeClassAttr(badge,'is-badge-featured')+'><td class="rank-cell">'+managerRankMedalHtml(1)+'</td><td'+managerBadgeUserCellAttr(badge)+'>'+managerUserNameWithBadge(name,badge)+'</td><td class="g">+3360</td><td>+2740</td><td>+620</td></tr><tr><td class="rank-cell">'+managerRankMedalHtml(2)+'</td><td><span class="manager-user-name-plain">马斯克</span></td><td class="g">+3230</td><td>+2700</td><td>+530</td></tr><tr><td class="rank-cell">'+managerRankMedalHtml(3)+'</td><td><span class="manager-user-name-plain">Roudric</span></td><td class="g">+3120</td><td>+2800</td><td>+320</td></tr>';
+  var config='<div'+managerBadgeClassAttr(badge,'manager-board manager-hall-card manager-badge-preview-config')+'><div class="manager-hall-card-top">'+managerBadgeHeroHtml(name,badge,{card:true})+'</div><div class="manager-hall-metrics"><div class="manager-hall-metric"><span>阵容风格</span><b>均衡基金流</b></div><div class="manager-hall-metric"><span>已用额度</span><b>430</b></div><div class="manager-hall-metric"><span>签约球员</span><b>4 人</b></div></div><div class="manager-hall-players"><span class="manager-pill">德米纳尔</span><span class="manager-pill">高芙</span><span class="manager-pill">保罗</span><span class="manager-pill">陶森</span></div></div>';
+  var sidebar='<div class="manager-badge-preview-sidebar"><div class="manager-badge-preview-sidebar-head">'+managerBadgeHeroHtml(name,badge,{sidebar:true})+'</div><div class="manager-badge-preview-sidebar-body"><b>我的阵容</b><span>人数 4/4</span><span>总支出 430</span><span>当前预测净收益 1120</span></div></div>';
+  var board='<div class="manager-badge-preview-section manager-boards-page"><h4>榜单展示</h4><div class="manager-table-scroll"><table class="manager-ledger-table manager-rank-table manager-station-board-table"><thead><tr><th>排名</th><th>用户名</th><th>本站净收益</th><th>球员收益</th><th>combo奖励</th></tr></thead><tbody>'+boardRow+'</tbody></table></div></div>';
+  var header='<div class="manager-badge-preview-login"><div><b>🎾 签表幸存者之炉网</b><small>⏱ 最近更新时间</small></div><div class="manager-badge-preview-account">'+identity+'<small>开发者：Candice·卢布列娃</small></div></div>';
+  var scenes={hall:config,lineup:sidebar,board:board,header:header};
+  var tabs=[['hall','配置大厅'],['lineup','我的阵容'],['board','榜单'],['header','顶部 banner']];
+  var motifHtml=(badge.motifs||[]).map(function(item){return '<span>'+esc(item)+'</span>';}).join('');
+  var previewPrice=badge.sale_status==='coming_soon'?'敬请期待':'经纪人本金 $'+Math.round(Number(badge.price)||0);
+  return '<div class="manager-badge-preview-overlay" data-badge="'+esc(theme)+'"><div class="manager-badge-preview-dialog"><section class="manager-badge-preview-hero"><img src="'+esc(visual.icon||badge.image_url||badge.thumb_url)+'" alt="'+esc(badge.title)+'"><div><span class="manager-badge-preview-category">'+esc(badge.category_label)+'</span><h2>'+esc(badge.formal_name||badge.title)+'</h2><p>'+esc(badge.description)+'</p><div class="manager-badge-preview-motifs">'+motifHtml+'</div></div><button class="manager-badge-preview-close" aria-label="关闭" data-manager-action="close-badge-preview">×</button></section><div class="manager-badge-preview-main"><article class="manager-badge-preview-story"><h3>徽章故事</h3><p>'+esc(badge.story||badge.description)+'</p><div class="manager-badge-preview-data"><div><small>典藏编号</small><b>'+esc(badge.serial_number||badge.badge_key)+'</b></div><div><small>收藏属性</small><b>永久拥有 · 全站同步</b></div><div><small>典藏价格</small><b>'+esc(previewPrice)+'</b></div><div><small>动态昵称</small><b>随当前登录用户自动替换</b></div></div></article><section class="manager-badge-preview-scenes"><div class="manager-badge-preview-scenes-head"><div><h3>实装预览</h3><p>配置大厅、我的阵容、榜单和顶部身份使用同一套公开佩戴状态。</p></div><div class="manager-badge-preview-tabs">'+tabs.map(function(item){return '<button class="'+(MANAGER_BADGE_PREVIEW_SCENE===item[0]?'on':'')+'" data-manager-action="preview-scene" data-scene="'+item[0]+'">'+item[1]+'</button>';}).join('')+'</div></div><div class="manager-badge-preview-stage">'+(scenes[MANAGER_BADGE_PREVIEW_SCENE]||config)+'</div></section></div></div></div>';
+}
+function managerRenderShop(){
+  var badges=managerBadgeCatalog(),owned=managerOwnedBadgeMap(),active=managerCurrentUserBadge();
+  var filters=[['all','全部 8'],['player','球员纪念 6'],['event','赛事限定 1'],['community','炉友纪念 1']];
+  if(MANAGER_BADGE_FILTER!=='all')badges=badges.filter(function(item){return item.category===MANAGER_BADGE_FILTER;});
+  var note='<div class="manager-note" style="margin-bottom:12px">徽章购买会消耗经纪人本金，并在“我的收益”写入购买徽章流水。佩戴后会在经纪人榜单、配置大厅、我的阵容、右上角登录状态和每日毒奶展示。</div>';
+  var filterHtml='<div class="manager-badge-filters">'+filters.map(function(item){return '<button class="'+(MANAGER_BADGE_FILTER===item[0]?'on':'')+'" data-manager-action="filter-badges" data-filter="'+item[0]+'">'+item[1]+'</button>';}).join('')+'</div>';
+  return note+filterHtml+'<div class="manager-badge-grid">'+badges.map(function(b){return managerBadgeCardHtml(b,!!owned[b.badge_key],active&&active.badge_key===b.badge_key,'shop');}).join('')+'</div>';
+}
+function managerRenderMyBadges(){
+  if(!AUTH_USER)return '<div class="manager-empty">登录后可以查看、佩戴和取消佩戴你的徽章。</div>';
+  var owned=(MANAGER_MY_BADGES||[]).map(managerNormalizeBadge).filter(Boolean),active=managerCurrentUserBadge();
+  if(!owned.length)return '<div class="manager-empty">你还没有徽章。去徽章商城买一个，让你的名字在炉网里亮起来。</div>';
+  return '<div class="manager-note" style="margin-bottom:12px">这里展示你已拥有的徽章大图；其他页面会使用轻量小图，不影响加载速度。</div><div class="manager-badge-grid">'+owned.map(function(b){return managerBadgeCardHtml(b,true,active&&active.badge_key===b.badge_key,'mine');}).join('')+'</div>';
+}
 function managerRenderMine(){
-  var tabs=[['lineup','我的阵容'],['previous','上站比赛'],['transfer','换人窗口'],['ledger','我的收益']];
-  var body=MANAGER_MY_VIEW==='previous'?managerRenderPreviousStation():(MANAGER_MY_VIEW==='transfer'?managerRenderTransfer():(MANAGER_MY_VIEW==='ledger'?managerRenderLedger():managerRenderMyLineup()));
+  var tabs=[['lineup','我的阵容'],['previous','上站比赛'],['transfer','换人窗口'],['ledger','我的收益'],['badges','我的徽章']];
+  var body=MANAGER_MY_VIEW==='previous'?managerRenderPreviousStation():(MANAGER_MY_VIEW==='transfer'?managerRenderTransfer():(MANAGER_MY_VIEW==='ledger'?managerRenderLedger():(MANAGER_MY_VIEW==='badges'?managerRenderMyBadges():managerRenderMyLineup())));
   return '<div class="manager-subtabs">'+tabs.map(function(x){return '<button class="manager-subtab '+(MANAGER_MY_VIEW===x[0]?'on':'')+'" onclick="managerSetMyView(\''+x[0]+'\')">'+x[1]+'</button>';}).join('')+'</div>'+body;
 }
 function managerRewardTable(){
@@ -3353,17 +3664,30 @@ function managerRenderRules(){
     '</div></div></details></div>';
 }
 function managerRenderHall(){
-  var submitted=managerSubmittedRecord(),mine=submitted?{user:'我的办公室',style:managerCalc().style,cost:submitted.cost,players:managerSanitizeLedgerPlayers(submitted.players||[]).map(managerLedgerPlayerName),note:'已提交，换人 '+MANAGER_TRANSFER_COUNT+'/1。'+submitted.note}:null;
-  var useDemoConfigs=managerLocalPreviewEnabled()&&!supabaseConfigured();
+  var submitted=managerSubmittedRecord(),mine=submitted?{user:currentDisplayName()||'我的办公室',style:managerCalc().style,cost:submitted.cost,badge:managerCurrentUserBadge(),submitted_at:submitted.submitted_at||submitted.date||new Date().toISOString(),players:managerSanitizeLedgerPlayers(submitted.players||[]).map(managerLedgerPlayerName),note:'已提交，换人 '+MANAGER_TRANSFER_COUNT+'/1。'+submitted.note}:null;
+  var useDemoConfigs=managerLocalPreviewEnabled()&&(!supabaseConfigured()||!!managerPreviewBadge());
   var source=MANAGER_REMOTE_CONFIGS&&MANAGER_REMOTE_CONFIGS.length?MANAGER_REMOTE_CONFIGS:(useDemoConfigs?MANAGER_DEMO_CONFIGS:[]);
+  if(managerLocalPreviewEnabled()){
+    var testBadge=managerCurrentUserBadge()||managerNormalizeBadge(managerBadgeFallbackForKey('alcaraz-duck'));
+    source=[{user:'test111',style:'均衡基金流',cost:430,badge:testBadge,submitted_at:'2099-01-01T00:00:00Z',players:['德米纳尔','高芙','保罗','陶森'],note:'预测净值 1120 · 本地视觉测试记录'}].concat((source||[]).filter(function(x){return String(x&&x.user||'').trim().toLowerCase()!=='test111';}));
+  }
   var loadingPublic=!!MANAGER_REMOTE_PUBLIC_LOADING&&!MANAGER_REMOTE_PUBLIC_SYNC_KEY;
   var q=String(MANAGER_HALL_SEARCH||'').toLowerCase(),configs=(mine?[mine]:[]).concat(source).filter(function(x){
     if(!q)return true;
     return [x.user,x.style,x.note].concat(x.players||[]).join(' ').toLowerCase().includes(q);
-  }),pager=managerPaginate(configs,MANAGER_HALL_PAGE,15);
+  });
+  configs.sort(function(a,b){
+    var badgeA=a.badge||managerBadgeForUserName(a.user),badgeB=b.badge||managerBadgeForUserName(b.user);
+    if(!!badgeA!==!!badgeB)return badgeA?-1:1;
+    var priceA=badgeA?Number((managerFindBadge(badgeA.badge_key)||badgeA).price)||0:0;
+    var priceB=badgeB?Number((managerFindBadge(badgeB.badge_key)||badgeB).price)||0:0;
+    if(priceA!==priceB)return priceB-priceA;
+    return (Date.parse(b.submitted_at||0)||0)-(Date.parse(a.submitted_at||0)||0);
+  });
+  var pager=managerPaginate(configs,MANAGER_HALL_PAGE,15);
   MANAGER_HALL_PAGE=pager.page;
   var emptyText=loadingPublic?'正在加载配置大厅...':(q?'没有搜到匹配的配置。':'暂无真实配置。等本站有人提交后，这里会从 Supabase 展示。');
-  return '<div class="manager-filter" style="margin-bottom:12px"><label>搜索配置大厅</label><input id="manager-hall-q" placeholder="玩家 / 球员 / 风格" value="'+esc(MANAGER_HALL_SEARCH)+'" autocomplete="off"><div class="manager-note">配置大厅展示本站已经提交的阵容，提交后立即公开完整配置。</div></div><div class="manager-board-grid">'+(pager.items.length?pager.items.map(function(x){return '<div class="manager-board"><h4>'+esc(x.user)+'</h4><div class="manager-sim"><div class="manager-sim-row"><span>阵容风格</span><b>'+esc(x.style)+'</b></div><div class="manager-sim-row"><span>已用额度</span><b>'+x.cost+'</b></div><div class="manager-sim-row"><span>签约球员</span><b>'+esc((x.players||[]).join(' / '))+'</b></div></div><div class="manager-note" style="margin-top:8px">'+esc(x.note||'')+'</div></div>';}).join(''):'<div class="manager-empty">'+emptyText+'</div>')+'</div>'+managerPagerHtml('hall',pager);
+  return '<div class="manager-filter" style="margin-bottom:12px"><label>搜索配置大厅</label><input id="manager-hall-q" placeholder="玩家 / 球员 / 风格" value="'+esc(MANAGER_HALL_SEARCH)+'" autocomplete="off"><div class="manager-note">配置大厅展示本站已经提交的阵容，提交后立即公开完整配置。</div></div><div class="manager-board-grid">'+(pager.items.length?pager.items.map(function(x){var badge=x.badge||managerBadgeForUserName(x.user),players=(x.players||[]);return '<div'+managerBadgeClassAttr(badge,'manager-board manager-hall-card badge-themed-config-card agent-config-card')+'><div class="manager-hall-card-top agent-card-badge-header badge-config-header'+(badge?' badged-card__identity':'')+'">'+managerBadgeHeroHtml(x.user,badge,{card:true})+'</div><div class="manager-hall-metrics"><div class="manager-hall-metric"><span>阵容风格</span><b>'+esc(x.style)+'</b></div><div class="manager-hall-metric"><span>已用额度</span><b>'+x.cost+'</b></div><div class="manager-hall-metric"><span>签约球员</span><b>'+players.length+' 人</b></div></div><div class="manager-hall-players">'+players.map(function(p){return '<span class="manager-pill">'+esc(p)+'</span>';}).join('')+'</div><div class="manager-note" style="margin-top:8px">'+esc(x.note||'')+'</div></div>';}).join(''):'<div class="manager-empty">'+emptyText+'</div>')+'</div>'+managerPagerHtml('hall',pager);
 }
 function managerRenderBoards(){
   var boards=[['赛季经理榜','草地运营部 +186','冷门研究所 +142','冠军资产组 +118'],['本站收益榜','柏林操盘手 +64','女王草地组 +58','均衡基金 +41'],['王牌球员','德米纳尔 +230','萨巴莲卡 +210','巴尔通科娃 +112'],['慧眼识珠榜','伊埃拉 18→82','费里 16→58','巴尔通科娃 22→72'],['巨星依赖指数','冠军资产组 78%','重仓一号 71%','稳胆派 63%'],['场地收益榜','草地 +266','红土 +184','硬地 +121'],['大满贯收益王','澳网资产部 +420','罗兰经纪 +388','温网观察组 +0'],['被坑球员榜','热门一号 -96','草地高价股 -82','签表硬汉 -70'],['调仓大师榜','窗口救火 +48','手续费也值 +32','止损专家 +21'],['破产重建榜','30 起步到 112','低保翻身 +66','冷门回血 +44']];
@@ -3384,29 +3708,48 @@ function managerSignedPoints(value){
   var n=Number(value)||0;
   return (n>0?'+':'')+Math.round(n);
 }
-function managerRenderStationNetBoard(){
+function managerRankMedalHtml(rank){
+  rank=Number(rank)||0;
+  if(rank===1)return '<span class="manager-rank-medal rank-1">1</span>';
+  if(rank===2)return '<span class="manager-rank-medal rank-2">2</span>';
+  if(rank===3)return '<span class="manager-rank-medal rank-3">3</span>';
+  return '<span class="manager-rank-number">'+(rank||'—')+'</span>';
+}
+function managerRenderStationNetBoard(hideNote){
   var meta=managerPublicBoardStationMeta();
-  var list=Array.isArray(MANAGER_REMOTE_STATION_NET_BOARD)?MANAGER_REMOTE_STATION_NET_BOARD:[],pager=managerPaginate(list,MANAGER_STATION_NET_PAGE,10);
+  var list=Array.isArray(MANAGER_REMOTE_STATION_NET_BOARD)?MANAGER_REMOTE_STATION_NET_BOARD:[];
+  if(managerLocalPreviewEnabled()&&!list.some(function(x){return String(x&&x.user||'').trim().toLowerCase()==='test111';})){
+    var testBadge=managerCurrentUserBadge()||managerNormalizeBadge(managerBadgeFallbackForKey('alcaraz-duck'));
+    list=[{rank:1,user:'test111',badge:testBadge,net:3360,player:2740,combo:620}].concat(list.map(function(row,index){return Object.assign({},row,{rank:index+2});}));
+  }
+  var pager=managerPaginate(list,MANAGER_STATION_NET_PAGE,10);
   MANAGER_STATION_NET_PAGE=pager.page;
   var currentStationName=managerStationName();
   var note='<div class="manager-note" style="margin-bottom:10px">当前展示：'+esc(meta.stationName)+'。'+(meta.isPrevious?esc(currentStationName)+'尚未开赛，先展示上一站结算榜；开赛后自动切换为'+esc(currentStationName)+'。':'当前站已开赛，展示当前站结算榜。')+'</div>';
-  if(!pager.items.length)return note+'<div class="manager-empty">'+((MANAGER_REMOTE_PUBLIC_LOADING&&!MANAGER_REMOTE_PUBLIC_SYNC_KEY)?'正在加载本站净收益榜...':esc(meta.stationName)+' 净收益榜等待真实结算数据。')+'</div>';
+  if(!pager.items.length)return (hideNote?'':note)+'<div class="manager-empty">'+((MANAGER_REMOTE_PUBLIC_LOADING&&!MANAGER_REMOTE_PUBLIC_SYNC_KEY)?'正在加载本站净收益榜...':esc(meta.stationName)+' 净收益榜等待真实结算数据。')+'</div>';
   var rows=pager.items.map(function(x,i){
     var rank=x.rank||pager.start+i;
-    return '<tr><td>'+rank+'</td><td>'+esc(x.user)+'</td><td class="'+(x.net>=0?'g':'r')+'">'+managerSignedPoints(x.net)+'</td><td>'+managerSignedPoints(x.player)+'</td><td>'+managerSignedPoints(x.combo)+'</td></tr>';
+    var badge=x.badge||managerBadgeForUserName(x.user);
+    return '<tr'+managerBadgeClassAttr(badge,rank===1?'is-badge-featured':'')+'><td class="rank-cell">'+managerRankMedalHtml(rank)+'</td><td'+managerBadgeUserCellAttr(badge)+'>'+managerUserNameWithBadge(x.user,badge)+'</td><td class="'+(x.net>=0?'g':'r')+'">'+managerSignedPoints(x.net)+'</td><td>'+managerSignedPoints(x.player)+'</td><td>'+managerSignedPoints(x.combo)+'</td></tr>';
   }).join('');
-  return note+'<div class="manager-table-scroll"><table class="manager-ledger-table"><thead><tr><th>排名</th><th>用户名</th><th>本站净收益</th><th>球员结算收益</th><th>combo奖励</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+managerPagerHtml('station-net',pager);
+  return (hideNote?'':note)+'<div class="manager-table-scroll"><table class="manager-ledger-table manager-rank-table manager-station-board-table"><thead><tr><th>排名</th><th>用户名</th><th>本站净收益</th><th>球员结算收益</th><th>combo奖励</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+managerPagerHtml('station-net',pager);
 }
-function managerRenderWalletBoard(){
-  var list=Array.isArray(MANAGER_REMOTE_WALLET_BOARD)?MANAGER_REMOTE_WALLET_BOARD:[],pager=managerPaginate(list,MANAGER_WALLET_BOARD_PAGE,10);
+function managerRenderWalletBoard(hideNote){
+  var list=Array.isArray(MANAGER_REMOTE_WALLET_BOARD)?MANAGER_REMOTE_WALLET_BOARD:[];
+  if(managerLocalPreviewEnabled()&&!list.some(function(x){return String(x&&x.user||'').trim().toLowerCase()==='test111';})){
+    var testBadge=managerCurrentUserBadge()||managerNormalizeBadge(managerBadgeFallbackForKey('alcaraz-duck'));
+    list=[{rank:1,user:'test111',badge:testBadge,balance:9876}].concat(list.map(function(row,index){return Object.assign({},row,{rank:index+2});}));
+  }
+  var pager=managerPaginate(list,MANAGER_WALLET_BOARD_PAGE,10);
   MANAGER_WALLET_BOARD_PAGE=pager.page;
   var note='<div class="manager-note" style="margin-bottom:10px">当前本金榜：按经纪人本金当前值排序，本金可带到下一站。</div>';
-  if(!pager.items.length)return note+'<div class="manager-empty">'+((MANAGER_REMOTE_PUBLIC_LOADING&&!MANAGER_REMOTE_PUBLIC_SYNC_KEY)?'正在加载当前本金榜...':'当前本金榜暂无数据。')+'</div>';
+  if(!pager.items.length)return (hideNote?'':note)+'<div class="manager-empty">'+((MANAGER_REMOTE_PUBLIC_LOADING&&!MANAGER_REMOTE_PUBLIC_SYNC_KEY)?'正在加载当前本金榜...':'当前本金榜暂无数据。')+'</div>';
   var rows=pager.items.map(function(x,i){
     var rank=x.rank||pager.start+i;
-    return '<tr><td>'+rank+'</td><td>'+esc(x.user)+'</td><td>'+managerMoneyAmount(x.balance,'inline')+'</td></tr>';
+    var badge=x.badge||managerBadgeForUserName(x.user);
+    return '<tr'+managerBadgeClassAttr(badge,rank===1?'is-badge-featured':'')+'><td class="rank-cell">'+managerRankMedalHtml(rank)+'</td><td'+managerBadgeUserCellAttr(badge)+'>'+managerUserNameWithBadge(x.user,badge)+'</td><td>'+managerMoneyAmount(x.balance,'inline')+'</td></tr>';
   }).join('');
-  return note+'<div class="manager-table-scroll"><table class="manager-ledger-table"><thead><tr><th>排名</th><th>用户名</th><th>当前本金</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+managerPagerHtml('wallet-board',pager);
+  return (hideNote?'':note)+'<div class="manager-table-scroll"><table class="manager-ledger-table manager-rank-table manager-wallet-board-table"><thead><tr><th>排名</th><th>用户名</th><th>当前本金</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+managerPagerHtml('wallet-board',pager);
 }
 function managerRenderPrivateBoards(){
   var c=managerCalc(),stars=c.players.filter(function(p){return p.tier==='S'||p.tier==='A';}).reduce(function(s,p){return s+p.price;},0),starRate=c.lineupCost?Math.round(stars/c.lineupCost*100):0;
@@ -3414,7 +3757,9 @@ function managerRenderPrivateBoards(){
   return cards.map(function(x){return '<div class="manager-board"><h4>'+x[0]+'</h4><div class="manager-price" style="text-align:left">'+esc(x[1])+'</div><div class="manager-note">'+esc(x[2])+'</div></div>';}).join('');
 }
 function managerRenderBoardsPage(){
-  return '<div class="manager-note" style="margin-bottom:12px">本站净收益 = 球员结算收益 + combo奖励。每天随经纪人自动结算更新。</div><div class="manager-rules"><details open><summary>本站净收益榜</summary><div class="rule-body">'+managerRenderStationNetBoard()+'</div></details><details open><summary>当前本金榜</summary><div class="rule-body">'+managerRenderWalletBoard()+'</div></details><details open><summary>我的私人榜单</summary><div class="rule-body"><div class="manager-board-grid">'+managerRenderPrivateBoards()+'</div></div></details></div>';
+  var badge=managerCurrentUserBadge(),theme=managerBadgeThemeKey(badge),meta=managerPublicBoardStationMeta();
+  var stationSub=meta.stationName+' · '+(meta.isPrevious?'上一站结算榜':'当前站结算榜');
+  return '<div class="manager-boards-page manager-badge-board-shell"'+(theme?' data-badge="'+esc(theme)+'"':'')+'><div class="manager-rules manager-demo-boards"><details open class="manager-demo-board"><summary><span><b>本站净收益榜</b><small>'+esc(stationSub)+'</small></span><em>经纪人收益榜</em></summary><div class="rule-body">'+managerRenderStationNetBoard(true)+'</div></details><details open class="manager-demo-board"><summary><span><b>当前本金榜</b><small>本金可带到下一站</small></span><em>本金榜</em></summary><div class="rule-body">'+managerRenderWalletBoard(true)+'</div></details><details open class="manager-private-board"><summary>我的私人榜单</summary><div class="rule-body"><div class="manager-board-grid">'+managerRenderPrivateBoards()+'</div></div></details></div></div>';
 }
 function managerMarketHeaderMeta(){
   var packs=managerContestPacks().filter(function(pack){return MANAGER_TOUR==='ALL'||pack.tour===MANAGER_TOUR;});
@@ -3429,7 +3774,7 @@ function managerEventMetaHtml(rules){
   var tour=MANAGER_TOUR==='WTA'?'WTA':'ATP',pack=managerEventPack(tour),cfg=MANAGER_LEVEL_CONFIG[pack.meta.level]||MANAGER_LEVEL_CONFIG['500'];
   return '<div class="manager-panel-meta"><span class="manager-panel-chip">'+esc(managerEventShortName(pack))+'</span><span class="manager-panel-chip surface '+managerSurfaceClass(pack.meta.surface)+'">'+managerSurfaceName(pack.meta.surface)+'</span><span class="manager-panel-chip">'+managerLevelName(pack.meta.level)+'</span><span class="manager-panel-chip">'+(pack.meta.drawSize||32)+'签</span><span class="manager-panel-chip">'+cfg.min+'-'+cfg.max+' 人阵容</span><span class="manager-panel-chip">换人 1 次 · 手续费 '+Math.round(cfg.transferFee*100)+'%</span></div>';
 }
-function managerRenderBody(){if(MANAGER_VIEW==='calculator')return managerRenderCalculator();if(MANAGER_VIEW==='mine')return managerRenderMine();if(MANAGER_VIEW==='hall')return managerRenderHall();if(MANAGER_VIEW==='transfer')return managerRenderTransfer();if(MANAGER_VIEW==='ledger')return managerRenderLedger();if(MANAGER_VIEW==='rules')return managerRenderRules();if(MANAGER_VIEW==='boards')return managerRenderBoardsPage();return managerRenderMarket();}
+function managerRenderBody(){if(MANAGER_VIEW==='calculator')return managerRenderCalculator();if(MANAGER_VIEW==='mine')return managerRenderMine();if(MANAGER_VIEW==='hall')return managerRenderHall();if(MANAGER_VIEW==='transfer')return managerRenderTransfer();if(MANAGER_VIEW==='ledger')return managerRenderLedger();if(MANAGER_VIEW==='rules')return managerRenderRules();if(MANAGER_VIEW==='boards')return managerRenderBoardsPage();if(MANAGER_VIEW==='shop')return managerRenderShop();return managerRenderMarket();}
 function renderManagerDemo(){
   var root=document.getElementById('manager-root');if(!root)return;
   if(!MANAGER_DATA_LOADED){
@@ -3442,11 +3787,14 @@ function renderManagerDemo(){
     return;
   }
   managerLoadState();
+  if(managerLocalPreviewEnabled()&&(MANAGER_VIEW==='hall'||MANAGER_VIEW==='boards')&&!MANAGER_REMOTE_PUBLIC_SYNC_KEY){
+    managerLoadRemotePublicData().then(function(){if(ACTIVE_TAB==='manager'&&(MANAGER_VIEW==='hall'||MANAGER_VIEW==='boards'))renderManagerDemo();}).catch(function(){});
+  }
   var c=managerCalc(),rules=managerRules();
-  var viewTitle={market:'球员市场',calculator:'收益计算器',mine:'我的',hall:'配置大厅',transfer:'换人窗口',ledger:'我的收益',rules:'规则',boards:'榜单'}[MANAGER_VIEW]||'球员市场';
+  var viewTitle={market:'球员市场',calculator:'收益计算器',mine:'我的',hall:'配置大厅',transfer:'换人窗口',ledger:'我的收益',rules:'规则',boards:'榜单',shop:'徽章商城'}[MANAGER_VIEW]||'球员市场';
   var showSide=MANAGER_VIEW!=='mine';
   var marketTabs='<div class="manager-tour-tabs"><button class="manager-tour-tab '+(MANAGER_TOUR==='ATP'?'on':'')+'" data-manager-tour="ATP">ATP</button><button class="manager-tour-tab '+(MANAGER_TOUR==='WTA'?'on':'')+'" data-manager-tour="WTA">WTA</button></div>';
-  var tabs='<div class="manager-tabs"><button class="manager-tab '+(MANAGER_VIEW==='market'?'on':'')+'" data-manager-view="market">球员市场</button><button class="manager-tab '+(MANAGER_VIEW==='calculator'?'on':'')+'" data-manager-view="calculator">收益计算器</button><button class="manager-tab '+(MANAGER_VIEW==='mine'?'on':'')+'" data-manager-view="mine">我的</button><button class="manager-tab '+(MANAGER_VIEW==='hall'?'on':'')+'" data-manager-view="hall">配置大厅</button><button class="manager-tab '+(MANAGER_VIEW==='boards'?'on':'')+'" data-manager-view="boards">榜单</button></div>';
+  var tabs='<div class="manager-tabs"><button class="manager-tab '+(MANAGER_VIEW==='market'?'on':'')+'" data-manager-view="market">球员市场</button><button class="manager-tab '+(MANAGER_VIEW==='calculator'?'on':'')+'" data-manager-view="calculator">收益计算器</button><button class="manager-tab '+(MANAGER_VIEW==='mine'?'on':'')+'" data-manager-view="mine">我的</button><button class="manager-tab '+(MANAGER_VIEW==='shop'?'on':'')+'" data-manager-view="shop">徽章商城</button><button class="manager-tab '+(MANAGER_VIEW==='hall'?'on':'')+'" data-manager-view="hall">配置大厅</button><button class="manager-tab '+(MANAGER_VIEW==='boards'?'on':'')+'" data-manager-view="boards">榜单</button></div>';
   var panelTitle='<div class="manager-panel-title"><span>'+viewTitle+'</span>'+(MANAGER_VIEW==='market'?marketTabs:'')+'</div>';
   var panelHead='<div class="manager-panel-h">'+panelTitle+(MANAGER_VIEW==='market'?managerEventMetaHtml(rules):'')+'</div>';
   var dialog=MANAGER_DIALOG?'<div class="manager-dialog"><div class="manager-dialog-card"><h3>'+esc(MANAGER_DIALOG.title)+'</h3><p>'+esc(MANAGER_DIALOG.msg).replace(/\n/g,'<br>')+'</p>'+(MANAGER_DIALOG.strong?'<div class="manager-dialog-strong">'+esc(MANAGER_DIALOG.strong).replace(/\n/g,'<br>')+'</div>':'')+'<div class="manager-actions">'+(MANAGER_DIALOG.confirmAction?'<button class="manager-clear" data-manager-action="close-dialog">'+esc(MANAGER_DIALOG.cancelLabel||'取消')+'</button><button class="manager-action" data-manager-action="'+esc(MANAGER_DIALOG.confirmAction)+'">'+esc(MANAGER_DIALOG.confirmLabel||'确定')+'</button>':'<button class="manager-action" data-manager-action="close-dialog">知道了</button>')+'</div></div></div>':'';
@@ -3456,7 +3804,8 @@ function renderManagerDemo(){
     :(submissionWindow.status==='closed'?managerStationName()+'已截止提交，请等待换人窗口。':managerStationName()+'开售时间待确认。');
   var wechat='<div class="manager-wechat-card"><div class="manager-wechat-copy"><div class="manager-wechat-alert">'+esc(stationNotice)+'</div><div class="manager-wechat-line main">本游戏每周跟随巡回赛历开新赛事</div><div class="manager-wechat-line">如需 <span class="manager-wechat-em">开售提醒</span>、<span class="manager-wechat-em">换人窗口提醒</span> 请扫码进本游戏官方群</div></div><img class="manager-wechat-qr" src="assets/manager/wechat-group-qr.jpg" alt="微信群二维码" width="92" height="122" loading="eager" decoding="async" fetchpriority="high"></div>';
   var qaBanner=managerLocalQaMode()?'<div class="manager-note" style="margin-bottom:10px"><b>本地换人测试模式：</b>提交和换人窗口均已开放；所有操作只保存在当前浏览器，不会写入线上 Supabase。</div>':'';
-  root.innerHTML='<div class="manager-shell">'+qaBanner+'<div class="manager-hero"><div class="manager-title"><div><div class="manager-title-line"><h2>巡回赛经纪人</h2><button class="manager-clear" data-manager-view="rules">查看规则</button><span class="manager-settle-note">每天09:37结算</span></div><p>组建你的球员阵容，在巡回赛里征战！<br>在公开市场上购买球员，球员成绩越好，你赚的越多，收益按巡回赛积分计算。<br>你不只懂网球，你是在做预算、风险和轮次收益的组合策略。</p></div></div>'+wechat+'<img class="manager-hero-art" src="assets/manager/agent-money-bag.webp" alt="" loading="lazy" decoding="async" fetchpriority="low"></div>'+managerRenderMoney(c,rules)+tabs+'<div class="manager-grid view-'+MANAGER_VIEW+' '+(showSide?'':'single')+'"><div class="manager-panel">'+panelHead+'<div class="manager-panel-b">'+managerRenderBody()+'</div></div>'+(showSide?managerSidebar(c,rules):'')+'</div>'+seoFaqLinkHtml()+dialog+'</div>';
+  var badgePreview=managerBadgePreviewHtml();
+  root.innerHTML='<div class="manager-shell">'+qaBanner+'<div class="manager-hero"><div class="manager-title"><div><div class="manager-title-line"><h2>巡回赛经纪人</h2><button class="manager-clear" data-manager-view="rules">查看规则</button><span class="manager-settle-note">每天09:37结算</span></div><p>组建你的球员阵容，在巡回赛里征战！<br>在公开市场上购买球员，球员成绩越好，你赚的越多，收益按巡回赛积分计算。<br>你不只懂网球，你是在做预算、风险和轮次收益的组合策略。</p></div></div>'+wechat+'<img class="manager-hero-art" src="assets/manager/agent-money-bag.webp" alt="" loading="lazy" decoding="async" fetchpriority="low"></div>'+managerRenderMoney(c,rules)+tabs+'<div class="manager-grid view-'+MANAGER_VIEW+' '+(showSide?'':'single')+'"><div class="manager-panel">'+panelHead+'<div class="manager-panel-b">'+managerRenderBody()+'</div></div>'+(showSide?managerSidebar(c,rules):'')+'</div>'+seoFaqLinkHtml()+dialog+badgePreview+'</div>';
 }
 
 function trackSupabaseError(operation,err,ignoreMissing){
@@ -3553,6 +3902,15 @@ function managerApplyRemoteState(state){
   }else{
     MANAGER_TRANSFER_COUNT=0;
   }
+  if(Array.isArray(state.badges))MANAGER_BADGES=state.badges.map(managerNormalizeBadge).filter(Boolean);
+  MANAGER_MY_BADGES=Array.isArray(state.my_badges)?state.my_badges.map(managerNormalizeBadge).filter(Boolean):[];
+  MANAGER_ACTIVE_BADGE=managerNormalizeBadge(state.active_badge||MANAGER_MY_BADGES.find(function(x){return x&&x.is_equipped;}));
+  if(AUTH_USER&&MANAGER_ACTIVE_BADGE){
+    MANAGER_ACTIVE_BADGE_BY_USER[String(AUTH_USER.id)]=MANAGER_ACTIVE_BADGE;
+    var display=currentDisplayName();
+    if(display)MANAGER_ACTIVE_BADGE_BY_NAME[String(display).trim()]=MANAGER_ACTIVE_BADGE;
+  }
+  updateAuthUi();
 }
 async function managerHydrateRemoteContracts(state){
   if(!state||!state.lineup||!AUTH_USER||!supabaseConfigured())return state;
@@ -3771,9 +4129,19 @@ async function managerLoadCareerLedger(opts){
   return MANAGER_REMOTE_ALL_LEDGER_LOADING;
 }
 async function managerLoadRemotePublicData(){
-  if(managerLocalPreviewEnabled()||!supabaseConfigured()){
-    MANAGER_REMOTE_STATION_NET_BOARD=[];
-    MANAGER_REMOTE_WALLET_BOARD=[];
+  if(!supabaseConfigured()){
+    var previewBadge=managerPreviewBadge();
+    MANAGER_REMOTE_STATION_NET_BOARD=previewBadge?[
+      {rank:1,user:'预览用户',badge:previewBadge,net:3360,player:2740,combo:620},
+      {rank:2,user:'马斯克',badge:null,net:3230,player:2700,combo:530},
+      {rank:3,user:'Roudric',badge:null,net:3120,player:2800,combo:320}
+    ]:[];
+    MANAGER_REMOTE_WALLET_BOARD=previewBadge?[
+      {rank:1,user:'预览用户',badge:previewBadge,balance:3416},
+      {rank:2,user:'袁天罡',badge:null,balance:3225},
+      {rank:3,user:'yygq专家',badge:null,balance:3110}
+    ]:[];
+    MANAGER_REMOTE_PUBLIC_SYNC_KEY='local-preview:'+(managerBadgeThemeKey(previewBadge)||'none');
     return [];
   }
   var boardMeta=managerPublicBoardStationMeta();
@@ -3784,22 +4152,29 @@ async function managerLoadRemotePublicData(){
     const client=await ensureSupabaseClient();
     const configReq=client.from('tour_manager_public_configurations').select('*').eq('station_key',managerStationKey()).order('submitted_at',{ascending:false}).limit(300);
     const boardReq=client.from('tour_manager_station_net_leaderboard')
-      .select('rank_no,display_name,station_net_income,player_settlement_income,combo_bonus')
+      .select('*')
       .eq('station_key',boardMeta.stationKey)
       .eq('season',managerSeason())
       .order('rank_no',{ascending:true})
       .limit(300);
     const walletReq=client.from('tour_manager_wallet_leaderboard')
-      .select('rank_no,display_name,current_principal')
+      .select('*')
       .eq('season',managerSeason())
       .order('rank_no',{ascending:true})
       .limit(300);
-    const results=await Promise.allSettled([configReq,boardReq,walletReq]);
+    const activeBadgeReq=client.from('tour_manager_active_badges')
+      .select('user_id,display_name,badge_key,title,subtitle,image_url,thumb_url,rarity')
+      .limit(500);
+    const badgeCatalogReq=client.from('tour_manager_badges').select('*').eq('is_active',true).order('sort_order',{ascending:true}).limit(100);
+    const results=await Promise.allSettled([configReq,boardReq,walletReq,activeBadgeReq,badgeCatalogReq]);
+    const badgeCatalog=results[4].status==='fulfilled'?results[4].value:null;
+    if(badgeCatalog&&badgeCatalog.error)trackSupabaseError('manager.badge_catalog.public',badgeCatalog.error,true);
+    else if(badgeCatalog)MANAGER_BADGES=(badgeCatalog.data||[]).map(managerNormalizeBadge).filter(Boolean);
     const res=results[0].status==='fulfilled'?results[0].value:null;
     if(res&&res.error)trackSupabaseError('manager.public_configurations',res.error,true);
     else if(res){
       MANAGER_REMOTE_CONFIGS=(res.data||[]).map(function(x){
-        return {user:x.display_name||'炉友',style:x.lineup_style||'待建仓',cost:x.lineup_cost||0,players:(x.players||[]).map(managerPublicConfigPlayerName).filter(Boolean),note:'预测净值 '+(x.predicted_net||0)};
+        return {user:x.display_name||'炉友',style:x.lineup_style||'待建仓',cost:x.lineup_cost||0,badge:managerBadgeFromRow(x)||managerBadgeForUserName(x.display_name),submitted_at:x.submitted_at||'',players:(x.players||[]).map(managerPublicConfigPlayerName).filter(Boolean),note:'预测净值 '+(x.predicted_net||0)};
       });
     }else if(results[0].reason)trackSupabaseError('manager.public_configurations',results[0].reason,true);
     const board=results[1].status==='fulfilled'?results[1].value:null;
@@ -3811,6 +4186,7 @@ async function managerLoadRemotePublicData(){
         return {
           rank:Number(x.rank_no)||0,
           user:x.display_name||'炉友',
+          badge:managerBadgeFromRow(x)||managerBadgeForUserName(x.display_name),
           net:Number(x.station_net_income)||0,
           player:Number(x.player_settlement_income)||0,
           combo:Number(x.combo_bonus)||0
@@ -3830,6 +4206,7 @@ async function managerLoadRemotePublicData(){
         return {
           rank:Number(x.rank_no)||0,
           user:x.display_name||'炉友',
+          badge:managerBadgeFromRow(x)||managerBadgeForUserName(x.display_name),
           balance:Number(x.current_principal)||0
         };
       });
@@ -3838,11 +4215,41 @@ async function managerLoadRemotePublicData(){
       MANAGER_REMOTE_WALLET_BOARD=[];
       trackSupabaseError('manager.wallet_leaderboard',results[2].reason,true);
     }
+    const activeBadges=results[3].status==='fulfilled'?results[3].value:null;
+    if(activeBadges&&activeBadges.error)trackSupabaseError('manager.active_badges.public',activeBadges.error,true);
+    else if(activeBadges){
+      managerApplyActiveBadges(activeBadges.data||[]);
+      if(AUTH_USER)MANAGER_ACTIVE_BADGE=MANAGER_ACTIVE_BADGE_BY_USER[String(AUTH_USER.id)]||null;
+      MANAGER_REMOTE_CONFIGS=MANAGER_REMOTE_CONFIGS.map(function(x){return Object.assign({},x,{badge:x.badge||managerBadgeForUserName(x.user)});});
+      MANAGER_REMOTE_STATION_NET_BOARD=MANAGER_REMOTE_STATION_NET_BOARD.map(function(x){return Object.assign({},x,{badge:x.badge||managerBadgeForUserName(x.user)});});
+      MANAGER_REMOTE_WALLET_BOARD=MANAGER_REMOTE_WALLET_BOARD.map(function(x){return Object.assign({},x,{badge:x.badge||managerBadgeForUserName(x.user)});});
+      updateAuthUi();
+    }
+    else if(results[3].reason)trackSupabaseError('manager.active_badges.public',results[3].reason,true);
+    managerInjectLocalBoardTestData();
     MANAGER_REMOTE_PUBLIC_SYNC_KEY=key;
     trackManagerEvent('manager_public_data_loaded',{config_count:MANAGER_REMOTE_CONFIGS.length,board_count:MANAGER_REMOTE_STATION_NET_BOARD.length,wallet_board_count:MANAGER_REMOTE_WALLET_BOARD.length,board_station:safeEventParam(boardMeta.stationKey)});
     return MANAGER_REMOTE_CONFIGS;
   })().finally(function(){MANAGER_REMOTE_PUBLIC_LOADING=null;});
   return MANAGER_REMOTE_PUBLIC_LOADING;
+}
+function managerInjectLocalBoardTestData(){
+  if(!managerLocalPreviewEnabled())return;
+  var badge=managerCurrentUserBadge()||managerNormalizeBadge(managerBadgeFallbackForKey('alcaraz-duck'));
+  function withoutTest(rows){return (rows||[]).filter(function(row){return String(row&&row.user||'').trim().toLowerCase()!=='test111';});}
+  MANAGER_REMOTE_CONFIGS=[{
+    user:'test111',
+    style:'均衡基金流',
+    cost:430,
+    badge:badge,
+    submitted_at:'2099-01-01T00:00:00Z',
+    players:['德米纳尔','高芙','保罗','陶森'],
+    note:'预测净值 1120 · 本地视觉测试记录'
+  }].concat(withoutTest(MANAGER_REMOTE_CONFIGS));
+  MANAGER_REMOTE_STATION_NET_BOARD=[{rank:1,user:'test111',badge:badge,net:3360,player:2740,combo:620}].concat(withoutTest(MANAGER_REMOTE_STATION_NET_BOARD).map(function(row,index){return Object.assign({},row,{rank:index+2});}));
+  MANAGER_REMOTE_WALLET_BOARD=[{rank:1,user:'test111',badge:badge,balance:9876}].concat(withoutTest(MANAGER_REMOTE_WALLET_BOARD).map(function(row,index){return Object.assign({},row,{rank:index+2});}));
+  MANAGER_STATION_NET_PAGE=1;
+  MANAGER_WALLET_BOARD_PAGE=1;
 }
 function managerRefreshRemotePublicDataAfterMutation(){
   MANAGER_REMOTE_PUBLIC_SYNC_KEY='';
@@ -4025,6 +4432,105 @@ async function managerTransferRemote(est,rules){
   return data;
 }
 
+async function managerPurchaseBadge(badgeKey){
+  badgeKey=String(badgeKey||'');
+  if(!badgeKey)return;
+  if(!managerRequireLogin('manager'))return;
+  try{
+    await supabaseRpc('tour_manager_purchase_badge',{p_badge_key:badgeKey,p_season:managerSeason()});
+    MANAGER_REMOTE_SYNC_KEY='';
+    MANAGER_REMOTE_ALL_LEDGER_SYNC_KEY='';
+    await managerLoadRemoteState({force:true});
+    await managerLoadCareerLedger({force:true});
+    await managerLoadActiveBadges();
+    managerRefreshRemotePublicDataAfterMutation();
+    managerSetMsg('徽章购买成功，购买流水已写入我的收益。');
+    renderManagerDemo();
+  }catch(e){
+    managerAlert(authErrorText(e),'购买失败');
+  }
+}
+
+function managerFindBadge(badgeKey){
+  badgeKey=String(badgeKey||'');
+  return managerBadgeCatalog().find(function(b){return b&&b.badge_key===badgeKey;})||managerNormalizeBadge({badge_key:badgeKey,title:'徽章',price:2888});
+}
+
+function managerRequestBadgePurchase(badgeKey){
+  badgeKey=String(badgeKey||'');
+  if(!badgeKey)return;
+  if(!managerRequireLogin('manager'))return;
+  var badge=managerFindBadge(badgeKey);
+  if(badge.sale_status==='coming_soon'){
+    managerAlert('「'+(badge.formal_name||badge.title||'炉网挚友')+'」暂未开放获取，敬请期待。','敬请期待');
+    return;
+  }
+  MANAGER_PENDING_BADGE_ACTION={action:'buy',badgeKey:badgeKey};
+  MANAGER_DIALOG={
+    title:'购买徽章？',
+    msg:'确定购买徽章「'+(badge.title||'徽章')+'」吗？将消耗 '+(badge.price||2888)+' 本金。',
+    confirmAction:'confirm-buy-badge',
+    confirmLabel:'确认购买',
+    cancelLabel:'先不买'
+  };
+  renderManagerDemo();
+}
+
+function managerRequestSetActiveBadge(badgeKey){
+  badgeKey=String(badgeKey||'');
+  if(!managerRequireLogin('manager'))return;
+  var badge=badgeKey?managerFindBadge(badgeKey):managerCurrentUserBadge();
+  MANAGER_PENDING_BADGE_ACTION={action:badgeKey?'equip':'unequip',badgeKey:badgeKey};
+  MANAGER_DIALOG=badgeKey?{
+    title:'佩戴徽章？',
+    msg:'确定佩戴徽章「'+(badge&&badge.title||'徽章')+'」吗？佩戴后会在炉网多个位置展示。',
+    confirmAction:'confirm-set-badge',
+    confirmLabel:'确认佩戴',
+    cancelLabel:'先不佩戴'
+  }:{
+    title:'取消佩戴徽章？',
+    msg:'确定取消佩戴当前徽章吗？取消后配置大厅、榜单、右上角登录状态等位置将不再展示该徽章。',
+    confirmAction:'confirm-set-badge',
+    confirmLabel:'确认取消',
+    cancelLabel:'先不取消'
+  };
+  renderManagerDemo();
+}
+
+function managerConfirmBadgePurchase(){
+  var pending=MANAGER_PENDING_BADGE_ACTION;
+  if(!pending||pending.action!=='buy'||!pending.badgeKey){managerCloseAlert();return;}
+  var badgeKey=pending.badgeKey;
+  MANAGER_DIALOG=null;
+  MANAGER_PENDING_BADGE_ACTION=null;
+  managerPurchaseBadge(badgeKey);
+}
+
+function managerConfirmSetActiveBadge(){
+  var pending=MANAGER_PENDING_BADGE_ACTION;
+  if(!pending||(pending.action!=='equip'&&pending.action!=='unequip')){managerCloseAlert();return;}
+  var badgeKey=pending.badgeKey||'';
+  MANAGER_DIALOG=null;
+  MANAGER_PENDING_BADGE_ACTION=null;
+  managerSetActiveBadge(badgeKey);
+}
+
+async function managerSetActiveBadge(badgeKey){
+  if(!managerRequireLogin('manager'))return;
+  try{
+    await supabaseRpc('tour_manager_set_active_badge',{p_badge_key:badgeKey||null});
+    MANAGER_REMOTE_SYNC_KEY='';
+    await managerLoadRemoteState({force:true});
+    await managerLoadActiveBadges();
+    managerRefreshRemotePublicDataAfterMutation();
+    managerSyncFullSiteTheme(managerCurrentUserBadge());
+    managerSetMsg(badgeKey?'徽章已佩戴。':'已取消佩戴徽章。');
+    renderManagerDemo();
+  }catch(e){
+    managerAlert(authErrorText(e),'徽章设置失败');
+  }
+}
+
 function currentDisplayName(){
   return (AUTH_PROFILE&&AUTH_PROFILE.display_name)||AUTH_USER?.user_metadata?.display_name||'';
 }
@@ -4037,6 +4543,266 @@ function maskPhoneNickname(name){
 function displayNickname(name,fallback){
   const text=String(name||'').trim()||String(fallback||'');
   return maskPhoneNickname(text);
+}
+
+function managerBadgeFallbackForKey(key){
+  var raw=String(key||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+  if(!raw)return null;
+  return (MANAGER_BADGE_FALLBACKS||[]).find(function(item){
+    return String(item.badge_key||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'')===raw;
+  })||null;
+}
+
+function managerNormalizeBadge(badge){
+  if(!badge)return null;
+  var key=badge.badge_key||badge.key||'';
+  if(!key)return null;
+  var fallback=managerBadgeFallbackForKey(key)||{};
+  return {
+    badge_key:String(key),
+    title:badge.title||badge.badge_title||fallback.title||'徽章',
+    formal_name:badge.formal_name||badge.metadata&&badge.metadata.formal_name||fallback.formal_name||badge.title||badge.badge_title||'徽章',
+    subtitle:badge.subtitle||badge.badge_subtitle||fallback.subtitle||'',
+    description:fallback.description||badge.description||'',
+    story:badge.story||badge.metadata&&badge.metadata.story||MANAGER_BADGE_STORIES[String(key)]||'',
+    category:badge.category||badge.metadata&&badge.metadata.category||fallback.category||'player',
+    category_label:badge.category_label||badge.metadata&&badge.metadata.category_label||fallback.category_label||badge.subtitle||fallback.subtitle||'球员纪念',
+    serial_number:badge.serial_number||badge.metadata&&badge.metadata.serial_number||fallback.serial_number||'',
+    motifs:Array.isArray(badge.motifs)?badge.motifs:(Array.isArray(badge.metadata&&badge.metadata.motifs)?badge.metadata.motifs:(fallback.motifs||[])),
+    available_from:badge.available_from||badge.metadata&&badge.metadata.available_from||fallback.available_from||'',
+    available_until:badge.available_until||badge.metadata&&badge.metadata.available_until||fallback.available_until||'',
+    price:Object.prototype.hasOwnProperty.call(fallback,'price')?(Number(fallback.price)||0):(Number(badge.price)||0),
+    sale_status:fallback.sale_status||badge.sale_status||badge.metadata&&badge.metadata.sale_status||'for_sale',
+    image_url:badge.image_url||badge.badge_image_url||fallback.image_url||'',
+    thumb_url:badge.thumb_url||badge.badge_thumb_url||fallback.thumb_url||'',
+    rarity:badge.rarity||badge.badge_rarity||fallback.rarity||'limited',
+    is_equipped:!!badge.is_equipped,
+    purchased_at:badge.purchased_at||''
+  };
+}
+
+function managerBadgeCatalog(){
+  var map={},order={};
+  MANAGER_BADGE_FALLBACKS.forEach(function(item,idx){
+    var badge=managerNormalizeBadge(item);
+    if(!badge)return;
+    map[badge.badge_key]=badge;
+    order[badge.badge_key]=Number(item.sort_order)||((idx+1)*10);
+  });
+  (MANAGER_BADGES||[]).forEach(function(item,idx){
+    var badge=managerNormalizeBadge(item);
+    if(!badge)return;
+    map[badge.badge_key]=Object.assign({},map[badge.badge_key]||{},badge);
+    if(order[badge.badge_key]==null)order[badge.badge_key]=Number(item.sort_order)||1000+idx;
+  });
+  return Object.keys(map).sort(function(a,b){return (order[a]||9999)-(order[b]||9999)||a.localeCompare(b);}).map(function(k){return map[k];});
+}
+
+function managerOwnedBadgeMap(){
+  var map={};
+  (MANAGER_MY_BADGES||[]).forEach(function(item){
+    var badge=managerNormalizeBadge(item);
+    if(badge)map[badge.badge_key]=badge;
+  });
+  return map;
+}
+
+function managerPreviewBadge(){
+  if(!managerLocalPreviewEnabled())return null;
+  var raw=new URLSearchParams(location.search).get('badge-preview')||'';
+  if(!raw)return null;
+  var normalized=raw.toLowerCase().replace(/_/g,'-');
+  var aliases={sinner:'sinner-fox',alcaraz:'alcaraz-duck',djokovic:'djoko-goat',lubu:'rublev-cat',zheng:'zheng-queen',mermaid:'wang-xinyu-mermaid',luwang:'luwang-friend',wimbledon:'wimbledon-2026'};
+  return managerNormalizeBadge(managerBadgeFallbackForKey(aliases[normalized]||normalized));
+}
+
+function managerCurrentUserBadge(){
+  return managerNormalizeBadge(MANAGER_ACTIVE_BADGE||(MANAGER_MY_BADGES||[]).find(function(x){return x&&x.is_equipped;})||managerPreviewBadge());
+}
+
+function managerBadgeFromRow(row){
+  if(!row)return null;
+  return managerNormalizeBadge({
+    badge_key:row.badge_key,
+    title:row.badge_title||row.title,
+    subtitle:row.badge_subtitle||row.subtitle,
+    image_url:row.badge_image_url||row.image_url,
+    thumb_url:row.badge_thumb_url||row.thumb_url,
+    rarity:row.badge_rarity||row.rarity
+  });
+}
+
+function managerBadgeThumbHtml(badge,cls){
+  badge=managerNormalizeBadge(badge);
+  if(!badge)return '';
+  var theme=managerBadgeThemeKey(badge),visual=MANAGER_BADGE_VISUAL_META[theme]||{};
+  var src=visual.icon||badge.thumb_url||'';
+  if(!src)return '';
+  return '<img class="badge-identity__icon manager-badge-thumb '+esc(cls||'')+'" src="'+esc(src)+'" alt="'+esc(visual.label||badge.title)+'" loading="lazy" decoding="async" onerror="this.remove()">';
+}
+
+function managerBadgeThemeKey(badge){
+  badge=managerNormalizeBadge(badge);
+  if(!badge)return '';
+  var raw=String(badge.badge_key||'').toLowerCase();
+  var map={
+    'sinner-fox':'sinner_fox',
+    'alcaraz-duck':'alcaraz_duck',
+    'djoko-goat':'djoko_goat',
+    'rublev-cat':'rublev_cat',
+    'zheng-queen':'zheng_queen',
+    'wang-xinyu-mermaid':'wang_mermaid',
+    'luwang-friend':'luwang_friend',
+    'wimbledon-2026':'wimbledon_2026'
+  };
+  return (map[raw]||raw).replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'');
+}
+
+function managerBadgeThemeClass(badge){
+  badge=managerNormalizeBadge(badge);
+  if(!badge)return '';
+  var key=managerBadgeThemeKey(badge).replace(/_/g,'-');
+  return key?'manager-badge-themed manager-badge-theme-'+key:'manager-badge-themed';
+}
+
+function managerBadgeClassAttr(badge,extra){
+  badge=managerNormalizeBadge(badge);
+  var theme=managerBadgeThemeKey(badge);
+  extra=extra||'';
+  var context='',isCard=/manager-hall-card|manager-badge-card|badge-themed-config-card|agent-config-card|badged-card/.test(extra),isSidebar=/manager-side|badge-themed-sidebar-panel|my-lineup-panel|lineup-sidebar-panel|badged-lineup-panel/.test(extra);
+  if(badge&&isCard)context='badged-card badge-themed-card';
+  else if(badge&&isSidebar)context='badged-lineup-panel';
+  else if(badge)context='badged-rank-row badge-themed-row';
+  var cls=[extra||'',context,managerBadgeThemeClass(badge)].filter(Boolean).join(' ').trim();
+  return cls?' class="'+esc(cls)+'"'+(theme?' data-badge="'+esc(theme)+'"':''):'';
+}
+
+function managerBadgeUserCellAttr(badge,extra){
+  var cls=[extra||'',managerNormalizeBadge(badge)?'badge-user-cell':''].filter(Boolean).join(' ').trim();
+  return cls?' class="'+esc(cls)+'"':'';
+}
+
+function managerUserNameWithBadge(name,badge,opts){
+  opts=opts||{};
+  badge=managerNormalizeBadge(badge);
+  var display=esc(displayNickname(name,'炉友'));
+  if(!badge)return '<span class="manager-user-name-plain">'+display+'</span>';
+  var theme=managerBadgeThemeKey(badge);
+  var visual=MANAGER_BADGE_VISUAL_META[theme]||{};
+  var variant=opts.login?'login':(opts.sidebar?'sidebar':(opts.card||opts.prominent?'card':'row'));
+  var label=visual.label||badge.title||'徽章';
+  var icon=visual.icon||badge.thumb_url||badge.image_url||'';
+  var cls='badge-identity badge-identity--'+variant+' manager-user-badge-line';
+  return '<span class="'+esc(cls)+'"'+(theme?' data-badge="'+esc(theme)+'"':'')+' title="'+esc(label+' · '+displayNickname(name,'炉友'))+'">'+(icon?'<img class="badge-identity__icon" src="'+esc(icon)+'" alt="'+esc(label)+'" loading="lazy" decoding="async">':'')+'<span class="badge-identity__plate"><span class="badge-identity__name">'+display+'</span></span></span>';
+}
+
+function managerBadgeHeroHtml(name,badge,opts){
+  opts=opts||{};
+  badge=managerNormalizeBadge(badge);
+  var display=esc(displayNickname(name,opts.fallback||'炉友'));
+  if(!badge)return '<span class="manager-badge-hero-name manager-badge-hero-name--plain"><small>炉网网友</small><b>'+display+'</b></span>';
+  var theme=managerBadgeThemeKey(badge),label=(MANAGER_BADGE_VISUAL_META[theme]||{}).label||badge.title||'徽章';
+  var rawName=displayNickname(name,'炉友'),lengthClass=rawName.length>14?' is-very-long':(rawName.length>8?' is-long':'');
+  return '<span class="manager-badge-hero-name'+lengthClass+'" data-badge="'+esc(theme)+'" title="'+esc(label+' · '+rawName)+'"><b>'+display+'</b></span>';
+}
+
+function managerHeaderLoginBadge(name,badge){
+  badge=managerNormalizeBadge(badge);
+  if(!badge)return '<span>'+esc(displayNickname(name,'已登录'))+'</span>';
+  var theme=managerBadgeThemeKey(badge);
+  return '<span class="header-badge-login"'+(theme?' data-badge="'+esc(theme)+'"':'')+'>'+managerUserNameWithBadge(name,badge,{login:true})+'<span class="header-badge-login__caret" aria-hidden="true">⌄</span></span>';
+}
+
+function managerApplyActiveBadges(rows){
+  rows=Array.isArray(rows)?rows:[];
+  MANAGER_ACTIVE_BADGES=rows.map(function(row){
+    var badge=managerBadgeFromRow(row)||managerNormalizeBadge(row);
+    if(!badge)return null;
+    return Object.assign({},badge,{user_id:row.user_id||'',display_name:row.display_name||''});
+  }).filter(Boolean);
+  MANAGER_ACTIVE_BADGE_BY_USER={};
+  MANAGER_ACTIVE_BADGE_BY_NAME={};
+  rows.forEach(function(row){
+    var badge=managerBadgeFromRow(row)||managerNormalizeBadge(row);
+    if(!badge)return;
+    if(row.user_id)MANAGER_ACTIVE_BADGE_BY_USER[String(row.user_id)]=badge;
+    if(row.display_name)MANAGER_ACTIVE_BADGE_BY_NAME[String(row.display_name).trim()]=badge;
+  });
+}
+
+function managerBadgeForUserName(name){
+  return MANAGER_ACTIVE_BADGE_BY_NAME[String(name||'').trim()]||null;
+}
+
+async function managerLoadActiveBadges(){
+  if(!supabaseConfigured())return MANAGER_ACTIVE_BADGES||[];
+  if(MANAGER_ACTIVE_BADGES_LOADING)return MANAGER_ACTIVE_BADGES_LOADING;
+  MANAGER_ACTIVE_BADGES_LOADING=(async function(){
+    try{
+      const client=await ensureSupabaseClient();
+      const res=await client.from('tour_manager_active_badges').select('user_id,display_name,badge_key,title,subtitle,image_url,thumb_url,rarity').limit(500);
+      if(res.error)throw res.error;
+      managerApplyActiveBadges(res.data||[]);
+      if(AUTH_USER)MANAGER_ACTIVE_BADGE=MANAGER_ACTIVE_BADGE_BY_USER[String(AUTH_USER.id)]||null;
+      updateAuthUi();
+      return MANAGER_ACTIVE_BADGES;
+    }catch(e){
+      trackSupabaseError('manager.active_badges',e,true);
+      return MANAGER_ACTIVE_BADGES||[];
+    }
+  })().finally(function(){MANAGER_ACTIVE_BADGES_LOADING=null;});
+  return MANAGER_ACTIVE_BADGES_LOADING;
+}
+
+function managerRenderBadgeGrantNotice(){
+  var old=document.getElementById('badge-grant-notice');
+  if(old)old.remove();
+  if(!MANAGER_BADGE_GRANT_NOTICE)return;
+  var badge=managerNormalizeBadge(MANAGER_BADGE_GRANT_NOTICE)||managerNormalizeBadge(managerBadgeFallbackForKey('wimbledon-2026'));
+  if(!badge)return;
+  var visual=MANAGER_BADGE_VISUAL_META[managerBadgeThemeKey(badge)]||{};
+  var modal=document.createElement('div');
+  modal.id='badge-grant-notice';
+  modal.className='badge-grant-notice';
+  modal.setAttribute('role','dialog');
+  modal.setAttribute('aria-modal','true');
+  modal.setAttribute('aria-labelledby','badge-grant-notice-title');
+  modal.innerHTML='<div class="badge-grant-notice__card"><div class="badge-grant-notice__hero"><img src="'+esc(visual.icon||badge.image_url||badge.thumb_url)+'" alt="'+esc(badge.title)+'"><div><small>2026 温网经纪人参赛纪念</small><h3 id="badge-grant-notice-title">'+esc(badge.formal_name||'2026温网限定·仲夏草地书')+'</h3></div></div><p class="badge-grant-notice__copy">恭喜您已获得「2026温网限定·仲夏草地书」徽章，请到「我的-我的徽章」查看。是否现在立即佩戴？</p><div class="badge-grant-notice__actions"><button class="manager-clear" data-manager-action="dismiss-badge-grant">稍后查看</button><button class="manager-action" data-manager-action="equip-granted-badge" data-badge-key="'+esc(badge.badge_key)+'">立即佩戴</button></div></div>';
+  document.body.appendChild(modal);
+}
+
+async function managerLoadBadgeGrantNotice(){
+  var previewGrant=managerLocalPreviewEnabled()&&new URLSearchParams(location.search).get('badge-grant-preview');
+  if(previewGrant){
+    MANAGER_BADGE_GRANT_NOTICE=managerBadgeFallbackForKey('wimbledon-2026');
+    managerRenderBadgeGrantNotice();
+    return MANAGER_BADGE_GRANT_NOTICE;
+  }
+  if(!AUTH_USER){managerRenderBadgeGrantNotice();return null;}
+  var userId=String(AUTH_USER.id||'');
+  if(MANAGER_BADGE_GRANT_NOTICE_CHECKED_USER===userId){
+    managerRenderBadgeGrantNotice();
+    return MANAGER_BADGE_GRANT_NOTICE;
+  }
+  MANAGER_BADGE_GRANT_NOTICE_CHECKED_USER=userId;
+  MANAGER_BADGE_GRANT_NOTICE=null;
+  try{
+    var notice=await supabaseRpc('tour_manager_take_badge_grant_notice',{}, {optional:true});
+    if(notice)MANAGER_BADGE_GRANT_NOTICE=managerNormalizeBadge(notice);
+  }catch(_err){}
+  managerRenderBadgeGrantNotice();
+  return MANAGER_BADGE_GRANT_NOTICE;
+}
+
+function managerDismissBadgeGrantNotice(){
+  MANAGER_BADGE_GRANT_NOTICE=null;
+  managerRenderBadgeGrantNotice();
+}
+
+function managerEquipGrantedBadge(badgeKey){
+  badgeKey=String(badgeKey||'wimbledon-2026');
+  managerDismissBadgeGrantNotice();
+  managerSetActiveBadge(badgeKey);
 }
 
 function logUserLoginEvent(eventType,isNewUser,sourceModule){
@@ -4180,8 +4946,18 @@ async function afterAuthChanged(user){
   AUTH_USER=user||null;
   AUTH_PROFILE=null;
   FOLLOWING_IDS=new Set();
-  if(AUTH_USER)await loadAccountData();
-  else resetFollowingFilters();
+  if(AUTH_USER){
+    await loadAccountData();
+    await managerLoadActiveBadges();
+    MANAGER_ACTIVE_BADGE=MANAGER_ACTIVE_BADGE_BY_USER[String(AUTH_USER.id)]||null;
+    await managerLoadBadgeGrantNotice();
+  }
+  else{
+    MANAGER_MY_BADGES=[];
+    MANAGER_ACTIVE_BADGE=null;
+    resetFollowingFilters();
+    await managerLoadBadgeGrantNotice();
+  }
   await setAnalyticsUser(AUTH_USER);
   updateAuthUi();
   refreshFollowButtons();
@@ -4221,16 +4997,71 @@ async function loadAccountData(){
   }
 }
 
+function managerSyncFullSiteTheme(badge){
+  var theme=managerBadgeThemeKey(badge);
+  if(theme)document.body.setAttribute('data-equipped-badge',theme);
+  else document.body.removeAttribute('data-equipped-badge');
+  if(MANAGER_BADGE_PREVIEW_KEY){
+    var previewTheme=managerBadgeThemeKey(managerFindBadge(MANAGER_BADGE_PREVIEW_KEY));
+    if(previewTheme)theme=previewTheme;
+  }
+  var pinnedTheme=new URLSearchParams(location.search).get('site-theme');
+  if(window.LuwangFullSiteTheme&&pinnedTheme){
+    var normalizedPinned=window.LuwangFullSiteTheme.normalize(pinnedTheme);
+    if(normalizedPinned)theme=normalizedPinned;
+  }
+  if(window.LuwangFullSiteTheme){
+    if(theme)window.LuwangFullSiteTheme.set(theme,{persist:false});
+    else if(window.LuwangFullSiteTheme.clear)window.LuwangFullSiteTheme.clear({persist:false});
+    return;
+  }
+  if(theme){
+    document.dispatchEvent(new CustomEvent('luwang:badge-change',{detail:{badgeId:theme}}));
+  }
+}
+
 function updateAuthUi(){
   const chip=document.getElementById('auth-chip');
   if(!chip)return;
+  const header=document.getElementById('hdr');
+  const headerTop=header&&header.querySelector('.hdt');
+  function applyHeaderBadge(badge){
+    var theme=managerBadgeThemeKey(badge);
+    if(header)header.classList.toggle('badge-login-header',!!theme);
+    if(headerTop)headerTop.classList.toggle('login-bar',!!theme);
+    if(theme){header.setAttribute('data-badge',theme);headerTop.setAttribute('data-badge',theme);}
+    else{if(header)header.removeAttribute('data-badge');if(headerTop)headerTop.removeAttribute('data-badge');}
+    managerSyncFullSiteTheme(badge);
+  }
   if(AUTH_USER){
-    chip.textContent=displayNickname((AUTH_PROFILE&&AUTH_PROFILE.display_name)||AUTH_USER.user_metadata?.display_name,'已登录');
+    var label=displayNickname((AUTH_PROFILE&&AUTH_PROFILE.display_name)||AUTH_USER.user_metadata?.display_name,'已登录');
+    var badge=managerCurrentUserBadge();
+    applyHeaderBadge(badge);
+    chip.classList.toggle('badged',!!badge);
+    if(badge){
+      var theme=managerBadgeThemeKey(badge);
+      if(theme)chip.setAttribute('data-badge',theme);
+      else chip.removeAttribute('data-badge');
+      chip.innerHTML=managerHeaderLoginBadge(label,badge);
+    }else{
+      chip.removeAttribute('data-badge');
+      chip.innerHTML='<span>'+esc(label)+'</span>';
+    }
     chip.title='点击退出登录';
     chip.onclick=logout;
   }else{
-    chip.textContent='登录';
-    chip.title='登录炉网账号';
+    var previewBadge=managerPreviewBadge();
+    applyHeaderBadge(previewBadge);
+    chip.classList.toggle('badged',!!previewBadge);
+    if(previewBadge){
+      chip.setAttribute('data-badge',managerBadgeThemeKey(previewBadge));
+      chip.innerHTML=managerHeaderLoginBadge('预览用户',previewBadge);
+      chip.title='本地徽章视觉预览；点击仍可登录';
+    }else{
+      chip.removeAttribute('data-badge');
+      chip.textContent='登录';
+      chip.title='登录炉网账号';
+    }
     chip.onclick=function(){openAuthModal();};
   }
 }
@@ -4269,6 +5100,12 @@ function authErrorText(err){
   if(/invalid_new_contract/i.test(msg))return '换入球员不在当前可签约市场。';
   if(/player_already_active/i.test(msg))return '这名球员已经在你的阵容里。';
   if(/contract_not_in_station/i.test(msg))return '这名球员不属于本站，不能换入。';
+  if(/badge_not_found/i.test(msg))return '徽章不存在或已下架。';
+  if(/badge_coming_soon/i.test(msg))return '这枚徽章暂未开放获取，敬请期待。';
+  if(/badge_not_for_sale/i.test(msg))return '这枚徽章目前不能购买。';
+  if(/badge_already_owned/i.test(msg))return '你已经拥有这个徽章了。';
+  if(/badge_not_owned/i.test(msg))return '你还没有拥有这个徽章。';
+  if(/insufficient_wallet_for_badge/i.test(msg))return '经纪人本金不足，暂时买不了这个徽章。';
   if(/already|registered|duplicate|unique/i.test(msg))return '这个昵称已经被注册了，请换一个。';
   if(/invalid login|credentials/i.test(msg))return '昵称或密码不对。';
   if(/password/i.test(msg))return '密码至少需要 6 位。';
@@ -5235,6 +6072,7 @@ async function loadJinxLeaderboard(){
   renderJinxLeaderboard();
   try{
     await loadJinxSettlements();
+    await managerLoadActiveBadges();
     const settlements=normalizedJinxSettlements();
     if(!settlements.length){
       JINX_LEADERBOARD=[];
@@ -5278,7 +6116,7 @@ function renderJinxLeaderCard(tour){
   if(!rows.length){
     return `<div class="jinx-leader-card"><div class="jinx-leader-head"><span>${title}</span><span class="jinx-leader-meta">暂无上榜</span></div><div class="jinx-status" style="padding:12px;margin:0">暂无毒奶得分，等昨日赛果结算后自动更新。</div></div>`;
   }
-  const trs=rows.map((x,i)=>`<tr><td class="jinx-leader-rank">#${i+1}</td><td class="jinx-leader-user">${esc(displayNickname(x.display_name,'匿名炉友'))}</td><td class="jinx-leader-score">${Number(x.score||0).toLocaleString()}分</td><td class="jinx-leader-hit">${Number(x.hit_count||0)}中</td></tr>`).join('');
+  const trs=rows.map((x,i)=>{const badge=managerBadgeForUserName(x.display_name),rank=i+1;return `<tr${managerBadgeClassAttr(badge,rank===1?'is-badge-featured':'')}><td class="jinx-leader-rank rank-cell">${managerRankMedalHtml(rank)}</td><td class="jinx-leader-user${badge?' badge-user-cell':''}">${managerUserNameWithBadge(x.display_name,badge)}</td><td class="jinx-leader-score">${Number(x.score||0).toLocaleString()}分</td><td class="jinx-leader-hit">${Number(x.hit_count||0)}中</td></tr>`;}).join('');
   return `<div class="jinx-leader-card"><div class="jinx-leader-head"><span>${title}</span><span class="jinx-leader-meta">${rows.length} 人上榜</span></div><table class="jinx-leader-table"><colgroup><col class="jinx-col-rank"><col><col class="jinx-col-score"><col class="jinx-col-hit"></colgroup><thead><tr><th>排名</th><th>用户</th><th>毒奶分</th><th>命中</th></tr></thead><tbody>${trs}</tbody></table></div>`;
 }
 
@@ -5405,6 +6243,17 @@ document.addEventListener('click',function(e){
   else if(btn.dataset.managerAction==='page-station-net')managerSetStationNetPage(btn.dataset.managerPage);
   else if(btn.dataset.managerAction==='page-wallet-board')managerSetWalletBoardPage(btn.dataset.managerPage);
   else if(btn.dataset.managerAction==='page-ledger')managerSetLedgerPage(btn.dataset.managerPage);
+  else if(btn.dataset.managerAction==='filter-badges'){MANAGER_BADGE_FILTER=btn.dataset.filter||'all';renderManagerDemo();}
+  else if(btn.dataset.managerAction==='preview-scene'){MANAGER_BADGE_PREVIEW_SCENE=btn.dataset.scene||'hall';renderManagerDemo();}
+  else if(btn.dataset.managerAction==='preview-badge')managerOpenBadgePreview(btn.dataset.badgeKey);
+  else if(btn.dataset.managerAction==='close-badge-preview')managerCloseBadgePreview();
+  else if(btn.dataset.managerAction==='buy-badge')managerRequestBadgePurchase(btn.dataset.badgeKey);
+  else if(btn.dataset.managerAction==='equip-badge')managerRequestSetActiveBadge(btn.dataset.badgeKey);
+  else if(btn.dataset.managerAction==='unequip-badge')managerRequestSetActiveBadge('');
+  else if(btn.dataset.managerAction==='confirm-buy-badge')managerConfirmBadgePurchase();
+  else if(btn.dataset.managerAction==='confirm-set-badge')managerConfirmSetActiveBadge();
+  else if(btn.dataset.managerAction==='dismiss-badge-grant')managerDismissBadgeGrantNotice();
+  else if(btn.dataset.managerAction==='equip-granted-badge')managerEquipGrantedBadge(btn.dataset.badgeKey);
   else if(btn.dataset.managerAction==='close-dialog')managerCloseAlert();
   else if(btn.dataset.managerAction==='submit')managerSubmitLineup();
 });
@@ -6112,7 +6961,9 @@ function setBdF(g,f,btn){
 }
 
 initAuth();
+if(managerLocalPreviewEnabled()&&new URLSearchParams(location.search).get('badge-grant-preview'))managerLoadBadgeGrantNotice();
 loadData();
 </script>
+<script src="assets/theme/full-site-badge-theme.js?v=20260712-2"></script>
 </body>
 </html>
