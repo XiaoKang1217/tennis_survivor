@@ -48,7 +48,7 @@ select distinct
     'grant_station_key', '2026-w27-wimbledon',
     'grant_title', '2026温网限定·仲夏草地书'
   ),
-  null
+  null::timestamptz
 from public.tour_manager_lineups l
 where l.station_key = '2026-w27-wimbledon'
   and l.status in ('submitted','locked','settling','settled')
