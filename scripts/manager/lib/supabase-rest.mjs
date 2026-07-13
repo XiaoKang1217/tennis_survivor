@@ -52,6 +52,27 @@ export class SupabaseRestClient {
     return out;
   }
 
+  async insert(table, rows, { chunkSize = 100, prefer = 'return=representation' } = {}) {
+    if (!rows.length) return [];
+    if (this.dryRun) return rows;
+
+    const out = [];
+    for (let i = 0; i < rows.length; i += chunkSize) {
+      const chunk = rows.slice(i, i + chunkSize);
+      const res = await fetch(this.endpoint(table), {
+        method: 'POST',
+        headers: this.headers(prefer),
+        body: JSON.stringify(chunk)
+      });
+      if (!res.ok) {
+        throw new Error(`${table} insert failed: ${res.status} ${await res.text()}`);
+      }
+      const text = await res.text();
+      if (text) out.push(...JSON.parse(text));
+    }
+    return out;
+  }
+
   async select(table, query = {}) {
     if (this.dryRun) return [];
     const res = await fetch(this.endpoint(table, query), {

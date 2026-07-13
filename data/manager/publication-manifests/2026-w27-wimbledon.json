@@ -1,0 +1,52 @@
+{
+  "station_key": "2026-w27-wimbledon",
+  "station_name": "Wimbledon 2026",
+  "season": 2026,
+  "status": "open",
+  "publication_version": 1,
+  "publication_kind": "initial_open",
+  "published_at": "2026-06-26T00:00:00+08:00",
+  "git_ref": "df8273c7",
+  "rules": {
+    "station_grant": 2500,
+    "combo_version": "wimbledon_2026",
+    "min_players": 2,
+    "max_players": 8,
+    "transfer_fee_rate": 0.15,
+    "combo": {
+      "total_cap": 700,
+      "multi_player": {
+        "min_players": 3,
+        "R32": 80,
+        "R16": 180,
+        "QF": 320,
+        "SF": 480,
+        "all_reach_R16_bonus": 100,
+        "highest_tier_only": true
+      },
+      "dual_tour": {
+        "R16": 80,
+        "QF": 170,
+        "SF": 300,
+        "F": 450,
+        "highest_tier_only": true
+      },
+      "value_pick": {
+        "max_price": 300,
+        "R32": 80,
+        "R16": 180,
+        "QF": 280,
+        "SF": 380,
+        "F": 530,
+        "W": 680,
+        "max_triggers": 1
+      },
+      "champion": {
+        "any_champion": 50,
+        "champion_max_price": 450,
+        "value_champion": 150,
+        "highest_tier_only": true
+      }
+    }
+  }
+}

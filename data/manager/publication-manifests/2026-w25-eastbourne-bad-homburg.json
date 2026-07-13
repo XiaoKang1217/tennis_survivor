@@ -1,0 +1,40 @@
+{
+  "station_key": "2026-w25-eastbourne-bad-homburg",
+  "station_name": "ATP Eastbourne + WTA Bad Homburg",
+  "season": 2026,
+  "status": "open",
+  "publication_version": 1,
+  "publication_kind": "initial_open",
+  "published_at": "2026-06-20T00:00:00+08:00",
+  "git_ref": "d305fa74",
+  "rules": {
+    "station_grant": 110,
+    "combo_version": "classic",
+    "min_players": 1,
+    "max_players": 4,
+    "transfer_fee_rate": 0.1,
+    "combo": {
+      "steady": {
+        "min_qf_ratio": 0.6,
+        "gross_rate": 0.08,
+        "cap": 80
+      },
+      "finalists": {
+        "min_players": 2,
+        "bonus": 60
+      },
+      "champion": {
+        "min_players": 1,
+        "bonus": 40
+      },
+      "value_pick": {
+        "tiers": [
+          "C",
+          "D"
+        ],
+        "reached_round": "SF",
+        "bonus_per_player": 30
+      }
+    }
+  }
+}

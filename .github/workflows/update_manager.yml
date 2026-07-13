@@ -31,6 +31,10 @@ jobs:
 
       - run: node scripts/manager/maybe-build-prices.mjs
 
+      - run: node scripts/manager/publish-station-snapshot.mjs --write-file --strict-open
+
+      - run: node scripts/manager/backfill-station-publication-snapshots.mjs
+
       - run: node scripts/manager/apply-qualifier-placements.mjs
 
       - run: node scripts/manager/apply-pre-r1-substitutions.mjs
@@ -44,4 +48,4 @@ jobs:
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Auto update tour manager data"
-          file_pattern: "data/manager/active_events.json data/manager/events/*.json data/manager/market_snapshot.json data/manager/player_photos.json data/manifest.json"
+          file_pattern: "data/manager/active_events.json data/manager/events/*.json data/manager/market_snapshot.json data/manager/player_photos.json data/manager/publications/*.json data/manifest.json"
