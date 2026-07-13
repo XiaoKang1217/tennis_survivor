@@ -1742,7 +1742,8 @@ function managerPlainMoney(value){
 function managerOriginalNameFromMeta(meta){
   meta=meta&&typeof meta==='object'?meta:{};
   var sub=meta.pre_r1_substitution&&typeof meta.pre_r1_substitution==='object'?meta.pre_r1_substitution:{};
-  return meta.substituted_from_name_zh||meta.original_name_zh||meta.out_name_zh||sub.out_name_zh||meta.substituted_from_name_en||meta.original_name_en||meta.out_name_en||sub.out_name_en||'';
+  var qualifier=meta.qualifier_replacement&&typeof meta.qualifier_replacement==='object'?meta.qualifier_replacement:{};
+  return meta.qualifier_replacement_from_name_zh||qualifier.placeholder_name_zh||meta.substituted_from_name_zh||meta.original_name_zh||meta.out_name_zh||sub.out_name_zh||meta.qualifier_replacement_from_name_en||qualifier.placeholder_name_en||meta.substituted_from_name_en||meta.original_name_en||meta.out_name_en||sub.out_name_en||'';
 }
 function managerDisplayNameWithOriginal(name,original){
   name=String(name||'球员');original=String(original||'').trim();
@@ -1755,8 +1756,8 @@ function managerPlayerDisplayName(p,withOriginal){
 }
 function managerPlayerTitleHtml(p){
   p=p||{};
-  var origin=p.originalName?'<span class="manager-origin" title="原为 '+esc(p.originalName)+'">原为 '+esc(p.originalName)+'</span>':'';
-  return '<div class="manager-player-title-line"><div class="manager-name" title="'+esc(managerPlayerDisplayName(p,true))+'">'+esc(p.name||'球员')+'</div>'+origin+'</div>';
+  var displayName=managerPlayerDisplayName(p,true);
+  return '<div class="manager-player-title-line"><div class="manager-name" title="'+esc(displayName)+'">'+esc(displayName)+'</div></div>';
 }
 function managerCurrentReplacementInfo(pack,key,name,meta){
   var list=pack&&pack.event&&Array.isArray(pack.event.players)?pack.event.players:[];
@@ -2536,6 +2537,7 @@ function managerIncomePartsFromRow(row){
   if(!Number.isFinite(amount))amount=Number(row&&row.net);
   if(!Number.isFinite(amount))return null;
   if(/submit_bonus_reversal|bonus_reversal/i.test(type))return {kind:'other',amount:amount};
+  if(/station_participation_compensation|本站参赛补偿/i.test(type))return {kind:'other',amount:amount};
   if(amount<=0)return null;
   if(/player_points_delta|points_delta/i.test(type))return {kind:'player',amount:amount};
   if(/station_combo_bonus|combo/i.test(type))return {kind:'combo',amount:amount};
@@ -2948,6 +2950,7 @@ function managerLedgerStatusText(type){
   if(/badge_purchase/i.test(t))return '购买徽章';
   if(/market_price_rollback_refund/i.test(t))return '市场价格回退补偿';
   if(/market_price_rollback_charge/i.test(t))return '市场价格回退扣款';
+  if(/station_participation_compensation/i.test(t))return '本站参赛补偿';
   if(/transfer/i.test(t))return '换人调仓';
   if(/settle|settlement|points/i.test(t))return '每日收益结算';
   if(/low_income|sponsor|低保/i.test(t))return '低保赞助';
