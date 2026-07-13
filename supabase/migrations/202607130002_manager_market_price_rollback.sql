@@ -12,52 +12,6 @@ lock table public.tour_manager_wallet_ledger in share row exclusive mode;
 lock table public.tour_manager_settlements in share row exclusive mode;
 lock table public.tour_manager_player_substitutions in share row exclusive mode;
 
-create temporary table manager_market_price_rollback_targets (
-  event_key text not null,
-  player_key text not null,
-  target_price int not null check (target_price >= 0),
-  primary key (event_key, player_key)
-) on commit drop;
-
-insert into manager_market_price_rollback_targets (event_key, player_key, target_price)
-values
-  ('atp-2026-w29-bastad-nordea-open', 'ATP|sebastian-ofner', 40),
-  ('wta-2026-w29-athens-open', 'WTA|clara-tauson', 85),
-  ('wta-2026-w29-athens-open', 'WTA|sapfo-sakellaridi', 45),
-  ('wta-2026-w29-athens-open', 'WTA|marianne-argyrokastriti', 45),
-  ('wta-2026-w29-athens-open', 'WTA|sara-bejlek', 105),
-  ('wta-2026-w29-athens-open', 'WTA|martha-matoula', 45),
-  ('wta-2026-w29-athens-open', 'WTA|zheng-qinwen', 95),
-  ('wta-2026-w29-athens-open', 'WTA|harriet-dart', 55),
-  ('wta-2026-w29-athens-open', 'WTA|maria-sakkari', 80),
-  ('wta-2026-w29-athens-open', 'WTA|tereza-valentova', 95),
-  ('wta-2026-w29-athens-open', 'WTA|alina-korneeva', 75),
-  ('wta-2026-w29-athens-open', 'WTA|ann-li', 65),
-  ('wta-2026-w29-athens-open', 'WTA|hibino-nao', 15),
-  ('wta-2026-w29-athens-open', 'WTA|miriana-tona', 55),
-  ('wta-2026-w29-athens-open', 'WTA|lilli-tagger', 15),
-  ('wta-2026-w29-athens-open', 'WTA|viktoria-morvayova', 15),
-  ('wta-2026-w29-athens-open', 'WTA|elena-micic', 15),
-  ('wta-2026-w29-athens-open', 'WTA|mina-hodzic', 15),
-  ('wta-2026-w29-athens-open', 'WTA|ito-aoi', 15);
-
-create temporary table manager_athens_qualifier_identity_repairs (
-  placeholder_player_key text primary key,
-  replacement_player_key text not null
-) on commit drop;
-
-insert into manager_athens_qualifier_identity_repairs (
-  placeholder_player_key,
-  replacement_player_key
-)
-values
-  ('WTA|qualifier-4', 'WTA|hibino-nao'),
-  ('WTA|qualifier-6', 'WTA|lilli-tagger'),
-  ('WTA|qualifier-7', 'WTA|viktoria-morvayova'),
-  ('WTA|qualifier-14', 'WTA|elena-micic'),
-  ('WTA|qualifier-21', 'WTA|mina-hodzic'),
-  ('WTA|qualifier-29', 'WTA|ito-aoi');
-
 update public.tour_manager_event_players ep
 set price = target.target_price,
     source = coalesce(ep.source, '{}'::jsonb) || jsonb_build_object(
@@ -69,7 +23,28 @@ set price = target.target_price,
       )
     ),
     updated_at = now()
-from manager_market_price_rollback_targets target
+from (
+  values
+    ('atp-2026-w29-bastad-nordea-open', 'ATP|sebastian-ofner', 40),
+    ('wta-2026-w29-athens-open', 'WTA|clara-tauson', 85),
+    ('wta-2026-w29-athens-open', 'WTA|sapfo-sakellaridi', 45),
+    ('wta-2026-w29-athens-open', 'WTA|marianne-argyrokastriti', 45),
+    ('wta-2026-w29-athens-open', 'WTA|sara-bejlek', 105),
+    ('wta-2026-w29-athens-open', 'WTA|martha-matoula', 45),
+    ('wta-2026-w29-athens-open', 'WTA|zheng-qinwen', 95),
+    ('wta-2026-w29-athens-open', 'WTA|harriet-dart', 55),
+    ('wta-2026-w29-athens-open', 'WTA|maria-sakkari', 80),
+    ('wta-2026-w29-athens-open', 'WTA|tereza-valentova', 95),
+    ('wta-2026-w29-athens-open', 'WTA|alina-korneeva', 75),
+    ('wta-2026-w29-athens-open', 'WTA|ann-li', 65),
+    ('wta-2026-w29-athens-open', 'WTA|hibino-nao', 15),
+    ('wta-2026-w29-athens-open', 'WTA|miriana-tona', 55),
+    ('wta-2026-w29-athens-open', 'WTA|lilli-tagger', 15),
+    ('wta-2026-w29-athens-open', 'WTA|viktoria-morvayova', 15),
+    ('wta-2026-w29-athens-open', 'WTA|elena-micic', 15),
+    ('wta-2026-w29-athens-open', 'WTA|mina-hodzic', 15),
+    ('wta-2026-w29-athens-open', 'WTA|ito-aoi', 15)
+) as target(event_key, player_key, target_price)
 where ep.event_key = target.event_key
   and ep.player_key = target.player_key
   and ep.price is distinct from target.target_price;
@@ -103,7 +78,15 @@ set player_key = replacement.player_key,
         'applied_at', now()
       )
     )
-from manager_athens_qualifier_identity_repairs repair
+from (
+  values
+    ('WTA|qualifier-4', 'WTA|hibino-nao'),
+    ('WTA|qualifier-6', 'WTA|lilli-tagger'),
+    ('WTA|qualifier-7', 'WTA|viktoria-morvayova'),
+    ('WTA|qualifier-14', 'WTA|elena-micic'),
+    ('WTA|qualifier-21', 'WTA|mina-hodzic'),
+    ('WTA|qualifier-29', 'WTA|ito-aoi')
+) as repair(placeholder_player_key, replacement_player_key)
 join public.tour_manager_event_players replacement
   on replacement.event_key = 'wta-2026-w29-athens-open'
  and replacement.player_key = repair.replacement_player_key
@@ -225,7 +208,15 @@ select
   'qualifier_placement',
   'https://wtafiles.wtatennis.com/pdf/draws/2026/1175/MDS.pdf',
   jsonb_build_object('repair_key', '2026-w29-athens-q-ll-placement-repair')
-from manager_athens_qualifier_identity_repairs repair
+from (
+  values
+    ('WTA|qualifier-4', 'WTA|hibino-nao'),
+    ('WTA|qualifier-6', 'WTA|lilli-tagger'),
+    ('WTA|qualifier-7', 'WTA|viktoria-morvayova'),
+    ('WTA|qualifier-14', 'WTA|elena-micic'),
+    ('WTA|qualifier-21', 'WTA|mina-hodzic'),
+    ('WTA|qualifier-29', 'WTA|ito-aoi')
+) as repair(placeholder_player_key, replacement_player_key)
 on conflict (event_key, out_player_key)
 do update set
   in_player_key = excluded.in_player_key,
@@ -256,6 +247,27 @@ do update set
 
 do $$
 declare
+  v_targets jsonb := '[
+    {"event_key":"atp-2026-w29-bastad-nordea-open","player_key":"ATP|sebastian-ofner","target_price":40},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|clara-tauson","target_price":85},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|sapfo-sakellaridi","target_price":45},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|marianne-argyrokastriti","target_price":45},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|sara-bejlek","target_price":105},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|martha-matoula","target_price":45},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|zheng-qinwen","target_price":95},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|harriet-dart","target_price":55},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|maria-sakkari","target_price":80},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|tereza-valentova","target_price":95},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|alina-korneeva","target_price":75},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|ann-li","target_price":65},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|hibino-nao","target_price":15},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|miriana-tona","target_price":55},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|lilli-tagger","target_price":15},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|viktoria-morvayova","target_price":15},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|elena-micic","target_price":15},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|mina-hodzic","target_price":15},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|ito-aoi","target_price":15}
+  ]'::jsonb;
   v_lineup public.tour_manager_lineups%rowtype;
   v_changes jsonb;
   v_refund_changes jsonb;
@@ -288,7 +300,7 @@ begin
       and exists (
         select 1
         from public.tour_manager_lineup_players lp
-        join manager_market_price_rollback_targets target
+        join jsonb_to_recordset(v_targets) as target(event_key text, player_key text, target_price int)
           on target.event_key = lp.event_key
          and target.player_key = lp.player_key
         where lp.lineup_id = l.id
@@ -336,7 +348,7 @@ begin
       ) filter (where target.target_price > lp.price)
     into v_refund, v_charge, v_changes, v_refund_changes, v_charge_changes
     from public.tour_manager_lineup_players lp
-    join manager_market_price_rollback_targets target
+    join jsonb_to_recordset(v_targets) as target(event_key text, player_key text, target_price int)
       on target.event_key = lp.event_key
      and target.player_key = lp.player_key
     where lp.lineup_id = v_lineup.id
@@ -431,7 +443,7 @@ begin
           ),
           true
         )
-    from manager_market_price_rollback_targets target,
+    from jsonb_to_recordset(v_targets) as target(event_key text, player_key text, target_price int),
          public.tour_manager_events event
     where lp.lineup_id = v_lineup.id
       and lp.is_active
@@ -572,12 +584,42 @@ end;
 $$;
 
 do $$
+declare
+  v_targets jsonb := '[
+    {"event_key":"atp-2026-w29-bastad-nordea-open","player_key":"ATP|sebastian-ofner","target_price":40},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|clara-tauson","target_price":85},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|sapfo-sakellaridi","target_price":45},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|marianne-argyrokastriti","target_price":45},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|sara-bejlek","target_price":105},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|martha-matoula","target_price":45},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|zheng-qinwen","target_price":95},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|harriet-dart","target_price":55},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|maria-sakkari","target_price":80},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|tereza-valentova","target_price":95},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|alina-korneeva","target_price":75},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|ann-li","target_price":65},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|hibino-nao","target_price":15},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|miriana-tona","target_price":55},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|lilli-tagger","target_price":15},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|viktoria-morvayova","target_price":15},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|elena-micic","target_price":15},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|mina-hodzic","target_price":15},
+    {"event_key":"wta-2026-w29-athens-open","player_key":"WTA|ito-aoi","target_price":15}
+  ]'::jsonb;
+  v_repairs jsonb := '[
+    {"placeholder_player_key":"WTA|qualifier-4","replacement_player_key":"WTA|hibino-nao"},
+    {"placeholder_player_key":"WTA|qualifier-6","replacement_player_key":"WTA|lilli-tagger"},
+    {"placeholder_player_key":"WTA|qualifier-7","replacement_player_key":"WTA|viktoria-morvayova"},
+    {"placeholder_player_key":"WTA|qualifier-14","replacement_player_key":"WTA|elena-micic"},
+    {"placeholder_player_key":"WTA|qualifier-21","replacement_player_key":"WTA|mina-hodzic"},
+    {"placeholder_player_key":"WTA|qualifier-29","replacement_player_key":"WTA|ito-aoi"}
+  ]'::jsonb;
 begin
   if exists (
     select 1
     from public.tour_manager_lineup_players lp
     join public.tour_manager_lineups lineup on lineup.id = lp.lineup_id
-    join manager_athens_qualifier_identity_repairs repair
+    join jsonb_to_recordset(v_repairs) as repair(placeholder_player_key text, replacement_player_key text)
       on repair.placeholder_player_key = coalesce(
            nullif(lp.metadata ->> 'qualifier_replacement_from_player_key', ''),
            nullif(lp.metadata ->> 'player_key', ''),
@@ -633,7 +675,7 @@ begin
 
   if exists (
     select 1
-    from manager_market_price_rollback_targets target
+    from jsonb_to_recordset(v_targets) as target(event_key text, player_key text, target_price int)
     left join public.tour_manager_event_players ep
       on ep.event_key = target.event_key
      and ep.player_key = target.player_key
@@ -647,7 +689,7 @@ begin
     select 1
     from public.tour_manager_lineup_players lp
     join public.tour_manager_lineups lineup on lineup.id = lp.lineup_id
-    join manager_market_price_rollback_targets target
+    join jsonb_to_recordset(v_targets) as target(event_key text, player_key text, target_price int)
       on target.event_key = lp.event_key
      and target.player_key = lp.player_key
     where lineup.station_key = '2026-w29-bastad-athens'
