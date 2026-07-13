@@ -360,8 +360,8 @@
   .manager-boards-page .manager-station-board-table{min-width:560px!important}
   .manager-boards-page .manager-wallet-board-table{min-width:390px!important}
   .manager-boards-page .manager-rank-table th:nth-child(2),
-  .manager-boards-page .manager-rank-table td:nth-child(2){width:138px!important;min-width:138px!important;max-width:138px!important}
-  .manager-boards-page .manager-rank-table .manager-user-name-plain{min-width:0!important;max-width:124px!important;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .manager-boards-page .manager-rank-table .badge-identity--row{--badge-icon-size:40px;--badge-plate-width:112px;--badge-plate-height:32px;width:138px;max-width:138px;padding-left:31px}
+  .manager-boards-page .manager-rank-table td:nth-child(2){width:170px!important;min-width:170px!important;max-width:170px!important}
+  .manager-boards-page .manager-rank-table .manager-user-name-plain{min-width:0!important;max-width:156px!important;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .manager-boards-page .manager-rank-table .badge-identity--row{--badge-icon-size:40px;--badge-plate-width:140px;--badge-plate-height:32px;width:170px;max-width:170px;padding-left:31px}
   .manager-boards-page .manager-rank-table .badge-identity--row .badge-identity__name{font-size:11px}
 }
