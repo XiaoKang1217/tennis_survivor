@@ -2261,8 +2261,8 @@
           "expected_points": 10.22,
           "expected_round": "R32",
           "breakeven_round": "SF",
-          "price": 55,
-          "tier": "C",
+          "price": 15,
+          "tier": "D",
           "pricing_detail": {
             "formula_version": "build-prices-v1",
             "weights": {
@@ -2304,71 +2304,32 @@
             },
             "preview_formula_version": "preview-expected-round-v2",
             "preview_generated_at": "2026-07-13T02:07:10.470Z",
-            "preview_notes": "Effective Elo bracket simulation was run, but pre-R1 substitution keeps original inherited contract price.",
+            "preview_notes": "Qualifier placement keeps the formally published Q1 contract price.",
             "expected_pricing_effective_elo": 1560.32,
-            "contract_price_policy": "keep_original_contract_price",
-            "inherited_from_player_key": "WTA|ajla-tomljanovic",
-            "inherited_from_name_en": "Ajla TOMLJANOVIC",
-            "inherited_from_name_zh": "汤姆亚诺维奇",
-            "original_contract_price": 55,
-            "replacement_pricing_reference": {
-              "formula_version": "build-prices-v1",
-              "weights": {
-                "base": 0.35,
-                "surface": 0.25,
-                "draw": 0.2,
-                "form": 0.15,
-                "manual": 0.05
-              },
-              "point_table": {
-                "R128": 0,
-                "R64": 0,
-                "R32": 1,
-                "R16": 30,
-                "QF": 54,
-                "SF": 98,
-                "F": 163,
-                "W": 250
-              },
-              "ranking_source": "https://www.live-tennis.cn/zh/rank/wta/s/year",
-              "elo_source": "https://tennisabstract.com/reports/wta_elo_ratings.html",
-              "surface_elo_field": "hard_elo",
-              "elo_source_kind": "tennis_abstract",
-              "peak_elo": 1751.2,
-              "peak_month": "2015-09",
-              "peak_close_score": 89.07,
-              "peak_recency_score": 0,
-              "draw_bonus_raw": -3.45,
-              "draw_actual_expected_points": 12.74,
-              "draw_same_bucket_baseline_points": 16.19,
-              "draw_bucket": "direct",
-              "draw_baseline_sample_count": 16,
-              "score_explanation": {
-                "base": "65% TA overall Elo percentile + 35% official ranking inverse percentile.",
-                "surface": "70% surface Elo percentile + 30% surface bonus percentile.",
-                "draw": "Same-bucket draw bonus percentile: actual expected points minus average after swapping into legal comparable draw slots.",
-                "form": "70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.",
-                "manual": "Manual correction defaults to 0."
-              }
+            "contract_price_policy": "keep_original_q_slot_price",
+            "original_contract_price": 15,
+            "market_price_lock": {
+              "rollback_key": "2026-w29-publication-v1-price-rollback",
+              "publication_version": 1,
+              "locked_at": "2026-07-12T14:10:00+08:00",
+              "calculated_price_before_lock": 55,
+              "locked_price": 15
             }
           },
           "is_qualifier_placeholder": false,
-          "pre_r1_substitution": {
-            "out_player_key": "WTA|ajla-tomljanovic",
-            "out_name_en": "Ajla TOMLJANOVIC",
-            "out_name_zh": "汤姆亚诺维奇",
-            "out_profile_id": "315232",
+          "pre_r1_substitution": null,
+          "qualifier_replacement": {
+            "placeholder_player_key": "WTA|qualifier-4",
+            "placeholder_name_en": "Qualifier Q1",
+            "placeholder_name_zh": "资格赛选手 Q1",
+            "placeholder_profile_id": "QUAL-1",
             "replacement_player_key": "WTA|hibino-nao",
             "replacement_name_en": "HIBINO Nao",
             "replacement_name_zh": "日比野菜绪",
             "replacement_profile_id": "320238",
             "draw_position": 2,
-            "reason": "pre_r1_withdrawal",
-            "source_url": "https://www.live-tennis.cn/zh/draw/ajax/31175/2026/device/0/horizontal/true",
-            "contract_price_policy": "keep_original_contract_price",
-            "original_contract_price": 55
-          },
-          "qualifier_replacement": null
+            "source_url": "https://wtafiles.wtatennis.com/pdf/draws/2026/1175/MDS.pdf"
+          }
         },
         {
           "player_key": "WTA|sapfo-sakellaridi",
@@ -2477,8 +2438,8 @@
           "expected_points": 23.49,
           "expected_round": "R32",
           "breakeven_round": "QF",
-          "price": 15,
-          "tier": "D",
+          "price": 55,
+          "tier": "C",
           "pricing_detail": {
             "formula_version": "build-prices-v1",
             "weights": {
@@ -2520,30 +2481,38 @@
             },
             "preview_formula_version": "preview-expected-round-v2",
             "preview_generated_at": "2026-07-13T02:07:10.470Z",
-            "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
+            "preview_notes": "Effective Elo bracket simulation was run, but the lucky-loser substitution keeps the original Tomljanovic contract price.",
             "expected_pricing_effective_elo": 1285.85,
+            "contract_price_policy": "keep_original_contract_price",
+            "inherited_from_player_key": "WTA|ajla-tomljanovic",
+            "inherited_from_name_en": "Ajla TOMLJANOVIC",
+            "inherited_from_name_zh": "汤姆亚诺维奇",
+            "original_contract_price": 55,
             "market_price_lock": {
               "rollback_key": "2026-w29-publication-v1-price-rollback",
               "publication_version": 1,
               "locked_at": "2026-07-12T14:10:00+08:00",
               "calculated_price_before_lock": 40,
-              "locked_price": 15
+              "locked_price": 55
             }
           },
           "is_qualifier_placeholder": false,
-          "pre_r1_substitution": null,
-          "qualifier_replacement": {
-            "placeholder_player_key": "WTA|qualifier-4",
-            "placeholder_name_en": "Qualifier Q1",
-            "placeholder_name_zh": "资格赛选手 Q1",
-            "placeholder_profile_id": "QUAL-1",
+          "pre_r1_substitution": {
+            "out_player_key": "WTA|ajla-tomljanovic",
+            "out_name_en": "Ajla TOMLJANOVIC",
+            "out_name_zh": "汤姆亚诺维奇",
+            "out_profile_id": "315232",
             "replacement_player_key": "WTA|miriana-tona",
             "replacement_name_en": "Miriana TONA",
             "replacement_name_zh": "托纳",
             "replacement_profile_id": "317541",
             "draw_position": 4,
-            "source_url": "https://www.live-tennis.cn/zh/draw/ajax/31175/2026/device/0/horizontal/true"
-          }
+            "reason": "lucky_loser",
+            "source_url": "https://wtafiles.wtatennis.com/pdf/draws/2026/1175/MDS.pdf",
+            "contract_price_policy": "keep_original_contract_price",
+            "original_contract_price": 55
+          },
+          "qualifier_replacement": null
         },
         {
           "player_key": "WTA|marianne-argyrokastriti",

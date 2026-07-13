@@ -241,6 +241,14 @@ export function parseDrawPlayersFromAjax(html, event, sourceUrl = '') {
     const countryCode = firstGrid[1].match(/class=playerFlag[^>]*alt=["']([^"']+)/i)?.[1] || null;
     const isBye = profileId === '0' || /^(bye|轮空)$/i.test(nameEnRaw) || nameZh === '轮空';
     const isQualifier = profileId === 'QUAL' || /qualifier|资格/.test(`${nameEnRaw} ${nameZh}`.toLowerCase());
+    const entrySign = seedLabel.toUpperCase();
+    const entryType = isQualifier || entrySign === 'Q'
+      ? 'qualifier'
+      : (entrySign === 'LL' || entrySign === 'L')
+        ? 'lucky_loser'
+        : entrySign === 'W'
+          ? 'wildcard'
+          : 'direct_acceptance';
 
     slots.push({
       draw_position: drawPosition,
@@ -250,7 +258,7 @@ export function parseDrawPlayersFromAjax(html, event, sourceUrl = '') {
       country_code: countryCode,
       seed_label: seedLabel,
       seed: /^\d+$/.test(seedLabel) ? Number(seedLabel) : null,
-      entry_type: isQualifier ? 'qualifier' : (seedLabel === 'W' ? 'wildcard' : 'direct_acceptance'),
+      entry_type: entryType,
       is_bye: isBye,
       is_qualifier_placeholder: isQualifier
     });

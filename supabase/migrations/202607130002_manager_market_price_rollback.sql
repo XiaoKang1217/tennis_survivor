@@ -1,6 +1,6 @@
--- Restore the Bastad + Athens market to publication v1 prices and reconcile every
--- still-effective contract with station-grant-first funding. The migration is
--- idempotent: contracts already at the target price are ignored on later runs.
+-- Restore the Bastad + Athens market to publication v1 prices, repair the Athens
+-- Q/LL placement identities, and reconcile every still-effective contract with
+-- station-grant-first funding. The migration is idempotent.
 
 begin;
 
@@ -31,12 +31,30 @@ values
   ('wta-2026-w29-athens-open', 'WTA|tereza-valentova', 95),
   ('wta-2026-w29-athens-open', 'WTA|alina-korneeva', 75),
   ('wta-2026-w29-athens-open', 'WTA|ann-li', 65),
-  ('wta-2026-w29-athens-open', 'WTA|miriana-tona', 15),
+  ('wta-2026-w29-athens-open', 'WTA|hibino-nao', 15),
+  ('wta-2026-w29-athens-open', 'WTA|miriana-tona', 55),
   ('wta-2026-w29-athens-open', 'WTA|lilli-tagger', 15),
   ('wta-2026-w29-athens-open', 'WTA|viktoria-morvayova', 15),
   ('wta-2026-w29-athens-open', 'WTA|elena-micic', 15),
   ('wta-2026-w29-athens-open', 'WTA|mina-hodzic', 15),
   ('wta-2026-w29-athens-open', 'WTA|ito-aoi', 15);
+
+create temporary table manager_athens_qualifier_identity_repairs (
+  placeholder_player_key text primary key,
+  replacement_player_key text not null
+) on commit drop;
+
+insert into manager_athens_qualifier_identity_repairs (
+  placeholder_player_key,
+  replacement_player_key
+)
+values
+  ('WTA|qualifier-4', 'WTA|hibino-nao'),
+  ('WTA|qualifier-6', 'WTA|lilli-tagger'),
+  ('WTA|qualifier-7', 'WTA|viktoria-morvayova'),
+  ('WTA|qualifier-14', 'WTA|elena-micic'),
+  ('WTA|qualifier-21', 'WTA|mina-hodzic'),
+  ('WTA|qualifier-29', 'WTA|ito-aoi');
 
 update public.tour_manager_event_players ep
 set price = target.target_price,
@@ -53,6 +71,138 @@ from manager_market_price_rollback_targets target
 where ep.event_key = target.event_key
   and ep.player_key = target.player_key
   and ep.price is distinct from target.target_price;
+
+-- Q contracts must follow their original draw slot, not whichever replacement
+-- player happened to be attached by the first refresh pass.
+update public.tour_manager_lineup_players lp
+set player_key = replacement.player_key,
+    tour = replacement.tour,
+    name_zh = replacement.name_zh,
+    name_en = replacement.name_en,
+    tier = public.tour_manager_price_tier(
+      lp.price,
+      replacement.tour,
+      event.level,
+      event.draw_size
+    ),
+    metadata = coalesce(lp.metadata, '{}'::jsonb) || jsonb_build_object(
+      'qualifier_replacement_to_player_key', replacement.player_key,
+      'qualifier_replacement_to_name_zh', replacement.name_zh,
+      'qualifier_replacement_to_name_en', replacement.name_en,
+      'qualifier_replacement_profile_id', replacement.profile_id,
+      'qualifier_replacement_draw_position', replacement.draw_position,
+      'qualifier_replacement_source_url', 'https://wtafiles.wtatennis.com/pdf/draws/2026/1175/MDS.pdf',
+      'qualifier_replacement_applied_at', now(),
+      'contract_price_policy', 'keep_original_q_slot_price',
+      'placement_identity_repair', jsonb_build_object(
+        'repair_key', '2026-w29-athens-q-ll-placement-repair',
+        'old_player_key', lp.player_key,
+        'new_player_key', replacement.player_key,
+        'applied_at', now()
+      )
+    )
+from manager_athens_qualifier_identity_repairs repair
+join public.tour_manager_event_players replacement
+  on replacement.event_key = 'wta-2026-w29-athens-open'
+ and replacement.player_key = repair.replacement_player_key
+join public.tour_manager_events event
+  on event.event_key = replacement.event_key
+where lp.event_key = replacement.event_key
+  and lp.is_active
+  and lp.metadata ->> 'qualifier_replacement_from_player_key' = repair.placeholder_player_key
+  and lp.player_key is distinct from repair.replacement_player_key
+  and exists (
+    select 1
+    from public.tour_manager_lineups lineup
+    where lineup.id = lp.lineup_id
+      and lineup.status in ('submitted', 'locked', 'settling')
+  );
+
+-- Tomljanovic's withdrawn contract belongs to LL Tona. This is separate from
+-- the first qualifier contract, which belongs to Hibino in the final draw.
+update public.tour_manager_lineup_players lp
+set player_key = replacement.player_key,
+    tour = replacement.tour,
+    name_zh = replacement.name_zh,
+    name_en = replacement.name_en,
+    tier = public.tour_manager_price_tier(
+      lp.price,
+      replacement.tour,
+      event.level,
+      event.draw_size
+    ),
+    metadata = coalesce(lp.metadata, '{}'::jsonb) || jsonb_build_object(
+      'substitution_reason', 'lucky_loser',
+      'substitution_source_url', 'https://wtafiles.wtatennis.com/pdf/draws/2026/1175/MDS.pdf',
+      'substitution_applied_at', now(),
+      'replacement_player_key', replacement.player_key,
+      'replacement_name_zh', replacement.name_zh,
+      'replacement_name_en', replacement.name_en,
+      'replacement_profile_id', replacement.profile_id,
+      'replacement_draw_position', replacement.draw_position,
+      'contract_price_policy', 'keep_original_contract_price',
+      'placement_identity_repair', jsonb_build_object(
+        'repair_key', '2026-w29-athens-q-ll-placement-repair',
+        'old_player_key', lp.player_key,
+        'new_player_key', replacement.player_key,
+        'applied_at', now()
+      )
+    )
+from public.tour_manager_event_players replacement
+join public.tour_manager_events event
+  on event.event_key = replacement.event_key
+where replacement.event_key = 'wta-2026-w29-athens-open'
+  and replacement.player_key = 'WTA|miriana-tona'
+  and lp.event_key = replacement.event_key
+  and lp.is_active
+  and lp.metadata ->> 'substituted_from_player_key' = 'WTA|ajla-tomljanovic'
+  and lp.player_key is distinct from replacement.player_key
+  and exists (
+    select 1
+    from public.tour_manager_lineups lineup
+    where lineup.id = lp.lineup_id
+      and lineup.status in ('submitted', 'locked', 'settling')
+  );
+
+insert into public.tour_manager_player_substitutions (
+  station_key, event_key, out_player_key, in_player_key, reason, source_url, metadata
+)
+select
+  '2026-w29-bastad-athens',
+  'wta-2026-w29-athens-open',
+  repair.placeholder_player_key,
+  repair.replacement_player_key,
+  'qualifier_placement',
+  'https://wtafiles.wtatennis.com/pdf/draws/2026/1175/MDS.pdf',
+  jsonb_build_object('repair_key', '2026-w29-athens-q-ll-placement-repair')
+from manager_athens_qualifier_identity_repairs repair
+on conflict (event_key, out_player_key)
+do update set
+  in_player_key = excluded.in_player_key,
+  reason = excluded.reason,
+  source_url = excluded.source_url,
+  metadata = excluded.metadata,
+  effective_at = now();
+
+insert into public.tour_manager_player_substitutions (
+  station_key, event_key, out_player_key, in_player_key, reason, source_url, metadata
+)
+values (
+  '2026-w29-bastad-athens',
+  'wta-2026-w29-athens-open',
+  'WTA|ajla-tomljanovic',
+  'WTA|miriana-tona',
+  'lucky_loser',
+  'https://wtafiles.wtatennis.com/pdf/draws/2026/1175/MDS.pdf',
+  jsonb_build_object('repair_key', '2026-w29-athens-q-ll-placement-repair')
+)
+on conflict (event_key, out_player_key)
+do update set
+  in_player_key = excluded.in_player_key,
+  reason = excluded.reason,
+  source_url = excluded.source_url,
+  metadata = excluded.metadata,
+  effective_at = now();
 
 do $$
 declare
@@ -339,6 +489,37 @@ $$;
 
 do $$
 begin
+  if exists (
+    select 1
+    from public.tour_manager_lineup_players lp
+    join public.tour_manager_lineups lineup on lineup.id = lp.lineup_id
+    join manager_athens_qualifier_identity_repairs repair
+      on repair.placeholder_player_key = lp.metadata ->> 'qualifier_replacement_from_player_key'
+    where lp.event_key = 'wta-2026-w29-athens-open'
+      and lineup.station_key = '2026-w29-bastad-athens'
+      and lineup.season = 2026
+      and lineup.status in ('submitted', 'locked', 'settling')
+      and lp.is_active
+      and lp.player_key is distinct from repair.replacement_player_key
+  ) then
+    raise exception 'market_price_rollback_qualifier_identity_verification_failed';
+  end if;
+
+  if exists (
+    select 1
+    from public.tour_manager_lineup_players lp
+    join public.tour_manager_lineups lineup on lineup.id = lp.lineup_id
+    where lp.event_key = 'wta-2026-w29-athens-open'
+      and lineup.station_key = '2026-w29-bastad-athens'
+      and lineup.season = 2026
+      and lineup.status in ('submitted', 'locked', 'settling')
+      and lp.is_active
+      and lp.metadata ->> 'substituted_from_player_key' = 'WTA|ajla-tomljanovic'
+      and lp.player_key is distinct from 'WTA|miriana-tona'
+  ) then
+    raise exception 'market_price_rollback_lucky_loser_identity_verification_failed';
+  end if;
+
   if exists (
     select 1
     from manager_market_price_rollback_targets target
