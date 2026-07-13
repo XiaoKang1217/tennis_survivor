@@ -19,7 +19,7 @@
   "submission_status": "open",
   "manual_schedule_windows": true,
   "submission_opens_at": "2026-07-12T14:10:00+08:00",
-  "schedule_status": "pending",
+  "schedule_status": "partial",
   "main_draw_first_match_at": "2026-07-13T11:00:00.000Z",
   "submission_cutoff_at": "2026-07-13T08:30:00.000Z",
   "submission_closes_at": "2026-07-13T08:30:00.000Z",
@@ -113,7 +113,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-12T06:46:38.968Z",
+        "preview_generated_at": "2026-07-13T01:38:05.869Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1924.89
       },
@@ -193,7 +193,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-12T06:46:38.968Z",
+        "preview_generated_at": "2026-07-13T01:38:05.869Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1634.71
       },
@@ -273,7 +273,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-12T06:46:38.968Z",
+        "preview_generated_at": "2026-07-13T01:38:05.869Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1717.81
       },
@@ -353,7 +353,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-12T06:46:38.968Z",
+        "preview_generated_at": "2026-07-13T01:38:05.869Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1761.69
       },
@@ -374,7 +374,7 @@
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20316/2026/device/0/horizontal/true",
       "player_key": "ATP|vilius-gaubas",
-      "rank": 126,
+      "rank": 128,
       "points": 508,
       "overall_elo": 1581,
       "surface_elo": 1534.6,
@@ -433,7 +433,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-12T06:46:38.968Z",
+        "preview_generated_at": "2026-07-13T01:38:05.869Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1581.35
       },
@@ -513,7 +513,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-12T06:46:38.968Z",
+        "preview_generated_at": "2026-07-13T01:38:05.869Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1467.05
       },
@@ -593,7 +593,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-12T06:46:38.968Z",
+        "preview_generated_at": "2026-07-13T01:38:05.869Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1762.13
       },
@@ -673,7 +673,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-12T06:46:38.968Z",
+        "preview_generated_at": "2026-07-13T01:38:05.869Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1857.23
       },
@@ -753,7 +753,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-12T06:46:38.968Z",
+        "preview_generated_at": "2026-07-13T01:38:05.869Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1706.63
       },
@@ -833,7 +833,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-12T06:46:38.968Z",
+        "preview_generated_at": "2026-07-13T01:38:05.869Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -35
       },
@@ -854,8 +854,8 @@
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20316/2026/device/0/horizontal/true",
       "player_key": "ATP|jan-choinski",
-      "rank": 88,
-      "points": 714,
+      "rank": 75,
+      "points": 775,
       "overall_elo": 1686.4,
       "surface_elo": 1652.4,
       "peak_elo": 1695.7,
@@ -913,7 +913,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-12T06:46:38.968Z",
+        "preview_generated_at": "2026-07-13T01:38:05.869Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1729.38
       },
@@ -934,7 +934,7 @@
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20316/2026/device/0/horizontal/true",
       "player_key": "ATP|nikoloz-basilashvili",
-      "rank": 133,
+      "rank": 135,
       "points": 474,
       "overall_elo": 1671.6,
       "surface_elo": 1635.2,
@@ -993,7 +993,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-12T06:46:38.968Z",
+        "preview_generated_at": "2026-07-13T01:38:05.869Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1651.11
       },
@@ -1014,7 +1014,7 @@
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20316/2026/device/0/horizontal/true",
       "player_key": "ATP|sebastian-ofner",
-      "rank": 123,
+      "rank": 125,
       "points": 515,
       "overall_elo": 1713.2,
       "surface_elo": 1680.4,
@@ -1073,7 +1073,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-12T06:46:38.968Z",
+        "preview_generated_at": "2026-07-13T01:38:05.869Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1725.86
       },
@@ -1153,7 +1153,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-12T06:46:38.968Z",
+        "preview_generated_at": "2026-07-13T01:38:05.869Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1797.84
       },
@@ -1233,7 +1233,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-12T06:46:38.968Z",
+        "preview_generated_at": "2026-07-13T01:38:05.869Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1736.74
       },
@@ -1313,7 +1313,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-12T06:46:38.968Z",
+        "preview_generated_at": "2026-07-13T01:38:05.870Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -35
       },
@@ -1393,7 +1393,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-12T06:46:38.968Z",
+        "preview_generated_at": "2026-07-13T01:38:05.870Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1789.38
       },
@@ -1473,7 +1473,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-12T06:46:38.968Z",
+        "preview_generated_at": "2026-07-13T01:38:05.870Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -35
       },
@@ -1494,7 +1494,7 @@
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20316/2026/device/0/horizontal/true",
       "player_key": "ATP|stefano-travaglia",
-      "rank": 149,
+      "rank": 150,
       "points": 385,
       "overall_elo": 1570.3,
       "surface_elo": 1527.5,
@@ -1553,7 +1553,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-12T06:46:38.968Z",
+        "preview_generated_at": "2026-07-13T01:38:05.870Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1534.64
       },
@@ -1633,7 +1633,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-12T06:46:38.968Z",
+        "preview_generated_at": "2026-07-13T01:38:05.870Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -35
       },
@@ -1713,7 +1713,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-12T06:46:38.968Z",
+        "preview_generated_at": "2026-07-13T01:38:05.870Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1871.08
       },
@@ -1793,7 +1793,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-12T06:46:38.968Z",
+        "preview_generated_at": "2026-07-13T01:38:05.870Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1807.14
       },
@@ -1873,7 +1873,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-12T06:46:38.968Z",
+        "preview_generated_at": "2026-07-13T01:38:05.870Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1508.52
       },
@@ -1953,7 +1953,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-12T06:46:38.968Z",
+        "preview_generated_at": "2026-07-13T01:38:05.870Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1638.5
       },
@@ -1974,7 +1974,7 @@
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20316/2026/device/0/horizontal/true",
       "player_key": "ATP|grigor-dimitrov",
-      "rank": 145,
+      "rank": 146,
       "points": 407,
       "overall_elo": 1743.5,
       "surface_elo": 1647.4,
@@ -2033,7 +2033,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-12T06:46:38.969Z",
+        "preview_generated_at": "2026-07-13T01:38:05.870Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1685.98
       },
@@ -2113,7 +2113,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-12T06:46:38.969Z",
+        "preview_generated_at": "2026-07-13T01:38:05.870Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1735.43
       },
@@ -2193,7 +2193,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-12T06:46:38.969Z",
+        "preview_generated_at": "2026-07-13T01:38:05.870Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1590.76
       },
@@ -2273,7 +2273,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-12T06:46:38.969Z",
+        "preview_generated_at": "2026-07-13T01:38:05.870Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1926.98
       },
@@ -2288,8 +2288,8 @@
     "form": 0.15,
     "manual": 0.05,
     "formula_version": "build-prices-v1",
-    "generated_at": "2026-07-12T06:46:38.969Z",
+    "generated_at": "2026-07-13T01:38:05.870Z",
     "preview_formula_version": "preview-expected-round-v2",
-    "preview_generated_at": "2026-07-12T06:46:38.969Z"
+    "preview_generated_at": "2026-07-13T01:38:05.870Z"
   }
 }
