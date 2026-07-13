@@ -22,6 +22,7 @@ function loadFunction(name, nextName, extras = {}) {
 test('qualifier placements retain their original Q slot in display names', () => {
   const originalName = loadFunction('managerOriginalNameFromMeta', 'managerDisplayNameWithOriginal');
   const displayName = loadFunction('managerDisplayNameWithOriginal', 'managerPlayerDisplayName');
+  const replacementInfo = loadFunction('managerCurrentReplacementInfo', 'managerPublicConfigPlayerName');
 
   assert.equal(
     originalName({
@@ -42,7 +43,36 @@ test('qualifier placements retain their original Q slot in display names', () =>
   assert.equal(displayName('塔格尔', '资格赛选手 Q2'), '塔格尔（原资格赛选手 Q2）');
   assert.match(
     html,
-    /class="manager-name" title="'\+esc\(displayName\)\+'">'\+esc\(displayName\)\+'<\/div>/
+    /class="manager-origin" title="原为 '\+esc\(p\.originalName\)\+'">原为 '\+esc\(p\.originalName\)/
+  );
+  assert.match(html, /manager-player-title-line\{display:flex;flex-direction:column;align-items:flex-start/);
+  assert.equal(
+    replacementInfo({ event: { players: [{
+      player_key: 'WTA|lilli-tagger',
+      name_zh: '塔格尔',
+      name_en: 'Lilli TAGGER',
+      qualifier_replacement: {
+        placeholder_player_key: 'WTA|qualifier-6',
+        placeholder_name_zh: '资格赛选手 Q2',
+        replacement_player_key: 'WTA|lilli-tagger',
+        replacement_name_zh: '塔格尔'
+      }
+    }] } }, '', '塔格尔', {}).originalName,
+    '资格赛选手 Q2'
+  );
+  assert.equal(
+    replacementInfo({ event: { players: [{
+      player_key: 'WTA|miriana-tona',
+      name_zh: '托纳',
+      name_en: 'Miriana TONA',
+      pre_r1_substitution: {
+        out_player_key: 'WTA|ajla-tomljanovic',
+        out_name_zh: '汤姆亚诺维奇',
+        replacement_player_key: 'WTA|miriana-tona',
+        replacement_name_zh: '托纳'
+      }
+    }] } }, '', '托纳', {}).originalName,
+    '汤姆亚诺维奇'
   );
 });
 

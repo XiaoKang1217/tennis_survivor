@@ -341,7 +341,7 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 .manager-avatar img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block;position:relative;z-index:1;background:#fffdf8}
 .manager-avatar.fullbody img{object-fit:contain;object-position:center bottom;background:#fff8e8}
 .manager-row-main{min-width:0}
-.manager-player-title-line{display:flex;align-items:baseline;gap:2px 8px;min-width:0;max-width:100%;flex-wrap:wrap}
+.manager-player-title-line{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-width:0;max-width:100%}
 .manager-name{font-size:15px;font-weight:950;color:#2f2a22;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
 .manager-origin{font-size:11px;color:#7b6b55;font-weight:850;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:0 1 auto;min-width:0}
 .manager-sub{font-size:11px;color:#756651;font-weight:850;margin-top:3px;display:flex;gap:5px;flex-wrap:wrap}
@@ -1757,7 +1757,8 @@ function managerPlayerDisplayName(p,withOriginal){
 function managerPlayerTitleHtml(p){
   p=p||{};
   var displayName=managerPlayerDisplayName(p,true);
-  return '<div class="manager-player-title-line"><div class="manager-name" title="'+esc(displayName)+'">'+esc(displayName)+'</div></div>';
+  var origin=p.originalName?'<span class="manager-origin" title="原为 '+esc(p.originalName)+'">原为 '+esc(p.originalName)+'</span>':'';
+  return '<div class="manager-player-title-line"><div class="manager-name" title="'+esc(displayName)+'">'+esc(p.name||'球员')+'</div>'+origin+'</div>';
 }
 function managerCurrentReplacementInfo(pack,key,name,meta){
   var list=pack&&pack.event&&Array.isArray(pack.event.players)?pack.event.players:[];
@@ -1768,7 +1769,10 @@ function managerCurrentReplacementInfo(pack,key,name,meta){
       var oldNames=[sub.out_name_zh,sub.out_name_en,raw.pricing_detail&&raw.pricing_detail.inherited_from_name_zh,raw.pricing_detail&&raw.pricing_detail.inherited_from_name_en].filter(Boolean);
       var oldKeys=[sub.out_player_key,raw.pricing_detail&&raw.pricing_detail.inherited_from_player_key].filter(Boolean);
       var oldProfiles=[sub.out_profile_id].filter(Boolean);
-      if(oldKeys.indexOf(key)>=0||oldNames.indexOf(name)>=0||oldProfiles.indexOf(String(meta.profile_id||''))>=0){
+      var newNames=[sub.replacement_name_zh,sub.replacement_name_en,raw.name_zh,raw.name_en].filter(Boolean);
+      var newKeys=[sub.replacement_player_key,raw.player_key].filter(Boolean);
+      var newProfiles=[sub.replacement_profile_id,raw.profile_id].filter(Boolean).map(String);
+      if(oldKeys.indexOf(key)>=0||oldNames.indexOf(name)>=0||oldProfiles.indexOf(String(meta.profile_id||''))>=0||newKeys.indexOf(key)>=0||newNames.indexOf(name)>=0||newProfiles.indexOf(String(meta.profile_id||''))>=0){
         return {raw:raw,originalName:oldNames[0]||name||key,replacementName:sub.replacement_name_zh||raw.name_zh||raw.name||sub.replacement_name_en||raw.name_en||'球员',replacementNameEn:sub.replacement_name_en||raw.name_en||'',replacementPlayerKey:sub.replacement_player_key||raw.player_key||'',replacementProfileId:sub.replacement_profile_id||raw.profile_id||'',replacementPhotoUrl:raw.photo_url||raw.profile_image_url||'',replacementFullBodyUrl:raw.full_body_url||raw.body_url||raw.photo_full_url||''};
       }
     }
@@ -1777,7 +1781,10 @@ function managerCurrentReplacementInfo(pack,key,name,meta){
       var qOldNames=[q.placeholder_name_zh,q.placeholder_name_en].filter(Boolean);
       var qOldKeys=[q.placeholder_player_key].filter(Boolean);
       var qOldProfiles=[q.placeholder_profile_id].filter(Boolean);
-      if(qOldKeys.indexOf(key)>=0||qOldNames.indexOf(name)>=0||qOldProfiles.indexOf(String(meta.profile_id||''))>=0){
+      var qNewNames=[q.replacement_name_zh,q.replacement_name_en,raw.name_zh,raw.name_en].filter(Boolean);
+      var qNewKeys=[q.replacement_player_key,raw.player_key].filter(Boolean);
+      var qNewProfiles=[q.replacement_profile_id,raw.profile_id].filter(Boolean).map(String);
+      if(qOldKeys.indexOf(key)>=0||qOldNames.indexOf(name)>=0||qOldProfiles.indexOf(String(meta.profile_id||''))>=0||qNewKeys.indexOf(key)>=0||qNewNames.indexOf(name)>=0||qNewProfiles.indexOf(String(meta.profile_id||''))>=0){
         return {raw:raw,originalName:qOldNames[0]||name||key,replacementName:q.replacement_name_zh||raw.name_zh||raw.name||q.replacement_name_en||raw.name_en||'球员',replacementNameEn:q.replacement_name_en||raw.name_en||'',replacementPlayerKey:q.replacement_player_key||raw.player_key||'',replacementProfileId:q.replacement_profile_id||raw.profile_id||'',replacementPhotoUrl:raw.photo_url||raw.profile_image_url||'',replacementFullBodyUrl:raw.full_body_url||raw.body_url||raw.photo_full_url||''};
       }
     }
