@@ -9,6 +9,8 @@ lock table public.tour_manager_lineups in share row exclusive mode;
 lock table public.tour_manager_lineup_players in share row exclusive mode;
 lock table public.tour_manager_wallets in share row exclusive mode;
 lock table public.tour_manager_wallet_ledger in share row exclusive mode;
+lock table public.tour_manager_settlements in share row exclusive mode;
+lock table public.tour_manager_player_substitutions in share row exclusive mode;
 
 create temporary table manager_market_price_rollback_targets (
   event_key text not null,
@@ -109,13 +111,17 @@ join public.tour_manager_events event
   on event.event_key = replacement.event_key
 where lp.event_key = replacement.event_key
   and lp.is_active
-  and lp.metadata ->> 'qualifier_replacement_from_player_key' = repair.placeholder_player_key
+  and coalesce(
+        nullif(lp.metadata ->> 'qualifier_replacement_from_player_key', ''),
+        nullif(lp.metadata ->> 'player_key', ''),
+        lp.player_key
+      ) = repair.placeholder_player_key
   and lp.player_key is distinct from repair.replacement_player_key
   and exists (
     select 1
     from public.tour_manager_lineups lineup
     where lineup.id = lp.lineup_id
-      and lineup.status in ('submitted', 'locked', 'settling')
+      and lineup.status in ('submitted', 'locked', 'settling', 'settled')
   );
 
 -- Tomljanovic's withdrawn contract belongs to LL Tona. This is separate from
@@ -155,14 +161,58 @@ where replacement.event_key = 'wta-2026-w29-athens-open'
   and replacement.player_key = 'WTA|miriana-tona'
   and lp.event_key = replacement.event_key
   and lp.is_active
-  and lp.metadata ->> 'substituted_from_player_key' = 'WTA|ajla-tomljanovic'
+  and coalesce(
+        nullif(lp.metadata ->> 'substituted_from_player_key', ''),
+        nullif(lp.metadata ->> 'player_key', ''),
+        lp.player_key
+      ) = 'WTA|ajla-tomljanovic'
   and lp.player_key is distinct from replacement.player_key
   and exists (
     select 1
     from public.tour_manager_lineups lineup
     where lineup.id = lp.lineup_id
-      and lineup.status in ('submitted', 'locked', 'settling')
+      and lineup.status in ('submitted', 'locked', 'settling', 'settled')
   );
+
+-- Keep any already-created settlement rows aligned with the repaired contract.
+update public.tour_manager_settlements settlement
+set player_key = contract.player_key,
+    source = coalesce(settlement.source, '{}'::jsonb) || jsonb_build_object(
+      'placement_identity_repair', contract.metadata -> 'placement_identity_repair'
+    )
+from public.tour_manager_lineup_players contract
+join public.tour_manager_lineups lineup on lineup.id = contract.lineup_id
+where settlement.contract_id = contract.id
+  and contract.event_key = 'wta-2026-w29-athens-open'
+  and lineup.station_key = '2026-w29-bastad-athens'
+  and lineup.season = 2026
+  and lineup.status in ('submitted', 'locked', 'settling', 'settled')
+  and contract.metadata ? 'placement_identity_repair'
+  and settlement.player_key is distinct from contract.player_key;
+
+-- Point ledgers do not store contract_id, so bind them to their settlement by
+-- lineup, event, round and match before changing the displayed player identity.
+update public.tour_manager_wallet_ledger ledger
+set metadata = coalesce(ledger.metadata, '{}'::jsonb) || jsonb_build_object(
+      'player_key', contract.player_key,
+      'placement_identity_repair', contract.metadata -> 'placement_identity_repair'
+    )
+from public.tour_manager_settlements settlement
+join public.tour_manager_lineup_players contract on contract.id = settlement.contract_id
+join public.tour_manager_lineups lineup on lineup.id = contract.lineup_id
+where ledger.lineup_id = settlement.lineup_id
+  and ledger.station_key = lineup.station_key
+  and ledger.type = 'player_points_delta'
+  and ledger.metadata ->> 'event_key' = settlement.event_key
+  and ledger.metadata ->> 'round_key' = settlement.round_key
+  and coalesce(ledger.metadata ->> 'match_key', '') = coalesce(settlement.source ->> 'match_key', '')
+  and ledger.metadata ->> 'player_key' = contract.metadata #>> '{placement_identity_repair,old_player_key}'
+  and contract.event_key = 'wta-2026-w29-athens-open'
+  and lineup.station_key = '2026-w29-bastad-athens'
+  and lineup.season = 2026
+  and lineup.status in ('submitted', 'locked', 'settling', 'settled')
+  and contract.metadata ? 'placement_identity_repair'
+  and ledger.metadata ->> 'player_key' is distinct from contract.player_key;
 
 insert into public.tour_manager_player_substitutions (
   station_key, event_key, out_player_key, in_player_key, reason, source_url, metadata
@@ -226,6 +276,8 @@ declare
   v_station_used_after_refund int;
   v_new_wallet_used int;
   v_wallet_used_after_refund int;
+  v_principal_shortfall int;
+  v_balance_after_compensation int;
 begin
   for v_lineup in
     select l.*
@@ -337,12 +389,12 @@ begin
       greatest(coalesce(v_lineup.station_grant, 0) - v_station_used_after_refund, 0)
     );
     v_remaining := v_charge - v_station_charge;
-    v_wallet_delta := v_wallet_release - v_remaining;
-
-    if v_balance_before + v_wallet_delta < 0 then
-      raise exception 'market_price_rollback_insufficient_principal:user=% lineup=% need=% balance=%',
-        v_lineup.user_id, v_lineup.id, -v_wallet_delta, v_balance_before;
-    end if;
+    -- An operator-caused repricing must never make a wallet negative or roll
+    -- back every other user's correction. Cover only the otherwise-unpayable
+    -- principal portion, record it separately, then complete the charge.
+    v_principal_shortfall := greatest(v_remaining - v_balance_after_refund, 0);
+    v_balance_after_compensation := v_balance_after_refund + v_principal_shortfall;
+    v_wallet_delta := v_wallet_release + v_principal_shortfall - v_remaining;
 
     v_new_lineup_cost := v_lineup_cost_after_refund + v_charge;
     v_new_station_used := v_station_used_after_refund + v_station_charge;
@@ -443,6 +495,36 @@ begin
       );
     end if;
 
+    if v_principal_shortfall > 0 then
+      insert into public.tour_manager_wallet_ledger (
+        user_id, season, station_key, lineup_id, type, amount,
+        balance_after, description, metadata
+      )
+      values (
+        v_lineup.user_id,
+        v_lineup.season,
+        v_lineup.station_key,
+        v_lineup.id,
+        'market_price_rollback_shortfall_compensation',
+        v_principal_shortfall,
+        v_balance_after_compensation,
+        '市场价格回退垫付',
+        jsonb_build_object(
+          'rollback_key', '2026-w29-publication-v1-price-rollback',
+          'publication_version', 1,
+          'wallet_delta', v_principal_shortfall,
+          'principal_shortfall', v_principal_shortfall,
+          'reason', 'operator_price_rollback_nonnegative_wallet_guard',
+          'wallet_balance_before', v_balance_after_refund,
+          'wallet_balance_after', v_balance_after_compensation,
+          'cost', 0,
+          'gross', 0,
+          'net', 0,
+          'exclude_from_income', true
+        )
+      );
+    end if;
+
     if v_charge > 0 then
       insert into public.tour_manager_wallet_ledger (
         user_id, season, station_key, lineup_id, type, amount,
@@ -467,13 +549,15 @@ begin
           'station_grant_charge', v_station_charge,
           'principal_refund', 0,
           'principal_charge', v_remaining,
+          'principal_charge_user_funded', v_remaining - v_principal_shortfall,
+          'operator_shortfall_compensation', v_principal_shortfall,
           'lineup_cost_before', v_lineup_cost_after_refund,
           'lineup_cost_after', v_new_lineup_cost,
           'station_grant_used_before', v_station_used_after_refund,
           'station_grant_used_after', v_new_station_used,
           'wallet_used_before', v_wallet_used_after_refund,
           'wallet_used_after', v_new_wallet_used,
-          'wallet_balance_before', v_balance_after_refund,
+          'wallet_balance_before', v_balance_after_compensation,
           'wallet_balance_after', v_balance_after,
           'cost', v_charge,
           'gross', 0,
@@ -494,12 +578,21 @@ begin
     from public.tour_manager_lineup_players lp
     join public.tour_manager_lineups lineup on lineup.id = lp.lineup_id
     join manager_athens_qualifier_identity_repairs repair
-      on repair.placeholder_player_key = lp.metadata ->> 'qualifier_replacement_from_player_key'
+      on repair.placeholder_player_key = coalesce(
+           nullif(lp.metadata ->> 'qualifier_replacement_from_player_key', ''),
+           nullif(lp.metadata ->> 'player_key', ''),
+           lp.player_key
+         )
     where lp.event_key = 'wta-2026-w29-athens-open'
       and lineup.station_key = '2026-w29-bastad-athens'
       and lineup.season = 2026
-      and lineup.status in ('submitted', 'locked', 'settling')
+      and lineup.status in ('submitted', 'locked', 'settling', 'settled')
       and lp.is_active
+      and coalesce(
+            nullif(lp.metadata ->> 'qualifier_replacement_from_player_key', ''),
+            nullif(lp.metadata ->> 'player_key', ''),
+            lp.player_key
+          ) = repair.placeholder_player_key
       and lp.player_key is distinct from repair.replacement_player_key
   ) then
     raise exception 'market_price_rollback_qualifier_identity_verification_failed';
@@ -512,12 +605,30 @@ begin
     where lp.event_key = 'wta-2026-w29-athens-open'
       and lineup.station_key = '2026-w29-bastad-athens'
       and lineup.season = 2026
-      and lineup.status in ('submitted', 'locked', 'settling')
+      and lineup.status in ('submitted', 'locked', 'settling', 'settled')
       and lp.is_active
-      and lp.metadata ->> 'substituted_from_player_key' = 'WTA|ajla-tomljanovic'
+      and coalesce(
+            nullif(lp.metadata ->> 'substituted_from_player_key', ''),
+            nullif(lp.metadata ->> 'player_key', ''),
+            lp.player_key
+          ) = 'WTA|ajla-tomljanovic'
       and lp.player_key is distinct from 'WTA|miriana-tona'
   ) then
     raise exception 'market_price_rollback_lucky_loser_identity_verification_failed';
+  end if;
+
+  if exists (
+    select 1
+    from public.tour_manager_settlements settlement
+    join public.tour_manager_lineup_players contract on contract.id = settlement.contract_id
+    join public.tour_manager_lineups lineup on lineup.id = contract.lineup_id
+    where contract.event_key = 'wta-2026-w29-athens-open'
+      and lineup.station_key = '2026-w29-bastad-athens'
+      and lineup.season = 2026
+      and contract.metadata ? 'placement_identity_repair'
+      and settlement.player_key is distinct from contract.player_key
+  ) then
+    raise exception 'market_price_rollback_settlement_identity_verification_failed';
   end if;
 
   if exists (
