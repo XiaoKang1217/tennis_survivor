@@ -28,6 +28,7 @@ const sourceRef = gitRef || args['source-ref'] || process.env.GITHUB_SHA || 'wor
 const writeFile = Boolean(args['write-file']);
 const strictReady = Boolean(args['strict-ready']);
 const strictOpen = Boolean(args['strict-open']);
+const requireTable = Boolean(args['require-table']);
 const allowBackfill = Boolean(args['allow-backfill']) || Boolean(gitRef) || publicationKind === 'manual_backfill';
 const serviceEnabled = Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY) && !args['dry-run'];
 
@@ -71,6 +72,12 @@ if (serviceEnabled) {
     databaseRow = rows[0] || null;
   } catch (error) {
     if (!missingSnapshotTable(error)) throw error;
+    if (requireTable) {
+      throw new Error(
+        'Snapshot table is not available. Apply migration '
+        + '202607130001_manager_station_publication_snapshots.sql before running this backfill.'
+      );
+    }
     console.warn(`Snapshot table is not available yet; run migration 202607130001. ${error.message}`);
   }
 }

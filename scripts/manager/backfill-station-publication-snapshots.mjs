@@ -21,6 +21,7 @@ for (const manifest of manifests) {
     publisher,
     '--manifest', manifest,
     '--write-file',
+    ...(args['require-table'] ? ['--require-table'] : []),
     ...(args['dry-run'] ? ['--dry-run'] : [])
   ]);
 }

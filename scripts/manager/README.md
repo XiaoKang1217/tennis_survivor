@@ -55,7 +55,7 @@ Current station selection is still manual: edit `data/manager/active_events.json
    - ATP official media aliases are Cloudflare-protected from direct scripts, so ATP rows stay pending unless already manually cached.
 
 `.github/workflows/update_manager.yml` runs the manager refresh at 06:00 Asia/Shanghai each day:
-`refresh-current-station-data.mjs --write --sync`, then `maybe-build-prices.mjs`, then the current-station publisher and idempotent historical publication backfill, then `apply-qualifier-placements.mjs`, then `apply-pre-r1-substitutions.mjs`, then `settle-current-or-previous-station.mjs`, then `validate-station.mjs`.
+`refresh-current-station-data.mjs --write --sync`, then `maybe-build-prices.mjs`, then the current-station publisher, then `apply-qualifier-placements.mjs`, then `apply-pre-r1-substitutions.mjs`, then `settle-current-or-previous-station.mjs`, then `validate-station.mjs`.
 
 `settle-current-or-previous-station.mjs` keeps settlement on `previous_station` while its finals are incomplete. It syncs and settles the previous station first; only after all previous-station finals are completed does it continue to the current active station. This preserves delayed finals and combo settlement during week-to-week station transitions.
 
@@ -124,7 +124,7 @@ Use `market_amendment` for a formally republished market or price correction. Hi
 SUPABASE_SERVICE_ROLE_KEY=... /Users/candicekang/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node scripts/manager/backfill-station-publication-snapshots.mjs
 ```
 
-The daily manager workflow also runs this backfill. If the migration has not been applied it only warns; after the table exists, the next workflow run inserts every missing version and verifies every existing hash.
+Historical backfill is intentionally not part of the daily manager workflow. After applying the migration, run the `Backfill Manager Publication Snapshots` workflow once from GitHub Actions. It requires the table to exist and fails clearly if the migration is missing. The daily workflow only checks or inserts the current station publication.
 
 ## Next Station Update Routine
 
