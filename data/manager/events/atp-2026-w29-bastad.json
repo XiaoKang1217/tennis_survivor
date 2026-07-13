@@ -54,13 +54,13 @@
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20316/2026/device/0/horizontal/true",
       "player_key": "ATP|andrey-rublev",
-      "rank": 16,
-      "points": 2230,
+      "rank": 20,
+      "points": 2130,
       "overall_elo": 1902.2,
       "surface_elo": 1872.4,
       "peak_elo": 2122.1,
       "peak_month": "2021-04",
-      "expected_points": 119.93,
+      "expected_points": 120.05,
       "expected_round": "SF",
       "breakeven_round": "F",
       "scores": {
@@ -100,8 +100,8 @@
         "peak_month": "2021-04",
         "peak_close_score": 89.64,
         "peak_recency_score": 0,
-        "draw_bonus_raw": -1.26,
-        "draw_actual_expected_points": 124.5,
+        "draw_bonus_raw": -1.27,
+        "draw_actual_expected_points": 124.49,
         "draw_same_bucket_baseline_points": 125.76,
         "draw_bucket": "seed_bye",
         "draw_baseline_sample_count": 4,
@@ -113,7 +113,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:05.869Z",
+        "preview_generated_at": "2026-07-13T02:07:10.337Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1924.89
       },
@@ -134,23 +134,23 @@
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20316/2026/device/0/horizontal/true",
       "player_key": "ATP|nicolai-budkov-kjaer",
-      "rank": 118,
-      "points": 530,
+      "rank": 129,
+      "points": 498,
       "overall_elo": 1620.1,
       "surface_elo": 1582.2,
       "peak_elo": 1749.3,
       "peak_month": "2025-10",
-      "expected_points": 12.7,
+      "expected_points": 12.6,
       "expected_round": "R32",
       "breakeven_round": "QF",
       "scores": {
-        "base": 29.63,
+        "base": 27.04,
         "surface": 38.15,
         "draw": 11.11,
         "form": 89.2,
         "manual": 0
       },
-      "total_score": 35.51,
+      "total_score": 34.6,
       "price": 30,
       "tier": "D",
       "pricing_detail": {
@@ -193,9 +193,9 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:05.869Z",
+        "preview_generated_at": "2026-07-13T02:07:10.337Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
-        "expected_pricing_effective_elo": 1634.71
+        "expected_pricing_effective_elo": 1633.16
       },
       "qualifier_replacement": null,
       "pre_r1_substitution": null
@@ -214,13 +214,13 @@
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20316/2026/device/0/horizontal/true",
       "player_key": "ATP|andrea-pellegrino",
-      "rank": 138,
-      "points": 459,
+      "rank": 142,
+      "points": 421,
       "overall_elo": 1673.6,
       "surface_elo": 1653.5,
       "peak_elo": 1681.8,
       "peak_month": "2026-06",
-      "expected_points": 24.85,
+      "expected_points": 24.95,
       "expected_round": "R32",
       "breakeven_round": "QF",
       "scores": {
@@ -273,7 +273,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:05.869Z",
+        "preview_generated_at": "2026-07-13T02:07:10.337Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1717.81
       },
@@ -294,23 +294,23 @@
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20316/2026/device/0/horizontal/true",
       "player_key": "ATP|jesper-de-jong",
-      "rank": 73,
-      "points": 808,
+      "rank": 100,
+      "points": 643,
       "overall_elo": 1710.6,
       "surface_elo": 1695.6,
       "peak_elo": 1741,
       "peak_month": "2025-10",
-      "expected_points": 41.9,
+      "expected_points": 41.73,
       "expected_round": "R16",
       "breakeven_round": "SF",
       "scores": {
-        "base": 52.97,
+        "base": 51.67,
         "surface": 71.48,
         "draw": 85.19,
         "form": 93.15,
         "manual": 0
       },
-      "total_score": 67.42,
+      "total_score": 66.96,
       "price": 60,
       "tier": "C",
       "pricing_detail": {
@@ -341,8 +341,8 @@
         "peak_close_score": 98.25,
         "peak_recency_score": 81.25,
         "draw_bonus_raw": 5.67,
-        "draw_actual_expected_points": 39.17,
-        "draw_same_bucket_baseline_points": 33.5,
+        "draw_actual_expected_points": 39.16,
+        "draw_same_bucket_baseline_points": 33.49,
         "draw_bucket": "direct",
         "draw_baseline_sample_count": 15,
         "score_explanation": {
@@ -353,9 +353,9 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:05.869Z",
+        "preview_generated_at": "2026-07-13T02:07:10.337Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
-        "expected_pricing_effective_elo": 1761.69
+        "expected_pricing_effective_elo": 1760.91
       },
       "qualifier_replacement": null,
       "pre_r1_substitution": null
@@ -375,22 +375,22 @@
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20316/2026/device/0/horizontal/true",
       "player_key": "ATP|vilius-gaubas",
       "rank": 128,
-      "points": 508,
+      "points": 507,
       "overall_elo": 1581,
       "surface_elo": 1534.6,
       "peak_elo": 1718.5,
       "peak_month": "2025-05",
-      "expected_points": 9.62,
+      "expected_points": 9.7,
       "expected_round": "R32",
       "breakeven_round": "R16",
       "scores": {
-        "base": 24.63,
+        "base": 25.93,
         "surface": 23.71,
         "draw": 25.93,
         "form": 85.65,
         "manual": 0
       },
-      "total_score": 32.58,
+      "total_score": 33.04,
       "price": 25,
       "tier": "D",
       "pricing_detail": {
@@ -420,8 +420,8 @@
         "peak_month": "2025-05",
         "peak_close_score": 92,
         "peak_recency_score": 70.83,
-        "draw_bonus_raw": -2.94,
-        "draw_actual_expected_points": 10.49,
+        "draw_bonus_raw": -2.95,
+        "draw_actual_expected_points": 10.48,
         "draw_same_bucket_baseline_points": 13.43,
         "draw_bucket": "direct",
         "draw_baseline_sample_count": 15,
@@ -433,9 +433,9 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:05.869Z",
+        "preview_generated_at": "2026-07-13T02:07:10.337Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
-        "expected_pricing_effective_elo": 1581.35
+        "expected_pricing_effective_elo": 1582.13
       },
       "qualifier_replacement": null,
       "pre_r1_substitution": null
@@ -456,18 +456,18 @@
       "player_key": "ATP|max-dahlin",
       "rank": 1347,
       "points": null,
-      "overall_elo": 1432.11,
-      "surface_elo": 1432.11,
-      "peak_elo": 1610.13,
+      "overall_elo": 1429.99,
+      "surface_elo": 1429.99,
+      "peak_elo": 1606.54,
       "peak_month": null,
-      "expected_points": 4.84,
+      "expected_points": 4.8,
       "expected_round": "R32",
       "breakeven_round": "R16",
       "scores": {
         "base": 9.63,
         "surface": 41.85,
         "draw": 66.67,
-        "form": 92.26,
+        "form": 92.31,
         "manual": 0
       },
       "total_score": 41.01,
@@ -496,13 +496,13 @@
         "elo_source": "rank_proxy:https://www.itftennis.com/en/players/max-dahlin/800534779/swe/mt/S/overview/+tennisabstract_distribution:clay_elo",
         "surface_elo_field": "clay_elo",
         "elo_source_kind": "rank_proxy",
-        "peak_elo": 1610.13,
+        "peak_elo": 1606.54,
         "peak_month": null,
-        "peak_close_score": 88.94,
+        "peak_close_score": 89.01,
         "peak_recency_score": 100,
         "draw_bonus_raw": 0,
-        "draw_actual_expected_points": 5.23,
-        "draw_same_bucket_baseline_points": 5.23,
+        "draw_actual_expected_points": 5.16,
+        "draw_same_bucket_baseline_points": 5.16,
         "draw_bucket": "wildcard_or_low_rank",
         "draw_baseline_sample_count": 1,
         "score_explanation": {
@@ -513,9 +513,9 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:05.869Z",
+        "preview_generated_at": "2026-07-13T02:07:10.337Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
-        "expected_pricing_effective_elo": 1467.05
+        "expected_pricing_effective_elo": 1465
       },
       "qualifier_replacement": null,
       "pre_r1_substitution": null
@@ -534,23 +534,23 @@
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20316/2026/device/0/horizontal/true",
       "player_key": "ATP|sebastian-baez",
-      "rank": 56,
-      "points": 935,
+      "rank": 57,
+      "points": 910,
       "overall_elo": 1758.9,
       "surface_elo": 1717.6,
       "peak_elo": 1941.4,
       "peak_month": "2022-07",
-      "expected_points": 48.49,
+      "expected_points": 48.47,
       "expected_round": "R16",
       "breakeven_round": "SF",
       "scores": {
-        "base": 75,
+        "base": 73.7,
         "surface": 65.92,
         "draw": 77.78,
         "form": 63.42,
         "manual": 0
       },
-      "total_score": 67.8,
+      "total_score": 67.34,
       "price": 65,
       "tier": "C",
       "pricing_detail": {
@@ -580,9 +580,9 @@
         "peak_month": "2022-07",
         "peak_close_score": 90.6,
         "peak_recency_score": 0,
-        "draw_bonus_raw": 3.08,
-        "draw_actual_expected_points": 50.93,
-        "draw_same_bucket_baseline_points": 47.85,
+        "draw_bonus_raw": 3.16,
+        "draw_actual_expected_points": 51.03,
+        "draw_same_bucket_baseline_points": 47.88,
         "draw_bucket": "seed",
         "draw_baseline_sample_count": 4,
         "score_explanation": {
@@ -593,9 +593,9 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:05.869Z",
+        "preview_generated_at": "2026-07-13T02:07:10.337Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
-        "expected_pricing_effective_elo": 1762.13
+        "expected_pricing_effective_elo": 1761.35
       },
       "qualifier_replacement": null,
       "pre_r1_substitution": null
@@ -620,7 +620,7 @@
       "surface_elo": 1781.3,
       "peak_elo": 1895.7,
       "peak_month": "2024-07",
-      "expected_points": 90.81,
+      "expected_points": 90.69,
       "expected_round": "QF",
       "breakeven_round": "SF",
       "scores": {
@@ -673,7 +673,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:05.869Z",
+        "preview_generated_at": "2026-07-13T02:07:10.337Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1857.23
       },
@@ -694,23 +694,23 @@
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20316/2026/device/0/horizontal/true",
       "player_key": "ATP|facundo-diaz-acosta",
-      "rank": 110,
+      "rank": 106,
       "points": 604,
       "overall_elo": 1680.5,
       "surface_elo": 1668.4,
       "peak_elo": 1791.9,
       "peak_month": "2024-02",
-      "expected_points": 42.8,
+      "expected_points": 42.88,
       "expected_round": "R16",
       "breakeven_round": "SF",
       "scores": {
-        "base": 44.26,
+        "base": 45.56,
         "surface": 62.23,
         "draw": 88.89,
         "form": 77.52,
         "manual": 0
       },
-      "total_score": 60.45,
+      "total_score": 60.91,
       "price": 60,
       "tier": "C",
       "pricing_detail": {
@@ -740,9 +740,9 @@
         "peak_month": "2024-02",
         "peak_close_score": 93.78,
         "peak_recency_score": 39.58,
-        "draw_bonus_raw": 6.08,
+        "draw_bonus_raw": 6.09,
         "draw_actual_expected_points": 34.29,
-        "draw_same_bucket_baseline_points": 28.21,
+        "draw_same_bucket_baseline_points": 28.2,
         "draw_bucket": "direct",
         "draw_baseline_sample_count": 15,
         "score_explanation": {
@@ -753,9 +753,9 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:05.869Z",
+        "preview_generated_at": "2026-07-13T02:07:10.337Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
-        "expected_pricing_effective_elo": 1706.63
+        "expected_pricing_effective_elo": 1707.41
       },
       "qualifier_replacement": null,
       "pre_r1_substitution": null
@@ -833,7 +833,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:05.869Z",
+        "preview_generated_at": "2026-07-13T02:07:10.337Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -35
       },
@@ -854,23 +854,23 @@
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20316/2026/device/0/horizontal/true",
       "player_key": "ATP|jan-choinski",
-      "rank": 75,
-      "points": 775,
+      "rank": 84,
+      "points": 707,
       "overall_elo": 1686.4,
       "surface_elo": 1652.4,
       "peak_elo": 1695.7,
       "peak_month": "2026-06",
-      "expected_points": 30.6,
+      "expected_points": 30.72,
       "expected_round": "R16",
       "breakeven_round": "QF",
       "scores": {
-        "base": 49.26,
+        "base": 50.55,
         "surface": 48.15,
         "draw": 48.15,
         "form": 98.99,
         "manual": 0
       },
-      "total_score": 53.76,
+      "total_score": 54.21,
       "price": 50,
       "tier": "C",
       "pricing_detail": {
@@ -913,9 +913,9 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:05.869Z",
+        "preview_generated_at": "2026-07-13T02:07:10.337Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
-        "expected_pricing_effective_elo": 1729.38
+        "expected_pricing_effective_elo": 1730.16
       },
       "qualifier_replacement": null,
       "pre_r1_substitution": null
@@ -940,7 +940,7 @@
       "surface_elo": 1635.2,
       "peak_elo": 1889.8,
       "peak_month": "2019-01",
-      "expected_points": 15.75,
+      "expected_points": 15.7,
       "expected_round": "R32",
       "breakeven_round": "QF",
       "scores": {
@@ -993,7 +993,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:05.869Z",
+        "preview_generated_at": "2026-07-13T02:07:10.337Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1651.11
       },
@@ -1014,24 +1014,24 @@
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20316/2026/device/0/horizontal/true",
       "player_key": "ATP|sebastian-ofner",
-      "rank": 125,
+      "rank": 124,
       "points": 515,
       "overall_elo": 1713.2,
       "surface_elo": 1680.4,
       "peak_elo": 1812.7,
       "peak_month": "2024-01",
-      "expected_points": 21.94,
+      "expected_points": 22.04,
       "expected_round": "R32",
       "breakeven_round": "QF",
       "scores": {
-        "base": 47.59,
+        "base": 48.89,
         "surface": 57.04,
         "draw": 14.81,
         "form": 77.41,
         "manual": 0
       },
-      "total_score": 45.49,
-      "price": 40,
+      "total_score": 45.95,
+      "price": 45,
       "tier": "C",
       "pricing_detail": {
         "formula_version": "build-prices-v1",
@@ -1073,9 +1073,9 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:05.869Z",
+        "preview_generated_at": "2026-07-13T02:07:10.337Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
-        "expected_pricing_effective_elo": 1725.86
+        "expected_pricing_effective_elo": 1726.64
       },
       "qualifier_replacement": null,
       "pre_r1_substitution": null
@@ -1094,13 +1094,13 @@
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20316/2026/device/0/horizontal/true",
       "player_key": "ATP|thiago-agustin-tirante",
-      "rank": 61,
-      "points": 921,
+      "rank": 59,
+      "points": 894,
       "overall_elo": 1740.6,
       "surface_elo": 1714.8,
       "peak_elo": 1759.1,
       "peak_month": "2026-05",
-      "expected_points": 41.75,
+      "expected_points": 41.64,
       "expected_round": "R16",
       "breakeven_round": "SF",
       "scores": {
@@ -1140,9 +1140,9 @@
         "peak_month": "2026-05",
         "peak_close_score": 98.95,
         "peak_recency_score": 95.83,
-        "draw_bonus_raw": -11.64,
+        "draw_bonus_raw": -11.66,
         "draw_actual_expected_points": 35.6,
-        "draw_same_bucket_baseline_points": 47.24,
+        "draw_same_bucket_baseline_points": 47.26,
         "draw_bucket": "seed",
         "draw_baseline_sample_count": 4,
         "score_explanation": {
@@ -1153,7 +1153,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:05.869Z",
+        "preview_generated_at": "2026-07-13T02:07:10.337Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1797.84
       },
@@ -1174,8 +1174,8 @@
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20316/2026/device/0/horizontal/true",
       "player_key": "ATP|botic-van-de-zandschulp",
-      "rank": 55,
-      "points": 969,
+      "rank": 53,
+      "points": 957,
       "overall_elo": 1742.9,
       "surface_elo": 1690.3,
       "peak_elo": 1938,
@@ -1220,9 +1220,9 @@
         "peak_month": "2022-09",
         "peak_close_score": 89.93,
         "peak_recency_score": 4.17,
-        "draw_bonus_raw": 1.29,
+        "draw_bonus_raw": 1.26,
         "draw_actual_expected_points": 43.47,
-        "draw_same_bucket_baseline_points": 42.18,
+        "draw_same_bucket_baseline_points": 42.21,
         "draw_bucket": "seed",
         "draw_baseline_sample_count": 4,
         "score_explanation": {
@@ -1233,7 +1233,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:05.869Z",
+        "preview_generated_at": "2026-07-13T02:07:10.337Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1736.74
       },
@@ -1313,7 +1313,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:05.870Z",
+        "preview_generated_at": "2026-07-13T02:07:10.337Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -35
       },
@@ -1334,7 +1334,7 @@
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20316/2026/device/0/horizontal/true",
       "player_key": "ATP|adolfo-daniel-vallejo",
-      "rank": 71,
+      "rank": 70,
       "points": 830,
       "overall_elo": 1740,
       "surface_elo": 1708.2,
@@ -1380,9 +1380,9 @@
         "peak_month": "2026-05",
         "peak_close_score": 97.73,
         "peak_recency_score": 95.83,
-        "draw_bonus_raw": 13.27,
+        "draw_bonus_raw": 13.28,
         "draw_actual_expected_points": 48.37,
-        "draw_same_bucket_baseline_points": 35.1,
+        "draw_same_bucket_baseline_points": 35.09,
         "draw_bucket": "direct",
         "draw_baseline_sample_count": 15,
         "score_explanation": {
@@ -1393,7 +1393,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:05.870Z",
+        "preview_generated_at": "2026-07-13T02:07:10.337Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1789.38
       },
@@ -1473,7 +1473,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:05.870Z",
+        "preview_generated_at": "2026-07-13T02:07:10.337Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -35
       },
@@ -1494,7 +1494,7 @@
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20316/2026/device/0/horizontal/true",
       "player_key": "ATP|stefano-travaglia",
-      "rank": 150,
+      "rank": 149,
       "points": 385,
       "overall_elo": 1570.3,
       "surface_elo": 1527.5,
@@ -1553,7 +1553,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:05.870Z",
+        "preview_generated_at": "2026-07-13T02:07:10.337Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1534.64
       },
@@ -1633,7 +1633,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:05.870Z",
+        "preview_generated_at": "2026-07-13T02:07:10.337Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -35
       },
@@ -1654,8 +1654,8 @@
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20316/2026/device/0/horizontal/true",
       "player_key": "ATP|mariano-navone",
-      "rank": 48,
-      "points": 1016,
+      "rank": 47,
+      "points": 1005,
       "overall_elo": 1822.2,
       "surface_elo": 1800.1,
       "peak_elo": 1875.9,
@@ -1700,7 +1700,7 @@
         "peak_month": "2024-04",
         "peak_close_score": 97.14,
         "peak_recency_score": 43.75,
-        "draw_bonus_raw": 9.26,
+        "draw_bonus_raw": 9.27,
         "draw_actual_expected_points": 107.68,
         "draw_same_bucket_baseline_points": 98.42,
         "draw_bucket": "seed_bye",
@@ -1713,7 +1713,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:05.870Z",
+        "preview_generated_at": "2026-07-13T02:07:10.337Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1871.08
       },
@@ -1734,7 +1734,7 @@
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20316/2026/device/0/horizontal/true",
       "player_key": "ATP|nuno-borges",
-      "rank": 52,
+      "rank": 50,
       "points": 970,
       "overall_elo": 1769,
       "surface_elo": 1725.9,
@@ -1780,9 +1780,9 @@
         "peak_month": "2025-03",
         "peak_close_score": 95.95,
         "peak_recency_score": 66.67,
-        "draw_bonus_raw": 7.24,
+        "draw_bonus_raw": 7.21,
         "draw_actual_expected_points": 56.98,
-        "draw_same_bucket_baseline_points": 49.74,
+        "draw_same_bucket_baseline_points": 49.77,
         "draw_bucket": "seed",
         "draw_baseline_sample_count": 4,
         "score_explanation": {
@@ -1793,7 +1793,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:05.870Z",
+        "preview_generated_at": "2026-07-13T02:07:10.337Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1807.14
       },
@@ -1814,7 +1814,7 @@
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20316/2026/device/0/horizontal/true",
       "player_key": "ATP|moise-kouame",
-      "rank": 211,
+      "rank": 207,
       "points": 263,
       "overall_elo": 1568.2,
       "surface_elo": 1426,
@@ -1873,7 +1873,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:05.870Z",
+        "preview_generated_at": "2026-07-13T02:07:10.337Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1508.52
       },
@@ -1953,7 +1953,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:05.870Z",
+        "preview_generated_at": "2026-07-13T02:07:10.337Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1638.5
       },
@@ -2020,9 +2020,9 @@
         "peak_month": "2014-08",
         "peak_close_score": 82.57,
         "peak_recency_score": 0,
-        "draw_bonus_raw": 3.01,
+        "draw_bonus_raw": 3.02,
         "draw_actual_expected_points": 28.68,
-        "draw_same_bucket_baseline_points": 25.67,
+        "draw_same_bucket_baseline_points": 25.66,
         "draw_bucket": "direct",
         "draw_baseline_sample_count": 15,
         "score_explanation": {
@@ -2033,7 +2033,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:05.870Z",
+        "preview_generated_at": "2026-07-13T02:07:10.337Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1685.98
       },
@@ -2054,23 +2054,23 @@
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20316/2026/device/0/horizontal/true",
       "player_key": "ATP|daniel-altmaier",
-      "rank": 60,
-      "points": 924,
+      "rank": 56,
+      "points": 915,
       "overall_elo": 1733.8,
       "surface_elo": 1692.8,
       "peak_elo": 1789.1,
       "peak_month": "2021-08",
-      "expected_points": 29.1,
+      "expected_points": 29.24,
       "expected_round": "R16",
       "breakeven_round": "QF",
       "scores": {
-        "base": 61.66,
+        "base": 62.96,
         "surface": 56.67,
         "draw": 44.44,
         "form": 67.84,
         "manual": 0
       },
-      "total_score": 54.81,
+      "total_score": 55.27,
       "price": 50,
       "tier": "C",
       "pricing_detail": {
@@ -2100,9 +2100,9 @@
         "peak_month": "2021-08",
         "peak_close_score": 96.91,
         "peak_recency_score": 0,
-        "draw_bonus_raw": -0.72,
+        "draw_bonus_raw": -0.71,
         "draw_actual_expected_points": 31.98,
-        "draw_same_bucket_baseline_points": 32.7,
+        "draw_same_bucket_baseline_points": 32.69,
         "draw_bucket": "direct",
         "draw_baseline_sample_count": 15,
         "score_explanation": {
@@ -2113,9 +2113,9 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:05.870Z",
+        "preview_generated_at": "2026-07-13T02:07:10.337Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
-        "expected_pricing_effective_elo": 1735.43
+        "expected_pricing_effective_elo": 1736.21
       },
       "qualifier_replacement": null,
       "pre_r1_substitution": null
@@ -2135,22 +2135,22 @@
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20316/2026/device/0/horizontal/true",
       "player_key": "ATP|hugo-gaston",
       "rank": 107,
-      "points": 619,
+      "points": 602,
       "overall_elo": 1622.1,
       "surface_elo": 1566.1,
       "peak_elo": 1795.1,
       "peak_month": "2021-11",
-      "expected_points": 9.32,
+      "expected_points": 9.25,
       "expected_round": "R32",
       "breakeven_round": "R16",
       "scores": {
-        "base": 35.92,
+        "base": 34.63,
         "surface": 24.07,
         "draw": 3.7,
         "form": 63.25,
         "manual": 0
       },
-      "total_score": 28.82,
+      "total_score": 28.37,
       "price": 25,
       "tier": "D",
       "pricing_detail": {
@@ -2193,9 +2193,9 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:05.870Z",
+        "preview_generated_at": "2026-07-13T02:07:10.337Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
-        "expected_pricing_effective_elo": 1590.76
+        "expected_pricing_effective_elo": 1589.99
       },
       "qualifier_replacement": null,
       "pre_r1_substitution": null
@@ -2214,13 +2214,13 @@
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20316/2026/device/0/horizontal/true",
       "player_key": "ATP|luciano-darderi",
-      "rank": 18,
-      "points": 2210,
+      "rank": 22,
+      "points": 2010,
       "overall_elo": 1834.5,
       "surface_elo": 1835.6,
       "peak_elo": 1858.1,
       "peak_month": "2026-05",
-      "expected_points": 116.93,
+      "expected_points": 116.85,
       "expected_round": "SF",
       "breakeven_round": "F",
       "scores": {
@@ -2273,7 +2273,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:05.870Z",
+        "preview_generated_at": "2026-07-13T02:07:10.337Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1926.98
       },
@@ -2288,8 +2288,8 @@
     "form": 0.15,
     "manual": 0.05,
     "formula_version": "build-prices-v1",
-    "generated_at": "2026-07-13T01:38:05.870Z",
+    "generated_at": "2026-07-13T02:07:10.337Z",
     "preview_formula_version": "preview-expected-round-v2",
-    "preview_generated_at": "2026-07-13T01:38:05.870Z"
+    "preview_generated_at": "2026-07-13T02:07:10.337Z"
   }
 }

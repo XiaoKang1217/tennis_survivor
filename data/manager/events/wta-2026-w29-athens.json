@@ -65,11 +65,11 @@
       "scores": {
         "base": 87.42,
         "surface": 75.16,
-        "draw": 100,
+        "draw": 96.77,
         "form": 87.22,
         "manual": 0
       },
-      "total_score": 82.47,
+      "total_score": 81.82,
       "price": 105,
       "tier": "B",
       "pricing_detail": {
@@ -112,7 +112,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:06.015Z",
+        "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1856.83
       },
@@ -192,7 +192,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:06.015Z",
+        "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation was run, but pre-R1 substitution keeps original inherited contract price.",
         "expected_pricing_effective_elo": 1560.32,
         "contract_price_policy": "keep_original_contract_price",
@@ -227,11 +227,11 @@
           "peak_month": "2015-09",
           "peak_close_score": 89.07,
           "peak_recency_score": 0,
-          "draw_bonus_raw": -4.73,
+          "draw_bonus_raw": -3.45,
           "draw_actual_expected_points": 12.74,
-          "draw_same_bucket_baseline_points": 17.47,
+          "draw_same_bucket_baseline_points": 16.19,
           "draw_bucket": "direct",
-          "draw_baseline_sample_count": 20,
+          "draw_baseline_sample_count": 16,
           "score_explanation": {
             "base": "65% TA overall Elo percentile + 35% official ranking inverse percentile.",
             "surface": "70% surface Elo percentile + 30% surface bonus percentile.",
@@ -284,11 +284,11 @@
       "scores": {
         "base": 2.26,
         "surface": 3.87,
-        "draw": 67.74,
+        "draw": 64.52,
         "form": 64.16,
         "manual": 0
       },
-      "total_score": 24.93,
+      "total_score": 24.29,
       "price": 25,
       "tier": "D",
       "pricing_detail": {
@@ -318,11 +318,11 @@
         "peak_month": "2023-07",
         "peak_close_score": 80.94,
         "peak_recency_score": 25,
-        "draw_bonus_raw": 4.15,
+        "draw_bonus_raw": 3.99,
         "draw_actual_expected_points": 8.91,
-        "draw_same_bucket_baseline_points": 4.76,
+        "draw_same_bucket_baseline_points": 4.92,
         "draw_bucket": "wildcard_or_low_rank",
-        "draw_baseline_sample_count": 4,
+        "draw_baseline_sample_count": 8,
         "score_explanation": {
           "base": "65% TA overall Elo percentile + 35% official ranking inverse percentile.",
           "surface": "70% surface Elo percentile + 30% surface bonus percentile.",
@@ -331,7 +331,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:06.015Z",
+        "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1106.83
       },
@@ -364,11 +364,11 @@
       "scores": {
         "base": 7.58,
         "surface": 33.87,
-        "draw": 93.55,
+        "draw": 83.87,
         "form": 75.59,
         "manual": 0
       },
-      "total_score": 41.17,
+      "total_score": 39.23,
       "price": 40,
       "tier": "C",
       "pricing_detail": {
@@ -398,11 +398,11 @@
         "peak_month": "2024-04",
         "peak_close_score": 89.23,
         "peak_recency_score": 43.75,
-        "draw_bonus_raw": 16.61,
+        "draw_bonus_raw": 12.7,
         "draw_actual_expected_points": 23.93,
-        "draw_same_bucket_baseline_points": 7.32,
-        "draw_bucket": "direct",
-        "draw_baseline_sample_count": 20,
+        "draw_same_bucket_baseline_points": 11.23,
+        "draw_bucket": "wildcard_or_low_rank",
+        "draw_baseline_sample_count": 8,
         "score_explanation": {
           "base": "65% TA overall Elo percentile + 35% official ranking inverse percentile.",
           "surface": "70% surface Elo percentile + 30% surface bonus percentile.",
@@ -411,7 +411,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:06.015Z",
+        "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1285.85
       },
@@ -455,11 +455,11 @@
       "scores": {
         "base": 2.1,
         "surface": 28.39,
-        "draw": 48.39,
+        "draw": 35.48,
         "form": 91.38,
         "manual": 0
       },
-      "total_score": 31.22,
+      "total_score": 28.64,
       "price": 20,
       "tier": "D",
       "pricing_detail": {
@@ -489,11 +489,11 @@
         "peak_month": null,
         "peak_close_score": 87.68,
         "peak_recency_score": 100,
-        "draw_bonus_raw": -4.26,
+        "draw_bonus_raw": -5.43,
         "draw_actual_expected_points": 2.8,
-        "draw_same_bucket_baseline_points": 7.06,
+        "draw_same_bucket_baseline_points": 8.23,
         "draw_bucket": "wildcard_or_low_rank",
-        "draw_baseline_sample_count": 4,
+        "draw_baseline_sample_count": 8,
         "score_explanation": {
           "base": "65% TA overall Elo percentile + 35% official ranking inverse percentile.",
           "surface": "70% surface Elo percentile + 30% surface bonus percentile.",
@@ -502,7 +502,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:06.015Z",
+        "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1233.25
       },
@@ -535,11 +535,11 @@
       "scores": {
         "base": 57.26,
         "surface": 73.23,
-        "draw": 96.77,
+        "draw": 100,
         "form": 91.99,
         "manual": 0
       },
-      "total_score": 71.5,
+      "total_score": 72.15,
       "price": 70,
       "tier": "C",
       "pricing_detail": {
@@ -569,11 +569,11 @@
         "peak_month": "2026-04",
         "peak_close_score": 91.24,
         "peak_recency_score": 93.75,
-        "draw_bonus_raw": 18.64,
+        "draw_bonus_raw": 20.45,
         "draw_actual_expected_points": 55.04,
-        "draw_same_bucket_baseline_points": 36.4,
+        "draw_same_bucket_baseline_points": 34.59,
         "draw_bucket": "direct",
-        "draw_baseline_sample_count": 20,
+        "draw_baseline_sample_count": 16,
         "score_explanation": {
           "base": "65% TA overall Elo percentile + 35% official ranking inverse percentile.",
           "surface": "70% surface Elo percentile + 30% surface bonus percentile.",
@@ -582,7 +582,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:06.015Z",
+        "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1749.61
       },
@@ -626,11 +626,11 @@
       "scores": {
         "base": 18.39,
         "surface": 33.87,
-        "draw": 32.26,
+        "draw": 6.45,
         "form": 94.74,
         "manual": 0
       },
-      "total_score": 35.57,
+      "total_score": 30.4,
       "price": 20,
       "tier": "D",
       "pricing_detail": {
@@ -660,11 +660,11 @@
         "peak_month": "2026-03",
         "peak_close_score": 96.05,
         "peak_recency_score": 91.67,
-        "draw_bonus_raw": -5.53,
+        "draw_bonus_raw": -9.18,
         "draw_actual_expected_points": 4.46,
-        "draw_same_bucket_baseline_points": 9.99,
-        "draw_bucket": "direct",
-        "draw_baseline_sample_count": 20,
+        "draw_same_bucket_baseline_points": 13.64,
+        "draw_bucket": "wildcard_or_low_rank",
+        "draw_baseline_sample_count": 8,
         "score_explanation": {
           "base": "65% TA overall Elo percentile + 35% official ranking inverse percentile.",
           "surface": "70% surface Elo percentile + 30% surface bonus percentile.",
@@ -673,7 +673,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:06.015Z",
+        "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1415.87
       },
@@ -764,7 +764,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:06.015Z",
+        "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1835.52
       },
@@ -797,11 +797,11 @@
       "scores": {
         "base": 97.74,
         "surface": 75.48,
-        "draw": 22.58,
+        "draw": 19.35,
         "form": 63.84,
         "manual": 0
       },
-      "total_score": 67.17,
+      "total_score": 66.52,
       "price": 90,
       "tier": "B",
       "pricing_detail": {
@@ -844,7 +844,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:06.015Z",
+        "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1881.59
       },
@@ -911,11 +911,11 @@
         "peak_month": "2024-06",
         "peak_close_score": 92.79,
         "peak_recency_score": 47.92,
-        "draw_bonus_raw": -11.72,
+        "draw_bonus_raw": -10.39,
         "draw_actual_expected_points": 10.84,
-        "draw_same_bucket_baseline_points": 22.56,
+        "draw_same_bucket_baseline_points": 21.23,
         "draw_bucket": "direct",
-        "draw_baseline_sample_count": 20,
+        "draw_baseline_sample_count": 16,
         "score_explanation": {
           "base": "65% TA overall Elo percentile + 35% official ranking inverse percentile.",
           "surface": "70% surface Elo percentile + 30% surface bonus percentile.",
@@ -924,7 +924,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:06.015Z",
+        "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1631.65
       },
@@ -957,11 +957,11 @@
       "scores": {
         "base": 31.29,
         "surface": 20.32,
-        "draw": 35.48,
+        "draw": 45.16,
         "form": 93.09,
         "manual": 0
       },
-      "total_score": 37.09,
+      "total_score": 39.03,
       "price": 25,
       "tier": "D",
       "pricing_detail": {
@@ -991,11 +991,11 @@
         "peak_month": "2025-11",
         "peak_close_score": 97.27,
         "peak_recency_score": 83.33,
-        "draw_bonus_raw": -5,
+        "draw_bonus_raw": -3.6,
         "draw_actual_expected_points": 7.52,
-        "draw_same_bucket_baseline_points": 12.52,
+        "draw_same_bucket_baseline_points": 11.12,
         "draw_bucket": "direct",
-        "draw_baseline_sample_count": 20,
+        "draw_baseline_sample_count": 16,
         "score_explanation": {
           "base": "65% TA overall Elo percentile + 35% official ranking inverse percentile.",
           "surface": "70% surface Elo percentile + 30% surface bonus percentile.",
@@ -1004,7 +1004,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:06.015Z",
+        "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1517.72
       },
@@ -1037,11 +1037,11 @@
       "scores": {
         "base": 62.9,
         "surface": 50.32,
-        "draw": 70.97,
+        "draw": 74.19,
         "form": 73.9,
         "manual": 0
       },
-      "total_score": 59.87,
+      "total_score": 60.52,
       "price": 60,
       "tier": "C",
       "pricing_detail": {
@@ -1071,11 +1071,11 @@
         "peak_month": "2023-04",
         "peak_close_score": 97.54,
         "peak_recency_score": 18.75,
-        "draw_bonus_raw": 5.93,
+        "draw_bonus_raw": 7.05,
         "draw_actual_expected_points": 43.65,
-        "draw_same_bucket_baseline_points": 37.72,
+        "draw_same_bucket_baseline_points": 36.6,
         "draw_bucket": "direct",
-        "draw_baseline_sample_count": 20,
+        "draw_baseline_sample_count": 16,
         "score_explanation": {
           "base": "65% TA overall Elo percentile + 35% official ranking inverse percentile.",
           "surface": "70% surface Elo percentile + 30% surface bonus percentile.",
@@ -1084,7 +1084,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:06.015Z",
+        "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1755.17
       },
@@ -1151,11 +1151,11 @@
         "peak_month": "2022-08",
         "peak_close_score": 89.1,
         "peak_recency_score": 2.08,
-        "draw_bonus_raw": 3.39,
+        "draw_bonus_raw": 2.49,
         "draw_actual_expected_points": 14.77,
-        "draw_same_bucket_baseline_points": 11.38,
+        "draw_same_bucket_baseline_points": 12.28,
         "draw_bucket": "wildcard_or_low_rank",
-        "draw_baseline_sample_count": 4,
+        "draw_baseline_sample_count": 8,
         "score_explanation": {
           "base": "65% TA overall Elo percentile + 35% official ranking inverse percentile.",
           "surface": "70% surface Elo percentile + 30% surface bonus percentile.",
@@ -1164,7 +1164,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:06.015Z",
+        "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1355.65
       },
@@ -1197,11 +1197,11 @@
       "scores": {
         "base": 18.22,
         "surface": 35.16,
-        "draw": 74.19,
+        "draw": 67.74,
         "form": 98.59,
         "manual": 0
       },
-      "total_score": 44.79,
+      "total_score": 43.5,
       "price": 35,
       "tier": "D",
       "pricing_detail": {
@@ -1231,11 +1231,11 @@
         "peak_month": "2026-06",
         "peak_close_score": 98.87,
         "peak_recency_score": 97.92,
-        "draw_bonus_raw": 8.49,
+        "draw_bonus_raw": 4.43,
         "draw_actual_expected_points": 18.82,
-        "draw_same_bucket_baseline_points": 10.33,
-        "draw_bucket": "direct",
-        "draw_baseline_sample_count": 20,
+        "draw_same_bucket_baseline_points": 14.39,
+        "draw_bucket": "wildcard_or_low_rank",
+        "draw_baseline_sample_count": 8,
         "score_explanation": {
           "base": "65% TA overall Elo percentile + 35% official ranking inverse percentile.",
           "surface": "70% surface Elo percentile + 30% surface bonus percentile.",
@@ -1244,7 +1244,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:06.015Z",
+        "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1433.72
       },
@@ -1288,11 +1288,11 @@
       "scores": {
         "base": 82.09,
         "surface": 88.39,
-        "draw": 87.1,
+        "draw": 90.32,
         "form": 79.29,
         "manual": 0
       },
-      "total_score": 80.14,
+      "total_score": 80.79,
       "price": 100,
       "tier": "B",
       "pricing_detail": {
@@ -1322,11 +1322,11 @@
         "peak_month": "2024-11",
         "peak_close_score": 88.27,
         "peak_recency_score": 58.33,
-        "draw_bonus_raw": 12.43,
+        "draw_bonus_raw": 14.29,
         "draw_actual_expected_points": 87.24,
-        "draw_same_bucket_baseline_points": 74.81,
+        "draw_same_bucket_baseline_points": 72.95,
         "draw_bucket": "direct",
-        "draw_baseline_sample_count": 20,
+        "draw_baseline_sample_count": 16,
         "score_explanation": {
           "base": "65% TA overall Elo percentile + 35% official ranking inverse percentile.",
           "surface": "70% surface Elo percentile + 30% surface bonus percentile.",
@@ -1335,7 +1335,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:06.015Z",
+        "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1897.44
       },
@@ -1415,7 +1415,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:06.015Z",
+        "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1741.73
       },
@@ -1448,11 +1448,11 @@
       "scores": {
         "base": 89.03,
         "surface": 69.68,
-        "draw": 83.87,
+        "draw": 80.65,
         "form": 73.05,
         "manual": 0
       },
-      "total_score": 76.31,
+      "total_score": 75.67,
       "price": 95,
       "tier": "B",
       "pricing_detail": {
@@ -1495,7 +1495,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:06.015Z",
+        "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1848.76
       },
@@ -1528,11 +1528,11 @@
       "scores": {
         "base": 30.32,
         "surface": 29.68,
-        "draw": 19.35,
+        "draw": 29.03,
         "form": 73.89,
         "manual": 0
       },
-      "total_score": 32.99,
+      "total_score": 34.92,
       "price": 20,
       "tier": "D",
       "pricing_detail": {
@@ -1562,11 +1562,11 @@
         "peak_month": "2024-03",
         "peak_close_score": 87.7,
         "peak_recency_score": 41.67,
-        "draw_bonus_raw": -7.03,
+        "draw_bonus_raw": -5.75,
         "draw_actual_expected_points": 5.91,
-        "draw_same_bucket_baseline_points": 12.94,
+        "draw_same_bucket_baseline_points": 11.66,
         "draw_bucket": "direct",
-        "draw_baseline_sample_count": 20,
+        "draw_baseline_sample_count": 16,
         "score_explanation": {
           "base": "65% TA overall Elo percentile + 35% official ranking inverse percentile.",
           "surface": "70% surface Elo percentile + 30% surface bonus percentile.",
@@ -1575,7 +1575,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:06.015Z",
+        "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1473.22
       },
@@ -1608,11 +1608,11 @@
       "scores": {
         "base": 7.42,
         "surface": 19.03,
-        "draw": 41.94,
+        "draw": 32.26,
         "form": 55.73,
         "manual": 0
       },
-      "total_score": 24.1,
+      "total_score": 22.17,
       "price": 20,
       "tier": "D",
       "pricing_detail": {
@@ -1642,11 +1642,11 @@
         "peak_month": "2018-04",
         "peak_close_score": 79.61,
         "peak_recency_score": 0,
-        "draw_bonus_raw": -4.5,
+        "draw_bonus_raw": -5.68,
         "draw_actual_expected_points": 4.16,
-        "draw_same_bucket_baseline_points": 8.66,
+        "draw_same_bucket_baseline_points": 9.84,
         "draw_bucket": "wildcard_or_low_rank",
-        "draw_baseline_sample_count": 4,
+        "draw_baseline_sample_count": 8,
         "score_explanation": {
           "base": "65% TA overall Elo percentile + 35% official ranking inverse percentile.",
           "surface": "70% surface Elo percentile + 30% surface bonus percentile.",
@@ -1655,7 +1655,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:06.015Z",
+        "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1249.95
       },
@@ -1688,11 +1688,11 @@
       "scores": {
         "base": 57.42,
         "surface": 60.32,
-        "draw": 90.32,
+        "draw": 93.55,
         "form": 66.97,
         "manual": 0
       },
-      "total_score": 63.29,
+      "total_score": 63.93,
       "price": 60,
       "tier": "C",
       "pricing_detail": {
@@ -1722,11 +1722,11 @@
         "peak_month": "2023-01",
         "peak_close_score": 90.31,
         "peak_recency_score": 12.5,
-        "draw_bonus_raw": 16.42,
+        "draw_bonus_raw": 17.7,
         "draw_actual_expected_points": 45.29,
-        "draw_same_bucket_baseline_points": 28.87,
+        "draw_same_bucket_baseline_points": 27.59,
         "draw_bucket": "direct",
-        "draw_baseline_sample_count": 20,
+        "draw_baseline_sample_count": 16,
         "score_explanation": {
           "base": "65% TA overall Elo percentile + 35% official ranking inverse percentile.",
           "surface": "70% surface Elo percentile + 30% surface bonus percentile.",
@@ -1735,7 +1735,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:06.015Z",
+        "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1669.52
       },
@@ -1768,11 +1768,11 @@
       "scores": {
         "base": 12.9,
         "surface": 34.52,
-        "draw": 58.06,
+        "draw": 41.94,
         "form": 76.17,
         "manual": 0
       },
-      "total_score": 36.18,
+      "total_score": 32.96,
       "price": 25,
       "tier": "D",
       "pricing_detail": {
@@ -1802,11 +1802,11 @@
         "peak_month": "2024-04",
         "peak_close_score": 90.07,
         "peak_recency_score": 43.75,
-        "draw_bonus_raw": -1.24,
+        "draw_bonus_raw": -5.33,
         "draw_actual_expected_points": 8.3,
-        "draw_same_bucket_baseline_points": 9.54,
-        "draw_bucket": "direct",
-        "draw_baseline_sample_count": 20,
+        "draw_same_bucket_baseline_points": 13.63,
+        "draw_bucket": "wildcard_or_low_rank",
+        "draw_baseline_sample_count": 8,
         "score_explanation": {
           "base": "65% TA overall Elo percentile + 35% official ranking inverse percentile.",
           "surface": "70% surface Elo percentile + 30% surface bonus percentile.",
@@ -1815,7 +1815,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:06.015Z",
+        "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1385.25
       },
@@ -1859,11 +1859,11 @@
       "scores": {
         "base": 44.2,
         "surface": 50.65,
-        "draw": 80.65,
+        "draw": 87.1,
         "form": 64.73,
         "manual": 0
       },
-      "total_score": 53.97,
+      "total_score": 55.26,
       "price": 50,
       "tier": "C",
       "pricing_detail": {
@@ -1893,11 +1893,11 @@
         "peak_month": "2022-06",
         "peak_close_score": 92.47,
         "peak_recency_score": 0,
-        "draw_bonus_raw": 10.78,
+        "draw_bonus_raw": 12.71,
         "draw_actual_expected_points": 33.43,
-        "draw_same_bucket_baseline_points": 22.65,
+        "draw_same_bucket_baseline_points": 20.72,
         "draw_bucket": "direct",
-        "draw_baseline_sample_count": 20,
+        "draw_baseline_sample_count": 16,
         "score_explanation": {
           "base": "65% TA overall Elo percentile + 35% official ranking inverse percentile.",
           "surface": "70% surface Elo percentile + 30% surface bonus percentile.",
@@ -1906,7 +1906,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:06.015Z",
+        "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1601.88
       },
@@ -1939,11 +1939,11 @@
       "scores": {
         "base": 66.45,
         "surface": 40.32,
-        "draw": 9.68,
+        "draw": 12.9,
         "form": 86.42,
         "manual": 0
       },
-      "total_score": 48.24,
+      "total_score": 48.88,
       "price": 45,
       "tier": "C",
       "pricing_detail": {
@@ -1973,11 +1973,11 @@
         "peak_month": "2024-12",
         "peak_close_score": 97.57,
         "peak_recency_score": 60.42,
-        "draw_bonus_raw": -9.19,
+        "draw_bonus_raw": -7.89,
         "draw_actual_expected_points": 20.38,
-        "draw_same_bucket_baseline_points": 29.57,
+        "draw_same_bucket_baseline_points": 28.27,
         "draw_bucket": "direct",
-        "draw_baseline_sample_count": 20,
+        "draw_baseline_sample_count": 16,
         "score_explanation": {
           "base": "65% TA overall Elo percentile + 35% official ranking inverse percentile.",
           "surface": "70% surface Elo percentile + 30% surface bonus percentile.",
@@ -1986,7 +1986,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:06.015Z",
+        "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1728.12
       },
@@ -2019,11 +2019,11 @@
       "scores": {
         "base": 88.23,
         "surface": 85.48,
-        "draw": 54.84,
+        "draw": 58.06,
         "form": 61.33,
         "manual": 0
       },
-      "total_score": 72.42,
+      "total_score": 73.06,
       "price": 85,
       "tier": "B",
       "pricing_detail": {
@@ -2066,7 +2066,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:06.015Z",
+        "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1838.86
       },
@@ -2099,11 +2099,11 @@
       "scores": {
         "base": 88.06,
         "surface": 82.9,
-        "draw": 51.61,
+        "draw": 54.84,
         "form": 92.46,
         "manual": 0
       },
-      "total_score": 75.74,
+      "total_score": 76.38,
       "price": 100,
       "tier": "B",
       "pricing_detail": {
@@ -2146,7 +2146,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:06.015Z",
+        "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1884.24
       },
@@ -2179,11 +2179,11 @@
       "scores": {
         "base": 40.97,
         "surface": 56.13,
-        "draw": 6.45,
+        "draw": 9.68,
         "form": 95.25,
         "manual": 0
       },
-      "total_score": 43.95,
+      "total_score": 44.6,
       "price": 30,
       "tier": "D",
       "pricing_detail": {
@@ -2213,11 +2213,11 @@
         "peak_month": "2026-04",
         "peak_close_score": 95.89,
         "peak_recency_score": 93.75,
-        "draw_bonus_raw": -10.52,
+        "draw_bonus_raw": -9.17,
         "draw_actual_expected_points": 10.58,
-        "draw_same_bucket_baseline_points": 21.1,
+        "draw_same_bucket_baseline_points": 19.75,
         "draw_bucket": "direct",
-        "draw_baseline_sample_count": 20,
+        "draw_baseline_sample_count": 16,
         "score_explanation": {
           "base": "65% TA overall Elo percentile + 35% official ranking inverse percentile.",
           "surface": "70% surface Elo percentile + 30% surface bonus percentile.",
@@ -2226,7 +2226,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:06.015Z",
+        "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1626.04
       },
@@ -2259,11 +2259,11 @@
       "scores": {
         "base": 57.1,
         "surface": 50.32,
-        "draw": 16.13,
+        "draw": 25.81,
         "form": 64.81,
         "manual": 0
       },
-      "total_score": 45.51,
+      "total_score": 47.45,
       "price": 40,
       "tier": "C",
       "pricing_detail": {
@@ -2293,11 +2293,11 @@
         "peak_month": "2019-10",
         "peak_close_score": 92.58,
         "peak_recency_score": 0,
-        "draw_bonus_raw": -7.24,
+        "draw_bonus_raw": -5.88,
         "draw_actual_expected_points": 23.32,
-        "draw_same_bucket_baseline_points": 30.56,
+        "draw_same_bucket_baseline_points": 29.2,
         "draw_bucket": "direct",
-        "draw_baseline_sample_count": 20,
+        "draw_baseline_sample_count": 16,
         "score_explanation": {
           "base": "65% TA overall Elo percentile + 35% official ranking inverse percentile.",
           "surface": "70% surface Elo percentile + 30% surface bonus percentile.",
@@ -2306,7 +2306,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:06.015Z",
+        "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1689.57
       },
@@ -2339,11 +2339,11 @@
       "scores": {
         "base": 62.09,
         "surface": 63.23,
-        "draw": 45.16,
+        "draw": 51.61,
         "form": 62.15,
         "manual": 0
       },
-      "total_score": 55.89,
+      "total_score": 57.18,
       "price": 50,
       "tier": "C",
       "pricing_detail": {
@@ -2373,11 +2373,11 @@
         "peak_month": "2019-01",
         "peak_close_score": 88.78,
         "peak_recency_score": 0,
-        "draw_bonus_raw": -4.48,
+        "draw_bonus_raw": -3.25,
         "draw_actual_expected_points": 33.44,
-        "draw_same_bucket_baseline_points": 37.92,
+        "draw_same_bucket_baseline_points": 36.69,
         "draw_bucket": "direct",
-        "draw_baseline_sample_count": 20,
+        "draw_baseline_sample_count": 16,
         "score_explanation": {
           "base": "65% TA overall Elo percentile + 35% official ranking inverse percentile.",
           "surface": "70% surface Elo percentile + 30% surface bonus percentile.",
@@ -2386,7 +2386,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:06.016Z",
+        "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1728.93
       },
@@ -2419,11 +2419,11 @@
       "scores": {
         "base": 30,
         "surface": 54.84,
-        "draw": 29.03,
+        "draw": 38.71,
         "form": 78.84,
         "manual": 0
       },
-      "total_score": 41.84,
+      "total_score": 43.78,
       "price": 30,
       "tier": "D",
       "pricing_detail": {
@@ -2453,11 +2453,11 @@
         "peak_month": "2024-12",
         "peak_close_score": 86.73,
         "peak_recency_score": 60.42,
-        "draw_bonus_raw": -6.83,
+        "draw_bonus_raw": -5.38,
         "draw_actual_expected_points": 13.77,
-        "draw_same_bucket_baseline_points": 20.6,
+        "draw_same_bucket_baseline_points": 19.15,
         "draw_bucket": "direct",
-        "draw_baseline_sample_count": 20,
+        "draw_baseline_sample_count": 16,
         "score_explanation": {
           "base": "65% TA overall Elo percentile + 35% official ranking inverse percentile.",
           "surface": "70% surface Elo percentile + 30% surface bonus percentile.",
@@ -2466,7 +2466,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:06.016Z",
+        "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1591.68
       },
@@ -2510,11 +2510,11 @@
       "scores": {
         "base": 64.52,
         "surface": 77.09,
-        "draw": 64.52,
+        "draw": 70.97,
         "form": 83.84,
         "manual": 0
       },
-      "total_score": 67.33,
+      "total_score": 68.62,
       "price": 65,
       "tier": "C",
       "pricing_detail": {
@@ -2544,11 +2544,11 @@
         "peak_month": "2024-10",
         "peak_close_score": 95.67,
         "peak_recency_score": 56.25,
-        "draw_bonus_raw": 3.65,
+        "draw_bonus_raw": 4.7,
         "draw_actual_expected_points": 46.16,
-        "draw_same_bucket_baseline_points": 42.51,
+        "draw_same_bucket_baseline_points": 41.45,
         "draw_bucket": "direct",
-        "draw_baseline_sample_count": 20,
+        "draw_baseline_sample_count": 16,
         "score_explanation": {
           "base": "65% TA overall Elo percentile + 35% official ranking inverse percentile.",
           "surface": "70% surface Elo percentile + 30% surface bonus percentile.",
@@ -2557,7 +2557,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:06.016Z",
+        "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1775.56
       },
@@ -2590,11 +2590,11 @@
       "scores": {
         "base": 62.58,
         "surface": 34.84,
-        "draw": 12.9,
+        "draw": 16.13,
         "form": 98.63,
         "manual": 0
       },
-      "total_score": 47.99,
+      "total_score": 48.63,
       "price": 40,
       "tier": "C",
       "pricing_detail": {
@@ -2624,11 +2624,11 @@
         "peak_month": "2026-06",
         "peak_close_score": 98.94,
         "peak_recency_score": 97.92,
-        "draw_bonus_raw": -8.65,
+        "draw_bonus_raw": -7.3,
         "draw_actual_expected_points": 16.17,
-        "draw_same_bucket_baseline_points": 24.82,
+        "draw_same_bucket_baseline_points": 23.47,
         "draw_bucket": "direct",
-        "draw_baseline_sample_count": 20,
+        "draw_baseline_sample_count": 16,
         "score_explanation": {
           "base": "65% TA overall Elo percentile + 35% official ranking inverse percentile.",
           "surface": "70% surface Elo percentile + 30% surface bonus percentile.",
@@ -2637,7 +2637,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:06.016Z",
+        "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1706.11
       },
@@ -2670,11 +2670,11 @@
       "scores": {
         "base": 88.38,
         "surface": 60,
-        "draw": 25.81,
+        "draw": 22.58,
         "form": 66.75,
         "manual": 0
       },
-      "total_score": 61.11,
+      "total_score": 60.46,
       "price": 70,
       "tier": "C",
       "pricing_detail": {
@@ -2717,7 +2717,7 @@
           "manual": "Manual correction defaults to 0."
         },
         "preview_formula_version": "preview-expected-round-v2",
-        "preview_generated_at": "2026-07-13T01:38:06.016Z",
+        "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1807.99
       },
@@ -2732,8 +2732,8 @@
     "form": 0.15,
     "manual": 0.05,
     "formula_version": "build-prices-v1",
-    "generated_at": "2026-07-13T01:38:06.016Z",
+    "generated_at": "2026-07-13T02:07:10.470Z",
     "preview_formula_version": "preview-expected-round-v2",
-    "preview_generated_at": "2026-07-13T01:38:06.016Z"
+    "preview_generated_at": "2026-07-13T02:07:10.470Z"
   }
 }
