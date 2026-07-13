@@ -108,4 +108,64 @@ begin
 end;
 $$;
 
+-- Claiming this notice updates the compensation ledger itself, so the same
+-- account cannot receive the popup again from another browser or device.
+create or replace function public.tour_manager_take_station_compensation_notice(
+  p_station_key text default '2026-w29-bastad-athens',
+  p_season int default 2026
+)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_user uuid := auth.uid();
+  v_ledger record;
+begin
+  if v_user is null then
+    raise exception 'auth_required';
+  end if;
+
+  select
+    ledger.id,
+    ledger.amount,
+    ledger.station_key,
+    ledger.description,
+    ledger.created_at
+  into v_ledger
+  from public.tour_manager_wallet_ledger ledger
+  where ledger.user_id = v_user
+    and ledger.season = p_season
+    and ledger.station_key = p_station_key
+    and ledger.type = 'station_participation_compensation'
+    and ledger.metadata ->> 'compensation_key' = '2026-w29-participation-compensation-120'
+    and nullif(ledger.metadata ->> 'notice_claimed_at', '') is null
+  order by ledger.created_at, ledger.id
+  limit 1
+  for update skip locked;
+
+  if v_ledger.id is null then
+    return null;
+  end if;
+
+  update public.tour_manager_wallet_ledger
+  set metadata = coalesce(metadata, '{}'::jsonb) || jsonb_build_object(
+        'notice_claimed_at', now(),
+        'notice_claimed_by_user_id', v_user
+      )
+  where id = v_ledger.id;
+
+  return jsonb_build_object(
+    'amount', v_ledger.amount,
+    'station_key', v_ledger.station_key,
+    'description', v_ledger.description,
+    'credited_at', v_ledger.created_at
+  );
+end;
+$$;
+
+revoke all on function public.tour_manager_take_station_compensation_notice(text, int) from public, anon;
+grant execute on function public.tour_manager_take_station_compensation_notice(text, int) to authenticated;
+
 commit;

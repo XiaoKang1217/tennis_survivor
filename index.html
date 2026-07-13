@@ -4414,6 +4414,22 @@ function managerMaybeShowDailyIncomeDialog(){
   trackManagerEvent('manager_daily_income_prompt',{income_bucket:managerValueBucket(summary.yesterdayIncome,[10,25,50,100,200,500])});
   return true;
 }
+async function managerMaybeShowStationCompensationDialog(){
+  if(!AUTH_USER||MANAGER_DIALOG||MANAGER_BADGE_GRANT_NOTICE)return false;
+  var notice=await supabaseRpc('tour_manager_take_station_compensation_notice',{
+    p_station_key:managerStationKey(),
+    p_season:managerSeason()
+  },{optional:true});
+  if(!notice)return false;
+  var amount=Math.max(0,Math.round(Number(notice.amount)||120));
+  var name=displayNickname(currentDisplayName(),'你');
+  MANAGER_DIALOG={
+    title:'本站补偿到账',
+    msg:'亲爱的'+name+'，由于今日bug，特补偿'+amount+'至您的本金账户，请查收！'
+  };
+  trackManagerEvent('manager_station_compensation_notice',{amount:amount,station_key:notice.station_key||managerStationKey()});
+  return true;
+}
 async function managerEnterFlow(){
   await loadManagerData();
   managerLoadState();
@@ -4421,8 +4437,9 @@ async function managerEnterFlow(){
   renderManagerDemo();
   managerLoadRemoteState({force:true}).then(function(){
     return managerLoadPreviousRemoteState({force:true}).catch(function(){return null;});
-  }).then(function(){
-    managerMaybeShowDailyIncomeDialog();
+  }).then(async function(){
+    var compensationShown=await managerMaybeShowStationCompensationDialog();
+    if(!compensationShown)managerMaybeShowDailyIncomeDialog();
     if(ACTIVE_TAB==='manager')renderManagerDemo();
   });
   managerSchedulePublicDataPreload();

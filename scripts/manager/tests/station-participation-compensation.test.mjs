@@ -59,6 +59,12 @@ test('participation compensation is rendered as other station income', () => {
   assert.equal(statusText('station_participation_compensation'), '本站参赛补偿');
 });
 
+test('compensation popup uses the requested copy and precedes daily income', () => {
+  assert.match(html, /tour_manager_take_station_compensation_notice/);
+  assert.match(html, /亲爱的'\+name\+'，由于今日bug，特补偿'\+amount\+'至您的本金账户，请查收！/);
+  assert.match(html, /if\(!compensationShown\)managerMaybeShowDailyIncomeDialog\(\)/);
+});
+
 test('compensation migration is one-time, principal-only, and scoped to active participants', () => {
   assert.match(migration, /v_station_key constant text := '2026-w29-bastad-athens'/);
   assert.match(migration, /v_amount constant int := 120/);
@@ -70,6 +76,12 @@ test('compensation migration is one-time, principal-only, and scoped to active p
   assert.match(migration, /'exclude_from_income', false/);
   assert.match(migration, /station_participation_compensation_verification_failed/);
   assert.match(migration, /ledger\.amount = 120/);
+  assert.match(migration, /tour_manager_take_station_compensation_notice/);
+  assert.match(migration, /security definer/);
+  assert.match(migration, /auth\.uid\(\)/);
+  assert.match(migration, /for update skip locked/);
+  assert.match(migration, /notice_claimed_at/);
+  assert.match(migration, /grant execute on function public\.tour_manager_take_station_compensation_notice\(text, int\) to authenticated/);
   assert.doesNotMatch(migration, /update public\.tour_manager_lineups\s+set/i);
   assert.doesNotMatch(migration, /station_grant_used\s*=/i);
 });
