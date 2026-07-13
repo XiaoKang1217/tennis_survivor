@@ -2456,6 +2456,10 @@ function managerWalletImpactAmount(row){
   var type=String(row&&row.type||row&&row.rawStatus||row&&row.status||'');
   var meta=row&&row.metadata&&typeof row.metadata==='object'?row.metadata:{};
   if(/station_grant/i.test(type)||/本站签约金/.test(type))return 0;
+  if(/market_price_rollback/i.test(type)){
+    var rollbackWalletDelta=Number(meta.wallet_delta);
+    if(Number.isFinite(rollbackWalletDelta))return rollbackWalletDelta;
+  }
   if(/lineup_withdraw_refund/i.test(type)){
     var walletRefund=Number(meta.wallet_refund??meta.wallet_delta??meta.wallet_used);
     if(Number.isFinite(walletRefund))return walletRefund;
@@ -2526,7 +2530,7 @@ function managerIncomePartsFromRow(row){
   if(managerLedgerRowHidden(row))return null;
   var type=String(row&&row.type||row&&row.rawStatus||row&&row.status||'');
   if(/station_grant/i.test(type)||/本站签约金/.test(type)||/season_opening|开户/i.test(type))return null;
-  if(/lineup_wallet_spend|lineup_purchase_cost|lineup_withdraw_refund|transfer/i.test(type))return null;
+  if(/lineup_wallet_spend|lineup_purchase_cost|lineup_withdraw_refund|transfer|market_price_rollback/i.test(type))return null;
   var amount=Number(row&&row.amount);
   if(!Number.isFinite(amount))amount=Number(row&&row.walletDelta);
   if(!Number.isFinite(amount))amount=Number(row&&row.net);
@@ -2697,6 +2701,8 @@ function managerLedgerDisplayAmounts(type,amount,meta,lineup,isSubmit,isSettle,i
   var isWithdrawRefund=/lineup_withdraw_refund/i.test(type);
   var isBonusReversal=/submit_bonus_reversal|bonus_reversal/i.test(type);
   var isBadgePurchase=/badge_purchase/i.test(type);
+  var isMarketPriceRollbackRefund=/market_price_rollback_refund/i.test(type);
+  var isMarketPriceRollbackCharge=/market_price_rollback_charge/i.test(type);
   if(isWalletSpend){
     var totalCost=Number(meta.lineup_cost??meta.cost);
     if(!Number.isFinite(totalCost)||totalCost<=0)totalCost=Math.abs(amount);
@@ -2706,6 +2712,16 @@ function managerLedgerDisplayAmounts(type,amount,meta,lineup,isSubmit,isSettle,i
     var badgePrice=Number(meta.price??meta.cost??Math.abs(amount));
     if(!Number.isFinite(badgePrice)||badgePrice<=0)badgePrice=Math.abs(amount);
     return {cost:badgePrice,gross:0,bonus:0,net:-badgePrice};
+  }
+  if(isMarketPriceRollbackRefund){
+    var rollbackRefund=Number(meta.total_adjustment??amount);
+    if(!Number.isFinite(rollbackRefund))rollbackRefund=Math.max(0,amount);
+    return {cost:0,gross:Math.max(0,rollbackRefund),bonus:0,net:Math.max(0,rollbackRefund)};
+  }
+  if(isMarketPriceRollbackCharge){
+    var rollbackCharge=Number(meta.total_adjustment??Math.abs(amount));
+    if(!Number.isFinite(rollbackCharge))rollbackCharge=Math.abs(amount);
+    return {cost:Math.max(0,rollbackCharge),gross:0,bonus:0,net:-Math.max(0,rollbackCharge)};
   }
   if(isBonusReversal)return {cost:Math.abs(amount),gross:0,bonus:0,net:amount};
   if(isWithdrawRefund)return {cost:0,gross:Math.max(0,amount),bonus:0,net:amount};
@@ -2930,6 +2946,8 @@ function managerLedgerStatusText(type){
   if(/submit_bonus_reversal|bonus_reversal/i.test(t))return '撤回提交奖励';
   if(/submit_bonus/i.test(t))return '提交阵容奖励';
   if(/badge_purchase/i.test(t))return '购买徽章';
+  if(/market_price_rollback_refund/i.test(t))return '市场价格回退补偿';
+  if(/market_price_rollback_charge/i.test(t))return '市场价格回退扣款';
   if(/transfer/i.test(t))return '换人调仓';
   if(/settle|settlement|points/i.test(t))return '每日收益结算';
   if(/low_income|sponsor|低保/i.test(t))return '低保赞助';

@@ -70,7 +70,7 @@
         "manual": 0
       },
       "total_score": 81.82,
-      "price": 105,
+      "price": 85,
       "tier": "B",
       "pricing_detail": {
         "formula_version": "build-prices-v1",
@@ -114,7 +114,14 @@
         "preview_formula_version": "preview-expected-round-v2",
         "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
-        "expected_pricing_effective_elo": 1856.83
+        "expected_pricing_effective_elo": 1856.83,
+        "market_price_lock": {
+          "rollback_key": "2026-w29-publication-v1-price-rollback",
+          "publication_version": 1,
+          "locked_at": "2026-07-12T14:10:00+08:00",
+          "calculated_price_before_lock": 105,
+          "locked_price": 85
+        }
       },
       "qualifier_replacement": null,
       "pre_r1_substitution": null
@@ -289,8 +296,8 @@
         "manual": 0
       },
       "total_score": 24.29,
-      "price": 25,
-      "tier": "D",
+      "price": 45,
+      "tier": "C",
       "pricing_detail": {
         "formula_version": "build-prices-v1",
         "weights": {
@@ -333,7 +340,14 @@
         "preview_formula_version": "preview-expected-round-v2",
         "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
-        "expected_pricing_effective_elo": 1106.83
+        "expected_pricing_effective_elo": 1106.83,
+        "market_price_lock": {
+          "rollback_key": "2026-w29-publication-v1-price-rollback",
+          "publication_version": 1,
+          "locked_at": "2026-07-12T14:10:00+08:00",
+          "calculated_price_before_lock": 25,
+          "locked_price": 45
+        }
       },
       "qualifier_replacement": null,
       "pre_r1_substitution": null
@@ -369,8 +383,8 @@
         "manual": 0
       },
       "total_score": 39.23,
-      "price": 40,
-      "tier": "C",
+      "price": 15,
+      "tier": "D",
       "pricing_detail": {
         "formula_version": "build-prices-v1",
         "weights": {
@@ -413,7 +427,14 @@
         "preview_formula_version": "preview-expected-round-v2",
         "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
-        "expected_pricing_effective_elo": 1285.85
+        "expected_pricing_effective_elo": 1285.85,
+        "market_price_lock": {
+          "rollback_key": "2026-w29-publication-v1-price-rollback",
+          "publication_version": 1,
+          "locked_at": "2026-07-12T14:10:00+08:00",
+          "calculated_price_before_lock": 40,
+          "locked_price": 15
+        }
       },
       "qualifier_replacement": {
         "placeholder_player_key": "WTA|qualifier-4",
@@ -460,8 +481,8 @@
         "manual": 0
       },
       "total_score": 28.64,
-      "price": 20,
-      "tier": "D",
+      "price": 45,
+      "tier": "C",
       "pricing_detail": {
         "formula_version": "build-prices-v1",
         "weights": {
@@ -504,7 +525,14 @@
         "preview_formula_version": "preview-expected-round-v2",
         "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
-        "expected_pricing_effective_elo": 1233.25
+        "expected_pricing_effective_elo": 1233.25,
+        "market_price_lock": {
+          "rollback_key": "2026-w29-publication-v1-price-rollback",
+          "publication_version": 1,
+          "locked_at": "2026-07-12T14:10:00+08:00",
+          "calculated_price_before_lock": 20,
+          "locked_price": 45
+        }
       },
       "qualifier_replacement": null,
       "pre_r1_substitution": null
@@ -540,8 +568,8 @@
         "manual": 0
       },
       "total_score": 72.15,
-      "price": 70,
-      "tier": "C",
+      "price": 15,
+      "tier": "D",
       "pricing_detail": {
         "formula_version": "build-prices-v1",
         "weights": {
@@ -584,7 +612,14 @@
         "preview_formula_version": "preview-expected-round-v2",
         "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
-        "expected_pricing_effective_elo": 1749.61
+        "expected_pricing_effective_elo": 1749.61,
+        "market_price_lock": {
+          "rollback_key": "2026-w29-publication-v1-price-rollback",
+          "publication_version": 1,
+          "locked_at": "2026-07-12T14:10:00+08:00",
+          "calculated_price_before_lock": 70,
+          "locked_price": 15
+        }
       },
       "qualifier_replacement": {
         "placeholder_player_key": "WTA|qualifier-6",
@@ -631,7 +666,7 @@
         "manual": 0
       },
       "total_score": 30.4,
-      "price": 20,
+      "price": 15,
       "tier": "D",
       "pricing_detail": {
         "formula_version": "build-prices-v1",
@@ -675,7 +710,14 @@
         "preview_formula_version": "preview-expected-round-v2",
         "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
-        "expected_pricing_effective_elo": 1415.87
+        "expected_pricing_effective_elo": 1415.87,
+        "market_price_lock": {
+          "rollback_key": "2026-w29-publication-v1-price-rollback",
+          "publication_version": 1,
+          "locked_at": "2026-07-12T14:10:00+08:00",
+          "calculated_price_before_lock": 20,
+          "locked_price": 15
+        }
       },
       "qualifier_replacement": {
         "placeholder_player_key": "WTA|qualifier-7",
@@ -722,7 +764,7 @@
         "manual": 0
       },
       "total_score": 75.81,
-      "price": 90,
+      "price": 105,
       "tier": "B",
       "pricing_detail": {
         "formula_version": "build-prices-v1",
@@ -766,7 +808,14 @@
         "preview_formula_version": "preview-expected-round-v2",
         "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
-        "expected_pricing_effective_elo": 1835.52
+        "expected_pricing_effective_elo": 1835.52,
+        "market_price_lock": {
+          "rollback_key": "2026-w29-publication-v1-price-rollback",
+          "publication_version": 1,
+          "locked_at": "2026-07-12T14:10:00+08:00",
+          "calculated_price_before_lock": 90,
+          "locked_price": 105
+        }
       },
       "qualifier_replacement": null,
       "pre_r1_substitution": null
@@ -1122,8 +1171,8 @@
         "manual": 0
       },
       "total_score": 32.68,
-      "price": 30,
-      "tier": "D",
+      "price": 45,
+      "tier": "C",
       "pricing_detail": {
         "formula_version": "build-prices-v1",
         "weights": {
@@ -1166,7 +1215,14 @@
         "preview_formula_version": "preview-expected-round-v2",
         "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
-        "expected_pricing_effective_elo": 1355.65
+        "expected_pricing_effective_elo": 1355.65,
+        "market_price_lock": {
+          "rollback_key": "2026-w29-publication-v1-price-rollback",
+          "publication_version": 1,
+          "locked_at": "2026-07-12T14:10:00+08:00",
+          "calculated_price_before_lock": 30,
+          "locked_price": 45
+        }
       },
       "qualifier_replacement": null,
       "pre_r1_substitution": null
@@ -1202,7 +1258,7 @@
         "manual": 0
       },
       "total_score": 43.5,
-      "price": 35,
+      "price": 15,
       "tier": "D",
       "pricing_detail": {
         "formula_version": "build-prices-v1",
@@ -1246,7 +1302,14 @@
         "preview_formula_version": "preview-expected-round-v2",
         "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
-        "expected_pricing_effective_elo": 1433.72
+        "expected_pricing_effective_elo": 1433.72,
+        "market_price_lock": {
+          "rollback_key": "2026-w29-publication-v1-price-rollback",
+          "publication_version": 1,
+          "locked_at": "2026-07-12T14:10:00+08:00",
+          "calculated_price_before_lock": 35,
+          "locked_price": 15
+        }
       },
       "qualifier_replacement": {
         "placeholder_player_key": "WTA|qualifier-14",
@@ -1293,7 +1356,7 @@
         "manual": 0
       },
       "total_score": 80.79,
-      "price": 100,
+      "price": 95,
       "tier": "B",
       "pricing_detail": {
         "formula_version": "build-prices-v1",
@@ -1337,7 +1400,14 @@
         "preview_formula_version": "preview-expected-round-v2",
         "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
-        "expected_pricing_effective_elo": 1897.44
+        "expected_pricing_effective_elo": 1897.44,
+        "market_price_lock": {
+          "rollback_key": "2026-w29-publication-v1-price-rollback",
+          "publication_version": 1,
+          "locked_at": "2026-07-12T14:10:00+08:00",
+          "calculated_price_before_lock": 100,
+          "locked_price": 95
+        }
       },
       "qualifier_replacement": null,
       "pre_r1_substitution": null
@@ -1773,7 +1843,7 @@
         "manual": 0
       },
       "total_score": 32.96,
-      "price": 25,
+      "price": 15,
       "tier": "D",
       "pricing_detail": {
         "formula_version": "build-prices-v1",
@@ -1817,7 +1887,14 @@
         "preview_formula_version": "preview-expected-round-v2",
         "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
-        "expected_pricing_effective_elo": 1385.25
+        "expected_pricing_effective_elo": 1385.25,
+        "market_price_lock": {
+          "rollback_key": "2026-w29-publication-v1-price-rollback",
+          "publication_version": 1,
+          "locked_at": "2026-07-12T14:10:00+08:00",
+          "calculated_price_before_lock": 25,
+          "locked_price": 15
+        }
       },
       "qualifier_replacement": {
         "placeholder_player_key": "WTA|qualifier-21",
@@ -1864,7 +1941,7 @@
         "manual": 0
       },
       "total_score": 55.26,
-      "price": 50,
+      "price": 55,
       "tier": "C",
       "pricing_detail": {
         "formula_version": "build-prices-v1",
@@ -1908,7 +1985,14 @@
         "preview_formula_version": "preview-expected-round-v2",
         "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
-        "expected_pricing_effective_elo": 1601.88
+        "expected_pricing_effective_elo": 1601.88,
+        "market_price_lock": {
+          "rollback_key": "2026-w29-publication-v1-price-rollback",
+          "publication_version": 1,
+          "locked_at": "2026-07-12T14:10:00+08:00",
+          "calculated_price_before_lock": 50,
+          "locked_price": 55
+        }
       },
       "qualifier_replacement": null,
       "pre_r1_substitution": null
@@ -2024,7 +2108,7 @@
         "manual": 0
       },
       "total_score": 73.06,
-      "price": 85,
+      "price": 80,
       "tier": "B",
       "pricing_detail": {
         "formula_version": "build-prices-v1",
@@ -2068,7 +2152,14 @@
         "preview_formula_version": "preview-expected-round-v2",
         "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
-        "expected_pricing_effective_elo": 1838.86
+        "expected_pricing_effective_elo": 1838.86,
+        "market_price_lock": {
+          "rollback_key": "2026-w29-publication-v1-price-rollback",
+          "publication_version": 1,
+          "locked_at": "2026-07-12T14:10:00+08:00",
+          "calculated_price_before_lock": 85,
+          "locked_price": 80
+        }
       },
       "qualifier_replacement": null,
       "pre_r1_substitution": null
@@ -2104,7 +2195,7 @@
         "manual": 0
       },
       "total_score": 76.38,
-      "price": 100,
+      "price": 95,
       "tier": "B",
       "pricing_detail": {
         "formula_version": "build-prices-v1",
@@ -2148,7 +2239,14 @@
         "preview_formula_version": "preview-expected-round-v2",
         "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
-        "expected_pricing_effective_elo": 1884.24
+        "expected_pricing_effective_elo": 1884.24,
+        "market_price_lock": {
+          "rollback_key": "2026-w29-publication-v1-price-rollback",
+          "publication_version": 1,
+          "locked_at": "2026-07-12T14:10:00+08:00",
+          "calculated_price_before_lock": 100,
+          "locked_price": 95
+        }
       },
       "qualifier_replacement": null,
       "pre_r1_substitution": null
@@ -2424,7 +2522,7 @@
         "manual": 0
       },
       "total_score": 43.78,
-      "price": 30,
+      "price": 15,
       "tier": "D",
       "pricing_detail": {
         "formula_version": "build-prices-v1",
@@ -2468,7 +2566,14 @@
         "preview_formula_version": "preview-expected-round-v2",
         "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
-        "expected_pricing_effective_elo": 1591.68
+        "expected_pricing_effective_elo": 1591.68,
+        "market_price_lock": {
+          "rollback_key": "2026-w29-publication-v1-price-rollback",
+          "publication_version": 1,
+          "locked_at": "2026-07-12T14:10:00+08:00",
+          "calculated_price_before_lock": 30,
+          "locked_price": 15
+        }
       },
       "qualifier_replacement": {
         "placeholder_player_key": "WTA|qualifier-29",
@@ -2515,8 +2620,8 @@
         "manual": 0
       },
       "total_score": 68.62,
-      "price": 65,
-      "tier": "C",
+      "price": 75,
+      "tier": "B",
       "pricing_detail": {
         "formula_version": "build-prices-v1",
         "weights": {
@@ -2559,7 +2664,14 @@
         "preview_formula_version": "preview-expected-round-v2",
         "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
-        "expected_pricing_effective_elo": 1775.56
+        "expected_pricing_effective_elo": 1775.56,
+        "market_price_lock": {
+          "rollback_key": "2026-w29-publication-v1-price-rollback",
+          "publication_version": 1,
+          "locked_at": "2026-07-12T14:10:00+08:00",
+          "calculated_price_before_lock": 65,
+          "locked_price": 75
+        }
       },
       "qualifier_replacement": null,
       "pre_r1_substitution": null
@@ -2675,7 +2787,7 @@
         "manual": 0
       },
       "total_score": 60.46,
-      "price": 70,
+      "price": 65,
       "tier": "C",
       "pricing_detail": {
         "formula_version": "build-prices-v1",
@@ -2719,7 +2831,14 @@
         "preview_formula_version": "preview-expected-round-v2",
         "preview_generated_at": "2026-07-13T02:07:10.470Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
-        "expected_pricing_effective_elo": 1807.99
+        "expected_pricing_effective_elo": 1807.99,
+        "market_price_lock": {
+          "rollback_key": "2026-w29-publication-v1-price-rollback",
+          "publication_version": 1,
+          "locked_at": "2026-07-12T14:10:00+08:00",
+          "calculated_price_before_lock": 70,
+          "locked_price": 65
+        }
       },
       "qualifier_replacement": null,
       "pre_r1_substitution": null
@@ -2734,6 +2853,13 @@
     "formula_version": "build-prices-v1",
     "generated_at": "2026-07-13T02:07:10.470Z",
     "preview_formula_version": "preview-expected-round-v2",
-    "preview_generated_at": "2026-07-13T02:07:10.470Z"
+    "preview_generated_at": "2026-07-13T02:07:10.470Z",
+    "market_prices_locked": true,
+    "locked_to_publication_version": 1
+  },
+  "market_price_lock": {
+    "rollback_key": "2026-w29-publication-v1-price-rollback",
+    "publication_version": 1,
+    "locked_at": "2026-07-12T14:10:00+08:00"
   }
 }

@@ -27,6 +27,28 @@ const warnings = [];
 const eventReports = [];
 const now = new Date();
 const openEventWindows = [];
+const priceLock = active.pricing?.market_prices_locked === true ? active.pricing : null;
+const lockedMarketByEvent = new Map();
+
+if (priceLock) {
+  const publicationVersion = Number(priceLock.publication_version);
+  if (!Number.isInteger(publicationVersion) || publicationVersion <= 0) {
+    errors.push('active price lock is missing a valid publication_version.');
+  } else {
+    const publicationFile = `data/manager/publications/${active.station_key}-v${publicationVersion}.json`;
+    try {
+      const publication = await readJson(publicationFile);
+      for (const market of publication.snapshot?.market || []) {
+        lockedMarketByEvent.set(
+          market.event_key,
+          new Map((market.players || []).map((player) => [player.player_key, player]))
+        );
+      }
+    } catch (error) {
+      errors.push(`active price lock publication could not be read: ${publicationFile} (${error.message})`);
+    }
+  }
+}
 
 function dateValue(value) {
   if (!value) return null;
@@ -63,6 +85,9 @@ for (const { item, event } of events) {
   if (!Array.isArray(event.source_urls) || !event.source_urls.length) warnings.push(`${label}: missing source_urls.`);
 
   const players = event.players || [];
+  if (priceLock && Number(event.market_price_lock?.publication_version) !== Number(priceLock.publication_version)) {
+    errors.push(`${label}: market_price_lock does not match active publication v${priceLock.publication_version}.`);
+  }
   if ((event.draw_status === 'published' || event.market_status === 'open') && !players.length) {
     errors.push(`${label}: draw/market is open but players list is empty.`);
   }
@@ -119,6 +144,20 @@ for (const { item, event } of events) {
       report.missing_profile_ids += 1;
     }
     if (!Number.isFinite(Number(player.price))) errors.push(`${label}: ${player.name_en || player.name_zh} missing numeric price.`);
+
+    if (priceLock) {
+      const publishedKey = player.qualifier_replacement?.placeholder_player_key
+        || player.pre_r1_substitution?.out_player_key
+        || playerKey;
+      const publishedPlayer = lockedMarketByEvent.get(event.event_key)?.get(publishedKey);
+      if (!publishedPlayer) {
+        errors.push(`${label}: ${player.name_en || player.name_zh} is missing from locked publication price map (${publishedKey}).`);
+      } else if (Number(player.price) !== Number(publishedPlayer.price)) {
+        errors.push(
+          `${label}: ${player.name_en || player.name_zh} price ${player.price} differs from locked publication price ${publishedPlayer.price}.`
+        );
+      }
+    }
 
     const scores = player.scores || {};
     for (const key of ['base', 'surface', 'draw', 'form']) {

@@ -35,6 +35,12 @@
       }
     }
   },
+  "pricing": {
+    "market_prices_locked": true,
+    "locked_at": "2026-07-12T14:10:00+08:00",
+    "publication_version": 1,
+    "reason": "Restore and retain the formally published opening prices for the station."
+  },
   "updated_at": "2026-07-12T00:00:00+08:00",
   "notes": [
     "经理模块只读取这里声明的 active events，不再从 index.html 硬编码赛站。",

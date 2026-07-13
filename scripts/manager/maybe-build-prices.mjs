@@ -51,6 +51,16 @@ function priceBuildDecision(active, entries, nowDate, forced) {
   if (forced) {
     return baseDecision(active, activeEvents, nowDate, stationCutoff, true, 'forced');
   }
+  if (active.pricing?.market_prices_locked === true) {
+    return {
+      ...baseDecision(active, activeEvents, nowDate, stationCutoff, false, 'market_prices_locked'),
+      price_lock: {
+        locked_at: active.pricing.locked_at || null,
+        publication_version: Number(active.pricing.publication_version) || null,
+        reason: active.pricing.reason || null
+      }
+    };
+  }
   if (!activeEvents.length) {
     return baseDecision(active, activeEvents, nowDate, stationCutoff, false, 'no_active_events');
   }

@@ -13,7 +13,7 @@ Current station selection is still manual: edit `data/manager/active_events.json
    - `--write` updates local event JSON. `--sync --settle` writes events/matches and calls the service-role settlement RPC when `SUPABASE_SERVICE_ROLE_KEY` is present.
 
 2. `maybe-build-prices.mjs` / `build-prices.mjs`
-   - The daily workflow calls `maybe-build-prices.mjs`. It runs pricing only before the station submission cutoff/main draw start; after users have submitted, it skips pricing so the station market keeps its original prices.
+   - The daily workflow calls `maybe-build-prices.mjs`. A formally opened station should set `pricing.market_prices_locked: true` in `active_events.json`; the workflow then keeps the published opening prices while draw, schedule, ranking, and result data continue to refresh. Before a station is locked, pricing may run only before the submission cutoff/main draw start. `--force` remains an explicit operator override.
    - Fetches/imports official ATP/WTA rankings, Tennis Abstract Elo, and the active station draw files.
    - Computes base strength, surface fit, draw path, recent-form proxy, total score, price, expected points, and break-even round.
    - Writes `data/manager/market_snapshot.json`, updates active `data/manager/events/*.json`, and can sync ranking/Elo/price rows to Supabase.

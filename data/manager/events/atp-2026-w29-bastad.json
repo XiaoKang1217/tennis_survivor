@@ -1031,7 +1031,7 @@
         "manual": 0
       },
       "total_score": 45.95,
-      "price": 45,
+      "price": 40,
       "tier": "C",
       "pricing_detail": {
         "formula_version": "build-prices-v1",
@@ -1075,7 +1075,14 @@
         "preview_formula_version": "preview-expected-round-v2",
         "preview_generated_at": "2026-07-13T02:07:10.337Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
-        "expected_pricing_effective_elo": 1726.64
+        "expected_pricing_effective_elo": 1726.64,
+        "market_price_lock": {
+          "rollback_key": "2026-w29-publication-v1-price-rollback",
+          "publication_version": 1,
+          "locked_at": "2026-07-12T14:10:00+08:00",
+          "calculated_price_before_lock": 45,
+          "locked_price": 40
+        }
       },
       "qualifier_replacement": null,
       "pre_r1_substitution": null
@@ -2290,6 +2297,13 @@
     "formula_version": "build-prices-v1",
     "generated_at": "2026-07-13T02:07:10.337Z",
     "preview_formula_version": "preview-expected-round-v2",
-    "preview_generated_at": "2026-07-13T02:07:10.337Z"
+    "preview_generated_at": "2026-07-13T02:07:10.337Z",
+    "market_prices_locked": true,
+    "locked_to_publication_version": 1
+  },
+  "market_price_lock": {
+    "rollback_key": "2026-w29-publication-v1-price-rollback",
+    "publication_version": 1,
+    "locked_at": "2026-07-12T14:10:00+08:00"
   }
 }
