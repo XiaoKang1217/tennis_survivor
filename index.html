@@ -3469,8 +3469,8 @@ function managerWimbledonComboRulesHtml(){
     managerComboRuleSection('冠军经纪',['任意买到冠军 +50。如果冠军球员价格 ≤ 450，则 +150。'])+
     managerComboRuleSection('温网 combo 总额封顶 700',[]);
 }
-function managerWimbledonComboRuleCard(){
-  return '<div class="manager-rule-card manager-combo-rule-card"><b>温网 Combo</b>'+managerWimbledonComboRulesHtml()+'</div>';
+function managerWimbledonComboRuleCard(title){
+  return '<div class="manager-rule-card manager-combo-rule-card"><b>'+esc(title||'温网 Combo')+'</b>'+managerWimbledonComboRulesHtml()+'</div>';
 }
 function managerNormalV2ComboRulesHtml(){
   return managerComboRuleSection('稳健经营',['阵容至少 2 人才触发。','至少 50% 阵容进入 8 强，奖励毛收益的 8%，封顶 50。'])+
@@ -3675,7 +3675,7 @@ function managerRenderRules(){
     '<details open><summary>三、每日结算、Combo 与策略边界</summary><div class="rule-body"><div class="manager-rule-grid">'+
       managerRuleCard('每日结算',['每天抓取昨天完赛结果。','同一合同按新到达轮次补差额，不重复发放。','结算同步到我的阵容、配置大厅和公共榜单。','最终净收益 = 累计积分收益 + Combo - 成本。'])+
       managerCurrentComboRuleCard()+
-      managerRuleCard('上一站 Combo',['伊斯特本 + 巴特洪堡仍按旧规则结算。','稳健：60% 阵容进 8 强，毛收益 +8%，封顶 80。','决赛团队：至少 2 人进决赛，+60。','冠军经纪：至少 1 人夺冠，+40。','慧眼识珠：C/D 档进 4 强，每人 +30。'])+
+      managerWimbledonComboRuleCard('上一站 Combo · 温网')+
       managerRuleCard('退赛替补',['球员 R1 开打后退赛，按实际赛果结算。','球员 R1 上场前退赛且签位被替补顶替，购买该球员的合同统一替换为顶替签位的新球员。','替补记录写入后台替补表和我的收益备注。'])+
       managerRuleCard('策略流派',['巨星核心流。','均衡基金流。','冷门伯乐流。','场地专家流。','调仓止损流。','大满贯攒钱流。'])+
       managerRuleCard('破产保护',['钱包花光也不会退坑。','每站仍有本站签约金。'])+
