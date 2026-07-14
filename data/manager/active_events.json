@@ -6,6 +6,7 @@
   "status": "open",
   "rules": {
     "station_grant": 200,
+    "cross_tour_transfer": true,
     "combo_version": "normal_2026_v2",
     "combo": {
       "total_cap": 200,

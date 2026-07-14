@@ -3193,6 +3193,8 @@ function managerTransferEstimate(fromId,toId){
 function managerCrossTourTransferEnabled(){
   var packs=managerContestPacks().filter(function(pack){return pack&&pack.event&&pack.meta&&pack.meta.eventKey;});
   if(packs.length<2)return false;
+  if(MANAGER_ACTIVE_EVENTS&&MANAGER_ACTIVE_EVENTS.rules&&MANAGER_ACTIVE_EVENTS.rules.cross_tour_transfer===true)return true;
+  if(packs.every(function(pack){return pack.event.cross_tour_transfer===true;}))return true;
   return packs.some(function(pack){
     var note=String(pack.event.transfer_window_note||'');
     return note.indexOf('互换')>=0||/ATP\/WTA\s*可以互换/i.test(note);
