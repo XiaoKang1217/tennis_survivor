@@ -13,7 +13,8 @@ const manifests = args._.length ? args._ : [
   'data/manager/publication-manifests/2026-w25-eastbourne-bad-homburg-v2-window.json',
   'data/manager/publication-manifests/2026-w27-wimbledon.json',
   'data/manager/publication-manifests/2026-w29-bastad-athens.json',
-  'data/manager/publication-manifests/2026-w29-bastad-athens-v2-window.json'
+  'data/manager/publication-manifests/2026-w29-bastad-athens-v2-window.json',
+  'data/manager/publication-manifests/2026-w29-bastad-athens-v3-transfer-window.json'
 ];
 
 for (const manifest of manifests) {
