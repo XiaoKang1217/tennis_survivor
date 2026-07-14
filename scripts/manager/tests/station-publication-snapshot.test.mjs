@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 
 import {
@@ -187,4 +188,16 @@ test('unsupported publication kinds are rejected before archiving', () => {
     publicationKind: 'silent_rewrite',
     publishedAt: '2026-07-01T00:00:00Z'
   }), /Unsupported publication kind/);
+});
+
+test('snapshot hash migrations expose Supabase pgcrypto to the validator', async () => {
+  const migrations = await Promise.all([
+    readFile('supabase/migrations/202607130001_manager_station_publication_snapshots.sql', 'utf8'),
+    readFile('supabase/migrations/202607140001_manager_station_publication_snapshot_hash_fix.sql', 'utf8')
+  ]);
+
+  for (const migration of migrations) {
+    assert.match(migration, /set search_path = public, extensions/);
+    assert.match(migration, /digest\(convert_to\(new\.canonical_payload, 'UTF8'\), 'sha256'::text\)/);
+  }
 });

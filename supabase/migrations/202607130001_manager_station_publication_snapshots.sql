@@ -1,7 +1,8 @@
 -- Immutable station publication archives.
 -- One row is a complete, replayable view of a manager station at publication time.
 
-create extension if not exists pgcrypto;
+create schema if not exists extensions;
+create extension if not exists pgcrypto with schema extensions;
 
 create table if not exists public.tour_manager_station_publication_snapshots (
   id uuid primary key default gen_random_uuid(),
@@ -34,7 +35,7 @@ on public.tour_manager_station_publication_snapshots(season desc, published_at d
 create or replace function public.tour_manager_validate_station_publication_snapshot()
 returns trigger
 language plpgsql
-set search_path = public
+set search_path = public, extensions
 as $$
 declare
   v_payload jsonb;
@@ -54,7 +55,10 @@ begin
     raise exception 'station_publication_snapshot_payload_mismatch';
   end if;
 
-  v_expected_hash := encode(digest(convert_to(new.canonical_payload, 'UTF8'), 'sha256'), 'hex');
+  v_expected_hash := encode(
+    digest(convert_to(new.canonical_payload, 'UTF8'), 'sha256'::text),
+    'hex'
+  );
   if new.data_hash <> v_expected_hash then
     raise exception 'station_publication_snapshot_hash_mismatch';
   end if;
