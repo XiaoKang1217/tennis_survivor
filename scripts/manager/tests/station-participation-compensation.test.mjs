@@ -89,6 +89,42 @@ test('participation compensation is rendered as other station income', () => {
   assert.equal(statusText('station_participation_compensation'), '本站参赛补偿');
 });
 
+test('player yesterday income is derived from the same daily ledger as the team total', () => {
+  const playerYesterdayIncome = loadFunction('managerPlayerYesterdayIncome', 'managerPlayerCurrentStats', {
+    managerVisibleLedgerRows: (rows) => rows,
+    managerIncomePartsFromRow: (row) => row.type === 'player_points_delta'
+      ? { kind: 'player', amount: Number(row.amount) || 0 }
+      : null,
+    managerLedgerBelongsToStation: (row, stationKey) => row.station_key === stationKey,
+    managerChinaDateKey: (value) => value ? String(value).slice(0, 10) : '2026-07-14'
+  });
+  const player = {
+    id: 'WTA|qinwen-zheng',
+    playerKey: 'WTA|qinwen-zheng',
+    eventKey: 'wta-2026-w29-athens',
+    contractId: 'contract-zheng'
+  };
+  const contract = {
+    id: 'contract-zheng',
+    lineup_id: 'lineup-1',
+    event_key: 'wta-2026-w29-athens',
+    player_key: 'WTA|qinwen-zheng',
+    metadata: {}
+  };
+  const state = {
+    lineup: { id: 'lineup-1' },
+    ledger: [
+      { type: 'player_points_delta', amount: 30, station_key: '2026-w29-bastad-athens', lineup_id: 'lineup-1', created_at: '2026-07-14T01:37:00Z', metadata: { event_key: 'wta-2026-w29-athens', player_key: 'WTA|qinwen-zheng' } },
+      { type: 'player_points_delta', amount: 45, station_key: '2026-w29-bastad-athens', lineup_id: 'lineup-1', created_at: '2026-07-14T01:37:00Z', metadata: { event_key: 'atp-2026-w29-bastad', player_key: 'ATP|andrey-rublev' } },
+      { type: 'player_points_delta', amount: 10, station_key: '2026-w29-bastad-athens', lineup_id: 'lineup-1', created_at: '2026-07-13T01:37:00Z', metadata: { event_key: 'wta-2026-w29-athens', player_key: 'WTA|qinwen-zheng' } },
+      { type: 'station_combo_bonus', amount: 20, station_key: '2026-w29-bastad-athens', lineup_id: 'lineup-1', created_at: '2026-07-14T01:37:00Z', metadata: {} }
+    ]
+  };
+
+  assert.equal(playerYesterdayIncome(player, contract, state, '2026-w29-bastad-athens'), 30);
+  assert.equal(playerYesterdayIncome(player, { ...contract, metadata: { yesterday_earned: 7 } }, { ledger: [] }, '2026-w29-bastad-athens'), 7);
+});
+
 test('compensation popup uses the requested copy and precedes daily income', () => {
   assert.match(html, /tour_manager_take_station_compensation_notice/);
   assert.match(html, /亲爱的'\+name\+'，由于今日bug，特补偿'\+amount\+'至您的本金账户，请查收！/);

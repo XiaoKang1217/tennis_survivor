@@ -2243,13 +2243,52 @@ function managerContractRoundDisplay(contract,p,fallback){
   if(!reached||reached==='OUT')return fallback||'未开赛';
   return managerRoundDisplay(reached,p);
 }
+function managerPlayerYesterdayIncome(p,contract,state,stationKey){
+  p=p||{};contract=contract||{};state=state||{};
+  var contractMeta=contract.metadata&&typeof contract.metadata==='object'?contract.metadata:(p.contractMetadata||{});
+  var legacy=Number(contractMeta.yesterday_earned??contractMeta.last_settlement_delta??contractMeta.points_delta_yesterday??0);
+  if(!Number.isFinite(legacy))legacy=0;
+  var ledger=Array.isArray(state.ledger)?state.ledger:[];
+  if(!ledger.length)return legacy;
+  var keys=[];
+  function addKey(value){value=String(value||'');if(value&&keys.indexOf(value)<0)keys.push(value);}
+  [p.id,p.playerKey,p.sourcePlayerKey,contract.player_key,
+    contractMeta.substituted_from_player_key,contractMeta.qualifier_replacement_from_player_key,
+    contractMeta.pre_r1_substitution_from_player_key,contractMeta.replacement_player_key,
+    contractMeta.qualifier_replacement_player_key,contractMeta.pre_r1_substitution_player_key
+  ].forEach(addKey);
+  var qualifier=contractMeta.qualifier_replacement&&typeof contractMeta.qualifier_replacement==='object'?contractMeta.qualifier_replacement:{};
+  var substitution=contractMeta.pre_r1_substitution&&typeof contractMeta.pre_r1_substitution==='object'?contractMeta.pre_r1_substitution:{};
+  [qualifier.placeholder_player_key,qualifier.replacement_player_key,substitution.out_player_key,substitution.replacement_player_key].forEach(addKey);
+  var lineupId=String(contract.lineup_id||state.lineup&&state.lineup.id||'');
+  var contractId=String(contract.id||p.contractId||'');
+  var eventKey=String(contract.event_key||p.eventKey||'');
+  var todayKey=managerChinaDateKey(),matched=false,total=0;
+  managerVisibleLedgerRows(ledger).forEach(function(row){
+    var part=managerIncomePartsFromRow(row);
+    if(!part||part.kind!=='player')return;
+    if(stationKey&&!managerLedgerBelongsToStation(row,stationKey))return;
+    if(managerChinaDateKey(row.created_at||row.updated_at)!==todayKey)return;
+    var meta=row.metadata&&typeof row.metadata==='object'?row.metadata:{};
+    var rowLineupId=String(row.lineup_id||meta.lineup_id||'');
+    var rowContractId=String(meta.contract_id||'');
+    var rowEventKey=String(meta.event_key||row.event_key||'');
+    var rowPlayerKey=String(meta.player_key||meta.playerKey||row.player_key||'');
+    if(lineupId&&rowLineupId&&rowLineupId!==lineupId)return;
+    if(contractId&&rowContractId&&rowContractId!==contractId)return;
+    if(eventKey&&rowEventKey&&rowEventKey!==eventKey)return;
+    if(!rowPlayerKey||keys.indexOf(rowPlayerKey)<0)return;
+    matched=true;
+    total+=part.amount;
+  });
+  return matched?total:legacy;
+}
 function managerPlayerCurrentStats(p){
-  var submitted=managerSubmittedRecord(),contract=managerContractForPlayer(p,true),meta=contract&&contract.metadata&&typeof contract.metadata==='object'?contract.metadata:(p.contractMetadata||{});
+  var submitted=managerSubmittedRecord(),contract=managerContractForPlayer(p,true);
   var earned=Number(contract&&contract.earned_points);
   if(!Number.isFinite(earned))earned=Number(p.earnedPoints);
   if(!Number.isFinite(earned))earned=0;
-  var yesterday=Number(meta.yesterday_earned??meta.last_settlement_delta??meta.points_delta_yesterday??0);
-  if(!Number.isFinite(yesterday))yesterday=0;
+  var yesterday=managerPlayerYesterdayIncome(p,contract,MANAGER_REMOTE_STATE,managerStationKey());
   var started=managerEventStarted(p.tour),replaced=contract&&contract.is_active===false,eliminated=managerContractEliminated(contract);
   var status=!submitted?'未提交':(!started?'存活':(replaced?'已换下':(eliminated?'已出局':'存活')));
   var round=!submitted?'未开赛':managerContractRoundDisplay(contract,p,'未开赛');
@@ -4084,9 +4123,9 @@ function managerPreviousPlayerFromContract(x){
   };
 }
 function managerRenderPreviousPlayerCard(p){
-  var contract=p.contract||{},meta=contract.metadata&&typeof contract.metadata==='object'?contract.metadata:{};
-  var yesterday=Number(meta.yesterday_earned??meta.last_settlement_delta??meta.points_delta_yesterday??0);
-  if(!Number.isFinite(yesterday))yesterday=0;
+  var contract=p.contract||{};
+  var prev=managerPreviousStationMeta();
+  var yesterday=managerPlayerYesterdayIncome(p,contract,MANAGER_PREVIOUS_STATE,prev&&prev.station_key||'');
   var round=managerContractRoundDisplay(contract,p,'进行中');
   return '<div class="manager-my-card"><div class="manager-my-head"><div class="manager-my-portrait">'+managerPlayerAvatar(p,'fullbody')+'<h4>'+esc(managerPlayerDisplayName(p,true))+'</h4></div><div><div class="manager-sub">'+esc(p.event)+' · '+p.tour+' · '+p.tier+'档 · '+p.drawSize+'签 · 身价 '+managerMoneyAmount(p.price,'inline')+' · '+esc(p.statusLabel)+'</div><div class="manager-player-metrics"><div class="manager-metric-box"><div class="manager-metric-row"><span>累计收益</span><b>'+p.earnedPoints+'</b></div><div class="manager-metric-row"><span>昨天收益</span><b>'+yesterday+'</b></div><div class="manager-metric-row"><span>目前轮次</span><b>'+round+'</b></div><div class="manager-metric-row"><span>合同状态</span><b>'+esc(p.statusLabel)+'</b></div></div></div></div></div></div>';
 }
