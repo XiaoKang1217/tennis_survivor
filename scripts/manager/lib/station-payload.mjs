@@ -63,6 +63,7 @@ export function buildStationPayload({ active, events, photoMap = {}, priceVersio
         display_name: event.display_name,
         city: event.city,
         country: event.country,
+        timezone: event.timezone || null,
         cross_tour_transfer: event.cross_tour_transfer === true,
         market_message: event.market_message || '',
         source_file: item.data_file

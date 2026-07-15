@@ -14,6 +14,7 @@
   "end_date": "2026-07-19",
   "city": "Athens",
   "country": "Greece",
+  "timezone": "Europe/Athens",
   "draw_status": "published",
   "market_status": "open",
   "submission_status": "open",

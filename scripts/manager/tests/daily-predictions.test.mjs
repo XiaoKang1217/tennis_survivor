@@ -1,0 +1,92 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import test from 'node:test';
+
+const migration = fs.readFileSync('supabase/migrations/202607150001_manager_daily_predictions.sql', 'utf8');
+const html = fs.readFileSync('index.html', 'utf8');
+const workflow = fs.readFileSync('.github/workflows/update_manager.yml', 'utf8');
+const stationPayload = fs.readFileSync('scripts/manager/lib/station-payload.mjs', 'utf8');
+const bastad = JSON.parse(fs.readFileSync('data/manager/events/atp-2026-w29-bastad.json', 'utf8'));
+const athens = JSON.parse(fs.readFileSync('data/manager/events/wta-2026-w29-athens.json', 'utf8'));
+
+test('daily games freeze one ATP and WTA match by smallest ranking gap', () => {
+  assert.match(migration, /unique \(station_key, contest_date, tour\)/);
+  assert.match(migration, /foreach v_tour in array array\['ATP','WTA'\]/);
+  assert.match(migration, /order by\s+abs\(p1\.ranking - p2\.ranking\) asc/i);
+  assert.match(migration, /m\.scheduled_at > now\(\)/);
+  assert.match(migration, /closes_at[^;]+scheduled_at/i);
+});
+
+test('daily selection groups the full official event day across China midnight', () => {
+  assert.match(migration, /p_raw ->> 'date'/);
+  assert.match(migration, /tour_manager_match_event_date[\s\S]+?= v_event_date/);
+  assert.match(migration, /closest_world_rank_official_event_day/);
+  assert.match(migration, /'event_date', g\.event_date/);
+  assert.doesNotMatch(migration, /timezone\('Asia\/Shanghai', m\.scheduled_at\)/);
+  assert.match(stationPayload, /timezone: event\.timezone \|\| null/);
+  assert.equal(bastad.timezone, 'Europe/Stockholm');
+  assert.equal(athens.timezone, 'Europe/Athens');
+});
+
+test('an unpicked future question can be recalculated after the schedule fills in', () => {
+  assert.match(migration, /delete from public\.tour_manager_daily_prediction_games g/);
+  assert.match(migration, /g\.status = 'open'/);
+  assert.match(migration, /now\(\) < g\.closes_at/);
+  assert.match(migration, /not exists \([\s\S]+?tour_manager_daily_prediction_picks p[\s\S]+?p\.game_id = g\.id/);
+  assert.match(migration, /'replaced_unpicked', v_replaced - v_legacy_replaced/);
+});
+
+test('pre-launch picks on the legacy China-calendar question are reset once', () => {
+  assert.match(migration, /g\.selection_method = 'closest_world_rank'/);
+  assert.match(migration, /get diagnostics v_legacy_replaced = row_count/);
+  assert.match(migration, /'replaced_legacy', v_legacy_replaced/);
+  assert.match(migration, /closest_world_rank_official_event_day/);
+});
+
+test('prediction submission is authenticated, atomic, and closes at match start', () => {
+  assert.match(migration, /tour_manager_submit_daily_predictions\(\s*p_picks jsonb/);
+  assert.match(migration, /tour_manager_submit_daily_prediction\(\s*\(v_item ->> 'game_id'\)::uuid/);
+  assert.match(migration, /v_game\.status <> 'open' or now\(\) >= v_game\.closes_at/);
+  assert.match(migration, /v_match\.status <> 'scheduled' or v_match\.scheduled_at <= now\(\)/);
+  assert.match(migration, /grant execute on function public\.tour_manager_submit_daily_predictions\(jsonb\) to authenticated/);
+  assert.doesNotMatch(migration, /grant execute on function public\.tour_manager_submit_daily_predictions\(jsonb\) to anon/);
+});
+
+test('correct picks pay principal once and write an auditable wallet row', () => {
+  assert.match(migration, /balance = balance \+ v_game\.reward_amount/);
+  assert.match(migration, /'daily_prediction_reward'/);
+  assert.match(migration, /'每日竞猜奖励'/);
+  assert.match(migration, /tour_manager_daily_prediction_reward_once_idx/);
+  assert.match(migration, /where game_id = v_game\.id and settled_at is null/);
+  assert.match(migration, /reward_amount = case when v_correct then v_game\.reward_amount else 0 end/);
+  assert.match(migration, /'principal_reward', true/);
+});
+
+test('daily workflow settles old games after match sync and then creates today games', () => {
+  const settleIndex = workflow.indexOf('settle-current-or-previous-station.mjs');
+  const predictionIndex = workflow.indexOf('update-daily-predictions.mjs');
+  assert.ok(settleIndex >= 0);
+  assert.ok(predictionIndex > settleIndex);
+  assert.match(migration, /g\.contest_date <= p_through_date/);
+  assert.match(migration, /m\.status in \('completed','walkover','retired','cancelled'\)/);
+});
+
+test('frontend exposes picks and separates personal prediction income without changing the station leaderboard', () => {
+  assert.match(html, /data-manager-view="prediction">每日竞猜/);
+  assert.match(html, /tour_manager_submit_daily_predictions/);
+  assert.match(html, /当前为本地测试，不会写入线上数据/);
+  assert.match(html, /今日竞猜 <span class="manager-prediction-reward">猜对一场 \+10 本金<\/span>/);
+  assert.match(html, /<p>比赛开始前可提交或修改，次日结算。<\/p>/);
+  assert.doesNotMatch(html, /每天各选一场 ATP、WTA 排名接近的比赛/);
+  assert.doesNotMatch(html, /<br>排名差/);
+  assert.doesNotMatch(html, /竞猜奖励会进入本金、我的收益和次日收益弹窗/);
+  assert.match(html, /竞猜收益/);
+  assert.match(html, /yesterdayPrediction/);
+  assert.match(html, /stationPrediction/);
+  assert.match(html, /daily_prediction_reward\|每日竞猜奖励/);
+  assert.doesNotMatch(migration, /as prediction_bonus/);
+  assert.match(migration, /\(coalesce\(lt\.player_settlement_income, 0\) \+ coalesce\(lt\.combo_bonus, 0\)\)::int as station_net_income/);
+  assert.doesNotMatch(html, /prediction:Number\(x\.prediction_bonus\)/);
+  assert.doesNotMatch(html, /<th>竞猜奖励<\/th>/);
+  assert.match(html, /本站净收益榜只统计球员收益 \+ Combo，不含竞猜收益/);
+});
