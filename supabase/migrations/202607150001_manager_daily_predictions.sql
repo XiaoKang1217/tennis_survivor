@@ -109,43 +109,21 @@ declare
   v_match record;
   v_created int := 0;
   v_existing int := 0;
-  v_replaced int := 0;
-  v_legacy_replaced int := 0;
-  v_deleted int := 0;
   v_missing text[] := '{}';
 begin
   if nullif(trim(p_station_key), '') is null then
     raise exception 'station_key_required';
   end if;
 
-  -- Pre-launch repair: remove only questions created by the old China-calendar
-  -- selector. Picks cascade with the invalid test question; official-day questions
-  -- created below remain protected once anyone submits.
-  delete from public.tour_manager_daily_prediction_games g
-  where g.station_key = p_station_key
-    and g.season = p_season
-    and g.contest_date = p_contest_date
-    and g.status = 'open'
-    and now() < g.closes_at
-    and g.selection_method = 'closest_world_rank';
-  get diagnostics v_legacy_replaced = row_count;
-  v_replaced := v_replaced + v_legacy_replaced;
-
   foreach v_tour in array array['ATP','WTA'] loop
+    -- A published question is an immutable daily snapshot. Schedule/ranking
+    -- refreshes must never replace it, even when nobody has submitted a pick.
     if exists (
       select 1 from public.tour_manager_daily_prediction_games g
       where g.station_key = p_station_key
         and g.season = p_season
         and g.contest_date = p_contest_date
         and g.tour = v_tour
-        and (
-          g.status <> 'open'
-          or now() >= g.closes_at
-          or exists (
-            select 1 from public.tour_manager_daily_prediction_picks p
-            where p.game_id = g.id
-          )
-        )
     ) then
       v_existing := v_existing + 1;
       continue;
@@ -229,35 +207,6 @@ begin
       continue;
     end if;
 
-    update public.tour_manager_daily_prediction_games g
-    set event_date = v_match.event_date,
-        selection_method = 'closest_world_rank_official_event_day',
-        updated_at = now()
-    where g.station_key = p_station_key
-      and g.season = p_season
-      and g.contest_date = p_contest_date
-      and g.tour = v_tour
-      and g.event_key = v_match.event_key
-      and g.match_key = v_match.match_key;
-    if found then
-      v_existing := v_existing + 1;
-      continue;
-    end if;
-
-    delete from public.tour_manager_daily_prediction_games g
-    where g.station_key = p_station_key
-      and g.season = p_season
-      and g.contest_date = p_contest_date
-      and g.tour = v_tour
-      and g.status = 'open'
-      and now() < g.closes_at
-      and not exists (
-        select 1 from public.tour_manager_daily_prediction_picks p
-        where p.game_id = g.id
-      );
-    get diagnostics v_deleted = row_count;
-    v_replaced := v_replaced + v_deleted;
-
     insert into public.tour_manager_daily_prediction_games (
       season, station_key, contest_date, event_date, tour, event_key, match_key,
       scheduled_at, closes_at,
@@ -280,9 +229,9 @@ begin
     'station_key', p_station_key,
     'season', p_season,
     'contest_date', p_contest_date,
-    'replaced_total', v_replaced,
-    'replaced_unpicked', v_replaced - v_legacy_replaced,
-    'replaced_legacy', v_legacy_replaced,
+    'replaced_total', 0,
+    'replaced_unpicked', 0,
+    'replaced_legacy', 0,
     'created', v_created,
     'existing', v_existing,
     'missing_tours', to_jsonb(v_missing)
@@ -527,7 +476,7 @@ begin
           'daily_prediction_reward',
           v_game.reward_amount,
           v_balance,
-          '每日竞猜奖励',
+          '每日竞猜奖励 · ' || v_game.tour || ' · 猜中' || v_pick.picked_player_name,
           jsonb_build_object(
             'prediction_pick_id', v_pick.id,
             'prediction_game_id', v_game.id,
@@ -539,6 +488,8 @@ begin
             'picked_player_name', v_pick.picked_player_name,
             'winner_key', v_game.match_winner_key,
             'winner_name', v_game.match_winner_name,
+            'income_player_key', v_pick.picked_player_key,
+            'income_player_name', v_pick.picked_player_name,
             'reward', v_game.reward_amount,
             'principal_reward', true
           )

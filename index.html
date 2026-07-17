@@ -2930,6 +2930,7 @@ function managerLedgerRowsFromRawLedger(ledger,ctx){
     var purchaseKey=lineupId||[rowStation,String(x.created_at||'').slice(0,10)].join('|');
     var players=[];
     if(isSubmit)players=managerSanitizeLedgerPlayers(Array.isArray(meta.players)?meta.players:playerTokens);
+    else if(/daily_prediction_reward/i.test(type))players=managerSanitizeLedgerPlayers([meta.income_player_name||meta.picked_player_name||meta.winner_name].filter(Boolean));
     else if(isSettle){
       if(Array.isArray(meta.players))players=managerSanitizeLedgerPlayers(meta.players);
       else{
@@ -3049,9 +3050,10 @@ function managerAllLedger(){
         seen[unique]=true;
         var meta=x.metadata&&typeof x.metadata==='object'?x.metadata:{},type=String(x.type||''),amount=Number(x.amount)||0;
         var rowStation=managerLedgerRowStationKey(x,ctx.stationKey),rowStationLabel=managerLedgerRowStationLabel(x,rowStation,ctx.stationName);
-        var isSubmit=/lineup_submit/i.test(type),isBonus=/submit_bonus/i.test(type),isStationGrant=/station_grant/i.test(type),isSettle=/settle|settlement|points/i.test(type),isTransfer=/transfer/i.test(type);
+        var isSubmit=/lineup_submit/i.test(type),isBonus=/submit_bonus|daily_prediction_reward/i.test(type),isStationGrant=/station_grant/i.test(type),isSettle=/settle|settlement|points/i.test(type),isTransfer=/transfer/i.test(type);
         var players=[];
         if(isSubmit)players=managerSanitizeLedgerPlayers(Array.isArray(meta.players)?meta.players:playerTokens);
+        else if(/daily_prediction_reward/i.test(type))players=managerSanitizeLedgerPlayers([meta.income_player_name||meta.picked_player_name||meta.winner_name].filter(Boolean));
         else if(isSettle){
           if(Array.isArray(meta.players))players=managerSanitizeLedgerPlayers(meta.players);
           else if(meta.player_key){

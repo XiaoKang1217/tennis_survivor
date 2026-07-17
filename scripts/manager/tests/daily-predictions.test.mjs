@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import test from 'node:test';
 
 const migration = fs.readFileSync('supabase/migrations/202607150001_manager_daily_predictions.sql', 'utf8');
+const immutableMigration = fs.readFileSync('supabase/migrations/202607170001_manager_daily_prediction_immutable_games.sql', 'utf8');
 const html = fs.readFileSync('index.html', 'utf8');
 const workflow = fs.readFileSync('.github/workflows/update_manager.yml', 'utf8');
 const stationPayload = fs.readFileSync('scripts/manager/lib/station-payload.mjs', 'utf8');
@@ -28,19 +29,13 @@ test('daily selection groups the full official event day across China midnight',
   assert.equal(athens.timezone, 'Europe/Athens');
 });
 
-test('an unpicked future question can be recalculated after the schedule fills in', () => {
-  assert.match(migration, /delete from public\.tour_manager_daily_prediction_games g/);
-  assert.match(migration, /g\.status = 'open'/);
-  assert.match(migration, /now\(\) < g\.closes_at/);
-  assert.match(migration, /not exists \([\s\S]+?tour_manager_daily_prediction_picks p[\s\S]+?p\.game_id = g\.id/);
-  assert.match(migration, /'replaced_unpicked', v_replaced - v_legacy_replaced/);
-});
-
-test('pre-launch picks on the legacy China-calendar question are reset once', () => {
-  assert.match(migration, /g\.selection_method = 'closest_world_rank'/);
-  assert.match(migration, /get diagnostics v_legacy_replaced = row_count/);
-  assert.match(migration, /'replaced_legacy', v_legacy_replaced/);
-  assert.match(migration, /closest_world_rank_official_event_day/);
+test('the first published station/date/tour question is immutable', () => {
+  for (const sql of [migration, immutableMigration]) {
+    assert.match(sql, /if exists \([\s\S]+?g\.station_key = p_station_key[\s\S]+?g\.contest_date = p_contest_date[\s\S]+?g\.tour = v_tour[\s\S]+?continue;/);
+    assert.doesNotMatch(sql, /delete from public\.tour_manager_daily_prediction_games/);
+    assert.match(sql, /'replaced_total', 0/);
+    assert.match(sql, /'replaced_unpicked', 0/);
+  }
 });
 
 test('prediction submission is authenticated, atomic, and closes at match start', () => {
@@ -55,11 +50,16 @@ test('prediction submission is authenticated, atomic, and closes at match start'
 test('correct picks pay principal once and write an auditable wallet row', () => {
   assert.match(migration, /balance = balance \+ v_game\.reward_amount/);
   assert.match(migration, /'daily_prediction_reward'/);
-  assert.match(migration, /'每日竞猜奖励'/);
+  assert.match(migration, /每日竞猜奖励/);
   assert.match(migration, /tour_manager_daily_prediction_reward_once_idx/);
   assert.match(migration, /where game_id = v_game\.id and settled_at is null/);
   assert.match(migration, /reward_amount = case when v_correct then v_game\.reward_amount else 0 end/);
   assert.match(migration, /'principal_reward', true/);
+  assert.match(migration, /'income_player_key', v_pick\.picked_player_key/);
+  assert.match(migration, /'income_player_name', v_pick\.picked_player_name/);
+  assert.match(migration, /'每日竞猜奖励 · ' \|\| v_game\.tour \|\| ' · 猜中' \|\| v_pick\.picked_player_name/);
+  assert.match(immutableMigration, /tour_manager_enrich_daily_prediction_reward_ledger/);
+  assert.match(immutableMigration, /'income_player_name', v_player_name/);
 });
 
 test('daily workflow settles old games after match sync and then creates today games', () => {
@@ -84,6 +84,7 @@ test('frontend exposes picks and separates personal prediction income without ch
   assert.match(html, /yesterdayPrediction/);
   assert.match(html, /stationPrediction/);
   assert.match(html, /daily_prediction_reward\|每日竞猜奖励/);
+  assert.match(html, /meta\.income_player_name\|\|meta\.picked_player_name\|\|meta\.winner_name/);
   assert.doesNotMatch(migration, /as prediction_bonus/);
   assert.match(migration, /\(coalesce\(lt\.player_settlement_income, 0\) \+ coalesce\(lt\.combo_bonus, 0\)\)::int as station_net_income/);
   assert.doesNotMatch(html, /prediction:Number\(x\.prediction_bonus\)/);
