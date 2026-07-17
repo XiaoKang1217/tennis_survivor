@@ -1,6 +1,9 @@
 -- Repair databases that already ran 202607170001 while missing the event-date
 -- helper from the original daily-prediction migration. No data or money moves.
 
+alter table public.tour_manager_daily_prediction_games
+  add column if not exists event_date date;
+
 create or replace function public.tour_manager_match_event_date(
   p_raw jsonb,
   p_scheduled_at timestamptz,

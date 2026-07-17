@@ -5,6 +5,7 @@ import test from 'node:test';
 const migration = fs.readFileSync('supabase/migrations/202607150001_manager_daily_predictions.sql', 'utf8');
 const immutableMigration = fs.readFileSync('supabase/migrations/202607170001_manager_daily_prediction_immutable_games.sql', 'utf8');
 const eventDateCompatMigration = fs.readFileSync('supabase/migrations/202607170002_manager_daily_prediction_event_date_compat.sql', 'utf8');
+const eventDateColumnMigration = fs.readFileSync('supabase/migrations/202607170003_manager_daily_prediction_event_date_column.sql', 'utf8');
 const html = fs.readFileSync('index.html', 'utf8');
 const workflow = fs.readFileSync('.github/workflows/update_manager.yml', 'utf8');
 const stationPayload = fs.readFileSync('scripts/manager/lib/station-payload.mjs', 'utf8');
@@ -43,7 +44,14 @@ test('immutable prediction migrations provide the exact event-date helper signat
   const helperSignature = /tour_manager_match_event_date\s*\(\s*p_raw jsonb,\s*p_scheduled_at timestamptz,\s*p_timezone text/s;
   assert.match(immutableMigration, helperSignature);
   assert.match(eventDateCompatMigration, helperSignature);
+  assert.match(eventDateColumnMigration, helperSignature);
+  assert.match(immutableMigration, /add column if not exists event_date date/);
+  assert.match(eventDateCompatMigration, /add column if not exists event_date date/);
+  assert.match(eventDateColumnMigration, /add column if not exists event_date date/);
+  assert.match(eventDateColumnMigration, /set event_date = public\.tour_manager_match_event_date/);
+  assert.match(eventDateColumnMigration, /set event_date = contest_date/);
   assert.doesNotMatch(eventDateCompatMigration, /insert\s+into|update\s+public\.|delete\s+from/i);
+  assert.doesNotMatch(eventDateColumnMigration, /tour_manager_wallet|daily_prediction_picks|settle_daily_predictions/i);
 });
 
 test('prediction submission is authenticated, atomic, and closes at match start', () => {

@@ -1,6 +1,9 @@
 -- Freeze each published daily prediction question and enrich reward ledger rows.
 -- This is a compatibility migration for databases that already ran 202607150001.
 
+alter table public.tour_manager_daily_prediction_games
+  add column if not exists event_date date;
+
 -- Some databases ran an earlier daily-prediction draft without this helper.
 -- Keep this migration self-contained so the refresh RPC can always resolve the
 -- exact argument types supplied by tour_manager_matches.scheduled_at.
