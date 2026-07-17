@@ -877,7 +877,7 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
   .manager-detail-table{grid-template-columns:1fr}
 }
 </style>
-<link rel="stylesheet" href="assets/theme/full-site-badge-themes.css?v=20260712-1">
+<link rel="stylesheet" href="assets/theme/full-site-badge-themes.css?v=20260717-1">
 <link rel="stylesheet" href="assets/manager/badges/ui-v5/badge-ui.css?v=20260712-10">
 </head>
 <body class="manager-mode">
@@ -2844,10 +2844,81 @@ function managerLedgerPlayerMapFromContracts(contracts){
   });
   return map;
 }
-function managerComboLedgerDetailTokens(meta,type){
+function managerComboPlainContractName(contract){
+  if(!contract)return '';
+  var name=contract.name_zh||contract.name||contract.name_en||contract.player_name||contract.display_name||contract.player_key||'';
+  return managerDisplayNameWithOriginal(name,managerOriginalNameFromMeta(contract.metadata));
+}
+function managerComboRoundLabel(round){
+  return round==='W'?'冠军':String(round||'');
+}
+function managerComboMultipleText(gross,cost){
+  var multiple=cost>0?gross/cost:0;
+  if(!Number.isFinite(multiple))return '';
+  return String(Math.round(multiple*100)/100).replace(/\.0+$/,'')+'倍';
+}
+function managerComboFallbackEvidence(item,meta,contracts,lineup){
+  var label=String(item&&item.label||item&&item.name||'');
+  var key=String(item&&item.key||'').toLowerCase();
+  if(!key){
+    if(/稳健/.test(label))key='steady';
+    else if(/双线/.test(label))key='dual';
+    else if(/慧眼/.test(label))key='jewel';
+    else if(/小本/.test(label))key='small_budget';
+    else if(/多点开花/.test(label))key='multi';
+    else if(/全员进阶/.test(label))key='all_r16';
+    else if(/决赛团队/.test(label))key='final_team';
+    else if(/冠军/.test(label))key='champion';
+  }
+  var active=(contracts||[]).filter(function(c){return c&&c.is_active!==false;});
+  var gross=Number(meta&&meta.gross)||0;
+  var cost=Number(meta&&meta.lineup_cost)||(lineup&&Number(lineup.lineup_cost))||active.reduce(function(sum,c){return sum+(Number(c.price)||0);},0);
+  var evidence={players:[],context:[]};
+  function atLeast(c,round){return managerRoundAtLeast(c&&c.reached_round,round);}
+  function names(list){return list.map(managerComboPlainContractName).filter(Boolean);}
+  function highestCommonTourRound(){
+    return ['F','SF','QF','R16'].find(function(round){
+      return active.some(function(c){return c.tour==='ATP'&&atLeast(c,round);})&&active.some(function(c){return c.tour==='WTA'&&atLeast(c,round);});
+    })||'';
+  }
+  if(key==='steady'){
+    evidence.players=names(active.filter(function(c){return atLeast(c,'QF');}));
+    evidence.context=['毛收益'+gross];
+  }else if(key==='dual'){
+    var dualRound=highestCommonTourRound();
+    evidence.players=names(active.filter(function(c){return dualRound&&atLeast(c,dualRound);}));
+    evidence.context=dualRound?[managerComboRoundLabel(dualRound)]:[];
+  }else if(key==='jewel'){
+    var version=String(meta&&meta.combo_version||'');
+    var candidates=active.filter(function(c){return version.indexOf('wimbledon')>=0?Number(c.price)<=300:(c.tier==='C'||c.tier==='D');});
+    var jewelRound=['W','F','SF','QF','R16','R32'].find(function(round){return candidates.some(function(c){return atLeast(c,round);});})||'';
+    var jewel=candidates.filter(function(c){return jewelRound&&atLeast(c,jewelRound);}).sort(function(a,b){return managerRoundIndex(b.reached_round)-managerRoundIndex(a.reached_round);})[0];
+    evidence.players=names(jewel?[jewel]:[]);
+    evidence.context=jewelRound?[managerComboRoundLabel(jewelRound)]:[];
+  }else if(key==='small_budget'){
+    evidence.context=['毛收益'+gross,'阵容成本'+cost,managerComboMultipleText(gross,cost)].filter(Boolean);
+  }else if(key==='multi'){
+    var multiRound=['SF','QF','R16','R32'].find(function(round){return active.filter(function(c){return atLeast(c,round);}).length>=3;})||'';
+    evidence.players=names(active.filter(function(c){return multiRound&&atLeast(c,multiRound);}));
+    evidence.context=multiRound?[managerComboRoundLabel(multiRound)]:[];
+  }else if(key==='all_r16'){
+    evidence.players=names(active.filter(function(c){return atLeast(c,'R16');}));
+    evidence.context=['R16'];
+  }else if(key==='final_team'){
+    evidence.players=names(active.filter(function(c){return atLeast(c,'F');}));
+    evidence.context=['F'];
+  }else if(key==='champion'){
+    evidence.players=names(active.filter(function(c){return c.reached_round==='W';}));
+    evidence.context=['冠军'];
+  }
+  return evidence;
+}
+function managerComboLedgerDetailTokens(meta,type,contracts,lineup){
   if(!/combo/i.test(String(type||'')))return [];
   meta=meta&&typeof meta==='object'?meta:{};
+  contracts=Array.isArray(contracts)?contracts:[];
   var details=Array.isArray(meta.combo_details)?meta.combo_details:(Array.isArray(meta.comboDetails)?meta.comboDetails:[]);
+  if(Array.isArray(meta.combo_entitled_details)&&meta.combo_entitled_details.length&&(details.length===0||details.some(function(item){return item&&item.key==='combo_delta';})))details=meta.combo_entitled_details;
   return details.map(function(item){
     if(!item||typeof item!=='object')return '';
     var label=String(item.label||item.name||item.key||'Combo').trim();
@@ -2863,7 +2934,16 @@ function managerComboLedgerDetailTokens(meta,type){
       var first=item.players.find(function(p){return p&&typeof p==='object'&&(p.round||p.round_key||p.target_round);});
       round=first?(first.round||first.round_key||first.target_round):'';
     }
-    var extra=players.length||round?'（'+players.join('/')+(players.length&&round?'，':'')+round+'）':'';
+    var context=[];
+    if(Array.isArray(item.context))context=item.context.map(String).filter(Boolean);
+    else if(item.context)context=[String(item.context)];
+    if(round)context.push(managerComboRoundLabel(round));
+    var fallback=managerComboFallbackEvidence(item,meta,contracts,lineup);
+    if(!players.length)players=fallback.players;
+    if(!context.length)context=fallback.context;
+    context=context.filter(function(value,index,list){return value&&list.indexOf(value)===index;});
+    var evidence=(players.length?players.join('/'):'')+(players.length&&context.length?'，':'')+context.join('，');
+    var extra=evidence?'（'+evidence+'）':'';
     return label+bonusText+extra;
   }).filter(Boolean);
 }
@@ -2939,7 +3019,7 @@ function managerLedgerRowsFromRawLedger(ledger,ctx){
         players=managerSanitizeLedgerPlayers([token||meta.player_name||meta.name_zh||meta.name||pKey].filter(Boolean));
       }
     }else if(isTransfer)players=managerSanitizeLedgerPlayers(Array.isArray(meta.players)?meta.players:[meta.out_player||meta.out_name,meta.in_player||meta.in_name].filter(Boolean));
-    var comboPlayers=managerComboLedgerDetailTokens(meta,type);
+    var comboPlayers=managerComboLedgerDetailTokens(meta,type,contracts,lineup);
     if(comboPlayers.length)players=comboPlayers;
     if(/badge_purchase/i.test(type))players=managerSanitizeLedgerPlayers([meta.badge_title||meta.title||meta.badge_key].filter(Boolean));
     if(!players.length&&Array.isArray(meta.players))players=managerSanitizeLedgerPlayers(meta.players);
@@ -3061,7 +3141,7 @@ function managerAllLedger(){
             players=settledContract?[managerLedgerPlayerTokenFromContract(settledContract)]:[];
           }
         }else if(isTransfer)players=managerSanitizeLedgerPlayers(Array.isArray(meta.players)?meta.players:[meta.out_player||meta.out_name,meta.in_player||meta.in_name].filter(Boolean));
-        var comboPlayers=managerComboLedgerDetailTokens(meta,type);
+        var comboPlayers=managerComboLedgerDetailTokens(meta,type,contracts,lineup);
         if(comboPlayers.length)players=comboPlayers;
         if(/badge_purchase/i.test(type))players=managerSanitizeLedgerPlayers([meta.badge_title||meta.title||meta.badge_key].filter(Boolean));
         if(!players.length&&Array.isArray(meta.players))players=managerSanitizeLedgerPlayers(meta.players);
