@@ -4,6 +4,7 @@ import test from 'node:test';
 
 const migration = fs.readFileSync('supabase/migrations/202607150001_manager_daily_predictions.sql', 'utf8');
 const immutableMigration = fs.readFileSync('supabase/migrations/202607170001_manager_daily_prediction_immutable_games.sql', 'utf8');
+const eventDateCompatMigration = fs.readFileSync('supabase/migrations/202607170002_manager_daily_prediction_event_date_compat.sql', 'utf8');
 const html = fs.readFileSync('index.html', 'utf8');
 const workflow = fs.readFileSync('.github/workflows/update_manager.yml', 'utf8');
 const stationPayload = fs.readFileSync('scripts/manager/lib/station-payload.mjs', 'utf8');
@@ -36,6 +37,13 @@ test('the first published station/date/tour question is immutable', () => {
     assert.match(sql, /'replaced_total', 0/);
     assert.match(sql, /'replaced_unpicked', 0/);
   }
+});
+
+test('immutable prediction migrations provide the exact event-date helper signature', () => {
+  const helperSignature = /tour_manager_match_event_date\s*\(\s*p_raw jsonb,\s*p_scheduled_at timestamptz,\s*p_timezone text/s;
+  assert.match(immutableMigration, helperSignature);
+  assert.match(eventDateCompatMigration, helperSignature);
+  assert.doesNotMatch(eventDateCompatMigration, /insert\s+into|update\s+public\.|delete\s+from/i);
 });
 
 test('prediction submission is authenticated, atomic, and closes at match start', () => {

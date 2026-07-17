@@ -1,6 +1,26 @@
 -- Freeze each published daily prediction question and enrich reward ledger rows.
 -- This is a compatibility migration for databases that already ran 202607150001.
 
+-- Some databases ran an earlier daily-prediction draft without this helper.
+-- Keep this migration self-contained so the refresh RPC can always resolve the
+-- exact argument types supplied by tour_manager_matches.scheduled_at.
+create or replace function public.tour_manager_match_event_date(
+  p_raw jsonb,
+  p_scheduled_at timestamptz,
+  p_timezone text default 'UTC'
+)
+returns date
+language sql
+immutable
+set search_path = public
+as $$
+  select case
+    when coalesce(p_raw ->> 'date', '') ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'
+      then (p_raw ->> 'date')::date
+    else (timezone(coalesce(nullif(trim(p_timezone), ''), 'UTC'), p_scheduled_at))::date
+  end;
+$$;
+
 create or replace function public.tour_manager_refresh_daily_prediction_games(
   p_station_key text,
   p_season int default 2026,
