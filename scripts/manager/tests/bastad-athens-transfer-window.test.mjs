@@ -15,8 +15,10 @@ const migration = fs.readFileSync(
 const opensAt = '2026-07-15T06:00:00+08:00';
 const closesAt = '2026-07-15T17:00:00+08:00';
 
-test('Bastad and Athens share the published cross-tour transfer window', () => {
-  assert.equal(active.station_key, '2026-w29-bastad-athens');
+test('Bastad and Athens retain the published cross-tour transfer window after station rollover', () => {
+  assert.equal(active.previous_station.station_key, '2026-w29-bastad-athens');
+  assert.equal(active.previous_station.publication_version, 3);
+  assert.equal(active.previous_station.publication_file, 'publications/2026-w29-bastad-athens-v3.json');
   assert.equal(active.rules.cross_tour_transfer, true);
 
   for (const event of [atp, wta]) {
@@ -25,6 +27,16 @@ test('Bastad and Athens share the published cross-tour transfer window', () => {
     assert.equal(event.cross_tour_transfer, true);
     assert.match(event.transfer_window_note, /ATP\/WTA 可以互换/);
   }
+});
+
+test('previous-station Combo rules render from the frozen publication instead of Wimbledon constants', () => {
+  const publication = JSON.parse(fs.readFileSync(`data/manager/${active.previous_station.publication_file}`, 'utf8'));
+  assert.equal(publication.station_key, active.previous_station.station_key);
+  assert.equal(publication.publication_version, active.previous_station.publication_version);
+  assert.equal(publication.snapshot.station_config.combo_version, 'normal_2026_v2');
+  assert.match(html, /function managerPreviousComboRuleCard\(\)/);
+  assert.match(html, /managerPreviousComboRuleCard\(\)\+/);
+  assert.doesNotMatch(html, /managerWimbledonComboRuleCard\('上一站 Combo · 温网'\)/);
 });
 
 test('cross-tour setting reaches the frontend and Supabase event metadata', () => {

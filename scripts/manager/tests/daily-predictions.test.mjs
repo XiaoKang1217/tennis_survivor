@@ -107,3 +107,12 @@ test('frontend exposes picks and separates personal prediction income without ch
   assert.doesNotMatch(html, /<th>竞猜奖励<\/th>/);
   assert.match(html, /本站净收益榜只统计球员收益 \+ Combo，不含竞猜收益/);
 });
+
+test('local QA reads immutable Supabase questions and falls back from previous to current station', () => {
+  assert.match(html, /function managerDailyPredictionStationKeys\(\)/);
+  assert.match(html, /\[previous,managerStationKey\(\)\]/);
+  assert.match(html, /for\(var i=0;i<stationKeys\.length;i\+\+\)/);
+  assert.doesNotMatch(html, /function managerPredictionPreviewData\(\)/);
+  assert.match(html, /if\(managerLocalQaMode\(\)\)\{/);
+  assert.match(html, /当前为本地测试，不会写入线上数据/);
+});

@@ -1077,6 +1077,7 @@ let MANAGER_DATA_LOADING=null;
 let MANAGER_DATA_ERROR=null;
 let MANAGER_ACTIVE_EVENTS=null;
 let MANAGER_EVENT_DATA={};
+let MANAGER_PREVIOUS_PUBLICATION=null;
 let MANAGER_PHOTO_DATA={fallbacks:{},players:{}};
 let MANAGER_REMOTE_STATE=null;
 let MANAGER_REMOTE_SYNC_KEY='';
@@ -1593,15 +1594,18 @@ async function loadManagerData(){
       const active=await managerFetchJson('active_events.json');
       const eventFiles=(active.events||[]).filter(function(x){return x.active!==false;});
       const photosPromise=managerFetchJson('player_photos.json').catch(function(){return {fallbacks:{},players:{}};});
+      const previousPublicationFile=active.previous_station&&active.previous_station.publication_file;
+      const previousPublicationPromise=previousPublicationFile?managerFetchJson(previousPublicationFile).catch(function(){return null;}):Promise.resolve(null);
       const eventPairsPromise=Promise.all(eventFiles.map(async function(item){
         const data=await managerFetchJson(item.data_file);
         return [item.tour,data];
       }));
-      const results=await Promise.all([photosPromise,eventPairsPromise]);
-      const photos=results[0],eventPairs=results[1];
+      const results=await Promise.all([photosPromise,eventPairsPromise,previousPublicationPromise]);
+      const photos=results[0],eventPairs=results[1],previousPublication=results[2];
       MANAGER_ACTIVE_EVENTS=active;
       MANAGER_EVENT_DATA={};
       eventPairs.forEach(function(pair){MANAGER_EVENT_DATA[pair[0]]=pair[1];});
+      MANAGER_PREVIOUS_PUBLICATION=previousPublication;
       MANAGER_PHOTO_DATA=photos||{fallbacks:{},players:{}};
       MANAGER_DATA_LOADED=true;
       MANAGER_DATA_ERROR=null;
@@ -2366,14 +2370,11 @@ function managerSetView(view){
   if(managerViewNeedsRemoteState(view))managerRefreshRemoteState(true);
 }
 
-function managerPredictionPreviewData(){
-  var base=Date.now()+4*3600000;
-  return {station_key:managerStationKey(),season:managerSeason(),contest_date:managerChinaDateKey(),games:[
-    {id:'preview-atp-20260716',tour:'ATP',event_date:'2026-07-16',scheduled_at:new Date(base).toISOString(),closes_at:new Date(base).toISOString(),player1_key:'ATP|jesper-de-jong',player1_name:'德容',player1_ranking:100,player2_key:'ATP|sebastian-baez',player2_name:'巴埃斯',player2_ranking:57,ranking_gap:43,reward_amount:10,status:'open',my_pick:null},
-    {id:'preview-wta-20260716',tour:'WTA',event_date:'2026-07-16',scheduled_at:new Date(base+2*3600000).toISOString(),closes_at:new Date(base+2*3600000).toISOString(),player1_key:'WTA|alina-korneeva',player1_name:'科尔涅耶娃',player1_ranking:90,player2_key:'WTA|ann-li',player2_name:'李吉妮',player2_ranking:31,ranking_gap:59,reward_amount:10,status:'open',my_pick:null}
-  ]};
+function managerDailyPredictionStationKeys(){
+  var previous=MANAGER_ACTIVE_EVENTS&&MANAGER_ACTIVE_EVENTS.previous_station&&MANAGER_ACTIVE_EVENTS.previous_station.station_key;
+  return [previous,managerStationKey()].filter(function(key,index,list){return key&&list.indexOf(key)===index;});
 }
-function managerPredictionDataKey(){return [managerStationKey(),managerSeason(),managerChinaDateKey(),AUTH_USER&&AUTH_USER.id||'anon'].join('|');}
+function managerPredictionDataKey(){return [managerDailyPredictionStationKeys().join(','),managerSeason(),managerChinaDateKey(),AUTH_USER&&AUTH_USER.id||'anon'].join('|');}
 async function managerLoadDailyPredictions(opts){
   opts=opts||{};
   var key=managerPredictionDataKey();
@@ -2381,12 +2382,18 @@ async function managerLoadDailyPredictions(opts){
   if(MANAGER_DAILY_PREDICTIONS_LOADING)return MANAGER_DAILY_PREDICTIONS_LOADING;
   MANAGER_DAILY_PREDICTIONS_ERROR='';
   MANAGER_DAILY_PREDICTIONS_LOADING=(async function(){
-    if(managerLocalQaMode())return managerPredictionPreviewData();
     try{
       const client=await ensureSupabaseClient();
-      const res=await client.rpc('tour_manager_get_daily_predictions',{p_station_key:managerStationKey(),p_season:managerSeason(),p_contest_date:managerChinaDateKey()});
-      if(res.error)throw res.error;
-      return res.data||{games:[]};
+      const stationKeys=managerDailyPredictionStationKeys();
+      var empty=null;
+      for(var i=0;i<stationKeys.length;i++){
+        const res=await client.rpc('tour_manager_get_daily_predictions',{p_station_key:stationKeys[i],p_season:managerSeason(),p_contest_date:managerChinaDateKey()});
+        if(res.error)throw res.error;
+        var data=res.data||{station_key:stationKeys[i],season:managerSeason(),contest_date:managerChinaDateKey(),games:[]};
+        if(!empty)empty=data;
+        if(data.games&&data.games.length)return data;
+      }
+      return empty||{station_key:managerStationKey(),season:managerSeason(),contest_date:managerChinaDateKey(),games:[]};
     }catch(err){
       MANAGER_DAILY_PREDICTIONS_ERROR=authErrorText(err);
       trackSupabaseError('manager.daily_predictions',err,true);
@@ -2535,7 +2542,7 @@ function managerNormalV2ComboScenario(gross,rounds){
       byTour.ATP.some(function(x){return managerRoundAtLeast(x.round,threshold);})&&
       byTour.WTA.some(function(x){return managerRoundAtLeast(x.round,threshold);});
   }
-  var dual=eachTour('F')?80:(eachTour('SF')?45:(eachTour('QF')?20:0));
+  var dual=eachTour('W')?120:(eachTour('F')?80:(eachTour('SF')?45:(eachTour('QF')?20:0)));
   var jewel=0;
   rounds.forEach(function(x){
     if(x.player.tier!=='C'&&x.player.tier!=='D')return;
@@ -2552,7 +2559,7 @@ function managerNormalV2ComboScenario(gross,rounds){
   var bonus=Math.min(raw,cap);
   return {gross:gross,stable:stable,finalBonus:dual,champBonus:0,jewelBonus:jewel,smallBusinessBonus:small,dualBonus:dual,bonus:bonus,comboVersion:'normal_2026_v2',comboCap:cap,comboRaw:raw,comboItems:[
     {label:'稳健经营',amount:stable,desc:'至少2人，50%阵容进QF，毛收益8%，封顶50'},
-    {label:'双线经营',amount:dual,desc:'ATP/WTA各有人进QF/SF/F，最高档+20/+45/+80'},
+    {label:'双线经营',amount:dual,desc:'ATP/WTA各有人进QF/SF/F/W，最高档+20/+45/+80/+120'},
     {label:'慧眼识珠',amount:jewel,desc:'一个C/D档球员进QF/SF/F/W，最高档+20/+45/+80/+125'},
     {label:'小本经营',amount:small,desc:'成本不超过本站签约金，毛收益达到成本1/1.5/2.5倍，最高档+20/+50/+90'}
   ]};
@@ -3750,15 +3757,31 @@ function managerWimbledonComboRulesHtml(){
 function managerWimbledonComboRuleCard(title){
   return '<div class="manager-rule-card manager-combo-rule-card"><b>'+esc(title||'温网 Combo')+'</b>'+managerWimbledonComboRulesHtml()+'</div>';
 }
-function managerNormalV2ComboRulesHtml(){
-  return managerComboRuleSection('稳健经营',['阵容至少 2 人才触发。','至少 50% 阵容进入 8 强，奖励毛收益的 8%，封顶 50。'])+
-    managerComboRuleSection('双线经营',['阵容里 ATP/WTA 都有人。','ATP/WTA 各至少 1 人进入 QF/SF/F：+20/+45/+80。','只取最高档。'])+
-    managerComboRuleSection('慧眼识珠',['一个 C/D 档球员进入 QF/SF/F/W：+20/+45/+80/+125。','每个阵容最多触发 1 次，只取最高档。'])+
-    managerComboRuleSection('小本经营',['阵容成本不超过本站签约金 '+managerMoneyAmount(managerRules().stationGrant,'inline')+'。','毛收益达到阵容成本的 1/1.5/2.5 倍：+20/+50/+90。','只取最高档。'])+
-    managerComboRuleSection('本站 Combo 总额封顶 '+managerNormalV2ComboCap(),[]);
+function managerNormalV2ComboRulesHtml(source,label){
+  var current=managerRules(),rules=source||(MANAGER_ACTIVE_EVENTS&&MANAGER_ACTIVE_EVENTS.rules)||current,combo=rules.combo||{},steady=combo.steady||{},dual=combo.dual_tour||{},value=combo.value_pick||{},small=combo.small_budget||{};
+  var minPlayers=Number(steady.min_players)||2,qfRatio=Math.round((Number(steady.qf_ratio)||.5)*100),grossRate=Math.round((Number(steady.gross_rate)||.08)*100),steadyCap=Number(steady.cap)||50;
+  var valueTiers=(value.tiers||['C','D']).join('/'),maxTriggers=Number(value.max_triggers)||1;
+  var multipliers=(small.gross_multipliers||[1,1.5,2.5]).join('/'),bonuses=(small.bonuses||[20,50,90]).map(function(x){return '+'+x;}).join('/');
+  var stationGrant=Number(rules.station_grant!=null?rules.station_grant:rules.stationGrant),maxCost=Number(small.max_cost)||stationGrant||200,totalCap=Number(combo.total_cap)||200;
+  return managerComboRuleSection('稳健经营',['阵容至少 '+minPlayers+' 人才触发。','至少 '+qfRatio+'% 阵容进入 8 强，奖励毛收益的 '+grossRate+'%，封顶 '+steadyCap+'。'])+
+    managerComboRuleSection('双线经营',['阵容里 ATP/WTA 都有人。','ATP/WTA 各至少 1 人进入 QF/SF/F/W：+'+(Number(dual.QF)||20)+'/+'+(Number(dual.SF)||45)+'/+'+(Number(dual.F)||80)+'/+'+(Number(dual.W)||120)+'。','只取最高档。'])+
+    managerComboRuleSection('慧眼识珠',['一个 '+valueTiers+' 档球员进入 QF/SF/F/W：+'+(Number(value.QF)||20)+'/+'+(Number(value.SF)||45)+'/+'+(Number(value.F)||80)+'/+'+(Number(value.W)||125)+'。','每个阵容最多触发 '+maxTriggers+' 次，只取最高档。'])+
+    managerComboRuleSection('小本经营',['阵容成本不超过本站签约金 '+managerMoneyAmount(maxCost,'inline')+'。','毛收益达到阵容成本的 '+multipliers+' 倍：'+bonuses+'。','只取最高档。'])+
+    managerComboRuleSection((label||'本站')+' Combo 总额封顶 '+totalCap,[]);
 }
-function managerNormalV2ComboRuleCard(){
-  return '<div class="manager-rule-card manager-combo-rule-card"><b>本站 Combo</b>'+managerNormalV2ComboRulesHtml()+'</div>';
+function managerNormalV2ComboRuleCard(source,title,label){
+  return '<div class="manager-rule-card manager-combo-rule-card"><b>'+esc(title||'本站 Combo')+'</b>'+managerNormalV2ComboRulesHtml(source,label)+'</div>';
+}
+function managerPreviousComboConfig(){
+  var previous=MANAGER_ACTIVE_EVENTS&&MANAGER_ACTIVE_EVENTS.previous_station||{},archive=MANAGER_PREVIOUS_PUBLICATION||{},snapshot=archive.snapshot||{},station=snapshot.station_config||{},publication=snapshot.publication||{};
+  var rules=station.rules||{station_grant:station.station_grant,combo_version:station.combo_version,combo:station.combo};
+  return {stationName:previous.station_name||publication.station_name||previous.station_key||'上一站',comboVersion:rules.combo_version||station.combo_version||archive.combo_version||'',rules:rules};
+}
+function managerPreviousComboRuleCard(){
+  var config=managerPreviousComboConfig(),title='上一站 Combo · '+config.stationName;
+  if(config.comboVersion==='normal_2026_v2')return managerNormalV2ComboRuleCard(config.rules,title,'上一站');
+  if(config.comboVersion==='wimbledon_2026')return managerWimbledonComboRuleCard(title);
+  return managerRuleCard(title,['上一站 Combo 规则快照暂不可用。']);
 }
 function managerCurrentComboRuleCard(){
   var policy=managerComboPolicyForPlayers(managerLineupPlayers());
@@ -3954,7 +3977,7 @@ function managerRenderRules(){
       managerRuleCard('每日结算',['每天抓取昨天完赛结果。','同一合同按新到达轮次补差额，不重复发放。','结算同步到我的阵容、配置大厅和公共榜单。','本站净收益榜只统计球员收益 + Combo，不含竞猜收益。'])+
       managerRuleCard('每日竞猜',['每天从本站赛程中各选 1 场 ATP、WTA 排名接近的比赛。','比赛开始前可以提交或修改。','猜对一场 +10，经次日结算进入本金。'])+
       managerCurrentComboRuleCard()+
-      managerWimbledonComboRuleCard('上一站 Combo · 温网')+
+      managerPreviousComboRuleCard()+
       managerRuleCard('退赛替补',['球员 R1 开打后退赛，按实际赛果结算。','球员 R1 上场前退赛且签位被替补顶替，购买该球员的合同统一替换为顶替签位的新球员。','替补记录写入后台替补表和我的收益备注。'])+
       managerRuleCard('策略流派',['巨星核心流。','均衡基金流。','冷门伯乐流。','场地专家流。','调仓止损流。','大满贯攒钱流。'])+
       managerRuleCard('破产保护',['钱包花光也不会退坑。','每站仍有本站签约金。'])+
@@ -4137,7 +4160,7 @@ function renderManagerDemo(force){
   var stationNotice=submissionWindow.status==='open'
     ?managerStationName()+'已开售！阵容提交截止：'+submissionWindow.label
     :(submissionWindow.status==='closed'?managerStationName()+'已截止提交，请等待换人窗口。':managerStationName()+'开售时间待确认。');
-  var wechat='<div class="manager-wechat-card"><div class="manager-wechat-copy"><div class="manager-wechat-alert">'+esc(stationNotice)+'</div><div class="manager-wechat-line main">本游戏每周跟随巡回赛历开新赛事</div><div class="manager-wechat-line">如需 <span class="manager-wechat-em">开售提醒</span>、<span class="manager-wechat-em">换人窗口提醒</span> 请扫码进本游戏官方群</div></div><img class="manager-wechat-qr" src="assets/manager/wechat-group-qr.jpg" alt="微信群二维码" width="92" height="122" loading="eager" decoding="async" fetchpriority="high"></div>';
+  var wechat='<div class="manager-wechat-card"><div class="manager-wechat-copy"><div class="manager-wechat-alert">'+esc(stationNotice)+'</div><div class="manager-wechat-line main">本游戏每周跟随巡回赛历开新赛事</div><div class="manager-wechat-line">如需 <span class="manager-wechat-em">开售提醒</span>、<span class="manager-wechat-em">换人窗口提醒</span> 请扫码进本游戏官方群</div></div><img class="manager-wechat-qr" src="assets/manager/wechat-group-qr.webp" alt="微信群二维码" width="92" height="122" loading="eager" decoding="async" fetchpriority="high"></div>';
   var qaBanner=managerLocalQaMode()?'<div class="manager-note" style="margin-bottom:10px"><b>本地换人测试模式：</b>提交和换人窗口均已开放；所有操作只保存在当前浏览器，不会写入线上 Supabase。</div>':'';
   var badgePreview=managerBadgePreviewHtml();
   root.innerHTML='<div class="manager-shell">'+qaBanner+'<div class="manager-hero"><div class="manager-title"><div><div class="manager-title-line"><h2>巡回赛经纪人</h2><button class="manager-clear" data-manager-view="rules">查看规则</button><span class="manager-settle-note">每天09:37结算</span></div><p>组建你的球员阵容，在巡回赛里征战！<br>在公开市场上购买球员，球员成绩越好，你赚的越多，收益按巡回赛积分计算。<br>你不只懂网球，你是在做预算、风险和轮次收益的组合策略。</p></div></div>'+wechat+'<img class="manager-hero-art" src="assets/manager/agent-money-bag.webp" alt="" loading="lazy" decoding="async" fetchpriority="low"></div>'+managerRenderMoney(c,rules)+tabs+'<div class="manager-grid view-'+MANAGER_VIEW+' '+(showSide?'':'single')+'"><div class="manager-panel">'+panelHead+'<div class="manager-panel-b">'+managerRenderBody()+'</div></div>'+(showSide?managerSidebar(c,rules):'')+'</div>'+seoFaqLinkHtml()+dialog+badgePreview+'</div>';
