@@ -578,6 +578,19 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 .manager-hall-card-top{min-height:72px;margin:0;padding:10px 12px;display:flex;align-items:center;gap:12px;background:transparent;border-bottom:1px solid color-mix(in srgb,var(--badge-secondary,#d8ba74) 28%,var(--lw-border) 72%);box-shadow:none;overflow:visible}
 .manager-hall-card-top:before{display:none}.manager-hall-card-top .badge-identity{filter:none}
 .manager-hall-card .manager-hall-metrics{margin:10px 12px}.manager-hall-card .manager-hall-players,.manager-hall-card>.manager-note{margin-left:12px;margin-right:12px}.manager-hall-card>.manager-note{margin-bottom:12px}
+.manager-badge-gallery-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}
+.manager-badge-gallery-card{position:relative;min-width:0;overflow:hidden;border:1px solid color-mix(in srgb,var(--badge-secondary,#d8ba74) 42%,var(--lw-border) 58%);border-radius:14px;background:linear-gradient(180deg,color-mix(in srgb,var(--badge-secondary,#d8ba74) 9%,#fffaf0 91%),#fffdf8);box-shadow:0 10px 24px rgba(113,75,31,.11);isolation:isolate}
+.manager-badge-gallery-card:before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.09;background-image:var(--badge-pattern);background-size:440px 88px;background-repeat:repeat;background-position:right top}
+.manager-badge-gallery-card>*{position:relative;z-index:1}
+.manager-badge-gallery-top{display:grid;grid-template-columns:36px minmax(0,1fr) 58px;align-items:center;gap:10px;min-height:78px;padding:10px 12px;border-bottom:1px solid color-mix(in srgb,var(--badge-secondary,#d8ba74) 28%,var(--lw-border) 72%);background:var(--badge-row-bg),rgba(255,250,240,.82)}
+.manager-badge-gallery-rank{display:flex;align-items:center;justify-content:center}.manager-badge-gallery-rank .manager-rank-number{font-size:13px;font-weight:950;color:var(--badge-username,#79511f)}
+.manager-badge-gallery-user{min-width:0;overflow:hidden}.manager-badge-gallery-user .badge-identity{max-width:100%}.manager-badge-gallery-user .badge-identity__plate{min-width:0;max-width:100%}.manager-badge-gallery-user .badge-identity__name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.manager-badge-gallery-count{display:grid;justify-items:center;min-width:58px;padding:7px 6px;border:1px solid color-mix(in srgb,var(--badge-secondary,#d8ba74) 34%,var(--lw-border) 66%);border-radius:9px;background:rgba(255,253,248,.84);box-shadow:inset 0 1px 0 rgba(255,255,255,.72)}
+.manager-badge-gallery-count strong{font-family:"Noto Serif SC","Songti SC",serif;font-size:23px;line-height:1;color:var(--badge-primary,#9a5f24)}.manager-badge-gallery-count small{margin-top:4px;color:var(--badge-username,#79511f);font-size:10px;font-weight:900;white-space:nowrap}
+.manager-badge-gallery-label{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 13px 6px;color:var(--badge-username,#79511f);font-size:11px;font-weight:950}.manager-badge-gallery-label em{font-style:normal;opacity:.72;font-variant-numeric:tabular-nums}
+.manager-badge-gallery-shelf{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(2,86px);gap:8px;min-height:190px;margin:0 12px;padding:10px 8px;border:1px solid color-mix(in srgb,var(--badge-secondary,#d8ba74) 26%,var(--lw-border) 74%);border-radius:11px;background:linear-gradient(180deg,rgba(255,253,248,.9),rgba(255,248,232,.74));box-shadow:inset 0 -4px 0 color-mix(in srgb,var(--badge-secondary,#d8ba74) 16%,transparent)}
+.manager-badge-gallery-item{display:grid;justify-items:center;align-content:start;gap:5px;min-width:0;color:var(--badge-username,#79511f);text-align:center}.manager-badge-gallery-item img{width:58px;height:58px;max-width:100%;aspect-ratio:1;object-fit:contain;border-radius:50%;background:#fff8ef;border:2px solid color-mix(in srgb,var(--badge-secondary,#d8ba74) 54%,white 46%);box-shadow:0 4px 10px rgba(77,45,18,.18)}.manager-badge-gallery-item span{width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;font-weight:900}
+.manager-badge-gallery-pager{min-height:38px;margin:8px 12px 11px}.manager-badge-gallery-pager .manager-clear{padding:5px 9px}.manager-badge-gallery-card.is-gallery-champion{box-shadow:0 14px 30px color-mix(in srgb,var(--badge-primary,#b78034) 18%,rgba(113,75,31,.14))}
 .manager-panel.manager-side.manager-badge-themed{position:relative;overflow:hidden;border-radius:14px;border:1px solid color-mix(in srgb,var(--badge-secondary,#d8ba74) 42%,var(--lw-border) 58%);background:linear-gradient(180deg,#fff8e8,#fffaf0);box-shadow:var(--lw-shadow);isolation:isolate}
 .manager-panel.manager-side.manager-badge-themed:before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.12;background-image:var(--badge-pattern);background-size:420px 84px;background-repeat:repeat;background-position:right top}
 .manager-panel.manager-side.manager-badge-themed>*{position:relative;z-index:1}
@@ -638,6 +651,12 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
   .manager-boards-page .manager-rules summary:before,.manager-boards-page .manager-rules summary:after{width:24px}
   .manager-boards-page .manager-board-grid{grid-template-columns:1fr}
   .manager-boards-page .manager-rank-table .manager-user-name-plain{min-width:150px}
+  .manager-badge-gallery-grid{grid-template-columns:1fr;gap:10px}
+  .manager-badge-gallery-top{grid-template-columns:32px minmax(0,1fr) 52px;gap:7px;padding:9px}
+  .manager-badge-gallery-shelf{grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(2,78px);gap:6px;min-height:174px;margin:0 9px;padding:8px 5px}
+  .manager-badge-gallery-item img{width:50px;height:50px}
+  .manager-badge-gallery-count{min-width:52px}
+  .manager-badge-gallery-count strong{font-size:20px}
   .follow-btn{width:22px;height:22px;margin-right:4px;font-size:14px}
   .tbl-wrap{max-height:none;border-radius:8px}
   table{font-size:12px;min-width:820px}
@@ -1095,6 +1114,8 @@ let MANAGER_REMOTE_ALL_LEDGER_LOADING=null;
 let MANAGER_REMOTE_CONFIGS=[];
 let MANAGER_REMOTE_STATION_NET_BOARD=[];
 let MANAGER_REMOTE_WALLET_BOARD=[];
+let MANAGER_REMOTE_BADGE_GALLERY=[];
+let MANAGER_BADGE_GALLERY_PAGES={};
 let MANAGER_REMOTE_PUBLIC_SYNC_KEY='';
 let MANAGER_REMOTE_PUBLIC_LOADING=null;
 let MANAGER_DAILY_PREDICTIONS=null;
@@ -2148,6 +2169,13 @@ function managerSetMarketPage(page){MANAGER_MARKET_PAGE=Number(page)||1;trackMan
 function managerSetHallPage(page){MANAGER_HALL_PAGE=Number(page)||1;trackManagerEvent('manager_hall_page',{page:MANAGER_HALL_PAGE});renderManagerDemo();}
 function managerSetStationNetPage(page){MANAGER_STATION_NET_PAGE=Number(page)||1;trackManagerEvent('manager_board_page',{page:MANAGER_STATION_NET_PAGE});renderManagerDemo();}
 function managerSetWalletBoardPage(page){MANAGER_WALLET_BOARD_PAGE=Number(page)||1;trackManagerEvent('manager_wallet_board_page',{page:MANAGER_WALLET_BOARD_PAGE});renderManagerDemo();}
+function managerSetBadgeGalleryPage(key,page){
+  key=String(key||'');
+  if(!key)return;
+  MANAGER_BADGE_GALLERY_PAGES[key]=Number(page)||1;
+  trackManagerEvent('manager_badge_gallery_page',{collection:safeEventParam(key),page:MANAGER_BADGE_GALLERY_PAGES[key]});
+  renderManagerDemo();
+}
 function managerSetLedgerPage(page){MANAGER_LEDGER_PAGE=Number(page)||1;trackManagerEvent('manager_ledger_page',{page:MANAGER_LEDGER_PAGE});renderManagerDemo();}
 function managerMarketFilterChanged(){
   MANAGER_MARKET_PAGE=1;
@@ -4102,6 +4130,45 @@ function managerRenderWalletBoard(hideNote){
   }).join('');
   return (hideNote?'':note)+'<div class="manager-table-scroll"><table class="manager-ledger-table manager-rank-table manager-wallet-board-table"><thead><tr><th>排名</th><th>用户名</th><th>当前本金</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+managerPagerHtml('wallet-board',pager);
 }
+function managerBadgeGalleryBadges(row){
+  var raw=row&&row.badges;
+  if(typeof raw==='string'){
+    try{raw=JSON.parse(raw);}catch(e){raw=[];}
+  }
+  return (Array.isArray(raw)?raw:[]).map(managerNormalizeBadge).filter(Boolean);
+}
+function managerBadgeGalleryPreviewRows(){
+  var badges=managerBadgeCatalog();
+  if(!badges.length)badges=Object.keys(MANAGER_BADGE_VISUAL_META||{}).map(function(key){return managerNormalizeBadge(managerBadgeFallbackForKey(key));}).filter(Boolean);
+  function setEquipped(list,key){return list.map(function(badge){return Object.assign({},badge,{is_equipped:badge.badge_key===key});});}
+  return [
+    {rank:1,user:'尊贵的娃老师',count:badges.length,badges:setEquipped(badges,'alcaraz-duck')},
+    {rank:2,user:'凌霄',count:Math.min(7,badges.length),badges:setEquipped(badges.slice(0,7),'djoko-goat')},
+    {rank:3,user:'仲夏典藏家',count:Math.min(4,badges.length),badges:setEquipped(badges.slice(0,4),'wimbledon-2026')}
+  ];
+}
+function managerBadgeGalleryPagerHtml(key,pager){
+  if(!pager||pager.total<=pager.size)return '<div class="manager-badge-gallery-pager" aria-hidden="true"></div>';
+  return '<div class="manager-pager manager-badge-gallery-pager"><button class="manager-clear" data-manager-action="page-badge-gallery" data-manager-gallery-key="'+esc(key)+'" data-manager-page="'+(pager.page-1)+'" '+(pager.page<=1?'disabled':'')+'>上一页</button><span>第 '+pager.page+' / '+pager.pages+' 页</span><button class="manager-clear" data-manager-action="page-badge-gallery" data-manager-gallery-key="'+esc(key)+'" data-manager-page="'+(pager.page+1)+'" '+(pager.page>=pager.pages?'disabled':'')+'>下一页</button></div>';
+}
+function managerRenderBadgeGallery(){
+  var list=Array.isArray(MANAGER_REMOTE_BADGE_GALLERY)?MANAGER_REMOTE_BADGE_GALLERY.slice():[];
+  if(managerLocalPreviewEnabled()&&!list.length)list=managerBadgeGalleryPreviewRows();
+  if(!list.length)return '<div class="manager-empty">'+((MANAGER_REMOTE_PUBLIC_LOADING&&!MANAGER_REMOTE_PUBLIC_SYNC_KEY)?'正在加载徽章展馆...':'徽章展馆等待第一批馆藏。')+'</div>';
+  return '<div class="manager-badge-gallery-grid">'+list.map(function(row,index){
+    var rank=Number(row.rank)||index+1,key=String(rank),badges=managerBadgeGalleryBadges(row);
+    var pager=managerPaginate(badges,MANAGER_BADGE_GALLERY_PAGES[key],8);
+    MANAGER_BADGE_GALLERY_PAGES[key]=pager.page;
+    var equipped=badges.find(function(badge){return badge.is_equipped;})||null;
+    var items=pager.items.map(function(badge){
+      var theme=managerBadgeThemeKey(badge),visual=MANAGER_BADGE_VISUAL_META[theme]||{};
+      var src=managerBadgeAssetUrl(visual.icon||badge.thumb_url||badge.image_url||'');
+      var title=badge.formal_name||badge.title||'徽章';
+      return '<div class="manager-badge-gallery-item" title="'+esc(title)+'">'+(src?'<img src="'+esc(src)+'" alt="'+esc(title)+'" loading="lazy" decoding="async" fetchpriority="low" onerror="managerBadgeImageRetry(this)">':'')+'<span>'+esc(title)+'</span></div>';
+    }).join('');
+    return '<article'+managerBadgeClassAttr(equipped,'manager-badge-gallery-card '+(rank===1?'is-gallery-champion':''))+'><div class="manager-badge-gallery-top"><div class="manager-badge-gallery-rank">'+managerRankMedalHtml(rank)+'</div><div class="manager-badge-gallery-user">'+managerUserNameWithBadge(row.user,equipped,{card:true})+'</div><div class="manager-badge-gallery-count"><strong>'+esc(row.count||badges.length)+'</strong><small>枚徽章</small></div></div><div class="manager-badge-gallery-label"><span>馆藏陈列</span><em>'+(pager.pages>1?'第 '+pager.page+' / '+pager.pages+' 页':'COLLECTION '+String(rank).padStart(2,'0'))+'</em></div><div class="manager-badge-gallery-shelf">'+items+'</div>'+managerBadgeGalleryPagerHtml(key,pager)+'</article>';
+  }).join('')+'</div>';
+}
 function managerRenderPrivateBoards(){
   var c=managerCalc(),stars=c.players.filter(function(p){return p.tier==='S'||p.tier==='A';}).reduce(function(s,p){return s+p.price;},0),starRate=c.lineupCost?Math.round(stars/c.lineupCost*100):0;
   var cards=[['我的赛季资产',managerWallet(),'钱包余额'],['本周阵容成本',c.spent,'含沉没成本'],['我的王牌球员',c.players[0]?c.players[0].name:'待结算','按本站阵容暂估'],['巨星依赖指数',starRate+'%','S/A 档成本占比'],['调仓记录',MANAGER_TRANSFER_COUNT+'/1','本站已用次数'],['当前风险画像',c.style,'由阵容结构生成']];
@@ -4110,7 +4177,7 @@ function managerRenderPrivateBoards(){
 function managerRenderBoardsPage(){
   var badge=managerCurrentUserBadge(),theme=managerBadgeThemeKey(badge),meta=managerPublicBoardStationMeta();
   var stationSub=meta.stationName+' · '+(meta.isPrevious?'上一站结算榜':'当前站结算榜');
-  return '<div class="manager-boards-page manager-badge-board-shell"'+(theme?' data-badge="'+esc(theme)+'"':'')+'><div class="manager-rules manager-demo-boards"><details open class="manager-demo-board"><summary><span><b>本站净收益榜</b><small>'+esc(stationSub)+'</small></span><em>经纪人收益榜</em></summary><div class="rule-body">'+managerRenderStationNetBoard(true)+'</div></details><details open class="manager-demo-board"><summary><span><b>当前本金榜</b><small>本金可带到下一站</small></span><em>本金榜</em></summary><div class="rule-body">'+managerRenderWalletBoard(true)+'</div></details><details open class="manager-private-board"><summary>我的私人榜单</summary><div class="rule-body"><div class="manager-board-grid">'+managerRenderPrivateBoards()+'</div></div></details></div></div>';
+  return '<div class="manager-boards-page manager-badge-board-shell"'+(theme?' data-badge="'+esc(theme)+'"':'')+'><div class="manager-rules manager-demo-boards"><details open class="manager-demo-board"><summary><span><b>本站净收益榜</b><small>'+esc(stationSub)+'</small></span><em>经纪人收益榜</em></summary><div class="rule-body">'+managerRenderStationNetBoard(true)+'</div></details><details open class="manager-demo-board"><summary><span><b>当前本金榜</b><small>本金可带到下一站</small></span><em>本金榜</em></summary><div class="rule-body">'+managerRenderWalletBoard(true)+'</div></details><details open class="manager-demo-board manager-badge-gallery-board"><summary><span><b>徽章展馆</b><small>按拥有徽章数、徽章总价依次降序</small></span><em>炉友典藏</em></summary><div class="rule-body">'+managerRenderBadgeGallery()+'</div></details><details open class="manager-private-board"><summary>我的私人榜单</summary><div class="rule-body"><div class="manager-board-grid">'+managerRenderPrivateBoards()+'</div></div></details></div></div>';
 }
 function managerRenderDailyPredictions(){
   if(!MANAGER_DAILY_PREDICTIONS&&!MANAGER_DAILY_PREDICTIONS_LOADING){
@@ -4546,6 +4613,7 @@ async function managerLoadRemotePublicData(){
       {rank:2,user:'袁天罡',badge:null,balance:3225},
       {rank:3,user:'yygq专家',badge:null,balance:3110}
     ]:[];
+    MANAGER_REMOTE_BADGE_GALLERY=managerLocalPreviewEnabled()?managerBadgeGalleryPreviewRows():[];
     MANAGER_REMOTE_PUBLIC_SYNC_KEY='local-preview:'+(managerBadgeThemeKey(previewBadge)||'none');
     return [];
   }
@@ -4571,7 +4639,11 @@ async function managerLoadRemotePublicData(){
       .select('user_id,display_name,badge_key,title,subtitle,image_url,thumb_url,rarity')
       .limit(500);
     const badgeCatalogReq=client.from('tour_manager_badges').select('*').eq('is_active',true).order('sort_order',{ascending:true}).limit(100);
-    const results=await Promise.allSettled([configReq,boardReq,walletReq,activeBadgeReq,badgeCatalogReq]);
+    const badgeGalleryReq=client.from('tour_manager_badge_gallery')
+      .select('rank_no,display_name,badge_count,badges')
+      .order('rank_no',{ascending:true})
+      .limit(500);
+    const results=await Promise.allSettled([configReq,boardReq,walletReq,activeBadgeReq,badgeCatalogReq,badgeGalleryReq]);
     const badgeCatalog=results[4].status==='fulfilled'?results[4].value:null;
     if(badgeCatalog&&badgeCatalog.error)trackSupabaseError('manager.badge_catalog.public',badgeCatalog.error,true);
     else if(badgeCatalog)MANAGER_BADGES=(badgeCatalog.data||[]).map(managerNormalizeBadge).filter(Boolean);
@@ -4631,9 +4703,22 @@ async function managerLoadRemotePublicData(){
       updateAuthUi();
     }
     else if(results[3].reason)trackSupabaseError('manager.active_badges.public',results[3].reason,true);
+    const badgeGallery=results[5].status==='fulfilled'?results[5].value:null;
+    if(badgeGallery&&badgeGallery.error){
+      MANAGER_REMOTE_BADGE_GALLERY=[];
+      trackSupabaseError('manager.badge_gallery.public',badgeGallery.error,true);
+    }else if(badgeGallery){
+      MANAGER_REMOTE_BADGE_GALLERY=(badgeGallery.data||[]).map(function(x){
+        return {rank:Number(x.rank_no)||0,user:x.display_name||'炉友',count:Number(x.badge_count)||0,badges:x.badges||[]};
+      });
+      MANAGER_BADGE_GALLERY_PAGES={};
+    }else if(results[5].reason){
+      MANAGER_REMOTE_BADGE_GALLERY=[];
+      trackSupabaseError('manager.badge_gallery.public',results[5].reason,true);
+    }
     managerInjectLocalBoardTestData();
     MANAGER_REMOTE_PUBLIC_SYNC_KEY=key;
-    trackManagerEvent('manager_public_data_loaded',{config_count:MANAGER_REMOTE_CONFIGS.length,board_count:MANAGER_REMOTE_STATION_NET_BOARD.length,wallet_board_count:MANAGER_REMOTE_WALLET_BOARD.length,board_station:safeEventParam(boardMeta.stationKey)});
+    trackManagerEvent('manager_public_data_loaded',{config_count:MANAGER_REMOTE_CONFIGS.length,board_count:MANAGER_REMOTE_STATION_NET_BOARD.length,wallet_board_count:MANAGER_REMOTE_WALLET_BOARD.length,badge_gallery_count:MANAGER_REMOTE_BADGE_GALLERY.length,board_station:safeEventParam(boardMeta.stationKey)});
     return MANAGER_REMOTE_CONFIGS;
   })().finally(function(){MANAGER_REMOTE_PUBLIC_LOADING=null;});
   return MANAGER_REMOTE_PUBLIC_LOADING;
@@ -4653,6 +4738,7 @@ function managerInjectLocalBoardTestData(){
   }].concat(withoutTest(MANAGER_REMOTE_CONFIGS));
   MANAGER_REMOTE_STATION_NET_BOARD=[{rank:1,user:'test111',badge:badge,net:3360,player:2740,combo:620}].concat(withoutTest(MANAGER_REMOTE_STATION_NET_BOARD).map(function(row,index){return Object.assign({},row,{rank:index+2});}));
   MANAGER_REMOTE_WALLET_BOARD=[{rank:1,user:'test111',badge:badge,balance:9876}].concat(withoutTest(MANAGER_REMOTE_WALLET_BOARD).map(function(row,index){return Object.assign({},row,{rank:index+2});}));
+  if(!MANAGER_REMOTE_BADGE_GALLERY.length)MANAGER_REMOTE_BADGE_GALLERY=managerBadgeGalleryPreviewRows();
   MANAGER_STATION_NET_PAGE=1;
   MANAGER_WALLET_BOARD_PAGE=1;
 }
@@ -4662,6 +4748,8 @@ function managerRefreshRemotePublicDataAfterMutation(){
   MANAGER_REMOTE_CONFIGS=[];
   MANAGER_REMOTE_STATION_NET_BOARD=[];
   MANAGER_REMOTE_WALLET_BOARD=[];
+  MANAGER_REMOTE_BADGE_GALLERY=[];
+  MANAGER_BADGE_GALLERY_PAGES={};
   return managerLoadRemotePublicData().then(function(){
     if(ACTIVE_TAB==='manager'&&(MANAGER_VIEW==='hall'||MANAGER_VIEW==='boards'))renderManagerDemo();
   }).catch(function(){});
@@ -5143,7 +5231,7 @@ function managerBadgeClassAttr(badge,extra){
   badge=managerNormalizeBadge(badge);
   var theme=managerBadgeThemeKey(badge);
   extra=extra||'';
-  var context='',isCard=/manager-hall-card|manager-badge-card|badge-themed-config-card|agent-config-card|badged-card/.test(extra),isSidebar=/manager-side|badge-themed-sidebar-panel|my-lineup-panel|lineup-sidebar-panel|badged-lineup-panel/.test(extra);
+  var context='',isCard=/manager-hall-card|manager-badge-card|manager-badge-gallery-card|badge-themed-config-card|agent-config-card|badged-card/.test(extra),isSidebar=/manager-side|badge-themed-sidebar-panel|my-lineup-panel|lineup-sidebar-panel|badged-lineup-panel/.test(extra);
   if(badge&&isCard)context='badged-card badge-themed-card';
   else if(badge&&isSidebar)context='badged-lineup-panel';
   else if(badge)context='badged-rank-row badge-themed-row';
@@ -6775,6 +6863,7 @@ document.addEventListener('click',function(e){
   else if(btn.dataset.managerAction==='page-hall')managerSetHallPage(btn.dataset.managerPage);
   else if(btn.dataset.managerAction==='page-station-net')managerSetStationNetPage(btn.dataset.managerPage);
   else if(btn.dataset.managerAction==='page-wallet-board')managerSetWalletBoardPage(btn.dataset.managerPage);
+  else if(btn.dataset.managerAction==='page-badge-gallery')managerSetBadgeGalleryPage(btn.dataset.managerGalleryKey,btn.dataset.managerPage);
   else if(btn.dataset.managerAction==='page-ledger')managerSetLedgerPage(btn.dataset.managerPage);
   else if(btn.dataset.managerAction==='filter-badges'){MANAGER_BADGE_FILTER=btn.dataset.filter||'all';renderManagerDemo();}
   else if(btn.dataset.managerAction==='preview-scene')managerSetBadgePreviewScene(btn.dataset.scene||'hall');
