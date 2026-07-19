@@ -2709,7 +2709,7 @@ function managerIncomePartsFromRow(row){
   if(managerLedgerRowHidden(row))return null;
   var type=String(row&&row.type||row&&row.rawStatus||row&&row.status||'');
   if(/station_grant/i.test(type)||/本站签约金/.test(type)||/season_opening|开户/i.test(type))return null;
-  if(/lineup_wallet_spend|lineup_purchase_cost|lineup_withdraw_refund|transfer|market_price_rollback/i.test(type))return null;
+  if(/lineup_wallet_spend|lineup_purchase_cost|lineup_withdraw_refund|lineup_principal_allocation_refund|transfer|market_price_rollback/i.test(type))return null;
   var amount=Number(row&&row.amount);
   if(!Number.isFinite(amount))amount=Number(row&&row.walletDelta);
   if(!Number.isFinite(amount))amount=Number(row&&row.net);
@@ -3206,6 +3206,7 @@ function managerLedgerStatusText(type){
   if(/station_grant/i.test(t))return '本站签约金发放';
   if(/lineup_purchase_cost|lineup_wallet_spend/i.test(t))return '签约球员支出';
   if(/lineup_withdraw_refund/i.test(t))return '签约球员撤回';
+  if(/lineup_principal_allocation_refund/i.test(t))return '签约金配置修复退款';
   if(/submit_bonus_reversal|bonus_reversal/i.test(t))return '撤回提交奖励';
   if(/submit_bonus/i.test(t))return '提交阵容奖励';
   if(/badge_purchase/i.test(t))return '购买徽章';
