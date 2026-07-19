@@ -185,3 +185,54 @@ body[data-site-theme="gauff_energy"] :is(button,input,select,textarea,h1,h2,h3,h
   text-overflow:clip;
   transform:translate(-7%,.04em);
 }
+
+/* Keep the live bee-duck lockups identical to the approved store preview.
+   The legacy header/leaderboard selectors otherwise flatten the 720:272 plaque. */
+#hdr.badge-login-header .badge-identity--login[data-badge="alcaraz_bee_duck"]{
+  --badge-icon-size:54px;
+  --badge-plate-width:175px;
+  --badge-plate-height:66px;
+}
+#hdr.badge-login-header .badge-identity--login[data-badge="alcaraz_bee_duck"] .badge-identity__name{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:12px;
+  line-height:1;
+}
+body .manager-boards-page .badge-identity--row[data-badge="alcaraz_bee_duck"],
+body .jinx-leader-table .badge-identity--row[data-badge="alcaraz_bee_duck"]{
+  --badge-icon-size:62px;
+  --badge-plate-width:166px;
+  --badge-plate-height:63px;
+}
+body .manager-boards-page .badge-identity--row[data-badge="alcaraz_bee_duck"] .badge-identity__name,
+body .jinx-leader-table .badge-identity--row[data-badge="alcaraz_bee_duck"] .badge-identity__name{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:12px;
+  line-height:1;
+}
+
+@media(max-width:768px){
+  #hdr.badge-login-header .badge-identity--login[data-badge="alcaraz_bee_duck"]{
+    --badge-icon-size:44px;
+    --badge-plate-width:150px;
+    --badge-plate-height:57px;
+  }
+  body .manager-boards-page .badge-identity--row[data-badge="alcaraz_bee_duck"],
+  body .jinx-leader-table .badge-identity--row[data-badge="alcaraz_bee_duck"]{
+    --badge-icon-size:40px;
+    --badge-plate-width:140px;
+    --badge-plate-height:53px;
+  }
+}
+
+@media(max-width:520px){
+  #hdr.badge-login-header .badge-identity--login[data-badge="alcaraz_bee_duck"]{
+    --badge-icon-size:40px;
+    --badge-plate-width:132px;
+    --badge-plate-height:50px;
+  }
+}
