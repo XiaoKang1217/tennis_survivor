@@ -226,13 +226,6 @@
 .manager-badge-hero-name.is-very-long b{font-size:clamp(9px,.84vw,13px)}
 [data-badge="alcaraz_duck"] .manager-badge-hero-name b,.manager-badge-hero-name[data-badge="alcaraz_duck"] b{width:94%;max-width:94%}
 
-/* Zheng and Djokovic use narrow source plaques. Preserve the shared type size and widen the art instead. */
-.badge-identity:is([data-badge="zheng_queen"],[data-badge="djoko_goat"]),
-.manager-user-badge-line:is([data-badge="zheng_queen"],[data-badge="djoko_goat"]){--badge-plate-width:232px}
-.badge-identity--login:is([data-badge="zheng_queen"],[data-badge="djoko_goat"]){--badge-plate-width:220px}
-.badge-identity--row:is([data-badge="zheng_queen"],[data-badge="djoko_goat"]){--badge-plate-width:242px}
-.badge-identity--card:is([data-badge="zheng_queen"],[data-badge="djoko_goat"]),
-.badge-identity--sidebar:is([data-badge="zheng_queen"],[data-badge="djoko_goat"]){--badge-plate-width:250px}
 .badge-identity--login[data-badge="zheng_queen"] .badge-identity__name{transform:translateY(.3em)}
 
 /* A complete neutral skin for public configuration cards whose owner has no badge. */
