@@ -3904,7 +3904,7 @@ function managerRenderMyLineup(){
   var replacedRows=replaced.map(function(p){return managerMyPlayerCard(p,true);}).join('');
   return '<div class="manager-status-line">'+esc(statusLine)+'</div>'+managerWithdrawLineupHtml()+'<div class="manager-my-summary-grid"><div class="manager-my-highlight"><h4>队伍目前收益</h4><div class="manager-kv"><div><span>总支出</span><b>'+managerSpendBreakdownText(c)+'</b></div><div><span>累计收益</span><b>'+team.earned+'</b></div><div><span>昨天收益</span><b>'+team.yesterday+'</b></div><div><span>目前存活</span><b>'+team.alive+' 人</b></div><div><span>预计最高收益</span><b>'+team.max+'</b></div></div></div><div class="manager-my-highlight"><h4>当前预测</h4><div class="manager-kv"><div><span>毛收益</span><b>'+c.gross+'</b></div><div><span>奖励</span><b>'+c.bonus+'</b></div><div><span>成本</span><b>'+c.spent+'</b></div><div><span>当前预测净收益</span><b>'+c.net+'</b></div><div><span>阵容风格</span><b>'+esc(c.style)+'</b></div></div></div></div><div class="manager-roster-title">当前阵容</div><div class="manager-my-lineup">'+currentRows+'</div>'+(replacedRows?'<div class="manager-roster-title" style="margin-top:14px">换下球员</div><div class="manager-my-lineup">'+replacedRows+'</div>':'');
 }
-function managerBadgeCardHtml(badge,owned,equipped,source){
+function managerBadgeCardHtml(badge,owned,equipped,source,isNew){
   badge=managerNormalizeBadge(badge);
   if(!badge)return '';
   var theme=managerBadgeThemeKey(badge),visual=MANAGER_BADGE_VISUAL_META[theme]||{};
@@ -3912,6 +3912,7 @@ function managerBadgeCardHtml(badge,owned,equipped,source){
   var motifs=(badge.motifs||[]).map(function(item){return '<span>'+esc(item)+'</span>';}).join('');
   var ribbonText=badge.badge_key==='gauff-energy'?'附赠全站字体':(badge.badge_key==='alcaraz-bee-duck'?'3D毛毡效果':'');
   var ribbonHtml=ribbonText?'<span class="manager-badge-card-ribbon">'+esc(ribbonText)+'</span>':'';
+  var newHtml=source==='shop'&&isNew?'<span class="manager-badge-new-mark" aria-label="新品">NEW!!</span>':'';
   var action='';
   if(source==='shop'){
     if(owned)action=equipped?'<span class="manager-badge-state">佩戴中</span>':'<button class="manager-clear" data-manager-action="equip-badge" data-badge-key="'+esc(badge.badge_key)+'">佩戴</button>';
@@ -3921,7 +3922,7 @@ function managerBadgeCardHtml(badge,owned,equipped,source){
     action=equipped?'<button class="manager-clear" data-manager-action="unequip-badge">取消佩戴</button>':'<button class="manager-action" data-manager-action="equip-badge" data-badge-key="'+esc(badge.badge_key)+'">佩戴</button>';
   }
   var priceHtml=saleStatus==='coming_soon'?'<div class="manager-badge-price is-status"><small>开放状态</small><strong>敬请期待</strong></div>':'<div class="manager-badge-price"><small>经纪人本金</small><strong>$'+Math.round(Number(badge.price)||0)+'</strong></div>';
-  return '<article'+managerBadgeClassAttr(badge,'manager-badge-card')+'>'+ribbonHtml+'<div class="manager-badge-card-flags"><span class="manager-badge-category">'+esc(badge.category_label)+'</span><span class="manager-badge-owned '+(owned?'is-owned':'')+'">'+(owned?'已拥有':'未拥有')+'</span></div><div class="manager-badge-card-art"><img class="manager-badge-art" src="'+esc(managerBadgeAssetUrl(visual.icon||badge.image_url||badge.thumb_url))+'" alt="'+esc(badge.title)+'" loading="lazy" decoding="async" onerror="managerBadgeImageRetry(this)"></div><div class="manager-badge-card-copy"><div class="manager-badge-serial">'+esc(badge.serial_number||badge.badge_key)+'</div><h4>'+esc(badge.formal_name||badge.title)+'</h4><div class="manager-badge-desc">'+esc(badge.description||'佩戴后会在炉网多个位置展示。')+'</div><div class="manager-badge-motifs">'+motifs+'</div><div class="manager-badge-card-footer">'+priceHtml+'<div class="manager-badge-actions"><button class="manager-clear" data-manager-action="preview-badge" data-badge-key="'+esc(badge.badge_key)+'">实装预览</button>'+action+'</div></div></div></article>';
+  return '<article'+managerBadgeClassAttr(badge,'manager-badge-card'+(isNew?' is-new':''))+'>'+newHtml+ribbonHtml+'<div class="manager-badge-card-flags"><span class="manager-badge-category">'+esc(badge.category_label)+'</span><span class="manager-badge-owned '+(owned?'is-owned':'')+'">'+(owned?'已拥有':'未拥有')+'</span></div><div class="manager-badge-card-art"><img class="manager-badge-art" src="'+esc(managerBadgeAssetUrl(visual.icon||badge.image_url||badge.thumb_url))+'" alt="'+esc(badge.title)+'" loading="lazy" decoding="async" onerror="managerBadgeImageRetry(this)"></div><div class="manager-badge-card-copy"><div class="manager-badge-serial">'+esc(badge.serial_number||badge.badge_key)+'</div><h4>'+esc(badge.formal_name||badge.title)+'</h4><div class="manager-badge-desc">'+esc(badge.description||'佩戴后会在炉网多个位置展示。')+'</div><div class="manager-badge-motifs">'+motifs+'</div><div class="manager-badge-card-footer">'+priceHtml+'<div class="manager-badge-actions"><button class="manager-clear" data-manager-action="preview-badge" data-badge-key="'+esc(badge.badge_key)+'">实装预览</button>'+action+'</div></div></div></article>';
 }
 
 function managerOpenBadgePreview(badgeKey){
@@ -3975,11 +3976,20 @@ function managerBadgePreviewHtml(){
 }
 function managerRenderShop(){
   var badges=managerBadgeCatalog(),owned=managerOwnedBadgeMap(),active=managerCurrentUserBadge();
+  var latestRelease=badges.reduce(function(latest,item){
+    var released=String(item.available_from||'').slice(0,10);
+    return released>latest?released:latest;
+  },'');
   var categoryCounts=badges.reduce(function(counts,item){counts[item.category]=(counts[item.category]||0)+1;return counts;},{all:badges.length});
   var filters=[['all','全部 '+categoryCounts.all],['player','球员纪念 '+(categoryCounts.player||0)],['event','赛事限定 '+(categoryCounts.event||0)],['community','炉友纪念 '+(categoryCounts.community||0)]];
   if(MANAGER_BADGE_FILTER!=='all')badges=badges.filter(function(item){return item.category===MANAGER_BADGE_FILTER;});
+  badges.sort(function(a,b){
+    var aNew=latestRelease&&String(a.available_from||'').slice(0,10)===latestRelease;
+    var bNew=latestRelease&&String(b.available_from||'').slice(0,10)===latestRelease;
+    return Number(bNew)-Number(aNew)||(Number(b.price)||0)-(Number(a.price)||0);
+  });
   var filterHtml='<div class="manager-badge-filters">'+filters.map(function(item){return '<button class="'+(MANAGER_BADGE_FILTER===item[0]?'on':'')+'" data-manager-action="filter-badges" data-filter="'+item[0]+'">'+item[1]+'</button>';}).join('')+'</div>';
-  return filterHtml+'<div class="manager-badge-grid">'+badges.map(function(b){return managerBadgeCardHtml(b,!!owned[b.badge_key],active&&active.badge_key===b.badge_key,'shop');}).join('')+'</div>';
+  return filterHtml+'<div class="manager-badge-grid">'+badges.map(function(b){var isNew=latestRelease&&String(b.available_from||'').slice(0,10)===latestRelease;return managerBadgeCardHtml(b,!!owned[b.badge_key],active&&active.badge_key===b.badge_key,'shop',isNew);}).join('')+'</div>';
 }
 function managerRenderMyBadges(){
   if(!AUTH_USER)return '<div class="manager-empty">登录后可以查看、佩戴和取消佩戴你的徽章。</div>';

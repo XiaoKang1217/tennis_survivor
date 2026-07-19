@@ -333,6 +333,8 @@
 .manager-badge-card::before{content:""!important;position:absolute!important;z-index:-1;top:-95px!important;right:-80px!important;bottom:auto!important;left:auto!important;width:260px!important;height:260px!important;display:block!important;pointer-events:none!important;border-radius:50%;background:radial-gradient(circle,var(--glow),transparent 68%)!important}
 .manager-badge-card::after{display:none!important}
 .manager-badge-card-flags{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:18px 18px 0}
+.manager-badge-card.is-new .manager-badge-card-flags{padding-top:38px}
+.manager-badge-new-mark{position:absolute;top:9px;left:13px;z-index:8;color:#d31f1f;font-family:Impact,"Arial Black","Noto Sans SC",sans-serif;font-size:20px;font-weight:950;line-height:1;letter-spacing:0;transform:rotate(-12deg);transform-origin:left center;text-shadow:0 1px 0 #fff,1px 0 0 #fff,0 -1px 0 #fff,-1px 0 0 #fff,0 3px 8px rgba(123,22,22,.18);pointer-events:none}
 .manager-badge-category{padding:6px 10px;color:var(--deep);border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);border-radius:999px;background:rgba(255,255,255,.55);font-size:11px;font-weight:800;letter-spacing:.08em}
 .manager-badge-owned{color:color-mix(in srgb,var(--deep) 82%,white);font-size:12px;font-weight:800}.manager-badge-owned::before{content:"◇";margin-right:6px;color:var(--accent);font-size:9px}.manager-badge-owned.is-owned::before{content:"◆"}
 .manager-badge-card-art{position:relative;z-index:2;width:100%!important;min-height:204px!important;height:204px!important;display:grid!important;place-items:center!important}
