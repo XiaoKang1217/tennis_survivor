@@ -19,7 +19,7 @@
 :is([data-badge="gauff_energy"],[data-badge="swiatek_whirlwind"],[data-badge="alcaraz_bee_duck"],[data-badge="who_is_leather"],[data-badge="rotten_cabbage"],[data-badge="federer_eternal"],[data-badge="nadal_clay_soul"]) .manager-badge-hero-name,
 .manager-badge-hero-name:is([data-badge="gauff_energy"],[data-badge="swiatek_whirlwind"],[data-badge="alcaraz_bee_duck"],[data-badge="who_is_leather"],[data-badge="rotten_cabbage"],[data-badge="federer_eternal"],[data-badge="nadal_clay_soul"]){top:50%;right:var(--v18-hero-r);width:var(--v18-hero-w);height:44%;padding:6% 8%;color:var(--badge-plaque-text);background:var(--badge-nameplate-art) center/100% 100% no-repeat;filter:drop-shadow(0 5px 8px rgba(36,20,36,.2));transform:translateY(-50%)}
 
-.manager-badge-preview-overlay[data-badge] .manager-badge-preview-hero{background:linear-gradient(116deg,rgba(28,19,37,.58),rgba(28,19,37,.14)),var(--badge-surface-wide-art,var(--badge-surface-art)) center/cover no-repeat}
+.manager-badge-preview-overlay:is([data-badge="gauff_energy"],[data-badge="swiatek_whirlwind"],[data-badge="alcaraz_bee_duck"],[data-badge="who_is_leather"],[data-badge="rotten_cabbage"],[data-badge="federer_eternal"],[data-badge="nadal_clay_soul"]) .manager-badge-preview-hero{background:linear-gradient(116deg,rgba(28,19,37,.58),rgba(28,19,37,.14)),var(--badge-surface-wide-art,var(--badge-surface-art)) center/cover no-repeat}
 
 :is([data-badge="gauff_energy"],[data-badge="swiatek_whirlwind"],[data-badge="alcaraz_bee_duck"],[data-badge="who_is_leather"],[data-badge="rotten_cabbage"],[data-badge="federer_eternal"],[data-badge="nadal_clay_soul"]) .manager-badge-card img.manager-badge-art{object-fit:contain!important}
 [data-badge="rotten_cabbage"] :is(.badge-identity__icon,.manager-badge-thumb),
@@ -128,7 +128,7 @@ body[data-site-theme="gauff_energy"] :is(button,input,select,textarea,h1,h2,h3,h
   display:flex;
   align-items:center;
   justify-content:center;
-  transform:translateX(5%);
+  transform:translate(5%,.16em);
   font-size:clamp(10px,1vw,14px);
   line-height:1;
   text-align:center;
@@ -150,16 +150,38 @@ body[data-site-theme="gauff_energy"] :is(button,input,select,textarea,h1,h2,h3,h
   right:10%;
 }
 
-.manager-hall-card[data-badge="gauff_energy"] .manager-badge-hero-name[data-badge="gauff_energy"]{
-  right:10%;
-  width:30%;
-  padding:3% 5%;
-}
-
-/* Center Gauff's plaque inside the right-side lavender frame in both live and shop-preview lineup cards. */
+.manager-hall-card[data-badge="gauff_energy"] .manager-badge-hero-name[data-badge="gauff_energy"],
 .manager-panel.manager-side[data-badge="gauff_energy"] .manager-panel-h .manager-badge-hero-name[data-badge="gauff_energy"],
 .manager-badge-preview-overlay[data-badge="gauff_energy"] .manager-badge-preview-sidebar-head .manager-badge-hero-name[data-badge="gauff_energy"]{
-  right:10%;
+  right:7.5%;
   width:35%;
   padding:4% 7%;
+}
+
+/* Gauff's illustrated fruit ends make the usable writing area slightly left of center. */
+.manager-hall-card[data-badge="gauff_energy"] .manager-badge-hero-name[data-badge="gauff_energy"] b,
+.manager-panel.manager-side[data-badge="gauff_energy"] .manager-panel-h .manager-badge-hero-name[data-badge="gauff_energy"] b{
+  width:88%;
+  max-width:88%;
+  overflow:visible;
+  font-size:clamp(14px,1.35vw,19px);
+  text-overflow:clip;
+  transform:translate(-5%,.04em);
+}
+
+/* The lineup card has more horizontal room than the hall card. Extend only this
+   plaque toward the left, stopping before the purple foliage, and center its copy. */
+.manager-panel.manager-side[data-badge="gauff_energy"] .manager-panel-h .manager-badge-hero-name[data-badge="gauff_energy"],
+.manager-badge-preview-overlay[data-badge="gauff_energy"] .manager-badge-preview-sidebar-head .manager-badge-hero-name[data-badge="gauff_energy"]{
+  right:7.5%;
+  width:39%;
+}
+.manager-panel.manager-side[data-badge="gauff_energy"] .manager-panel-h .manager-badge-hero-name[data-badge="gauff_energy"] b,
+.manager-badge-preview-overlay[data-badge="gauff_energy"] .manager-badge-preview-sidebar-head .manager-badge-hero-name[data-badge="gauff_energy"] b{
+  width:84%;
+  max-width:84%;
+  overflow:visible;
+  font-size:clamp(14px,1.35vw,19px);
+  text-overflow:clip;
+  transform:translate(-7%,.04em);
 }

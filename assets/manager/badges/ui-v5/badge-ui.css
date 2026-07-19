@@ -58,6 +58,13 @@
 .manager-panel.manager-side.manager-badge-themed .manager-panel-h .manager-sidebar-owner{position:static;z-index:auto}
 .manager-panel.manager-side.manager-badge-themed .manager-panel-h .manager-badge-hero-name{position:absolute;top:50%;right:2%;z-index:4;width:56%;height:44%;padding:7% 9%;transform:translateY(-50%)}
 .manager-panel.manager-side.manager-badge-themed .manager-panel-h .manager-badge-hero-name[data-badge="alcaraz_duck"]{top:44%;right:4%;width:49%;height:42%;padding:5% 8%}
+.manager-hall-card[data-badge="zheng_queen"] .manager-badge-hero-name[data-badge="zheng_queen"] b,
+.manager-panel.manager-side[data-badge="zheng_queen"] .manager-panel-h .manager-badge-hero-name[data-badge="zheng_queen"] b,
+.manager-badge-preview-overlay[data-badge="zheng_queen"] .manager-badge-preview-sidebar-head .manager-badge-hero-name[data-badge="zheng_queen"] b{transform:translateY(.28em)}
+.manager-hall-card[data-badge="wang_mermaid"] .manager-badge-hero-name[data-badge="wang_mermaid"],
+.manager-panel.manager-side[data-badge="wang_mermaid"] .manager-panel-h .manager-badge-hero-name[data-badge="wang_mermaid"]{right:8%}
+.manager-panel.manager-side[data-badge="wang_mermaid"] .manager-panel-h .manager-badge-hero-name[data-badge="wang_mermaid"],
+.manager-badge-preview-overlay[data-badge="wang_mermaid"] .manager-badge-preview-sidebar-head .manager-badge-hero-name[data-badge="wang_mermaid"]{right:6%}
 .manager-panel.manager-side.manager-badge-themed .manager-sidebar-title{position:absolute;top:11px;left:13px;z-index:5;color:#fff8eb;font-size:12px;text-shadow:0 2px 4px rgba(31,17,38,.72)}
 .manager-panel.manager-side.manager-badge-themed .manager-panel-h>.manager-clear{position:absolute;top:9px;right:9px;z-index:6;color:#fff8eb;border-color:rgba(255,239,204,.55);background:rgba(43,24,48,.3)}
 .manager-panel.manager-side.manager-badge-themed .manager-panel-b{padding:14px;background:linear-gradient(180deg,#fffdf9,#fff8ed)}
@@ -218,6 +225,15 @@
 .manager-badge-hero-name.is-long b{font-size:clamp(12px,1.08vw,16px)}
 .manager-badge-hero-name.is-very-long b{font-size:clamp(9px,.84vw,13px)}
 [data-badge="alcaraz_duck"] .manager-badge-hero-name b,.manager-badge-hero-name[data-badge="alcaraz_duck"] b{width:94%;max-width:94%}
+
+/* Zheng and Djokovic use narrow source plaques. Preserve the shared type size and widen the art instead. */
+.badge-identity:is([data-badge="zheng_queen"],[data-badge="djoko_goat"]),
+.manager-user-badge-line:is([data-badge="zheng_queen"],[data-badge="djoko_goat"]){--badge-plate-width:232px}
+.badge-identity--login:is([data-badge="zheng_queen"],[data-badge="djoko_goat"]){--badge-plate-width:220px}
+.badge-identity--row:is([data-badge="zheng_queen"],[data-badge="djoko_goat"]){--badge-plate-width:242px}
+.badge-identity--card:is([data-badge="zheng_queen"],[data-badge="djoko_goat"]),
+.badge-identity--sidebar:is([data-badge="zheng_queen"],[data-badge="djoko_goat"]){--badge-plate-width:250px}
+.badge-identity--login[data-badge="zheng_queen"] .badge-identity__name{transform:translateY(.3em)}
 
 /* A complete neutral skin for public configuration cards whose owner has no badge. */
 .manager-hall-card:not(.manager-badge-themed){overflow:hidden;border:1px solid color-mix(in srgb,var(--site-border,#d9c6a0) 68%,#c8d4df 32%);border-radius:12px;background:var(--site-surface-raised,#fffdf9);box-shadow:0 10px 24px rgba(55,63,76,.09)}
