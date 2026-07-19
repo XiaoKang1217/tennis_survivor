@@ -1125,9 +1125,11 @@ let SECONDARY_DATA_PREFETCHED=false;
 let CHART_JS_LOADING=null;
 let MANAGER_BADGE_PREVIEW_SCROLL=0;
 let MANAGER_RENDER_DEFERRED_FOR_SEARCH=false;
+let MANAGER_LAST_RENDER_HTML='';
 const MANAGER_STORE_KEY='tennis_manager_state_v3';
 const MANAGER_LEDGER_KEY='tennis_manager_ledger_v2';
 const MANAGER_DAILY_SUMMARY_KEY='tennis_manager_daily_summary_v1';
+const MANAGER_EQUIPPED_BADGE_CACHE_KEY='tennis_manager_equipped_badge_v1';
 const MANAGER_REMOTE_SYNC_TTL_MS=15000;
 const MANAGER_DEMO_EVENT_META={};
 const MANAGER_LEVEL_CONFIG={
@@ -1644,15 +1646,17 @@ async function loadManagerData(){
   })();
   return MANAGER_DATA_LOADING;
 }
-function scheduleManagerPrewarm(){
+function scheduleManagerPrewarm(immediate){
   if(MANAGER_PREWARM_STARTED)return;
   MANAGER_PREWARM_STARTED=true;
-  runWhenIdle(function(){
+  var start=function(){
     loadManagerData().then(function(){
       if(ACTIVE_TAB==='manager')renderManagerDemo();
       scheduleSecondaryDataPrefetch();
     });
-  },1800);
+  };
+  if(immediate)start();
+  else runWhenIdle(start,1800);
 }
 function managerStorageNamespace(){
   var user=AUTH_USER&&AUTH_USER.id?AUTH_USER.id:'anon';
@@ -4152,6 +4156,12 @@ function managerEventMetaHtml(rules){
   return '<div class="manager-panel-meta"><span class="manager-panel-chip">'+esc(managerEventShortName(pack))+'</span><span class="manager-panel-chip surface '+managerSurfaceClass(pack.meta.surface)+'">'+managerSurfaceName(pack.meta.surface)+'</span><span class="manager-panel-chip">'+managerLevelName(pack.meta.level)+'</span><span class="manager-panel-chip">'+(pack.meta.drawSize||32)+'签</span><span class="manager-panel-chip">'+cfg.min+'-'+cfg.max+' 人阵容</span><span class="manager-panel-chip">换人 1 次 · 手续费 '+Math.round(cfg.transferFee*100)+'%</span></div>';
 }
 function managerRenderBody(){if(MANAGER_VIEW==='calculator')return managerRenderCalculator();if(MANAGER_VIEW==='prediction')return managerRenderDailyPredictions();if(MANAGER_VIEW==='mine')return managerRenderMine();if(MANAGER_VIEW==='hall')return managerRenderHall();if(MANAGER_VIEW==='transfer')return managerRenderTransfer();if(MANAGER_VIEW==='ledger')return managerRenderLedger();if(MANAGER_VIEW==='rules')return managerRenderRules();if(MANAGER_VIEW==='boards')return managerRenderBoardsPage();if(MANAGER_VIEW==='shop')return managerRenderShop();return managerRenderMarket();}
+function managerCommitRender(root,html){
+  if(!root||MANAGER_LAST_RENDER_HTML===html)return false;
+  root.innerHTML=html;
+  MANAGER_LAST_RENDER_HTML=html;
+  return true;
+}
 function renderManagerDemo(force){
   var root=document.getElementById('manager-root');if(!root)return;
   var active=document.activeElement,activeId=active&&active.id;
@@ -4163,12 +4173,12 @@ function renderManagerDemo(force){
   var oldPreviewDialog=root.querySelector('.manager-badge-preview-dialog');
   if(oldPreviewDialog)MANAGER_BADGE_PREVIEW_SCROLL=oldPreviewDialog.scrollTop;
   if(!MANAGER_DATA_LOADED){
-    root.innerHTML='<div class="manager-shell"><div class="manager-panel"><div class="manager-panel-b"><div class="manager-empty">正在加载巡回赛经纪人赛站数据...</div></div></div></div>';
+    managerCommitRender(root,'<div class="manager-shell"><div class="manager-panel"><div class="manager-panel-b"><div class="manager-empty">正在加载巡回赛经纪人赛站数据...</div></div></div></div>');
     loadManagerData().then(function(){renderManagerDemo();});
     return;
   }
   if(MANAGER_DATA_ERROR&&!managerLocalPreviewEnabled()){
-    root.innerHTML='<div class="manager-shell"><div class="manager-panel"><div class="manager-panel-h">巡回赛经纪人</div><div class="manager-panel-b"><div class="manager-empty">巡回赛经纪人赛站数据暂时加载失败，请稍后刷新。正式环境不会使用 demo 数据兜底。</div></div></div></div>';
+    managerCommitRender(root,'<div class="manager-shell"><div class="manager-panel"><div class="manager-panel-h">巡回赛经纪人</div><div class="manager-panel-b"><div class="manager-empty">巡回赛经纪人赛站数据暂时加载失败，请稍后刷新。正式环境不会使用 demo 数据兜底。</div></div></div></div>');
     return;
   }
   managerLoadState();
@@ -4190,8 +4200,9 @@ function renderManagerDemo(force){
   var wechat='<div class="manager-wechat-card"><div class="manager-wechat-copy"><div class="manager-wechat-alert">'+esc(stationNotice)+'</div><div class="manager-wechat-line main">本游戏每周跟随巡回赛历开新赛事</div><div class="manager-wechat-line">如需 <span class="manager-wechat-em">开售提醒</span>、<span class="manager-wechat-em">换人窗口提醒</span> 请扫码进本游戏官方群</div></div><img class="manager-wechat-qr" src="assets/manager/wechat-group-qr.webp" alt="微信群二维码" width="92" height="122" loading="eager" decoding="async" fetchpriority="high"></div>';
   var qaBanner=managerLocalQaMode()?'<div class="manager-note" style="margin-bottom:10px"><b>本地换人测试模式：</b>提交和换人窗口均已开放；所有操作只保存在当前浏览器，不会写入线上 Supabase。</div>':'';
   var badgePreview=managerBadgePreviewHtml();
-  root.innerHTML='<div class="manager-shell">'+qaBanner+'<div class="manager-hero"><div class="manager-title"><div><div class="manager-title-line"><h2>巡回赛经纪人</h2><button class="manager-clear" data-manager-view="rules">查看规则</button><span class="manager-settle-note">每天09:37结算</span></div><p>组建你的球员阵容，在巡回赛里征战！<br>在公开市场上购买球员，球员成绩越好，你赚的越多，收益按巡回赛积分计算。<br>你不只懂网球，你是在做预算、风险和轮次收益的组合策略。</p></div></div>'+wechat+'<img class="manager-hero-art" src="assets/manager/agent-money-bag.webp" alt="" loading="lazy" decoding="async" fetchpriority="low"></div>'+managerRenderMoney(c,rules)+tabs+'<div class="manager-grid view-'+MANAGER_VIEW+' '+(showSide?'':'single')+'"><div class="manager-panel">'+panelHead+'<div class="manager-panel-b">'+managerRenderBody()+'</div></div>'+(showSide?managerSidebar(c,rules):'')+'</div>'+seoFaqLinkHtml()+dialog+badgePreview+'</div>';
-  if(badgePreview&&MANAGER_BADGE_PREVIEW_SCROLL){
+  var nextHtml='<div class="manager-shell">'+qaBanner+'<div class="manager-hero"><div class="manager-title"><div><div class="manager-title-line"><h2>巡回赛经纪人</h2><button class="manager-clear" data-manager-view="rules">查看规则</button><span class="manager-settle-note">每天09:37结算</span></div><p>组建你的球员阵容，在巡回赛里征战！<br>在公开市场上购买球员，球员成绩越好，你赚的越多，收益按巡回赛积分计算。<br>你不只懂网球，你是在做预算、风险和轮次收益的组合策略。</p></div></div>'+wechat+'<img class="manager-hero-art" src="assets/manager/agent-money-bag.webp" alt="" loading="lazy" decoding="async" fetchpriority="low"></div>'+managerRenderMoney(c,rules)+tabs+'<div class="manager-grid view-'+MANAGER_VIEW+' '+(showSide?'':'single')+'"><div class="manager-panel">'+panelHead+'<div class="manager-panel-b">'+managerRenderBody()+'</div></div>'+(showSide?managerSidebar(c,rules):'')+'</div>'+seoFaqLinkHtml()+dialog+badgePreview+'</div>';
+  var didCommit=managerCommitRender(root,nextHtml);
+  if(didCommit&&badgePreview&&MANAGER_BADGE_PREVIEW_SCROLL){
     requestAnimationFrame(function(){
       var nextPreviewDialog=document.querySelector('.manager-badge-preview-dialog');
       if(nextPreviewDialog)nextPreviewDialog.scrollTop=MANAGER_BADGE_PREVIEW_SCROLL;
@@ -4296,10 +4307,13 @@ function managerApplyRemoteState(state){
   if(Array.isArray(state.badges))MANAGER_BADGES=state.badges.map(managerNormalizeBadge).filter(Boolean);
   MANAGER_MY_BADGES=Array.isArray(state.my_badges)?state.my_badges.map(managerNormalizeBadge).filter(Boolean):[];
   MANAGER_ACTIVE_BADGE=managerNormalizeBadge(state.active_badge||MANAGER_MY_BADGES.find(function(x){return x&&x.is_equipped;}));
-  if(AUTH_USER&&MANAGER_ACTIVE_BADGE){
-    MANAGER_ACTIVE_BADGE_BY_USER[String(AUTH_USER.id)]=MANAGER_ACTIVE_BADGE;
-    var display=currentDisplayName();
-    if(display)MANAGER_ACTIVE_BADGE_BY_NAME[String(display).trim()]=MANAGER_ACTIVE_BADGE;
+  if(AUTH_USER){
+    managerWriteCachedEquippedBadge(AUTH_USER.id,MANAGER_ACTIVE_BADGE);
+    if(MANAGER_ACTIVE_BADGE){
+      MANAGER_ACTIVE_BADGE_BY_USER[String(AUTH_USER.id)]=MANAGER_ACTIVE_BADGE;
+      var display=currentDisplayName();
+      if(display)MANAGER_ACTIVE_BADGE_BY_NAME[String(display).trim()]=MANAGER_ACTIVE_BADGE;
+    }
   }
   updateAuthUi();
 }
@@ -4775,8 +4789,8 @@ async function managerEnterFlow(){
   managerLoadState();
   managerTrackView(MANAGER_VIEW,MANAGER_VIEW==='mine'?MANAGER_MY_VIEW:'','entry');
   renderManagerDemo();
-  managerLoadRemoteState({force:true}).then(function(){
-    return managerLoadPreviousRemoteState({force:true}).catch(function(){return null;});
+  managerLoadRemoteState().then(function(){
+    return managerLoadPreviousRemoteState().catch(function(){return null;});
   }).then(async function(){
     var compensationShown=await managerMaybeShowStationCompensationDialog();
     if(!compensationShown)managerMaybeShowDailyIncomeDialog();
@@ -5096,12 +5110,19 @@ function managerBadgeThemeKey(badge){
 
 function managerPreloadBadgeVisuals(badge){
   var visual=MANAGER_BADGE_VISUAL_META[managerBadgeThemeKey(badge)]||{};
-  [visual.icon,visual.nameplate,visual.header,visual.surface,visual.surfaceWide].filter(Boolean).map(function(src){return managerBadgeAssetUrl(src);}).forEach(function(src){
+  [
+    {src:visual.icon,priority:'high'},
+    {src:visual.nameplate,priority:'auto'},
+    {src:visual.header,priority:'auto'},
+    {src:visual.surface,priority:'auto'},
+    {src:visual.surfaceWide,priority:'auto'}
+  ].filter(function(item){return !!item.src;}).map(function(item){return {src:managerBadgeAssetUrl(item.src),priority:item.priority};}).forEach(function(item){
+    var src=item.src;
     if(MANAGER_BADGE_PRELOADED_ASSETS.has(src))return;
     MANAGER_BADGE_PRELOADED_ASSETS.add(src);
     var img=new Image();
     img.decoding='async';
-    img.fetchPriority='high';
+    img.fetchPriority=item.priority;
     img.onerror=function(){
       if(img.dataset.badgeRetry==='1')return;
       img.dataset.badgeRetry='1';
@@ -5146,7 +5167,7 @@ function managerUserNameWithBadge(name,badge,opts){
   var label=visual.label||badge.title||'徽章';
   var icon=managerBadgeAssetUrl(visual.icon||badge.thumb_url||badge.image_url||'');
   var cls='badge-identity badge-identity--'+variant+' manager-user-badge-line';
-  var priority=(opts.login||opts.sidebar)?' loading="eager" fetchpriority="high"':' loading="lazy"';
+  var priority=opts.login?' loading="eager" fetchpriority="high"':' loading="lazy" fetchpriority="auto"';
   return '<span class="'+esc(cls)+'"'+(theme?' data-badge="'+esc(theme)+'"':'')+' title="'+esc(label+' · '+displayNickname(name,'炉友'))+'">'+(icon?'<img class="badge-identity__icon" src="'+esc(icon)+'" alt="'+esc(label)+'"'+priority+' decoding="async" onerror="managerBadgeImageRetry(this)">':'')+'<span class="badge-identity__plate"><span class="badge-identity__name">'+display+'</span></span></span>';
 }
 
@@ -5188,6 +5209,35 @@ function managerBadgeForUserName(name){
   return MANAGER_ACTIVE_BADGE_BY_NAME[String(name||'').trim()]||null;
 }
 
+function managerEquippedBadgeCacheStorageKey(userId){
+  return MANAGER_EQUIPPED_BADGE_CACHE_KEY+'|'+String(userId||'');
+}
+
+function managerReadCachedEquippedBadge(userId){
+  if(!userId)return null;
+  try{
+    var badgeKey=localStorage.getItem(managerEquippedBadgeCacheStorageKey(userId));
+    return badgeKey?managerNormalizeBadge(managerBadgeFallbackForKey(badgeKey)):null;
+  }catch(_err){return null;}
+}
+
+function managerWriteCachedEquippedBadge(userId,badge){
+  if(!userId)return;
+  try{
+    var key=managerEquippedBadgeCacheStorageKey(userId);
+    if(badge&&badge.badge_key)localStorage.setItem(key,String(badge.badge_key));
+    else localStorage.removeItem(key);
+  }catch(_err){}
+}
+
+function managerApplyCachedEquippedBadge(userId){
+  var badge=managerReadCachedEquippedBadge(userId);
+  if(!badge)return null;
+  MANAGER_ACTIVE_BADGE=badge;
+  MANAGER_ACTIVE_BADGE_BY_USER[String(userId)]=badge;
+  return badge;
+}
+
 async function managerLoadActiveBadges(){
   if(!supabaseConfigured())return MANAGER_ACTIVE_BADGES||[];
   if(MANAGER_ACTIVE_BADGES_LOADING)return MANAGER_ACTIVE_BADGES_LOADING;
@@ -5197,8 +5247,12 @@ async function managerLoadActiveBadges(){
       const res=await client.from('tour_manager_active_badges').select('user_id,display_name,badge_key,title,subtitle,image_url,thumb_url,rarity').limit(500);
       if(res.error)throw res.error;
       managerApplyActiveBadges(res.data||[]);
-      if(AUTH_USER)MANAGER_ACTIVE_BADGE=MANAGER_ACTIVE_BADGE_BY_USER[String(AUTH_USER.id)]||null;
+      if(AUTH_USER){
+        MANAGER_ACTIVE_BADGE=MANAGER_ACTIVE_BADGE_BY_USER[String(AUTH_USER.id)]||null;
+        managerWriteCachedEquippedBadge(AUTH_USER.id,MANAGER_ACTIVE_BADGE);
+      }
       updateAuthUi();
+      if(ACTIVE_TAB==='manager')renderManagerDemo();
       return MANAGER_ACTIVE_BADGES;
     }catch(e){
       trackSupabaseError('manager.active_badges',e,true);
@@ -5401,10 +5455,21 @@ async function afterAuthChanged(user){
   AUTH_PROFILE=null;
   FOLLOWING_IDS=new Set();
   if(AUTH_USER){
-    await loadAccountData();
-    await managerLoadActiveBadges();
-    MANAGER_ACTIVE_BADGE=MANAGER_ACTIVE_BADGE_BY_USER[String(AUTH_USER.id)]||null;
-    await managerLoadBadgeGrantNotice();
+    managerApplyCachedEquippedBadge(AUTH_USER.id);
+    updateAuthUi();
+    if(ACTIVE_TAB==='manager')managerEnterFlow();
+
+    var profilePromise=loadProfileData().then(function(){
+      updateAuthUi();
+      if(ACTIVE_TAB==='manager')renderManagerDemo();
+    });
+    var followingPromise=loadFollowingData().then(function(){
+      refreshFollowButtons();
+      refreshLiveFilters();
+    });
+    var badgePromise=managerLoadActiveBadges();
+    var grantPromise=badgePromise.then(function(){return managerLoadBadgeGrantNotice();});
+    await Promise.allSettled([profilePromise,followingPromise,badgePromise,grantPromise]);
   }
   else{
     MANAGER_MY_BADGES=[];
@@ -5417,7 +5482,7 @@ async function afterAuthChanged(user){
   refreshFollowButtons();
   refreshLiveFilters();
   if(ACTIVE_TAB==='jinx')renderDailyJinx();
-  if(ACTIVE_TAB==='manager')await managerEnterFlow();
+  if(ACTIVE_TAB==='manager'&&!AUTH_USER)await managerEnterFlow();
 }
 
 async function initAuth(){
@@ -5436,19 +5501,32 @@ async function initAuth(){
   }
 }
 
-async function loadAccountData(){
+async function loadProfileData(){
   if(!AUTH_USER)return;
   try{
     const client=await ensureSupabaseClient();
-    const profileReq=client.from('profiles').select('display_name').eq('id',AUTH_USER.id).maybeSingle();
-    const followsReq=client.from('user_follows').select('followed_user_id').eq('account_id',AUTH_USER.id);
-    const results=await Promise.all([profileReq,followsReq]);
-    if(!results[0].error)AUTH_PROFILE=results[0].data;
-    if(!results[1].error)FOLLOWING_IDS=new Set((results[1].data||[]).map(x=>String(x.followed_user_id)));
+    const res=await client.from('profiles').select('display_name').eq('id',AUTH_USER.id).maybeSingle();
+    if(!res.error)AUTH_PROFILE=res.data;
   }catch(e){
-    console.warn('账号资料加载失败',e);
-    trackSupabaseError('account.load',e,false);
+    console.warn('账号昵称加载失败',e);
+    trackSupabaseError('account.profile',e,false);
   }
+}
+
+async function loadFollowingData(){
+  if(!AUTH_USER)return;
+  try{
+    const client=await ensureSupabaseClient();
+    const res=await client.from('user_follows').select('followed_user_id').eq('account_id',AUTH_USER.id);
+    if(!res.error)FOLLOWING_IDS=new Set((res.data||[]).map(x=>String(x.followed_user_id)));
+  }catch(e){
+    console.warn('关注列表加载失败',e);
+    trackSupabaseError('account.follows',e,false);
+  }
+}
+
+async function loadAccountData(){
+  await Promise.allSettled([loadProfileData(),loadFollowingData()]);
 }
 
 function managerSyncFullSiteTheme(badge){
@@ -7426,6 +7504,7 @@ function setBdF(g,f,btn){
   bdSearch(g);
 }
 
+scheduleManagerPrewarm(ACTIVE_TAB==='manager');
 initAuth();
 if(managerLocalPreviewEnabled()&&new URLSearchParams(location.search).get('badge-grant-preview'))managerLoadBadgeGrantNotice();
 loadData();
