@@ -13,6 +13,7 @@
 .badge-identity__icon,.manager-badge-thumb{position:absolute;left:0;z-index:4;width:var(--badge-icon-size);height:var(--badge-icon-size);flex:0 0 var(--badge-icon-size);padding:0;border:0;border-radius:50%;background:transparent;object-fit:cover;clip-path:circle(49.2% at 50% 50%);box-shadow:none;filter:drop-shadow(0 4px 7px rgba(43,24,48,.26))}
 .badge-identity__plate{position:relative;z-index:2;width:var(--badge-plate-width);height:var(--badge-plate-height);min-height:0;display:flex;align-items:center;justify-content:center;margin:0;padding:5px 15px 5px 25px;overflow:visible;color:var(--badge-plaque-text,#fff4d7);border:0;border-radius:0;background:var(--badge-nameplate-art) center/100% 100% no-repeat;box-shadow:none;font-family:"Songti SC","STSong","SimSun",serif;text-shadow:0 1px 1px rgba(255,255,255,.3),0 2px 3px rgba(42,22,38,.42)}
 .badge-identity__name{position:relative;z-index:2;width:82%;overflow:hidden;font-size:15px;font-weight:900;line-height:1;letter-spacing:0;text-align:center;text-overflow:ellipsis;white-space:nowrap}
+.badge-identity[data-badge="djoko_goat"] .badge-identity__name{transform:translateY(.25em)}
 .badge-identity--login{--badge-icon-size:50px;--badge-plate-width:174px;--badge-plate-height:46px}.badge-identity--login .badge-identity__name{font-size:14px}
 .badge-identity--row{--badge-icon-size:62px;--badge-plate-width:196px;--badge-plate-height:50px}.badge-identity--row .badge-identity__name{font-size:15px}
 .badge-identity--card,.badge-identity--sidebar{--badge-icon-size:66px;--badge-plate-width:210px;--badge-plate-height:58px}.badge-identity--card .badge-identity__name,.badge-identity--sidebar .badge-identity__name{font-size:16px}
@@ -43,6 +44,7 @@
 .manager-hall-card-top::before,.manager-hall-card-top::after{display:none!important}
 .manager-badge-hero-name{position:absolute;top:50%;right:2%;z-index:3;width:56%;height:44%;display:flex;align-items:center;justify-content:center;padding:7% 9%;color:var(--badge-plaque-text);background:var(--badge-nameplate-art) center/100% 100% no-repeat;transform:translateY(-50%);filter:drop-shadow(0 5px 8px rgba(36,20,36,.2));font-family:"Songti SC","STSong","SimSun",serif;text-shadow:0 1px 1px rgba(255,255,255,.32),0 2px 3px rgba(45,24,40,.4)}
 .manager-badge-hero-name b{width:80%;overflow:hidden;font-size:clamp(14px,1.35vw,19px);line-height:1;letter-spacing:0;text-align:center;text-overflow:ellipsis;white-space:nowrap}
+.manager-badge-hero-name[data-badge="djoko_goat"] b{transform:translateY(.25em)}
 [data-badge="alcaraz_duck"] .manager-badge-hero-name,.manager-badge-hero-name[data-badge="alcaraz_duck"]{top:44%;right:4%;width:49%;height:42%;padding:5% 8%;color:#633b60;background:none;filter:none;text-shadow:0 1px #fff7ed}
 .manager-badge-hero-name--plain{position:static;width:auto;height:auto;padding:9px 14px;color:#5c421f;border-radius:8px;background:rgba(255,250,240,.9);transform:none}
 .manager-hall-card .manager-hall-metrics{margin:10px 12px;border-color:rgba(218,164,87,.48);background:linear-gradient(120deg,#fffdf8,#fff2e8)}
