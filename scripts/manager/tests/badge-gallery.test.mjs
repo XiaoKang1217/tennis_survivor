@@ -30,6 +30,20 @@ test('each badge collection paginates independently at eight thumbnails', () => 
   assert.match(html, /managerSetBadgeGalleryPage/);
 });
 
+test('badge gallery paginates users independently at nine cards per page', () => {
+  assert.match(html, /managerPaginate\(list,MANAGER_BADGE_GALLERY_USER_PAGE,9\)/);
+  assert.match(html, /data-manager-action="page-badge-gallery-users"/);
+  assert.match(html, /managerSetBadgeGalleryUserPage/);
+  assert.match(html, /managerBadgeGalleryUserPagerHtml\(userPager\)/);
+});
+
+test('badge gallery usernames shrink until their full text fits', () => {
+  assert.match(html, /function managerFitBadgeGalleryNames\(root\)/);
+  assert.match(html, /name\.scrollWidth>name\.clientWidth\+1/);
+  assert.match(html, /size>9/);
+  assert.match(html, /didCommit&&MANAGER_VIEW==='boards'/);
+});
+
 test('badge thumbnails defer loading and preserve stable two-row shelves', () => {
   assert.match(html, /manager-badge-gallery-shelf\{[^}]*grid-template-rows:repeat\(2,86px\)/);
   assert.match(html, /class="manager-badge-gallery-item"[\s\S]*?loading="lazy" decoding="async" fetchpriority="low"/);

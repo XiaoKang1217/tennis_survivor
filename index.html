@@ -584,13 +584,14 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 .manager-badge-gallery-card>*{position:relative;z-index:1}
 .manager-badge-gallery-top{display:grid;grid-template-columns:36px minmax(0,1fr) 58px;align-items:center;gap:10px;min-height:78px;padding:10px 12px;border-bottom:1px solid color-mix(in srgb,var(--badge-secondary,#d8ba74) 28%,var(--lw-border) 72%);background:var(--badge-row-bg),rgba(255,250,240,.82)}
 .manager-badge-gallery-rank{display:flex;align-items:center;justify-content:center}.manager-badge-gallery-rank .manager-rank-number{font-size:13px;font-weight:950;color:var(--badge-username,#79511f)}
-.manager-badge-gallery-user{min-width:0;overflow:hidden}.manager-badge-gallery-user .badge-identity{max-width:100%}.manager-badge-gallery-user .badge-identity__plate{min-width:0;max-width:100%}.manager-badge-gallery-user .badge-identity__name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.manager-badge-gallery-user{min-width:0;overflow:hidden}.manager-badge-gallery-user .badge-identity{max-width:100%}.manager-badge-gallery-user .badge-identity__plate{min-width:0;max-width:100%}.manager-badge-gallery-user .badge-identity__name{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:clip;transition:font-size .12s ease}
 .manager-badge-gallery-count{display:grid;justify-items:center;min-width:58px;padding:7px 6px;border:1px solid color-mix(in srgb,var(--badge-secondary,#d8ba74) 34%,var(--lw-border) 66%);border-radius:9px;background:rgba(255,253,248,.84);box-shadow:inset 0 1px 0 rgba(255,255,255,.72)}
 .manager-badge-gallery-count strong{font-family:"Noto Serif SC","Songti SC",serif;font-size:23px;line-height:1;color:var(--badge-primary,#9a5f24)}.manager-badge-gallery-count small{margin-top:4px;color:var(--badge-username,#79511f);font-size:10px;font-weight:900;white-space:nowrap}
 .manager-badge-gallery-label{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 13px 6px;color:var(--badge-username,#79511f);font-size:11px;font-weight:950}.manager-badge-gallery-label em{font-style:normal;opacity:.72;font-variant-numeric:tabular-nums}
 .manager-badge-gallery-shelf{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(2,86px);gap:8px;min-height:190px;margin:0 12px;padding:10px 8px;border:1px solid color-mix(in srgb,var(--badge-secondary,#d8ba74) 26%,var(--lw-border) 74%);border-radius:11px;background:linear-gradient(180deg,rgba(255,253,248,.9),rgba(255,248,232,.74));box-shadow:inset 0 -4px 0 color-mix(in srgb,var(--badge-secondary,#d8ba74) 16%,transparent)}
 .manager-badge-gallery-item{display:grid;justify-items:center;align-content:start;gap:5px;min-width:0;color:var(--badge-username,#79511f);text-align:center}.manager-badge-gallery-item img{width:58px;height:58px;max-width:100%;aspect-ratio:1;object-fit:contain;border-radius:50%;background:#fff8ef;border:2px solid color-mix(in srgb,var(--badge-secondary,#d8ba74) 54%,white 46%);box-shadow:0 4px 10px rgba(77,45,18,.18)}.manager-badge-gallery-item span{width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;font-weight:900}
 .manager-badge-gallery-pager{min-height:38px;margin:8px 12px 11px}.manager-badge-gallery-pager .manager-clear{padding:5px 9px}.manager-badge-gallery-card.is-gallery-champion{box-shadow:0 14px 30px color-mix(in srgb,var(--badge-primary,#b78034) 18%,rgba(113,75,31,.14))}
+.manager-badge-gallery-user-pager{margin-top:14px}
 .manager-panel.manager-side.manager-badge-themed{position:relative;overflow:hidden;border-radius:14px;border:1px solid color-mix(in srgb,var(--badge-secondary,#d8ba74) 42%,var(--lw-border) 58%);background:linear-gradient(180deg,#fff8e8,#fffaf0);box-shadow:var(--lw-shadow);isolation:isolate}
 .manager-panel.manager-side.manager-badge-themed:before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.12;background-image:var(--badge-pattern);background-size:420px 84px;background-repeat:repeat;background-position:right top}
 .manager-panel.manager-side.manager-badge-themed>*{position:relative;z-index:1}
@@ -1116,6 +1117,7 @@ let MANAGER_REMOTE_STATION_NET_BOARD=[];
 let MANAGER_REMOTE_WALLET_BOARD=[];
 let MANAGER_REMOTE_BADGE_GALLERY=[];
 let MANAGER_BADGE_GALLERY_PAGES={};
+let MANAGER_BADGE_GALLERY_USER_PAGE=1;
 let MANAGER_REMOTE_PUBLIC_SYNC_KEY='';
 let MANAGER_REMOTE_PUBLIC_LOADING=null;
 let MANAGER_DAILY_PREDICTIONS=null;
@@ -2174,6 +2176,11 @@ function managerSetBadgeGalleryPage(key,page){
   if(!key)return;
   MANAGER_BADGE_GALLERY_PAGES[key]=Number(page)||1;
   trackManagerEvent('manager_badge_gallery_page',{collection:safeEventParam(key),page:MANAGER_BADGE_GALLERY_PAGES[key]});
+  renderManagerDemo();
+}
+function managerSetBadgeGalleryUserPage(page){
+  MANAGER_BADGE_GALLERY_USER_PAGE=Number(page)||1;
+  trackManagerEvent('manager_badge_gallery_user_page',{page:MANAGER_BADGE_GALLERY_USER_PAGE});
   renderManagerDemo();
 }
 function managerSetLedgerPage(page){MANAGER_LEDGER_PAGE=Number(page)||1;trackManagerEvent('manager_ledger_page',{page:MANAGER_LEDGER_PAGE});renderManagerDemo();}
@@ -4161,12 +4168,18 @@ function managerBadgeGalleryPagerHtml(key,pager){
   if(!pager||pager.total<=pager.size)return '<div class="manager-badge-gallery-pager" aria-hidden="true"></div>';
   return '<div class="manager-pager manager-badge-gallery-pager"><button class="manager-clear" data-manager-action="page-badge-gallery" data-manager-gallery-key="'+esc(key)+'" data-manager-page="'+(pager.page-1)+'" '+(pager.page<=1?'disabled':'')+'>上一页</button><span>第 '+pager.page+' / '+pager.pages+' 页</span><button class="manager-clear" data-manager-action="page-badge-gallery" data-manager-gallery-key="'+esc(key)+'" data-manager-page="'+(pager.page+1)+'" '+(pager.page>=pager.pages?'disabled':'')+'>下一页</button></div>';
 }
+function managerBadgeGalleryUserPagerHtml(pager){
+  if(!pager||pager.total<=pager.size)return '';
+  return '<div class="manager-pager manager-badge-gallery-user-pager"><button class="manager-clear" data-manager-action="page-badge-gallery-users" data-manager-page="'+(pager.page-1)+'" '+(pager.page<=1?'disabled':'')+'>上一页</button><span>第 '+pager.page+' / '+pager.pages+' 页 · '+pager.start+'-'+pager.end+' / '+pager.total+' 位炉友</span><button class="manager-clear" data-manager-action="page-badge-gallery-users" data-manager-page="'+(pager.page+1)+'" '+(pager.page>=pager.pages?'disabled':'')+'>下一页</button></div>';
+}
 function managerRenderBadgeGallery(){
   var list=Array.isArray(MANAGER_REMOTE_BADGE_GALLERY)?MANAGER_REMOTE_BADGE_GALLERY.slice():[];
   if(managerLocalPreviewEnabled()&&!list.length)list=managerBadgeGalleryPreviewRows();
   if(!list.length)return '<div class="manager-empty">'+((MANAGER_REMOTE_PUBLIC_LOADING&&!MANAGER_REMOTE_PUBLIC_SYNC_KEY)?'正在加载徽章展馆...':'徽章展馆等待第一批馆藏。')+'</div>';
-  return '<div class="manager-badge-gallery-grid">'+list.map(function(row,index){
-    var rank=Number(row.rank)||index+1,key=String(rank),badges=managerBadgeGalleryBadges(row);
+  var userPager=managerPaginate(list,MANAGER_BADGE_GALLERY_USER_PAGE,9);
+  MANAGER_BADGE_GALLERY_USER_PAGE=userPager.page;
+  return '<div class="manager-badge-gallery-grid">'+userPager.items.map(function(row,index){
+    var rank=Number(row.rank)||userPager.start+index,key=String(rank),badges=managerBadgeGalleryBadges(row);
     var pager=managerPaginate(badges,MANAGER_BADGE_GALLERY_PAGES[key],8);
     MANAGER_BADGE_GALLERY_PAGES[key]=pager.page;
     var equipped=badges.find(function(badge){return badge.is_equipped;})||null;
@@ -4177,7 +4190,20 @@ function managerRenderBadgeGallery(){
       return '<div class="manager-badge-gallery-item" title="'+esc(title)+'">'+(src?'<img src="'+esc(src)+'" alt="'+esc(title)+'" loading="lazy" decoding="async" fetchpriority="low" onerror="managerBadgeImageRetry(this)">':'')+'<span>'+esc(title)+'</span></div>';
     }).join('');
     return '<article'+managerBadgeClassAttr(equipped,'manager-badge-gallery-card '+(rank===1?'is-gallery-champion':''))+'><div class="manager-badge-gallery-top"><div class="manager-badge-gallery-rank">'+managerRankMedalHtml(rank)+'</div><div class="manager-badge-gallery-user">'+managerUserNameWithBadge(row.user,equipped,{card:true})+'</div><div class="manager-badge-gallery-count"><strong>'+esc(row.count||badges.length)+'</strong><small>枚徽章</small></div></div><div class="manager-badge-gallery-label"><span>馆藏陈列</span><em>'+(pager.pages>1?'第 '+pager.page+' / '+pager.pages+' 页':'COLLECTION '+String(rank).padStart(2,'0'))+'</em></div><div class="manager-badge-gallery-shelf">'+items+'</div>'+managerBadgeGalleryPagerHtml(key,pager)+'</article>';
-  }).join('')+'</div>';
+  }).join('')+'</div>'+managerBadgeGalleryUserPagerHtml(userPager);
+}
+function managerFitBadgeGalleryNames(root){
+  if(!root)return;
+  requestAnimationFrame(function(){
+    root.querySelectorAll('.manager-badge-gallery-user .badge-identity__name').forEach(function(name){
+      name.style.fontSize='';
+      var size=parseFloat(getComputedStyle(name).fontSize)||16;
+      while(name.scrollWidth>name.clientWidth+1&&size>9){
+        size=Math.max(9,size-.5);
+        name.style.fontSize=size+'px';
+      }
+    });
+  });
 }
 function managerRenderPrivateBoards(){
   var c=managerCalc(),stars=c.players.filter(function(p){return p.tier==='S'||p.tier==='A';}).reduce(function(s,p){return s+p.price;},0),starRate=c.lineupCost?Math.round(stars/c.lineupCost*100):0;
@@ -4279,6 +4305,7 @@ function renderManagerDemo(force){
   var badgePreview=managerBadgePreviewHtml();
   var nextHtml='<div class="manager-shell">'+qaBanner+'<div class="manager-hero"><div class="manager-title"><div><div class="manager-title-line"><h2>巡回赛经纪人</h2><button class="manager-clear" data-manager-view="rules">查看规则</button><span class="manager-settle-note">每天09:37结算</span></div><p>组建你的球员阵容，在巡回赛里征战！<br>在公开市场上购买球员，球员成绩越好，你赚的越多，收益按巡回赛积分计算。<br>你不只懂网球，你是在做预算、风险和轮次收益的组合策略。</p></div></div>'+wechat+'<img class="manager-hero-art" src="assets/manager/agent-money-bag.webp" alt="" loading="lazy" decoding="async" fetchpriority="low"></div>'+managerRenderMoney(c,rules)+tabs+'<div class="manager-grid view-'+MANAGER_VIEW+' '+(showSide?'':'single')+'"><div class="manager-panel">'+panelHead+'<div class="manager-panel-b">'+managerRenderBody()+'</div></div>'+(showSide?managerSidebar(c,rules):'')+'</div>'+seoFaqLinkHtml()+dialog+badgePreview+'</div>';
   var didCommit=managerCommitRender(root,nextHtml);
+  if(didCommit&&MANAGER_VIEW==='boards')managerFitBadgeGalleryNames(root);
   if(didCommit&&badgePreview&&MANAGER_BADGE_PREVIEW_SCROLL){
     requestAnimationFrame(function(){
       var nextPreviewDialog=document.querySelector('.manager-badge-preview-dialog');
@@ -4722,6 +4749,7 @@ async function managerLoadRemotePublicData(){
         return {rank:Number(x.rank_no)||0,user:x.display_name||'炉友',count:Number(x.badge_count)||0,badges:x.badges||[]};
       });
       MANAGER_BADGE_GALLERY_PAGES={};
+      MANAGER_BADGE_GALLERY_USER_PAGE=1;
     }else if(results[5].reason){
       MANAGER_REMOTE_BADGE_GALLERY=[];
       trackSupabaseError('manager.badge_gallery.public',results[5].reason,true);
@@ -6874,6 +6902,7 @@ document.addEventListener('click',function(e){
   else if(btn.dataset.managerAction==='page-station-net')managerSetStationNetPage(btn.dataset.managerPage);
   else if(btn.dataset.managerAction==='page-wallet-board')managerSetWalletBoardPage(btn.dataset.managerPage);
   else if(btn.dataset.managerAction==='page-badge-gallery')managerSetBadgeGalleryPage(btn.dataset.managerGalleryKey,btn.dataset.managerPage);
+  else if(btn.dataset.managerAction==='page-badge-gallery-users')managerSetBadgeGalleryUserPage(btn.dataset.managerPage);
   else if(btn.dataset.managerAction==='page-ledger')managerSetLedgerPage(btn.dataset.managerPage);
   else if(btn.dataset.managerAction==='filter-badges'){MANAGER_BADGE_FILTER=btn.dataset.filter||'all';renderManagerDemo();}
   else if(btn.dataset.managerAction==='preview-scene')managerSetBadgePreviewScene(btn.dataset.scene||'hall');
@@ -6890,6 +6919,12 @@ document.addEventListener('click',function(e){
   else if(btn.dataset.managerAction==='prediction-submit')managerSubmitDailyPredictions();
   else if(btn.dataset.managerAction==='close-dialog')managerCloseAlert();
   else if(btn.dataset.managerAction==='submit')managerSubmitLineup();
+});
+var MANAGER_BADGE_GALLERY_RESIZE_TIMER=null;
+window.addEventListener('resize',function(){
+  if(MANAGER_VIEW!=='boards')return;
+  clearTimeout(MANAGER_BADGE_GALLERY_RESIZE_TIMER);
+  MANAGER_BADGE_GALLERY_RESIZE_TIMER=setTimeout(function(){managerFitBadgeGalleryNames(document.getElementById('manager-root'));},100);
 });
 document.addEventListener('compositionstart',function(e){
   const id=e.target&&e.target.id;
