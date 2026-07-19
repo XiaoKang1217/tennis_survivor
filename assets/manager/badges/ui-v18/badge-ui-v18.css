@@ -1,0 +1,165 @@
+/* Seven production badge skins. Loaded after the existing badge UI. */
+[data-badge="gauff_energy"]{--badge-icon-art:url("../ui-v18/optimized/gauff-badge-640.webp?v=20260719-2");--badge-nameplate-art:url("../ui-v18/optimized/gauff-nameplate-720.webp?v=20260719-2");--badge-card-header:url("../ui-v18/optimized/gauff-card-header-960.webp?v=20260719-2");--badge-surface-art:url("../ui-v18/optimized/gauff-surface-narrow-1600.webp?v=20260719-2");--badge-surface-wide-art:url("../ui-v18/optimized/gauff-surface-wide-1600.webp?v=20260719-2");--badge-a:#514c9b;--badge-b:#a78fdb;--badge-c:#ef8364;--badge-primary:#725fac;--badge-card-tint:#e5d9f2;--badge-glow:rgba(131,104,190,.32);--badge-plaque-text:#18365f;--badge-body-text:#283f5c;--badge-border-final:#b9add0;--v18-login-w:165px;--v18-login-h:51px;--v18-row-w:154px;--v18-row-h:47px;--v18-hero-w:46%;--v18-hero-r:3%}
+[data-badge="swiatek_whirlwind"]{--badge-icon-art:url("../ui-v18/optimized/swiatek-badge-640.webp?v=20260719-2");--badge-nameplate-art:url("../ui-v18/optimized/swiatek-nameplate-720.webp?v=20260719-2");--badge-card-header:url("../ui-v18/optimized/swiatek-card-header-960.webp?v=20260719-2");--badge-surface-art:url("../ui-v18/optimized/swiatek-surface-narrow-1600.webp?v=20260719-2");--badge-surface-wide-art:url("../ui-v18/optimized/swiatek-surface-wide-1600.webp?v=20260719-2");--badge-a:#183f76;--badge-b:#7fb9e4;--badge-c:#e95f32;--badge-primary:#315f94;--badge-card-tint:#d9ebf5;--badge-glow:rgba(66,130,189,.3);--badge-plaque-text:#173c70;--badge-body-text:#213e55;--badge-border-final:#9ebfd0;--v18-login-w:190px;--v18-login-h:52px;--v18-row-w:180px;--v18-row-h:48px;--v18-hero-w:54%;--v18-hero-r:2%}
+[data-badge="alcaraz_bee_duck"]{--badge-icon-art:url("../ui-v18/optimized/bee-duck-badge-640.webp?v=20260719-2");--badge-nameplate-art:url("../ui-v18/optimized/bee-duck-nameplate-720.webp?v=20260719-2");--badge-card-header:url("../ui-v18/optimized/bee-duck-card-header-960.webp?v=20260719-2");--badge-surface-art:url("../ui-v18/optimized/bee-duck-surface-narrow-1600.webp?v=20260719-2");--badge-surface-wide-art:url("../ui-v18/optimized/bee-duck-surface-wide-1600.webp?v=20260719-2");--badge-a:#5a3824;--badge-b:#c47c13;--badge-c:#f0b83d;--badge-primary:#9d661b;--badge-card-tint:#f2dfac;--badge-glow:rgba(219,157,43,.32);--badge-plaque-text:#52321e;--badge-body-text:#4b3c28;--badge-border-final:#cdb476;--v18-login-w:175px;--v18-login-h:66px;--v18-row-w:166px;--v18-row-h:63px;--v18-hero-w:56%;--v18-hero-r:2%}
+[data-badge="who_is_leather"]{--badge-icon-art:url("../ui-v18/optimized/who-leather-badge-640.webp?v=20260719-2");--badge-nameplate-art:url("../ui-v18/optimized/who-leather-nameplate-720.webp?v=20260719-2");--badge-card-header:url("../ui-v18/optimized/who-leather-card-header-960.webp?v=20260719-2");--badge-surface-art:url("../ui-v18/optimized/who-leather-surface-narrow-1600.webp?v=20260719-2");--badge-surface-wide-art:url("../ui-v18/optimized/who-leather-surface-wide-1600.webp?v=20260719-2");--badge-a:#25252a;--badge-b:#ec9fa5;--badge-c:#f6c4c8;--badge-primary:#b5757d;--badge-card-tint:#f4dfe0;--badge-glow:rgba(208,130,139,.28);--badge-plaque-text:#26252a;--badge-body-text:#4d4147;--badge-border-final:#cba7ab;--v18-login-w:198px;--v18-login-h:48px;--v18-row-w:186px;--v18-row-h:45px;--v18-hero-w:52%;--v18-hero-r:4%}
+[data-badge="rotten_cabbage"]{--badge-icon-art:url("../ui-v18/optimized/rotten-cabbage-badge-640.webp?v=20260719-2");--badge-nameplate-art:url("../ui-v18/optimized/rotten-cabbage-nameplate-720.webp?v=20260719-2");--badge-card-header:url("../ui-v18/optimized/rotten-cabbage-card-header-960.webp?v=20260719-2");--badge-surface-art:url("../ui-v18/optimized/rotten-cabbage-surface-narrow-1600.webp?v=20260719-2");--badge-surface-wide-art:url("../ui-v18/optimized/rotten-cabbage-surface-wide-1600.webp?v=20260719-2");--badge-a:#425d3d;--badge-b:#a9bd74;--badge-c:#e6df9a;--badge-primary:#6f8551;--badge-card-tint:#e2e8c9;--badge-glow:rgba(112,139,82,.28);--badge-plaque-text:#3f513c;--badge-body-text:#3f4d3a;--badge-border-final:#aebc8c;--v18-login-w:200px;--v18-login-h:49px;--v18-row-w:188px;--v18-row-h:46px;--v18-hero-w:54%;--v18-hero-r:3%}
+[data-badge="federer_eternal"]{--badge-icon-art:url("../ui-v18/optimized/federer-badge-640.webp?v=20260719-2");--badge-nameplate-art:url("../ui-v18/optimized/federer-nameplate-720.webp?v=20260719-2");--badge-card-header:url("../ui-v18/optimized/federer-card-header-960.webp?v=20260719-2");--badge-surface-art:url("../ui-v18/optimized/federer-surface-narrow-1600.webp?v=20260719-2");--badge-surface-wide-art:url("../ui-v18/optimized/federer-surface-wide-1600.webp?v=20260719-2");--badge-a:#6c7480;--badge-b:#d7c9ae;--badge-c:#f0dfba;--badge-primary:#81745f;--badge-card-tint:#e8e2d5;--badge-glow:rgba(166,149,117,.28);--badge-plaque-text:#584b3b;--badge-body-text:#3c4650;--badge-border-final:#b8aa87;--v18-login-w:205px;--v18-login-h:49px;--v18-row-w:188px;--v18-row-h:45px;--v18-hero-w:58%;--v18-hero-r:0%}
+[data-badge="nadal_clay_soul"]{--badge-icon-art:url("../ui-v18/optimized/nadal-badge-640.webp?v=20260719-2");--badge-nameplate-art:url("../ui-v18/optimized/nadal-nameplate-720.webp?v=20260719-2");--badge-card-header:url("../ui-v18/optimized/nadal-card-header-960.webp?v=20260719-2");--badge-surface-art:url("../ui-v18/optimized/nadal-surface-narrow-1600.webp?v=20260719-2");--badge-surface-wide-art:url("../ui-v18/optimized/nadal-surface-wide-1600.webp?v=20260719-2");--badge-a:#35150d;--badge-b:#81300f;--badge-c:#c16e29;--badge-primary:#8e3f1b;--badge-card-tint:#ead2bd;--badge-glow:rgba(153,65,25,.3);--badge-plaque-text:#f7e1b6;--badge-body-text:#4d3329;--badge-border-final:#c8906c;--v18-login-w:200px;--v18-login-h:52px;--v18-row-w:184px;--v18-row-h:48px;--v18-hero-w:58%;--v18-hero-r:2%}
+
+:is([data-badge="gauff_energy"],[data-badge="swiatek_whirlwind"],[data-badge="alcaraz_bee_duck"],[data-badge="who_is_leather"],[data-badge="rotten_cabbage"],[data-badge="federer_eternal"],[data-badge="nadal_clay_soul"]) :is(.badge-identity,.manager-user-badge-line),
+:is(.badge-identity,.manager-user-badge-line):is([data-badge="gauff_energy"],[data-badge="swiatek_whirlwind"],[data-badge="alcaraz_bee_duck"],[data-badge="who_is_leather"],[data-badge="rotten_cabbage"],[data-badge="federer_eternal"],[data-badge="nadal_clay_soul"]){width:calc(var(--badge-icon-size) + var(--badge-plate-width) + 7px);padding-left:calc(var(--badge-icon-size) + 7px)}
+
+:is([data-badge="gauff_energy"],[data-badge="swiatek_whirlwind"],[data-badge="alcaraz_bee_duck"],[data-badge="who_is_leather"],[data-badge="rotten_cabbage"],[data-badge="federer_eternal"],[data-badge="nadal_clay_soul"]) .badge-identity--login,
+.badge-identity--login:is([data-badge="gauff_energy"],[data-badge="swiatek_whirlwind"],[data-badge="alcaraz_bee_duck"],[data-badge="who_is_leather"],[data-badge="rotten_cabbage"],[data-badge="federer_eternal"],[data-badge="nadal_clay_soul"]){--badge-icon-size:54px;--badge-plate-width:var(--v18-login-w);--badge-plate-height:var(--v18-login-h)}
+
+:is([data-badge="gauff_energy"],[data-badge="swiatek_whirlwind"],[data-badge="alcaraz_bee_duck"],[data-badge="who_is_leather"],[data-badge="rotten_cabbage"],[data-badge="federer_eternal"],[data-badge="nadal_clay_soul"]) .badge-identity--row,
+.badge-identity--row:is([data-badge="gauff_energy"],[data-badge="swiatek_whirlwind"],[data-badge="alcaraz_bee_duck"],[data-badge="who_is_leather"],[data-badge="rotten_cabbage"],[data-badge="federer_eternal"],[data-badge="nadal_clay_soul"]){--badge-icon-size:62px;--badge-plate-width:var(--v18-row-w);--badge-plate-height:var(--v18-row-h)}
+
+:is([data-badge="gauff_energy"],[data-badge="swiatek_whirlwind"],[data-badge="alcaraz_bee_duck"],[data-badge="who_is_leather"],[data-badge="rotten_cabbage"],[data-badge="federer_eternal"],[data-badge="nadal_clay_soul"]) .manager-badge-hero-name,
+.manager-badge-hero-name:is([data-badge="gauff_energy"],[data-badge="swiatek_whirlwind"],[data-badge="alcaraz_bee_duck"],[data-badge="who_is_leather"],[data-badge="rotten_cabbage"],[data-badge="federer_eternal"],[data-badge="nadal_clay_soul"]){top:50%;right:var(--v18-hero-r);width:var(--v18-hero-w);height:44%;padding:6% 8%;color:var(--badge-plaque-text);background:var(--badge-nameplate-art) center/100% 100% no-repeat;filter:drop-shadow(0 5px 8px rgba(36,20,36,.2));transform:translateY(-50%)}
+
+.manager-badge-preview-overlay[data-badge] .manager-badge-preview-hero{background:linear-gradient(116deg,rgba(28,19,37,.58),rgba(28,19,37,.14)),var(--badge-surface-wide-art,var(--badge-surface-art)) center/cover no-repeat}
+
+:is([data-badge="gauff_energy"],[data-badge="swiatek_whirlwind"],[data-badge="alcaraz_bee_duck"],[data-badge="who_is_leather"],[data-badge="rotten_cabbage"],[data-badge="federer_eternal"],[data-badge="nadal_clay_soul"]) .manager-badge-card img.manager-badge-art{object-fit:contain!important}
+[data-badge="rotten_cabbage"] :is(.badge-identity__icon,.manager-badge-thumb),
+.badge-identity[data-badge="rotten_cabbage"] .badge-identity__icon,
+.manager-badge-card[data-badge="rotten_cabbage"] img.manager-badge-art{border-radius:0!important;clip-path:none!important;object-fit:contain!important}
+
+/* Each new theme animates its own visual language on leaderboard hover. */
+tr[data-badge="gauff_energy"].manager-badge-themed:hover{filter:saturate(1.08);animation:v18-fruit-pulse 1.35s ease-in-out}
+tr[data-badge="swiatek_whirlwind"].manager-badge-themed:hover{animation:v18-wind-shift 1.4s ease-out}
+tr[data-badge="alcaraz_bee_duck"].manager-badge-themed:hover{animation:v18-honey-bounce .9s ease-in-out}
+tr[data-badge="who_is_leather"].manager-badge-themed:hover{animation:v18-pig-wink .8s ease-in-out}
+tr[data-badge="rotten_cabbage"].manager-badge-themed:hover{animation:v18-tear-drift 1.45s ease-in-out}
+tr[data-badge="federer_eternal"].manager-badge-themed:hover{animation:v18-eternal-glow 1.6s ease-in-out}
+tr[data-badge="nadal_clay_soul"].manager-badge-themed:hover{animation:v18-clay-kick 1.05s ease-out}
+@keyframes v18-fruit-pulse{50%{filter:saturate(1.18) brightness(1.04)}}
+@keyframes v18-wind-shift{45%{filter:brightness(1.06);transform:translateX(2px)}}
+@keyframes v18-honey-bounce{45%{filter:saturate(1.12);transform:translateY(-2px)}}
+@keyframes v18-pig-wink{45%{filter:brightness(1.04);transform:rotate(.08deg)}}
+@keyframes v18-tear-drift{50%{filter:hue-rotate(-4deg) brightness(1.04)}}
+@keyframes v18-eternal-glow{50%{filter:brightness(1.08) drop-shadow(0 0 6px rgba(240,223,186,.55))}}
+@keyframes v18-clay-kick{45%{filter:saturate(1.14);transform:translateY(-1px) scale(1.002)}}
+
+@media(max-width:768px){
+  :is([data-badge="gauff_energy"],[data-badge="swiatek_whirlwind"],[data-badge="alcaraz_bee_duck"],[data-badge="who_is_leather"],[data-badge="rotten_cabbage"],[data-badge="federer_eternal"],[data-badge="nadal_clay_soul"]) .badge-identity--login,
+  .badge-identity--login:is([data-badge="gauff_energy"],[data-badge="swiatek_whirlwind"],[data-badge="alcaraz_bee_duck"],[data-badge="who_is_leather"],[data-badge="rotten_cabbage"],[data-badge="federer_eternal"],[data-badge="nadal_clay_soul"]){--badge-icon-size:44px;--badge-plate-width:150px;--badge-plate-height:40px}
+  .manager-boards-page :is([data-badge="gauff_energy"],[data-badge="swiatek_whirlwind"],[data-badge="alcaraz_bee_duck"],[data-badge="who_is_leather"],[data-badge="rotten_cabbage"],[data-badge="federer_eternal"],[data-badge="nadal_clay_soul"]) .badge-identity--row,
+  .manager-boards-page .badge-identity--row:is([data-badge="gauff_energy"],[data-badge="swiatek_whirlwind"],[data-badge="alcaraz_bee_duck"],[data-badge="who_is_leather"],[data-badge="rotten_cabbage"],[data-badge="federer_eternal"],[data-badge="nadal_clay_soul"]){--badge-icon-size:40px;--badge-plate-width:140px;--badge-plate-height:34px;width:187px;max-width:187px;padding-left:47px}
+}
+@media(max-width:520px){
+  :is([data-badge="gauff_energy"],[data-badge="swiatek_whirlwind"],[data-badge="alcaraz_bee_duck"],[data-badge="who_is_leather"],[data-badge="rotten_cabbage"],[data-badge="federer_eternal"],[data-badge="nadal_clay_soul"]) .badge-identity--login,
+  .badge-identity--login:is([data-badge="gauff_energy"],[data-badge="swiatek_whirlwind"],[data-badge="alcaraz_bee_duck"],[data-badge="who_is_leather"],[data-badge="rotten_cabbage"],[data-badge="federer_eternal"],[data-badge="nadal_clay_soul"]){--badge-icon-size:40px;--badge-plate-width:132px;--badge-plate-height:38px}
+}
+@media(prefers-reduced-motion:reduce){tr.manager-badge-themed[data-badge]{animation:none!important}}
+
+/* Keep the badge medallion tucked into the plaque, matching the approved identity lockup. */
+:is([data-badge="gauff_energy"],[data-badge="swiatek_whirlwind"],[data-badge="alcaraz_bee_duck"],[data-badge="who_is_leather"],[data-badge="rotten_cabbage"],[data-badge="federer_eternal"],[data-badge="nadal_clay_soul"]) :is(.badge-identity,.manager-user-badge-line),
+:is(.badge-identity,.manager-user-badge-line):is([data-badge="gauff_energy"],[data-badge="swiatek_whirlwind"],[data-badge="alcaraz_bee_duck"],[data-badge="who_is_leather"],[data-badge="rotten_cabbage"],[data-badge="federer_eternal"],[data-badge="nadal_clay_soul"]){width:calc(var(--badge-icon-size) + var(--badge-plate-width) - 12px);padding-left:calc(var(--badge-icon-size) - 12px);padding-right:0}
+
+:is([data-badge="gauff_energy"],[data-badge="swiatek_whirlwind"],[data-badge="alcaraz_bee_duck"],[data-badge="who_is_leather"],[data-badge="rotten_cabbage"],[data-badge="federer_eternal"],[data-badge="nadal_clay_soul"]) .badge-identity__icon,
+.badge-identity:is([data-badge="gauff_energy"],[data-badge="swiatek_whirlwind"],[data-badge="alcaraz_bee_duck"],[data-badge="who_is_leather"],[data-badge="rotten_cabbage"],[data-badge="federer_eternal"],[data-badge="nadal_clay_soul"]) .badge-identity__icon{position:absolute;left:0;top:50%;width:var(--badge-icon-size);height:var(--badge-icon-size);transform:translateY(-50%)}
+
+#hdr.badge-login-header .badge-identity--login:is([data-badge="gauff_energy"],[data-badge="swiatek_whirlwind"],[data-badge="alcaraz_bee_duck"],[data-badge="who_is_leather"],[data-badge="rotten_cabbage"],[data-badge="federer_eternal"],[data-badge="nadal_clay_soul"]){width:calc(var(--badge-icon-size) + var(--badge-plate-width) - 12px);padding-left:calc(var(--badge-icon-size) - 12px)}
+
+/* The source plaques have different real aspect ratios; preserve them instead of stretching. */
+[data-badge="gauff_energy"]{--v18-hero-w:40%;--v18-hero-ratio:720/221}
+[data-badge="swiatek_whirlwind"]{--v18-hero-w:45%;--v18-hero-ratio:4/1}
+[data-badge="alcaraz_bee_duck"]{--v18-hero-w:47%;--v18-hero-ratio:720/272}
+[data-badge="who_is_leather"]{--v18-hero-w:43%;--v18-hero-ratio:720/179}
+[data-badge="rotten_cabbage"]{--v18-hero-w:45%;--v18-hero-ratio:720/176}
+[data-badge="federer_eternal"]{--v18-hero-w:46%;--v18-hero-ratio:720/172}
+[data-badge="nadal_clay_soul"]{--v18-hero-w:46%;--v18-hero-ratio:720/188}
+
+:is([data-badge="gauff_energy"],[data-badge="swiatek_whirlwind"],[data-badge="alcaraz_bee_duck"],[data-badge="who_is_leather"],[data-badge="rotten_cabbage"],[data-badge="federer_eternal"],[data-badge="nadal_clay_soul"]) .manager-badge-hero-name,
+.manager-badge-hero-name:is([data-badge="gauff_energy"],[data-badge="swiatek_whirlwind"],[data-badge="alcaraz_bee_duck"],[data-badge="who_is_leather"],[data-badge="rotten_cabbage"],[data-badge="federer_eternal"],[data-badge="nadal_clay_soul"]){top:50%;right:var(--v18-hero-r);width:var(--v18-hero-w);height:auto;aspect-ratio:var(--v18-hero-ratio);box-sizing:border-box;padding:4% 7%;transform:translateY(-50%)}
+
+.manager-panel.manager-side.manager-badge-themed .manager-panel-h .manager-badge-hero-name:is([data-badge="gauff_energy"],[data-badge="swiatek_whirlwind"],[data-badge="alcaraz_bee_duck"],[data-badge="who_is_leather"],[data-badge="rotten_cabbage"],[data-badge="federer_eternal"],[data-badge="nadal_clay_soul"]){width:var(--v18-hero-w);height:auto;padding:4% 7%}
+
+/* Store-only collector ribbons. */
+.manager-badge-card-ribbon{position:absolute;top:58px;right:-1px;z-index:7;min-width:116px;padding:8px 18px 8px 23px;clip-path:polygon(12px 0,100% 0,calc(100% - 8px) 50%,100% 100%,12px 100%,0 50%);color:#fffaf0;background:linear-gradient(100deg,color-mix(in srgb,var(--badge-primary) 88%,#2c1820),color-mix(in srgb,var(--badge-secondary) 76%,#f3c46b));box-shadow:0 7px 16px var(--badge-glow);font:800 12px/1.1 "Noto Sans SC","PingFang SC",sans-serif;letter-spacing:.04em;text-align:center;text-shadow:0 1px 2px rgba(36,20,28,.42)}
+.manager-badge-card[data-badge="gauff_energy"] .manager-badge-card-ribbon{background:linear-gradient(100deg,#514c9b,#a78fdb 58%,#ef8364)}
+.manager-badge-card[data-badge="alcaraz_bee_duck"] .manager-badge-card-ribbon{color:#4c3018;background:linear-gradient(100deg,#e4a52e,#ffd66a 56%,#ca7d18);text-shadow:0 1px rgba(255,250,214,.8)}
+
+@font-face{font-family:"Luwang Gauff";src:url("fonts/chill-round-f.woff2?v=20260719-2") format("woff2");font-style:normal;font-weight:400;font-display:swap}
+body[data-site-theme="gauff_energy"],
+body[data-site-theme="gauff_energy"] :is(button,input,select,textarea,h1,h2,h3,h4,h5,h6,p,span,b,strong,small,th,td,label,summary){font-family:"Luwang Gauff","PingFang SC","Noto Sans SC",sans-serif!important}
+
+@media(max-width:768px){
+  .manager-boards-page .badge-identity--row:is([data-badge="gauff_energy"],[data-badge="swiatek_whirlwind"],[data-badge="alcaraz_bee_duck"],[data-badge="who_is_leather"],[data-badge="rotten_cabbage"],[data-badge="federer_eternal"],[data-badge="nadal_clay_soul"]){width:168px;max-width:168px;padding-left:28px}
+  .manager-badge-card-ribbon{top:54px;min-width:108px;padding:7px 15px 7px 20px;font-size:11px}
+}
+
+/* Final lockup calibration: keep each medallion beside the plaque ornaments, never over them. */
+:is([data-badge="gauff_energy"],[data-badge="swiatek_whirlwind"],[data-badge="alcaraz_bee_duck"],[data-badge="who_is_leather"],[data-badge="rotten_cabbage"],[data-badge="federer_eternal"],[data-badge="nadal_clay_soul"]){--v18-lockup-gap:4px}
+[data-badge="gauff_energy"]{--v18-lockup-gap:8px;--v18-hero-w:35%;--v18-hero-r:5%}
+[data-badge="alcaraz_bee_duck"]{--v18-lockup-gap:5px}
+
+:is([data-badge="gauff_energy"],[data-badge="swiatek_whirlwind"],[data-badge="alcaraz_bee_duck"],[data-badge="who_is_leather"],[data-badge="rotten_cabbage"],[data-badge="federer_eternal"],[data-badge="nadal_clay_soul"]) :is(.badge-identity,.manager-user-badge-line),
+:is(.badge-identity,.manager-user-badge-line):is([data-badge="gauff_energy"],[data-badge="swiatek_whirlwind"],[data-badge="alcaraz_bee_duck"],[data-badge="who_is_leather"],[data-badge="rotten_cabbage"],[data-badge="federer_eternal"],[data-badge="nadal_clay_soul"]),
+#hdr.badge-login-header .badge-identity--login:is([data-badge="gauff_energy"],[data-badge="swiatek_whirlwind"],[data-badge="alcaraz_bee_duck"],[data-badge="who_is_leather"],[data-badge="rotten_cabbage"],[data-badge="federer_eternal"],[data-badge="nadal_clay_soul"]){
+  width:calc(var(--badge-icon-size) + var(--badge-plate-width) + var(--v18-lockup-gap));
+  padding-left:calc(var(--badge-icon-size) + var(--v18-lockup-gap));
+  padding-right:0;
+}
+
+/* The bee-duck writing area is narrower and slightly right of the asset center. */
+.badge-identity[data-badge="alcaraz_bee_duck"] .badge-identity__plate,
+.manager-user-badge-line[data-badge="alcaraz_bee_duck"] .badge-identity__plate,
+.manager-badge-hero-name[data-badge="alcaraz_bee_duck"]{
+  padding:0;
+}
+.badge-identity[data-badge="alcaraz_bee_duck"] .badge-identity__name,
+.manager-user-badge-line[data-badge="alcaraz_bee_duck"] .badge-identity__name{
+  width:52%;
+  max-width:52%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transform:translateX(5%);
+  font-size:12px;
+  line-height:1;
+  text-align:center;
+}
+.manager-badge-hero-name[data-badge="alcaraz_bee_duck"] b{
+  width:52%;
+  max-width:52%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transform:translateX(5%);
+  font-size:clamp(10px,1vw,14px);
+  line-height:1;
+  text-align:center;
+}
+
+@media(max-width:768px){
+  .manager-boards-page .badge-identity--row:is([data-badge="gauff_energy"],[data-badge="swiatek_whirlwind"],[data-badge="alcaraz_bee_duck"],[data-badge="who_is_leather"],[data-badge="rotten_cabbage"],[data-badge="federer_eternal"],[data-badge="nadal_clay_soul"]){
+    width:calc(var(--badge-icon-size) + var(--badge-plate-width) + var(--v18-lockup-gap));
+    max-width:none;
+    padding-left:calc(var(--badge-icon-size) + var(--v18-lockup-gap));
+  }
+  .badge-identity[data-badge="alcaraz_bee_duck"] .badge-identity__name,
+  .manager-user-badge-line[data-badge="alcaraz_bee_duck"] .badge-identity__name{font-size:10px}
+}
+
+/* Card-header-only calibration. Login and leaderboard lockups intentionally stay unchanged. */
+.manager-hall-card[data-badge="rotten_cabbage"] .manager-badge-hero-name[data-badge="rotten_cabbage"],
+.manager-panel.manager-side[data-badge="rotten_cabbage"] .manager-panel-h .manager-badge-hero-name[data-badge="rotten_cabbage"]{
+  right:10%;
+}
+
+.manager-hall-card[data-badge="gauff_energy"] .manager-badge-hero-name[data-badge="gauff_energy"]{
+  right:10%;
+  width:30%;
+  padding:3% 5%;
+}
+
+/* Center Gauff's plaque inside the right-side lavender frame in both live and shop-preview lineup cards. */
+.manager-panel.manager-side[data-badge="gauff_energy"] .manager-panel-h .manager-badge-hero-name[data-badge="gauff_energy"],
+.manager-badge-preview-overlay[data-badge="gauff_energy"] .manager-badge-preview-sidebar-head .manager-badge-hero-name[data-badge="gauff_energy"]{
+  right:10%;
+  width:35%;
+  padding:4% 7%;
+}

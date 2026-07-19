@@ -1,0 +1,365 @@
+/*
+ * 炉网 v18 七徽章 · 全站换肤层
+ *
+ * 设计原则：
+ * 1. 不修改 badge-* / manager-user-badge-line 等既有徽章组件；
+ * 2. 只为页面画布、导航、普通卡片、表格、表单、弹窗和业务模块换色；
+ * 3. 每套主题只使用一个主题色族的深浅层级，并以奶油白/纸白作为信息底色；
+ * 4. body[data-site-theme] 是唯一主题入口。
+ */
+
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) {
+  --site-canvas: #f1f1e7;
+  --site-canvas-glow: #fffdf5;
+  --site-surface: #fcfbf4;
+  --site-surface-raised: #fffef9;
+  --site-surface-muted: #e5e6d2;
+  --site-surface-strong: #c9cba3;
+  --site-text: #35412d;
+  --site-text-strong: #25311f;
+  --site-muted: #69705b;
+  --site-accent: #67764c;
+  --site-accent-2: #b89d55;
+  --site-accent-deep: #36452f;
+  --site-accent-soft: #dfe2ca;
+  --site-story: #b89d55;
+  --site-fresh: #7c8f68;
+  --site-panel-tint: #eef0df;
+  --site-secondary-tint: #e8ead8;
+  --site-chrome-start: #2f3e2a;
+  --site-chrome-mid: #67764c;
+  --site-chrome-end: #9b8346;
+  --site-active-text: #2c3926;
+  --site-canvas-pattern: linear-gradient(rgba(255,255,255,.18),rgba(255,255,255,.18));
+  --site-border: #b9ad78;
+  --site-border-soft: rgba(65, 83, 49, .20);
+  --site-on-accent: #fffbea;
+  --site-success: #527a4f;
+  --site-danger: #aa5148;
+  --site-warning: #b77a34;
+  --site-shadow-color: rgba(49, 61, 41, .13);
+  --site-shadow: 0 12px 32px var(--site-shadow-color);
+  --site-shadow-soft: 0 4px 16px color-mix(in srgb, var(--site-shadow-color) 72%, transparent);
+  --site-focus: 0 0 0 3px color-mix(in srgb, var(--site-accent) 22%, transparent);
+  color: var(--site-text);
+  background:
+    var(--site-canvas-pattern),
+    radial-gradient(circle at 8% 2%, color-mix(in srgb, var(--site-panel-tint) 78%, transparent), transparent 30rem),
+    linear-gradient(155deg, var(--site-canvas-glow), var(--site-canvas) 68%);
+  transition: color .28s ease, background .42s ease;
+}
+
+/* 高芙·果切能量：低饱和、低亮度的清新灰柔紫 + 奶油白。 */
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"])[data-site-theme="gauff_energy"] {
+  --site-canvas:#f1edf2; --site-canvas-glow:#faf7fa; --site-surface:#f8f5f8; --site-surface-raised:#fffdfd;
+  --site-surface-muted:#e8e1ea; --site-surface-strong:#d4cad8; --site-text:#4b4550; --site-text-strong:#39333e; --site-muted:#756e7a;
+  --site-accent:#83768d; --site-accent-2:#a79bab; --site-accent-deep:#5b5263; --site-accent-soft:#e6dfe8;
+  --site-story:#918499; --site-fresh:#afa4b3; --site-panel-tint:#eee8f0; --site-secondary-tint:#f2edf3;
+  --site-chrome-start:#554d5d; --site-chrome-mid:#6c6275; --site-chrome-end:#83788b; --site-active-text:#514959;
+  --site-border:#c9bfcd; --site-border-soft:rgba(82,73,89,.17); --site-on-accent:#fffdfd; --site-success:#4f7f68; --site-danger:#b6524f; --site-warning:#a87542;
+  --site-shadow-color:rgba(74,65,80,.12);
+  --site-canvas-pattern:linear-gradient(rgba(255,255,255,.12),rgba(255,255,255,.12));
+}
+
+/* 斯瓦泰克·旋风少女：克制的冰雾蓝灰 + 暖白，不做满屏亮蓝。 */
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"])[data-site-theme="swiatek_whirlwind"] {
+  --site-canvas:#eff1f2; --site-canvas-glow:#fafafa; --site-surface:#f7f9fa; --site-surface-raised:#ffffff;
+  --site-surface-muted:#dfe6ea; --site-surface-strong:#c7d2d8; --site-text:#46545e; --site-text-strong:#33434f; --site-muted:#707d85;
+  --site-accent:#728a9b; --site-accent-2:#98aab6; --site-accent-deep:#4d6475; --site-accent-soft:#dce5ea;
+  --site-story:#8298a7; --site-fresh:#a8b7c0; --site-panel-tint:#e6ecef; --site-secondary-tint:#f0f2f3;
+  --site-chrome-start:#465c6c; --site-chrome-mid:#5d7484; --site-chrome-end:#748895; --site-active-text:#465c6c;
+  --site-border:#b8c3c9; --site-border-soft:rgba(70,91,105,.17); --site-on-accent:#ffffff; --site-success:#4f7a67; --site-danger:#b4544d; --site-warning:#a87542;
+  --site-shadow-color:rgba(61,78,89,.12);
+  --site-canvas-pattern:linear-gradient(rgba(255,255,255,.10),rgba(255,255,255,.10));
+}
+
+/* 阿卡·蜜蜂鸭：燕麦毛毡打底，以可可棕到蜂蜜金的同色族塑造3D厚度。 */
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"])[data-site-theme="alcaraz_bee_duck"] {
+  --site-canvas:#f2ece2; --site-canvas-glow:#fffaf1; --site-surface:#fbf5e9; --site-surface-raised:#fffdf7;
+  --site-surface-muted:#eadbc1; --site-surface-strong:#d7bd86; --site-text:#51402f; --site-text-strong:#332216; --site-muted:#776852;
+  --site-accent:#a96b25; --site-accent-2:#d79a32; --site-accent-deep:#56341f; --site-accent-soft:#f0dfb8;
+  --site-story:#bd8230; --site-fresh:#d6b675; --site-panel-tint:#f1dfbf; --site-secondary-tint:#f4ead8;
+  --site-chrome-start:#4b2d1d; --site-chrome-mid:#9a6025; --site-chrome-end:#d69a32; --site-active-text:#4b2d1d;
+  --site-border:#c9a86a; --site-border-soft:rgba(91,58,27,.20); --site-on-accent:#fff8e8; --site-success:#587b4e; --site-danger:#ad5546; --site-warning:#b9782f;
+  --site-shadow-color:rgba(79,50,25,.14);
+  --site-canvas-pattern:linear-gradient(rgba(255,255,255,.08),rgba(255,255,255,.08));
+}
+
+/* 谁是皮革：让人直接想起小猪的低饱和猪粉 + 纸白。 */
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"])[data-site-theme="who_is_leather"] {
+  --site-canvas:#f5eded; --site-canvas-glow:#fff9f9; --site-surface:#fcf6f6; --site-surface-raised:#fffdfd;
+  --site-surface-muted:#ecdcdc; --site-surface-strong:#d9c0c3; --site-text:#55494c; --site-text-strong:#3e3336; --site-muted:#7c6f72;
+  --site-accent:#c48e95; --site-accent-2:#d6aeb3; --site-accent-deep:#815c63; --site-accent-soft:#f0dfe1;
+  --site-story:#ba838b; --site-fresh:#d8b4b8; --site-panel-tint:#f3e3e4; --site-secondary-tint:#f8eeee;
+  --site-chrome-start:#78575e; --site-chrome-mid:#966d75; --site-chrome-end:#b2838a; --site-active-text:#6e4f56;
+  --site-border:#d2b5b9; --site-border-soft:rgba(113,78,85,.16); --site-on-accent:#fffdfd; --site-success:#507b65; --site-danger:#a94f59; --site-warning:#a87442;
+  --site-shadow-color:rgba(99,70,76,.11);
+  --site-canvas-pattern:linear-gradient(rgba(255,255,255,.10),rgba(255,255,255,.10));
+}
+
+/* 烂白菜·烂之泪伤：旧纸米白和黑线是主角，整站只铺菜帮灰绿。 */
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"])[data-site-theme="rotten_cabbage"] {
+  --site-canvas:#f2f1e9; --site-canvas-glow:#fffdf5; --site-surface:#fbfbf4; --site-surface-raised:#fffef9;
+  --site-surface-muted:#e8ead9; --site-surface-strong:#cbd2ae; --site-text:#41473d; --site-text-strong:#22281f; --site-muted:#6d7468;
+  --site-accent:#71805a; --site-accent-2:#9ba785; --site-accent-deep:#394334; --site-accent-soft:#e1e6cd;
+  --site-story:#82906a; --site-fresh:#aab58d; --site-panel-tint:#edf0df; --site-secondary-tint:#f3f4ea;
+  --site-chrome-start:#4c5741; --site-chrome-mid:#667354; --site-chrome-end:#7f8b6b; --site-active-text:#46513d;
+  --site-border:#b5b99c; --site-border-soft:rgba(58,68,52,.18); --site-on-accent:#fffdf1; --site-success:#567a4f; --site-danger:#aa554c; --site-warning:#a97839;
+  --site-shadow-color:rgba(54,61,49,.11);
+  --site-canvas-pattern:linear-gradient(rgba(255,255,255,.08),rgba(255,255,255,.08));
+}
+
+/* 费德勒·优雅永恒：珍珠白承担空间，以雾银灰到香槟金的同色族建立秩序。 */
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"])[data-site-theme="federer_eternal"] {
+  --site-canvas:#f1f0ed; --site-canvas-glow:#fffdf8; --site-surface:#fbfaf7; --site-surface-raised:#ffffff;
+  --site-surface-muted:#e8e6e1; --site-surface-strong:#d3cec6; --site-text:#4b4945; --site-text-strong:#393632; --site-muted:#77736d;
+  --site-accent:#8a8175; --site-accent-2:#b39c78; --site-accent-deep:#5d574f; --site-accent-soft:#e8e4dd;
+  --site-story:#a88d62; --site-fresh:#c2ad88; --site-panel-tint:#f2ede3; --site-secondary-tint:#f6f3ed;
+  --site-chrome-start:#665c50; --site-chrome-mid:#837665; --site-chrome-end:#9e8d73; --site-active-text:#5c5348;
+  --site-border:#bbae93; --site-border-soft:rgba(69,80,90,.16); --site-on-accent:#fffdf6; --site-success:#4f7964; --site-danger:#ad5252; --site-warning:#ad783b;
+  --site-shadow-color:rgba(56,62,68,.11);
+  --site-canvas-pattern:linear-gradient(rgba(255,255,255,.10),rgba(255,255,255,.10));
+}
+
+/* 纳达尔·赤土之魂：石灰岩与沙色给呼吸，整站只使用赤土到深棕的层级。 */
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"])[data-site-theme="nadal_clay_soul"] {
+  --site-canvas:#efe7df; --site-canvas-glow:#fff8ef; --site-surface:#faf3ec; --site-surface-raised:#fffdf8;
+  --site-surface-muted:#e8d6c7; --site-surface-strong:#d0aa8e; --site-text:#52362a; --site-text-strong:#2e1c14; --site-muted:#78645a;
+  --site-accent:#a74d26; --site-accent-2:#c17b3c; --site-accent-deep:#5b2918; --site-accent-soft:#edd0bd;
+  --site-story:#b56536; --site-fresh:#c99773; --site-panel-tint:#f0ddcd; --site-secondary-tint:#f5e9df;
+  --site-chrome-start:#35190f; --site-chrome-mid:#84371d; --site-chrome-end:#b66b32; --site-active-text:#4d2719;
+  --site-border:#bd8a68; --site-border-soft:rgba(99,48,29,.19); --site-on-accent:#fff7e9; --site-success:#527657; --site-danger:#ae493f; --site-warning:#af6f2f;
+  --site-shadow-color:rgba(75,37,24,.14);
+  --site-canvas-pattern:linear-gradient(rgba(255,255,255,.07),rgba(255,255,255,.07));
+}
+
+/* ---------- 全站骨架 ---------- */
+body.manager-mode.luwang-site-skin { background-color: var(--site-canvas); }
+body.manager-mode.luwang-site-skin .main { background: transparent; }
+body.manager-mode.luwang-site-skin .manager-shell {
+  color: var(--site-text);
+  background:
+    linear-gradient(color-mix(in srgb, var(--site-canvas) 92%, transparent), color-mix(in srgb, var(--site-canvas-glow) 88%, transparent)),
+    radial-gradient(circle at 86% 4%, color-mix(in srgb, var(--site-panel-tint) 66%, transparent), transparent 32rem);
+}
+
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) #hdr {
+  color: var(--site-on-accent);
+  background: linear-gradient(110deg,var(--site-chrome-start),var(--site-chrome-mid) 62%,var(--site-chrome-end));
+  box-shadow: inset 0 -1px 0 color-mix(in srgb,var(--site-on-accent) 20%,transparent),0 6px 24px color-mix(in srgb,var(--site-chrome-start) 26%,transparent);
+}
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) #hdr h1 { color: var(--site-on-accent); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .tab { border-color: color-mix(in srgb, var(--site-on-accent) 48%, transparent); background: color-mix(in srgb, var(--site-on-accent) 13%, transparent); color: var(--site-on-accent); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .tab:hover:not(.on) { background: color-mix(in srgb, var(--site-on-accent) 24%, transparent); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .tab.on { color: var(--site-active-text); border-color: var(--site-surface-raised); background: var(--site-surface-raised); box-shadow: inset 0 -3px 0 var(--site-story),0 4px 14px color-mix(in srgb,var(--site-chrome-start) 22%,transparent); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .auth-chip { border-color: color-mix(in srgb, var(--site-on-accent) 50%, transparent); background: color-mix(in srgb, var(--site-on-accent) 13%, transparent); color: var(--site-on-accent); }
+
+/* ---------- 通用按钮、筛选器与输入框 ---------- */
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) :where(.sheet-tab,.fbtn,.ftab,.jtab,.select-mini,.pick-stat-more) {
+  color: var(--site-muted); border-color: var(--site-border); background: var(--site-surface-raised);
+}
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) :where(.sheet-tab,.fbtn,.ftab,.jtab).on {
+  color:var(--site-on-accent); border-color:transparent; background:linear-gradient(135deg,color-mix(in srgb,var(--site-chrome-mid) 72%,var(--site-chrome-start)),var(--site-chrome-start)); box-shadow:inset 0 -2px 0 color-mix(in srgb,var(--site-story) 76%,transparent),0 5px 16px color-mix(in srgb,var(--site-chrome-start) 20%,transparent);
+}
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) :where(.sheet-tab,.fbtn,.ftab,.jtab,.pick-stat-more):hover:not(.on) { color: var(--site-accent-deep); border-color: var(--site-accent); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) :where(.toolbar input,.auth-form input,.jinx-form textarea,.bd-toolbar input,.manager-filter input,.manager-filter select,.manager-ledger-filters input,.manager-ledger-filters select,.manager-calc-table select) {
+  color: var(--site-text-strong); border-color: var(--site-border); background: var(--site-surface-raised);
+}
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) :where(.toolbar input,.auth-form input,.jinx-form textarea,.bd-toolbar input,.manager-filter input,.manager-filter select,.manager-ledger-filters input,.manager-ledger-filters select,.manager-calc-table select):focus {
+  outline: none; border-color: var(--site-accent); box-shadow: var(--site-focus);
+}
+
+/* ---------- 经纪人首页 ---------- */
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-hero {
+  color: var(--site-text-strong);
+  border-color: var(--site-border);
+  background: linear-gradient(120deg,var(--site-surface-raised),var(--site-panel-tint) 68%,var(--site-secondary-tint));
+  box-shadow: var(--site-shadow);
+}
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-hero::after { background: linear-gradient(90deg,color-mix(in srgb,var(--site-surface-raised) 97%,transparent),color-mix(in srgb,var(--site-panel-tint) 74%,transparent) 54%,transparent 100%); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-title p,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-settle-note,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-wechat-copy,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-wechat-line.small { color: var(--site-muted); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-title h2 { color: var(--site-text-strong); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-wechat-card { color: var(--site-text); border-color: color-mix(in srgb,var(--site-border) 65%,white); background: color-mix(in srgb,var(--site-surface-raised) 72%,transparent); box-shadow: inset 0 0 0 1px var(--site-border-soft); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-wechat-qr { border-color: var(--site-border); box-shadow: var(--site-shadow-soft); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-wechat-em { color: var(--site-success); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-wechat-alert { color: var(--site-danger); }
+
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-money,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-panel,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-my-highlight,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-my-card,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-rule-card,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-board {
+  color: var(--site-text); border-color: var(--site-border-soft); background: var(--site-surface-raised); box-shadow: var(--site-shadow-soft);
+}
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-money.hot { border-color: var(--site-story); background:linear-gradient(145deg,var(--site-surface-raised),color-mix(in srgb,var(--site-story) 9%,var(--site-surface-raised))); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-money:nth-of-type(3n+2) { background: var(--site-surface-raised); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-money b,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-money.hot b,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-money-amount,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-money-amount .manager-dollar { color: var(--site-accent-deep)!important; text-shadow: 1px 1px 0 color-mix(in srgb,var(--site-on-accent) 78%,transparent); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-money > span { color: var(--site-muted); }
+
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-panel-h,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-rules summary,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) :where(.manager-calc-table,.manager-ledger-table,.manager-reward-table) th {
+  color: var(--site-text-strong); border-color: var(--site-border-soft); background:linear-gradient(105deg,var(--site-panel-tint),color-mix(in srgb,var(--site-secondary-tint) 62%,var(--site-surface-raised)));
+}
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-panel-chip { color: var(--site-muted); border-color: var(--site-border); background: var(--site-surface-raised); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-panel-chip.surface.grass { color: var(--site-success); background: color-mix(in srgb,var(--site-success) 10%,var(--site-surface-raised)); border-color: color-mix(in srgb,var(--site-success) 38%,var(--site-border)); }
+
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) :where(.manager-tab,.manager-tour-tab,.manager-subtab,.manager-clear) { color: var(--site-text); border-color: var(--site-border); background: var(--site-surface-raised); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) :where(.manager-tab,.manager-tour-tab,.manager-subtab).on { color:var(--site-on-accent); border-color:var(--site-chrome-start); background:linear-gradient(135deg,color-mix(in srgb,var(--site-chrome-mid) 72%,var(--site-chrome-start)),var(--site-chrome-start)); box-shadow:inset 0 -2px 0 color-mix(in srgb,var(--site-story) 74%,transparent); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-action { color:var(--site-on-accent); background:linear-gradient(135deg,color-mix(in srgb,var(--site-chrome-mid) 72%,var(--site-chrome-start)),var(--site-chrome-start)); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-action.secondary { background:linear-gradient(135deg,color-mix(in srgb,var(--site-story) 62%,var(--site-chrome-start)),var(--site-chrome-start)); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-action.warn { background: var(--site-warning); }
+
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-filter,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-sim,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-status-line,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-empty,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-detail,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-metric-box,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-dialog-strong {
+  color: var(--site-text); border-color: var(--site-border-soft); background: color-mix(in srgb,var(--site-surface-muted) 52%,var(--site-surface-raised));
+}
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-filter label,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) :where(.manager-sub,.manager-origin,.manager-note,.manager-lines,.manager-msg,.manager-sim-hint,.manager-pager,.manager-roster-title) { color: var(--site-muted); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) :where(.manager-row,.manager-roster-row,.manager-detail-item,.manager-detail-stat) { color: var(--site-text); border-color: var(--site-border-soft); background: var(--site-surface-raised); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-row.sel { border-color: var(--site-story); background:linear-gradient(90deg,color-mix(in srgb,var(--site-secondary-tint) 82%,var(--site-surface-raised)),color-mix(in srgb,var(--site-panel-tint) 54%,var(--site-surface-raised))); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-avatar { color: var(--site-accent-deep); border-color: var(--site-border); background: linear-gradient(135deg,var(--site-surface-muted),var(--site-surface-raised)); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) :where(.manager-name,.manager-roster-name,.manager-detail-stat b,.manager-my-card h4,.manager-my-portrait h4) { color: var(--site-text-strong); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) :where(.manager-price,.manager-roster-price,.manager-sim-row b,.manager-board em,.manager-my-highlight b,.manager-my-card b) { color: var(--site-accent-deep); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-pill { color: var(--site-text); background: var(--site-surface-muted); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-track { background: color-mix(in srgb,var(--site-surface-strong) 46%,var(--site-surface-raised)); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) :where(.manager-fill,.manager-metric-fill,.manager-score-fill,.score-fill) {
+  background: linear-gradient(90deg,var(--site-accent-deep),var(--site-accent));
+}
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-dialog { background: color-mix(in srgb,var(--site-accent-deep) 36%,transparent); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-dialog-card { border-color: var(--site-border); background: var(--site-surface-raised); box-shadow: 0 18px 50px color-mix(in srgb,var(--site-accent-deep) 26%,transparent); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-dialog-card h3 { color: var(--site-on-accent); background: var(--site-accent-deep); }
+
+/* ---------- 每日竞猜 ---------- */
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-prediction-intro { border-color: var(--site-border-soft); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-prediction-intro h3 { color: var(--site-text-strong); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-prediction-intro p { color: var(--site-muted); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-prediction-reward {
+  color: var(--site-text-strong);
+  border-color: var(--site-border);
+  background:linear-gradient(110deg,color-mix(in srgb,var(--site-panel-tint) 76%,var(--site-surface-raised)),color-mix(in srgb,var(--site-story) 10%,var(--site-surface-raised)));
+}
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-prediction-card {
+  color: var(--site-text);
+  border-color: var(--site-border);
+  background: var(--site-surface-raised);
+  box-shadow: var(--site-shadow-soft);
+}
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-prediction-card-head {
+  border-color: var(--site-border-soft);
+  background:linear-gradient(105deg,var(--site-panel-tint),color-mix(in srgb,var(--site-secondary-tint) 62%,var(--site-surface-raised)));
+}
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-prediction-tour { color: var(--site-text-strong); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-prediction-time { color: var(--site-muted); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-prediction-option {
+  color: var(--site-text);
+  border-color: var(--site-border-soft);
+  background: var(--site-surface-raised);
+}
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-prediction-option:hover:not(:disabled) {
+  color: var(--site-text-strong);
+  border-color: var(--site-story);
+  background: color-mix(in srgb,var(--site-secondary-tint) 48%,var(--site-surface-raised));
+}
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-prediction-option.on {
+  color: var(--site-text-strong);
+  border-color: var(--site-accent-deep);
+  background:linear-gradient(90deg,color-mix(in srgb,var(--site-panel-tint) 88%,var(--site-surface-raised)),color-mix(in srgb,var(--site-secondary-tint) 80%,var(--site-surface-raised)));
+  box-shadow:inset 4px 0 0 var(--site-story),inset 0 0 0 1px var(--site-accent-deep);
+}
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-prediction-option b { color: var(--site-text-strong); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-prediction-option span { color: var(--site-muted); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-prediction-result {
+  color: var(--site-muted);
+  background: color-mix(in srgb,var(--site-surface-muted) 56%,var(--site-surface-raised));
+}
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-prediction-result.ok {
+  color: var(--site-success);
+  background: color-mix(in srgb,var(--site-success) 12%,var(--site-surface-raised));
+}
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-prediction-result.bad {
+  color: var(--site-danger);
+  background: color-mix(in srgb,var(--site-danger) 11%,var(--site-surface-raised));
+}
+
+/* ---------- 实时榜单、偏好、积分构成 ---------- */
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) :where(.kc,.sc,.exp-sec,.bd-sbadge,.bd-card,.flight-card,.seo-faq,.fortune-card) { color: var(--site-text); border-color: var(--site-border-soft); background: var(--site-surface-raised); box-shadow: var(--site-shadow-soft); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) :where(.kl,.scs,.psr,.nf,.dev-note,.fortune-sub,.fortune-hint,.fortune-yi,.bd-loading,.bd-chart-sub,.bd-legend-pct,.bd-bar-month,.bd-bar-events,.bd-bar-zero,.bd-surf-pct) { color: var(--site-muted); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) :where(.tu,.tp,.tw,.psp,.exp-sub-t,.bd-name,.bd-exp-title,.bd-chart-total,.bd-legend-name,.bd-ev-group-hdr,.bd-surf-lbl,.bd-surf-val) { color: var(--site-text); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) :where(.tbl-wrap,.bd-tbl-wrap) { border-color: var(--site-border); box-shadow: var(--site-shadow-soft); background: var(--site-surface-raised); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) :where(thead,.bd-tbl thead) { background:linear-gradient(105deg,var(--site-panel-tint),color-mix(in srgb,var(--site-secondary-tint) 66%,var(--site-surface-raised))); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) :where(th,.bd-tbl th) { color: var(--site-text-strong); border-color: var(--site-border); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) :where(td,.bd-tbl td,.st td) { color: var(--site-text); border-color: color-mix(in srgb,var(--site-border-soft) 72%,transparent); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) :where(tr.pref-row,tr[data-status],.bd-main-row):hover td { background:color-mix(in srgb,var(--site-secondary-tint) 56%,transparent)!important; }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) :where(.exp-row,.bd-exp-row,.sdr-row) { background: color-mix(in srgb,var(--site-surface-muted) 42%,var(--site-surface-raised))!important; }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) :where(.exp-inner,.bd-exp-inner,.sdr-cell) { border-color: var(--site-border); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) :where(.et,.exp-tag,.day-item,.bd-forced) { color:var(--site-text); border-color:var(--site-border); background:linear-gradient(100deg,var(--site-panel-tint),var(--site-secondary-tint)); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .bd-bar-track,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .bd-surf-track { background: color-mix(in srgb,var(--site-surface-strong) 38%,var(--site-surface-raised)); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) :where(.bd-bar-fill,.bd-surf-fill,.progress-fill) {
+  background: linear-gradient(90deg,var(--site-accent-deep),var(--site-accent));
+}
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) :where(.bd-score,.bd-legend-val,.bd-ev-score,.bd-bar-score-out) { color: var(--site-accent-deep); }
+
+/* ---------- 每日运势、毒奶、航班与 FAQ ---------- */
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .fortune-title,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .fortune-player,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .flight-day,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .seo-faq h2,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .seo-faq-item h3 { color: var(--site-accent-deep); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .fortune-text { color:var(--site-text); border-left-color:var(--site-story); background:linear-gradient(100deg,color-mix(in srgb,var(--site-panel-tint) 68%,var(--site-surface-raised)),color-mix(in srgb,var(--site-secondary-tint) 34%,var(--site-surface-raised))); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .fortune-btn,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .auth-submit { color:var(--site-on-accent); background:linear-gradient(135deg,color-mix(in srgb,var(--site-chrome-mid) 72%,var(--site-chrome-start)),var(--site-chrome-start)); box-shadow:inset 0 -2px 0 color-mix(in srgb,var(--site-story) 72%,transparent),0 5px 16px color-mix(in srgb,var(--site-chrome-start) 22%,transparent); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) :where(.flight-pill,.fattr) { color:var(--site-text); border-color:var(--site-border); background:linear-gradient(100deg,var(--site-panel-tint),var(--site-secondary-tint)); }
+
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .jinx-board,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .jinx-leader-card { border-color: color-mix(in srgb,var(--site-danger) 38%,var(--site-border)); background: var(--site-surface-raised); box-shadow: var(--site-shadow-soft); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .jinx-hero { background: linear-gradient(135deg,color-mix(in srgb,var(--site-danger) 76%,var(--site-accent-deep)),var(--site-danger),color-mix(in srgb,var(--site-warning) 72%,var(--site-accent))); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) :where(.jinx-body,.jinx-leader-head) { background: var(--site-surface-raised); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .jinx-leader-head { color: var(--site-danger); border-color: color-mix(in srgb,var(--site-danger) 32%,var(--site-border)); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .jinx-player,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .jinx-bar { color: var(--site-text); border-color: color-mix(in srgb,var(--site-danger) 30%,var(--site-border)); background: color-mix(in srgb,var(--site-danger) 6%,var(--site-surface-raised)); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .jinx-status,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .jinx-count,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .jinx-msg,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .jinx-leader-meta { color: var(--site-muted); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .jinx-submit { color: var(--site-on-accent); background: linear-gradient(135deg,var(--site-danger),color-mix(in srgb,var(--site-warning) 70%,var(--site-danger))); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .jinx-leader-table th { color:var(--site-text-strong); background:linear-gradient(105deg,var(--site-panel-tint),var(--site-secondary-tint)); border-color:var(--site-border); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .jinx-leader-table td { color: var(--site-text); border-color: var(--site-border-soft); }
+
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .seo-faq { color: var(--site-text); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .seo-faq-link { color: var(--site-muted); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .seo-faq-link button { color: var(--site-accent-deep); }
+
+/* ---------- 登录弹窗 ---------- */
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .auth-modal { background: color-mix(in srgb,var(--site-accent-deep) 38%,transparent); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .auth-card { border-color: var(--site-border); background: var(--site-surface-raised); box-shadow: 0 18px 60px color-mix(in srgb,var(--site-accent-deep) 28%,transparent); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .auth-head { color:var(--site-on-accent); background:linear-gradient(110deg,var(--site-chrome-start),color-mix(in srgb,var(--site-chrome-mid) 74%,var(--site-chrome-start)),color-mix(in srgb,var(--site-chrome-end) 66%,var(--site-chrome-start))); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .auth-close { color: var(--site-accent-deep); background: color-mix(in srgb,var(--site-on-accent) 84%,transparent); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .auth-tab { color: var(--site-muted); border-color: var(--site-border); background: var(--site-surface-raised); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .auth-tab.on { color:var(--site-on-accent); border-color:var(--site-chrome-start); background:color-mix(in srgb,var(--site-chrome-mid) 68%,var(--site-chrome-start)); }
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) :where(.auth-form label,.auth-note,.auth-msg) { color: var(--site-muted); }
+
+/* 键盘可见焦点。 */
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) :where(button,input,select,textarea):focus-visible { outline: 2px solid var(--site-accent-2); outline-offset: 2px; }
+
+@media (max-width:768px) {
+  body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .toolbar { background: color-mix(in srgb,var(--site-surface-raised) 88%,transparent); border: 1px solid var(--site-border-soft); }
+  body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-hero { background:linear-gradient(145deg,var(--site-surface-raised),var(--site-panel-tint),var(--site-secondary-tint)); }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]), body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) * { transition-duration:.01ms!important; animation-duration:.01ms!important; animation-iteration-count:1!important; }
+}

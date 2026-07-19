@@ -9,7 +9,14 @@
     'zheng_queen',
     'wang_mermaid',
     'luwang_friend',
-    'wimbledon_2026'
+    'wimbledon_2026',
+    'gauff_energy',
+    'swiatek_whirlwind',
+    'alcaraz_bee_duck',
+    'who_is_leather',
+    'rotten_cabbage',
+    'federer_eternal',
+    'nadal_clay_soul'
   ];
 
   var ALIASES = {
@@ -20,7 +27,14 @@
     zheng: 'zheng_queen', zheng_queen: 'zheng_queen',
     mermaid: 'wang_mermaid', wang_mermaid: 'wang_mermaid',
     luwang: 'luwang_friend', luwang_friend: 'luwang_friend',
-    wimbledon: 'wimbledon_2026', wimbledon_2026: 'wimbledon_2026'
+    wimbledon: 'wimbledon_2026', wimbledon_2026: 'wimbledon_2026',
+    gauff: 'gauff_energy', gauff_energy: 'gauff_energy', fruit_energy: 'gauff_energy',
+    swiatek: 'swiatek_whirlwind', iga: 'swiatek_whirlwind', swiatek_whirlwind: 'swiatek_whirlwind',
+    bee: 'alcaraz_bee_duck', bee_duck: 'alcaraz_bee_duck', alcaraz_bee_duck: 'alcaraz_bee_duck',
+    leather: 'who_is_leather', who_leather: 'who_is_leather', who_is_leather: 'who_is_leather',
+    cabbage: 'rotten_cabbage', cabbage_tears: 'rotten_cabbage', rotten_cabbage: 'rotten_cabbage',
+    federer: 'federer_eternal', elegance_eternal: 'federer_eternal', federer_eternal: 'federer_eternal',
+    nadal: 'nadal_clay_soul', clay_soul: 'nadal_clay_soul', nadal_clay_soul: 'nadal_clay_soul'
   };
 
   function normalize(themeId) {
@@ -69,6 +83,7 @@
   }
 
   window.LuwangFullSiteTheme = {
+    version: '20260719-v18-coherent',
     themes: THEMES.slice(),
     normalize: normalize,
     set: setTheme,
