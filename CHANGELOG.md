@@ -7,6 +7,23 @@ Versioning guideline:
 - Minor versions add user-facing features or change data logic.
 - Major versions are reserved for large rewrites or incompatible data changes.
 
+## v0.3.7 - 2026-07-20
+
+Release baseline:
+- Online version before release: commit `10e1e5e`.
+- New published version: `v0.3.7`.
+- Rollback target for this release: commit `10e1e5e`.
+
+### Changed
+- Moved the Estoril/Prague manager lineup submission deadline from 17:45 to 16:45 Asia/Shanghai for both tours.
+- Marked the station schedule windows as manual so the daily refresh does not recalculate the deadline from the 18:00 first-match placeholder.
+- Added immutable station publication v2 as a window amendment while preserving publication v1 opening prices and history.
+
+### Validation
+- Ran the focused Estoril/Prague opening and publication tests.
+- Ran the complete Node.js manager test suite and Python scoring tests.
+- Ran station validation and `git diff --check`.
+
 ## v0.3.6 - 2026-05-29
 
 Release baseline:
