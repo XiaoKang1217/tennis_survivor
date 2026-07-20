@@ -1919,10 +1919,12 @@ function managerLedgerPlayerObjectName(item){
   if(!item||typeof item!=='object')return '';
   return String(item.name_zh||item.name||item.name_en||item.player_name||item.display_name||item.player_key||'').trim();
 }
+function managerRemoteLineupIsAuthoritative(lineup){
+  return !!lineup&&['submitted','locked','settling','settled'].indexOf(String(lineup.status||'').toLowerCase())>=0;
+}
 function managerSubmittedRecord(){
-  if(MANAGER_REMOTE_STATE&&MANAGER_REMOTE_STATE.lineup){
+  if(MANAGER_REMOTE_STATE&&managerRemoteLineupIsAuthoritative(MANAGER_REMOTE_STATE.lineup)){
     var l=MANAGER_REMOTE_STATE.lineup,contracts=MANAGER_REMOTE_STATE.contracts||[];
-    if(l.status==='cancelled')return null;
     return {id:l.id,date:String(l.submitted_at||'').slice(0,10),station:l.station_key||managerStationKey(),level:(managerRules().levels||[]).join('/'),status:'已提交',cost:l.lineup_cost||0,gross:l.predicted_gross||0,bonus:l.predicted_bonus||0,net:l.predicted_net||0,walletDelta:l.submission_bonus||10,players:contracts.filter(function(x){return x.is_active!==false;}).map(managerLedgerPlayerTokenFromContract),transfers:['后台记录'],note:'已由 Supabase 记录并锁定'};
   }
   if(AUTH_USER&&supabaseConfigured()&&!managerLocalQaMode())return null;
@@ -2300,7 +2302,7 @@ function managerLineupPlayers(){
     if(p.sourcePlayerKey&&!map[p.sourcePlayerKey])map[p.sourcePlayerKey]=p;
   });
   var remoteLineup=MANAGER_REMOTE_STATE&&MANAGER_REMOTE_STATE.lineup;
-  if(remoteLineup&&remoteLineup.status!=='cancelled'){
+  if(managerRemoteLineupIsAuthoritative(remoteLineup)){
     var remoteSeen={};
     return activePlayers.filter(function(p){
       if(!p||remoteSeen[p.id])return false;
@@ -4420,22 +4422,19 @@ function managerApplyRemoteState(state){
     MANAGER_REMOTE_SYNC_AT=Date.now();
   }
   var contracts=Array.isArray(state.contracts)?state.contracts:[];
-  if(contracts.length){
+  var authoritative=managerRemoteLineupIsAuthoritative(state.lineup);
+  if(authoritative){
     var active=contracts.filter(function(x){return x.is_active!==false;});
     MANAGER_LINEUP=managerNormalizeIds(active.map(function(x){return x.player_key;}),managerRules().maxPlayers);
     MANAGER_PREDICTIONS={};
     active.forEach(function(x){MANAGER_PREDICTIONS[x.player_key]=x.predicted_round||'OUT';});
-  }else{
-    MANAGER_LINEUP=[];
-    MANAGER_PREDICTIONS={};
-    MANAGER_SUNK_COST=0;
   }
-  if(state.lineup){
+  if(authoritative){
     MANAGER_TRANSFER_COUNT=Number(state.lineup.transfer_count)||0;
   }else{
     MANAGER_TRANSFER_COUNT=0;
   }
-  if(state.lineup&&state.lineup.status!=='cancelled')managerSaveState();
+  if(authoritative)managerSaveState();
   if(Array.isArray(state.badges))MANAGER_BADGES=state.badges.map(managerNormalizeBadge).filter(Boolean);
   MANAGER_MY_BADGES=Array.isArray(state.my_badges)?state.my_badges.map(managerNormalizeBadge).filter(Boolean):[];
   MANAGER_ACTIVE_BADGE=managerNormalizeBadge(state.active_badge||MANAGER_MY_BADGES.find(function(x){return x&&x.is_equipped;}));

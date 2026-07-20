@@ -7,6 +7,22 @@ Versioning guideline:
 - Minor versions add user-facing features or change data logic.
 - Major versions are reserved for large rewrites or incompatible data changes.
 
+## v0.3.9 - 2026-07-20
+
+Release baseline:
+- Online version before release: commit `04439517`.
+- New published version: `v0.3.9`.
+- Rollback target for this release: commit `04439517`.
+
+### Fixed
+- Fixed asynchronous remote-state refreshes so a missing or cancelled backend lineup cannot clear an unsubmitted or withdrawn local draft.
+- Kept submitted, locked, settling, and settled lineups authoritative so successful submissions and official transfers still refresh and persist active contracts immediately.
+
+### Validation
+- Added regressions for unsubmitted drafts, withdrawn drafts, resubmission, and official transfer refresh without changing transfer business rules.
+- Ran the complete Node.js manager test suite and Python scoring tests.
+- Ran station validation and `git diff --check`.
+
 ## v0.3.8 - 2026-07-20
 
 Release baseline:
