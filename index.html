@@ -4205,6 +4205,29 @@ function managerFitBadgeGalleryNames(root){
     });
   });
 }
+var MANAGER_BADGE_HERO_NAME_FIT_THEMES=['federer_eternal','gauff_energy','swiatek_whirlwind','nadal_clay_soul','who_is_leather','rotten_cabbage'];
+var MANAGER_BADGE_LOGIN_NAME_FIT_THEMES=['federer_eternal','gauff_energy','swiatek_whirlwind','nadal_clay_soul'];
+function managerFitBadgeNameplates(root){
+  var scope=root||document;
+  requestAnimationFrame(function(){
+    var heroSelectors=MANAGER_BADGE_HERO_NAME_FIT_THEMES.reduce(function(list,theme){
+      list.push('.manager-hall-card[data-badge="'+theme+'"] .manager-badge-hero-name[data-badge="'+theme+'"] b');
+      list.push('.manager-panel.manager-side[data-badge="'+theme+'"] .manager-panel-h .manager-badge-hero-name[data-badge="'+theme+'"] b');
+      return list;
+    },[]);
+    var loginSelectors=MANAGER_BADGE_LOGIN_NAME_FIT_THEMES.map(function(theme){
+      return '#hdr.badge-login-header .badge-identity--login[data-badge="'+theme+'"] .badge-identity__name';
+    });
+    scope.querySelectorAll(heroSelectors.concat(loginSelectors).join(',')).forEach(function(name){
+      name.style.fontSize='';
+      var size=parseFloat(getComputedStyle(name).fontSize)||16;
+      while(name.scrollWidth>name.clientWidth+1&&size>9){
+        size=Math.max(9,size-.5);
+        name.style.fontSize=size+'px';
+      }
+    });
+  });
+}
 function managerRenderPrivateBoards(){
   var c=managerCalc(),stars=c.players.filter(function(p){return p.tier==='S'||p.tier==='A';}).reduce(function(s,p){return s+p.price;},0),starRate=c.lineupCost?Math.round(stars/c.lineupCost*100):0;
   var cards=[['我的赛季资产',managerWallet(),'钱包余额'],['本周阵容成本',c.spent,'含沉没成本'],['我的王牌球员',c.players[0]?c.players[0].name:'待结算','按本站阵容暂估'],['巨星依赖指数',starRate+'%','S/A 档成本占比'],['调仓记录',MANAGER_TRANSFER_COUNT+'/1','本站已用次数'],['当前风险画像',c.style,'由阵容结构生成']];
@@ -4305,6 +4328,7 @@ function renderManagerDemo(force){
   var badgePreview=managerBadgePreviewHtml();
   var nextHtml='<div class="manager-shell">'+qaBanner+'<div class="manager-hero"><div class="manager-title"><div><div class="manager-title-line"><h2>巡回赛经纪人</h2><button class="manager-clear" data-manager-view="rules">查看规则</button><span class="manager-settle-note">每天09:37结算</span></div><p>组建你的球员阵容，在巡回赛里征战！<br>在公开市场上购买球员，球员成绩越好，你赚的越多，收益按巡回赛积分计算。<br>你不只懂网球，你是在做预算、风险和轮次收益的组合策略。</p></div></div>'+wechat+'<img class="manager-hero-art" src="assets/manager/agent-money-bag.webp" alt="" loading="lazy" decoding="async" fetchpriority="low"></div>'+managerRenderMoney(c,rules)+tabs+'<div class="manager-grid view-'+MANAGER_VIEW+' '+(showSide?'':'single')+'"><div class="manager-panel">'+panelHead+'<div class="manager-panel-b">'+managerRenderBody()+'</div></div>'+(showSide?managerSidebar(c,rules):'')+'</div>'+seoFaqLinkHtml()+dialog+badgePreview+'</div>';
   var didCommit=managerCommitRender(root,nextHtml);
+  if(didCommit)managerFitBadgeNameplates(root);
   if(didCommit&&MANAGER_VIEW==='boards')managerFitBadgeGalleryNames(root);
   if(didCommit&&badgePreview&&MANAGER_BADGE_PREVIEW_SCROLL){
     requestAnimationFrame(function(){
@@ -5282,6 +5306,12 @@ function managerBadgeUserCellAttr(badge,extra){
   return cls?' class="'+esc(cls)+'"':'';
 }
 
+function managerBadgeCompactNameClass(name){
+  var raw=displayNickname(name,'炉友');
+  var cjkCount=Array.from(raw).filter(function(char){return /[\u3400-\u9fff\uf900-\ufaff]/.test(char);}).length;
+  return cjkCount>=4?' is-name-compact':'';
+}
+
 function managerUserNameWithBadge(name,badge,opts){
   opts=opts||{};
   badge=managerNormalizeBadge(badge);
@@ -5292,7 +5322,7 @@ function managerUserNameWithBadge(name,badge,opts){
   var variant=opts.login?'login':(opts.sidebar?'sidebar':(opts.card||opts.prominent?'card':'row'));
   var label=visual.label||badge.title||'徽章';
   var icon=managerBadgeAssetUrl(visual.icon||badge.thumb_url||badge.image_url||'');
-  var cls='badge-identity badge-identity--'+variant+' manager-user-badge-line';
+  var cls='badge-identity badge-identity--'+variant+' manager-user-badge-line'+managerBadgeCompactNameClass(name);
   var priority=opts.login?' loading="eager" fetchpriority="high"':' loading="lazy" fetchpriority="auto"';
   return '<span class="'+esc(cls)+'"'+(theme?' data-badge="'+esc(theme)+'"':'')+' title="'+esc(label+' · '+displayNickname(name,'炉友'))+'">'+(icon?'<img class="badge-identity__icon" src="'+esc(icon)+'" alt="'+esc(label)+'"'+priority+' decoding="async" onerror="managerBadgeImageRetry(this)">':'')+'<span class="badge-identity__plate"><span class="badge-identity__name">'+display+'</span></span></span>';
 }
@@ -5304,6 +5334,7 @@ function managerBadgeHeroHtml(name,badge,opts){
   if(!badge)return '<span class="manager-badge-hero-name manager-badge-hero-name--plain"><small>炉网网友</small><b>'+display+'</b></span>';
   var theme=managerBadgeThemeKey(badge),label=(MANAGER_BADGE_VISUAL_META[theme]||{}).label||badge.title||'徽章';
   var rawName=displayNickname(name,'炉友'),lengthClass=rawName.length>10?' is-very-long':(rawName.length>6?' is-long':'');
+  lengthClass+=managerBadgeCompactNameClass(rawName);
   return '<span class="manager-badge-hero-name'+lengthClass+'" data-badge="'+esc(theme)+'" title="'+esc(label+' · '+rawName)+'"><b>'+display+'</b></span>';
 }
 
@@ -5723,6 +5754,7 @@ function updateAuthUi(){
     }
     chip.onclick=function(){openAuthModal();};
   }
+  managerFitBadgeNameplates(document);
 }
 
 async function ensureProfile(displayName){
@@ -6922,9 +6954,11 @@ document.addEventListener('click',function(e){
 });
 var MANAGER_BADGE_GALLERY_RESIZE_TIMER=null;
 window.addEventListener('resize',function(){
-  if(MANAGER_VIEW!=='boards')return;
   clearTimeout(MANAGER_BADGE_GALLERY_RESIZE_TIMER);
-  MANAGER_BADGE_GALLERY_RESIZE_TIMER=setTimeout(function(){managerFitBadgeGalleryNames(document.getElementById('manager-root'));},100);
+  MANAGER_BADGE_GALLERY_RESIZE_TIMER=setTimeout(function(){
+    managerFitBadgeNameplates(document);
+    if(MANAGER_VIEW==='boards')managerFitBadgeGalleryNames(document.getElementById('manager-root'));
+  },100);
 });
 document.addEventListener('compositionstart',function(e){
   const id=e.target&&e.target.id;

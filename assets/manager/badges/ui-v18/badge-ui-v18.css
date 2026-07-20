@@ -236,3 +236,37 @@ body .jinx-leader-table .badge-identity--row[data-badge="alcaraz_bee_duck"] .bad
     --badge-plate-height:50px;
   }
 }
+
+/* Long CJK nicknames use the plaque's real writing area and remain centered. */
+:is(
+  .manager-hall-card,
+  .manager-panel.manager-side
+) .manager-badge-hero-name.is-name-compact:is(
+  [data-badge="federer_eternal"],
+  [data-badge="gauff_energy"],
+  [data-badge="swiatek_whirlwind"],
+  [data-badge="nadal_clay_soul"],
+  [data-badge="who_is_leather"],
+  [data-badge="rotten_cabbage"]
+) b{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:clamp(10px,1vw,14px);
+  line-height:1;
+  text-align:center;
+}
+
+#hdr.badge-login-header .badge-identity--login.is-name-compact:is(
+  [data-badge="federer_eternal"],
+  [data-badge="gauff_energy"],
+  [data-badge="swiatek_whirlwind"],
+  [data-badge="nadal_clay_soul"]
+) .badge-identity__name{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:12px;
+  line-height:1;
+  text-align:center;
+}
