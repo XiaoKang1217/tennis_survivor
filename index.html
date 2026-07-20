@@ -2299,14 +2299,18 @@ function managerLineupPlayers(){
     if(!map[p.id])map[p.id]=p;
     if(p.sourcePlayerKey&&!map[p.sourcePlayerKey])map[p.sourcePlayerKey]=p;
   });
+  var remoteLineup=MANAGER_REMOTE_STATE&&MANAGER_REMOTE_STATE.lineup;
+  if(remoteLineup&&remoteLineup.status!=='cancelled'){
+    var remoteSeen={};
+    return activePlayers.filter(function(p){
+      if(!p||remoteSeen[p.id])return false;
+      remoteSeen[p.id]=true;
+      return true;
+    });
+  }
   var seen={},out=[];
   MANAGER_LINEUP.forEach(function(id){
     var p=map[id];
-    if(!p||seen[p.id])return;
-    seen[p.id]=true;
-    out.push(p);
-  });
-  activePlayers.forEach(function(p){
     if(!p||seen[p.id])return;
     seen[p.id]=true;
     out.push(p);
@@ -4307,7 +4311,6 @@ function renderManagerDemo(force){
     managerCommitRender(root,'<div class="manager-shell"><div class="manager-panel"><div class="manager-panel-h">巡回赛经纪人</div><div class="manager-panel-b"><div class="manager-empty">巡回赛经纪人赛站数据暂时加载失败，请稍后刷新。正式环境不会使用 demo 数据兜底。</div></div></div></div>');
     return;
   }
-  managerLoadState();
   if(managerLocalPreviewEnabled()&&(MANAGER_VIEW==='hall'||MANAGER_VIEW==='boards')&&!MANAGER_REMOTE_PUBLIC_SYNC_KEY){
     managerLoadRemotePublicData().then(function(){if(ACTIVE_TAB==='manager'&&(MANAGER_VIEW==='hall'||MANAGER_VIEW==='boards'))renderManagerDemo();}).catch(function(){});
   }
@@ -4432,6 +4435,7 @@ function managerApplyRemoteState(state){
   }else{
     MANAGER_TRANSFER_COUNT=0;
   }
+  if(state.lineup&&state.lineup.status!=='cancelled')managerSaveState();
   if(Array.isArray(state.badges))MANAGER_BADGES=state.badges.map(managerNormalizeBadge).filter(Boolean);
   MANAGER_MY_BADGES=Array.isArray(state.my_badges)?state.my_badges.map(managerNormalizeBadge).filter(Boolean):[];
   MANAGER_ACTIVE_BADGE=managerNormalizeBadge(state.active_badge||MANAGER_MY_BADGES.find(function(x){return x&&x.is_equipped;}));

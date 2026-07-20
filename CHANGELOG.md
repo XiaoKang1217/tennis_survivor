@@ -7,6 +7,23 @@ Versioning guideline:
 - Minor versions add user-facing features or change data logic.
 - Major versions are reserved for large rewrites or incompatible data changes.
 
+## v0.3.8 - 2026-07-20
+
+Release baseline:
+- Online version before release: commit `21fdfe5b`.
+- New published version: `v0.3.8`.
+- Rollback target for this release: commit `21fdfe5b`.
+
+### Fixed
+- Fixed pre-match withdraw/edit/resubmit so a successful resubmission immediately replaces the cached draft with the authoritative active contracts.
+- Fixed submitted lineups so stale local draft players are never merged into the current remote lineup.
+- Stopped repeated renders from reloading an obsolete lineup snapshot from local storage, while preserving the withdrawn lineup as an editable draft until it is resubmitted.
+
+### Validation
+- Added regression coverage for withdrawing Blockx/Bartunkova, editing the draft to Darderi/Krejcikova, and resubmitting without ghost players.
+- Ran the complete Node.js manager test suite and Python scoring tests.
+- Ran station validation and `git diff --check`.
+
 ## v0.3.7 - 2026-07-20
 
 Release baseline:
