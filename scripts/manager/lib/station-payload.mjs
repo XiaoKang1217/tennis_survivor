@@ -213,7 +213,10 @@ export function buildStationPayload({ active, events, photoMap = {}, priceVersio
     }
   };
 
-  const configuredGrant = Number(active.rules?.station_grant);
+  const rawConfiguredGrant = active.rules?.station_grant;
+  const configuredGrant = rawConfiguredGrant == null || rawConfiguredGrant === ''
+    ? Number.NaN
+    : Number(rawConfiguredGrant);
   const stationConfigRow = {
     station_key: active.station_key,
     season: active.season,

@@ -184,13 +184,18 @@ if (sync) {
     priceStatus: args['price-status'] || 'draft'
   });
   const client = new SupabaseRestClient({ dryRun: false });
+  if (!Number.isFinite(payload.stationConfigRow.station_grant)) {
+    throw new Error(
+      `station grant missing for ${active.station_key}; refusing to overwrite backend station config`
+    );
+  }
   await client.upsert('tour_manager_station_configs', [payload.stationConfigRow], 'station_key,season');
   await client.upsert('tour_manager_events', payload.eventRows, 'event_key');
   const syncedRules = await client.rpc('tour_manager_station_rules', {
     p_station_key: active.station_key,
     p_season: Number(active.season)
   });
-  const configuredGrant = Number(payload.stationConfigRow.station_grant);
+  const configuredGrant = payload.stationConfigRow.station_grant;
   const syncedGrant = Number(syncedRules?.station_grant);
   if (Number.isFinite(configuredGrant) && syncedGrant !== configuredGrant) {
     throw new Error(
