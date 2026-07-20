@@ -55,6 +55,8 @@ declare
   v_combo_details jsonb;
   v_delta_details jsonb;
   v_combo_summary text;
+  v_dual_round text;
+  v_dual_players jsonb;
 begin
   if coalesce(auth.role(), '') <> 'service_role' then
     raise exception 'admin_required';
@@ -135,6 +137,8 @@ begin
     v_combo_details := '[]'::jsonb;
     v_delta_details := '[]'::jsonb;
     v_combo_summary := '';
+    v_dual_round := null;
+    v_dual_players := '[]'::jsonb;
 
     if v_combo_version = 'normal_2026_v2' then
       select
@@ -174,12 +178,36 @@ begin
 
       if v_atp_w > 0 and v_wta_w > 0 then
         v_dual_bonus := v_dual_w_value;
+        v_dual_round := 'W';
       elsif v_atp_f > 0 and v_wta_f > 0 then
         v_dual_bonus := v_dual_f_value;
+        v_dual_round := 'F';
       elsif v_atp_sf > 0 and v_wta_sf > 0 then
         v_dual_bonus := v_dual_sf_value;
+        v_dual_round := 'SF';
       elsif v_atp_qf > 0 and v_wta_qf > 0 then
         v_dual_bonus := v_dual_qf_value;
+        v_dual_round := 'QF';
+      end if;
+
+      if v_dual_round is not null then
+        select coalesce(jsonb_agg(player_name order by tour, created_at), '[]'::jsonb)
+        into v_dual_players
+        from (
+          select
+            tour,
+            coalesce(nullif(name_zh, ''), nullif(name_en, ''), player_key) as player_name,
+            created_at
+          from public.tour_manager_lineup_players
+          where lineup_id = v_lineup.id
+            and is_active
+            and tour in ('ATP', 'WTA')
+            and case
+              when v_dual_round = 'W' then reached_round = 'W'
+              else public.tour_manager_round_order(coalesce(reached_round, 'OUT'))
+                >= public.tour_manager_round_order(v_dual_round)
+            end
+        ) dual_players;
       end if;
 
       if v_lineup.lineup_cost > 0 and v_lineup.lineup_cost <= v_lineup.station_grant then
@@ -199,7 +227,13 @@ begin
         v_combo_details := v_combo_details || jsonb_build_array(jsonb_build_object('key', 'steady', 'label', '稳健经营', 'bonus', v_stable_bonus));
       end if;
       if v_dual_bonus > 0 then
-        v_combo_details := v_combo_details || jsonb_build_array(jsonb_build_object('key', 'dual', 'label', '双线经营', 'bonus', v_dual_bonus));
+        v_combo_details := v_combo_details || jsonb_build_array(jsonb_build_object(
+          'key', 'dual',
+          'label', '双线经营',
+          'bonus', v_dual_bonus,
+          'players', v_dual_players,
+          'context', jsonb_build_array(v_dual_round)
+        ));
       end if;
       if v_jewel_bonus > 0 then
         v_combo_details := v_combo_details || jsonb_build_array(jsonb_build_object('key', 'jewel', 'label', '慧眼识珠', 'bonus', v_jewel_bonus));
