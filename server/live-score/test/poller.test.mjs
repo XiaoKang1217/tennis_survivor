@@ -67,3 +67,58 @@ test('snapshot contains only matches on the current Beijing date', () => {
   assert.equal(poller.snapshot.tournaments.length, 1);
   assert.equal(poller.snapshot.tournaments[0].name, 'Today');
 });
+
+test('a match confirmed finished by livescore cannot regress to live on a later poll', () => {
+  const scheduled = [{
+    event_key: 7,
+    event_date: '2026-07-21',
+    event_time: '12:00',
+    event_status: 'Scheduled',
+    event_type_type: 'Atp Singles',
+    tournament_name: 'Today'
+  }];
+  const poller = setup(100, scheduled);
+  poller.cache.data.live = [{
+    ...scheduled[0],
+    event_status: 'Finished',
+    event_final_result: '2 - 1',
+    scores: [
+      { score_set: '1', score_first: '6', score_second: '2' },
+      { score_set: '2', score_first: '3', score_second: '6' },
+      { score_set: '3', score_first: '6', score_second: '1' }
+    ]
+  }];
+  poller.rememberTerminalMatches(poller.cache.data.live);
+  poller.snapshot = poller.buildSnapshot();
+  assert.equal(poller.snapshot.tournaments[0].venues[0].matches[0].status, 'finished');
+
+  poller.cache.data.live = [{
+    ...scheduled[0],
+    event_status: 'Set 3',
+    event_live: '1',
+    event_game_result: '15 - 0',
+    scores: [{ score_set: '3', score_first: '2', score_second: '1' }]
+  }];
+  poller.snapshot = poller.buildSnapshot();
+  const match = poller.snapshot.tournaments[0].venues[0].matches[0];
+  assert.equal(match.status, 'finished');
+  assert.equal(match.statusText, 'Finished');
+  assert.deepEqual(match.sets.at(-1), { set: '3', first: '6', second: '1' });
+});
+
+test('a terminal match stays finished after it disappears from livescore', () => {
+  const finished = [{
+    event_key: 8,
+    event_date: '2026-07-21',
+    event_time: '10:00',
+    event_status: 'Finished',
+    event_type_type: 'Atp Singles',
+    tournament_name: 'Today',
+    scores: [{ score_set: '1', score_first: '6', score_second: '4' }]
+  }];
+  const poller = setup(100, []);
+  poller.rememberTerminalMatches(finished);
+  poller.cache.data.live = [];
+  poller.snapshot = poller.buildSnapshot();
+  assert.equal(poller.snapshot.tournaments[0].venues[0].matches[0].status, 'finished');
+});

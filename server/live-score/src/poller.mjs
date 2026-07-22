@@ -1,5 +1,5 @@
 import { EventEmitter } from 'node:events';
-import { applyPrematchOdds, groupSchedule, isMainTour, isObservationWindow, mergeMatches } from './normalizer.mjs';
+import { applyPrematchOdds, groupSchedule, isMainTour, isObservationWindow, mergeMatches, normalizeMatch } from './normalizer.mjs';
 
 const OBSERVATION_PROBE_MS = 60_000;
 const LIVE_POLL_MS = 8_000;
@@ -14,13 +14,47 @@ export class LivePoller extends EventEmitter {
     this.now = now;
     this.timer = null;
     this.running = false;
+    this.rememberTerminalMatches(this.cache.data.fixtures?.items || [], false);
+    this.rememberTerminalMatches(this.cache.data.live || [], false);
     this.snapshot = this.buildSnapshot();
   }
 
-  buildSnapshot(error = '') {
-    const fixtures = this.cache.data.fixtures?.items || [];
+  terminalMatches() {
     const date = this.client.beijingDate();
-    let matches = mergeMatches(fixtures, this.cache.data.live || []);
+    const saved = this.cache.data.terminalMatches;
+    if (!saved || saved.date !== date || !saved.items || typeof saved.items !== 'object') {
+      this.cache.data.terminalMatches = { date, items: {} };
+    }
+    return Object.values(this.cache.data.terminalMatches.items);
+  }
+
+  rememberTerminalMatches(items = [], write = true) {
+    this.terminalMatches();
+    const saved = this.cache.data.terminalMatches.items;
+    let changed = false;
+    for (const raw of items) {
+      const match = normalizeMatch(raw);
+      if (!match.id || match.status !== 'finished') continue;
+      const key = String(match.id);
+      const next = JSON.stringify(raw);
+      if (JSON.stringify(saved[key]) === next) continue;
+      saved[key] = raw;
+      changed = true;
+    }
+    if (changed && write) this.cache.scheduleWrite();
+    return changed;
+  }
+
+  matchSources() {
+    return [
+      ...(this.cache.data.fixtures?.items || []),
+      ...this.terminalMatches()
+    ];
+  }
+
+  buildSnapshot(error = '') {
+    const date = this.client.beijingDate();
+    let matches = mergeMatches(this.matchSources(), this.cache.data.live || []);
     if (this.localizer) matches = this.localizer.enrich(matches);
     matches = applyPrematchOdds(matches, this.cache.data.prematchOdds?.items || {});
     const rankingByPlayer = new Map();
@@ -56,6 +90,7 @@ export class LivePoller extends EventEmitter {
     if (!force && saved && saved.date === date && saved.dateStop === dateStop && this.now() - saved.fetchedAt < this.config.fixturesTtlMs) return saved.items;
     const items = await this.client.fixtures(date, dateStop);
     this.cache.data.fixtures = { fetchedAt: this.now(), date, dateStop, items };
+    this.rememberTerminalMatches(items, false);
     this.cache.scheduleWrite();
     return items;
   }
@@ -73,7 +108,7 @@ export class LivePoller extends EventEmitter {
 
   shouldObserve() {
     const date = this.client.beijingDate();
-    let matches = mergeMatches(this.cache.data.fixtures?.items || [], this.cache.data.live || []);
+    let matches = mergeMatches(this.matchSources(), this.cache.data.live || []);
     if (this.localizer) matches = this.localizer.enrich(matches);
     const officialScheduleReady = this.cache.data.localization?.date === date && (this.cache.data.localization?.tours || []).length > 0;
     return matches.some(match => isMainTour(match)
@@ -90,7 +125,9 @@ export class LivePoller extends EventEmitter {
       await this.localizer?.refresh(this.client.beijingDate(), this.now()).catch(cause => console.warn('[localizer]', cause.message));
       await this.refreshPrematchOdds().catch(cause => console.warn('[odds]', cause.message));
       if (this.shouldObserve()) {
-        this.cache.data.live = await this.client.livescore();
+        const live = await this.client.livescore();
+        this.rememberTerminalMatches(live, false);
+        this.cache.data.live = live;
         this.cache.scheduleWrite();
       } else if (!this.shouldObserve()) {
         this.cache.data.live = [];
@@ -109,9 +146,8 @@ export class LivePoller extends EventEmitter {
   nextDelay() {
     if (this.snapshot.hasLive) return LIVE_POLL_MS;
     if (this.shouldObserve()) return OBSERVATION_PROBE_MS;
-    const fixtures = this.cache.data.fixtures?.items || [];
     const date = this.client.beijingDate();
-    let matches = mergeMatches(fixtures, this.cache.data.live || []);
+    let matches = mergeMatches(this.matchSources(), this.cache.data.live || []);
     if (this.localizer) matches = this.localizer.enrich(matches);
     const officialScheduleReady = this.cache.data.localization?.date === date && (this.cache.data.localization?.tours || []).length > 0;
     const pending = matches.filter(match => isMainTour(match)
