@@ -901,6 +901,8 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 <link rel="stylesheet" href="assets/theme/full-site-badge-themes-v18.css?v=20260719-1">
 <link rel="stylesheet" href="assets/manager/badges/ui-v5/badge-ui.css?v=20260719-7">
 <link rel="stylesheet" href="assets/manager/badges/ui-v18/badge-ui-v18.css?v=20260719-7">
+<link rel="stylesheet" href="assets/live-score/live-score.css?v=20260722-5">
+<link rel="stylesheet" href="assets/live-score/live-score-enhancements.css?v=20260722-5">
 </head>
 <body class="manager-mode">
 <div id="hdr">
@@ -920,6 +922,7 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
   </div>
   <div class="tabs">
     <button class="tab on" onclick="switchTab('manager',this)" id="tab-manager">💼 巡回赛经纪人</button>
+    <button class="tab" onclick="switchTab('live',this)" id="tab-live">🎾 实时比分-内测版</button>
     <button class="tab" onclick="switchTab('ms-s',this)" id="tab-ms-s">🎾 ATP 男单</button>
     <button class="tab" onclick="switchTab('ws-s',this)" id="tab-ws-s">🎾 WTA 女单</button>
     <button class="tab" onclick="switchTab('ms-bd',this)" id="tab-breakdown">💹 积分构成</button>
@@ -938,6 +941,7 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
   <div id="content-ms-s" style="display:none"></div>
 </div>
 <div id="p-manager" class="panel on"><div class="manager-wrap" id="manager-root"><div class="loading">⏳ 加载巡回赛经纪人...</div></div></div>
+<div id="p-live" class="panel"><div id="live-score-root"><div class="loading">⏳ 正在连接实时比分...</div></div></div>
 <div id="p-ws-s" class="panel">
   <div class="loading" id="loading-ws">⏳ 加载WTA数据中...</div>
   <div id="content-ws-s" style="display:none"></div>
@@ -1055,7 +1059,7 @@ const TOP_TAB_BY_PANEL={
   'ms-bd':'tab-breakdown','ws-bd':'tab-breakdown',
   'ms-p':'tab-preference','ws-p':'tab-preference',
   'ms-t':'tab-disasters','ws-t':'tab-disasters',
-  flight:'tab-flight',fortune:'tab-fortune',jinx:'tab-jinx',manager:'tab-manager',faq:'tab-faq'
+  flight:'tab-flight',fortune:'tab-fortune',jinx:'tab-jinx',manager:'tab-manager',live:'tab-live',faq:'tab-faq'
 };
 let ACTIVE_TAB='manager';
 let SUPABASE_CLIENT=null;
@@ -1403,7 +1407,7 @@ function tabMeta(tab){
     'ms-bd':'breakdown','ws-bd':'breakdown',
     'ms-p':'preference','ws-p':'preference',
     'ms-t':'disasters','ws-t':'disasters',
-    flight:'daily_flights',fortune:'fortune',jinx:'daily_jinx',manager:'manager_demo',faq:'faq'
+    flight:'daily_flights',fortune:'fortune',jinx:'daily_jinx',manager:'manager_demo',live:'live_scores',faq:'faq'
   }[tab]||tab;
   var eventLabel=(g==='ms'||g==='ws')&&tab.slice(-2)==='-s'?currentEventLabel(g):'';
   return {module:module,tour:tour,event_label:eventLabel};
@@ -6317,6 +6321,19 @@ function toggleExpDyn(row){
 
 // ===== 通用功能 =====
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+let LIVE_SCORE_SCRIPT_LOADING=null;
+function loadLiveScoreModule(){
+  if(window.__LUWANG_LIVE_SCORE_LOADED)return Promise.resolve();
+  if(LIVE_SCORE_SCRIPT_LOADING)return LIVE_SCORE_SCRIPT_LOADING;
+  LIVE_SCORE_SCRIPT_LOADING=new Promise(function(resolve,reject){
+    var script=document.createElement('script');
+    script.src='assets/live-score/live-score.js?v=20260722-7';
+    script.onload=function(){window.__LUWANG_LIVE_SCORE_LOADED=true;resolve();};
+    script.onerror=function(){LIVE_SCORE_SCRIPT_LOADING=null;reject(new Error('实时比分模块加载失败'));};
+    document.body.appendChild(script);
+  });
+  return LIVE_SCORE_SCRIPT_LOADING;
+}
 function switchTab(t,btn){
   var prev=ACTIVE_TAB;
   var panel=document.getElementById('p-'+t);
@@ -6355,6 +6372,10 @@ function switchTab(t,btn){
     loadHistoryPart('flights',function(){initFlightSelect();}).catch(function(){});
   }
   if(t==='jinx')renderDailyJinx();
+  if(t==='live')loadLiveScoreModule().catch(function(error){
+    var liveRoot=document.getElementById('live-score-root');
+    if(liveRoot)liveRoot.innerHTML='<div class="live-error">'+esc(error.message)+'</div>';
+  });
   if(t==='manager'){
     trackManagerEvent('manager_entry_attempt',{source:'tab'});
     managerEnterFlow();

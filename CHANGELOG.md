@@ -7,6 +7,23 @@ Versioning guideline:
 - Minor versions add user-facing features or change data logic.
 - Major versions are reserved for large rewrites or incompatible data changes.
 
+## Unreleased - v0.4.0
+
+### Added
+- Added a lazy-loaded live tennis module with Beijing-date status filters, collapsible tournament sections, court grouping, surface colors, serving and latest-point indicators, and responsive match cards.
+- Added match statistics and H2H detail views plus independent player H2H and yearly match-history searches.
+- Added a server-side API Tennis proxy with shared JSON cache, SSE fan-out, ETags, CORS allow-listing, request throttling, and persisted daily request accounting.
+- Added production systemd and Nginx templates. The API key is read only from a protected server environment file and is never exposed to the static site.
+
+### Changed
+- Live-score polling now runs only around scheduled match windows: 60-second observation probes and 8-second refreshes after a live match is detected, with adaptive quota protection at 6500, 7300, and 7800 daily requests.
+- Missing court and surface metadata are displayed as `未标注` instead of being hardcoded.
+
+### Validation
+- Added Node.js tests for field normalization, tournament/court grouping, observation windows, no polling outside match windows, and adaptive request intervals.
+- Verified the service health and cached response endpoints, parsed all new JavaScript, and ran `git diff --check`.
+- Verified desktop browser navigation, zero horizontal overflow, and the independent H2H form without using simulated score data.
+
 ## v0.3.9 - 2026-07-20
 
 Release baseline:

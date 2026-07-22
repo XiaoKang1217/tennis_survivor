@@ -1,0 +1,70 @@
+.live-tiebreak {
+  font-size: 8px;
+  line-height: 1;
+  margin-left: 1px;
+  position: relative;
+  top: -0.45em;
+}
+
+.live-suggestion b,
+.live-suggestion small {
+  display: block;
+}
+
+.live-suggestion small {
+  color: #7a8794;
+  font-size: 10px;
+  margin-top: 3px;
+}
+
+.live-suggestion:focus {
+  background: #f1f6ff;
+  outline: 2px solid #1769ff;
+  outline-offset: -2px;
+}
+
+.live-tour-name,
+.live-tour-meta {
+  display: block;
+}
+
+.live-day-offset {
+  color: #1769ff;
+  font-size: 9px;
+  margin-left: 2px;
+}
+
+.live-h2h-result {
+  min-width: 28px;
+}
+
+.live-player {
+  min-height: 41px;
+}
+
+.live-player-copy {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+  min-width: 0;
+}
+
+.live-player-copy > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.live-player-meta {
+  color: #8793a0;
+  font-size: 9px;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.live-odds {
+  color: #1769ff;
+  font-style: normal;
+  font-weight: 800;
+  margin-left: 4px;
+}
