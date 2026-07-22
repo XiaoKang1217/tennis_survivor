@@ -902,7 +902,7 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 <link rel="stylesheet" href="assets/manager/badges/ui-v5/badge-ui.css?v=20260719-7">
 <link rel="stylesheet" href="assets/manager/badges/ui-v18/badge-ui-v18.css?v=20260719-7">
 <link rel="stylesheet" href="assets/live-score/live-score.css?v=20260722-6">
-<link rel="stylesheet" href="assets/live-score/live-score-enhancements.css?v=20260722-6">
+<link rel="stylesheet" href="assets/live-score/live-score-enhancements.css?v=20260722-7">
 </head>
 <body class="manager-mode">
 <div id="hdr">
@@ -6327,7 +6327,7 @@ function loadLiveScoreModule(){
   if(LIVE_SCORE_SCRIPT_LOADING)return LIVE_SCORE_SCRIPT_LOADING;
   LIVE_SCORE_SCRIPT_LOADING=new Promise(function(resolve,reject){
     var script=document.createElement('script');
-    script.src='assets/live-score/live-score.js?v=20260722-8';
+    script.src='assets/live-score/live-score.js?v=20260722-9';
     script.onload=function(){window.__LUWANG_LIVE_SCORE_LOADED=true;resolve();};
     script.onerror=function(){LIVE_SCORE_SCRIPT_LOADING=null;reject(new Error('实时比分模块加载失败'));};
     document.body.appendChild(script);

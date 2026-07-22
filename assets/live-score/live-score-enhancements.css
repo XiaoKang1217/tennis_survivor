@@ -108,6 +108,20 @@
 .live-match-status-live { background: #ef4444; }
 .live-match-status-scheduled { background: #eab308; }
 
+.live-serve-badge {
+  background: #ef4444;
+  border-radius: 999px;
+  color: #fff;
+  flex: 0 0 auto;
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+  margin-left: auto;
+  overflow: visible;
+  padding: 4px 7px;
+  white-space: nowrap;
+}
+
 .live-winner-stamp {
   align-items: center;
   border: 2px solid #d62f2f;
@@ -134,5 +148,10 @@
 
   .live-player.has-current {
     grid-template-columns: minmax(0, 1fr) repeat(var(--set-count, 2), 24px) 34px;
+  }
+
+  .live-serve-badge {
+    font-size: 9px;
+    padding: 3px 5px;
   }
 }
