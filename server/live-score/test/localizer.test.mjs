@@ -37,6 +37,24 @@ test('marks Beijing next-day matches while retaining the official schedule date'
   assert.equal(parseChineseSchedule(html, '2026-07-22')[0].matches[0].dayOffset, 1);
 });
 
+test('keeps the last complete schedule when an upstream refresh is empty', { concurrency: false }, async () => {
+  const tours = [{ id: '1', city: '测试站', matches: [{ dayOffset: 1 }] }];
+  const cache = {
+    data: { localization: { date: '2026-07-22', version: 4, fetchedAt: 0, tours } },
+    scheduleWrite() {}
+  };
+  const localizer = new ChineseLocalizer({ cache, url: 'https://example.test/zh/{date}', ttlMs: 1, catalogFile: '/file/does/not/exist' });
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () => ({ ok: true, text: async () => '' });
+  try {
+    assert.equal(await localizer.refresh('2026-07-22', 10), tours);
+    assert.equal(cache.data.localization.tours, tours);
+    assert.equal(cache.data.localization.fetchedAt, 10);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
 test('catalog lookups tolerate ATP and WTA prefixes', () => {
   const cache = { data: {}, scheduleWrite() {} };
   const localizer = new ChineseLocalizer({ cache, url: '', ttlMs: 1, catalogFile: '/file/does/not/exist' });

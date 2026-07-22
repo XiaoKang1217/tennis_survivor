@@ -197,6 +197,12 @@ export class ChineseLocalizer {
       request(chineseUrl.replace('/zh/', '/en/')).catch(() => '')
     ]);
     const tours = parseChineseSchedule(chineseHtml, date);
+    if (!tours.length && saved?.date === date && saved?.tours?.length) {
+      this.cache.data.localization = { ...saved, fetchedAt: now };
+      this.cache.scheduleWrite();
+      console.warn('[localizer] empty schedule response; keeping the last complete schedule');
+      return saved.tours;
+    }
     const englishTours = new Map(parseChineseSchedule(englishHtml, date).map(tour => [tour.id, tour]));
     tours.forEach(tour => {
       const english = englishTours.get(tour.id);
