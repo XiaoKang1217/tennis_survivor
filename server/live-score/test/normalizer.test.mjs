@@ -62,6 +62,35 @@ test('keeps scheduled time and venue when live feed omits them', async () => {
   assert.equal(merged[0].tournament.surface, 'Clay');
 });
 
+test('keeps a freshly confirmed finished fixture over a stale live row', async () => {
+  const { mergeMatches } = await import('../src/normalizer.mjs');
+  const merged = mergeMatches(
+    [{
+      event_key: 9,
+      event_date: '2026-07-22',
+      event_time: '17:00',
+      event_status: 'Finished',
+      event_final_result: '2 - 1',
+      scores: [
+        { score_set: '1', score_first: '7', score_second: '6' },
+        { score_set: '2', score_first: '2', score_second: '6' },
+        { score_set: '3', score_first: '6', score_second: '4' }
+      ]
+    }],
+    [{
+      event_key: 9,
+      event_status: 'Set 3',
+      event_live: '1',
+      event_game_result: '15 - 0',
+      scores: [{ score_set: '3', score_first: '3', score_second: '3' }]
+    }]
+  );
+  assert.equal(merged[0].status, 'finished');
+  assert.equal(merged[0].statusText, 'Finished');
+  assert.deepEqual(merged[0].current, { first: '', second: '' });
+  assert.deepEqual(merged[0].sets.at(-1), { set: '3', first: '6', second: '4' });
+});
+
 test('selects a stable bookmaker priority from API Tennis Home/Away odds', () => {
   const selected = selectPrematchOdds({
     'Home/Away': {

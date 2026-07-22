@@ -2,6 +2,7 @@ import { EventEmitter } from 'node:events';
 import { applyPrematchOdds, groupSchedule, isMainTour, isObservationWindow, mergeMatches } from './normalizer.mjs';
 
 const OBSERVATION_PROBE_MS = 60_000;
+const LIVE_POLL_MS = 8_000;
 
 export class LivePoller extends EventEmitter {
   constructor({ client, cache, config, localizer = null, now = () => Date.now() }) {
@@ -14,14 +15,6 @@ export class LivePoller extends EventEmitter {
     this.timer = null;
     this.running = false;
     this.snapshot = this.buildSnapshot();
-  }
-
-  budgetDelay() {
-    const used = this.client.budgetToday().used;
-    if (used >= 7800) return null;
-    if (used >= 7300) return 60_000;
-    if (used >= 6500) return 15_000;
-    return 8_000;
   }
 
   buildSnapshot(error = '') {
@@ -96,7 +89,7 @@ export class LivePoller extends EventEmitter {
       await this.refreshFixtures();
       await this.localizer?.refresh(this.client.beijingDate(), this.now()).catch(cause => console.warn('[localizer]', cause.message));
       await this.refreshPrematchOdds().catch(cause => console.warn('[odds]', cause.message));
-      if (this.shouldObserve() && this.budgetDelay() !== null) {
+      if (this.shouldObserve()) {
         this.cache.data.live = await this.client.livescore();
         this.cache.scheduleWrite();
       } else if (!this.shouldObserve()) {
@@ -114,10 +107,27 @@ export class LivePoller extends EventEmitter {
   }
 
   nextDelay() {
-    if (this.snapshot.hasLive) return this.budgetDelay() ?? this.config.fixturesTtlMs;
-    if (this.shouldObserve()) return this.budgetDelay() === null ? this.config.fixturesTtlMs : OBSERVATION_PROBE_MS;
+    if (this.snapshot.hasLive) return LIVE_POLL_MS;
+    if (this.shouldObserve()) return OBSERVATION_PROBE_MS;
+    const fixtures = this.cache.data.fixtures?.items || [];
+    const date = this.client.beijingDate();
+    let matches = mergeMatches(fixtures, this.cache.data.live || []);
+    if (this.localizer) matches = this.localizer.enrich(matches);
+    const officialScheduleReady = this.cache.data.localization?.date === date && (this.cache.data.localization?.tours || []).length > 0;
+    const pending = matches.filter(match => isMainTour(match)
+      && match.status === 'scheduled'
+      && (officialScheduleReady ? match.officialScheduleMatch : match.date === date));
+    const nextWindow = pending.map(match => {
+      const start = Date.parse(`${match.scheduleDate || match.date}T${match.time}:00+08:00`)
+        + (Number(match.dayOffset) || 0) * 24 * 60 * 60_000;
+      return start - this.config.observationBeforeMs - this.now();
+    }).filter(delay => Number.isFinite(delay) && delay > 0).sort((a, b) => a - b)[0];
     const fetchedAt = this.cache.data.fixtures?.fetchedAt || 0;
-    return Math.max(5_000, this.config.fixturesTtlMs - (this.now() - fetchedAt));
+    const fixtureRefresh = Math.max(5_000, this.config.fixturesTtlMs - (this.now() - fetchedAt));
+    if (Number.isFinite(nextWindow)) return Math.max(5_000, Math.min(nextWindow, fixtureRefresh));
+    if (pending.length) return fixtureRefresh;
+    const nextDate = this.client.dateAfter(date);
+    return Math.max(5_000, Date.parse(`${nextDate}T00:00:01+08:00`) - this.now());
   }
 
   schedule() {

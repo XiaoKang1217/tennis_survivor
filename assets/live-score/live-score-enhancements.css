@@ -68,3 +68,71 @@
   font-weight: 800;
   margin-left: 4px;
 }
+
+/* Player rows stay neutral; only the live point value is highlighted. */
+.live-player,
+.live-player.last-point {
+  background: #fff;
+  grid-template-columns: minmax(0, 1fr) repeat(var(--set-count, 3), 26px);
+}
+
+.live-player.has-current {
+  grid-template-columns: minmax(0, 1fr) repeat(var(--set-count, 3), 26px) 38px;
+}
+
+.live-player .live-current,
+.live-player.last-point .live-current {
+  background: transparent;
+  color: #1f2937;
+  padding: 0;
+}
+
+.live-player .live-current.live-current-point {
+  background: #1769ff;
+  border-radius: 4px;
+  color: #fff;
+  padding: 5px 0;
+}
+
+.live-match-status {
+  border-radius: 999px;
+  color: #fff;
+  flex: 0 0 auto;
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+  padding: 4px 8px;
+}
+
+.live-match-status-finished { background: #16a34a; }
+.live-match-status-live { background: #ef4444; }
+.live-match-status-scheduled { background: #eab308; }
+
+.live-winner-stamp {
+  align-items: center;
+  border: 2px solid #d62f2f;
+  border-radius: 50%;
+  color: #d62f2f;
+  display: inline-flex;
+  flex: 0 0 25px;
+  font-family: KaiTi, STKaiti, "Kaiti SC", serif;
+  font-size: 16px;
+  font-weight: 900;
+  height: 25px;
+  justify-content: center;
+  line-height: 1;
+  margin-left: 7px;
+  opacity: .82;
+  transform: rotate(-14deg);
+}
+
+@media(max-width:760px) {
+  .live-player,
+  .live-player.last-point {
+    grid-template-columns: minmax(0, 1fr) repeat(var(--set-count, 2), 24px);
+  }
+
+  .live-player.has-current {
+    grid-template-columns: minmax(0, 1fr) repeat(var(--set-count, 2), 24px) 34px;
+  }
+}

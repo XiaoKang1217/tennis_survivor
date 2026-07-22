@@ -16,7 +16,8 @@ Versioning guideline:
 - Added production systemd and Nginx templates. The API key is read only from a protected server environment file and is never exposed to the static site.
 
 ### Changed
-- Live-score polling now runs only around scheduled match windows: 60-second observation probes and 8-second refreshes after a live match is detected, with adaptive quota protection at 6500, 7300, and 7800 daily requests.
+- Live-score polling now runs only around scheduled match windows: 60-second observation probes and fixed 8-second refreshes after a live match is detected. Local request-count throttling at 6500, 7300, and 7800 has been removed.
+- Match cards now use explicit Chinese status pills, neutral white player rows, live-only current-point highlighting, and a winner stamp on completed matches.
 - Missing court and surface metadata are displayed as `未标注` instead of being hardcoded.
 
 ### Validation

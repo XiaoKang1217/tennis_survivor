@@ -72,6 +72,7 @@ export function normalizeMatch(raw) {
   const live = LIVE_STATUSES.has(statusLower) || Boolean(raw.event_live === '1' || raw.event_live === 1);
   const finished = FINISHED_STATUSES.has(statusLower);
   const serve = String(first(raw, ['event_serve', 'serve'], ''));
+  const winner = String(first(raw, ['event_winner', 'winner'], ''));
   const type = first(raw, ['event_type_type', 'event_type'], '');
   return {
     id: String(first(raw, ['event_key', 'match_key', 'id'], '')),
@@ -93,6 +94,7 @@ export function normalizeMatch(raw) {
     court: first(raw, ['event_stadium', 'event_court', 'court', 'stadium'], '未标注'),
     first: player(raw, 'first'),
     second: player(raw, 'second'),
+    winner: ['First Player', '1', 'first'].includes(winner) ? 'first' : ['Second Player', '2', 'second'].includes(winner) ? 'second' : '',
     serve: ['First Player', '1', 'first'].includes(serve) ? 'first' : ['Second Player', '2', 'second'].includes(serve) ? 'second' : '',
     lastPoint: inferLastPointSide(raw),
     current: currentGameScore(raw),
@@ -127,6 +129,10 @@ export function mergeMatches(fixtures = [], live = []) {
     const item = normalizeMatch(raw);
     const prior = byId.get(item.id);
     if (!prior) return byId.set(item.id, item);
+    // A freshly refreshed fixture is authoritative once it confirms the match
+    // is over. Some providers keep an outdated copy in get_livescore for a
+    // while after the final point; do not let that stale row resurrect it.
+    if (prior.status === 'finished' && item.status === 'live') return;
     const tournament = {
       ...prior.tournament,
       ...item.tournament,
