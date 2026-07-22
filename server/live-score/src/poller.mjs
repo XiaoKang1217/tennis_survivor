@@ -3,6 +3,8 @@ import { applyPrematchOdds, groupSchedule, isMainTour, isObservationWindow, merg
 
 const OBSERVATION_PROBE_MS = 60_000;
 const LIVE_POLL_MS = 8_000;
+const HISTORY_START_DATE = '2026-07-22';
+const HISTORY_DAYS = 5;
 
 export class LivePoller extends EventEmitter {
   constructor({ client, cache, config, localizer = null, now = () => Date.now() }) {
@@ -14,13 +16,57 @@ export class LivePoller extends EventEmitter {
     this.now = now;
     this.timer = null;
     this.running = false;
+    if (!this.cache.data.activeScheduleDate || this.cache.data.activeScheduleDate < HISTORY_START_DATE) {
+      this.cache.data.activeScheduleDate = this.client.beijingDate();
+    }
+    if (!this.cache.data.scheduleHistory || typeof this.cache.data.scheduleHistory !== 'object') {
+      this.cache.data.scheduleHistory = {};
+    }
     this.rememberTerminalMatches(this.cache.data.fixtures?.items || [], false);
     this.rememberTerminalMatches(this.cache.data.live || [], false);
     this.snapshot = this.buildSnapshot();
+    this.rememberSnapshot(this.snapshot, false);
+  }
+
+  scheduleDate() {
+    return this.cache.data.activeScheduleDate || this.client.beijingDate();
+  }
+
+  historyDates(extraDate = '') {
+    return [...new Set([...Object.keys(this.cache.data.scheduleHistory || {}), extraDate].filter(date => date >= HISTORY_START_DATE))]
+      .sort()
+      .slice(-HISTORY_DAYS);
+  }
+
+  rememberSnapshot(snapshot, write = true) {
+    if (!snapshot?.date || snapshot.date < HISTORY_START_DATE) return;
+    const history = this.cache.data.scheduleHistory;
+    history[snapshot.date] = { ...snapshot, availableDates: undefined };
+    const keep = new Set(this.historyDates(snapshot.date));
+    Object.keys(history).forEach(date => { if (!keep.has(date)) delete history[date]; });
+    snapshot.availableDates = this.historyDates(snapshot.date);
+    if (write) this.cache.scheduleWrite();
+  }
+
+  activeDayComplete(snapshot = this.snapshot) {
+    const matches = (snapshot?.tournaments || []).flatMap(tour => tour.venues.flatMap(venue => venue.matches));
+    return matches.length > 0 && matches.every(match => match.status === 'finished');
+  }
+
+  advanceScheduleDayIfComplete(snapshot = this.snapshot) {
+    const calendarDate = this.client.beijingDate();
+    if (calendarDate <= this.scheduleDate() || !this.activeDayComplete(snapshot)) return false;
+    this.cache.data.activeScheduleDate = calendarDate;
+    this.cache.data.fixtures = null;
+    this.cache.data.live = [];
+    this.cache.data.terminalMatches = null;
+    this.cache.data.prematchOdds = null;
+    this.cache.scheduleWrite();
+    return true;
   }
 
   terminalMatches() {
-    const date = this.client.beijingDate();
+    const date = this.scheduleDate();
     const saved = this.cache.data.terminalMatches;
     if (!saved || saved.date !== date || !saved.items || typeof saved.items !== 'object') {
       this.cache.data.terminalMatches = { date, items: {} };
@@ -53,7 +99,7 @@ export class LivePoller extends EventEmitter {
   }
 
   buildSnapshot(error = '') {
-    const date = this.client.beijingDate();
+    const date = this.scheduleDate();
     let matches = mergeMatches(this.matchSources(), this.cache.data.live || []);
     if (this.localizer) matches = this.localizer.enrich(matches);
     matches = applyPrematchOdds(matches, this.cache.data.prematchOdds?.items || {});
@@ -79,13 +125,15 @@ export class LivePoller extends EventEmitter {
       error,
       requestBudget: { ...this.client.budgetToday(), limit: this.config.dailyLimit },
       hasLive: matches.some(match => match.status === 'live'),
+      activeDate: date,
+      availableDates: this.historyDates(date),
       tournaments: groupSchedule(matches)
     };
   }
 
   async refreshFixtures(force = false) {
     const saved = this.cache.data.fixtures;
-    const date = this.client.beijingDate();
+    const date = this.scheduleDate();
     const dateStop = this.client.dateAfter(date);
     if (!force && saved && saved.date === date && saved.dateStop === dateStop && this.now() - saved.fetchedAt < this.config.fixturesTtlMs) return saved.items;
     const items = await this.client.fixtures(date, dateStop);
@@ -97,7 +145,7 @@ export class LivePoller extends EventEmitter {
 
   async refreshPrematchOdds(force = false) {
     const saved = this.cache.data.prematchOdds;
-    const date = this.client.beijingDate();
+    const date = this.scheduleDate();
     const dateStop = this.client.dateAfter(date);
     if (!force && saved && saved.date === date && saved.dateStop === dateStop && this.now() - saved.fetchedAt < this.config.oddsTtlMs) return saved.items;
     const items = await this.client.odds(date, dateStop);
@@ -107,7 +155,7 @@ export class LivePoller extends EventEmitter {
   }
 
   shouldObserve() {
-    const date = this.client.beijingDate();
+    const date = this.scheduleDate();
     let matches = mergeMatches(this.matchSources(), this.cache.data.live || []);
     if (this.localizer) matches = this.localizer.enrich(matches);
     const officialScheduleReady = this.cache.data.localization?.date === date && (this.cache.data.localization?.tours || []).length > 0;
@@ -122,7 +170,7 @@ export class LivePoller extends EventEmitter {
     let error = '';
     try {
       await this.refreshFixtures();
-      await this.localizer?.refresh(this.client.beijingDate(), this.now()).catch(cause => console.warn('[localizer]', cause.message));
+      await this.localizer?.refresh(this.scheduleDate(), this.now()).catch(cause => console.warn('[localizer]', cause.message));
       await this.refreshPrematchOdds().catch(cause => console.warn('[odds]', cause.message));
       if (this.shouldObserve()) {
         const live = await this.client.livescore();
@@ -137,16 +185,18 @@ export class LivePoller extends EventEmitter {
       console.warn('[poller]', cause.message);
     } finally {
       this.snapshot = this.buildSnapshot(error);
+      this.rememberSnapshot(this.snapshot);
       this.emit('snapshot', this.snapshot);
+      const advanced = this.advanceScheduleDayIfComplete(this.snapshot);
       this.running = false;
-      this.schedule();
+      this.schedule(advanced ? 5_000 : undefined);
     }
   }
 
   nextDelay() {
     if (this.snapshot.hasLive) return LIVE_POLL_MS;
     if (this.shouldObserve()) return OBSERVATION_PROBE_MS;
-    const date = this.client.beijingDate();
+    const date = this.scheduleDate();
     let matches = mergeMatches(this.matchSources(), this.cache.data.live || []);
     if (this.localizer) matches = this.localizer.enrich(matches);
     const officialScheduleReady = this.cache.data.localization?.date === date && (this.cache.data.localization?.tours || []).length > 0;
@@ -166,9 +216,9 @@ export class LivePoller extends EventEmitter {
     return Math.max(5_000, Date.parse(`${nextDate}T00:00:01+08:00`) - this.now());
   }
 
-  schedule() {
+  schedule(delay) {
     clearTimeout(this.timer);
-    this.timer = setTimeout(() => this.tick(), this.nextDelay());
+    this.timer = setTimeout(() => this.tick(), delay ?? this.nextDelay());
   }
 
   start() { return this.tick(); }

@@ -128,6 +128,13 @@ const server = http.createServer(async (req, res) => {
     const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
     if (url.pathname === '/health') return json(req, res, 200, { ok: true, apiConfigured: Boolean(config.apiKey), updatedAt: poller.snapshot.updatedAt });
     if (url.pathname === '/api/v1/live/today') return json(req, res, 200, poller.snapshot, poller.snapshot.hasLive ? 2 : 30);
+    if (url.pathname === '/api/v1/live/day') {
+      const date = url.searchParams.get('date') || '';
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return json(req, res, 400, { error: 'invalid_date' });
+      const snapshot = date === poller.snapshot.date ? poller.snapshot : cache.data.scheduleHistory?.[date];
+      if (!snapshot) return json(req, res, 404, { error: 'schedule_not_saved', message: '该日期赛程尚未保存' });
+      return json(req, res, 200, { ...snapshot, availableDates: poller.historyDates(poller.snapshot.date), activeDate: poller.snapshot.date }, 60);
+    }
     if (url.pathname === '/api/v1/live/stream') {
       cors(req, res);
       res.writeHead(200, { 'content-type': 'text/event-stream; charset=utf-8', 'cache-control': 'no-cache, no-transform', connection: 'keep-alive', 'x-accel-buffering': 'no' });

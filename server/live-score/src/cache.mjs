@@ -4,7 +4,15 @@ import path from 'node:path';
 export class JsonCache {
   constructor(file) {
     this.file = file;
-    this.data = { fixtures: null, live: [], terminalMatches: null, details: {}, budget: {} };
+    this.data = {
+      fixtures: null,
+      live: [],
+      terminalMatches: null,
+      details: {},
+      budget: {},
+      activeScheduleDate: '',
+      scheduleHistory: {}
+    };
     this.writeTimer = null;
   }
 

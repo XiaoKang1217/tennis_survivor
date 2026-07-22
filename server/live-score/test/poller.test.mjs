@@ -2,10 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { LivePoller } from '../src/poller.mjs';
 
-function setup(used, fixtures = []) {
-  const now = Date.parse('2026-07-21T12:00:00+08:00');
-  const cache = { data: { fixtures: { fetchedAt: now, items: fixtures }, live: [], details: {}, budget: { day: '2026-07-21', used } }, scheduleWrite() {} };
-  const client = { beijingDate: () => '2026-07-21', dateAfter: () => '2026-07-22', budgetToday: () => cache.data.budget };
+function setup(used, fixtures = [], options = {}) {
+  const calendarDate = options.calendarDate || '2026-07-21';
+  const now = options.now || Date.parse(`${calendarDate}T12:00:00+08:00`);
+  const cache = { data: { fixtures: { fetchedAt: now, items: fixtures }, live: [], details: {}, budget: { day: calendarDate, used }, activeScheduleDate: options.activeScheduleDate || '' }, scheduleWrite() {} };
+  const client = { beijingDate: () => calendarDate, dateAfter: date => new Date(Date.parse(`${date}T00:00:00Z`) + 86_400_000).toISOString().slice(0, 10), budgetToday: () => cache.data.budget };
   const config = { timeZone: 'Asia/Shanghai', dailyLimit: 8000, fixturesTtlMs: 6 * 60 * 60_000, observationBeforeMs: 15 * 60_000, observationAfterMs: 6 * 60 * 60_000 };
   return new LivePoller({ client, cache, config, now: () => now });
 }
@@ -121,4 +122,40 @@ test('a terminal match stays finished after it disappears from livescore', () =>
   poller.cache.data.live = [];
   poller.snapshot = poller.buildSnapshot();
   assert.equal(poller.snapshot.tournaments[0].venues[0].matches[0].status, 'finished');
+});
+
+test('keeps the previous official schedule date after Beijing midnight while a match is unfinished', () => {
+  const poller = setup(100, [{
+    event_key: 9,
+    event_date: '2026-07-22',
+    event_time: '01:30',
+    event_type_type: 'Atp Singles',
+    tournament_name: 'Estoril'
+  }], { calendarDate: '2026-07-23', activeScheduleDate: '2026-07-22' });
+  assert.equal(poller.snapshot.date, '2026-07-22');
+  assert.equal(poller.advanceScheduleDayIfComplete(), false);
+  assert.equal(poller.scheduleDate(), '2026-07-22');
+});
+
+test('advances to the new schedule day only after every match is finished', () => {
+  const poller = setup(100, [{
+    event_key: 10,
+    event_date: '2026-07-22',
+    event_time: '01:30',
+    event_status: 'Finished',
+    event_type_type: 'Atp Singles',
+    tournament_name: 'Estoril'
+  }], { calendarDate: '2026-07-23', activeScheduleDate: '2026-07-22' });
+  assert.equal(poller.advanceScheduleDayIfComplete(), true);
+  assert.equal(poller.scheduleDate(), '2026-07-23');
+  assert.equal(poller.cache.data.fixtures, null);
+  assert.deepEqual(poller.cache.data.live, []);
+});
+
+test('stores at most five schedule snapshots and never backfills before July 22', () => {
+  const poller = setup(100, [], { calendarDate: '2026-07-27', activeScheduleDate: '2026-07-27' });
+  for (let day = 21; day <= 27; day += 1) poller.rememberSnapshot({ date: `2026-07-${day}`, tournaments: [], hasLive: false }, false);
+  assert.deepEqual(Object.keys(poller.cache.data.scheduleHistory).sort(), [
+    '2026-07-23', '2026-07-24', '2026-07-25', '2026-07-26', '2026-07-27'
+  ]);
 });
