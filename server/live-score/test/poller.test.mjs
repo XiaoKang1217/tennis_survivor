@@ -5,7 +5,7 @@ import { LivePoller } from '../src/poller.mjs';
 function setup(used, fixtures = [], options = {}) {
   const calendarDate = options.calendarDate || '2026-07-21';
   const now = options.now || Date.parse(`${calendarDate}T12:00:00+08:00`);
-  const cache = { data: { fixtures: { fetchedAt: now, items: fixtures }, live: [], details: {}, budget: { day: calendarDate, used }, pipelineVersion: 2, activeScheduleDate: options.activeScheduleDate || '' }, scheduleWrite() {} };
+  const cache = { data: { fixtures: { fetchedAt: now, items: fixtures }, live: [], details: {}, budget: { day: calendarDate, used }, pipelineVersion: 3, activeScheduleDate: options.activeScheduleDate || '' }, scheduleWrite() {} };
   const client = { beijingDate: () => calendarDate, dateAfter: date => new Date(Date.parse(`${date}T00:00:00Z`) + 86_400_000).toISOString().slice(0, 10), budgetToday: () => cache.data.budget };
   const config = { timeZone: 'Asia/Shanghai', dailyLimit: 8000, fixturesTtlMs: 6 * 60 * 60_000, observationBeforeMs: 15 * 60_000, observationAfterMs: 6 * 60 * 60_000 };
   return new LivePoller({ client, cache, config, now: () => now });
@@ -90,7 +90,7 @@ test('keeps API tournaments even when the metadata source has no matching tourna
   assert.equal(poller.snapshot.tournaments[0].name, 'WTA Hamburg');
 });
 
-test('includes only early next-day fixtures in the previous schedule day', () => {
+test('assigns a Beijing next-day fixture to its tournament-local official date', () => {
   const poller = setup(100, [
     { event_key: 21, event_date: '2026-07-23', event_time: '01:30', event_type_type: 'Atp Singles', tournament_name: 'Estoril' },
     { event_key: 22, event_date: '2026-07-23', event_time: '17:00', event_type_type: 'Wta Singles', tournament_name: 'Hamburg' }
@@ -98,6 +98,18 @@ test('includes only early next-day fixtures in the previous schedule day', () =>
   const matches = poller.snapshot.tournaments.flatMap(tour => tour.venues.flatMap(venue => venue.matches));
   assert.deepEqual(matches.map(match => match.id), ['21']);
   assert.equal(matches[0].dayOffset, 1);
+});
+
+test('does not repeat the previous official schedule day after Beijing midnight', () => {
+  const poller = setup(100, [
+    { event_key: 23, event_date: '2026-07-23', event_time: '01:25', event_status: 'Finished', event_type_type: 'Atp Doubles', tournament_name: 'Estoril' },
+    { event_key: 24, event_date: '2026-07-23', event_time: '19:00', event_type_type: 'Atp Singles', tournament_name: 'Estoril' },
+    { event_key: 25, event_date: '2026-07-24', event_time: '01:30', event_type_type: 'Atp Singles', tournament_name: 'Estoril' }
+  ], { calendarDate: '2026-07-23', activeScheduleDate: '2026-07-23' });
+  const matches = poller.snapshot.tournaments.flatMap(tour => tour.venues.flatMap(venue => venue.matches));
+  assert.deepEqual(matches.map(match => match.id), ['24', '25']);
+  assert.equal(matches[0].dayOffset, 0);
+  assert.equal(matches[1].dayOffset, 1);
 });
 
 test('a match confirmed finished by livescore cannot regress to live on a later poll', () => {
@@ -219,7 +231,7 @@ test('prefetches the new Beijing calendar day without switching the unfinished a
 test('advances to the new schedule day only after every match is finished', () => {
   const poller = setup(100, [{
     event_key: 10,
-    event_date: '2026-07-22',
+    event_date: '2026-07-23',
     event_time: '01:30',
     event_status: 'Finished',
     event_type_type: 'Atp Singles',
@@ -245,7 +257,7 @@ test('invalidates snapshots created by the old competitor-driven pipeline', () =
   const cache = {
     data: {
       fixtures: { fetchedAt: now, items: [] }, live: [], details: {}, budget: { day: calendarDate, used: 0 },
-      pipelineVersion: 1, activeScheduleDate: calendarDate,
+      pipelineVersion: 2, activeScheduleDate: calendarDate,
       scheduleHistory: { '2026-07-22': { date: '2026-07-22' }, '2026-07-23': { date: '2026-07-23', tournaments: [{ name: 'corrupt' }] } }
     },
     scheduleWrite() {}
@@ -253,6 +265,7 @@ test('invalidates snapshots created by the old competitor-driven pipeline', () =
   const client = { beijingDate: () => calendarDate, dateAfter: () => '2026-07-24', budgetToday: () => cache.data.budget };
   const config = { timeZone: 'Asia/Shanghai', dailyLimit: 8000, fixturesTtlMs: 6 * 60 * 60_000, observationBeforeMs: 15 * 60_000, observationAfterMs: 6 * 60 * 60_000 };
   new LivePoller({ client, cache, config, now: () => now });
-  assert.equal(cache.data.pipelineVersion, 2);
+  assert.equal(cache.data.pipelineVersion, 3);
+  assert.ok(cache.data.scheduleHistory['2026-07-22']);
   assert.equal(cache.data.scheduleHistory['2026-07-23'].tournaments.length, 0);
 });

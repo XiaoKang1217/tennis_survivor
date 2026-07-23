@@ -233,6 +233,7 @@ export function groupSchedule(matches) {
           name,
           order: Math.min(...venueMatches.map(match => match.courtOrder ?? Number.MAX_SAFE_INTEGER)),
           matches: venueMatches.sort((a, b) => (a.scheduleOrder ?? Number.MAX_SAFE_INTEGER) - (b.scheduleOrder ?? Number.MAX_SAFE_INTEGER)
+            || (Number(a.dayOffset) || 0) - (Number(b.dayOffset) || 0)
             || `${a.time}${a.id}`.localeCompare(`${b.time}${b.id}`))
         }))
         .sort((a, b) => a.order - b.order || String(a.name).localeCompare(String(b.name), 'zh-CN'))
