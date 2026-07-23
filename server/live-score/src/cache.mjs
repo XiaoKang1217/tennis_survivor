@@ -10,6 +10,7 @@ export class JsonCache {
       terminalMatches: null,
       details: {},
       budget: {},
+      pipelineVersion: 0,
       activeScheduleDate: '',
       scheduleHistory: {}
     };

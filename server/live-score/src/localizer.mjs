@@ -115,9 +115,16 @@ function playerSurnameKeys(value = '') {
   return String(value).split('/').map(surnameKey).filter(Boolean);
 }
 
-function playerPairScore(match, candidate) {
-  return multisetOverlap(playerSurnameKeys(match.first.name), playerSurnameKeys(candidate.firstEn))
-    + multisetOverlap(playerSurnameKeys(match.second.name), playerSurnameKeys(candidate.secondEn));
+function sameTeam(first = '', second = '') {
+  const left = playerSurnameKeys(first);
+  const right = playerSurnameKeys(second);
+  return left.length > 0 && left.length === right.length && multisetOverlap(left, right) === left.length;
+}
+
+function sameMatchPlayers(match, candidate) {
+  const direct = sameTeam(match.first.name, candidate.firstEn) && sameTeam(match.second.name, candidate.secondEn);
+  const reversed = sameTeam(match.first.name, candidate.secondEn) && sameTeam(match.second.name, candidate.firstEn);
+  return direct || reversed;
 }
 
 function clockMinutes(value = '') {
@@ -184,7 +191,7 @@ export class ChineseLocalizer {
 
   async refresh(date, now = Date.now()) {
     const saved = this.cache.data.localization;
-    if (saved?.version === 4 && saved?.date === date && now - saved.fetchedAt < this.ttlMs) return saved.tours || [];
+    if (saved?.version === 5 && saved?.date === date && now - saved.fetchedAt < this.ttlMs) return saved.tours || [];
     const tours = await this.fetchTours(date);
     if (!tours.length && saved?.date === date && saved?.tours?.length) {
       this.cache.data.localization = { ...saved, fetchedAt: now };
@@ -194,11 +201,11 @@ export class ChineseLocalizer {
     }
     this.cache.data.localization = {
       date,
-      version: 4,
+      version: 5,
       fetchedAt: now,
       tours,
-      translations: [3, 4].includes(saved?.version) ? saved.translations || {} : {},
-      tournamentTranslations: [3, 4].includes(saved?.version) ? saved.tournamentTranslations || {} : {}
+      translations: {},
+      tournamentTranslations: {}
     };
     this.cache.scheduleWrite();
     return tours;
@@ -252,7 +259,7 @@ export class ChineseLocalizer {
 
   tournamentName(english) {
     const key = tournamentKey(english);
-    const exact = this.tournamentTranslations()[key] || this.tournamentByExact.get(key);
+    const exact = this.tournamentByExact.get(key);
     if (exact) return exact;
     if (key.length >= 5) {
       const fuzzy = [...this.tournamentByExact].find(([candidate]) => candidate.includes(key) || key.includes(candidate));
@@ -268,7 +275,7 @@ export class ChineseLocalizer {
   }
 
   playerName(id, english) {
-    return this.translations()[String(id)] || this.catalogPlayer(english) || english;
+    return this.catalogPlayer(english) || english;
   }
 
   enrich(matches, localization = this.cache.data.localization) {
@@ -280,54 +287,41 @@ export class ChineseLocalizer {
       groups.get(key).push(match);
     }
     for (const group of groups.values()) {
-      const signatures = group.map(match => `${match.time}:${kindFromMatch(match)}`);
       let bestIndex = -1;
       let bestScore = 0;
       for (const [index, tour] of tours.entries()) {
-        const other = tour.matches.map(match => `${match.time}:${match.kind}`);
-        const overlap = multisetOverlap(signatures, other);
-        const score = tournamentNameScore(group[0]?.tournament?.name, tour) + overlap * 10 - Math.abs(signatures.length - other.length);
+        const nameScore = tournamentNameScore(group[0]?.tournament?.name, tour);
+        if (nameScore <= 0) continue;
+        const exactMatches = group.reduce((total, match) => total + Number(tour.matches.some(candidate =>
+          candidate.kind === kindFromMatch(match) && sameMatchPlayers(match, candidate)
+        )), 0);
+        const score = nameScore + exactMatches * 1_000;
         if (score > bestScore) { bestScore = score; bestIndex = index; }
       }
       const tour = bestIndex >= 0 ? tours[bestIndex] : null;
       const used = new Set();
       for (const match of group) {
         const candidates = (tour?.matches || []).map((candidate, index) => ({ candidate, index }))
-          .filter(({ candidate, index }) => !used.has(index) && candidate.kind === kindFromMatch(match))
+          .filter(({ candidate, index }) => !used.has(index)
+            && candidate.kind === kindFromMatch(match)
+            && sameMatchPlayers(match, candidate))
           .map(item => ({
             ...item,
-            playerScore: playerPairScore(match, item.candidate),
             timeDistance: clockDistance(match.time, item.candidate.time)
           }))
-          .filter(item => item.playerScore > 0 || item.timeDistance === 0)
-          .sort((a, b) => b.playerScore - a.playerScore || a.timeDistance - b.timeDistance || a.index - b.index);
+          .sort((a, b) => a.timeDistance - b.timeDistance || a.index - b.index);
         const localIndex = candidates[0]?.index ?? -1;
         const local = localIndex >= 0 ? tour.matches[localIndex] : null;
         if (local) used.add(localIndex);
-        const firstName = local?.first || this.playerName(match.first.id, match.first.name);
-        const secondName = local?.second || this.playerName(match.second.id, match.second.name);
-        this.remember(match.first, firstName !== match.first.name ? firstName : '');
-        this.remember(match.second, secondName !== match.second.name ? secondName : '');
+        const firstName = this.playerName(match.first.id, match.first.name);
+        const secondName = this.playerName(match.second.id, match.second.name);
         match.first = { ...match.first, nameEn: match.first.name, name: firstName };
         match.second = { ...match.second, nameEn: match.second.name, name: secondName };
-        if (local?.firstRank) match.first.rank = local.firstRank;
-        if (local?.secondRank) match.second.rank = local.secondRank;
-        match.h2h = local?.h2h || '';
-        if (local?.time) match.time = local.time;
-        match.dayOffset = local?.dayOffset || 0;
-        match.scheduleOrder = localIndex >= 0 ? localIndex : Number.MAX_SAFE_INTEGER;
-        match.courtOrder = local ? tour.matches.findIndex(candidate => candidate.court === local.court) : Number.MAX_SAFE_INTEGER;
-        match.scheduleDate = localization?.date || match.date;
-        match.officialScheduleMatch = Boolean(local);
-        const tournamentName = tour?.city || this.tournamentName(match.tournament.name);
-        this.rememberTournament(match.tournament.name, tournamentName);
+        const tournamentName = this.tournamentName(match.tournament.name);
         match.tournament = {
           ...match.tournament,
           nameEn: match.tournament.name,
           name: tournamentName,
-          subtitle: tour?.name || '',
-          level: tour?.level || match.tournament.level,
-          sourceOrder: bestIndex >= 0 ? bestIndex : Number.MAX_SAFE_INTEGER,
           surface: tour?.surface && tour.surface !== '未标注' ? tour.surface : match.tournament.surface
         };
         if (local?.court) match.court = local.court;

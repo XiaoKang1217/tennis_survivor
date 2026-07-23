@@ -63,7 +63,7 @@ test('catalog lookups tolerate ATP and WTA prefixes', () => {
   assert.doesNotThrow(() => localizer.enrich([]));
 });
 
-test('matches reference schedule by players when provider time has changed', () => {
+test('only enriches court and surface when the complete API pairing matches', () => {
   const cache = {
     data: { localization: { date: '2026-07-22', translations: {}, tournamentTranslations: {}, tours: [{
       city: '埃斯托利尔', name: '埃斯托利尔公开赛', englishCity: 'Estoril', englishName: 'Estoril Open',
@@ -82,31 +82,36 @@ test('matches reference schedule by players when provider time has changed', () 
     event_first_player: 'Borges/ Cabral', event_second_player: 'Reymond/ Sanchez'
   });
   localizer.enrich([match]);
-  assert.equal(match.officialScheduleMatch, true);
-  assert.equal(match.time, '23:00');
+  assert.equal(match.time, '21:30');
   assert.equal(match.court, '卡斯卡伊斯球场');
+  assert.equal(match.tournament.surface, '未标注');
+  assert.equal(match.first.name, 'Borges/ Cabral');
+  assert.equal(match.second.name, 'Reymond/ Sanchez');
 });
 
-test('retains the official day while marking a matched Beijing next-day fixture', () => {
+test('never overwrites an API match when only one player and the time match', () => {
   const cache = {
     data: { localization: { date: '2026-07-22', translations: {}, tournamentTranslations: {}, tours: [{
-      city: '埃斯托利尔', name: '埃斯托利尔公开赛', englishCity: 'Estoril', englishName: 'Estoril Open',
+      city: '汉堡', name: '汉堡公开赛', englishCity: 'Hamburg', englishName: 'Hamburg Open', surface: '红土',
       matches: [{
-        time: '00:00', beijingDate: '2026-07-23', dayOffset: 1, kind: 'MS',
-        first: '亚历杭德罗·塔比洛', second: 'Tiago Torres',
-        firstEn: 'Alejandro Tabilo', secondEn: 'Tiago Torres', court: '千禧银行球场'
+        time: '19:10', beijingDate: '2026-07-22', dayOffset: 0, kind: 'WS',
+        first: '泰莎-约翰娜·布罗克曼', second: '埃尔莎·雅克莫',
+        firstEn: 'T. Brockmann', secondEn: 'E. Jacquemot', court: 'M1'
       }]
     }] } },
     scheduleWrite() {}
   };
   const localizer = new ChineseLocalizer({ cache, url: '', ttlMs: 1, catalogFile: '/file/does/not/exist' });
   const match = normalizeMatch({
-    event_key: 2, event_date: '2026-07-23', event_time: '00:00', event_type_type: 'Atp Singles',
-    tournament_key: 2204, tournament_name: 'ATP Estoril',
-    event_first_player: 'A. Tabilo', event_second_player: 'T. Torres'
+    event_key: 2, event_date: '2026-07-23', event_time: '19:10', event_type_type: 'Wta Singles',
+    tournament_key: 3733, tournament_name: 'WTA Hamburg',
+    event_first_player: 'M. Sherif', event_second_player: 'E. Jacquemot'
   });
   localizer.enrich([match]);
-  assert.equal(match.officialScheduleMatch, true);
-  assert.equal(match.scheduleDate, '2026-07-22');
-  assert.equal(match.dayOffset, 1);
+  assert.equal(match.first.name, 'M. Sherif');
+  assert.equal(match.second.name, 'E. Jacquemot');
+  assert.equal(match.date, '2026-07-23');
+  assert.equal(match.time, '19:10');
+  assert.equal(match.court, '未标注');
+  assert.equal(match.tournament.surface, '红土');
 });

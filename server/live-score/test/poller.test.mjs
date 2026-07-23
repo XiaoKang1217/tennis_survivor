@@ -5,7 +5,7 @@ import { LivePoller } from '../src/poller.mjs';
 function setup(used, fixtures = [], options = {}) {
   const calendarDate = options.calendarDate || '2026-07-21';
   const now = options.now || Date.parse(`${calendarDate}T12:00:00+08:00`);
-  const cache = { data: { fixtures: { fetchedAt: now, items: fixtures }, live: [], details: {}, budget: { day: calendarDate, used }, activeScheduleDate: options.activeScheduleDate || '' }, scheduleWrite() {} };
+  const cache = { data: { fixtures: { fetchedAt: now, items: fixtures }, live: [], details: {}, budget: { day: calendarDate, used }, pipelineVersion: 2, activeScheduleDate: options.activeScheduleDate || '' }, scheduleWrite() {} };
   const client = { beijingDate: () => calendarDate, dateAfter: date => new Date(Date.parse(`${date}T00:00:00Z`) + 86_400_000).toISOString().slice(0, 10), budgetToday: () => cache.data.budget };
   const config = { timeZone: 'Asia/Shanghai', dailyLimit: 8000, fixturesTtlMs: 6 * 60 * 60_000, observationBeforeMs: 15 * 60_000, observationAfterMs: 6 * 60 * 60_000 };
   return new LivePoller({ client, cache, config, now: () => now });
@@ -69,6 +69,37 @@ test('snapshot contains only matches on the current Beijing date', () => {
   assert.equal(poller.snapshot.tournaments[0].name, 'Today');
 });
 
+test('keeps API tournaments even when the metadata source has no matching tournament', () => {
+  const poller = setup(100, [{
+    event_key: 20,
+    event_date: '2026-07-21',
+    event_time: '17:00',
+    event_type_type: 'Wta Singles',
+    tournament_name: 'WTA Hamburg',
+    event_first_player: 'M. Sherif',
+    event_second_player: 'E. Jacquemot'
+  }]);
+  poller.localizer = {
+    enrich(matches) {
+      matches.forEach(match => { match.officialScheduleMatch = false; });
+      return matches;
+    }
+  };
+  poller.snapshot = poller.buildSnapshot();
+  assert.equal(poller.snapshot.tournaments.length, 1);
+  assert.equal(poller.snapshot.tournaments[0].name, 'WTA Hamburg');
+});
+
+test('includes only early next-day fixtures in the previous schedule day', () => {
+  const poller = setup(100, [
+    { event_key: 21, event_date: '2026-07-23', event_time: '01:30', event_type_type: 'Atp Singles', tournament_name: 'Estoril' },
+    { event_key: 22, event_date: '2026-07-23', event_time: '17:00', event_type_type: 'Wta Singles', tournament_name: 'Hamburg' }
+  ], { calendarDate: '2026-07-23', activeScheduleDate: '2026-07-22' });
+  const matches = poller.snapshot.tournaments.flatMap(tour => tour.venues.flatMap(venue => venue.matches));
+  assert.deepEqual(matches.map(match => match.id), ['21']);
+  assert.equal(matches[0].dayOffset, 1);
+});
+
 test('a match confirmed finished by livescore cannot regress to live on a later poll', () => {
   const scheduled = [{
     event_key: 7,
@@ -122,6 +153,32 @@ test('a terminal match stays finished after it disappears from livescore', () =>
   poller.cache.data.live = [];
   poller.snapshot = poller.buildSnapshot();
   assert.equal(poller.snapshot.tournaments[0].venues[0].matches[0].status, 'finished');
+});
+
+test('a new provider event id cannot downgrade the same completed pairing', () => {
+  const base = {
+    event_date: '2026-07-21',
+    event_time: '12:00',
+    event_type_type: 'Wta Singles',
+    tournament_name: 'WTA Hamburg',
+    event_first_player: 'A. Player',
+    first_player_key: '100',
+    event_second_player: 'B. Player',
+    second_player_key: '200'
+  };
+  const poller = setup(100, [{ ...base, event_key: 31, event_status: 'Scheduled' }]);
+  poller.rememberTerminalMatches([{
+    ...base,
+    event_key: 30,
+    event_status: 'Finished',
+    event_winner: 'First Player',
+    scores: [{ score_set: '1', score_first: '6', score_second: '3' }]
+  }]);
+  poller.snapshot = poller.buildSnapshot();
+  const matches = poller.snapshot.tournaments.flatMap(tour => tour.venues.flatMap(venue => venue.matches));
+  assert.equal(matches.length, 1);
+  assert.equal(matches[0].id, '30');
+  assert.equal(matches[0].status, 'finished');
 });
 
 test('keeps the previous official schedule date after Beijing midnight while a match is unfinished', () => {
@@ -180,4 +237,22 @@ test('stores at most five schedule snapshots and never backfills before July 22'
   assert.deepEqual(Object.keys(poller.cache.data.scheduleHistory).sort(), [
     '2026-07-23', '2026-07-24', '2026-07-25', '2026-07-26', '2026-07-27'
   ]);
+});
+
+test('invalidates snapshots created by the old competitor-driven pipeline', () => {
+  const calendarDate = '2026-07-23';
+  const now = Date.parse(`${calendarDate}T12:00:00+08:00`);
+  const cache = {
+    data: {
+      fixtures: { fetchedAt: now, items: [] }, live: [], details: {}, budget: { day: calendarDate, used: 0 },
+      pipelineVersion: 1, activeScheduleDate: calendarDate,
+      scheduleHistory: { '2026-07-22': { date: '2026-07-22' }, '2026-07-23': { date: '2026-07-23', tournaments: [{ name: 'corrupt' }] } }
+    },
+    scheduleWrite() {}
+  };
+  const client = { beijingDate: () => calendarDate, dateAfter: () => '2026-07-24', budgetToday: () => cache.data.budget };
+  const config = { timeZone: 'Asia/Shanghai', dailyLimit: 8000, fixturesTtlMs: 6 * 60 * 60_000, observationBeforeMs: 15 * 60_000, observationAfterMs: 6 * 60 * 60_000 };
+  new LivePoller({ client, cache, config, now: () => now });
+  assert.equal(cache.data.pipelineVersion, 2);
+  assert.equal(cache.data.scheduleHistory['2026-07-23'].tournaments.length, 0);
 });

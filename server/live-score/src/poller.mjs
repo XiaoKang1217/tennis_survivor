@@ -5,6 +5,49 @@ const OBSERVATION_PROBE_MS = 60_000;
 const LIVE_POLL_MS = 8_000;
 const HISTORY_START_DATE = '2026-07-22';
 const HISTORY_DAYS = 5;
+const NEXT_DAY_CUTOFF_MINUTES = 6 * 60;
+const DATA_PIPELINE_VERSION = 2;
+
+function normalizedIdentity(value = '') {
+  return String(value).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+function teamIdentity(player = {}) {
+  return normalizedIdentity(player.nameEn || player.name || player.id);
+}
+
+function terminalFingerprint(match) {
+  const teams = [teamIdentity(match.first), teamIdentity(match.second)].sort();
+  return [match.date, normalizedIdentity(match.tournament.nameEn || match.tournament.name), normalizedIdentity(match.type), ...teams].join('|');
+}
+
+function lockTerminalMatches(matches = []) {
+  const terminal = new Map();
+  matches.forEach(match => {
+    if (match.status === 'finished') terminal.set(terminalFingerprint(match), match);
+  });
+  const locked = new Map();
+  matches.forEach(match => {
+    const fingerprint = terminalFingerprint(match);
+    locked.set(fingerprint, terminal.get(fingerprint) || match);
+  });
+  return [...locked.values()];
+}
+
+function belongsToScheduleDate(match, date, nextDate) {
+  if (match.date === date) return true;
+  if (match.date !== nextDate) return false;
+  const [hour, minute] = String(match.time || '').split(':').map(Number);
+  return Number.isFinite(hour) && Number.isFinite(minute) && hour * 60 + minute < NEXT_DAY_CUTOFF_MINUTES;
+}
+
+function assignScheduleDate(matches, date, nextDate) {
+  return matches.filter(match => belongsToScheduleDate(match, date, nextDate)).map(match => {
+    match.scheduleDate = date;
+    match.dayOffset = match.date === nextDate ? 1 : 0;
+    return match;
+  });
+}
 
 export class LivePoller extends EventEmitter {
   constructor({ client, cache, config, localizer = null, now = () => Date.now() }) {
@@ -16,6 +59,10 @@ export class LivePoller extends EventEmitter {
     this.now = now;
     this.timer = null;
     this.running = false;
+    if (this.cache.data.pipelineVersion !== DATA_PIPELINE_VERSION) {
+      this.cache.data.pipelineVersion = DATA_PIPELINE_VERSION;
+      this.cache.data.scheduleHistory = {};
+    }
     if (!this.cache.data.activeScheduleDate || this.cache.data.activeScheduleDate < HISTORY_START_DATE) {
       this.cache.data.activeScheduleDate = this.client.beijingDate();
     }
@@ -80,12 +127,11 @@ export class LivePoller extends EventEmitter {
         return {};
       })
     ]);
-    let matches = mergeMatches(fixtureItems, []);
+    let matches = lockTerminalMatches(mergeMatches(fixtureItems, []));
     const localization = { date, tours };
     if (this.localizer) matches = this.localizer.enrich(matches, localization);
     matches = applyPrematchOdds(matches, odds || {});
-    matches = matches.filter(match => isMainTour(match)
-      && (tours.length ? match.officialScheduleMatch : match.date === date));
+    matches = assignScheduleDate(matches.filter(isMainTour), date, dateStop);
     const snapshot = {
       date,
       timeZone: this.config.timeZone,
@@ -137,7 +183,8 @@ export class LivePoller extends EventEmitter {
 
   buildSnapshot(error = '') {
     const date = this.scheduleDate();
-    let matches = mergeMatches(this.matchSources(), this.cache.data.live || []);
+    const nextDate = this.client.dateAfter(date);
+    let matches = lockTerminalMatches(mergeMatches(this.matchSources(), this.cache.data.live || []));
     if (this.localizer) matches = this.localizer.enrich(matches);
     matches = applyPrematchOdds(matches, this.cache.data.prematchOdds?.items || {});
     const rankingByPlayer = new Map();
@@ -151,9 +198,7 @@ export class LivePoller extends EventEmitter {
       if (!match.first.rank) match.first.rank = rankingByPlayer.get(String(match.first.id)) || '';
       if (!match.second.rank) match.second.rank = rankingByPlayer.get(String(match.second.id)) || '';
     });
-    const officialScheduleReady = this.cache.data.localization?.date === date && (this.cache.data.localization?.tours || []).length > 0;
-    matches = matches.filter(match => isMainTour(match)
-      && (officialScheduleReady ? match.officialScheduleMatch : match.date === date));
+    matches = assignScheduleDate(matches.filter(isMainTour), date, nextDate);
     return {
       date,
       timeZone: this.config.timeZone,
@@ -193,12 +238,12 @@ export class LivePoller extends EventEmitter {
 
   shouldObserve() {
     const date = this.scheduleDate();
-    let matches = mergeMatches(this.matchSources(), this.cache.data.live || []);
+    const nextDate = this.client.dateAfter(date);
+    let matches = lockTerminalMatches(mergeMatches(this.matchSources(), this.cache.data.live || []));
     if (this.localizer) matches = this.localizer.enrich(matches);
-    const officialScheduleReady = this.cache.data.localization?.date === date && (this.cache.data.localization?.tours || []).length > 0;
-    return matches.some(match => isMainTour(match)
-      && (officialScheduleReady ? match.officialScheduleMatch : match.date === date)
-      && isObservationWindow(match, this.now(), this.config.observationBeforeMs, this.config.observationAfterMs));
+    matches = assignScheduleDate(matches.filter(isMainTour), date, nextDate);
+    return matches.some(match =>
+      isObservationWindow(match, this.now(), this.config.observationBeforeMs, this.config.observationAfterMs));
   }
 
   async tick() {
@@ -235,12 +280,11 @@ export class LivePoller extends EventEmitter {
     if (this.snapshot.hasLive) return LIVE_POLL_MS;
     if (this.shouldObserve()) return OBSERVATION_PROBE_MS;
     const date = this.scheduleDate();
-    let matches = mergeMatches(this.matchSources(), this.cache.data.live || []);
+    const nextDate = this.client.dateAfter(date);
+    let matches = lockTerminalMatches(mergeMatches(this.matchSources(), this.cache.data.live || []));
     if (this.localizer) matches = this.localizer.enrich(matches);
-    const officialScheduleReady = this.cache.data.localization?.date === date && (this.cache.data.localization?.tours || []).length > 0;
-    const pending = matches.filter(match => isMainTour(match)
-      && match.status === 'scheduled'
-      && (officialScheduleReady ? match.officialScheduleMatch : match.date === date));
+    matches = assignScheduleDate(matches.filter(isMainTour), date, nextDate);
+    const pending = matches.filter(match => match.status === 'scheduled');
     const nextWindow = pending.map(match => {
       const start = Date.parse(`${match.scheduleDate || match.date}T${match.time}:00+08:00`)
         + (Number(match.dayOffset) || 0) * 24 * 60 * 60_000;
@@ -250,7 +294,6 @@ export class LivePoller extends EventEmitter {
     const fixtureRefresh = Math.max(5_000, this.config.fixturesTtlMs - (this.now() - fetchedAt));
     if (Number.isFinite(nextWindow)) return Math.max(5_000, Math.min(nextWindow, fixtureRefresh));
     if (pending.length) return fixtureRefresh;
-    const nextDate = this.client.dateAfter(date);
     return Math.max(5_000, Date.parse(`${nextDate}T00:00:01+08:00`) - this.now());
   }
 
