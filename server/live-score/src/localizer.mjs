@@ -185,6 +185,26 @@ export class ChineseLocalizer {
   async refresh(date, now = Date.now()) {
     const saved = this.cache.data.localization;
     if (saved?.version === 4 && saved?.date === date && now - saved.fetchedAt < this.ttlMs) return saved.tours || [];
+    const tours = await this.fetchTours(date);
+    if (!tours.length && saved?.date === date && saved?.tours?.length) {
+      this.cache.data.localization = { ...saved, fetchedAt: now };
+      this.cache.scheduleWrite();
+      console.warn('[localizer] empty schedule response; keeping the last complete schedule');
+      return saved.tours;
+    }
+    this.cache.data.localization = {
+      date,
+      version: 4,
+      fetchedAt: now,
+      tours,
+      translations: [3, 4].includes(saved?.version) ? saved.translations || {} : {},
+      tournamentTranslations: [3, 4].includes(saved?.version) ? saved.tournamentTranslations || {} : {}
+    };
+    this.cache.scheduleWrite();
+    return tours;
+  }
+
+  async fetchTours(date) {
     const chineseUrl = this.url.replace('{date}', date);
     const request = target => fetch(target, {
       signal: AbortSignal.timeout(12_000), headers: { accept: 'text/html', 'user-agent': 'LuWang live score localization cache' }
@@ -197,12 +217,6 @@ export class ChineseLocalizer {
       request(chineseUrl.replace('/zh/', '/en/')).catch(() => '')
     ]);
     const tours = parseChineseSchedule(chineseHtml, date);
-    if (!tours.length && saved?.date === date && saved?.tours?.length) {
-      this.cache.data.localization = { ...saved, fetchedAt: now };
-      this.cache.scheduleWrite();
-      console.warn('[localizer] empty schedule response; keeping the last complete schedule');
-      return saved.tours;
-    }
     const englishTours = new Map(parseChineseSchedule(englishHtml, date).map(tour => [tour.id, tour]));
     tours.forEach(tour => {
       const english = englishTours.get(tour.id);
@@ -215,15 +229,6 @@ export class ChineseLocalizer {
         secondEn: english.matches[index]?.second || ''
       }));
     });
-    this.cache.data.localization = {
-      date,
-      version: 4,
-      fetchedAt: now,
-      tours,
-      translations: [3, 4].includes(saved?.version) ? saved.translations || {} : {},
-      tournamentTranslations: [3, 4].includes(saved?.version) ? saved.tournamentTranslations || {} : {}
-    };
-    this.cache.scheduleWrite();
     return tours;
   }
 
@@ -266,8 +271,8 @@ export class ChineseLocalizer {
     return this.translations()[String(id)] || this.catalogPlayer(english) || english;
   }
 
-  enrich(matches) {
-    const tours = this.cache.data.localization?.tours || [];
+  enrich(matches, localization = this.cache.data.localization) {
+    const tours = localization?.tours || [];
     const groups = new Map();
     for (const match of matches) {
       const key = match.tournament.id || match.tournament.name;
@@ -312,7 +317,7 @@ export class ChineseLocalizer {
         match.dayOffset = local?.dayOffset || 0;
         match.scheduleOrder = localIndex >= 0 ? localIndex : Number.MAX_SAFE_INTEGER;
         match.courtOrder = local ? tour.matches.findIndex(candidate => candidate.court === local.court) : Number.MAX_SAFE_INTEGER;
-        match.scheduleDate = this.cache.data.localization?.date || match.date;
+        match.scheduleDate = localization?.date || match.date;
         match.officialScheduleMatch = Boolean(local);
         const tournamentName = tour?.city || this.tournamentName(match.tournament.name);
         this.rememberTournament(match.tournament.name, tournamentName);

@@ -137,6 +137,28 @@ test('keeps the previous official schedule date after Beijing midnight while a m
   assert.equal(poller.scheduleDate(), '2026-07-22');
 });
 
+test('prefetches the new Beijing calendar day without switching the unfinished active schedule', async () => {
+  const poller = setup(100, [{
+    event_key: 9,
+    event_date: '2026-07-23',
+    event_time: '01:30',
+    event_type_type: 'Atp Singles',
+    tournament_name: 'Estoril'
+  }], { calendarDate: '2026-07-23', activeScheduleDate: '2026-07-22' });
+  poller.client.fixtures = async date => [{
+    event_key: 11,
+    event_date: date,
+    event_time: '17:00',
+    event_type_type: 'Atp Singles',
+    tournament_name: 'Kitzbuhel'
+  }];
+  poller.client.odds = async () => ({});
+  assert.equal(await poller.prefetchCalendarDay(), true);
+  assert.equal(poller.scheduleDate(), '2026-07-22');
+  assert.ok(poller.cache.data.scheduleHistory['2026-07-23']);
+  assert.deepEqual(poller.historyDates(), ['2026-07-22', '2026-07-23']);
+});
+
 test('advances to the new schedule day only after every match is finished', () => {
   const poller = setup(100, [{
     event_key: 10,

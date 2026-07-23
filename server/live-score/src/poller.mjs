@@ -65,6 +65,43 @@ export class LivePoller extends EventEmitter {
     return true;
   }
 
+  async prefetchCalendarDay() {
+    const date = this.client.beijingDate();
+    if (date <= this.scheduleDate() || this.cache.data.scheduleHistory?.[date]) return false;
+    const dateStop = this.client.dateAfter(date);
+    const [fixtureItems, tours, odds] = await Promise.all([
+      this.client.fixtures(date, dateStop),
+      this.localizer?.fetchTours(date).catch(cause => {
+        console.warn('[prefetch-localizer]', cause.message);
+        return [];
+      }) || [],
+      this.client.odds(date, dateStop).catch(cause => {
+        console.warn('[prefetch-odds]', cause.message);
+        return {};
+      })
+    ]);
+    let matches = mergeMatches(fixtureItems, []);
+    const localization = { date, tours };
+    if (this.localizer) matches = this.localizer.enrich(matches, localization);
+    matches = applyPrematchOdds(matches, odds || {});
+    matches = matches.filter(match => isMainTour(match)
+      && (tours.length ? match.officialScheduleMatch : match.date === date));
+    const snapshot = {
+      date,
+      timeZone: this.config.timeZone,
+      updatedAt: new Date(this.now()).toISOString(),
+      stale: false,
+      error: '',
+      requestBudget: { ...this.client.budgetToday(), limit: this.config.dailyLimit },
+      hasLive: false,
+      activeDate: this.scheduleDate(),
+      availableDates: [],
+      tournaments: groupSchedule(matches)
+    };
+    this.rememberSnapshot(snapshot);
+    return true;
+  }
+
   terminalMatches() {
     const date = this.scheduleDate();
     const saved = this.cache.data.terminalMatches;
@@ -172,6 +209,7 @@ export class LivePoller extends EventEmitter {
       await this.refreshFixtures();
       await this.localizer?.refresh(this.scheduleDate(), this.now()).catch(cause => console.warn('[localizer]', cause.message));
       await this.refreshPrematchOdds().catch(cause => console.warn('[odds]', cause.message));
+      await this.prefetchCalendarDay().catch(cause => console.warn('[prefetch]', cause.message));
       if (this.shouldObserve()) {
         const live = await this.client.livescore();
         this.rememberTerminalMatches(live, false);
