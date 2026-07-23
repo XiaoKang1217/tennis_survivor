@@ -111,20 +111,50 @@ function surnameKey(value = '') {
   return tokens.at(-1) || '';
 }
 
-function playerSurnameKeys(value = '') {
-  return String(value).split('/').map(surnameKey).filter(Boolean);
+function playerTokens(value = '') {
+  return normalized(value).split(' ').filter(token => token.length > 1);
+}
+
+function samePlayer(first = '', second = '') {
+  const left = normalized(first);
+  const right = normalized(second);
+  if (!left || !right) return false;
+  if (left === right || surnameKey(left) === surnameKey(right)) return true;
+  const leftTokens = playerTokens(left);
+  const rightTokens = new Set(playerTokens(right));
+  if (leftTokens.length === 1 && rightTokens.has(leftTokens[0])) return true;
+  const leftSet = new Set(leftTokens);
+  const rightList = [...rightTokens];
+  if (rightList.length === 1 && leftSet.has(rightList[0])) return true;
+  return leftTokens.length > 1
+    && leftTokens.length === rightList.length
+    && leftTokens.every(token => rightTokens.has(token));
 }
 
 function sameTeam(first = '', second = '') {
-  const left = playerSurnameKeys(first);
-  const right = playerSurnameKeys(second);
-  return left.length > 0 && left.length === right.length && multisetOverlap(left, right) === left.length;
+  const left = String(first).split('/').map(value => value.trim()).filter(Boolean);
+  const right = String(second).split('/').map(value => value.trim()).filter(Boolean);
+  if (!left.length || left.length !== right.length) return false;
+  const used = new Set();
+  return left.every(player => {
+    const index = right.findIndex((candidate, candidateIndex) =>
+      !used.has(candidateIndex) && samePlayer(player, candidate));
+    if (index < 0) return false;
+    used.add(index);
+    return true;
+  });
+}
+
+function matchOrientation(match, candidate) {
+  const first = match.first.nameEn || match.first.name;
+  const second = match.second.nameEn || match.second.name;
+  const direct = sameTeam(first, candidate.firstEn) && sameTeam(second, candidate.secondEn);
+  const reversed = sameTeam(first, candidate.secondEn) && sameTeam(second, candidate.firstEn);
+  return direct ? 'direct' : reversed ? 'reversed' : '';
 }
 
 function sameMatchPlayers(match, candidate) {
-  const direct = sameTeam(match.first.name, candidate.firstEn) && sameTeam(match.second.name, candidate.secondEn);
-  const reversed = sameTeam(match.first.name, candidate.secondEn) && sameTeam(match.second.name, candidate.firstEn);
-  return direct || reversed;
+  return Boolean(matchOrientation(match, candidate));
 }
 
 function clockMinutes(value = '') {
@@ -138,16 +168,6 @@ function clockDistance(first = '', second = '') {
   if (!Number.isFinite(a) || !Number.isFinite(b) || a === Number.MAX_SAFE_INTEGER || b === Number.MAX_SAFE_INTEGER) return Number.MAX_SAFE_INTEGER;
   const direct = Math.abs(a - b);
   return Math.min(direct, 24 * 60 - direct);
-}
-
-function multisetOverlap(first, second) {
-  const counts = new Map();
-  second.forEach(value => counts.set(value, (counts.get(value) || 0) + 1));
-  let total = 0;
-  for (const value of first) {
-    if ((counts.get(value) || 0) > 0) { total += 1; counts.set(value, counts.get(value) - 1); }
-  }
-  return total;
 }
 
 function tournamentNameScore(english, tour) {
@@ -182,7 +202,11 @@ export class ChineseLocalizer {
   }
 
   catalogPlayer(name) {
-    if (/[/&]/.test(String(name))) return '';
+    if (/[/&]/.test(String(name))) {
+      const separator = String(name).includes('/') ? '/' : '&';
+      const translated = String(name).split(separator).map(part => this.catalogPlayer(part.trim()));
+      return translated.every(Boolean) ? translated.join('/') : '';
+    }
     const exact = this.byExact.get(normalized(name));
     if (exact) return exact;
     const candidates = this.bySurname.get(surnameKey(name));
@@ -199,7 +223,7 @@ export class ChineseLocalizer {
       console.warn('[localizer] empty schedule response; keeping the last complete schedule');
       return saved.tours;
     }
-    this.cache.data.localization = {
+    const value = {
       date,
       version: 5,
       fetchedAt: now,
@@ -207,8 +231,40 @@ export class ChineseLocalizer {
       translations: {},
       tournamentTranslations: {}
     };
+    this.cache.data.localization = value;
+    this.rememberHistory(value);
     this.cache.scheduleWrite();
     return tours;
+  }
+
+  rememberHistory(value) {
+    const history = this.cache.data.localizationHistory ||= {};
+    history[value.date] = {
+      date: value.date,
+      version: value.version,
+      fetchedAt: value.fetchedAt,
+      tours: value.tours || []
+    };
+    Object.keys(history).sort().slice(0, -5).forEach(date => delete history[date]);
+  }
+
+  async loadDate(date, now = Date.now()) {
+    const current = this.cache.data.localization;
+    if (current?.version === 5 && current.date === date
+      && current.tours?.length && now - current.fetchedAt < this.ttlMs) return current;
+    const history = this.cache.data.localizationHistory?.[date];
+    if (history?.version === 5 && history.tours?.length
+      && now - history.fetchedAt < this.ttlMs) return history;
+    const tours = await this.fetchTours(date);
+    if (!tours.length) {
+      if (history?.tours?.length) return history;
+      if (current?.date === date && current.tours?.length) return current;
+      return { date, version: 5, fetchedAt: now, tours: [] };
+    }
+    const value = { date, version: 5, fetchedAt: now, tours };
+    this.rememberHistory(value);
+    this.cache.scheduleWrite();
+    return value;
   }
 
   async fetchTours(date) {
@@ -275,7 +331,17 @@ export class ChineseLocalizer {
   }
 
   playerName(id, english) {
-    return this.catalogPlayer(english) || english;
+    return this.translations()[String(id)] || this.catalogPlayer(english) || english;
+  }
+
+  preferredLocalizedName(localized, english) {
+    const localParts = String(localized || '').split('/');
+    const englishParts = String(english || '').split('/');
+    return localParts.map((part, index) => {
+      const value = part.trim();
+      if (!/[A-Za-z]/.test(value)) return value;
+      return this.catalogPlayer(value) || this.catalogPlayer(englishParts[index]?.trim()) || value;
+    }).join('/');
   }
 
   enrich(matches, localization = this.cache.data.localization) {
@@ -290,7 +356,10 @@ export class ChineseLocalizer {
       let bestIndex = -1;
       let bestScore = 0;
       for (const [index, tour] of tours.entries()) {
-        const nameScore = tournamentNameScore(group[0]?.tournament?.name, tour);
+        const nameScore = tournamentNameScore(
+          group[0]?.tournament?.nameEn || group[0]?.tournament?.name,
+          tour
+        );
         if (nameScore <= 0) continue;
         const exactMatches = group.reduce((total, match) => total + Number(tour.matches.some(candidate =>
           candidate.kind === kindFromMatch(match) && sameMatchPlayers(match, candidate)
@@ -307,24 +376,40 @@ export class ChineseLocalizer {
             && sameMatchPlayers(match, candidate))
           .map(item => ({
             ...item,
+            orientation: matchOrientation(match, item.candidate),
             timeDistance: clockDistance(match.time, item.candidate.time)
           }))
           .sort((a, b) => a.timeDistance - b.timeDistance || a.index - b.index);
         const localIndex = candidates[0]?.index ?? -1;
         const local = localIndex >= 0 ? tour.matches[localIndex] : null;
+        const orientation = candidates[0]?.orientation || '';
         if (local) used.add(localIndex);
-        const firstName = this.playerName(match.first.id, match.first.name);
-        const secondName = this.playerName(match.second.id, match.second.name);
-        match.first = { ...match.first, nameEn: match.first.name, name: firstName };
-        match.second = { ...match.second, nameEn: match.second.name, name: secondName };
-        const tournamentName = this.tournamentName(match.tournament.name);
+        const firstEnglish = match.first.nameEn || match.first.name;
+        const secondEnglish = match.second.nameEn || match.second.name;
+        const firstName = local
+          ? this.preferredLocalizedName(
+            orientation === 'reversed' ? local.second : local.first,
+            firstEnglish
+          )
+          : this.playerName(match.first.id, firstEnglish);
+        const secondName = local
+          ? this.preferredLocalizedName(
+            orientation === 'reversed' ? local.first : local.second,
+            secondEnglish
+          )
+          : this.playerName(match.second.id, secondEnglish);
+        this.remember(match.first, firstName !== firstEnglish ? firstName : '');
+        this.remember(match.second, secondName !== secondEnglish ? secondName : '');
+        match.first = { ...match.first, nameEn: firstEnglish, name: firstName };
+        match.second = { ...match.second, nameEn: secondEnglish, name: secondName };
+        const tournamentEnglish = match.tournament.nameEn || match.tournament.name;
+        const tournamentName = tour?.city || this.tournamentName(tournamentEnglish);
+        this.rememberTournament(tournamentEnglish, tournamentName);
         match.tournament = {
           ...match.tournament,
-          nameEn: match.tournament.name,
-          name: tournamentName,
-          surface: tour?.surface && tour.surface !== '未标注' ? tour.surface : match.tournament.surface
+          nameEn: tournamentEnglish,
+          name: tournamentName
         };
-        if (local?.court) match.court = local.court;
       }
     }
     this.cache.scheduleWrite();

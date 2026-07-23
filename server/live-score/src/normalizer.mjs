@@ -2,7 +2,8 @@ const LIVE_STATUSES = new Set([
   'live', 'in progress', 'interrupted', 'suspended', 'paused', 'rain delay',
   'set 1', 'set 2', 'set 3', 'set 4', 'set 5'
 ]);
-const FINISHED_STATUSES = new Set(['finished', 'retired', 'walkover', 'cancelled', 'abandoned']);
+const FINISHED_STATUSES = new Set(['finished', 'retired', 'walkover']);
+const CANCELLED_STATUSES = new Set(['cancelled', 'canceled', 'abandoned']);
 
 function first(raw, keys, fallback = '') {
   for (const key of keys) if (raw?.[key] !== undefined && raw[key] !== null && raw[key] !== '') return raw[key];
@@ -71,6 +72,7 @@ export function normalizeMatch(raw) {
   const statusLower = statusText.toLowerCase();
   const live = LIVE_STATUSES.has(statusLower) || Boolean(raw.event_live === '1' || raw.event_live === 1);
   const finished = FINISHED_STATUSES.has(statusLower);
+  const cancelled = CANCELLED_STATUSES.has(statusLower);
   const serve = String(first(raw, ['event_serve', 'serve'], ''));
   const winner = String(first(raw, ['event_winner', 'winner'], ''));
   const type = first(raw, ['event_type_type', 'event_type'], '');
@@ -78,7 +80,7 @@ export function normalizeMatch(raw) {
     id: String(first(raw, ['event_key', 'match_key', 'id'], '')),
     date: first(raw, ['event_date', 'date'], ''),
     time: first(raw, ['event_time', 'time'], ''),
-    status: finished ? 'finished' : live ? 'live' : 'scheduled',
+    status: cancelled ? 'cancelled' : finished ? 'finished' : live ? 'live' : 'scheduled',
     statusText,
     type,
     round: first(raw, ['tournament_round', 'event_round', 'round'], '未标注'),
@@ -132,7 +134,7 @@ export function mergeMatches(fixtures = [], live = []) {
     // A freshly refreshed fixture is authoritative once it confirms the match
     // is over. Some providers keep an outdated copy in get_livescore for a
     // while after the final point; do not let that stale row resurrect it.
-    if (prior.status === 'finished' && item.status === 'live') return;
+    if ((prior.status === 'finished' || prior.status === 'cancelled') && item.status === 'live') return;
     const tournament = {
       ...prior.tournament,
       ...item.tournament,
@@ -216,6 +218,7 @@ export function applyPrematchOdds(matches = [], oddsByEvent = {}) {
 export function groupSchedule(matches) {
   const tournaments = new Map();
   for (const match of matches) {
+    if (match.status === 'cancelled') continue;
     const tournamentKey = `${match.tournament.tour || ''}:${match.tournament.name || match.tournament.id}`;
     if (!tournaments.has(tournamentKey)) tournaments.set(tournamentKey, { ...match.tournament, venues: new Map(), matchCount: 0 });
     const tournament = tournaments.get(tournamentKey);

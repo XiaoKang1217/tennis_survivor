@@ -6,7 +6,7 @@ const OBSERVATION_PROBE_MS = 60_000;
 const LIVE_POLL_MS = 8_000;
 const HISTORY_START_DATE = '2026-07-22';
 const HISTORY_DAYS = 5;
-const DATA_PIPELINE_VERSION = 3;
+const DATA_PIPELINE_VERSION = 4;
 
 function normalizedIdentity(value = '') {
   return String(value).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
@@ -35,12 +35,13 @@ function lockTerminalMatches(matches = []) {
 }
 
 export class LivePoller extends EventEmitter {
-  constructor({ client, cache, config, localizer = null, now = () => Date.now() }) {
+  constructor({ client, cache, config, localizer = null, officialValidator = null, now = () => Date.now() }) {
     super();
     this.client = client;
     this.cache = cache;
     this.config = config;
     this.localizer = localizer;
+    this.officialValidator = officialValidator;
     this.now = now;
     this.timer = null;
     this.running = false;
@@ -114,7 +115,10 @@ export class LivePoller extends EventEmitter {
         return {};
       })
     ]);
+    await this.officialValidator?.refresh(date, this.now()).catch(cause =>
+      console.warn('[official-prefetch]', cause.message));
     let matches = lockTerminalMatches(mergeMatches(fixtureItems, []));
+    if (this.officialValidator) matches = this.officialValidator.reconcile(matches, date);
     const localization = { date, tours };
     if (this.localizer) matches = this.localizer.enrich(matches, localization);
     matches = applyPrematchOdds(matches, odds || {});
@@ -171,6 +175,7 @@ export class LivePoller extends EventEmitter {
   buildSnapshot(error = '') {
     const date = this.scheduleDate();
     let matches = lockTerminalMatches(mergeMatches(this.matchSources(), this.cache.data.live || []));
+    if (this.officialValidator) matches = this.officialValidator.reconcile(matches, date);
     if (this.localizer) matches = this.localizer.enrich(matches);
     matches = applyPrematchOdds(matches, this.cache.data.prematchOdds?.items || {});
     const rankingByPlayer = new Map();
@@ -199,6 +204,38 @@ export class LivePoller extends EventEmitter {
     };
   }
 
+  async snapshotForDate(date) {
+    const snapshot = date === this.snapshot.date ? this.snapshot : this.cache.data.scheduleHistory?.[date];
+    if (!snapshot) return null;
+    if (!this.officialValidator) return snapshot;
+    await this.officialValidator.refresh(date, this.now()).catch(cause =>
+      console.warn('[official-history]', cause.message));
+    let matches = (snapshot.tournaments || []).flatMap(tournament =>
+      (tournament.venues || []).flatMap(venue => venue.matches || []));
+    matches = this.officialValidator.reconcile(matches, date);
+    if (this.localizer) {
+      const historicalLocalization = await this.localizer.loadDate(date, this.now()).catch(cause => {
+        console.warn('[localizer-history]', cause.message);
+        return { date, tours: [] };
+      });
+      matches = this.localizer.enrich(matches, {
+        ...historicalLocalization,
+        translations: this.cache.data.localization?.translations || {},
+        tournamentTranslations: this.cache.data.localization?.tournamentTranslations || {}
+      });
+    }
+    const corrected = {
+      ...snapshot,
+      tournaments: groupSchedule(matches),
+      officialCheckedAt: new Date(this.now()).toISOString()
+    };
+    if (date !== this.snapshot.date) {
+      this.cache.data.scheduleHistory[date] = { ...corrected, availableDates: undefined };
+      this.cache.scheduleWrite();
+    }
+    return corrected;
+  }
+
   async refreshFixtures(force = false) {
     const saved = this.cache.data.fixtures;
     const date = this.scheduleDate();
@@ -225,6 +262,7 @@ export class LivePoller extends EventEmitter {
   shouldObserve() {
     const date = this.scheduleDate();
     let matches = lockTerminalMatches(mergeMatches(this.matchSources(), this.cache.data.live || []));
+    if (this.officialValidator) matches = this.officialValidator.reconcile(matches, date);
     if (this.localizer) matches = this.localizer.enrich(matches);
     matches = assignOfficialScheduleDate(matches.filter(isMainTour), date, this.config.timeZone);
     return matches.some(match =>
@@ -237,6 +275,8 @@ export class LivePoller extends EventEmitter {
     let error = '';
     try {
       await this.refreshFixtures();
+      await this.officialValidator?.refresh(this.scheduleDate(), this.now()).catch(cause =>
+        console.warn('[official]', cause.message));
       await this.localizer?.refresh(this.scheduleDate(), this.now()).catch(cause => console.warn('[localizer]', cause.message));
       await this.refreshPrematchOdds().catch(cause => console.warn('[odds]', cause.message));
       await this.prefetchCalendarDay().catch(cause => console.warn('[prefetch]', cause.message));
@@ -267,6 +307,7 @@ export class LivePoller extends EventEmitter {
     const date = this.scheduleDate();
     const nextDate = this.client.dateAfter(date);
     let matches = lockTerminalMatches(mergeMatches(this.matchSources(), this.cache.data.live || []));
+    if (this.officialValidator) matches = this.officialValidator.reconcile(matches, date);
     if (this.localizer) matches = this.localizer.enrich(matches);
     matches = assignOfficialScheduleDate(matches.filter(isMainTour), date, this.config.timeZone);
     const pending = matches.filter(match => match.status === 'scheduled');

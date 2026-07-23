@@ -37,7 +37,8 @@ export function assignOfficialScheduleDate(matches = [], scheduleDate, displayTi
     const timestamp = Date.parse(`${match.date}T${match.time}:00+08:00`);
     if (!Number.isFinite(timestamp)) return [];
     const officialTimeZone = tournamentTimeZone(match);
-    const officialDate = officialTimeZone ? dateInTimeZone(timestamp, officialTimeZone) : match.date;
+    const officialDate = match.officialScheduleDate
+      || (officialTimeZone ? dateInTimeZone(timestamp, officialTimeZone) : match.date);
     if (officialDate !== scheduleDate) return [];
     const displayDate = dateInTimeZone(timestamp, displayTimeZone);
     match.scheduleDate = officialDate;

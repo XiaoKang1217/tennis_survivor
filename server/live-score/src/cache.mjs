@@ -12,7 +12,9 @@ export class JsonCache {
       budget: {},
       pipelineVersion: 0,
       activeScheduleDate: '',
-      scheduleHistory: {}
+      scheduleHistory: {},
+      officialReferences: {},
+      localizationHistory: {}
     };
     this.writeTimer = null;
   }

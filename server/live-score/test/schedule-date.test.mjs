@@ -38,3 +38,12 @@ test('does not include the previous official date in the next schedule day', () 
   assert.deepEqual(result.map(match => match.id), ['2', '3']);
   assert.deepEqual(result.map(match => match.dayOffset), [0, 1]);
 });
+
+test('an explicit official schedule date is never reassigned by Beijing time', () => {
+  const match = fixture({ date: '2026-07-23', time: '19:00', tournamentKey: 3733, tournament: 'WTA Hamburg' });
+  match.officialScheduleDate = '2026-07-22';
+  const result = assignOfficialScheduleDate([match], '2026-07-22');
+  assert.equal(result.length, 1);
+  assert.equal(result[0].scheduleDate, '2026-07-22');
+  assert.equal(result[0].dayOffset, 1);
+});

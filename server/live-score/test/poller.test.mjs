@@ -5,7 +5,7 @@ import { LivePoller } from '../src/poller.mjs';
 function setup(used, fixtures = [], options = {}) {
   const calendarDate = options.calendarDate || '2026-07-21';
   const now = options.now || Date.parse(`${calendarDate}T12:00:00+08:00`);
-  const cache = { data: { fixtures: { fetchedAt: now, items: fixtures }, live: [], details: {}, budget: { day: calendarDate, used }, pipelineVersion: 3, activeScheduleDate: options.activeScheduleDate || '' }, scheduleWrite() {} };
+  const cache = { data: { fixtures: { fetchedAt: now, items: fixtures }, live: [], details: {}, budget: { day: calendarDate, used }, pipelineVersion: 4, activeScheduleDate: options.activeScheduleDate || '' }, scheduleWrite() {} };
   const client = { beijingDate: () => calendarDate, dateAfter: date => new Date(Date.parse(`${date}T00:00:00Z`) + 86_400_000).toISOString().slice(0, 10), budgetToday: () => cache.data.budget };
   const config = { timeZone: 'Asia/Shanghai', dailyLimit: 8000, fixturesTtlMs: 6 * 60 * 60_000, observationBeforeMs: 15 * 60_000, observationAfterMs: 6 * 60 * 60_000 };
   return new LivePoller({ client, cache, config, now: () => now });
@@ -265,7 +265,7 @@ test('invalidates snapshots created by the old competitor-driven pipeline', () =
   const client = { beijingDate: () => calendarDate, dateAfter: () => '2026-07-24', budgetToday: () => cache.data.budget };
   const config = { timeZone: 'Asia/Shanghai', dailyLimit: 8000, fixturesTtlMs: 6 * 60 * 60_000, observationBeforeMs: 15 * 60_000, observationAfterMs: 6 * 60 * 60_000 };
   new LivePoller({ client, cache, config, now: () => now });
-  assert.equal(cache.data.pipelineVersion, 3);
+  assert.equal(cache.data.pipelineVersion, 4);
   assert.ok(cache.data.scheduleHistory['2026-07-22']);
   assert.equal(cache.data.scheduleHistory['2026-07-23'].tournaments.length, 0);
 });

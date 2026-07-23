@@ -44,6 +44,17 @@ test('splits provider current game score and treats interrupted match as live', 
   assert.deepEqual(match.current, { first: '30', second: '40' });
 });
 
+test('keeps cancelled matches distinct from completed matches and hides them from the schedule', () => {
+  const cancelled = normalizeMatch({
+    event_key: 99,
+    event_status: 'Cancelled',
+    event_first_player: 'A',
+    event_second_player: 'B'
+  });
+  assert.equal(cancelled.status, 'cancelled');
+  assert.deepEqual(groupSchedule([cancelled]), []);
+});
+
 test('infers the latest point winner from point-by-point score transitions', () => {
   const first = normalizeMatch({ pointbypoint: [{ points: [{ score: '15 - 0' }, { score: '30 - 0' }] }] });
   const secondAtDeuce = normalizeMatch({ pointbypoint: [{ points: [{ score: '40 - A' }, { score: '40 - 40' }] }] });
