@@ -35,7 +35,17 @@ export function tournamentTimeZone(match = {}) {
 export function assignOfficialScheduleDate(matches = [], scheduleDate, displayTimeZone = 'Asia/Shanghai') {
   return matches.flatMap(match => {
     const timestamp = Date.parse(`${match.date}T${match.time}:00+08:00`);
-    if (!Number.isFinite(timestamp)) return [];
+    if (!Number.isFinite(timestamp)) {
+      // An official order of play may say only "followed by". Keep that
+      // official match on its official day with a pending display time instead
+      // of deleting it merely because there is no exact clock time yet.
+      if (match.officialScheduleDate === scheduleDate) {
+        match.scheduleDate = scheduleDate;
+        match.dayOffset = match.date ? dateDistance(scheduleDate, match.date) : 0;
+        return [match];
+      }
+      return [];
+    }
     const officialTimeZone = tournamentTimeZone(match);
     const officialDate = match.officialScheduleDate
       || (officialTimeZone ? dateInTimeZone(timestamp, officialTimeZone) : match.date);

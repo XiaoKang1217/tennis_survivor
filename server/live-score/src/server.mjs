@@ -11,7 +11,10 @@ const config = loadConfig();
 const cache = new JsonCache(config.cacheFile);
 await cache.load();
 const client = new ApiTennisClient({ ...config, cache });
-const localizer = new ChineseLocalizer({ cache, url: config.localizationUrl, ttlMs: config.localizationTtlMs, catalogFile: config.translationCatalogFile });
+const localizer = new ChineseLocalizer({
+  cache,
+  catalogFile: config.translationCatalogFile
+});
 const officialValidator = new OfficialScheduleValidator({
   cache,
   baseUrl: config.officialWtaBase,

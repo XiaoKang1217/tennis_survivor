@@ -241,6 +241,185 @@ test('a complete official sheet supplies a tournament missing from the provider 
   assert.equal(match.status, 'finished');
 });
 
+test('official pairing canonicalizes a provider-mislabeled Hamburg row and never groups it as Palermo', () => {
+  const official = {
+    tours: [{
+      tour: 'WTA',
+      id: '2042',
+      year: 2026,
+      name: 'MSC Hamburg Ladies Open',
+      city: 'Hamburg',
+      aliases: ['Hamburg'],
+      surface: '红土',
+      level: 'WTA 125',
+      officialUrl: 'https://www.wtatennis.com/scores?date=2026-07-23&status=All',
+      source: 'WTA official',
+      complete: true,
+      matches: [{
+        id: 'LS020',
+        kind: 'WS',
+        first: { name: 'Mayar Sherif', ids: [], countries: [] },
+        second: { name: 'Elsa Jacquemot', ids: [], countries: [] },
+        court: 'Center Court',
+        courtOrder: 0,
+        scheduleOrder: 1,
+        scheduleDate: '2026-07-23',
+        date: '2026-07-23',
+        time: '17:00',
+        status: 'finished',
+        statusText: 'Finished',
+        winner: 'first',
+        sets: [{ set: '1', first: '6', second: '3' }]
+      }]
+    }]
+  };
+  const dirty = normalizeMatch({
+    event_key: 77,
+    event_date: '2026-07-23',
+    event_time: '17:00',
+    event_type_type: 'Wta Singles',
+    tournament_name: 'WTA125 Palermo',
+    event_first_player: 'M. Sherif',
+    event_second_player: 'E. Jacquemot'
+  });
+  const [match] = reconcileOfficialSchedule([dirty], official, '2026-07-23');
+  assert.equal(match.id, '77');
+  assert.equal(match.tournament.id, '2042');
+  assert.equal(match.tournament.name, 'Hamburg');
+  assert.equal(match.tournament.nameEn, 'MSC Hamburg Ladies Open');
+  assert.equal(match.tournament.canonicalKey, 'WTA:2042:2026');
+});
+
+test('a postponed WTA MatchID is removed from the old official day', () => {
+  const match = {
+    MatchId: 'LD011',
+    Players: [
+      { Player: [{ FirstName: 'A', SurName: 'One' }, { FirstName: 'A', SurName: 'Two' }] },
+      { Player: [{ FirstName: 'B', SurName: 'One' }, { FirstName: 'B', SurName: 'Two' }] }
+    ]
+  };
+  const oop = {
+    orderOfPlay: [JSON.stringify({
+      OOP: {
+        Schedule: {
+          Day: [
+            { ISODate: '2026-07-22', Court: { CourtName: 'M1', Matches: { Match: match } } },
+            { ISODate: '2026-07-23', Court: { CourtName: 'M2', Matches: { Match: match } } }
+          ]
+        }
+      }
+    })]
+  };
+  const tournament = {
+    year: 2026,
+    city: 'Hamburg',
+    surface: 'Clay',
+    level: 'WTA 125',
+    tournamentGroup: { id: 2042, name: 'Hamburg' }
+  };
+  const oldDay = parseWtaOfficialTournament({
+    tournament,
+    oop,
+    results: { matches: [] },
+    date: '2026-07-22',
+    supersededIds: new Set(['LD011'])
+  });
+  const newDay = parseWtaOfficialTournament({
+    tournament,
+    oop,
+    results: { matches: [] },
+    date: '2026-07-23'
+  });
+  assert.equal(oldDay.matches.length, 0);
+  assert.equal(newDay.matches.length, 1);
+  assert.equal(newDay.matches[0].court, 'M2');
+  assert.equal(newDay.matches[0].scheduleDate, '2026-07-23');
+});
+
+test('WTA 125 tournaments are included in official schedule refresh', async () => {
+  const calendar = {
+    content: [{
+      year: 2026,
+      city: 'Hamburg',
+      level: 'WTA 125',
+      surface: 'Clay',
+      tournamentGroup: { id: 2042, name: 'Hamburg', level: 'WTA 125' }
+    }]
+  };
+  const oop = {
+    orderOfPlay: [JSON.stringify({
+      OOP: {
+        Schedule: {
+          Day: {
+            ISODate: '2026-07-23',
+            Court: {
+              CourtName: 'Center Court',
+              Matches: {
+                Match: {
+                  MatchId: 'LS020',
+                  Players: [
+                    { Player: { FirstName: 'Mayar', SurName: 'Sherif' } },
+                    { Player: { FirstName: 'Elsa', SurName: 'Jacquemot' } }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    })]
+  };
+  const validator = new OfficialScheduleValidator({
+    cache: { data: { officialReferences: {} }, scheduleWrite() {} },
+    fetchImpl: async url => ({
+      ok: true,
+      json: async () => url.includes('/tournaments/?')
+        ? calendar
+        : url.endsWith('/oop')
+          ? oop
+          : { matches: [] }
+    })
+  });
+  const value = await validator.refresh('2026-07-23', 1, true);
+  const wta = value.tours.filter(tour => tour.tour === 'WTA');
+  assert.equal(wta.length, 1);
+  assert.equal(wta[0].level, 'WTA 125');
+  assert.equal(wta[0].matches[0].court, 'Center Court');
+});
+
+test('the verified ATP 2026-07-23 sheets contain every official tour match and court', async () => {
+  const cache = { data: { officialReferences: {} }, scheduleWrite() {} };
+  const validator = new OfficialScheduleValidator({
+    cache,
+    fetchImpl: async () => ({ ok: true, json: async () => ({ content: [] }) })
+  });
+  const value = await validator.refresh('2026-07-23', 1, true);
+  const atp = value.tours.filter(tour => tour.tour === 'ATP');
+  assert.equal(atp.length, 2);
+  assert.deepEqual(atp.map(tour => [tour.city, tour.matches.length]), [
+    ['Estoril', 7],
+    ['Kitzbühel', 6]
+  ]);
+  assert.deepEqual(
+    [...new Set(atp.find(tour => tour.city === 'Estoril').matches.map(match => match.court))],
+    ['ESTADIO MILLENNIUM', 'COURT CASCAIS', 'COURT CTE']
+  );
+  assert.deepEqual(
+    [...new Set(atp.find(tour => tour.city === 'Kitzbühel').matches.map(match => match.court))],
+    ['Center Court', 'Grandstand']
+  );
+  const kitzbuhel = atp.find(tour => tour.city === 'Kitzbühel');
+  assert.deepEqual(
+    kitzbuhel.matches.slice(0, 3).map(match => [match.first.name, match.second.name, match.status, match.winner]),
+    [
+      ['Quentin Halys', 'Mariano Navone', 'finished', 'first'],
+      ['Yannick Hanfmann', 'Sebastian Baez', 'finished', 'first'],
+      ['Tomas Martin Etcheverry', 'Ignacio Buse', 'finished', 'first']
+    ]
+  );
+  assert.equal(kitzbuhel.matches[4].status, 'finished');
+});
+
 test('the verified ATP 2026-07-22 sheet removes the dirty ninth Estoril row per pairing', async () => {
   const cache = { data: { officialReferences: {} }, scheduleWrite() {} };
   const validator = new OfficialScheduleValidator({
@@ -266,6 +445,9 @@ test('the verified ATP 2026-07-22 sheet removes the dirty ninth Estoril row per 
   assert.equal(estoril.every(match => match.status === 'finished'), true);
   assert.equal(estoril.find(match => match.id === '5').first.nameEn, 'Orlando Luz/Rafael Matos');
   assert.equal(estoril.find(match => match.id === '5').second.nameEn, 'Ray Ho/Benjamin Kittay');
+  const tabilo = estoril.find(match => match.id === '3');
+  assert.equal(tabilo.winner, 'second');
+  assert.deepEqual(tabilo.sets.map(set => [set.first, set.second]), [['4', '6'], ['4', '6']]);
   assert.deepEqual([...new Set(estoril.map(match => match.court))].sort(), [
     'COURT CASCAIS',
     'COURT CTE',

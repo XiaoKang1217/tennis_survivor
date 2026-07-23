@@ -5,7 +5,18 @@ import { LivePoller } from '../src/poller.mjs';
 function setup(used, fixtures = [], options = {}) {
   const calendarDate = options.calendarDate || '2026-07-21';
   const now = options.now || Date.parse(`${calendarDate}T12:00:00+08:00`);
-  const cache = { data: { fixtures: { fetchedAt: now, items: fixtures }, live: [], details: {}, budget: { day: calendarDate, used }, pipelineVersion: 4, activeScheduleDate: options.activeScheduleDate || '' }, scheduleWrite() {} };
+  const cache = {
+    data: {
+      fixtures: { fetchedAt: now, date: options.activeScheduleDate || calendarDate, items: fixtures },
+      live: fixtures.filter(item => item.event_live === '1'
+        || /^(?:set \d+|live|in progress)$/i.test(String(item.event_status || ''))),
+      details: {},
+      budget: { day: calendarDate, used },
+      pipelineVersion: 6,
+      activeScheduleDate: options.activeScheduleDate || ''
+    },
+    scheduleWrite() {}
+  };
   const client = { beijingDate: () => calendarDate, dateAfter: date => new Date(Date.parse(`${date}T00:00:00Z`) + 86_400_000).toISOString().slice(0, 10), budgetToday: () => cache.data.budget };
   const config = { timeZone: 'Asia/Shanghai', dailyLimit: 8000, fixturesTtlMs: 6 * 60 * 60_000, observationBeforeMs: 15 * 60_000, observationAfterMs: 6 * 60 * 60_000 };
   return new LivePoller({ client, cache, config, now: () => now });
@@ -48,6 +59,24 @@ test('uses the fixed live interval after a match is confirmed live', () => {
   }]);
   assert.equal(poller.snapshot.hasLive, true);
   assert.equal(poller.nextDelay(), 8_000);
+});
+
+test('a stale live marker in fixtures cannot keep eight-second polling alive', () => {
+  const fixture = {
+    event_key: 1,
+    event_date: '2026-07-21',
+    event_time: '12:00',
+    event_status: 'Set 1',
+    event_live: '1',
+    event_type_type: 'Atp Singles',
+    tournament_name: 'Today'
+  };
+  const poller = setup(100, [fixture]);
+  assert.equal(poller.snapshot.hasLive, true);
+  poller.cache.data.live = [];
+  poller.snapshot = poller.buildSnapshot();
+  assert.equal(poller.snapshot.hasLive, false);
+  assert.equal(poller.nextDelay(), 60_000);
 });
 
 test('wakes at the next fifteen-minute observation window', () => {
@@ -160,7 +189,7 @@ test('a terminal match stays finished after it disappears from livescore', () =>
     tournament_name: 'Today',
     scores: [{ score_set: '1', score_first: '6', score_second: '4' }]
   }];
-  const poller = setup(100, []);
+  const poller = setup(100, finished.map(item => ({ ...item, event_status: 'Scheduled', scores: [] })));
   poller.rememberTerminalMatches(finished);
   poller.cache.data.live = [];
   poller.snapshot = poller.buildSnapshot();
@@ -189,7 +218,7 @@ test('a new provider event id cannot downgrade the same completed pairing', () =
   poller.snapshot = poller.buildSnapshot();
   const matches = poller.snapshot.tournaments.flatMap(tour => tour.venues.flatMap(venue => venue.matches));
   assert.equal(matches.length, 1);
-  assert.equal(matches[0].id, '30');
+  assert.equal(matches[0].id, '31');
   assert.equal(matches[0].status, 'finished');
 });
 
@@ -265,7 +294,7 @@ test('invalidates snapshots created by the old competitor-driven pipeline', () =
   const client = { beijingDate: () => calendarDate, dateAfter: () => '2026-07-24', budgetToday: () => cache.data.budget };
   const config = { timeZone: 'Asia/Shanghai', dailyLimit: 8000, fixturesTtlMs: 6 * 60 * 60_000, observationBeforeMs: 15 * 60_000, observationAfterMs: 6 * 60 * 60_000 };
   new LivePoller({ client, cache, config, now: () => now });
-  assert.equal(cache.data.pipelineVersion, 4);
-  assert.ok(cache.data.scheduleHistory['2026-07-22']);
-  assert.equal(cache.data.scheduleHistory['2026-07-23'].tournaments.length, 0);
+  assert.equal(cache.data.pipelineVersion, 6);
+  assert.deepEqual(Object.keys(cache.data.scheduleHistory), [calendarDate]);
+  assert.equal(cache.data.scheduleHistory[calendarDate].tournaments.length, 0);
 });

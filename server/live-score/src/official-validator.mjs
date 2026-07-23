@@ -24,20 +24,37 @@ function officialTeam(name) {
   return { name, ids: [], countries: [] };
 }
 
-function officialMatch({ id, kind = 'MS', first, second, court, winner, sets }) {
+function officialMatch({
+  id,
+  kind = 'MS',
+  first,
+  second,
+  court,
+  courtOrder = 0,
+  scheduleOrder,
+  scheduleDate = '2026-07-22',
+  date = '',
+  time = '',
+  round = '',
+  status = 'finished',
+  statusText = status === 'finished' ? 'Finished' : '',
+  winner = '',
+  sets = []
+}) {
   return {
     id,
     kind,
     first: officialTeam(first),
     second: officialTeam(second),
     court,
-    courtOrder: 0,
-    scheduleOrder: Number(String(id).match(/(\d+)$/)?.[1] || 0),
-    scheduleDate: '2026-07-22',
-    date: '',
-    time: '',
-    status: 'finished',
-    statusText: 'Finished',
+    courtOrder,
+    scheduleOrder: scheduleOrder ?? Number(String(id).match(/(\d+)$/)?.[1] || 0),
+    scheduleDate,
+    date,
+    time,
+    round,
+    status,
+    statusText,
     winner,
     sets: sets.map(([a, b], index) => ({
       set: String(index + 1),
@@ -67,7 +84,7 @@ const ATP_VERIFIED_DAYS = {
       matches: [
         officialMatch({ id: 'estoril-1', first: 'Hugo Gaston', second: 'Titouan Droguet', court: 'ESTADIO MILLENNIUM', winner: 'first', sets: [[6, 0], [6, 3]] }),
         officialMatch({ id: 'estoril-2', first: 'Roman Andres Burruchaga', second: 'Nuno Borges', court: 'ESTADIO MILLENNIUM', winner: 'first', sets: [[6, 1], [4, 6], [6, 3]] }),
-        officialMatch({ id: 'estoril-3', first: 'Tiago Torres', second: 'Alejandro Tabilo', court: 'ESTADIO MILLENNIUM', winner: 'first', sets: [[6, 4], [6, 4]] }),
+        officialMatch({ id: 'estoril-3', first: 'Tiago Torres', second: 'Alejandro Tabilo', court: 'ESTADIO MILLENNIUM', winner: 'second', sets: [[4, 6], [4, 6]] }),
         officialMatch({ id: 'estoril-4', first: 'Alexander Blockx', second: 'Kyrian Jacquet', court: 'ESTADIO MILLENNIUM', winner: 'first', sets: [[3, 6], [6, 4], [7, 6]] }),
         officialMatch({ id: 'estoril-5', kind: 'MD', first: 'Orlando Luz/Rafael Matos', second: 'Ray Ho/Benjamin Kittay', court: 'COURT CASCAIS', winner: 'first', sets: [[7, 6], [6, 2]] }),
         officialMatch({ id: 'estoril-6', kind: 'MD', first: 'Nuno Borges/Francisco Cabral', second: 'Arthur Reymond/Luca Sanchez', court: 'COURT CASCAIS', winner: 'first', sets: [[7, 6], [7, 6]] }),
@@ -99,6 +116,51 @@ const ATP_VERIFIED_DAYS = {
         officialMatch({ id: 'kitzbuhel-9', kind: 'MD', first: 'Jakob Schnaitter/Mark Wallner', second: 'Andres Molteni/Patrik Trhac', court: 'Küchenmeister', winner: 'first', sets: [[6, 3], [6, 2]] }),
         officialMatch({ id: 'kitzbuhel-10', first: 'Yannick Hanfmann', second: 'Marco Trungelliti', court: 'Küchenmeister', winner: 'first', sets: [[6, 4], [7, 6]] }),
         officialMatch({ id: 'kitzbuhel-11', kind: 'MD', first: 'N.Sriram Balaji/Andre Goransson', second: 'Constantin Frantzen/Robin Haase', court: 'Küchenmeister', winner: 'first', sets: [[6, 4], [7, 6]] })
+      ]
+    }
+  ],
+  '2026-07-23': [
+    {
+      tour: 'ATP',
+      id: '7290',
+      year: 2026,
+      name: 'Millennium Estoril Open',
+      city: 'Estoril',
+      aliases: ['estoril'],
+      surface: '红土',
+      level: 'ATP 250',
+      officialUrl: 'https://www.atptour.com/en/scores/current/estoril/7290/daily-schedule?day=2',
+      source: 'ATP official daily schedule',
+      complete: true,
+      matches: [
+        officialMatch({ id: 'estoril-20260723-1', first: 'Luca Van Assche', second: 'Pablo Carreno Busta', court: 'ESTADIO MILLENNIUM', scheduleDate: '2026-07-23', date: '2026-07-23', time: '19:00', round: 'R16', status: 'scheduled', scheduleOrder: 1 }),
+        officialMatch({ id: 'estoril-20260723-2', first: 'Jaime Faria', second: 'Gonzalo Bueno', court: 'ESTADIO MILLENNIUM', scheduleDate: '2026-07-23', date: '2026-07-23', time: '21:00', round: 'R16', status: 'scheduled', scheduleOrder: 2 }),
+        officialMatch({ id: 'estoril-20260723-3', first: 'Andrey Rublev', second: 'Timofey Skatov', court: 'ESTADIO MILLENNIUM', scheduleDate: '2026-07-23', date: '2026-07-24', time: '00:00', round: 'R16', status: 'scheduled', scheduleOrder: 3 }),
+        officialMatch({ id: 'estoril-20260723-4', first: 'Pedro Martinez', second: 'Luciano Darderi', court: 'ESTADIO MILLENNIUM', scheduleDate: '2026-07-23', date: '2026-07-24', time: '', round: 'R16', status: 'scheduled', scheduleOrder: 4 }),
+        officialMatch({ id: 'estoril-20260723-5', kind: 'MD', first: 'Diego Hidalgo/Alejandro Tabilo', second: 'Sander Arends/David Pel', court: 'COURT CASCAIS', courtOrder: 1, scheduleDate: '2026-07-23', date: '2026-07-23', time: '20:00', round: 'QF', status: 'scheduled', scheduleOrder: 101 }),
+        officialMatch({ id: 'estoril-20260723-6', kind: 'MD', first: 'Joao Domingues/Tiago Torres', second: 'Orlando Luz/Rafael Matos', court: 'COURT CASCAIS', courtOrder: 1, scheduleDate: '2026-07-23', date: '2026-07-23', time: '', round: 'QF', status: 'scheduled', scheduleOrder: 102 }),
+        officialMatch({ id: 'estoril-20260723-7', kind: 'MD', first: 'Titouan Droguet/Kyrian Jacquet', second: 'Santiago Gonzalez/Miguel Angel Reyes-Varela', court: 'COURT CTE', courtOrder: 2, scheduleDate: '2026-07-23', date: '2026-07-23', time: '20:00', round: 'QF', status: 'scheduled', scheduleOrder: 201 })
+      ]
+    },
+    {
+      tour: 'ATP',
+      id: '319',
+      year: 2026,
+      name: 'Generali Open',
+      city: 'Kitzbühel',
+      aliases: ['kitzbuhel', 'kitzbühel'],
+      surface: '红土',
+      level: 'ATP 250',
+      officialUrl: 'https://www.atptour.com/en/scores/current/kitzbuhel/319/daily-schedule?day=1',
+      source: 'ATP official daily schedule',
+      complete: true,
+      matches: [
+        officialMatch({ id: 'kitzbuhel-20260723-1', first: 'Quentin Halys', second: 'Mariano Navone', court: 'Center Court', scheduleDate: '2026-07-23', date: '2026-07-23', time: '17:00', round: 'QF', status: 'finished', winner: 'first', sets: [[7, 5], [6, 3]], scheduleOrder: 1 }),
+        officialMatch({ id: 'kitzbuhel-20260723-2', first: 'Yannick Hanfmann', second: 'Sebastian Baez', court: 'Center Court', scheduleDate: '2026-07-23', date: '2026-07-23', time: '', round: 'QF', status: 'finished', winner: 'first', sets: [[6, 3], [6, 1]], scheduleOrder: 2 }),
+        officialMatch({ id: 'kitzbuhel-20260723-3', first: 'Tomas Martin Etcheverry', second: 'Ignacio Buse', court: 'Center Court', scheduleDate: '2026-07-23', date: '2026-07-23', time: '', round: 'QF', status: 'finished', winner: 'first', sets: [[6, 2], [7, 5]], scheduleOrder: 3 }),
+        officialMatch({ id: 'kitzbuhel-20260723-4', first: 'Alexander Bublik', second: 'Alex Molcan', court: 'Center Court', scheduleDate: '2026-07-23', date: '2026-07-23', time: '', round: 'QF', status: 'scheduled', scheduleOrder: 4 }),
+        officialMatch({ id: 'kitzbuhel-20260723-5', kind: 'MD', first: 'Pierre-Hugues Herbert/Kevin Krawietz', second: 'Lukas Neumayer/Joel Schwaerzler', court: 'Grandstand', courtOrder: 1, scheduleDate: '2026-07-23', date: '2026-07-23', time: '17:30', round: 'QF', status: 'finished', winner: 'first', sets: [[6, 3], [6, 4]], scheduleOrder: 101 }),
+        officialMatch({ id: 'kitzbuhel-20260723-6', kind: 'MD', first: 'Jean-Julien Rojer/Theodore Winegar', second: 'Lucas Miedler/Marc Polmans', court: 'Grandstand', courtOrder: 1, scheduleDate: '2026-07-23', date: '2026-07-23', time: '23:00', round: 'QF', status: 'scheduled', scheduleOrder: 102 })
       ]
     }
   ]
@@ -181,6 +243,11 @@ function officialTournamentMatches(match, tournament) {
   return names.some(name => source.includes(name) || name.includes(source));
 }
 
+function pairingBelongsToTournament(match, tournament) {
+  return (tournament.matches || []).some(official =>
+    matchKind(match) === official.kind && Boolean(orientation(match, official)));
+}
+
 function playerName(player = {}) {
   return `${player.FirstName || ''} ${player.SurName || ''}`.replace(/\s+/g, ' ').trim();
 }
@@ -244,11 +311,35 @@ function wtaSets(result = {}) {
   return sets;
 }
 
-export function parseWtaOfficialTournament({ tournament, oop, results, date }) {
-  const parsed = asArray(oop?.orderOfPlay).map(value => {
+function parsedOop(oop = {}) {
+  return asArray(oop?.orderOfPlay).map(value => {
     try { return typeof value === 'string' ? JSON.parse(value) : value; } catch (_) { return null; }
   }).find(Boolean);
-  const day = asArray(parsed?.OOP?.Schedule?.Day).find(item => item.ISODate === date);
+}
+
+function oopDay(oop, date) {
+  return asArray(parsedOop(oop)?.OOP?.Schedule?.Day).find(item => item.ISODate === date);
+}
+
+function oopMatchIds(oop, date) {
+  const ids = new Set();
+  asArray(oopDay(oop, date)?.Court).forEach(court => {
+    asArray(court?.Matches?.Match).forEach(item => {
+      const id = String(item.MatchId || item.MatchID || item.matchId || '');
+      if (id) ids.add(id);
+    });
+  });
+  return ids;
+}
+
+export function parseWtaOfficialTournament({
+  tournament,
+  oop,
+  results,
+  date,
+  supersededIds = new Set()
+}) {
+  const day = oopDay(oop, date);
   if (!day) return null;
   const resultById = new Map(asArray(results?.matches).map(result => [String(result.MatchID || ''), result]));
   const matches = [];
@@ -256,6 +347,10 @@ export function parseWtaOfficialTournament({ tournament, oop, results, date }) {
     asArray(court?.Matches?.Match).forEach((item, matchOrder) => {
       const id = String(item.MatchId || item.MatchID || item.matchId || '');
       if (!/^L[SD]/.test(id)) return;
+      // The WTA OOP can retain a postponed row on the old day. If the same
+      // official MatchID appears on the following day, only the later official
+      // day owns it.
+      if (supersededIds.has(id)) return;
       const teams = asArray(item.Players);
       if (teams.length !== 2) return;
       const first = teamFromOop(teams[0]);
@@ -304,18 +399,20 @@ function swapSets(sets = []) {
 }
 
 function officialRawMatch(official, tournament) {
+  const canonicalKey = `${tournament.tour}:${tournament.id}:${tournament.year}`;
   return {
     id: `official:${tournament.tour.toLowerCase()}:${tournament.id}:${tournament.year}:${official.id}`,
     date: official.date || official.scheduleDate,
-    time: official.time || '00:00',
+    time: official.time || '待定',
     status: official.status,
     statusText: official.statusText,
     type: `${tournament.tour === 'WTA' ? 'Wta' : 'Atp'} ${official.kind.endsWith('D') ? 'Doubles' : 'Singles'}`,
-    round: '未标注',
+    round: official.round || '未标注',
     tournament: {
       id: tournament.id,
       name: tournament.city || tournament.name,
       nameEn: tournament.name,
+      canonicalKey,
       country: '',
       logo: '',
       surface: tournament.surface,
@@ -384,7 +481,11 @@ function overlayOfficial(match, official, tournament, direction) {
     },
     tournament: {
       ...match.tournament,
-      nameEn: match.tournament.nameEn || tournament.name,
+      id: String(tournament.id),
+      name: tournament.city || tournament.name,
+      nameEn: tournament.name,
+      canonicalKey: `${tournament.tour}:${tournament.id}:${tournament.year}`,
+      tour: tournament.tour,
       surface: tournament.surface || match.tournament.surface,
       level: tournament.level || match.tournament.level,
       officialUrl: tournament.officialUrl,
@@ -414,7 +515,9 @@ export function reconcileOfficialSchedule(matches = [], reference = null, date =
   let remaining = [...matches];
   const output = [];
   for (const tournament of reference?.tours || []) {
-    const candidates = remaining.filter(match => officialTournamentMatches(match, tournament));
+    const candidates = remaining.filter(match =>
+      officialTournamentMatches(match, tournament)
+      || pairingBelongsToTournament(match, tournament));
     if (!candidates.length) {
       if (tournament.complete) {
         output.push(...(tournament.matches || []).map(official => officialRawMatch(official, tournament)));
@@ -483,16 +586,29 @@ export class OfficialScheduleValidator {
 
   async fetchWta(date) {
     const calendar = await this.json(`/tournaments/?page=0&pageSize=30&excludeLevels=ITF&from=${date}&to=${date}`);
-    const tournaments = asArray(calendar?.content).filter(item => /^WTA (?:250|500|1000)$/.test(item.level || item.tournamentGroup?.level || ''));
-    return (await Promise.all(tournaments.map(async tournament => {
+    const tournaments = asArray(calendar?.content)
+      .filter(item => /^WTA (?:125|250|500|1000)$/.test(item.level || item.tournamentGroup?.level || ''));
+    const nextDate = new Date(`${date}T00:00:00Z`);
+    nextDate.setUTCDate(nextDate.getUTCDate() + 1);
+    const followingDate = nextDate.toISOString().slice(0, 10);
+    const settled = await Promise.allSettled(tournaments.map(async tournament => {
       const id = tournament.tournamentGroup?.id || tournament.liveScoringId;
       const year = tournament.year || date.slice(0, 4);
       const [oop, results] = await Promise.all([
         this.json(`/tournaments/${id}/${year}/oop`),
-        this.json(`/tournaments/${id}/${year}/matches?from=${date}&to=${date}`)
+        this.json(`/tournaments/${id}/${year}/matches?from=${date}&to=${followingDate}`)
       ]);
-      return parseWtaOfficialTournament({ tournament, oop, results, date });
-    }))).filter(Boolean);
+      return parseWtaOfficialTournament({
+        tournament,
+        oop,
+        results,
+        date,
+        supersededIds: oopMatchIds(oop, followingDate)
+      });
+    }));
+    settled.filter(item => item.status === 'rejected')
+      .forEach(item => console.warn('[official-wta-tournament]', item.reason?.message || item.reason));
+    return settled.filter(item => item.status === 'fulfilled').map(item => item.value).filter(Boolean);
   }
 
   async refresh(date, now = Date.now(), force = false) {

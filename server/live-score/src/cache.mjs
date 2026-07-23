@@ -13,8 +13,9 @@ export class JsonCache {
       pipelineVersion: 0,
       activeScheduleDate: '',
       scheduleHistory: {},
+      scheduleBases: {},
       officialReferences: {},
-      localizationHistory: {}
+      localization: { playerTranslations: {} }
     };
     this.writeTimer = null;
   }

@@ -122,35 +122,91 @@ export function tournamentLevelRank(tournament = {}) {
   return 200;
 }
 
-export function mergeMatches(fixtures = [], live = []) {
-  const byId = new Map(fixtures.map(raw => {
-    const item = normalizeMatch(raw);
-    return [item.id, item];
-  }));
-  live.forEach(raw => {
-    const item = normalizeMatch(raw);
-    const prior = byId.get(item.id);
-    if (!prior) return byId.set(item.id, item);
-    // A freshly refreshed fixture is authoritative once it confirms the match
-    // is over. Some providers keep an outdated copy in get_livescore for a
-    // while after the final point; do not let that stale row resurrect it.
-    if ((prior.status === 'finished' || prior.status === 'cancelled') && item.status === 'live') return;
-    const tournament = {
-      ...prior.tournament,
-      ...item.tournament,
-      name: item.tournament.name === '未命名赛事' ? prior.tournament.name : item.tournament.name,
-      surface: item.tournament.surface === '未标注' ? prior.tournament.surface : item.tournament.surface
-    };
-    byId.set(item.id, {
-      ...prior,
-      ...item,
-      date: item.date || prior.date,
-      time: item.time && item.time !== '00:00' ? item.time : prior.time,
-      court: item.court === '未标注' ? prior.court : item.court,
-      tournament
-    });
+function identity(value = '') {
+  return String(value)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+function playerIdentity(player = {}) {
+  return identity(player.nameEn || player.name || player.id);
+}
+
+function matchFingerprint(match = {}) {
+  const teams = [playerIdentity(match.first), playerIdentity(match.second)].sort();
+  return [identity(match.type), ...teams].join('|');
+}
+
+function normalizedUpdate(value = {}) {
+  return value.first && value.second && value.tournament ? value : normalizeMatch(value);
+}
+
+/**
+ * Overlay volatile scoring fields on an immutable schedule.
+ *
+ * The schedule is the allow-list. A livescore row may update status, score,
+ * server and point state for an existing pairing, but it can never create a
+ * match or replace tournament/date/time/court/surface/player identity.
+ */
+export function overlayLiveScores(schedule = [], updates = []) {
+  const output = schedule.map(match => structuredClone(match));
+  const byId = new Map();
+  const byFingerprint = new Map();
+
+  output.forEach(match => {
+    [match.id, match.providerId].filter(Boolean)
+      .forEach(id => byId.set(String(id), match));
+    const fingerprint = matchFingerprint(match);
+    if (fingerprint) {
+      if (!byFingerprint.has(fingerprint)) byFingerprint.set(fingerprint, []);
+      byFingerprint.get(fingerprint).push(match);
+    }
   });
-  return [...byId.values()].sort((a, b) => `${a.time}${a.id}`.localeCompare(`${b.time}${b.id}`));
+
+  for (const raw of updates) {
+    const update = normalizedUpdate(raw);
+    let target = byId.get(String(update.id || ''));
+    if (!target) {
+      const candidates = byFingerprint.get(matchFingerprint(update)) || [];
+      if (candidates.length === 1) target = candidates[0];
+    }
+    if (!target) continue;
+
+    const targetTerminal = target.status === 'finished' || target.status === 'cancelled';
+    const updateTerminal = update.status === 'finished' || update.status === 'cancelled';
+    if (targetTerminal && !updateTerminal) continue;
+
+    if (!target.providerId && update.id && update.id !== target.id) {
+      target.providerId = update.id;
+      byId.set(String(update.id), target);
+    }
+
+    target.status = update.status;
+    target.statusText = update.statusText;
+    target.rawUpdatedAt = update.rawUpdatedAt;
+    if (update.sets?.length) target.sets = structuredClone(update.sets);
+    if (update.winner) target.winner = update.winner;
+
+    if (updateTerminal) {
+      target.current = { first: '', second: '' };
+      target.serve = '';
+      target.lastPoint = '';
+    } else if (update.status === 'live') {
+      target.current = { ...update.current };
+      target.serve = update.serve;
+      target.lastPoint = update.lastPoint;
+    }
+  }
+  return output;
+}
+
+export function mergeMatches(fixtures = [], live = []) {
+  const schedule = fixtures.map(normalizedUpdate);
+  return overlayLiveScores(schedule, live)
+    .sort((a, b) => `${a.time}${a.id}`.localeCompare(`${b.time}${b.id}`));
 }
 
 function decimalOdd(value) {
@@ -219,7 +275,8 @@ export function groupSchedule(matches) {
   const tournaments = new Map();
   for (const match of matches) {
     if (match.status === 'cancelled') continue;
-    const tournamentKey = `${match.tournament.tour || ''}:${match.tournament.name || match.tournament.id}`;
+    const tournamentKey = match.tournament.canonicalKey
+      || `${match.tournament.tour || ''}:${match.tournament.id || match.tournament.nameEn || match.tournament.name}`;
     if (!tournaments.has(tournamentKey)) tournaments.set(tournamentKey, { ...match.tournament, venues: new Map(), matchCount: 0 });
     const tournament = tournaments.get(tournamentKey);
     const court = match.court || '未标注';

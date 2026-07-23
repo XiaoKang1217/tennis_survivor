@@ -16,8 +16,6 @@ export function loadConfig(env = process.env) {
     observationAfterMs: Number(env.OBSERVATION_AFTER_MS || 6 * 60 * 60_000),
     officialWtaBase: env.OFFICIAL_WTA_BASE || 'https://api.wtatennis.com/tennis',
     officialTtlMs: Number(env.OFFICIAL_TTL_MS || 5 * 60_000),
-    localizationUrl: env.LOCALIZATION_URL || 'https://www.live-tennis.cn/zh/result/{date}',
-    localizationTtlMs: Number(env.LOCALIZATION_TTL_MS || 10 * 60_000),
     translationCatalogFile: path.resolve(env.TRANSLATION_CATALOG_FILE || './data/translations.json')
   };
 }
