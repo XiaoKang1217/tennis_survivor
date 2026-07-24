@@ -1,112 +1,103 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { ChineseLocalizer, parseChineseSchedule } from '../src/localizer.mjs';
+import { fileURLToPath } from 'node:url';
+import { ChineseLocalizer } from '../src/localizer.mjs';
 import { normalizeMatch } from '../src/normalizer.mjs';
 
-test('parses Chinese tournament, court, surface and player names', () => {
-  const html = `
-    <div class="cResultTourTitle" tour-id="20319">
-      <div class="cResultTourInfoCity">基茨比厄尔</div>
-      <div class="cResultTourInfoName">忠利公开赛</div>
-      <span class="SurfaceClay"></span>
-      <div class="cResultCourt something">
-        <div class="cResultCourtTitle">中心球场</div>
-        <div class="cResultMatch something">
-          <div class="cResultMatchTime">1784701200</div>
-          <div class="cResultMatchGender">男单</div>
-          <table><tr class="one"><td><span>辛纳</span><sub>1</sub> 1.25</td></tr><tr class="two"><td><span>阿尔卡拉斯</span><sub>2</sub> 3.75</td></tr></table>
-          <a>3:2</a>
-        </div>
-      </div>
-    </div>`;
-  const tours = parseChineseSchedule(html, '2026-07-22');
-  assert.equal(tours.length, 1);
-  assert.deepEqual(tours[0], {
-    id: '20319', city: '基茨比厄尔', name: '忠利公开赛', surface: '红土', level: '',
-    matches: [{
-      time: '14:20', beijingDate: '2026-07-22', dayOffset: 0, kind: 'MS',
-      first: '辛纳', second: '阿尔卡拉斯', firstRank: '1', secondRank: '2',
-      firstOdds: '1.25', secondOdds: '3.75', h2h: '3:2', court: '中心球场'
-    }]
+function localizer(cache = { data: {}, scheduleWrite() {} }) {
+  return new ChineseLocalizer({
+    cache,
+    catalogFile: fileURLToPath(new URL('../data/translations.json', import.meta.url))
   });
-});
+}
 
-test('marks Beijing next-day matches while retaining the official schedule date', () => {
-  const epoch = Date.parse('2026-07-23T00:30:00+08:00') / 1000;
-  const html = `\n<div class="cResultTourTitle" tour-id="1"><div class="cResultTourInfoCity">A</div><div class="cResultCourt x"><div class="cResultCourtTitle">C</div><div class="cResultMatch x"><div class="cResultMatchTime">${epoch}</div><div class="cResultMatchGender">男单</div><tr class="a"><span>A</span></tr><tr class="b"><span>B</span></tr></div></div></div>`;
-  assert.equal(parseChineseSchedule(html, '2026-07-22')[0].matches[0].dayOffset, 1);
-});
-
-test('keeps the last complete schedule when an upstream refresh is empty', { concurrency: false }, async () => {
-  const tours = [{ id: '1', city: '测试站', matches: [{ dayOffset: 1 }] }];
-  const cache = {
-    data: { localization: { date: '2026-07-22', version: 4, fetchedAt: 0, tours } },
-    scheduleWrite() {}
-  };
-  const localizer = new ChineseLocalizer({ cache, url: 'https://example.test/zh/{date}', ttlMs: 1, catalogFile: '/file/does/not/exist' });
-  const originalFetch = globalThis.fetch;
-  globalThis.fetch = async () => ({ ok: true, text: async () => '' });
-  try {
-    assert.equal(await localizer.refresh('2026-07-22', 10), tours);
-    assert.equal(cache.data.localization.tours, tours);
-    assert.equal(cache.data.localization.fetchedAt, 10);
-  } finally {
-    globalThis.fetch = originalFetch;
-  }
-});
-
-test('catalog lookups tolerate ATP and WTA prefixes', () => {
-  const cache = { data: {}, scheduleWrite() {} };
-  const localizer = new ChineseLocalizer({ cache, url: '', ttlMs: 1, catalogFile: '/file/does/not/exist' });
-  localizer.tournamentByExact.set('wimbledon', '温网');
-  assert.equal(localizer.tournamentName('ATP Wimbledon'), '温网');
-  assert.doesNotThrow(() => localizer.enrich([]));
-});
-
-test('matches reference schedule by players when provider time has changed', () => {
-  const cache = {
-    data: { localization: { date: '2026-07-22', translations: {}, tournamentTranslations: {}, tours: [{
-      city: '埃斯托利尔', name: '埃斯托利尔公开赛', englishCity: 'Estoril', englishName: 'Estoril Open',
-      matches: [{
-        time: '23:00', beijingDate: '2026-07-22', dayOffset: 0, kind: 'MD',
-        first: '努诺·博尔热斯/弗朗西斯科·卡布拉尔', second: '阿蒂尔·雷蒙/卢卡·桑切斯',
-        firstEn: 'Borges/Cabral', secondEn: 'Reymond/Sanchez', court: '卡斯卡伊斯球场'
-      }]
-    }] } },
-    scheduleWrite() {}
-  };
-  const localizer = new ChineseLocalizer({ cache, url: '', ttlMs: 1, catalogFile: '/file/does/not/exist' });
+test('localization changes labels only and preserves every schedule fact', () => {
+  const instance = localizer();
   const match = normalizeMatch({
-    event_key: 1, event_date: '2026-07-22', event_time: '21:30', event_type_type: 'Atp Doubles',
-    tournament_key: 1267, tournament_name: 'ATP Estoril Doubles',
-    event_first_player: 'Borges/ Cabral', event_second_player: 'Reymond/ Sanchez'
+    event_key: 7,
+    event_date: '2026-07-23',
+    event_time: '19:00',
+    event_status: 'Set 2',
+    event_live: '1',
+    event_type_type: 'Atp Singles',
+    tournament_key: 319,
+    tournament_name: 'Generali Open',
+    tournament_surface: 'Clay',
+    event_stadium: 'Center Court',
+    event_first_player_key: 1,
+    event_first_player: 'Tiago Torres',
+    event_second_player_key: 2,
+    event_second_player: 'Alejandro Tabilo',
+    scores: [{ score_set: 1, score_first: 6, score_second: 4 }]
   });
-  localizer.enrich([match]);
-  assert.equal(match.officialScheduleMatch, true);
-  assert.equal(match.time, '23:00');
-  assert.equal(match.court, '卡斯卡伊斯球场');
+  match.tournament.canonicalKey = 'ATP:319:2026';
+  match.officialScheduleDate = '2026-07-23';
+  const factsBefore = {
+    id: match.id,
+    date: match.date,
+    time: match.time,
+    status: match.status,
+    type: match.type,
+    tournamentId: match.tournament.id,
+    canonicalKey: match.tournament.canonicalKey,
+    surface: match.tournament.surface,
+    court: match.court,
+    winner: match.winner,
+    serve: match.serve,
+    sets: structuredClone(match.sets),
+    officialScheduleDate: match.officialScheduleDate
+  };
+
+  instance.enrich([match]);
+
+  assert.deepEqual({
+    id: match.id,
+    date: match.date,
+    time: match.time,
+    status: match.status,
+    type: match.type,
+    tournamentId: match.tournament.id,
+    canonicalKey: match.tournament.canonicalKey,
+    surface: match.tournament.surface,
+    court: match.court,
+    winner: match.winner,
+    serve: match.serve,
+    sets: match.sets,
+    officialScheduleDate: match.officialScheduleDate
+  }, factsBefore);
+  assert.equal(match.first.nameEn, 'Tiago Torres');
+  assert.equal(match.first.name, '蒂亚戈·托雷斯');
+  assert.equal(match.tournament.name, 'Generali Open');
 });
 
-test('retains the official day while marking a matched Beijing next-day fixture', () => {
+test('a saved player-id translation is reusable without a network source', () => {
   const cache = {
-    data: { localization: { date: '2026-07-22', translations: {}, tournamentTranslations: {}, tours: [{
-      city: '埃斯托利尔', name: '埃斯托利尔公开赛', englishCity: 'Estoril', englishName: 'Estoril Open',
-      matches: [{
-        time: '00:00', beijingDate: '2026-07-23', dayOffset: 1, kind: 'MS',
-        first: '亚历杭德罗·塔比洛', second: 'Tiago Torres',
-        firstEn: 'Alejandro Tabilo', secondEn: 'Tiago Torres', court: '千禧银行球场'
-      }]
-    }] } },
+    data: { localization: { playerTranslations: { 101: '测试球员' } } },
     scheduleWrite() {}
   };
-  const localizer = new ChineseLocalizer({ cache, url: '', ttlMs: 1, catalogFile: '/file/does/not/exist' });
-  const match = normalizeMatch({
-    event_key: 2, event_date: '2026-07-23', event_time: '00:00', event_type_type: 'Atp Singles',
-    tournament_key: 2204, tournament_name: 'ATP Estoril',
-    event_first_player: 'A. Tabilo', event_second_player: 'T. Torres'
-  });
-  localizer.enrich([match]);
-  assert.equal(match.officialScheduleMatch, true);
-  assert.equal(match.scheduleDate, '2026-07-22');
-  assert.equal(match.dayOffset, 1);
+  const instance = localizer(cache);
+  assert.equal(instance.playerName('101', 'Test Player'), '测试球员');
+});
+
+test('localizing a details response cannot alter event metadata', () => {
+  const instance = localizer();
+  const original = {
+    event_key: 42,
+    event_date: '2026-07-23',
+    event_time: '17:00',
+    event_status: 'Finished',
+    event_first_player: 'Tiago Torres',
+    event_second_player: 'Alejandro Tabilo',
+    tournament_name: 'Millennium Estoril Open',
+    event_stadium: 'ESTADIO MILLENNIUM'
+  };
+  const localized = instance.localizeEvent(original);
+  assert.equal(localized.event_key, 42);
+  assert.equal(localized.event_date, original.event_date);
+  assert.equal(localized.event_time, original.event_time);
+  assert.equal(localized.event_status, original.event_status);
+  assert.equal(localized.event_stadium, original.event_stadium);
+  assert.equal(localized.event_first_player_en, 'Tiago Torres');
+  assert.equal(localized.event_first_player, '蒂亚戈·托雷斯');
+  assert.equal(localized.tournament_name, 'Millennium Estoril Open');
 });

@@ -28,6 +28,25 @@
   display: block;
 }
 
+.live-tour-title-line,
+.live-tour-facts {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.live-tour-fact {
+  background: rgb(255 255 255 / 18%);
+  border: 1px solid rgb(255 255 255 / 34%);
+  border-radius: 999px;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+  padding: 4px 7px;
+}
+
 .live-day-offset {
   color: #1769ff;
   font-size: 9px;

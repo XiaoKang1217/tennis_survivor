@@ -10,8 +10,15 @@ export class JsonCache {
       terminalMatches: null,
       details: {},
       budget: {},
+      pipelineVersion: 0,
       activeScheduleDate: '',
-      scheduleHistory: {}
+      scheduleHistory: {},
+      scheduleArchive: {},
+      scheduleBases: {},
+      scheduleFixtures: {},
+      officialReferences: {},
+      atpOopSnapshots: {},
+      localization: { playerTranslations: {} }
     };
     this.writeTimer = null;
   }

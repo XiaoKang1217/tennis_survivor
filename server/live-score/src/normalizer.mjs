@@ -2,7 +2,8 @@ const LIVE_STATUSES = new Set([
   'live', 'in progress', 'interrupted', 'suspended', 'paused', 'rain delay',
   'set 1', 'set 2', 'set 3', 'set 4', 'set 5'
 ]);
-const FINISHED_STATUSES = new Set(['finished', 'retired', 'walkover', 'cancelled', 'abandoned']);
+const FINISHED_STATUSES = new Set(['finished', 'retired', 'walkover']);
+const CANCELLED_STATUSES = new Set(['cancelled', 'canceled', 'abandoned']);
 
 function first(raw, keys, fallback = '') {
   for (const key of keys) if (raw?.[key] !== undefined && raw[key] !== null && raw[key] !== '') return raw[key];
@@ -71,6 +72,7 @@ export function normalizeMatch(raw) {
   const statusLower = statusText.toLowerCase();
   const live = LIVE_STATUSES.has(statusLower) || Boolean(raw.event_live === '1' || raw.event_live === 1);
   const finished = FINISHED_STATUSES.has(statusLower);
+  const cancelled = CANCELLED_STATUSES.has(statusLower);
   const serve = String(first(raw, ['event_serve', 'serve'], ''));
   const winner = String(first(raw, ['event_winner', 'winner'], ''));
   const type = first(raw, ['event_type_type', 'event_type'], '');
@@ -78,7 +80,7 @@ export function normalizeMatch(raw) {
     id: String(first(raw, ['event_key', 'match_key', 'id'], '')),
     date: first(raw, ['event_date', 'date'], ''),
     time: first(raw, ['event_time', 'time'], ''),
-    status: finished ? 'finished' : live ? 'live' : 'scheduled',
+    status: cancelled ? 'cancelled' : finished ? 'finished' : live ? 'live' : 'scheduled',
     statusText,
     type,
     round: first(raw, ['tournament_round', 'event_round', 'round'], '未标注'),
@@ -120,35 +122,91 @@ export function tournamentLevelRank(tournament = {}) {
   return 200;
 }
 
-export function mergeMatches(fixtures = [], live = []) {
-  const byId = new Map(fixtures.map(raw => {
-    const item = normalizeMatch(raw);
-    return [item.id, item];
-  }));
-  live.forEach(raw => {
-    const item = normalizeMatch(raw);
-    const prior = byId.get(item.id);
-    if (!prior) return byId.set(item.id, item);
-    // A freshly refreshed fixture is authoritative once it confirms the match
-    // is over. Some providers keep an outdated copy in get_livescore for a
-    // while after the final point; do not let that stale row resurrect it.
-    if (prior.status === 'finished' && item.status === 'live') return;
-    const tournament = {
-      ...prior.tournament,
-      ...item.tournament,
-      name: item.tournament.name === '未命名赛事' ? prior.tournament.name : item.tournament.name,
-      surface: item.tournament.surface === '未标注' ? prior.tournament.surface : item.tournament.surface
-    };
-    byId.set(item.id, {
-      ...prior,
-      ...item,
-      date: item.date || prior.date,
-      time: item.time && item.time !== '00:00' ? item.time : prior.time,
-      court: item.court === '未标注' ? prior.court : item.court,
-      tournament
-    });
+function identity(value = '') {
+  return String(value)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+function playerIdentity(player = {}) {
+  return identity(player.nameEn || player.name || player.id);
+}
+
+function matchFingerprint(match = {}) {
+  const teams = [playerIdentity(match.first), playerIdentity(match.second)].sort();
+  return [identity(match.type), ...teams].join('|');
+}
+
+function normalizedUpdate(value = {}) {
+  return value.first && value.second && value.tournament ? value : normalizeMatch(value);
+}
+
+/**
+ * Overlay volatile scoring fields on an immutable schedule.
+ *
+ * The schedule is the allow-list. A livescore row may update status, score,
+ * server and point state for an existing pairing, but it can never create a
+ * match or replace tournament/date/time/court/surface/player identity.
+ */
+export function overlayLiveScores(schedule = [], updates = []) {
+  const output = schedule.map(match => structuredClone(match));
+  const byId = new Map();
+  const byFingerprint = new Map();
+
+  output.forEach(match => {
+    [match.id, match.providerId].filter(Boolean)
+      .forEach(id => byId.set(String(id), match));
+    const fingerprint = matchFingerprint(match);
+    if (fingerprint) {
+      if (!byFingerprint.has(fingerprint)) byFingerprint.set(fingerprint, []);
+      byFingerprint.get(fingerprint).push(match);
+    }
   });
-  return [...byId.values()].sort((a, b) => `${a.time}${a.id}`.localeCompare(`${b.time}${b.id}`));
+
+  for (const raw of updates) {
+    const update = normalizedUpdate(raw);
+    let target = byId.get(String(update.id || ''));
+    if (!target) {
+      const candidates = byFingerprint.get(matchFingerprint(update)) || [];
+      if (candidates.length === 1) target = candidates[0];
+    }
+    if (!target) continue;
+
+    const targetTerminal = target.status === 'finished' || target.status === 'cancelled';
+    const updateTerminal = update.status === 'finished' || update.status === 'cancelled';
+    if (targetTerminal && !updateTerminal) continue;
+
+    if (!target.providerId && update.id && update.id !== target.id) {
+      target.providerId = update.id;
+      byId.set(String(update.id), target);
+    }
+
+    target.status = update.status;
+    target.statusText = update.statusText;
+    target.rawUpdatedAt = update.rawUpdatedAt;
+    if (update.sets?.length) target.sets = structuredClone(update.sets);
+    if (update.winner) target.winner = update.winner;
+
+    if (updateTerminal) {
+      target.current = { first: '', second: '' };
+      target.serve = '';
+      target.lastPoint = '';
+    } else if (update.status === 'live') {
+      target.current = { ...update.current };
+      target.serve = update.serve;
+      target.lastPoint = update.lastPoint;
+    }
+  }
+  return output;
+}
+
+export function mergeMatches(fixtures = [], live = []) {
+  const schedule = fixtures.map(normalizedUpdate);
+  return overlayLiveScores(schedule, live)
+    .sort((a, b) => `${a.time}${a.id}`.localeCompare(`${b.time}${b.id}`));
 }
 
 function decimalOdd(value) {
@@ -216,7 +274,9 @@ export function applyPrematchOdds(matches = [], oddsByEvent = {}) {
 export function groupSchedule(matches) {
   const tournaments = new Map();
   for (const match of matches) {
-    const tournamentKey = `${match.tournament.tour || ''}:${match.tournament.name || match.tournament.id}`;
+    if (match.status === 'cancelled') continue;
+    const tournamentKey = match.tournament.canonicalKey
+      || `${match.tournament.tour || ''}:${match.tournament.id || match.tournament.nameEn || match.tournament.name}`;
     if (!tournaments.has(tournamentKey)) tournaments.set(tournamentKey, { ...match.tournament, venues: new Map(), matchCount: 0 });
     const tournament = tournaments.get(tournamentKey);
     const court = match.court || '未标注';
@@ -233,6 +293,7 @@ export function groupSchedule(matches) {
           name,
           order: Math.min(...venueMatches.map(match => match.courtOrder ?? Number.MAX_SAFE_INTEGER)),
           matches: venueMatches.sort((a, b) => (a.scheduleOrder ?? Number.MAX_SAFE_INTEGER) - (b.scheduleOrder ?? Number.MAX_SAFE_INTEGER)
+            || (Number(a.dayOffset) || 0) - (Number(b.dayOffset) || 0)
             || `${a.time}${a.id}`.localeCompare(`${b.time}${b.id}`))
         }))
         .sort((a, b) => a.order - b.order || String(a.name).localeCompare(String(b.name), 'zh-CN'))

@@ -5,13 +5,22 @@ import { JsonCache } from './cache.mjs';
 import { ApiTennisClient } from './api-tennis-client.mjs';
 import { LivePoller } from './poller.mjs';
 import { ChineseLocalizer } from './localizer.mjs';
+import { OfficialScheduleValidator } from './official-validator.mjs';
 
 const config = loadConfig();
 const cache = new JsonCache(config.cacheFile);
 await cache.load();
 const client = new ApiTennisClient({ ...config, cache });
-const localizer = new ChineseLocalizer({ cache, url: config.localizationUrl, ttlMs: config.localizationTtlMs, catalogFile: config.translationCatalogFile });
-const poller = new LivePoller({ client, cache, config, localizer });
+const localizer = new ChineseLocalizer({
+  cache,
+  catalogFile: config.translationCatalogFile
+});
+const officialValidator = new OfficialScheduleValidator({
+  cache,
+  baseUrl: config.officialWtaBase,
+  ttlMs: config.officialTtlMs
+});
+const poller = new LivePoller({ client, cache, config, localizer, officialValidator });
 const streams = new Set();
 
 function cors(req, res) {
@@ -131,7 +140,7 @@ const server = http.createServer(async (req, res) => {
     if (url.pathname === '/api/v1/live/day') {
       const date = url.searchParams.get('date') || '';
       if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return json(req, res, 400, { error: 'invalid_date' });
-      const snapshot = date === poller.snapshot.date ? poller.snapshot : cache.data.scheduleHistory?.[date];
+      const snapshot = await poller.snapshotForDate(date);
       if (!snapshot) return json(req, res, 404, { error: 'schedule_not_saved', message: '该日期赛程尚未保存' });
       return json(req, res, 200, { ...snapshot, availableDates: poller.historyDates(poller.snapshot.date), activeDate: poller.snapshot.date }, 60);
     }

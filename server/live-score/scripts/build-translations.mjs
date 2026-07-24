@@ -4,27 +4,129 @@ import path from 'node:path';
 const serviceRoot = path.resolve(import.meta.dirname, '..');
 const repoRoot = path.resolve(serviceRoot, '../..');
 const eventsDir = path.join(repoRoot, 'data/manager/events');
-const calendarFile = path.join(repoRoot, 'data/official_calendar.json');
 const playerMap = new Map();
-const tournamentMap = new Map();
 
 const rankedPlayerFallbacks = {
   'Carlos Alcaraz': '阿尔卡拉斯',
   'Victoria Mboko': '姆博科',
-  'Lorenzo Musetti': '穆塞蒂'
+  'Lorenzo Musetti': '穆塞蒂',
+  'Adrienn Nagy': '纳吉',
+  'Adam Pavlasek': '亚当·帕夫拉塞克',
+  'Alana Smith': '阿拉娜·史密斯',
+  'Alina Charaeva': '查拉耶娃',
+  'Alevtina Ibragimova': '伊布拉吉莫娃',
+  'Alexandra Panova': '帕诺娃',
+  'Alice Rame': '拉梅',
+  'Amarissa Toth': '托特',
+  'Anastasia Detiuc': '德蒂乌克',
+  'Anastasia Abbagnato': '阿巴尼亚托',
+  'Anastasia Tikhonova': '季霍诺娃',
+  'Angelica Moratelli': '莫拉泰利',
+  'Andre Goransson': '戈兰松',
+  'Andres Molteni': '莫尔泰尼',
+  'Arthur Reymond': '雷蒙德',
+  'Bart Stevens': '斯蒂文斯',
+  'Benjamin Kittay': '基泰',
+  'Caijsa Hennemann': '亨内曼',
+  'Clara Burel': '布雷尔',
+  'Constantin Frantzen': '弗兰岑',
+  'Dalila Jakupovic': '雅库波维奇',
+  'Dalila Spiteri': '斯皮泰里',
+  'Darja Semenistaja': '塞梅尼斯塔娅',
+  'David Pel': '佩尔',
+  'Denisa Zoldakova': '佐尔达科娃',
+  'Diego Hidalgo': '伊达尔戈',
+  'Ekaterine Gorgodze': '戈尔戈泽',
+  'Elena Pridankina': '普里丹金娜',
+  'Elina Avanesyan': '阿瓦涅相',
+  'Erika Andreeva': '埃里卡·安德烈娃',
+  'Estelle Cascino': '卡斯西诺',
+  'Federica Urgesi': '乌尔杰西',
+  'Fiona Ferro': '费罗',
+  'Francisco Cabral': '卡布拉尔',
+  'Gabriella Da Silva Fick': '达席尔瓦-菲克',
+  'Hao-Ching Chan': '詹皓晴',
+  'Ingrid Martins': '马丁斯',
+  'Irina Khromacheva': '赫罗马切娃',
+  'Isabella Shinikova': '希尼科娃',
+  'Isabelle Haverlag': '哈弗拉格',
+  'Jakob Schnaitter': '施奈特',
+  'Jean-Julien Rojer': '罗耶',
+  'Jennifer Ruggeri': '鲁杰里',
+  'Joao Domingues': '多明戈斯',
+  'Joel Schwaerzler': '施瓦茨勒',
+  'Jurij Rodionov': '罗迪奥诺夫',
+  'Katarzyna Kawa': '卡瓦',
+  'Kevin Krawietz': '克拉维茨',
+  'Kilian Feldbausch': '费尔德鲍施',
+  'Lara Salden': '萨尔登',
+  'Laura Bohner': '博纳',
+  'Leyre Romero Gormaz': '罗梅罗-戈尔马斯',
+  'Lisa Zaar': '扎尔',
+  'Lola Radivojevic': '拉迪沃耶维奇',
+  'Lucas Miedler': '米德勒',
+  'Luca Sanchez': '桑切斯',
+  'Lucia Bronzetti': '布朗泽蒂',
+  'Lucija Ciric Bagaric': '齐里奇-巴加里奇',
+  'Lukas Neumayer': '诺伊迈尔',
+  'Madeleine Brooks': '布鲁克斯',
+  'Magali Kempen': '肯彭',
+  'Mai Hontama': '本玉真唯',
+  'Maia Lumsden': '拉姆斯登',
+  'Makoto Ninomiya': '二宫真琴',
+  'Mana Ayukawa': '鲇川真奈',
+  'Marc Polmans': '波尔曼斯',
+  'Marcelo Demoliner': '德莫利纳',
+  'Maria Lourdes Carle': '卡莱',
+  'Mariana Drazic': '德拉齐奇',
+  'Mariia Kozyreva': '科济列娃',
+  'Mark Wallner': '瓦尔纳',
+  'Martyna Kubka': '库布卡',
+  'Mayar Sherif': '谢里芙',
+  'Miguel Angel Reyes-Varela': '雷耶斯-巴雷拉',
+  'Mina Hodzic': '霍季奇',
+  'Miriam Bulgaru': '布尔加鲁',
+  'Miriana Tona': '托纳',
+  'Miyu Kato': '加藤未唯',
+  'N.Sriram Balaji': '巴拉吉',
+  'Nadiia Kichenok': '基切诺克',
+  'Nastasja Schunk': '舒克',
+  'Nika Radisic': '拉迪西奇',
+  'Nicole Fossa Huergo': '福萨-韦尔戈',
+  'Noemi Basiletti': '巴西莱蒂',
+  'Noma Noha Akugue': '诺哈-阿库格',
+  'Oana Gavrila': '加夫里拉',
+  'Patrik Rikl': '里克尔',
+  'Patrik Trhac': '特尔哈克',
+  'Pierre-Hugues Herbert': '赫伯特',
+  'Qiu Yu Ye': '叶秋语',
+  'Rafael Matos': '马托斯',
+  'Raluka Serban': '塞尔班',
+  'Rasheeda McAdoo': '麦卡杜',
+  'Ray Ho': '何承叡',
+  'Robert Galloway': '加洛韦',
+  'Robin Haase': '哈泽',
+  'Sander Arends': '阿伦茨',
+  'Santiago Gonzalez': '冈萨雷斯',
+  'Sara Sorribes Tormo': '索里维斯-托莫',
+  'Sofya Lansere': '兰塞尔',
+  'Tamara Zidansek': '齐丹塞克',
+  'Tenika McGiffin': '麦吉芬',
+  'Tereza Krejcova': '克雷奇科娃',
+  'Tessa Johanna Brockmann': '布罗克曼',
+  'Theodore Winegar': '瓦恩加',
+  'Timofey Skatov': '斯卡托夫',
+  'Valentin Vacherot': '瓦舍罗',
+  'Vasil Kirkov': '基尔科夫',
+  'Weronika Falkowska': '法尔科夫斯卡',
+  'Julia Stusek': '斯图塞克',
+  'Kimberley Zimmermann': '齐默尔曼',
+  'Yasmine Kabbaj': '卡巴吉',
+  'Yvonne Cavalle-Reimers': '卡瓦列-赖默斯',
+  'Zhibek Kulambayeva': '库兰巴耶娃'
 };
-const tournamentFallbacks = {
-  'French Open': '法网',
-  Wimbledon: '温网',
-  'Finals - Turin': '都灵年终总决赛',
-  'Six Kings Slam': '六王大满贯',
-  'Others matches': '其他比赛'
-};
-
 for (const file of fs.readdirSync(eventsDir).filter(name => name.endsWith('.json'))) {
   const event = JSON.parse(fs.readFileSync(path.join(eventsDir, file), 'utf8'));
-  if (event.name && event.name_zh) tournamentMap.set(event.name, event.name_zh);
-  if (event.display_name && event.name_zh) tournamentMap.set(event.display_name, event.name_zh);
   for (const player of event.players || []) {
     if (player.name_en && player.name_zh) playerMap.set(player.name_en, player.name_zh);
   }
@@ -34,25 +136,10 @@ for (const [english, chinese] of Object.entries(rankedPlayerFallbacks)) {
   if (!playerMap.has(english)) playerMap.set(english, chinese);
 }
 
-try {
-  const calendar = JSON.parse(fs.readFileSync(calendarFile, 'utf8'));
-  for (const event of calendar.events || []) {
-    if (!/[\u3400-\u9fff]/.test(event.event_key || '')) continue;
-    for (const alias of [...(event.aliases || []), event.city, event.name]) {
-      if (alias && !/[\u3400-\u9fff]/.test(alias)) tournamentMap.set(alias, event.event_key);
-    }
-  }
-} catch (_) {}
-
-for (const [english, chinese] of Object.entries(tournamentFallbacks)) {
-  if (!tournamentMap.has(english)) tournamentMap.set(english, chinese);
-}
-
 const output = {
   generatedAt: new Date().toISOString(),
-  players: Object.fromEntries([...playerMap].sort(([a], [b]) => a.localeCompare(b))),
-  tournaments: Object.fromEntries([...tournamentMap].sort(([a], [b]) => a.localeCompare(b)))
+  players: Object.fromEntries([...playerMap].sort(([a], [b]) => a.localeCompare(b)))
 };
 fs.mkdirSync(path.join(serviceRoot, 'data'), { recursive: true });
 fs.writeFileSync(path.join(serviceRoot, 'data/translations.json'), `${JSON.stringify(output, null, 2)}\n`);
-console.log(`wrote ${playerMap.size} player and ${tournamentMap.size} tournament translations`);
+console.log(`wrote ${playerMap.size} player translations`);
