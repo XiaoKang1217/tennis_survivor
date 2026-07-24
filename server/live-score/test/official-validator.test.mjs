@@ -420,6 +420,72 @@ test('the verified ATP 2026-07-23 sheets contain every official tour match and c
   assert.equal(kitzbuhel.matches[4].status, 'finished');
 });
 
+test('the verified ATP 2026-07-24 OOP sheets supply clay surface and every main-tour court', async () => {
+  const cache = { data: { officialReferences: {} }, scheduleWrite() {} };
+  const validator = new OfficialScheduleValidator({
+    cache,
+    fetchImpl: async () => ({ ok: true, json: async () => ({ content: [] }) })
+  });
+  const value = await validator.refresh('2026-07-24', 1, true);
+  const atp = value.tours.filter(tour => tour.tour === 'ATP');
+  assert.deepEqual(atp.map(tour => [tour.city, tour.matches.length, tour.surface]), [
+    ['Estoril', 6, '红土'],
+    ['Kitzbühel', 4, '红土']
+  ]);
+
+  const estoril = atp.find(tour => tour.city === 'Estoril');
+  assert.deepEqual([...new Set(estoril.matches.map(match => match.court))], [
+    'ESTADIO MILLENNIUM',
+    'COURT CASCAIS'
+  ]);
+  assert.deepEqual(
+    estoril.matches.map(match => [match.first.name, match.second.name, match.court, match.time]),
+    [
+      ['Tiago Torres', 'Hugo Gaston', 'ESTADIO MILLENNIUM', '18:00'],
+      ['Andrey Rublev', 'Luca Van Assche', 'ESTADIO MILLENNIUM', ''],
+      ['Roman Andres Burruchaga', 'Alexander Blockx', 'ESTADIO MILLENNIUM', '23:00'],
+      ['Jaime Faria', 'Luciano Darderi', 'ESTADIO MILLENNIUM', ''],
+      ['Vasil Kirkov/Bart Stevens', 'Nuno Borges/Francisco Cabral', 'COURT CASCAIS', '20:00'],
+      ['Sander Arends/David Pel', 'Orlando Luz/Rafael Matos', 'COURT CASCAIS', '']
+    ]
+  );
+
+  const kitzbuhel = atp.find(tour => tour.city === 'Kitzbühel');
+  assert.equal(kitzbuhel.matches.every(match => match.court === 'Center Court'), true);
+  assert.equal(kitzbuhel.matches.some(match => /Choi|Lorincik|Calin|Drijver/.test(
+    `${match.first.name} ${match.second.name}`
+  )), false);
+  assert.deepEqual(kitzbuhel.matches.map(match => match.time), ['16:30', '18:30', '20:00', '']);
+  assert.match(kitzbuhel.officialUrl, /protennislive\.com\/posting\/2026\/319\/op\.pdf/);
+});
+
+test('the ATP 2026-07-24 OOP replaces an unmarked API court without changing live state', async () => {
+  const cache = { data: { officialReferences: {} }, scheduleWrite() {} };
+  const validator = new OfficialScheduleValidator({
+    cache,
+    fetchImpl: async () => ({ ok: true, json: async () => ({ content: [] }) })
+  });
+  await validator.refresh('2026-07-24', 1, true);
+  const live = normalizeMatch({
+    event_key: 24,
+    event_date: '2026-07-24',
+    event_time: '18:30',
+    event_status: 'Set 1',
+    event_live: '1',
+    event_type_type: 'Atp Singles',
+    tournament_name: 'ATP Kitzbuhel',
+    event_first_player: 'Yannick Hanfmann',
+    event_second_player: 'Quentin Halys'
+  });
+  const reconciled = validator.reconcile([live], '2026-07-24');
+  const match = reconciled.find(item => item.id === '24');
+  assert.equal(match.status, 'live');
+  assert.equal(match.court, 'Center Court');
+  assert.equal(match.time, '18:30');
+  assert.equal(match.tournament.surface, '红土');
+  assert.equal(match.officialScheduleMatch, true);
+});
+
 test('the verified ATP 2026-07-22 sheet removes the dirty ninth Estoril row per pairing', async () => {
   const cache = { data: { officialReferences: {} }, scheduleWrite() {} };
   const validator = new OfficialScheduleValidator({

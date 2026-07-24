@@ -65,8 +65,8 @@ function officialMatch({
 }
 
 // ATP pages do not expose a supported public JSON endpoint. These complete
-// official day sheets repair the already-saved 2026-07-22 snapshot. API Tennis
-// remains the primary source for every other ATP day.
+// official day sheets are transcribed from the ATP-linked ProTennisLive Order
+// of Play PDFs. API Tennis remains the primary source for every other ATP day.
 const ATP_VERIFIED_DAYS = {
   '2026-07-22': [
     {
@@ -161,6 +161,48 @@ const ATP_VERIFIED_DAYS = {
         officialMatch({ id: 'kitzbuhel-20260723-4', first: 'Alexander Bublik', second: 'Alex Molcan', court: 'Center Court', scheduleDate: '2026-07-23', date: '2026-07-23', time: '', round: 'QF', status: 'scheduled', scheduleOrder: 4 }),
         officialMatch({ id: 'kitzbuhel-20260723-5', kind: 'MD', first: 'Pierre-Hugues Herbert/Kevin Krawietz', second: 'Lukas Neumayer/Joel Schwaerzler', court: 'Grandstand', courtOrder: 1, scheduleDate: '2026-07-23', date: '2026-07-23', time: '17:30', round: 'QF', status: 'finished', winner: 'first', sets: [[6, 3], [6, 4]], scheduleOrder: 101 }),
         officialMatch({ id: 'kitzbuhel-20260723-6', kind: 'MD', first: 'Jean-Julien Rojer/Theodore Winegar', second: 'Lucas Miedler/Marc Polmans', court: 'Grandstand', courtOrder: 1, scheduleDate: '2026-07-23', date: '2026-07-23', time: '23:00', round: 'QF', status: 'scheduled', scheduleOrder: 102 })
+      ]
+    }
+  ],
+  '2026-07-24': [
+    {
+      tour: 'ATP',
+      id: '7290',
+      year: 2026,
+      name: 'Millennium Estoril Open',
+      city: 'Estoril',
+      aliases: ['estoril'],
+      surface: '红土',
+      level: 'ATP 250',
+      officialUrl: 'https://www.protennislive.com/posting/2026/7290/op.pdf',
+      source: 'ATP official OOP PDF',
+      complete: true,
+      matches: [
+        officialMatch({ id: 'estoril-20260724-1', first: 'Tiago Torres', second: 'Hugo Gaston', court: 'ESTADIO MILLENNIUM', scheduleDate: '2026-07-24', date: '2026-07-24', time: '18:00', round: 'QF', status: 'scheduled', scheduleOrder: 1 }),
+        officialMatch({ id: 'estoril-20260724-2', first: 'Andrey Rublev', second: 'Luca Van Assche', court: 'ESTADIO MILLENNIUM', scheduleDate: '2026-07-24', date: '2026-07-24', time: '', round: 'QF', status: 'scheduled', scheduleOrder: 2 }),
+        officialMatch({ id: 'estoril-20260724-3', first: 'Roman Andres Burruchaga', second: 'Alexander Blockx', court: 'ESTADIO MILLENNIUM', scheduleDate: '2026-07-24', date: '2026-07-24', time: '23:00', round: 'QF', status: 'scheduled', scheduleOrder: 3 }),
+        officialMatch({ id: 'estoril-20260724-4', first: 'Jaime Faria', second: 'Luciano Darderi', court: 'ESTADIO MILLENNIUM', scheduleDate: '2026-07-24', date: '2026-07-24', time: '', round: 'QF', status: 'scheduled', scheduleOrder: 4 }),
+        officialMatch({ id: 'estoril-20260724-5', kind: 'MD', first: 'Vasil Kirkov/Bart Stevens', second: 'Nuno Borges/Francisco Cabral', court: 'COURT CASCAIS', courtOrder: 1, scheduleDate: '2026-07-24', date: '2026-07-24', time: '20:00', round: 'QF', status: 'scheduled', scheduleOrder: 101 }),
+        officialMatch({ id: 'estoril-20260724-6', kind: 'MD', first: 'Sander Arends/David Pel', second: 'Orlando Luz/Rafael Matos', court: 'COURT CASCAIS', courtOrder: 1, scheduleDate: '2026-07-24', date: '2026-07-24', time: '', round: 'SF', status: 'scheduled', scheduleOrder: 102 })
+      ]
+    },
+    {
+      tour: 'ATP',
+      id: '319',
+      year: 2026,
+      name: 'Generali Open',
+      city: 'Kitzbühel',
+      aliases: ['kitzbuhel', 'kitzbühel'],
+      surface: '红土',
+      level: 'ATP 250',
+      officialUrl: 'https://www.protennislive.com/posting/2026/319/op.pdf',
+      source: 'ATP official OOP PDF',
+      complete: true,
+      matches: [
+        officialMatch({ id: 'kitzbuhel-20260724-1', kind: 'MD', first: 'Pierre-Hugues Herbert/Kevin Krawietz', second: 'Jakob Schnaitter/Mark Wallner', court: 'Center Court', scheduleDate: '2026-07-24', date: '2026-07-24', time: '16:30', round: 'SF', status: 'scheduled', scheduleOrder: 1 }),
+        officialMatch({ id: 'kitzbuhel-20260724-2', first: 'Yannick Hanfmann', second: 'Quentin Halys', court: 'Center Court', scheduleDate: '2026-07-24', date: '2026-07-24', time: '18:30', round: 'SF', status: 'scheduled', scheduleOrder: 2 }),
+        officialMatch({ id: 'kitzbuhel-20260724-3', first: 'Alexander Bublik', second: 'Tomas Martin Etcheverry', court: 'Center Court', scheduleDate: '2026-07-24', date: '2026-07-24', time: '20:00', round: 'SF', status: 'scheduled', scheduleOrder: 3 }),
+        officialMatch({ id: 'kitzbuhel-20260724-4', kind: 'MD', first: 'N.Sriram Balaji/Andre Goransson', second: 'Lucas Miedler/Marc Polmans', court: 'Center Court', scheduleDate: '2026-07-24', date: '2026-07-24', time: '', round: 'SF', status: 'scheduled', scheduleOrder: 4 })
       ]
     }
   ]
