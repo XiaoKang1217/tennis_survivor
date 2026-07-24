@@ -1,212 +1,8 @@
+import fs from 'node:fs/promises';
+import { parseAtpOopPdf } from './atp-oop-pdf.mjs';
+
 const PLAYER_A_WINNERS = new Set(['2', '4', '6']);
 const PLAYER_B_WINNERS = new Set(['3', '5', '7']);
-
-const ATP_TOURNAMENTS = [
-  {
-    aliases: ['kitzbuhel', 'kitzbühel'],
-    name: 'Generali Open',
-    city: 'Kitzbühel',
-    surface: '红土',
-    level: 'ATP 250',
-    officialUrl: 'https://www.atptour.com/en/scores/current/kitzbuhel/319/results'
-  },
-  {
-    aliases: ['estoril'],
-    name: 'Millennium Estoril Open',
-    city: 'Estoril',
-    surface: '红土',
-    level: 'ATP 250',
-    officialUrl: 'https://www.atptour.com/en/scores/current/estoril/7290/results'
-  }
-];
-
-function officialTeam(name) {
-  return { name, ids: [], countries: [] };
-}
-
-function officialMatch({
-  id,
-  kind = 'MS',
-  first,
-  second,
-  court,
-  courtOrder = 0,
-  scheduleOrder,
-  scheduleDate = '2026-07-22',
-  date = '',
-  time = '',
-  round = '',
-  status = 'finished',
-  statusText = status === 'finished' ? 'Finished' : '',
-  winner = '',
-  sets = []
-}) {
-  return {
-    id,
-    kind,
-    first: officialTeam(first),
-    second: officialTeam(second),
-    court,
-    courtOrder,
-    scheduleOrder: scheduleOrder ?? Number(String(id).match(/(\d+)$/)?.[1] || 0),
-    scheduleDate,
-    date,
-    time,
-    round,
-    status,
-    statusText,
-    winner,
-    sets: sets.map(([a, b], index) => ({
-      set: String(index + 1),
-      first: String(a),
-      second: String(b)
-    }))
-  };
-}
-
-// ATP pages do not expose a supported public JSON endpoint. These complete
-// official day sheets are transcribed from the ATP-linked ProTennisLive Order
-// of Play PDFs. API Tennis remains the primary source for every other ATP day.
-const ATP_VERIFIED_DAYS = {
-  '2026-07-22': [
-    {
-      tour: 'ATP',
-      id: '7290',
-      year: 2026,
-      name: 'Millennium Estoril Open',
-      city: 'Estoril',
-      aliases: ['estoril'],
-      surface: '红土',
-      level: 'ATP 250',
-      officialUrl: 'https://www.atptour.com/en/scores/current/estoril/7290/daily-schedule?day=5',
-      source: 'ATP official daily schedule',
-      complete: true,
-      matches: [
-        officialMatch({ id: 'estoril-1', first: 'Hugo Gaston', second: 'Titouan Droguet', court: 'ESTADIO MILLENNIUM', winner: 'first', sets: [[6, 0], [6, 3]] }),
-        officialMatch({ id: 'estoril-2', first: 'Roman Andres Burruchaga', second: 'Nuno Borges', court: 'ESTADIO MILLENNIUM', winner: 'first', sets: [[6, 1], [4, 6], [6, 3]] }),
-        officialMatch({ id: 'estoril-3', first: 'Tiago Torres', second: 'Alejandro Tabilo', court: 'ESTADIO MILLENNIUM', winner: 'second', sets: [[4, 6], [4, 6]] }),
-        officialMatch({ id: 'estoril-4', first: 'Alexander Blockx', second: 'Kyrian Jacquet', court: 'ESTADIO MILLENNIUM', winner: 'first', sets: [[3, 6], [6, 4], [7, 6]] }),
-        officialMatch({ id: 'estoril-5', kind: 'MD', first: 'Orlando Luz/Rafael Matos', second: 'Ray Ho/Benjamin Kittay', court: 'COURT CASCAIS', winner: 'first', sets: [[7, 6], [6, 2]] }),
-        officialMatch({ id: 'estoril-6', kind: 'MD', first: 'Nuno Borges/Francisco Cabral', second: 'Arthur Reymond/Luca Sanchez', court: 'COURT CASCAIS', winner: 'first', sets: [[7, 6], [7, 6]] }),
-        officialMatch({ id: 'estoril-7', kind: 'MD', first: 'Joao Domingues/Tiago Torres', second: 'Jaime Faria/Henrique Rocha', court: 'COURT CASCAIS', winner: 'first', sets: [[1, 6], [6, 3], [10, 8]] }),
-        officialMatch({ id: 'estoril-8', kind: 'MD', first: 'Vasil Kirkov/Bart Stevens', second: 'Marcelo Demoliner/Robert Galloway', court: 'COURT CTE', winner: 'first', sets: [[6, 2], [3, 6], [10, 7]] })
-      ]
-    },
-    {
-      tour: 'ATP',
-      id: '319',
-      year: 2026,
-      name: 'Generali Open',
-      city: 'Kitzbühel',
-      aliases: ['kitzbuhel', 'kitzbühel'],
-      surface: '红土',
-      level: 'ATP 250',
-      officialUrl: 'https://www.atptour.com/en/scores/current/kitzbuhel/319/daily-schedule?day=5',
-      source: 'ATP official daily schedule',
-      complete: true,
-      matches: [
-        officialMatch({ id: 'kitzbuhel-1', first: 'Quentin Halys', second: 'Valentin Vacherot', court: 'Center Court', winner: 'first', sets: [[6, 3], [6, 4]] }),
-        officialMatch({ id: 'kitzbuhel-2', first: 'Mariano Navone', second: 'Jan-Lennard Struff', court: 'Center Court', winner: 'first', sets: [[6, 0], [6, 3]] }),
-        officialMatch({ id: 'kitzbuhel-3', first: 'Tomas Martin Etcheverry', second: 'Jurij Rodionov', court: 'Center Court', winner: 'first', sets: [[6, 2], [7, 6]] }),
-        officialMatch({ id: 'kitzbuhel-4', first: 'Alexander Bublik', second: 'Facundo Diaz Acosta', court: 'Center Court', winner: 'first', sets: [[6, 3], [7, 5]] }),
-        officialMatch({ id: 'kitzbuhel-5', kind: 'MD', first: 'Lucas Miedler/Marc Polmans', second: 'Adam Pavlasek/Patrik Rikl', court: 'Center Court', winner: 'first', sets: [[6, 3], [7, 6]] }),
-        officialMatch({ id: 'kitzbuhel-6', first: 'Sebastian Baez', second: 'Arthur Rinderknech', court: 'Grandstand', winner: 'first', sets: [[7, 6], [2, 6], [6, 4]] }),
-        officialMatch({ id: 'kitzbuhel-7', first: 'Ignacio Buse', second: 'Kilian Feldbausch', court: 'Grandstand', winner: 'first', sets: [[2, 6], [6, 2], [6, 2]] }),
-        officialMatch({ id: 'kitzbuhel-8', first: 'Alex Molcan', second: 'Daniel Altmaier', court: 'Grandstand', winner: 'first', sets: [[6, 3], [3, 6], [7, 5]] }),
-        officialMatch({ id: 'kitzbuhel-9', kind: 'MD', first: 'Jakob Schnaitter/Mark Wallner', second: 'Andres Molteni/Patrik Trhac', court: 'Küchenmeister', winner: 'first', sets: [[6, 3], [6, 2]] }),
-        officialMatch({ id: 'kitzbuhel-10', first: 'Yannick Hanfmann', second: 'Marco Trungelliti', court: 'Küchenmeister', winner: 'first', sets: [[6, 4], [7, 6]] }),
-        officialMatch({ id: 'kitzbuhel-11', kind: 'MD', first: 'N.Sriram Balaji/Andre Goransson', second: 'Constantin Frantzen/Robin Haase', court: 'Küchenmeister', winner: 'first', sets: [[6, 4], [7, 6]] })
-      ]
-    }
-  ],
-  '2026-07-23': [
-    {
-      tour: 'ATP',
-      id: '7290',
-      year: 2026,
-      name: 'Millennium Estoril Open',
-      city: 'Estoril',
-      aliases: ['estoril'],
-      surface: '红土',
-      level: 'ATP 250',
-      officialUrl: 'https://www.atptour.com/en/scores/current/estoril/7290/daily-schedule?day=2',
-      source: 'ATP official daily schedule',
-      complete: true,
-      matches: [
-        officialMatch({ id: 'estoril-20260723-1', first: 'Luca Van Assche', second: 'Pablo Carreno Busta', court: 'ESTADIO MILLENNIUM', scheduleDate: '2026-07-23', date: '2026-07-23', time: '19:00', round: 'R16', status: 'scheduled', scheduleOrder: 1 }),
-        officialMatch({ id: 'estoril-20260723-2', first: 'Jaime Faria', second: 'Gonzalo Bueno', court: 'ESTADIO MILLENNIUM', scheduleDate: '2026-07-23', date: '2026-07-23', time: '21:00', round: 'R16', status: 'scheduled', scheduleOrder: 2 }),
-        officialMatch({ id: 'estoril-20260723-3', first: 'Andrey Rublev', second: 'Timofey Skatov', court: 'ESTADIO MILLENNIUM', scheduleDate: '2026-07-23', date: '2026-07-24', time: '00:00', round: 'R16', status: 'scheduled', scheduleOrder: 3 }),
-        officialMatch({ id: 'estoril-20260723-4', first: 'Pedro Martinez', second: 'Luciano Darderi', court: 'ESTADIO MILLENNIUM', scheduleDate: '2026-07-23', date: '2026-07-24', time: '', round: 'R16', status: 'scheduled', scheduleOrder: 4 }),
-        officialMatch({ id: 'estoril-20260723-5', kind: 'MD', first: 'Diego Hidalgo/Alejandro Tabilo', second: 'Sander Arends/David Pel', court: 'COURT CASCAIS', courtOrder: 1, scheduleDate: '2026-07-23', date: '2026-07-23', time: '20:00', round: 'QF', status: 'scheduled', scheduleOrder: 101 }),
-        officialMatch({ id: 'estoril-20260723-6', kind: 'MD', first: 'Joao Domingues/Tiago Torres', second: 'Orlando Luz/Rafael Matos', court: 'COURT CASCAIS', courtOrder: 1, scheduleDate: '2026-07-23', date: '2026-07-23', time: '', round: 'QF', status: 'scheduled', scheduleOrder: 102 }),
-        officialMatch({ id: 'estoril-20260723-7', kind: 'MD', first: 'Titouan Droguet/Kyrian Jacquet', second: 'Santiago Gonzalez/Miguel Angel Reyes-Varela', court: 'COURT CTE', courtOrder: 2, scheduleDate: '2026-07-23', date: '2026-07-23', time: '20:00', round: 'QF', status: 'scheduled', scheduleOrder: 201 })
-      ]
-    },
-    {
-      tour: 'ATP',
-      id: '319',
-      year: 2026,
-      name: 'Generali Open',
-      city: 'Kitzbühel',
-      aliases: ['kitzbuhel', 'kitzbühel'],
-      surface: '红土',
-      level: 'ATP 250',
-      officialUrl: 'https://www.atptour.com/en/scores/current/kitzbuhel/319/daily-schedule?day=1',
-      source: 'ATP official daily schedule',
-      complete: true,
-      matches: [
-        officialMatch({ id: 'kitzbuhel-20260723-1', first: 'Quentin Halys', second: 'Mariano Navone', court: 'Center Court', scheduleDate: '2026-07-23', date: '2026-07-23', time: '17:00', round: 'QF', status: 'finished', winner: 'first', sets: [[7, 5], [6, 3]], scheduleOrder: 1 }),
-        officialMatch({ id: 'kitzbuhel-20260723-2', first: 'Yannick Hanfmann', second: 'Sebastian Baez', court: 'Center Court', scheduleDate: '2026-07-23', date: '2026-07-23', time: '', round: 'QF', status: 'finished', winner: 'first', sets: [[6, 3], [6, 1]], scheduleOrder: 2 }),
-        officialMatch({ id: 'kitzbuhel-20260723-3', first: 'Tomas Martin Etcheverry', second: 'Ignacio Buse', court: 'Center Court', scheduleDate: '2026-07-23', date: '2026-07-23', time: '', round: 'QF', status: 'finished', winner: 'first', sets: [[6, 2], [7, 5]], scheduleOrder: 3 }),
-        officialMatch({ id: 'kitzbuhel-20260723-4', first: 'Alexander Bublik', second: 'Alex Molcan', court: 'Center Court', scheduleDate: '2026-07-23', date: '2026-07-23', time: '', round: 'QF', status: 'scheduled', scheduleOrder: 4 }),
-        officialMatch({ id: 'kitzbuhel-20260723-5', kind: 'MD', first: 'Pierre-Hugues Herbert/Kevin Krawietz', second: 'Lukas Neumayer/Joel Schwaerzler', court: 'Grandstand', courtOrder: 1, scheduleDate: '2026-07-23', date: '2026-07-23', time: '17:30', round: 'QF', status: 'finished', winner: 'first', sets: [[6, 3], [6, 4]], scheduleOrder: 101 }),
-        officialMatch({ id: 'kitzbuhel-20260723-6', kind: 'MD', first: 'Jean-Julien Rojer/Theodore Winegar', second: 'Lucas Miedler/Marc Polmans', court: 'Grandstand', courtOrder: 1, scheduleDate: '2026-07-23', date: '2026-07-23', time: '23:00', round: 'QF', status: 'scheduled', scheduleOrder: 102 })
-      ]
-    }
-  ],
-  '2026-07-24': [
-    {
-      tour: 'ATP',
-      id: '7290',
-      year: 2026,
-      name: 'Millennium Estoril Open',
-      city: 'Estoril',
-      aliases: ['estoril'],
-      surface: '红土',
-      level: 'ATP 250',
-      officialUrl: 'https://www.protennislive.com/posting/2026/7290/op.pdf',
-      source: 'ATP official OOP PDF',
-      complete: true,
-      matches: [
-        officialMatch({ id: 'estoril-20260724-1', first: 'Tiago Torres', second: 'Hugo Gaston', court: 'ESTADIO MILLENNIUM', scheduleDate: '2026-07-24', date: '2026-07-24', time: '18:00', round: 'QF', status: 'scheduled', scheduleOrder: 1 }),
-        officialMatch({ id: 'estoril-20260724-2', first: 'Andrey Rublev', second: 'Luca Van Assche', court: 'ESTADIO MILLENNIUM', scheduleDate: '2026-07-24', date: '2026-07-24', time: '', round: 'QF', status: 'scheduled', scheduleOrder: 2 }),
-        officialMatch({ id: 'estoril-20260724-3', first: 'Roman Andres Burruchaga', second: 'Alexander Blockx', court: 'ESTADIO MILLENNIUM', scheduleDate: '2026-07-24', date: '2026-07-24', time: '23:00', round: 'QF', status: 'scheduled', scheduleOrder: 3 }),
-        officialMatch({ id: 'estoril-20260724-4', first: 'Jaime Faria', second: 'Luciano Darderi', court: 'ESTADIO MILLENNIUM', scheduleDate: '2026-07-24', date: '2026-07-24', time: '', round: 'QF', status: 'scheduled', scheduleOrder: 4 }),
-        officialMatch({ id: 'estoril-20260724-5', kind: 'MD', first: 'Vasil Kirkov/Bart Stevens', second: 'Nuno Borges/Francisco Cabral', court: 'COURT CASCAIS', courtOrder: 1, scheduleDate: '2026-07-24', date: '2026-07-24', time: '20:00', round: 'QF', status: 'scheduled', scheduleOrder: 101 }),
-        officialMatch({ id: 'estoril-20260724-6', kind: 'MD', first: 'Sander Arends/David Pel', second: 'Orlando Luz/Rafael Matos', court: 'COURT CASCAIS', courtOrder: 1, scheduleDate: '2026-07-24', date: '2026-07-24', time: '', round: 'SF', status: 'scheduled', scheduleOrder: 102 })
-      ]
-    },
-    {
-      tour: 'ATP',
-      id: '319',
-      year: 2026,
-      name: 'Generali Open',
-      city: 'Kitzbühel',
-      aliases: ['kitzbuhel', 'kitzbühel'],
-      surface: '红土',
-      level: 'ATP 250',
-      officialUrl: 'https://www.protennislive.com/posting/2026/319/op.pdf',
-      source: 'ATP official OOP PDF',
-      complete: true,
-      matches: [
-        officialMatch({ id: 'kitzbuhel-20260724-1', kind: 'MD', first: 'Pierre-Hugues Herbert/Kevin Krawietz', second: 'Jakob Schnaitter/Mark Wallner', court: 'Center Court', scheduleDate: '2026-07-24', date: '2026-07-24', time: '16:30', round: 'SF', status: 'scheduled', scheduleOrder: 1 }),
-        officialMatch({ id: 'kitzbuhel-20260724-2', first: 'Yannick Hanfmann', second: 'Quentin Halys', court: 'Center Court', scheduleDate: '2026-07-24', date: '2026-07-24', time: '18:30', round: 'SF', status: 'scheduled', scheduleOrder: 2 }),
-        officialMatch({ id: 'kitzbuhel-20260724-3', first: 'Alexander Bublik', second: 'Tomas Martin Etcheverry', court: 'Center Court', scheduleDate: '2026-07-24', date: '2026-07-24', time: '20:00', round: 'SF', status: 'scheduled', scheduleOrder: 3 }),
-        officialMatch({ id: 'kitzbuhel-20260724-4', kind: 'MD', first: 'N.Sriram Balaji/Andre Goransson', second: 'Lucas Miedler/Marc Polmans', court: 'Center Court', scheduleDate: '2026-07-24', date: '2026-07-24', time: '', round: 'SF', status: 'scheduled', scheduleOrder: 4 })
-      ]
-    }
-  ]
-};
 
 function asArray(value) {
   if (value === undefined || value === null) return [];
@@ -259,6 +55,28 @@ function sameTeam(first = '', second = '') {
   });
 }
 
+function placeholderOption(value = '') {
+  return /^(?:(?:qualifier|lucky loser|alternate|tbd|winner)(?:\s*(?:of)?\s*\d+)?|[abq]|ll)$/i
+    .test(String(value).trim());
+}
+
+function teamMatches(value, official = {}) {
+  const options = [official.name, ...(official.alternatives || [])].filter(Boolean);
+  if (options.some(option => sameTeam(value, option))) return true;
+  // ATP OOP rows may temporarily say Qualifier, Lucky Loser, A or B, etc.
+  // Such a row is not used to identify a candidate, but remains in the
+  // official sheet so the next PDF revision can resolve it without deleting
+  // the fixtures candidate.
+  return options.some(placeholderOption);
+}
+
+function officialTeamName(official = {}, fallback = '') {
+  const options = [official.name, ...(official.alternatives || [])].filter(Boolean);
+  return options.find(option => sameTeam(fallback, option))
+    || (placeholderOption(official.name) ? fallback : official.name)
+    || fallback;
+}
+
 function matchKind(match = {}) {
   const type = String(match.type || '').toLowerCase();
   return `${type.includes('wta') || type.includes('women') ? 'W' : 'M'}${type.includes('doubles') ? 'D' : 'S'}`;
@@ -267,22 +85,31 @@ function matchKind(match = {}) {
 function orientation(match, official) {
   const first = match.first?.nameEn || match.first?.name || '';
   const second = match.second?.nameEn || match.second?.name || '';
-  if (sameTeam(first, official.first.name) && sameTeam(second, official.second.name)) return 'direct';
-  if (sameTeam(first, official.second.name) && sameTeam(second, official.first.name)) return 'reversed';
+  if (teamMatches(first, official.first) && teamMatches(second, official.second)) return 'direct';
+  if (teamMatches(first, official.second) && teamMatches(second, official.first)) return 'reversed';
   return '';
 }
 
 function tournamentText(match = {}) {
-  return normalized(`${match.tournament?.nameEn || ''} ${match.tournament?.name || ''}`);
+  return normalized([
+    match.tournament?.nameEn,
+    match.tournament?.name,
+    match.tournament?.city,
+    match.tournament?.country
+  ].filter(Boolean).join(' '));
+}
+
+function tournamentNames(tournament) {
+  return [tournament.city, tournament.name, ...(tournament.aliases || [])]
+    .map(normalized)
+    .filter(Boolean);
 }
 
 function officialTournamentMatches(match, tournament) {
   if (String(match.tournament?.tour || '').toUpperCase() !== tournament.tour) return false;
   const source = tournamentText(match);
-  const names = [tournament.city, tournament.name, ...(tournament.aliases || [])]
-    .map(normalized)
-    .filter(Boolean);
-  return names.some(name => source.includes(name) || name.includes(source));
+  if (!source) return false;
+  return tournamentNames(tournament).some(name => source.includes(name) || name.includes(source));
 }
 
 function pairingBelongsToTournament(match, tournament) {
@@ -320,9 +147,8 @@ function beijingDateTime(date, time = '') {
 }
 
 function wtaStatus(result = {}, oop = {}) {
-  if (String(result.MatchState || '').toUpperCase() === 'F' || String(oop.Status || '').toLowerCase() === 'completed') {
-    return 'finished';
-  }
+  if (String(result.MatchState || '').toUpperCase() === 'F'
+    || String(oop.Status || '').toLowerCase() === 'completed') return 'finished';
   if (String(result.MatchState || '').toUpperCase() === 'C') return 'cancelled';
   return 'scheduled';
 }
@@ -374,6 +200,15 @@ function oopMatchIds(oop, date) {
   return ids;
 }
 
+function wtaCountry(meta = {}) {
+  return meta.country
+    || meta.countryName
+    || meta.tournamentGroup?.country
+    || meta.tournamentGroup?.countryName
+    || meta.location?.country
+    || '';
+}
+
 export function parseWtaOfficialTournament({
   tournament,
   oop,
@@ -388,11 +223,7 @@ export function parseWtaOfficialTournament({
   asArray(day.Court).forEach((court, courtOrder) => {
     asArray(court?.Matches?.Match).forEach((item, matchOrder) => {
       const id = String(item.MatchId || item.MatchID || item.matchId || '');
-      if (!/^L[SD]/.test(id)) return;
-      // The WTA OOP can retain a postponed row on the old day. If the same
-      // official MatchID appears on the following day, only the later official
-      // day owns it.
-      if (supersededIds.has(id)) return;
+      if (!/^L[SD]/.test(id) || supersededIds.has(id)) return;
       const teams = asArray(item.Players);
       if (teams.length !== 2) return;
       const first = teamFromOop(teams[0]);
@@ -400,6 +231,7 @@ export function parseWtaOfficialTournament({
       if (!first.name || !second.name) return;
       const result = resultById.get(id) || {};
       const clock = beijingDateTime(date, item.NotBeforeISOTime);
+      const status = wtaStatus(result, item);
       matches.push({
         id,
         kind: id.startsWith('LD') ? 'WD' : 'WS',
@@ -411,8 +243,8 @@ export function parseWtaOfficialTournament({
         scheduleDate: date,
         date: clock.date,
         time: clock.time,
-        status: wtaStatus(result, item),
-        statusText: wtaStatus(result, item) === 'finished' ? 'Finished' : '',
+        status,
+        statusText: status === 'finished' ? 'Finished' : '',
         winner: wtaWinner(result),
         sets: wtaSets(result)
       });
@@ -426,6 +258,7 @@ export function parseWtaOfficialTournament({
     year: Number(meta?.year || date.slice(0, 4)),
     name: meta?.title || group.name || meta?.city || 'WTA',
     city: meta?.city || group.name || '',
+    country: wtaCountry(meta),
     aliases: [group.name, meta?.city].filter(Boolean),
     surface: ({ Clay: '红土', Hard: '硬地', Grass: '草地' })[meta?.surface] || meta?.surface || '未标注',
     level: meta?.level || group.level || '',
@@ -440,51 +273,56 @@ function swapSets(sets = []) {
   return sets.map(set => ({ ...set, first: set.second, second: set.first }));
 }
 
-function officialRawMatch(official, tournament) {
-  const canonicalKey = `${tournament.tour}:${tournament.id}:${tournament.year}`;
+function tournamentMetadata(tournament) {
   return {
-    id: `official:${tournament.tour.toLowerCase()}:${tournament.id}:${tournament.year}:${official.id}`,
+    id: String(tournament.id || tournament.atpId || ''),
+    name: tournament.name || tournament.city,
+    nameEn: tournament.name,
+    city: tournament.city || '',
+    country: tournament.country || '',
+    canonicalKey: `${tournament.tour}:${tournament.id || tournament.atpId}:${tournament.year}`,
+    surface: tournament.surface,
+    level: tournament.level,
+    timeZone: tournament.timeZone || '',
+    tour: tournament.tour,
+    officialUrl: tournament.officialUrl,
+    officialSource: tournament.source
+  };
+}
+
+function officialRawMatch(official, tournament) {
+  const metadata = tournamentMetadata(tournament);
+  return {
+    id: `official:${tournament.tour.toLowerCase()}:${metadata.id}:${tournament.year}:${official.id}`,
     date: official.date || official.scheduleDate,
     time: official.time || '待定',
     status: official.status,
     statusText: official.statusText,
     type: `${tournament.tour === 'WTA' ? 'Wta' : 'Atp'} ${official.kind.endsWith('D') ? 'Doubles' : 'Singles'}`,
     round: official.round || '未标注',
-    tournament: {
-      id: tournament.id,
-      name: tournament.city || tournament.name,
-      nameEn: tournament.name,
-      canonicalKey,
-      country: '',
-      logo: '',
-      surface: tournament.surface,
-      level: tournament.level,
-      tour: tournament.tour,
-      officialUrl: tournament.officialUrl,
-      officialSource: tournament.source
-    },
+    tournament: { ...metadata, logo: '' },
     court: official.court,
     first: {
-      id: official.first.ids[0] || '',
-      officialIds: official.first.ids,
+      id: official.first.ids?.[0] || '',
+      officialIds: official.first.ids || [],
       name: official.first.name,
       nameEn: official.first.name,
-      country: official.first.countries[0] || '',
+      country: official.first.countries?.[0] || '',
       rank: '', odds: '', seed: ''
     },
     second: {
-      id: official.second.ids[0] || '',
-      officialIds: official.second.ids,
+      id: official.second.ids?.[0] || '',
+      officialIds: official.second.ids || [],
       name: official.second.name,
       nameEn: official.second.name,
-      country: official.second.countries[0] || '',
+      country: official.second.countries?.[0] || '',
       rank: '', odds: '', seed: ''
     },
     winner: official.winner,
     serve: '',
     lastPoint: '',
     current: { first: '', second: '' },
-    sets: official.sets,
+    sets: official.sets || [],
     dayOffset: official.date && official.date !== official.scheduleDate ? 1 : 0,
     scheduleDate: official.scheduleDate,
     officialScheduleDate: official.scheduleDate,
@@ -496,6 +334,17 @@ function officialRawMatch(official, tournament) {
   };
 }
 
+function overlayTournamentMetadata(match, tournament) {
+  return {
+    ...match,
+    tournament: {
+      ...match.tournament,
+      ...tournamentMetadata(tournament),
+      logo: match.tournament?.logo || ''
+    }
+  };
+}
+
 function overlayOfficial(match, official, tournament, direction) {
   const reversed = direction === 'reversed';
   const officialFirst = reversed ? official.second : official.first;
@@ -503,9 +352,9 @@ function overlayOfficial(match, official, tournament, direction) {
   const officialWinner = reversed
     ? official.winner === 'first' ? 'second' : official.winner === 'second' ? 'first' : ''
     : official.winner;
-  const officialSets = reversed ? swapSets(official.sets) : official.sets;
+  const officialSets = reversed ? swapSets(official.sets || []) : (official.sets || []);
   const result = {
-    ...match,
+    ...overlayTournamentMetadata(match, tournament),
     court: official.court || match.court,
     scheduleOrder: official.scheduleOrder,
     courtOrder: official.courtOrder,
@@ -515,30 +364,20 @@ function overlayOfficial(match, official, tournament, direction) {
     officialMatchId: official.id,
     first: {
       ...match.first,
-      nameEn: officialFirst.name || match.first?.nameEn || match.first?.name
+      nameEn: officialTeamName(officialFirst, match.first?.nameEn || match.first?.name)
     },
     second: {
       ...match.second,
-      nameEn: officialSecond.name || match.second?.nameEn || match.second?.name
-    },
-    tournament: {
-      ...match.tournament,
-      id: String(tournament.id),
-      name: tournament.city || tournament.name,
-      nameEn: tournament.name,
-      canonicalKey: `${tournament.tour}:${tournament.id}:${tournament.year}`,
-      tour: tournament.tour,
-      surface: tournament.surface || match.tournament.surface,
-      level: tournament.level || match.tournament.level,
-      officialUrl: tournament.officialUrl,
-      officialSource: tournament.source
+      nameEn: officialTeamName(officialSecond, match.second?.nameEn || match.second?.name)
     }
   };
-  if (official.date && official.time) {
+  if (official.date) {
     result.date = official.date;
-    result.time = official.time;
+    result.time = official.time || '待定';
     result.dayOffset = official.date === official.scheduleDate ? 0 : 1;
   }
+  // OOP fixes immutable schedule fields. Status and score remain the provider's
+  // responsibility unless an official WTA result explicitly confirms terminal.
   if (official.status === 'finished') {
     result.status = 'finished';
     result.statusText = official.statusText || 'Finished';
@@ -581,40 +420,104 @@ export function reconcileOfficialSchedule(matches = [], reference = null, date =
         output.push(officialRawMatch(official, tournament));
       }
     }
-    if (!tournament.complete) {
-      candidates.forEach((match, index) => { if (!used.has(index)) output.push(match); });
-    }
-  }
-  for (const match of remaining) {
-    if (String(match.tournament?.tour || '').toUpperCase() === 'ATP') {
-      const name = tournamentText(match);
-      const meta = ATP_TOURNAMENTS.find(item => item.aliases.some(alias => name.includes(normalized(alias))));
-      if (meta) {
-        match.tournament = {
-          ...match.tournament,
-          nameEn: match.tournament.nameEn || meta.name,
-          surface: meta.surface,
-          level: match.tournament.level || meta.level,
-          officialUrl: meta.officialUrl,
-          officialSource: 'ATP official tournament page'
-        };
+    candidates.forEach((match, index) => {
+      if (!used.has(index) && !tournament.complete) {
+        output.push(overlayTournamentMetadata(match, tournament));
       }
-    }
-    output.push(match);
+    });
   }
+  output.push(...remaining);
   return output.filter(match => !date || !match.officialScheduleDate || match.officialScheduleDate === date);
 }
 
+function registryMatchesCandidate(registry, match) {
+  if (String(match.tournament?.tour || '').toUpperCase() !== 'ATP') return false;
+  const source = tournamentText(match);
+  if (!source) return false;
+  const names = [registry.name, registry.city, ...(registry.aliases || [])].map(normalized).filter(Boolean);
+  return names.some(name => source.includes(name) || name.includes(source));
+}
+
+function registryActiveOn(registry, date) {
+  return Number(registry.year) === Number(date.slice(0, 4))
+    && registry.startDate <= date
+    && registry.endDate >= date;
+}
+
+function cityAgrees(registry, parsed) {
+  const expected = normalized(registry.city);
+  const actual = normalized(parsed.city);
+  return Boolean(expected && actual && (expected.includes(actual) || actual.includes(expected)));
+}
+
+const COUNTRY_CODES = new Map([
+  ['austria', 'aut'], ['portugal', 'por'], ['united states', 'usa'],
+  ['united states of america', 'usa'], ['usa', 'usa'], ['mexico', 'mex'],
+  ['canada', 'can'], ['china', 'chn'], ['japan', 'jpn'],
+  ['kazakhstan', 'kaz'], ['belgium', 'bel'], ['france', 'fra'],
+  ['switzerland', 'sui'], ['sweden', 'swe'], ['italy', 'ita']
+]);
+
+function countryIdentity(value = '') {
+  const key = normalized(value);
+  return COUNTRY_CODES.get(key) || key;
+}
+
+function countryAgrees(registry, parsed) {
+  return Boolean(
+    countryIdentity(registry.country)
+    && countryIdentity(registry.country) === countryIdentity(parsed.country)
+  );
+}
+
+function surfaceAgrees(registry, parsed) {
+  const identity = value => {
+    const text = String(value || '').toLowerCase();
+    if (/clay|红土/.test(text)) return 'clay';
+    if (/hard|硬地/.test(text)) return 'hard';
+    if (/grass|草地/.test(text)) return 'grass';
+    return normalized(text);
+  };
+  return Boolean(identity(registry.surface) && identity(registry.surface) === identity(parsed.surface));
+}
+
 export class OfficialScheduleValidator {
-  constructor({ cache, baseUrl = 'https://api.wtatennis.com/tennis', ttlMs = 5 * 60_000, fetchImpl = fetch }) {
+  constructor({
+    cache,
+    baseUrl = 'https://api.wtatennis.com/tennis',
+    ttlMs = 5 * 60_000,
+    fetchImpl = fetch,
+    atpRegistryFile = null,
+    atpRegistryDirectory = new URL('../data/', import.meta.url),
+    atpRegistry = null,
+    parseAtpPdf = parseAtpOopPdf
+  }) {
     this.cache = cache;
     this.baseUrl = baseUrl.replace(/\/$/, '');
     this.ttlMs = ttlMs;
     this.fetchImpl = fetchImpl;
+    this.atpRegistryFile = atpRegistryFile;
+    this.atpRegistryDirectory = atpRegistryDirectory;
+    this.parseAtpPdf = parseAtpPdf;
+    this.injectedAtpRegistry = atpRegistry;
+    this.atpRegistryPromises = new Map();
   }
 
   saved(date) {
     return this.cache.data.officialReferences?.[date] || null;
+  }
+
+  async registry(year) {
+    if (this.injectedAtpRegistry) {
+      return this.injectedAtpRegistry.filter(item => Number(item.year) === Number(year));
+    }
+    const key = String(year);
+    if (!this.atpRegistryPromises.has(key)) {
+      const file = this.atpRegistryFile
+        || new URL(`atp-tournaments-${key}.json`, this.atpRegistryDirectory);
+      this.atpRegistryPromises.set(key, fs.readFile(file, 'utf8').then(JSON.parse));
+    }
+    return this.atpRegistryPromises.get(key);
   }
 
   async json(path) {
@@ -653,24 +556,142 @@ export class OfficialScheduleValidator {
     return settled.filter(item => item.status === 'fulfilled').map(item => item.value).filter(Boolean);
   }
 
-  async refresh(date, now = Date.now(), force = false) {
+  snapshotKey(registry, date) {
+    return `${registry.atpId}:${date}`;
+  }
+
+  savedAtpSnapshot(registry, date) {
+    return this.cache.data.atpOopSnapshots?.[this.snapshotKey(registry, date)]?.current || null;
+  }
+
+  saveAtpSnapshot(registry, parsed, sourceUrl, fetchedAt) {
+    this.cache.data.atpOopSnapshots ||= {};
+    const key = this.snapshotKey(registry, parsed.date);
+    const saved = this.cache.data.atpOopSnapshots[key] || { revisions: [] };
+    const snapshot = {
+      atpId: registry.atpId,
+      officialScheduleDate: parsed.date,
+      sourceUrl,
+      fetchedAt,
+      sha256: parsed.sha256,
+      parsed
+    };
+    if (!saved.revisions.some(item => item.sha256 === parsed.sha256)) {
+      saved.revisions.push(snapshot);
+    }
+    saved.current = snapshot;
+    this.cache.data.atpOopSnapshots[key] = saved;
+    this.cache.scheduleWrite();
+    return snapshot;
+  }
+
+  atpTourFromSnapshot(registry, snapshot, complete = true) {
+    const parsed = snapshot.parsed;
+    return {
+      tour: 'ATP',
+      id: registry.atpId,
+      year: registry.year,
+      name: registry.name,
+      city: parsed.city || registry.city,
+      country: parsed.country || registry.country,
+      aliases: registry.aliases || [],
+      surface: parsed.surface || registry.surface,
+      level: registry.level,
+      officialUrl: snapshot.sourceUrl,
+      source: 'ATP official OOP PDF',
+      complete,
+      timeZone: registry.timeZone,
+      officialScheduleDate: parsed.date,
+      oopSha256: parsed.sha256,
+      matches: parsed.matches
+    };
+  }
+
+  atpFallbackTour(registry) {
+    return {
+      tour: 'ATP',
+      id: registry.atpId,
+      year: registry.year,
+      name: registry.name,
+      city: registry.city,
+      country: registry.country,
+      aliases: registry.aliases || [],
+      surface: registry.surface,
+      level: registry.level,
+      officialUrl: registry.officialUrl,
+      source: 'ATP official calendar; OOP pending',
+      complete: false,
+      timeZone: registry.timeZone,
+      matches: []
+    };
+  }
+
+  async fetchAtpTournament(registry, date, now) {
+    const saved = this.savedAtpSnapshot(registry, date);
+    const sourceUrl = `https://www.protennislive.com/posting/${registry.year}/${registry.atpId}/op.pdf`;
+    try {
+      const response = await this.fetchImpl(sourceUrl, {
+        signal: AbortSignal.timeout(15_000),
+        headers: { accept: 'application/pdf', 'user-agent': 'LuWang ATP OOP validator' }
+      });
+      if (!response.ok) throw new Error(`ATP OOP HTTP ${response.status}`);
+      const parsed = this.parseAtpPdf(Buffer.from(await response.arrayBuffer()), registry);
+      if (parsed.date !== date) {
+        throw new Error(`ATP OOP currently contains ${parsed.date}, requested ${date}`);
+      }
+      if (!cityAgrees(registry, parsed)) {
+        throw new Error(`ATP OOP city mismatch: registry=${registry.city}, pdf=${parsed.city}`);
+      }
+      if (!countryAgrees(registry, parsed)) {
+        throw new Error(`ATP OOP country mismatch: registry=${registry.country}, pdf=${parsed.country}`);
+      }
+      if (!surfaceAgrees(registry, parsed)) {
+        throw new Error(`ATP OOP surface mismatch: registry=${registry.surface}, pdf=${parsed.surface}`);
+      }
+      const snapshot = this.saveAtpSnapshot(registry, parsed, sourceUrl, now);
+      return this.atpTourFromSnapshot(registry, snapshot);
+    } catch (error) {
+      if (saved?.parsed?.date === date) {
+        console.warn(`[official-atp:${registry.atpId}:${date}] using saved snapshot:`, error.message);
+        return this.atpTourFromSnapshot(registry, saved);
+      }
+      console.warn(`[official-atp:${registry.atpId}:${date}] OOP pending:`, error.message);
+      return this.atpFallbackTour(registry);
+    }
+  }
+
+  async fetchAtp(date, candidates = [], now = Date.now()) {
+    const registry = (await this.registry(date.slice(0, 4))).filter(item => registryActiveOn(item, date));
+    // Fetch every official ATP tournament active on this calendar date. A
+    // complete OOP may contain a match missing from get_fixtures, while an
+    // unpublished OOP still returns a metadata-only fallback and leaves every
+    // fixtures candidate intact.
+    const relevant = registry;
+    const settled = await Promise.all(relevant.map(item => this.fetchAtpTournament(item, date, now)));
+    return settled;
+  }
+
+  async refresh(date, now = Date.now(), force = false, candidates = []) {
     const saved = this.saved(date);
     if (!force && saved && now - saved.fetchedAt < this.ttlMs) return saved;
     try {
-      let wtaTours = [];
-      try {
-        wtaTours = await this.fetchWta(date);
-      } catch (error) {
-        wtaTours = (saved?.tours || []).filter(tour => tour.tour === 'WTA');
-        if (!wtaTours.length && !(ATP_VERIFIED_DAYS[date] || []).length) throw error;
-        console.warn('[official-wta]', error.message);
-      }
-      const tours = [...(ATP_VERIFIED_DAYS[date] || []), ...wtaTours];
-      const value = { date, fetchedAt: now, tours };
+      const [wtaResult, atpResult] = await Promise.allSettled([
+        this.fetchWta(date),
+        this.fetchAtp(date, candidates, now)
+      ]);
+      const wtaTours = wtaResult.status === 'fulfilled'
+        ? wtaResult.value
+        : (saved?.tours || []).filter(tour => tour.tour === 'WTA');
+      const atpTours = atpResult.status === 'fulfilled'
+        ? atpResult.value
+        : (saved?.tours || []).filter(tour => tour.tour === 'ATP');
+      if (wtaResult.status === 'rejected') console.warn('[official-wta]', wtaResult.reason?.message);
+      if (atpResult.status === 'rejected') console.warn('[official-atp]', atpResult.reason?.message);
+      const value = { date, fetchedAt: now, tours: [...atpTours, ...wtaTours] };
       this.cache.data.officialReferences ||= {};
+      // Daily official references are intentionally retained. The UI only
+      // exposes five days, but production snapshots are not deleted with it.
       this.cache.data.officialReferences[date] = value;
-      Object.keys(this.cache.data.officialReferences).sort().slice(0, -5)
-        .forEach(oldDate => delete this.cache.data.officialReferences[oldDate]);
       this.cache.scheduleWrite();
       return value;
     } catch (error) {

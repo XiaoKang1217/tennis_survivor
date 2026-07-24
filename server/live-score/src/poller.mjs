@@ -14,7 +14,7 @@ const OBSERVATION_PROBE_MS = 60_000;
 const LIVE_POLL_MS = 8_000;
 const HISTORY_START_DATE = '2026-07-22';
 const HISTORY_DAYS = 5;
-const DATA_PIPELINE_VERSION = 6;
+const DATA_PIPELINE_VERSION = 7;
 
 function normalizedIdentity(value = '') {
   return String(value)
@@ -79,7 +79,10 @@ export class LivePoller extends EventEmitter {
     this.running = false;
 
     this.cache.data.scheduleHistory ||= {};
+    this.cache.data.scheduleArchive ||= {};
     this.cache.data.scheduleBases ||= {};
+    this.cache.data.scheduleFixtures ||= {};
+    this.cache.data.atpOopSnapshots ||= {};
     this.cache.data.live ||= [];
     if (this.cache.data.pipelineVersion !== DATA_PIPELINE_VERSION) {
       // Old snapshots were allowed to take factual schedule fields from a
@@ -87,10 +90,12 @@ export class LivePoller extends EventEmitter {
       // API Tennis plus ATP/WTA official references.
       this.cache.data.pipelineVersion = DATA_PIPELINE_VERSION;
       this.cache.data.scheduleHistory = {};
+      this.cache.data.scheduleArchive = {};
       this.cache.data.scheduleBases = {};
+      this.cache.data.scheduleFixtures = {};
+      this.cache.data.officialReferences = {};
       this.cache.data.fixtures = null;
       this.cache.data.live = [];
-      this.cache.data.terminalMatches = null;
     }
     if (!this.cache.data.activeScheduleDate
       || this.cache.data.activeScheduleDate < HISTORY_START_DATE) {
@@ -122,7 +127,7 @@ export class LivePoller extends EventEmitter {
     for (const collection of [
       this.cache.data.scheduleHistory,
       this.cache.data.scheduleBases,
-      this.cache.data.officialReferences || {}
+      this.cache.data.scheduleFixtures
     ]) {
       Object.keys(collection || {}).forEach(date => {
         if (!keep.has(date)) delete collection[date];
@@ -136,6 +141,16 @@ export class LivePoller extends EventEmitter {
       ...snapshot,
       availableDates: undefined
     };
+    // This archive is intentionally not trimmed with the five-day UI window.
+    // One durable snapshot per official schedule day remains available for
+    // audit and recovery after the day leaves the date picker.
+    const archived = this.cache.data.scheduleArchive[snapshot.date];
+    if (!archived || flatten(snapshot).length || !flatten(archived).length) {
+      this.cache.data.scheduleArchive[snapshot.date] = {
+        ...snapshot,
+        availableDates: undefined
+      };
+    }
     this.trimHistory(snapshot.date);
     snapshot.availableDates = this.historyDates(snapshot.date);
     if (write) this.cache.scheduleWrite();
@@ -221,7 +236,7 @@ export class LivePoller extends EventEmitter {
     const value = {
       date,
       builtAt: this.now(),
-      sourcePolicy: 'api-tennis+official-atp-wta',
+      sourcePolicy: 'api-tennis-candidates+official-atp-oop+wta-official',
       matches: structuredClone(matches)
     };
     this.cache.data.scheduleBases[date] = value;
@@ -302,9 +317,9 @@ export class LivePoller extends EventEmitter {
     return true;
   }
 
-  async refreshOfficial(date, force = false) {
+  async refreshOfficial(date, force = false, candidates = []) {
     if (!this.officialValidator) return null;
-    return this.officialValidator.refresh(date, this.now(), force);
+    return this.officialValidator.refresh(date, this.now(), force, candidates);
   }
 
   async fetchScheduleDate(date, { force = false, active = false } = {}) {
@@ -312,9 +327,10 @@ export class LivePoller extends EventEmitter {
       return this.cache.data.scheduleBases[date];
     }
     const dateStop = this.client.dateAfter(date);
-    const [fixtures, official, odds] = await Promise.all([
-      this.client.fixtures(date, dateStop),
-      this.refreshOfficial(date, force).catch(cause => {
+    const fixtures = await this.client.fixtures(date, dateStop);
+    const candidates = mergeMatches(fixtures, []).filter(isMainTour);
+    const [official, odds] = await Promise.all([
+      this.refreshOfficial(date, force, candidates).catch(cause => {
         console.warn(`[official:${date}]`, cause.message);
         return null;
       }),
@@ -325,6 +341,13 @@ export class LivePoller extends EventEmitter {
     ]);
     void official;
 
+    this.cache.data.scheduleFixtures[date] = {
+      fetchedAt: this.now(),
+      date,
+      dateStop,
+      items: fixtures,
+      odds
+    };
     if (active) {
       this.cache.data.fixtures = {
         fetchedAt: this.now(),
@@ -353,7 +376,8 @@ export class LivePoller extends EventEmitter {
     const base = this.cache.data.scheduleBases?.[date];
     if (!force && saved?.date === date && base?.matches
       && this.now() - saved.fetchedAt < this.config.fixturesTtlMs) {
-      await this.refreshOfficial(date).catch(cause =>
+      const candidates = mergeMatches(saved.items, []).filter(isMainTour);
+      await this.refreshOfficial(date, false, candidates).catch(cause =>
         console.warn(`[official:${date}]`, cause.message));
       return this.createScheduleBase(
         date,
@@ -385,6 +409,23 @@ export class LivePoller extends EventEmitter {
       } catch (cause) {
         console.warn(`[schedule-backfill:${date}]`, cause.message);
       }
+    }
+  }
+
+  async refreshPendingOfficialDates() {
+    const ttl = this.config.officialTtlMs || 5 * 60_000;
+    for (const [date, reference] of Object.entries(this.cache.data.officialReferences || {})) {
+      if (date === this.scheduleDate()) continue;
+      const pending = (reference?.tours || []).some(tour =>
+        tour.tour === 'ATP' && tour.complete === false);
+      if (!pending || this.now() - (reference.fetchedAt || 0) < ttl) continue;
+      const saved = this.cache.data.scheduleFixtures?.[date];
+      if (!saved?.items) continue;
+      const candidates = mergeMatches(saved.items, []).filter(isMainTour);
+      await this.refreshOfficial(date, false, candidates).catch(cause =>
+        console.warn(`[official:${date}]`, cause.message));
+      const base = this.createScheduleBase(date, saved.items, saved.odds || {});
+      this.rememberSnapshot(this.snapshotFromMatches(date, base.matches), false);
     }
   }
 
@@ -422,6 +463,24 @@ export class LivePoller extends EventEmitter {
       ));
   }
 
+  officialScheduleRefreshDelay() {
+    const ttl = this.config.officialTtlMs || 5 * 60_000;
+    const delays = Object.entries(this.cache.data.officialReferences || {})
+      .filter(([date, reference]) => {
+        const atpTours = (reference?.tours || []).filter(tour => tour.tour === 'ATP');
+        return atpTours.length && (
+          date === this.scheduleDate()
+          || (
+            atpTours.some(tour => tour.complete === false)
+            && Boolean(this.cache.data.scheduleFixtures?.[date]?.items)
+          )
+        );
+      })
+      .map(([, reference]) =>
+        Math.max(5_000, (reference.fetchedAt || 0) + ttl - this.now()));
+    return delays.length ? Math.min(...delays) : Number.POSITIVE_INFINITY;
+  }
+
   async tick() {
     if (this.running) return;
     this.running = true;
@@ -429,6 +488,7 @@ export class LivePoller extends EventEmitter {
     try {
       await this.refreshActiveSchedule();
       await this.backfillRecentDates();
+      await this.refreshPendingOfficialDates();
       const observe = this.shouldObserve();
       if (observe) {
         const live = await this.client.livescore();
@@ -466,10 +526,12 @@ export class LivePoller extends EventEmitter {
       5_000,
       this.config.fixturesTtlMs - (this.now() - fetchedAt)
     );
+    const officialRefresh = this.officialScheduleRefreshDelay();
     if (Number.isFinite(nextWindow)) {
-      return Math.max(5_000, Math.min(nextWindow, fixtureRefresh));
+      return Math.max(5_000, Math.min(nextWindow, fixtureRefresh, officialRefresh));
     }
-    if (pending.length) return fixtureRefresh;
+    if (pending.length) return Math.min(fixtureRefresh, officialRefresh);
+    if (Number.isFinite(officialRefresh)) return officialRefresh;
 
     const nextDate = this.client.dateAfter(this.scheduleDate());
     return Math.max(

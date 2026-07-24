@@ -25,3 +25,17 @@ test('production live-score code has no competitor runtime dependency', () => {
   assert.deepEqual(Object.keys(catalog).sort(), ['generatedAt', 'players']);
   assert.equal(Object.keys(catalog.players || {}).length > 400, true);
 });
+
+test('frontend tournament headers render official level, country and city metadata', () => {
+  const script = fs.readFileSync(
+    fileURLToPath(new URL('../../../assets/live-score/live-score.js', import.meta.url)),
+    'utf8'
+  );
+  const styles = fs.readFileSync(
+    fileURLToPath(new URL('../../../assets/live-score/live-score-enhancements.css', import.meta.url)),
+    'utf8'
+  );
+  assert.match(script, /const facts=\[t\.level,t\.country,t\.city/);
+  assert.match(script, /live-tour-fact/);
+  assert.match(styles, /\.live-tour-fact\b/);
+});

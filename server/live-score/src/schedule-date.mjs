@@ -22,6 +22,7 @@ function dateDistance(first, second) {
 }
 
 export function tournamentTimeZone(match = {}) {
+  if (match.tournament?.timeZone) return match.tournament.timeZone;
   const id = String(match.tournament?.id || '');
   if (TOURNAMENT_TIME_ZONES.has(id)) return TOURNAMENT_TIME_ZONES.get(id);
   const name = String(match.tournament?.nameEn || match.tournament?.name || '').toLowerCase();

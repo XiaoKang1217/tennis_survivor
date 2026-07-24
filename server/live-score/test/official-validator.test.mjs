@@ -1,10 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import {
   OfficialScheduleValidator,
   parseWtaOfficialTournament,
   reconcileOfficialSchedule
 } from '../src/official-validator.mjs';
+import { parseAtpOopLayout } from '../src/atp-oop-pdf.mjs';
 import { normalizeMatch } from '../src/normalizer.mjs';
 
 function apiMatch(id, first, second, type = 'Atp Singles') {
@@ -285,7 +287,7 @@ test('official pairing canonicalizes a provider-mislabeled Hamburg row and never
   const [match] = reconcileOfficialSchedule([dirty], official, '2026-07-23');
   assert.equal(match.id, '77');
   assert.equal(match.tournament.id, '2042');
-  assert.equal(match.tournament.name, 'Hamburg');
+  assert.equal(match.tournament.name, 'MSC Hamburg Ladies Open');
   assert.equal(match.tournament.nameEn, 'MSC Hamburg Ladies Open');
   assert.equal(match.tournament.canonicalKey, 'WTA:2042:2026');
 });
@@ -371,6 +373,7 @@ test('WTA 125 tournaments are included in official schedule refresh', async () =
   };
   const validator = new OfficialScheduleValidator({
     cache: { data: { officialReferences: {} }, scheduleWrite() {} },
+    atpRegistry: [],
     fetchImpl: async url => ({
       ok: true,
       json: async () => url.includes('/tournaments/?')
@@ -387,85 +390,149 @@ test('WTA 125 tournaments are included in official schedule refresh', async () =
   assert.equal(wta[0].matches[0].court, 'Center Court');
 });
 
-test('the verified ATP 2026-07-23 sheets contain every official tour match and court', async () => {
-  const cache = { data: { officialReferences: {} }, scheduleWrite() {} };
-  const validator = new OfficialScheduleValidator({
-    cache,
-    fetchImpl: async () => ({ ok: true, json: async () => ({ content: [] }) })
-  });
-  const value = await validator.refresh('2026-07-23', 1, true);
-  const atp = value.tours.filter(tour => tour.tour === 'ATP');
-  assert.equal(atp.length, 2);
-  assert.deepEqual(atp.map(tour => [tour.city, tour.matches.length]), [
-    ['Estoril', 7],
-    ['Kitzbühel', 6]
-  ]);
+function atpLayout() {
+  return [
+    { x: 50, y: 824, text: 'GENERALI OPEN' },
+    { x: 50, y: 804, text: 'Kitzbühel, Austria' },
+    { x: 50, y: 790, text: 'ATP 250 | Clay | Outdoor' },
+    { x: 50, y: 770, text: 'ORDER OF PLAY - FRIDAY, JULY 24, 2026' },
+    { x: 50, y: 742, text: 'CENTER COURT' },
+    { x: 50, y: 710, text: 'Starts At 10:30' },
+    { x: 50, y: 680, text: 'Yannick Hanfmann (GER)' },
+    { x: 50, y: 660, text: 'vs.' },
+    { x: 50, y: 640, text: 'Qualifier or Quentin Halys (FRA)' },
+    { x: 50, y: 600, text: 'Followed By' },
+    { x: 50, y: 570, text: 'Vasil Kirkov (USA)' },
+    { x: 50, y: 558, text: 'Bart Stevens (NED)' },
+    { x: 50, y: 540, text: 'vs.' },
+    { x: 50, y: 522, text: 'Nuno Borges (POR)' },
+    { x: 50, y: 510, text: 'Francisco Cabral (POR)' }
+  ];
+}
+
+function parsedAtp(sha256 = 'first-sha') {
+  return parseAtpOopLayout(atpLayout(), {
+    atpId: '319',
+    name: 'Generali Open',
+    city: 'Kitzbühel',
+    country: 'Austria',
+    timeZone: 'Europe/Vienna'
+  }, sha256);
+}
+
+function atpRegistry() {
+  return [{
+    atpId: '319',
+    year: 2026,
+    name: 'Generali Open',
+    city: 'Kitzbühel',
+    country: 'Austria',
+    level: 'ATP 250',
+    surface: '红土',
+    timeZone: 'Europe/Vienna',
+    startDate: '2026-07-20',
+    endDate: '2026-07-25',
+    aliases: ['kitzbuhel', 'generali open'],
+    officialUrl: 'https://www.atptour.com/en/tournaments/kitzbuhel/319/overview'
+  }];
+}
+
+function validatorFetch({ pdfOk = true } = {}) {
+  return async url => {
+    if (url.startsWith('https://api.wtatennis.com/')) {
+      return { ok: true, json: async () => ({ content: [] }) };
+    }
+    return {
+      ok: pdfOk,
+      status: pdfOk ? 200 : 404,
+      arrayBuffer: async () => new Uint8Array([1, 2, 3]).buffer
+    };
+  };
+}
+
+test('parses ATP OOP layout into official date, city, surface, order, court and Beijing time', () => {
+  const parsed = parsedAtp();
+  assert.equal(parsed.date, '2026-07-24');
+  assert.equal(parsed.city, 'Kitzbühel');
+  assert.equal(parsed.country, 'Austria');
+  assert.equal(parsed.surface, '红土');
+  assert.equal(parsed.matches.length, 2);
   assert.deepEqual(
-    [...new Set(atp.find(tour => tour.city === 'Estoril').matches.map(match => match.court))],
-    ['ESTADIO MILLENNIUM', 'COURT CASCAIS', 'COURT CTE']
+    parsed.matches.map(match => [match.kind, match.court, match.time]),
+    [['MS', 'Center Court', '16:30'], ['MD', 'Center Court', '']]
   );
-  assert.deepEqual(
-    [...new Set(atp.find(tour => tour.city === 'Kitzbühel').matches.map(match => match.court))],
-    ['Center Court', 'Grandstand']
-  );
-  const kitzbuhel = atp.find(tour => tour.city === 'Kitzbühel');
-  assert.deepEqual(
-    kitzbuhel.matches.slice(0, 3).map(match => [match.first.name, match.second.name, match.status, match.winner]),
-    [
-      ['Quentin Halys', 'Mariano Navone', 'finished', 'first'],
-      ['Yannick Hanfmann', 'Sebastian Baez', 'finished', 'first'],
-      ['Tomas Martin Etcheverry', 'Ignacio Buse', 'finished', 'first']
-    ]
-  );
-  assert.equal(kitzbuhel.matches[4].status, 'finished');
+  assert.deepEqual(parsed.matches[0].second.alternatives, ['Qualifier', 'Quentin Halys']);
 });
 
-test('the verified ATP 2026-07-24 OOP sheets supply clay surface and every main-tour court', async () => {
-  const cache = { data: { officialReferences: {} }, scheduleWrite() {} };
-  const validator = new OfficialScheduleValidator({
-    cache,
-    fetchImpl: async () => ({ ok: true, json: async () => ({ content: [] }) })
+test('keeps ATP OOP page coordinates isolated in a multi-page PDF', () => {
+  const firstPage = atpLayout().map(line => ({ ...line, page: 0 }));
+  const secondPage = atpLayout().map(line => ({
+    ...line,
+    page: 1,
+    text: line.text
+      .replace('Yannick Hanfmann', 'Alexander Bublik')
+      .replace('Qualifier or Quentin Halys', 'Tomas Martin Etcheverry')
+      .replace('Vasil Kirkov', 'Lucas Miedler')
+      .replace('Bart Stevens', 'Marc Polmans')
+      .replace('Nuno Borges', 'Sriram Balaji')
+      .replace('Francisco Cabral', 'Andre Goransson')
+  }));
+  const parsed = parseAtpOopLayout([...firstPage, ...secondPage], {
+    atpId: '319',
+    name: 'Generali Open',
+    city: 'Kitzbühel',
+    country: 'Austria',
+    timeZone: 'Europe/Vienna'
   });
-  const value = await validator.refresh('2026-07-24', 1, true);
-  const atp = value.tours.filter(tour => tour.tour === 'ATP');
-  assert.deepEqual(atp.map(tour => [tour.city, tour.matches.length, tour.surface]), [
-    ['Estoril', 6, '红土'],
-    ['Kitzbühel', 4, '红土']
-  ]);
-
-  const estoril = atp.find(tour => tour.city === 'Estoril');
-  assert.deepEqual([...new Set(estoril.matches.map(match => match.court))], [
-    'ESTADIO MILLENNIUM',
-    'COURT CASCAIS'
-  ]);
+  assert.equal(parsed.matches.length, 4);
   assert.deepEqual(
-    estoril.matches.map(match => [match.first.name, match.second.name, match.court, match.time]),
-    [
-      ['Tiago Torres', 'Hugo Gaston', 'ESTADIO MILLENNIUM', '18:00'],
-      ['Andrey Rublev', 'Luca Van Assche', 'ESTADIO MILLENNIUM', ''],
-      ['Roman Andres Burruchaga', 'Alexander Blockx', 'ESTADIO MILLENNIUM', '23:00'],
-      ['Jaime Faria', 'Luciano Darderi', 'ESTADIO MILLENNIUM', ''],
-      ['Vasil Kirkov/Bart Stevens', 'Nuno Borges/Francisco Cabral', 'COURT CASCAIS', '20:00'],
-      ['Sander Arends/David Pel', 'Orlando Luz/Rafael Matos', 'COURT CASCAIS', '']
-    ]
+    parsed.matches.map(match => match.first.name),
+    ['Yannick Hanfmann', 'Vasil Kirkov/Bart Stevens', 'Alexander Bublik', 'Lucas Miedler/Marc Polmans']
   );
-
-  const kitzbuhel = atp.find(tour => tour.city === 'Kitzbühel');
-  assert.equal(kitzbuhel.matches.every(match => match.court === 'Center Court'), true);
-  assert.equal(kitzbuhel.matches.some(match => /Choi|Lorincik|Calin|Drijver/.test(
-    `${match.first.name} ${match.second.name}`
-  )), false);
-  assert.deepEqual(kitzbuhel.matches.map(match => match.time), ['16:30', '18:30', '20:00', '']);
-  assert.match(kitzbuhel.officialUrl, /protennislive\.com\/posting\/2026\/319\/op\.pdf/);
+  assert.deepEqual(parsed.matches.map(match => match.scheduleOrder), [0, 1, 10_000, 10_001]);
 });
 
-test('the ATP 2026-07-24 OOP replaces an unmarked API court without changing live state', async () => {
-  const cache = { data: { officialReferences: {} }, scheduleWrite() {} };
+test('ATP validator stores versioned parsed snapshots by main-draw ID and official day', async () => {
+  const cache = {
+    data: { officialReferences: {}, atpOopSnapshots: {} },
+    scheduleWrite() {}
+  };
+  let revision = 0;
   const validator = new OfficialScheduleValidator({
     cache,
-    fetchImpl: async () => ({ ok: true, json: async () => ({ content: [] }) })
+    atpRegistry: atpRegistry(),
+    fetchImpl: validatorFetch(),
+    parseAtpPdf: () => parsedAtp(`sha-${revision += 1}`)
   });
-  await validator.refresh('2026-07-24', 1, true);
+  const candidates = [normalizeMatch({
+    event_key: 24,
+    event_date: '2026-07-24',
+    event_time: '16:30',
+    event_status: 'Scheduled',
+    event_type_type: 'Atp Singles',
+    tournament_name: 'ATP Kitzbuhel',
+    event_first_player: 'Yannick Hanfmann',
+    event_second_player: 'Quentin Halys'
+  })];
+  await validator.refresh('2026-07-24', 1, true, candidates);
+  await validator.refresh('2026-07-24', 2, true, candidates);
+  const saved = cache.data.atpOopSnapshots['319:2026-07-24'];
+  assert.equal(saved.current.atpId, '319');
+  assert.equal(saved.revisions.length, 2);
+  assert.match(saved.current.sourceUrl, /\/2026\/319\/op\.pdf$/);
+});
+
+test('ATP OOP is authoritative per pairing and court without changing provider live state', async () => {
+  const cache = {
+    data: { officialReferences: {}, atpOopSnapshots: {} },
+    scheduleWrite() {}
+  };
+  const validator = new OfficialScheduleValidator({
+    cache,
+    atpRegistry: atpRegistry(),
+    fetchImpl: validatorFetch(),
+    parseAtpPdf: () => parsedAtp()
+  });
   const live = normalizeMatch({
     event_key: 24,
     event_date: '2026-07-24',
@@ -477,48 +544,56 @@ test('the ATP 2026-07-24 OOP replaces an unmarked API court without changing liv
     event_first_player: 'Yannick Hanfmann',
     event_second_player: 'Quentin Halys'
   });
-  const reconciled = validator.reconcile([live], '2026-07-24');
+  const dirty = normalizeMatch({
+    event_key: 25,
+    event_date: '2026-07-24',
+    event_time: '18:30',
+    event_status: 'Scheduled',
+    event_type_type: 'Atp Singles',
+    tournament_name: 'ATP Kitzbuhel',
+    event_first_player: 'Wrong Player',
+    event_second_player: 'Wrong Opponent'
+  });
+  await validator.refresh('2026-07-24', 1, true, [live, dirty]);
+  const reconciled = validator.reconcile([live, dirty], '2026-07-24');
   const match = reconciled.find(item => item.id === '24');
+  assert.equal(reconciled.length, 2);
+  assert.equal(reconciled.some(item => item.id === '25'), false);
   assert.equal(match.status, 'live');
   assert.equal(match.court, 'Center Court');
-  assert.equal(match.time, '18:30');
-  assert.equal(match.tournament.surface, '红土');
-  assert.equal(match.officialScheduleMatch, true);
+  assert.equal(match.time, '16:30');
+  assert.equal(match.tournament.level, 'ATP 250');
+  assert.equal(match.tournament.country, 'Austria');
+  assert.equal(match.tournament.city, 'Kitzbühel');
+  assert.equal(match.second.nameEn, 'Quentin Halys');
 });
 
-test('the verified ATP 2026-07-22 sheet removes the dirty ninth Estoril row per pairing', async () => {
-  const cache = { data: { officialReferences: {} }, scheduleWrite() {} };
+test('an unpublished ATP OOP retains fixtures candidates and retries from a metadata-only reference', async () => {
+  const cache = {
+    data: { officialReferences: {}, atpOopSnapshots: {} },
+    scheduleWrite() {}
+  };
   const validator = new OfficialScheduleValidator({
     cache,
-    fetchImpl: async () => ({ ok: true, json: async () => ({ content: [] }) })
+    atpRegistry: atpRegistry(),
+    fetchImpl: validatorFetch({ pdfOk: false })
   });
-  await validator.refresh('2026-07-22', 1, true);
-  const matches = [
-    apiMatch(1, 'Hugo Gaston', 'Titouan Droguet'),
-    apiMatch(2, 'Roman Andres Burruchaga', 'Nuno Borges'),
-    apiMatch(3, 'Tiago Torres', 'Alejandro Tabilo'),
-    apiMatch(4, 'Alexander Blockx', 'Kyrian Jacquet'),
-    apiMatch(5, 'Orlando Luz/Rafael Matos', 'Ray Ho/Benjamin Kittay', 'Atp Doubles'),
-    apiMatch(6, 'Nuno Borges/Francisco Cabral', 'Arthur Reymond/Luca Sanchez', 'Atp Doubles'),
-    apiMatch(7, 'Joao Domingues/Tiago Torres', 'Jaime Faria/Henrique Rocha', 'Atp Doubles'),
-    apiMatch(8, 'Vasil Kirkov/Bart Stevens', 'Marcelo Demoliner/Robert Galloway', 'Atp Doubles'),
-    apiMatch(9, 'Roman Andres Burruchaga/Camilo Ugo Carabelli', 'Jaime Faria/Henrique Rocha', 'Atp Doubles')
-  ];
-  const reconciled = validator.reconcile(matches, '2026-07-22');
-  const estoril = reconciled.filter(match => match.tournament.nameEn.includes('Estoril'));
-  assert.equal(estoril.length, 8);
-  assert.equal(estoril.some(match => match.id === '9'), false);
-  assert.equal(estoril.every(match => match.status === 'finished'), true);
-  assert.equal(estoril.find(match => match.id === '5').first.nameEn, 'Orlando Luz/Rafael Matos');
-  assert.equal(estoril.find(match => match.id === '5').second.nameEn, 'Ray Ho/Benjamin Kittay');
-  const tabilo = estoril.find(match => match.id === '3');
-  assert.equal(tabilo.winner, 'second');
-  assert.deepEqual(tabilo.sets.map(set => [set.first, set.second]), [['4', '6'], ['4', '6']]);
-  assert.deepEqual([...new Set(estoril.map(match => match.court))].sort(), [
-    'COURT CASCAIS',
-    'COURT CTE',
-    'ESTADIO MILLENNIUM'
-  ]);
+  const candidate = normalizeMatch({
+    event_key: 24,
+    event_date: '2026-07-24',
+    event_time: '18:30',
+    event_status: 'Scheduled',
+    event_type_type: 'Atp Singles',
+    tournament_name: 'ATP Kitzbuhel',
+    event_first_player: 'Yannick Hanfmann',
+    event_second_player: 'Quentin Halys'
+  });
+  await validator.refresh('2026-07-24', 1, true, [candidate]);
+  const [kept] = validator.reconcile([candidate], '2026-07-24');
+  assert.equal(kept.id, '24');
+  assert.equal(kept.tournament.level, 'ATP 250');
+  assert.equal(kept.officialScheduleMatch, false);
+  assert.equal(cache.data.atpOopSnapshots['319:2026-07-24'], undefined);
 });
 
 test('ATP metadata never changes an unverified day pairing or status', () => {
@@ -528,6 +603,25 @@ test('ATP metadata never changes an unverified day pairing or status', () => {
   assert.equal(reconciled.first.name, 'A');
   assert.equal(reconciled.second.name, 'B');
   assert.equal(reconciled.status, 'scheduled');
-  assert.equal(reconciled.tournament.surface, '红土');
-  assert.match(reconciled.tournament.officialUrl, /atptour\.com/);
+  assert.equal(reconciled.tournament.surface, '未标注');
+  assert.equal(reconciled.tournament.officialUrl, undefined);
+});
+
+test('checked-in ATP calendar uses one unique main-draw ID and complete official metadata per event', () => {
+  const registry = JSON.parse(fs.readFileSync(
+    new URL('../data/atp-tournaments-2026.json', import.meta.url),
+    'utf8'
+  ));
+  assert.equal(new Set(registry.map(item => item.atpId)).size, registry.length);
+  assert.equal(registry.some(item => item.atpId === '7481' || item.atpId === '4714'), false);
+  assert.equal(registry.some(item => item.atpId === '7480'), true);
+  assert.equal(registry.some(item => item.atpId === '4713'), true);
+  registry.forEach(item => {
+    assert.match(item.atpId, /^\d+$/);
+    assert.equal(item.year, 2026);
+    assert.equal(item.startDate <= item.endDate, true);
+    assert.equal(Boolean(item.name && item.city && item.country && item.level), true);
+    assert.equal(Boolean(item.surface && item.timeZone && item.officialUrl), true);
+    assert.match(item.officialUrl, new RegExp(`/tournaments/.+/${item.atpId}/overview$`));
+  });
 });
