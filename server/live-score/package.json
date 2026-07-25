@@ -5,7 +5,13 @@
   "type": "module",
   "scripts": {
     "start": "node src/server.mjs",
-    "test": "node --test"
+    "test": "node --test",
+    "test:behavior": "node --test test/api-tennis-client.test.mjs test/localizer.test.mjs test/normalizer.test.mjs test/official-validator.test.mjs test/poller.test.mjs test/schedule-date.test.mjs test/source-boundary.test.mjs",
+    "test:phase0": "node --test test/phase0-baseline.test.mjs test/architecture-boundaries.test.mjs test/fixture-registry.test.mjs test/legacy-case-registry.test.mjs",
+    "typecheck:v2": "npm run typecheck --prefix v2",
+    "verify:phase0": "node scripts/verify-phase0.mjs",
+    "fixtures:register": "node scripts/register-fixture.mjs",
+    "fixtures:capture:api-tennis": "node scripts/capture-api-tennis-fixture.mjs"
   },
   "engines": {
     "node": ">=18"

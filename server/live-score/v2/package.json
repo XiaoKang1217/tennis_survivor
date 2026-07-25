@@ -1,0 +1,12 @@
+{
+  "name": "@luwang/live-score-v2-contracts",
+  "version": "0.0.0-phase0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}

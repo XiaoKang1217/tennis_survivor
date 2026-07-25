@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "allowedFiles": [
+    "v2/src/domain/reduce-match.ts"
+  ],
+  "policy": "Only the pure canonical reducer may construct a match with a changed status. Adapters, reconciliation orchestration, projections and APIs may not mutate it."
+}

@@ -1,0 +1,234 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://luwang.example/schemas/live-score-fixture-manifest-v1.json",
+  "title": "Live Score Real Fixture Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "registryStatus",
+    "entries"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "registryStatus": {
+      "enum": [
+        "blocked_missing_real_payloads",
+        "partial",
+        "ready"
+      ]
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/entry"
+      }
+    }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "provider",
+        "capability",
+        "eventType",
+        "scenario",
+        "status",
+        "realPayload",
+        "file",
+        "sha256",
+        "bytes",
+        "contentType",
+        "capturedAt",
+        "endpointLabel",
+        "captureMethod",
+        "secretReview",
+        "reviewedBy",
+        "reviewedAt",
+        "reviewNotes",
+        "blocker"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]+$"
+        },
+        "provider": {
+          "enum": [
+            "api-tennis",
+            "atp-official",
+            "wta-official",
+            "itf-official",
+            "goalserve"
+          ]
+        },
+        "capability": {
+          "enum": [
+            "live-score",
+            "schedule",
+            "draw",
+            "match-stats",
+            "player",
+            "ranking",
+            "historical-match"
+          ]
+        },
+        "eventType": {
+          "enum": [
+            "fixture",
+            "score",
+            "stats",
+            "draw",
+            "ranking",
+            "player",
+            "error",
+            "empty-response",
+            "oop-pdf"
+          ]
+        },
+        "scenario": {
+          "type": "string",
+          "minLength": 3
+        },
+        "status": {
+          "enum": [
+            "pending_capture",
+            "quarantine",
+            "verified",
+            "rejected"
+          ]
+        },
+        "realPayload": {
+          "type": "boolean",
+          "description": "True only after independent review verifies authorized real-source provenance, sanitization, schema and scenario."
+        },
+        "file": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sha256": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "bytes": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "contentType": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "application/json",
+            "application/pdf",
+            null
+          ]
+        },
+        "capturedAt": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "endpointLabel": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "captureMethod": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "secretReview": {
+          "type": "boolean"
+        },
+        "reviewedBy": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reviewedAt": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "reviewNotes": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "blocker": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "verified"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "realPayload": {
+                "const": true
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "pending_capture",
+                  "quarantine",
+                  "rejected"
+                ]
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "realPayload": {
+                "const": false
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "baselineCommit": "142c687",
+  "baselineBranch": "origin/main",
+  "nodeObserved": "v24.14.0",
+  "nodeSupported": ">=18",
+  "baselineTestCount": 61,
+  "startCommand": "node src/server.mjs",
+  "productionPackageSurface": {
+    "dependencies": {},
+    "devDependencies": {},
+    "optionalDependencies": {},
+    "peerDependencies": {},
+    "lockfiles": []
+  },
+  "protectedRoots": [
+    "assets/live-score",
+    "index.html",
+    "server/live-score/deploy",
+    "server/live-score/src"
+  ],
+  "productionFiles": [
+    {
+      "path": "index.html",
+      "bytes": 548891,
+      "lines": 7706,
+      "sha256": "00b8ea9c8c535f34bb7c3ce4d1200ce02601c94b0f1faeba568aaf372032dfe6"
+    },
+    {
+      "path": "assets/live-score/live-score-enhancements.css",
+      "bytes": 3166,
+      "sha256": "599ce4570a8ea557471375a25bc00c8457daf35f9bb2d666dd617cf30bcf996b"
+    },
+    {
+      "path": "assets/live-score/live-score.css",
+      "bytes": 7712,
+      "sha256": "258f96d6be8dbaf7277e34e637989881e2b3fde3166eded49fded432a2e2a840"
+    },
+    {
+      "path": "assets/live-score/live-score.js",
+      "bytes": 17053,
+      "sha256": "e3709eeae2784224c118f4a407bc99a683e6157869455ac445e8cfc90bfa9133"
+    },
+    {
+      "path": "server/live-score/deploy/luwang-live-score.service",
+      "bytes": 538,
+      "sha256": "4d738271201c54e01a0a809a9e37ccad6dc2935d13c0afbc49ba8803d73f0db2"
+    },
+    {
+      "path": "server/live-score/deploy/nginx-live-score.conf",
+      "bytes": 890,
+      "sha256": "7d43192d0ae815979795efc5bf9a28e1932ccfa84ae4058e9675fcd39bcf0c6f"
+    },
+    {
+      "path": "server/live-score/deploy/production.env.example",
+      "bytes": 352,
+      "sha256": "9deec6161b42254008c9360292b3601989b82ae60251f73de66dce9011046ce2"
+    },
+    {
+      "path": "server/live-score/src/api-tennis-client.mjs",
+      "bytes": 3021,
+      "sha256": "4c6779a09864bc37b5df96e1cf9717c3e8ea185f252f8cf83227b102dc3e4c33"
+    },
+    {
+      "path": "server/live-score/src/atp-oop-pdf.mjs",
+      "bytes": 18198,
+      "sha256": "ede0c048a867747ebe8dc4edf52e3f5205f4f23bafa35bfd1de092e6297eeb8d"
+    },
+    {
+      "path": "server/live-score/src/cache.mjs",
+      "bytes": 1180,
+      "sha256": "f5acde5376e1df961e9778c7853b8e0e7f25bf72eef2b11cbb2070611859b189"
+    },
+    {
+      "path": "server/live-score/src/config.mjs",
+      "bytes": 1110,
+      "sha256": "fd9e8b42a687d5b51ab35387784a302aeda94d0ad79b37736a3301d24e138c97"
+    },
+    {
+      "path": "server/live-score/src/localizer.mjs",
+      "bytes": 4332,
+      "sha256": "72d1fa243ef12da046da042c9e70079d32af7a3e78deea21e641328fb3588334"
+    },
+    {
+      "path": "server/live-score/src/normalizer.mjs",
+      "bytes": 13808,
+      "lines": 313,
+      "legacy": true,
+      "sha256": "41190a66542a78af129d7b6101af9f6cbc4eb2b2c9bdecfe060268173e9ccdb6"
+    },
+    {
+      "path": "server/live-score/src/official-validator.mjs",
+      "bytes": 26204,
+      "lines": 706,
+      "legacy": true,
+      "sha256": "87dd8119fded196aed710535d5af27f55431129f0a1d6618ba324f36c1a111b1"
+    },
+    {
+      "path": "server/live-score/src/poller.mjs",
+      "bytes": 19306,
+      "lines": 555,
+      "legacy": true,
+      "sha256": "54989b772285b9227a10cd2f72155b0b55ec1ebc9ae7ab246e91af0945190933"
+    },
+    {
+      "path": "server/live-score/src/schedule-date.mjs",
+      "bytes": 2477,
+      "sha256": "6dd5670a6fb122561cb6ecdbe4c98ebdc5b1bd59ae5314ddbd48c629605088dd"
+    },
+    {
+      "path": "server/live-score/src/server.mjs",
+      "bytes": 9517,
+      "sha256": "036af3c525fa7d64043707533c679166dbb72f0117de80e9017e3a7ff86cf059"
+    }
+  ]
+}

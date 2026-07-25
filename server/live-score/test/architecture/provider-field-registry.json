@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "protectedLayers": [
+    "v2/src/domain",
+    "v2/src/projections",
+    "v2/src/api"
+  ],
+  "providers": {
+    "api-tennis": {
+      "schemaStatus": "known-from-legacy",
+      "tokens": [
+        "event_key",
+        "event_date",
+        "event_time",
+        "event_status",
+        "event_live",
+        "event_type_type",
+        "event_first_player",
+        "event_second_player",
+        "event_first_player_key",
+        "event_second_player_key",
+        "event_first_player_result",
+        "event_second_player_result",
+        "event_final_result",
+        "event_game_result",
+        "event_serve",
+        "event_winner",
+        "tournament_key",
+        "tournament_name",
+        "tournament_surface",
+        "event_stadium",
+        "first_player_key",
+        "second_player_key"
+      ],
+      "patterns": [
+        "\\bapi[-_ ]?tennis\\b"
+      ]
+    },
+    "goalserve": {
+      "schemaStatus": "pending-real-sample",
+      "tokens": [],
+      "patterns": [
+        "\\bgoalserve\\b"
+      ],
+      "blocker": "No legally obtained real Goalserve sample is present. Add exact raw field names to this registry when its adapter contract is reviewed."
+    }
+  }
+}

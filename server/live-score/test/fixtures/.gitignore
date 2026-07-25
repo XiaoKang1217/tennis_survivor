@@ -1,0 +1,2 @@
+# Authorized captures enter quarantine locally and must never be staged by default.
+quarantine/

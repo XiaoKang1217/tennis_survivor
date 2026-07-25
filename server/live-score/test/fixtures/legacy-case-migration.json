@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "7c8fe48",
+  "baselineCommit": "142c687",
+  "policy": "Track the incident semantics without cherry-picking the hotfix production implementation.",
+  "newCases": [
+    {
+      "id": "hotfix-atp-compact-feeder-alternatives",
+      "sourceFile": "server/live-score/test/official-validator.test.mjs",
+      "sourceTest": "parses compact ATP feeder alternatives as singles instead of a doubles team",
+      "targetPhase": "phase-1-adapter-and-phase-2-participant-slots",
+      "status": "pending_migration",
+      "requiredOutcome": "Parse compact alternative singles candidates without converting them into a doubles team."
+    },
+    {
+      "id": "hotfix-atp-junior-side-event-adjacency",
+      "sourceFile": "server/live-score/test/official-validator.test.mjs",
+      "sourceTest": "filters a labeled ATP junior side event without dropping adjacent tour finals",
+      "targetPhase": "phase-2-competition-policy",
+      "status": "pending_migration",
+      "requiredOutcome": "Classify the side event separately while retaining adjacent tour finals; this must not become a blanket junior exclusion."
+    },
+    {
+      "id": "hotfix-atp-finished-feeder-resolution",
+      "sourceFile": "server/live-score/test/official-validator.test.mjs",
+      "sourceTest": "finished feeder matches resolve ATP OOP alternatives before fixtures publishes the final",
+      "targetPhase": "phase-2-identity-and-reconciliation",
+      "status": "pending_migration",
+      "requiredOutcome": "Resolve provisional OOP participant candidates from finished feeder evidence with provenance."
+    },
+    {
+      "id": "hotfix-atp-unresolved-feeder-display",
+      "sourceFile": "server/live-score/test/official-validator.test.mjs",
+      "sourceTest": "an unresolved ATP feeder choice is displayed once per candidate",
+      "targetPhase": "phase-2-participant-slots-and-phase-3-projection",
+      "status": "pending_migration",
+      "requiredOutcome": "Preserve a provisional slot and display each candidate once without inventing identity."
+    },
+    {
+      "id": "hotfix-watched-schedule-dates",
+      "sourceFile": "server/live-score/test/poller.test.mjs",
+      "sourceTest": "watches the active official day, Beijing today and tomorrow independently",
+      "targetPhase": "phase-1-ingestion-scheduler",
+      "status": "pending_migration",
+      "requiredOutcome": "Observe active official day, current Beijing day, and following day independently."
+    },
+    {
+      "id": "hotfix-contextual-fixture-retry",
+      "sourceFile": "server/live-score/test/poller.test.mjs",
+      "sourceTest": "uses five-minute fixture retries for unresolved OOP rows and hourly prefetch for tomorrow",
+      "targetPhase": "phase-1-ingestion-scheduler",
+      "status": "pending_migration",
+      "requiredOutcome": "Use capability/state-aware refresh policy without embedding page-state rules in an adapter."
+    },
+    {
+      "id": "hotfix-stale-nonactive-day-refresh",
+      "sourceFile": "server/live-score/test/poller.test.mjs",
+      "sourceTest": "refreshes a stale non-active current day instead of freezing its first prefetch",
+      "targetPhase": "phase-1-ingestion-scheduler",
+      "status": "pending_migration",
+      "requiredOutcome": "Refresh stale prefetched schedule data without switching the active projection day."
+    },
+    {
+      "id": "hotfix-oop-anomaly-day-advance",
+      "sourceFile": "server/live-score/test/poller.test.mjs",
+      "sourceTest": "an old OOP-only scheduled anomaly cannot freeze the previous date forever",
+      "targetPhase": "phase-2-state-and-reconciliation",
+      "status": "pending_migration",
+      "requiredOutcome": "A stale uncorroborated OOP anomaly cannot block official-day advancement indefinitely."
+    },
+    {
+      "id": "hotfix-cancelled-day-advance",
+      "sourceFile": "server/live-score/test/poller.test.mjs",
+      "sourceTest": "advances after every source match is cancelled even though cancelled cards are hidden",
+      "targetPhase": "phase-2-state-and-phase-3-projection",
+      "status": "pending_migration",
+      "requiredOutcome": "Projection filtering of cancelled cards cannot hide source completeness from day advancement."
+    }
+  ],
+  "strengthenedExistingCases": [
+    {
+      "id": "hotfix-pipeline-invalidation-oop-snapshots",
+      "sourceFile": "server/live-score/test/poller.test.mjs",
+      "baselineTest": "invalidates snapshots created by the old competitor-driven pipeline",
+      "sourceTest": "invalidates snapshots and parsed OOP rows from an incompatible pipeline",
+      "targetPhase": "phase-1-event-schema-versioning",
+      "status": "pending_migration",
+      "requiredOutcome": "An incompatible pipeline/schema version invalidates derived OOP state while preserving separately durable terminal evidence."
+    }
+  ]
+}
