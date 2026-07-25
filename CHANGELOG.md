@@ -12,13 +12,14 @@ Versioning guideline:
 ### Added
 - Added a lazy-loaded live tennis module with Beijing-date status filters, collapsible tournament sections, court grouping, surface colors, serving and latest-point indicators, and responsive match cards.
 - Added match statistics and H2H detail views plus independent player H2H and yearly match-history searches.
-- Added a server-side API Tennis proxy with shared JSON cache, SSE fan-out, ETags, CORS allow-listing, request throttling, and persisted daily request accounting.
-- Added production systemd and Nginx templates. The API key is read only from a protected server environment file and is never exposed to the static site.
+- Added a private server-side live-data service with shared JSON cache, realtime fan-out, ETags, CORS allow-listing, request throttling, and persisted request accounting.
+- Kept live-data credentials and deployment configuration outside the public static-site repository.
 
 ### Changed
 - Live-score polling now runs only around scheduled match windows: 60-second observation probes and fixed 8-second refreshes after a live match is detected. Local request-count throttling at 6500, 7300, and 7800 has been removed.
 - Match cards now use explicit Chinese status pills, neutral white player rows, live-only current-point highlighting, and a winner stamp on completed matches.
 - Missing court and surface metadata are displayed as `未标注` instead of being hardcoded.
+- Removed the retired live-data backend implementation and deployment details from the public repository; the public site now contains only the versioned frontend client.
 
 ### Validation
 - Added Node.js tests for field normalization, tournament/court grouping, observation windows, no polling outside match windows, and adaptive request intervals.
