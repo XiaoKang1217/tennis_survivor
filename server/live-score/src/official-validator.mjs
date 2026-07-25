@@ -60,8 +60,18 @@ function placeholderOption(value = '') {
     .test(String(value).trim());
 }
 
+function officialTeamOptions(official = {}) {
+  const seen = new Set();
+  return [official.name, ...(official.alternatives || [])].filter(value => {
+    const key = normalized(value);
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 function teamMatches(value, official = {}) {
-  const options = [official.name, ...(official.alternatives || [])].filter(Boolean);
+  const options = officialTeamOptions(official);
   if (options.some(option => sameTeam(value, option))) return true;
   // ATP OOP rows may temporarily say Qualifier, Lucky Loser, A or B, etc.
   // Such a row is not used to identify a candidate, but remains in the
@@ -71,10 +81,15 @@ function teamMatches(value, official = {}) {
 }
 
 function officialTeamName(official = {}, fallback = '') {
-  const options = [official.name, ...(official.alternatives || [])].filter(Boolean);
+  const options = officialTeamOptions(official);
   return options.find(option => sameTeam(fallback, option))
     || (placeholderOption(official.name) ? fallback : official.name)
     || fallback;
+}
+
+function officialTeamDisplay(official = {}) {
+  const options = officialTeamOptions(official);
+  return options.length > 1 ? options.join(' or ') : (options[0] || '待定');
 }
 
 function matchKind(match = {}) {
@@ -115,6 +130,62 @@ function officialTournamentMatches(match, tournament) {
 function pairingBelongsToTournament(match, tournament) {
   return (tournament.matches || []).some(official =>
     matchKind(match) === official.kind && Boolean(orientation(match, official)));
+}
+
+function resolveOfficialTeam(team = {}, results = [], tournament, kind, officialDate = '') {
+  const options = officialTeamOptions(team);
+  if (options.length < 2) return team;
+  const eligible = [...results]
+    .filter(result => {
+      const resultDate = result.scheduleDate || result.officialScheduleDate || result.date || '';
+      return !officialDate || !resultDate || resultDate <= officialDate;
+    })
+    .sort((first, second) => String(
+      second.scheduleDate || second.officialScheduleDate || second.date || ''
+    ).localeCompare(String(
+      first.scheduleDate || first.officialScheduleDate || first.date || ''
+    )));
+  for (const result of eligible) {
+    if (result.status !== 'finished' || !result.winner) continue;
+    if (kind && matchKind(result) !== kind) continue;
+    if (tournament && !officialTournamentMatches(result, tournament)) continue;
+    const firstName = result.first?.nameEn || result.first?.name || '';
+    const secondName = result.second?.nameEn || result.second?.name || '';
+    const firstOption = options.find(option => sameTeam(firstName, option));
+    const secondOption = options.find(option => sameTeam(secondName, option));
+    if (!firstOption || !secondOption || firstOption === secondOption) continue;
+    const winner = result.winner === 'first' ? firstOption : secondOption;
+    return {
+      ...team,
+      name: winner,
+      alternatives: [],
+      resolvedFrom: `finished:${result.id || ''}`
+    };
+  }
+  return team;
+}
+
+function resolveOfficialMatch(official, results, tournament) {
+  const first = resolveOfficialTeam(
+    official.first,
+    results,
+    tournament,
+    official.kind,
+    official.scheduleDate
+  );
+  const second = resolveOfficialTeam(
+    official.second,
+    results,
+    tournament,
+    official.kind,
+    official.scheduleDate
+  );
+  return {
+    ...official,
+    first,
+    second,
+    provisional: Boolean(first.alternatives?.length || second.alternatives?.length)
+  };
 }
 
 function playerName(player = {}) {
@@ -292,6 +363,8 @@ function tournamentMetadata(tournament) {
 
 function officialRawMatch(official, tournament) {
   const metadata = tournamentMetadata(tournament);
+  const firstName = officialTeamDisplay(official.first);
+  const secondName = officialTeamDisplay(official.second);
   return {
     id: `official:${tournament.tour.toLowerCase()}:${metadata.id}:${tournament.year}:${official.id}`,
     date: official.date || official.scheduleDate,
@@ -305,16 +378,18 @@ function officialRawMatch(official, tournament) {
     first: {
       id: official.first.ids?.[0] || '',
       officialIds: official.first.ids || [],
-      name: official.first.name,
-      nameEn: official.first.name,
+      name: firstName,
+      nameEn: firstName,
+      alternatives: official.first.alternatives || [],
       country: official.first.countries?.[0] || '',
       rank: '', odds: '', seed: ''
     },
     second: {
       id: official.second.ids?.[0] || '',
       officialIds: official.second.ids || [],
-      name: official.second.name,
-      nameEn: official.second.name,
+      name: secondName,
+      nameEn: secondName,
+      alternatives: official.second.alternatives || [],
       country: official.second.countries?.[0] || '',
       rank: '', odds: '', seed: ''
     },
@@ -329,6 +404,13 @@ function officialRawMatch(official, tournament) {
     scheduleOrder: official.scheduleOrder,
     courtOrder: official.courtOrder,
     officialScheduleMatch: true,
+    officialMainTour: official.officialMainTour !== false,
+    provisional: Boolean(
+      official.provisional
+      || official.first.alternatives?.length
+      || official.second.alternatives?.length
+    ),
+    providerId: '',
     officialMatchId: official.id,
     rawUpdatedAt: Date.now()
   };
@@ -392,7 +474,7 @@ function overlayOfficial(match, official, tournament, direction) {
   return result;
 }
 
-export function reconcileOfficialSchedule(matches = [], reference = null, date = '') {
+export function reconcileOfficialSchedule(matches = [], reference = null, date = '', finishedResults = []) {
   let remaining = [...matches];
   const output = [];
   for (const tournament of reference?.tours || []) {
@@ -401,14 +483,17 @@ export function reconcileOfficialSchedule(matches = [], reference = null, date =
       || pairingBelongsToTournament(match, tournament));
     if (!candidates.length) {
       if (tournament.complete) {
-        output.push(...(tournament.matches || []).map(official => officialRawMatch(official, tournament)));
+        output.push(...(tournament.matches || [])
+          .map(official => resolveOfficialMatch(official, finishedResults, tournament))
+          .map(official => officialRawMatch(official, tournament)));
       }
       continue;
     }
     const candidateSet = new Set(candidates);
     remaining = remaining.filter(match => !candidateSet.has(match));
     const used = new Set();
-    for (const official of tournament.matches || []) {
+    for (const rawOfficial of tournament.matches || []) {
+      const official = resolveOfficialMatch(rawOfficial, finishedResults, tournament);
       const candidate = candidates.map((match, index) => ({ match, index }))
         .filter(({ match, index }) => !used.has(index) && matchKind(match) === official.kind)
         .map(item => ({ ...item, direction: orientation(item.match, official) }))
@@ -700,7 +785,7 @@ export class OfficialScheduleValidator {
     }
   }
 
-  reconcile(matches, date) {
-    return reconcileOfficialSchedule(matches, this.saved(date), date);
+  reconcile(matches, date, finishedResults = []) {
+    return reconcileOfficialSchedule(matches, this.saved(date), date, finishedResults);
   }
 }

@@ -317,7 +317,14 @@ function stripPlayerLine(value) {
 }
 
 function alternatives(value) {
-  return value.split(/\s+(?:or|\/\s*or)\s+/i).map(stripPlayerLine).filter(Boolean);
+  // ATP PDFs are visually spaced, but their text layer is not. The same
+  // placeholder may therefore be encoded as "A or B", "A (ARG)or/B" or
+  // "A/or/B". Treat only those explicit separators as alternatives; a plain
+  // slash continues to mean a doubles team.
+  return String(value)
+    .split(/\s+or\s+|\s*\/\s*or\s*\/\s*|(?<=\([A-Z]{3}\))\s*or\s*\/?/i)
+    .map(stripPlayerLine)
+    .filter(Boolean);
 }
 
 function teamFromLines(lines) {
@@ -352,11 +359,31 @@ function courtName(value) {
   return known[compact] || value.replace(/\bCOURT\b/gi, 'Court').trim();
 }
 
-function isSideEvent(lines, firstY, xMin, xMax) {
-  return lines.some(line =>
-    line.x >= xMin && line.x < xMax
-    && line.y > firstY && line.y - firstY < 80
-    && /\b(?:RISING|JUNIOR|EXHIBITION|INVITATIONAL)\b/i.test(line.text));
+const SIDE_EVENT_PATTERN = /\b(?:RISING|JUNIOR|JUNIORS|EXHIBITION|INVITATIONAL|LEGENDS?|RACE\s+TO|U[-\s]?(?:12|14|15|16|18))\b/i;
+const SECTION_PATTERN = /\b(?:SINGLES|DOUBLES|QUALIFYING|QUALIFICATION|FINAL|SEMI(?:FINAL)?S?|QUARTER(?:FINAL)?S?|RISING|JUNIOR|JUNIORS|EXHIBITION|INVITATIONAL|LEGENDS?|RACE\s+TO|U[-\s]?(?:12|14|15|16|18))\b/i;
+
+function sectionForMatch(pageLines, versusLine, firstY, courtLine) {
+  const candidates = pageLines
+    .filter(line =>
+      line.y > firstY
+      && line.y < courtLine - 2
+      && Math.abs(line.x - versusLine.x) < 160
+      && SECTION_PATTERN.test(line.text))
+    .map(line => ({
+      line,
+      // Centred PDF labels often expose their text origin near the right edge,
+      // so column boundaries are unreliable. Score both horizontal proximity
+      // to the "vs" anchor and vertical proximity to this match instead.
+      score: Math.abs(line.x - versusLine.x) * 2 + Math.abs(line.y - firstY)
+    }))
+    .sort((first, second) => first.score - second.score);
+  return candidates[0]?.line?.text || '';
+}
+
+function kindFromSection(section = '') {
+  if (/\bDOUBLES\b/i.test(section)) return 'MD';
+  if (/\bSINGLES\b/i.test(section)) return 'MS';
+  return '';
 }
 
 export function parseAtpOopLayout(chunks, registry, sha256 = '') {
@@ -424,7 +451,13 @@ export function parseAtpOopLayout(chunks, registry, sha256 = '') {
         }
         firstLines.sort((first, second) => second.y - first.y);
         secondLines.sort((first, second) => second.y - first.y);
-        if (isSideEvent(columnLines, firstLines[0].y, court.min, court.max)) return;
+        const section = sectionForMatch(
+          pageLines,
+          versusLine,
+          firstLines[0].y,
+          courtLine
+        );
+        if (SIDE_EVENT_PATTERN.test(section)) return;
         const first = teamFromLines(firstLines);
         const second = teamFromLines(secondLines);
         if (!first.name || !second.name) {
@@ -437,7 +470,8 @@ export function parseAtpOopLayout(chunks, registry, sha256 = '') {
           .find(line => /^(?:Starts?|Not Before|Followed By)\b/i.test(line.text));
         const localTime = parseClock(timeLine?.text || '');
         const clock = localDateTime(scheduleDate, localTime, registry?.timeZone);
-        const kind = first.name.includes('/') || second.name.includes('/') ? 'MD' : 'MS';
+        const kind = kindFromSection(section)
+          || (first.name.includes('/') || second.name.includes('/') ? 'MD' : 'MS');
         matches.push({
           id: `atp-oop:${registry?.atpId || 'unknown'}:${scheduleDate}:${page}:${courtIndex}:${matchIndex}`,
           kind,
@@ -449,7 +483,9 @@ export function parseAtpOopLayout(chunks, registry, sha256 = '') {
           scheduleDate,
           date: clock.date || scheduleDate,
           time: clock.time,
-          round: '',
+          round: section,
+          provisional: Boolean(first.alternatives.length || second.alternatives.length),
+          officialMainTour: true,
           status: 'scheduled',
           statusText: 'Scheduled',
           winner: '',

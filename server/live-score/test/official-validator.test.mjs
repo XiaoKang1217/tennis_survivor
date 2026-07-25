@@ -464,6 +464,81 @@ test('parses ATP OOP layout into official date, city, surface, order, court and 
   assert.deepEqual(parsed.matches[0].second.alternatives, ['Qualifier', 'Quentin Halys']);
 });
 
+test('parses compact ATP feeder alternatives as singles instead of a doubles team', () => {
+  const layout = atpLayout()
+    .filter(line => line.y >= 640)
+    .map(line => {
+      if (line.text === 'Yannick Hanfmann (GER)') {
+        return { ...line, text: 'Roman Andres Burruchaga (ARG)or/Alexander Blockx (BEL)' };
+      }
+      if (line.text === 'Qualifier or Quentin Halys (FRA)') {
+        return { ...line, text: 'Jaime Faria (POR)or/Luciano Darderi (ITA)' };
+      }
+      return line;
+    });
+  layout.push({ x: 50, y: 700, text: 'SINGLES FINAL' });
+  const parsed = parseAtpOopLayout(layout, {
+    atpId: '7290',
+    name: 'Millennium Estoril Open',
+    city: 'Estoril',
+    country: 'Portugal',
+    timeZone: 'Europe/Lisbon'
+  });
+  assert.equal(parsed.matches.length, 1);
+  assert.equal(parsed.matches[0].kind, 'MS');
+  assert.equal(parsed.matches[0].round, 'SINGLES FINAL');
+  assert.deepEqual(parsed.matches[0].first.alternatives, [
+    'Roman Andres Burruchaga',
+    'Alexander Blockx'
+  ]);
+  assert.deepEqual(parsed.matches[0].second.alternatives, [
+    'Jaime Faria',
+    'Luciano Darderi'
+  ]);
+});
+
+test('filters a labeled ATP junior side event without dropping adjacent tour finals', () => {
+  const layout = [
+    { x: 50, y: 824, text: 'GENERALI OPEN' },
+    { x: 50, y: 804, text: 'Kitzbühel, Austria' },
+    { x: 50, y: 790, text: 'ATP 250 | Clay | Outdoor' },
+    { x: 50, y: 770, text: 'ORDER OF PLAY - SATURDAY, JULY 25, 2026' },
+    { x: 50, y: 742, text: 'CENTER COURT' },
+    { x: 50, y: 730, text: 'Starts At 10:30' },
+    { x: 50, y: 718, text: 'DOUBLES FINAL' },
+    { x: 50, y: 700, text: 'Jakob Schnaitter (GER)' },
+    { x: 50, y: 688, text: 'Mark Wallner (GER)' },
+    { x: 50, y: 670, text: 'vs.' },
+    { x: 50, y: 652, text: 'Lucas Miedler (AUT)' },
+    { x: 50, y: 640, text: 'Marc Polmans (AUS)' },
+    { x: 50, y: 612, text: 'Followed By' },
+    { x: 50, y: 600, text: 'KITZ RISING FINAL' },
+    { x: 50, y: 580, text: 'Rafael Pagonis (GRE)' },
+    { x: 50, y: 560, text: 'vs.' },
+    { x: 50, y: 540, text: 'Mohamed Genidy (EGY)' },
+    { x: 50, y: 512, text: 'Not Before 13:00' },
+    { x: 50, y: 500, text: 'SINGLES FINAL' },
+    { x: 50, y: 480, text: 'Alexander Bublik (KAZ)' },
+    { x: 50, y: 460, text: 'vs.' },
+    { x: 50, y: 440, text: 'Quentin Halys (FRA)' }
+  ];
+  const parsed = parseAtpOopLayout(layout, {
+    atpId: '319',
+    name: 'Generali Open',
+    city: 'Kitzbühel',
+    country: 'Austria',
+    timeZone: 'Europe/Vienna'
+  });
+  assert.deepEqual(
+    parsed.matches.map(match => [match.kind, match.first.name, match.second.name]),
+    [
+      ['MD', 'Jakob Schnaitter/Mark Wallner', 'Lucas Miedler/Marc Polmans'],
+      ['MS', 'Alexander Bublik', 'Quentin Halys']
+    ]
+  );
+  assert.equal(parsed.matches.some(match => /Pagonis|Genidy/.test(match.first.name)), false);
+});
+
 test('keeps ATP OOP page coordinates isolated in a multi-page PDF', () => {
   const firstPage = atpLayout().map(line => ({ ...line, page: 0 }));
   const secondPage = atpLayout().map(line => ({
@@ -490,6 +565,121 @@ test('keeps ATP OOP page coordinates isolated in a multi-page PDF', () => {
     ['Yannick Hanfmann', 'Vasil Kirkov/Bart Stevens', 'Alexander Bublik', 'Lucas Miedler/Marc Polmans']
   );
   assert.deepEqual(parsed.matches.map(match => match.scheduleOrder), [0, 1, 10_000, 10_001]);
+});
+
+test('finished feeder matches resolve ATP OOP alternatives before fixtures publishes the final', () => {
+  const tournament = {
+    tour: 'ATP',
+    id: '7290',
+    year: 2026,
+    name: 'Millennium Estoril Open',
+    city: 'Estoril',
+    country: 'Portugal',
+    aliases: ['Estoril'],
+    surface: '红土',
+    level: 'ATP 250',
+    source: 'ATP official OOP PDF',
+    complete: true,
+    matches: [{
+      id: 'atp-final',
+      kind: 'MS',
+      first: {
+        name: 'Roman Andres Burruchaga',
+        alternatives: ['Roman Andres Burruchaga', 'Alexander Blockx'],
+        ids: [],
+        countries: []
+      },
+      second: {
+        name: 'Jaime Faria',
+        alternatives: ['Jaime Faria', 'Luciano Darderi'],
+        ids: [],
+        countries: []
+      },
+      court: 'Estadio Millennium',
+      scheduleDate: '2026-07-25',
+      date: '2026-07-26',
+      time: '00:30',
+      status: 'scheduled',
+      winner: '',
+      sets: []
+    }]
+  };
+  const finished = [
+    normalizeMatch({
+      event_key: 91,
+      event_date: '2026-07-24',
+      event_time: '18:00',
+      event_status: 'Finished',
+      event_winner: 'Second Player',
+      event_final_result: '0 - 2',
+      event_type_type: 'Atp Singles',
+      tournament_name: 'ATP Estoril',
+      event_first_player: 'Roman Andres Burruchaga',
+      event_second_player: 'Alexander Blockx',
+      event_first_player_result: '0',
+      event_second_player_result: '2'
+    }),
+    normalizeMatch({
+      event_key: 92,
+      event_date: '2026-07-24',
+      event_time: '20:00',
+      event_status: 'Finished',
+      event_winner: 'Second Player',
+      event_final_result: '0 - 2',
+      event_type_type: 'Atp Singles',
+      tournament_name: 'ATP Estoril',
+      event_first_player: 'Jaime Faria',
+      event_second_player: 'Luciano Darderi',
+      event_first_player_result: '0',
+      event_second_player_result: '2'
+    })
+  ];
+  const [resolved] = reconcileOfficialSchedule(
+    [],
+    { date: '2026-07-25', tours: [tournament] },
+    '2026-07-25',
+    finished
+  );
+  assert.equal(resolved.first.nameEn, 'Alexander Blockx');
+  assert.equal(resolved.second.nameEn, 'Luciano Darderi');
+  assert.equal(resolved.type, 'Atp Singles');
+  assert.equal(resolved.provisional, false);
+});
+
+test('an unresolved ATP feeder choice is displayed once per candidate', () => {
+  const [match] = reconcileOfficialSchedule([], {
+    tours: [{
+      tour: 'ATP',
+      id: '7290',
+      year: 2026,
+      name: 'Millennium Estoril Open',
+      city: 'Estoril',
+      country: 'Portugal',
+      aliases: ['Estoril'],
+      surface: '红土',
+      level: 'ATP 250',
+      complete: true,
+      matches: [{
+        id: 'atp-final',
+        kind: 'MS',
+        first: {
+          name: 'Roman Andres Burruchaga',
+          alternatives: ['Roman Andres Burruchaga', 'Alexander Blockx']
+        },
+        second: {
+          name: 'Jaime Faria',
+          alternatives: ['Jaime Faria', 'Luciano Darderi']
+        },
+        scheduleDate: '2026-07-25',
+        date: '2026-07-26',
+        time: '00:30',
+        status: 'scheduled'
+      }]
+    }]
+  }, '2026-07-25');
+  assert.equal(match.first.nameEn, 'Roman Andres Burruchaga or Alexander Blockx');
+  assert.equal(match.second.nameEn, 'Jaime Faria or Luciano Darderi');
+  assert.equal(match.provisional, true);
 });
 
 test('ATP validator stores versioned parsed snapshots by main-draw ID and official day', async () => {

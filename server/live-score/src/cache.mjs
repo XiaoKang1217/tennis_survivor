@@ -8,6 +8,7 @@ export class JsonCache {
       fixtures: null,
       live: [],
       terminalMatches: null,
+      terminalMatchesByDate: {},
       details: {},
       budget: {},
       pipelineVersion: 0,

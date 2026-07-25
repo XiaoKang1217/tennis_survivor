@@ -5,19 +5,28 @@ import { LivePoller } from '../src/poller.mjs';
 function setup(used, fixtures = [], options = {}) {
   const calendarDate = options.calendarDate || '2026-07-21';
   const now = options.now || Date.parse(`${calendarDate}T12:00:00+08:00`);
+  const tomorrow = new Date(Date.parse(`${calendarDate}T00:00:00Z`) + 86_400_000).toISOString().slice(0, 10);
   const cache = {
     data: {
       fixtures: { fetchedAt: now, date: options.activeScheduleDate || calendarDate, items: fixtures },
+      scheduleFixtures: {
+        [calendarDate]: { fetchedAt: now, date: calendarDate, items: fixtures, odds: {} },
+        [tomorrow]: { fetchedAt: now, date: tomorrow, items: [], odds: {} }
+      },
       live: fixtures.filter(item => item.event_live === '1'
         || /^(?:set \d+|live|in progress)$/i.test(String(item.event_status || ''))),
       details: {},
       budget: { day: calendarDate, used },
-      pipelineVersion: 7,
+      pipelineVersion: 8,
       activeScheduleDate: options.activeScheduleDate || ''
     },
     scheduleWrite() {}
   };
-  const client = { beijingDate: () => calendarDate, dateAfter: date => new Date(Date.parse(`${date}T00:00:00Z`) + 86_400_000).toISOString().slice(0, 10), budgetToday: () => cache.data.budget };
+  const client = {
+    beijingDate: () => calendarDate,
+    dateAfter: (date, days = 1) => new Date(Date.parse(`${date}T00:00:00Z`) + days * 86_400_000).toISOString().slice(0, 10),
+    budgetToday: () => cache.data.budget
+  };
   const config = { timeZone: 'Asia/Shanghai', dailyLimit: 8000, fixturesTtlMs: 6 * 60 * 60_000, officialTtlMs: 5 * 60_000, observationBeforeMs: 15 * 60_000, observationAfterMs: 6 * 60 * 60_000 };
   return new LivePoller({ client, cache, config, now: () => now });
 }
@@ -87,15 +96,15 @@ test('wakes at the next fifteen-minute observation window', () => {
 test('retries a pending ATP OOP at the official TTL without deleting fixtures candidates', () => {
   const poller = setup(100, [{
     event_key: 1,
-    event_date: '2026-07-21',
+    event_date: '2026-07-22',
     event_time: '18:00',
     event_type_type: 'Atp Singles',
     tournament_name: 'Today'
-  }]);
+  }], { calendarDate: '2026-07-22' });
   poller.cache.data.officialReferences = {
-    '2026-07-21': {
-      date: '2026-07-21',
-      fetchedAt: Date.parse('2026-07-21T11:59:00+08:00'),
+    '2026-07-22': {
+      date: '2026-07-22',
+      fetchedAt: Date.parse('2026-07-22T11:59:00+08:00'),
       tours: [{ tour: 'ATP', complete: false }]
     }
   };
@@ -106,15 +115,15 @@ test('retries a pending ATP OOP at the official TTL without deleting fixtures ca
 test('continues checking a published active ATP OOP for same-URL revisions', () => {
   const poller = setup(100, [{
     event_key: 1,
-    event_date: '2026-07-21',
+    event_date: '2026-07-22',
     event_time: '18:00',
     event_type_type: 'Atp Singles',
     tournament_name: 'Today'
-  }]);
+  }], { calendarDate: '2026-07-22' });
   poller.cache.data.officialReferences = {
-    '2026-07-21': {
-      date: '2026-07-21',
-      fetchedAt: Date.parse('2026-07-21T11:59:00+08:00'),
+    '2026-07-22': {
+      date: '2026-07-22',
+      fetchedAt: Date.parse('2026-07-22T11:59:00+08:00'),
       tours: [{ tour: 'ATP', complete: true }]
     }
   };
@@ -160,6 +169,104 @@ test('retries an unpublished prefetched ATP day without switching the active day
   assert.equal(refreshed, 1);
   assert.equal(poller.scheduleDate(), '2026-07-22');
   assert.equal(poller.cache.data.scheduleBases['2026-07-23'].matches.length, 1);
+});
+
+test('watches the active official day, Beijing today and tomorrow independently', () => {
+  const poller = setup(100, [], {
+    calendarDate: '2026-07-25',
+    activeScheduleDate: '2026-07-24'
+  });
+  assert.deepEqual(poller.watchedScheduleDates(), [
+    '2026-07-24',
+    '2026-07-25',
+    '2026-07-26'
+  ]);
+});
+
+test('uses five-minute fixture retries for unresolved OOP rows and hourly prefetch for tomorrow', () => {
+  const poller = setup(100, [], { calendarDate: '2026-07-25' });
+  poller.config.fixturesTtlMs = 30 * 60_000;
+  poller.config.unresolvedFixturesTtlMs = 5 * 60_000;
+  poller.config.futureFixturesTtlMs = 60 * 60_000;
+  poller.cache.data.scheduleBases['2026-07-25'] = {
+    date: '2026-07-25',
+    matches: [{
+      id: 'official:atp:7290:2026:final',
+      providerId: '',
+      status: 'scheduled',
+      provisional: true,
+      first: { alternatives: ['A', 'B'] },
+      second: { alternatives: [] }
+    }]
+  };
+  assert.equal(poller.fixtureRefreshTtl('2026-07-25'), 5 * 60_000);
+  assert.equal(poller.fixtureRefreshTtl('2026-07-26'), 60 * 60_000);
+  poller.cache.data.scheduleBases['2026-07-25'].matches[0] = {
+    id: '123',
+    providerId: '123',
+    status: 'scheduled',
+    first: {},
+    second: {}
+  };
+  assert.equal(poller.fixtureRefreshTtl('2026-07-25'), 30 * 60_000);
+});
+
+test('refreshes a stale non-active current day instead of freezing its first prefetch', async () => {
+  const poller = setup(100, [], {
+    calendarDate: '2026-07-25',
+    activeScheduleDate: '2026-07-24'
+  });
+  poller.config.fixturesTtlMs = 30 * 60_000;
+  poller.config.futureFixturesTtlMs = 60 * 60_000;
+  poller.cache.data.scheduleFixtures['2026-07-25'] = {
+    fetchedAt: poller.now() - 31 * 60_000,
+    oddsFetchedAt: poller.now(),
+    date: '2026-07-25',
+    items: [],
+    odds: {}
+  };
+  let fetched = 0;
+  poller.client.fixtures = async date => {
+    fetched += 1;
+    return date === '2026-07-25' ? [{
+      event_key: 25,
+      event_date: date,
+      event_time: '18:00',
+      event_type_type: 'Atp Singles',
+      tournament_name: 'ATP Estoril',
+      event_first_player: 'Alexander Blockx',
+      event_second_player: 'Luciano Darderi'
+    }] : [];
+  };
+  poller.client.odds = async () => ({});
+  await poller.refreshAdditionalScheduleDates();
+  assert.equal(fetched, 1);
+  assert.equal(poller.cache.data.scheduleBases['2026-07-25'].matches[0].id, '25');
+  assert.equal(poller.scheduleDate(), '2026-07-24');
+});
+
+test('an old OOP-only scheduled anomaly cannot freeze the previous date forever', () => {
+  const poller = setup(100, [], {
+    calendarDate: '2026-07-25',
+    activeScheduleDate: '2026-07-24',
+    now: Date.parse('2026-07-25T12:00:00+08:00')
+  });
+  const staleOfficial = {
+    id: 'official:atp:319:2026:kitz-rising',
+    providerId: '',
+    officialScheduleMatch: true,
+    officialMainTour: true,
+    scheduleDate: '2026-07-24',
+    date: '2026-07-24',
+    time: '18:00',
+    status: 'scheduled'
+  };
+  const snapshot = {
+    date: '2026-07-24',
+    tournaments: [{ venues: [{ matches: [staleOfficial] }] }]
+  };
+  assert.equal(poller.matchBlocksDayAdvance(staleOfficial), false);
+  assert.equal(poller.activeDayComplete(snapshot), true);
 });
 
 test('waits until the next Beijing day after all matches finish', () => {
@@ -350,6 +457,20 @@ test('advances to the new schedule day only after every match is finished', () =
   assert.deepEqual(poller.cache.data.live, []);
 });
 
+test('advances after every source match is cancelled even though cancelled cards are hidden', () => {
+  const poller = setup(100, [{
+    event_key: 12,
+    event_date: '2026-07-22',
+    event_time: '18:00',
+    event_status: 'Cancelled',
+    event_type_type: 'Atp Singles',
+    tournament_name: 'Estoril'
+  }], { calendarDate: '2026-07-23', activeScheduleDate: '2026-07-22' });
+  assert.equal(poller.snapshot.tournaments.length, 0);
+  assert.equal(poller.advanceScheduleDayIfComplete(), true);
+  assert.equal(poller.scheduleDate(), '2026-07-23');
+});
+
 test('shows at most five dates but durably archives every schedule day from July 22', () => {
   const poller = setup(100, [], { calendarDate: '2026-07-27', activeScheduleDate: '2026-07-27' });
   for (let day = 21; day <= 27; day += 1) poller.rememberSnapshot({ date: `2026-07-${day}`, tournaments: [], hasLive: false }, false);
@@ -361,7 +482,7 @@ test('shows at most five dates but durably archives every schedule day from July
   ]);
 });
 
-test('invalidates snapshots created by the old competitor-driven pipeline', () => {
+test('invalidates snapshots and parsed OOP rows from an incompatible pipeline', () => {
   const calendarDate = '2026-07-23';
   const now = Date.parse(`${calendarDate}T12:00:00+08:00`);
   const cache = {
@@ -372,6 +493,11 @@ test('invalidates snapshots created by the old competitor-driven pipeline', () =
         date: calendarDate,
         items: { 99: { id: '99', status: 'finished' } }
       },
+      atpOopSnapshots: {
+        '319:2026-07-24': {
+          current: { parsed: { matches: [{ first: { name: 'Junior side event' } }] } }
+        }
+      },
       scheduleHistory: { '2026-07-22': { date: '2026-07-22' }, '2026-07-23': { date: '2026-07-23', tournaments: [{ name: 'corrupt' }] } }
     },
     scheduleWrite() {}
@@ -379,8 +505,9 @@ test('invalidates snapshots created by the old competitor-driven pipeline', () =
   const client = { beijingDate: () => calendarDate, dateAfter: () => '2026-07-24', budgetToday: () => cache.data.budget };
   const config = { timeZone: 'Asia/Shanghai', dailyLimit: 8000, fixturesTtlMs: 6 * 60 * 60_000, observationBeforeMs: 15 * 60_000, observationAfterMs: 6 * 60 * 60_000 };
   new LivePoller({ client, cache, config, now: () => now });
-  assert.equal(cache.data.pipelineVersion, 7);
+  assert.equal(cache.data.pipelineVersion, 8);
   assert.deepEqual(Object.keys(cache.data.scheduleHistory), [calendarDate]);
   assert.equal(cache.data.scheduleHistory[calendarDate].tournaments.length, 0);
   assert.equal(cache.data.terminalMatches.items['99'].status, 'finished');
+  assert.deepEqual(cache.data.atpOopSnapshots, {});
 });
