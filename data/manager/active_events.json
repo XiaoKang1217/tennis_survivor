@@ -1,29 +1,30 @@
 {
   "season": 2026,
-  "station_key": "2026-w30-estoril-prague",
-  "station_name": "ATP Estoril + WTA Prague",
+  "station_key": "2026-w31-washington",
+  "station_name": "ATP Washington + WTA Washington",
   "survivor_aligned": true,
-  "status": "open",
+  "status": "preview",
   "rules": {
-    "station_grant": 200,
+    "station_grant": 500,
     "cross_tour_transfer": true,
-    "combo_version": "normal_2026_v2",
+    "combo_version": "washington_2026_v1",
+    "combo_design_status": "confirmed",
     "combo": {
-      "total_cap": 200,
+      "total_cap": 400,
       "steady": {
         "min_players": 2,
         "qf_ratio": 0.5,
         "gross_rate": 0.08,
-        "cap": 50
+        "cap": 80
       },
       "dual_tour": {
-        "QF": 20,
-        "SF": 45,
-        "F": 80,
-        "W": 120
+        "QF": 60,
+        "SF": 120,
+        "F": 200,
+        "W": 300
       },
       "value_pick": {
-        "tiers": ["C", "D"],
+        "max_price": 100,
         "QF": 20,
         "SF": 45,
         "F": 80,
@@ -31,41 +32,49 @@
         "max_triggers": 1
       },
       "small_budget": {
-        "max_cost": 200,
-        "gross_multipliers": [1, 1.5, 2.5],
-        "bonuses": [20, 50, 90]
+        "max_cost": 500,
+        "gross_multipliers": [
+          0.75,
+          1,
+          1.25,
+          1.5
+        ],
+        "bonuses": [
+          50,
+          100,
+          150,
+          200
+        ]
       }
     }
   },
   "pricing": {
-    "market_prices_locked": true,
-    "publication_version": 1,
-    "locked_at": "2026-07-19T09:30:42+08:00",
-    "reason": "Freeze publication v1 opening prices after the published draws, current rankings, and current Elo data were reviewed."
+    "market_prices_locked": false,
+    "reason": "Washington local preview; prices remain draft until user confirmation."
   },
-  "updated_at": "2026-07-20T10:07:42+08:00",
+  "updated_at": "2026-07-26T02:09:45.630Z",
   "notes": [
-    "埃斯托利尔与布拉格主签由 live-tennis 当前站读取；排名、Elo 与身价由经理模块刷新脚本生成。",
-    "巴斯塔德与雅典保留为 previous_station，由结算脚本继续刷新；当前市场只展示埃斯托利尔与布拉格。",
-    "本站 ATP/WTA 可以互换；换人窗口待赛程确认。",
-    "本站阵容提交截止时间通过窗口修订提前至 2026-07-20 16:45（Asia/Shanghai）；开盘价格继续锁定在 publication v1。"
+    "华盛顿 ATP/WTA 主签以 ATP/WTA 官方 PDF 为签位、对阵与赛事元数据真源；第三方页面仅提供中文名与公开 profile ID 映射。",
+    "本站签约金为 500；ATP/WTA 可以互换；换人窗口待赛程确认。",
+    "华盛顿 Combo 使用独立 washington_2026_v1 规则；旧赛站继续使用各自冻结的 Combo 快照与原结算代码。",
+    "ATP 官方签表已将退赛的 Ethan Quinn 替换为 Qualifier/Lucky Loser，第 31 签位按官方占位保留。"
   ],
   "previous_station": {
-    "station_key": "2026-w29-bastad-athens",
-    "station_name": "ATP Bastad + WTA Athens",
-    "publication_version": 3,
-    "publication_file": "publications/2026-w29-bastad-athens-v3.json",
+    "station_key": "2026-w30-estoril-prague",
+    "station_name": "ATP Estoril + WTA Prague",
+    "publication_version": 2,
+    "publication_file": "publications/2026-w30-estoril-prague-v2.json",
     "events": [
       {
         "tour": "ATP",
-        "event_key": "atp-2026-w29-bastad-nordea-open",
-        "data_file": "events/atp-2026-w29-bastad.json",
+        "event_key": "atp-2026-w30-estoril-millennium-estoril-open",
+        "data_file": "events/atp-2026-w30-estoril.json",
         "active": false
       },
       {
         "tour": "WTA",
-        "event_key": "wta-2026-w29-athens-open",
-        "data_file": "events/wta-2026-w29-athens.json",
+        "event_key": "wta-2026-w30-prague-livesport-prague-open",
+        "data_file": "events/wta-2026-w30-prague.json",
         "active": false
       }
     ]
@@ -73,14 +82,14 @@
   "events": [
     {
       "tour": "ATP",
-      "event_key": "atp-2026-w30-estoril-millennium-estoril-open",
-      "data_file": "events/atp-2026-w30-estoril.json",
+      "event_key": "atp-2026-w31-washington-mubadala-citi-dc-open",
+      "data_file": "events/atp-2026-w31-washington.json",
       "active": true
     },
     {
       "tour": "WTA",
-      "event_key": "wta-2026-w30-prague-livesport-prague-open",
-      "data_file": "events/wta-2026-w30-prague.json",
+      "event_key": "wta-2026-w31-washington-mubadala-citi-dc-open",
+      "data_file": "events/wta-2026-w31-washington.json",
       "active": true
     }
   ]

@@ -2,7 +2,9 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import test from 'node:test';
 
-const active = JSON.parse(fs.readFileSync('data/manager/active_events.json', 'utf8'));
+const publication = JSON.parse(
+  fs.readFileSync('data/manager/publications/2026-w29-bastad-athens-v3.json', 'utf8')
+);
 const atp = JSON.parse(fs.readFileSync('data/manager/events/atp-2026-w29-bastad.json', 'utf8'));
 const wta = JSON.parse(fs.readFileSync('data/manager/events/wta-2026-w29-athens.json', 'utf8'));
 const html = fs.readFileSync('index.html', 'utf8');
@@ -16,10 +18,10 @@ const opensAt = '2026-07-15T06:00:00+08:00';
 const closesAt = '2026-07-15T17:00:00+08:00';
 
 test('Bastad and Athens retain the published cross-tour transfer window after station rollover', () => {
-  assert.equal(active.previous_station.station_key, '2026-w29-bastad-athens');
-  assert.equal(active.previous_station.publication_version, 3);
-  assert.equal(active.previous_station.publication_file, 'publications/2026-w29-bastad-athens-v3.json');
-  assert.equal(active.rules.cross_tour_transfer, true);
+  assert.equal(publication.station_key, '2026-w29-bastad-athens');
+  assert.equal(publication.publication_version, 3);
+  assert.equal(publication.publication_kind, 'window_amendment');
+  assert.equal(publication.snapshot.station_config.rules.cross_tour_transfer, true);
 
   for (const event of [atp, wta]) {
     assert.equal(event.transfer_window_opens_at, opensAt);
@@ -30,9 +32,6 @@ test('Bastad and Athens retain the published cross-tour transfer window after st
 });
 
 test('previous-station Combo rules render from the frozen publication instead of Wimbledon constants', () => {
-  const publication = JSON.parse(fs.readFileSync(`data/manager/${active.previous_station.publication_file}`, 'utf8'));
-  assert.equal(publication.station_key, active.previous_station.station_key);
-  assert.equal(publication.publication_version, active.previous_station.publication_version);
   assert.equal(publication.snapshot.station_config.combo_version, 'normal_2026_v2');
   assert.match(html, /function managerPreviousComboRuleCard\(\)/);
   assert.match(html, /managerPreviousComboRuleCard\(\)\+/);

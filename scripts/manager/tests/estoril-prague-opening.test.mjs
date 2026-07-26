@@ -4,10 +4,12 @@ import test from 'node:test';
 
 import { canonicalJson, sha256 } from '../lib/station-publication-snapshot.mjs';
 
-const active = JSON.parse(fs.readFileSync('data/manager/active_events.json', 'utf8'));
 const openingPublication = JSON.parse(fs.readFileSync('data/manager/publications/2026-w30-estoril-prague-v1.json', 'utf8'));
 const windowAmendment = JSON.parse(fs.readFileSync('data/manager/publications/2026-w30-estoril-prague-v2.json', 'utf8'));
-const events = active.events.map((item) => JSON.parse(fs.readFileSync(`data/manager/${item.data_file}`, 'utf8')));
+const events = [
+  'data/manager/events/atp-2026-w30-estoril.json',
+  'data/manager/events/wta-2026-w30-prague.json'
+].map((file) => JSON.parse(fs.readFileSync(file, 'utf8')));
 const html = fs.readFileSync('index.html', 'utf8');
 const migration = fs.readFileSync(
   'supabase/migrations/202607190001_manager_dual_tour_champion_combo.sql',
@@ -15,8 +17,8 @@ const migration = fs.readFileSync(
 );
 
 test('Estoril and Prague close at the amended manual deadline', () => {
-  assert.equal(active.station_key, '2026-w30-estoril-prague');
-  assert.equal(active.status, 'open');
+  assert.equal(windowAmendment.station_key, '2026-w30-estoril-prague');
+  assert.equal(windowAmendment.snapshot.station_config.status, 'open');
   for (const event of events) {
     assert.equal(event.submission_status, 'open');
     assert.equal(event.manual_schedule_windows, true);
@@ -35,7 +37,10 @@ test('window amendment preserves the immutable opening publication', () => {
 });
 
 test('normal dual-tour Combo includes a config-driven champion tier', () => {
-  assert.deepEqual(active.rules.combo.dual_tour, { QF: 20, SF: 45, F: 80, W: 120 });
+  assert.deepEqual(
+    windowAmendment.snapshot.station_config.combo.dual_tour,
+    { QF: 20, SF: 45, F: 80, W: 120 }
+  );
   assert.equal(openingPublication.snapshot.station_config.combo.dual_tour.W, 120);
   assert.match(html, /eachTour\('W'\)\?120/);
   assert.match(html, /QF\/SF\/F\/W/);
