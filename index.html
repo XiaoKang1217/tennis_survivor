@@ -2660,7 +2660,7 @@ function managerWashingtonComboScenario(gross,rounds){
   var maxPrice=Number(valueRules.max_price)||100,jewel=0;
   rounds.forEach(function(x){
     if((Number(x.player.price)||0)>maxPrice)return;
-    var value=x.round==='W'?(Number(valueRules.W)||125):(managerRoundAtLeast(x.round,'F')?(Number(valueRules.F)||80):(managerRoundAtLeast(x.round,'SF')?(Number(valueRules.SF)||45):(managerRoundAtLeast(x.round,'QF')?(Number(valueRules.QF)||20):0)));
+    var value=x.round==='W'?(Number(valueRules.W)||200):(managerRoundAtLeast(x.round,'F')?(Number(valueRules.F)||150):(managerRoundAtLeast(x.round,'SF')?(Number(valueRules.SF)||100):(managerRoundAtLeast(x.round,'QF')?(Number(valueRules.QF)||50):0)));
     jewel=Math.max(jewel,value);
   });
   var cost=players.reduce(function(sum,p){return sum+(Number(p.price)||0);},0),small=0;
@@ -2674,10 +2674,10 @@ function managerWashingtonComboScenario(gross,rounds){
     });
   }
   var raw=stable+dual+jewel+small,cap=Number(combo.total_cap)||400,bonus=Math.min(raw,cap);
-  return {gross:gross,stable:stable,finalBonus:dual,champBonus:0,jewelBonus:jewel,smallBusinessBonus:small,dualBonus:dual,bonus:bonus,comboVersion:'washington_2026_v1',comboCap:cap,comboRaw:raw,comboItems:[
+  return {gross:gross,stable:stable,finalBonus:dual,champBonus:0,jewelBonus:jewel,smallBusinessBonus:small,dualBonus:dual,bonus:bonus,comboVersion:rules.combo_version||'washington_2026_v2',comboCap:cap,comboRaw:raw,comboItems:[
     {label:'稳健经营',amount:stable,desc:'至少2人，50%阵容进QF，毛收益8%，封顶80'},
     {label:'双线经营',amount:dual,desc:'ATP/WTA各有人进QF/SF/F/W，最高档+60/+120/+200/+300'},
-    {label:'慧眼识珠',amount:jewel,desc:'签约价不高于100的球员进QF/SF/F/W，最高档+20/+45/+80/+125'},
+    {label:'慧眼识珠',amount:jewel,desc:'签约价不高于100的球员进QF/SF/F/W，最高档+50/+100/+150/+200'},
     {label:'小本经营',amount:small,desc:'成本不超过500，毛收益达到成本0.75/1/1.25/1.5倍，最高档+50/+100/+150/+200'}
   ]};
 }
@@ -2730,7 +2730,7 @@ function managerScoreScenario(players,roundFor){
   });
   var policy=managerComboPolicyForPlayers(players);
   if(policy==='wimbledon_2026')return managerWimbledonComboScenario(gross,rounds);
-  if(policy==='washington_2026_v1')return managerWashingtonComboScenario(gross,rounds);
+  if(policy==='washington_2026_v1'||policy==='washington_2026_v2')return managerWashingtonComboScenario(gross,rounds);
   if(policy==='normal_2026_v2')return managerNormalV2ComboScenario(gross,rounds);
   return managerClassicComboScenario(gross,rounds);
 }
@@ -3017,7 +3017,7 @@ function managerComboFallbackEvidence(item,meta,contracts,lineup){
     var version=String(meta&&meta.combo_version||'');
     var candidates=active.filter(function(c){
       if(version.indexOf('wimbledon')>=0)return Number(c.price)<=300;
-      if(version.indexOf('washington_2026_v1')>=0)return Number(c.price)<=100;
+      if(version.indexOf('washington_2026_')>=0)return Number(c.price)<=100;
       return c.tier==='C'||c.tier==='D';
     });
     var jewelRound=['W','F','SF','QF','R16','R32'].find(function(round){return candidates.some(function(c){return atLeast(c,round);});})||'';
@@ -3861,7 +3861,7 @@ function managerRenderMarket(){
 }
 function managerComboBrief(c){
   if(c.comboVersion==='wimbledon_2026')return '多点开花 '+(c.bloomBonus||0)+' / 全员进阶 '+(c.allR16Bonus||0)+' / 双线经营 '+(c.dualBonus||0)+' / 慧眼识珠 '+(c.jewelBonus||0)+' / 冠军经纪 '+(c.champBonus||0)+' / 合计 '+c.bonus+(c.comboRaw>c.bonus?'（封顶 '+c.comboCap+'）':'');
-  if(c.comboVersion==='normal_2026_v2'||c.comboVersion==='washington_2026_v1')return '稳健经营 '+(c.stable||0)+' / 双线经营 '+(c.dualBonus||0)+' / 慧眼识珠 '+(c.jewelBonus||0)+' / 小本经营 '+(c.smallBusinessBonus||0)+' / 合计 '+c.bonus+(c.comboRaw>c.bonus?'（封顶 '+c.comboCap+'）':'');
+  if(c.comboVersion==='normal_2026_v2'||c.comboVersion==='washington_2026_v1'||c.comboVersion==='washington_2026_v2')return '稳健经营 '+(c.stable||0)+' / 双线经营 '+(c.dualBonus||0)+' / 慧眼识珠 '+(c.jewelBonus||0)+' / 小本经营 '+(c.smallBusinessBonus||0)+' / 合计 '+c.bonus+(c.comboRaw>c.bonus?'（封顶 '+c.comboCap+'）':'');
   return '稳健 '+c.stable+' / 决赛团队 '+c.finalBonus+' / 冠军经纪 '+c.champBonus+' / 慧眼识珠 '+c.jewelBonus;
 }
 function managerSpendBreakdownText(c){
@@ -3903,18 +3903,18 @@ function managerPreviousComboConfig(){
 }
 function managerPreviousComboRuleCard(){
   var config=managerPreviousComboConfig(),title='上一站 Combo · '+config.stationName;
-  if(config.comboVersion==='normal_2026_v2'||config.comboVersion==='washington_2026_v1')return managerNormalV2ComboRuleCard(config.rules,title,'上一站');
+  if(config.comboVersion==='normal_2026_v2'||config.comboVersion==='washington_2026_v1'||config.comboVersion==='washington_2026_v2')return managerNormalV2ComboRuleCard(config.rules,title,'上一站');
   if(config.comboVersion==='wimbledon_2026')return managerWimbledonComboRuleCard(title);
   return managerRuleCard(title,['上一站 Combo 规则快照暂不可用。']);
 }
 function managerCurrentComboRuleCard(){
   var policy=managerComboPolicyForPlayers(managerLineupPlayers());
-  if(policy==='normal_2026_v2'||policy==='washington_2026_v1')return managerNormalV2ComboRuleCard();
+  if(policy==='normal_2026_v2'||policy==='washington_2026_v1'||policy==='washington_2026_v2')return managerNormalV2ComboRuleCard();
   if(policy==='wimbledon_2026')return managerWimbledonComboRuleCard();
   return managerRuleCard('本站 Combo',['稳健：60% 阵容进 8 强，毛收益 +8%，封顶 80。','决赛团队：至少 2 人进决赛，+60。','冠军经纪：至少 1 人夺冠，+40。','慧眼识珠：C/D 档进 4 强，每人 +30。']);
 }
 function managerCalculatorComboRulesHtml(c){
-  if(c.comboVersion==='normal_2026_v2'||c.comboVersion==='washington_2026_v1')return '<div style="margin-top:12px">'+managerNormalV2ComboRuleCard()+'</div>';
+  if(c.comboVersion==='normal_2026_v2'||c.comboVersion==='washington_2026_v1'||c.comboVersion==='washington_2026_v2')return '<div style="margin-top:12px">'+managerNormalV2ComboRuleCard()+'</div>';
   if(c.comboVersion==='wimbledon_2026')return '<div style="margin-top:12px">'+managerWimbledonComboRuleCard()+'</div>';
   return '';
 }
