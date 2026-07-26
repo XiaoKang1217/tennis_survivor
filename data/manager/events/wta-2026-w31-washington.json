@@ -2257,6 +2257,12 @@
     "formula_version": "build-prices-v1",
     "generated_at": "2026-07-26T02:12:12.725Z",
     "preview_formula_version": "preview-expected-round-v2",
-    "preview_generated_at": "2026-07-26T02:12:12.725Z"
+    "preview_generated_at": "2026-07-26T02:12:12.725Z",
+    "market_prices_locked": true,
+    "locked_to_publication_version": 1
+  },
+  "market_price_lock": {
+    "publication_version": 1,
+    "locked_at": "2026-07-26T15:20:00+08:00"
   }
 }
