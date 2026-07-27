@@ -17,6 +17,22 @@ const openingPublication = JSON.parse(fs.readFileSync(
   'data/manager/publications/2026-w31-washington-v1.json',
   'utf8',
 ));
+const cutoffPublication = JSON.parse(fs.readFileSync(
+  'data/manager/publications/2026-w31-washington-v3.json',
+  'utf8',
+));
+const atpEvent = JSON.parse(fs.readFileSync(
+  'data/manager/events/atp-2026-w31-washington.json',
+  'utf8',
+));
+const wtaEvent = JSON.parse(fs.readFileSync(
+  'data/manager/events/wta-2026-w31-washington.json',
+  'utf8',
+));
+const cutoffMigration = fs.readFileSync(
+  'supabase/migrations/202607270001_manager_washington_submission_cutoff_2245.sql',
+  'utf8',
+);
 
 function washingtonScenario(gross, rounds) {
   const start = html.indexOf('function managerWashingtonComboScenario');
@@ -57,6 +73,24 @@ test('Washington publishes the confirmed station-specific Combo contract', () =>
     gross_multipliers: [0.75, 1, 1.25, 1.5],
     bonuses: [50, 100, 150, 200],
   });
+});
+
+test('Washington submission closes 15 minutes before the 23:00 first match', () => {
+  for (const event of [atpEvent, wtaEvent]) {
+    assert.equal(event.main_draw_first_match_at, '2026-07-27T15:00:00.000Z');
+    assert.equal(event.submission_cutoff_at, '2026-07-27T22:45:00+08:00');
+    assert.equal(event.submission_closes_at, '2026-07-27T22:45:00+08:00');
+  }
+  assert.match(cutoffMigration, /station_key = '2026-w31-washington'/);
+  assert.match(cutoffMigration, /submission_cutoff_at = '2026-07-27T22:45:00\+08:00'/);
+  assert.match(cutoffMigration, /submission_closes_at = '2026-07-27T22:45:00\+08:00'/);
+  assert.match(cutoffMigration, /if v_count <> 2/);
+  assert.equal(cutoffPublication.publication_kind, 'window_amendment');
+  assert.equal(cutoffPublication.publication_version, 3);
+  for (const event of cutoffPublication.snapshot.events) {
+    assert.equal(event.submission_cutoff_at, '2026-07-27T22:45:00+08:00');
+    assert.equal(event.submission_closes_at, '2026-07-27T22:45:00+08:00');
+  }
 });
 
 test('Washington calculator applies all four rules and caps the combined reward at 400', () => {

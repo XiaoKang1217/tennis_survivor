@@ -51,5 +51,5 @@ test('badge thumbnails defer loading and preserve stable two-row shelves', () =>
 
 test('public data loader fetches the badge gallery alongside other boards', () => {
   assert.match(html, /client\.from\('tour_manager_badge_gallery'\)/);
-  assert.match(html, /Promise\.allSettled\(\[configReq,boardReq,walletReq,activeBadgeReq,badgeCatalogReq,badgeGalleryReq\]\)/);
+  assert.match(html, /Promise\.allSettled\(\[configReq,boardReq,walletReq,activeBadgeReq,badgeCatalogReq,badgeGalleryReq,careerIncomeReq\]\)/);
 });

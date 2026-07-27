@@ -54,10 +54,11 @@
     "locked_at": "2026-07-26T15:20:00+08:00",
     "reason": "Washington opening prices confirmed and locked for production."
   },
-  "updated_at": "2026-07-26T07:21:00.000Z",
+  "updated_at": "2026-07-27T04:38:03.000Z",
   "notes": [
     "华盛顿 ATP/WTA 主签以 ATP/WTA 官方 PDF 为签位、对阵与赛事元数据真源；第三方页面仅提供中文名与公开 profile ID 映射。",
     "本站签约金为 500；ATP/WTA 可以互换；换人窗口待赛程确认。",
+    "华盛顿首场比赛确认于北京时间 2026-07-27 23:00 开始，阵容提交截止时间调整为同日 22:45。",
     "华盛顿 Combo 使用独立 washington_2026_v2 规则；慧眼识珠调整为 QF/SF/F/W +50/+100/+150/+200，旧赛站与华盛顿 v1 继续使用各自冻结的 Combo 快照与原结算代码。",
     "ATP 官方签表已将退赛的 Ethan Quinn 替换为 Qualifier/Lucky Loser，第 31 签位按官方占位保留。"
   ],

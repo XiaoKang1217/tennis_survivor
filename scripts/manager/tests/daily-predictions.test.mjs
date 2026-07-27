@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import test from 'node:test';
+import vm from 'node:vm';
 
 const migration = fs.readFileSync('supabase/migrations/202607150001_manager_daily_predictions.sql', 'utf8');
 const immutableMigration = fs.readFileSync('supabase/migrations/202607170001_manager_daily_prediction_immutable_games.sql', 'utf8');
@@ -92,7 +93,7 @@ test('frontend exposes picks and separates personal prediction income without ch
   assert.match(html, /tour_manager_submit_daily_predictions/);
   assert.match(html, /当前为本地测试，不会写入线上数据/);
   assert.match(html, /今日竞猜 <span class="manager-prediction-reward">猜对一场 \+10 本金<\/span>/);
-  assert.match(html, /<p>比赛开始前可提交或修改，次日结算。<\/p>/);
+  assert.match(html, /按每场真实截止时间开放，跨零点也不会提前隐藏/);
   assert.doesNotMatch(html, /每天各选一场 ATP、WTA 排名接近的比赛/);
   assert.doesNotMatch(html, /<br>排名差/);
   assert.doesNotMatch(html, /竞猜奖励会进入本金、我的收益和次日收益弹窗/);
@@ -111,8 +112,32 @@ test('frontend exposes picks and separates personal prediction income without ch
 test('local QA reads immutable Supabase questions and falls back from previous to current station', () => {
   assert.match(html, /function managerDailyPredictionStationKeys\(\)/);
   assert.match(html, /\[previous,managerStationKey\(\)\]/);
+  assert.match(html, /function managerDailyPredictionDateKeys\(\)/);
+  assert.match(html, /managerChinaDateKey\(new Date\(\),-1\)/);
   assert.match(html, /for\(var i=0;i<stationKeys\.length;i\+\+\)/);
+  assert.match(html, /managerDailyPredictionSetHasOpenGame\(previousData\)/);
+  assert.match(html, /previousData\.carried_over=true/);
+  assert.match(html, /p_contest_date:previousDate/);
+  assert.match(html, /p_contest_date:todayDate/);
   assert.doesNotMatch(html, /function managerPredictionPreviewData\(\)/);
   assert.match(html, /if\(managerLocalQaMode\(\)\)\{/);
   assert.match(html, /当前为本地测试，不会写入线上数据/);
+});
+
+test('cross-midnight visibility follows each game closes_at instead of China midnight', () => {
+  const start = html.indexOf('function managerDailyPredictionSetHasOpenGame');
+  const end = html.indexOf('function managerPredictionDataKey', start);
+  assert.ok(start >= 0 && end > start);
+  const context = {};
+  vm.runInNewContext(html.slice(start, end), context);
+  const now = Date.parse('2026-07-28T00:10:00+08:00');
+  assert.equal(context.managerDailyPredictionSetHasOpenGame({
+    games: [
+      { status: 'open', closes_at: '2026-07-28T00:30:00+08:00' },
+      { status: 'open', closes_at: '2026-07-28T06:30:00+08:00' },
+    ],
+  }, now), true);
+  assert.equal(context.managerDailyPredictionSetHasOpenGame({
+    games: [{ status: 'open', closes_at: '2026-07-28T00:00:00+08:00' }],
+  }, now), false);
 });
