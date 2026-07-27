@@ -35,6 +35,14 @@ OFFICIAL_EVENT_ALIAS_OVERRIDES = {
     ('WTA', 'merida'): {'梅里达'},
 }
 
+# 赛事轮换造成的单站失效日补丁。
+# 2025 加拿大站在蒙特利尔于 7 月 27 日开赛，但 2026 加拿大站轮换到
+# 多伦多并于 8 月 2 日开赛。华盛顿站期间仍应保留 2025 蒙特利尔积分，
+# 等 2026 加拿大站真正开始后再按原有 18 站规则重选。
+EVENT_EXPIRY_DEFERRALS = {
+    ('WTA', 2025, '蒙特利尔'): date(2026, 8, 2),
+}
+
 # 仅用作 scrape_calendar 里颜色无法判断时的兜底，后续会被动态场地覆盖
 INDOOR_FALLBACK = {
     '鹿特丹','巴黎','都灵','霍巴特','林茨','武汉','多哈','达拉斯',
@@ -434,6 +442,22 @@ def _event_cycle_has_started(rec, today):
     return today >= cycle_date
 
 
+def _event_expiry_is_deferred(tour, rec, today):
+    aliases = {
+        norm_event_key(rec.get('event_key')),
+        *(norm_event_key(alias) for alias in (rec.get('aliases') or [])),
+    }
+    for (deferred_tour, deferred_year, deferred_event), expires_on in EVENT_EXPIRY_DEFERRALS.items():
+        if (
+            tour == deferred_tour
+            and int(rec.get('year') or 0) == deferred_year
+            and norm_event_key(deferred_event) in aliases
+            and today < expires_on
+        ):
+            return True
+    return False
+
+
 def _copy_with_survivor_flags(rec, **flags):
     out = dict(rec)
     out.update(flags)
@@ -488,7 +512,11 @@ def choose_official_record(ev, gender, official_calendar, today, force_year=None
         prev_year = [rec for rec in rows if int(rec.get('year') or 0) == today.year - 1]
         if prev_year:
             rec = max(prev_year, key=score)
-            expired = _event_cycle_has_started(rec, today) and not current_year_has_survivor
+            expired = (
+                _event_cycle_has_started(rec, today)
+                and not current_year_has_survivor
+                and not _event_expiry_is_deferred(tour, rec, today)
+            )
             return _copy_with_survivor_flags(
                 rec,
                 survivor_year_status='previous_year_no_current_survivor',

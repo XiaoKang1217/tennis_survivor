@@ -141,6 +141,25 @@ class InstantScoreTests(unittest.TestCase):
         )
         self.assertEqual(score, 250)
 
+    def test_wta_montreal_expiry_is_deferred_until_2026_canada_starts(self):
+        survivor_events = scoring._build_survivor_events_index([
+            {'year': 2026, 'tour': 'WTA', 'event_name': '华盛顿'},
+        ])
+
+        during_washington = scoring.choose_official_record(
+            '蒙特利尔', 'WS', self.official_calendar, scoring.date(2026, 7, 27),
+            survivor_events=survivor_events
+        )
+        canada_start = scoring.choose_official_record(
+            '蒙特利尔', 'WS', self.official_calendar, scoring.date(2026, 8, 2),
+            survivor_events=survivor_events
+        )
+
+        self.assertEqual(during_washington['year'], 2025)
+        self.assertFalse(during_washington['expired_by_survivor_calendar'])
+        self.assertEqual(canada_start['year'], 2025)
+        self.assertTrue(canada_start['expired_by_survivor_calendar'])
+
 
 if __name__ == '__main__':
     unittest.main()
