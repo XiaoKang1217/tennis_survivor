@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import test from 'node:test';
 import vm from 'node:vm';
@@ -33,6 +34,11 @@ const cutoffMigration = fs.readFileSync(
   'supabase/migrations/202607270001_manager_washington_submission_cutoff_2245.sql',
   'utf8',
 );
+const dataManifest = JSON.parse(fs.readFileSync('data/manifest.json', 'utf8'));
+
+function contentVersion(file) {
+  return createHash('sha256').update(fs.readFileSync(file)).digest('hex').slice(0, 16);
+}
 
 function washingtonScenario(gross, rounds) {
   const start = html.indexOf('function managerWashingtonComboScenario');
@@ -90,6 +96,17 @@ test('Washington submission closes 15 minutes before the 23:00 first match', () 
   for (const event of cutoffPublication.snapshot.events) {
     assert.equal(event.submission_cutoff_at, '2026-07-27T22:45:00+08:00');
     assert.equal(event.submission_closes_at, '2026-07-27T22:45:00+08:00');
+  }
+});
+
+test('Washington cutoff files are cache-busted in the frontend data manifest', () => {
+  for (const file of [
+    'data/manager/active_events.json',
+    'data/manager/events/atp-2026-w31-washington.json',
+    'data/manager/events/wta-2026-w31-washington.json',
+    'data/manager/publications/2026-w31-washington-v3.json',
+  ]) {
+    assert.equal(dataManifest.files[file]?.version, contentVersion(file), `${file} manifest version is stale`);
   }
 });
 
