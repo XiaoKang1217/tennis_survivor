@@ -2,9 +2,6 @@ name: Update Tour Manager Data
 
 on:
   workflow_dispatch:
-  schedule:
-    # 06:00 Asia/Shanghai.
-    - cron: "0 22 * * *"
 
 jobs:
   update:
