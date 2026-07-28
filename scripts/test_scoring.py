@@ -92,6 +92,21 @@ class InstantScoreTests(unittest.TestCase):
         self.assertEqual(meta['type'], 'A500')
         self.assertEqual(scoring.norm_event_key(meta['event_key']), 'merida')
 
+    def test_wta_washington_chinese_alias_matches_current_official_event(self):
+        rows = self.official_calendar['by_alias'].get(
+            ('WTA', scoring.norm_event_key('华盛顿')),
+            [],
+        )
+        washington_2026 = [
+            row for row in rows
+            if row.get('year') == 2026
+            and scoring.norm_event_key(row.get('event_key')) == 'washingtondc'
+        ]
+
+        self.assertEqual(len(washington_2026), 1)
+        self.assertEqual(washington_2026[0]['start_date'], '2026-07-27')
+        self.assertEqual(washington_2026[0]['end_date'], '2026-08-02')
+
     def test_previous_year_event_not_opened_by_survivor_expires_and_is_not_reselected(self):
         survivor_events = scoring._build_survivor_events_index([
             {'year': 2026, 'tour': 'ATP', 'event_name': '伊斯特本'},

@@ -33,6 +33,7 @@ YE_EVENTS = {
 
 OFFICIAL_EVENT_ALIAS_OVERRIDES = {
     ('WTA', 'merida'): {'梅里达'},
+    ('WTA', 'Washington Dc'): {'华盛顿'},
 }
 
 # 赛事轮换造成的单站失效日补丁。
