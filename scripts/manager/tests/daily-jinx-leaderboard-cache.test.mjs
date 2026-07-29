@@ -11,6 +11,10 @@ const migration = fs.readFileSync(
   'supabase/migrations/202607290002_daily_jinx_incremental_leaderboard.sql',
   'utf8',
 );
+const safeDeleteFix = fs.readFileSync(
+  'supabase/migrations/202607290003_daily_jinx_safe_delete_fix.sql',
+  'utf8',
+);
 const cachePath = 'data/daily_jinx_leaderboard.json';
 const cache = JSON.parse(fs.readFileSync(cachePath, 'utf8'));
 const manifest = JSON.parse(fs.readFileSync('data/manifest.json', 'utf8'));
@@ -23,12 +27,38 @@ test('Daily Jinx uses an idempotent incremental score ledger', () => {
   assert.match(migration, /create table if not exists public\.daily_jinx_score_ledger/);
   assert.match(migration, /unique \(vote_id, settlement_key\)/);
   assert.match(migration, /daily_jinx_refresh_leaderboard\(\s*p_settlements jsonb,\s*p_refresh_dates date\[\],\s*p_full_refresh boolean/s);
-  assert.match(migration, /if coalesce\(p_full_refresh, false\) then\s+delete from public\.daily_jinx_score_ledger/s);
+  assert.match(
+    migration,
+    /if coalesce\(p_full_refresh, false\) then\s+delete from public\.daily_jinx_score_ledger\s+where id is not null/s,
+  );
   assert.match(migration, /where vote_date = any\(p_refresh_dates\)/);
+  assert.match(
+    migration,
+    /delete from public\.daily_jinx_leaderboard_cache\s+where account_id is not null/s,
+  );
   assert.match(migration, /v\.created_at < s\.match_start_at/);
   assert.match(migration, /btrim\(picked\.player_name\) = s\.player_name/);
   assert.match(migration, /grant execute on function public\.daily_jinx_refresh_leaderboard\(jsonb, date\[\], boolean\)\s+to service_role/);
   assert.doesNotMatch(migration, /to anon|to authenticated/);
+});
+
+test('Daily Jinx deployed RPC patch satisfies Supabase safe-delete guards', () => {
+  assert.match(
+    safeDeleteFix,
+    /create or replace function public\.daily_jinx_refresh_leaderboard/,
+  );
+  assert.match(
+    safeDeleteFix,
+    /delete from public\.daily_jinx_score_ledger\s+where id is not null/s,
+  );
+  assert.match(
+    safeDeleteFix,
+    /delete from public\.daily_jinx_leaderboard_cache\s+where account_id is not null/s,
+  );
+  assert.doesNotMatch(
+    safeDeleteFix,
+    /delete from public\.(?:daily_jinx_score_ledger|daily_jinx_leaderboard_cache)\s*;/,
+  );
 });
 
 test('Update Daily Data settles before publishing the compact cache', () => {
