@@ -1041,10 +1041,12 @@ let JINX_VOTES=null;
 let JINX_LOAD_ERROR='';
 let JINX_BARRAGE_TIMERS=[];
 let JINX_BARRAGE_SOURCE=[];
-let JINX_SETTLEMENT_DATA=null;
 let JINX_LEADERBOARD=null;
+let JINX_LEADERBOARD_META=null;
 let JINX_LEADERBOARD_LOADING=false;
 let JINX_LEADERBOARD_ERROR='';
+let JINX_LEADERBOARD_PREFETCH_PROMISE=null;
+const JINX_LEADERBOARD_STORAGE_KEY='daily-jinx-leaderboard-v2';
 const JINX_RESULT_VIEWED={};
 const SS={};const FS={};
 const GA_MEASUREMENT_ID='G-E51GZG7C1F';
@@ -6917,52 +6919,74 @@ async function submitDailyJinx(e){
   }
 }
 
-async function loadJinxSettlements(){
-  if(JINX_SETTLEMENT_DATA)return JINX_SETTLEMENT_DATA;
-  if(!window.__jinxSettlementPromise){
-    window.__jinxSettlementPromise=loadJson('data/daily_jinx_settlements.json',{key:'daily_jinx_settlements',timeoutMs:8000}).catch(function(e){trackDataLoadError('daily_jinx_settlements_json',e);return {updated_at:'',settled_through:'',settlements:[]};});
-  }
-  JINX_SETTLEMENT_DATA=await window.__jinxSettlementPromise;
-  return JINX_SETTLEMENT_DATA;
+function normalizeJinxLeaderboardPayload(payload){
+  if(!payload||Number(payload.schema_version)!==2||!Array.isArray(payload.leaderboard))return null;
+  return {
+    schema_version:2,
+    updated_at:String(payload.updated_at||''),
+    settled_through:String(payload.settled_through||''),
+    leaderboard:payload.leaderboard.filter(x=>x&&['ATP','WTA'].includes(x.tour)).map(x=>({
+      tour:x.tour,
+      display_name:String(x.display_name||'匿名炉友'),
+      score:Number(x.score||0),
+      hit_count:Number(x.hit_count||0),
+      scored_days:Number(x.scored_days||0)
+    })),
+    badges:Array.isArray(payload.badges)?payload.badges:[]
+  };
 }
 
-function normalizedJinxSettlements(){
-  const rows=(JINX_SETTLEMENT_DATA&&JINX_SETTLEMENT_DATA.settlements)||[];
-  return rows.filter(x=>x&&x.date&&x.tour&&x.player_name).map(x=>({
-    vote_date:x.date,
-    tour:x.tour,
-    event_id:x.event_id||'',
-    player_name:x.player_name,
-    pick_count:Number(x.pick_count||0),
-    match_start_at:x.match_start_at||null
-  }));
+function readStoredJinxLeaderboard(){
+  try{
+    return normalizeJinxLeaderboardPayload(JSON.parse(localStorage.getItem(JINX_LEADERBOARD_STORAGE_KEY)||'null'));
+  }catch(e){return null;}
+}
+
+function storeJinxLeaderboard(payload){
+  try{localStorage.setItem(JINX_LEADERBOARD_STORAGE_KEY,JSON.stringify(payload));}catch(e){}
+}
+
+function applyJinxLeaderboardPayload(payload){
+  const normalized=normalizeJinxLeaderboardPayload(payload);
+  if(!normalized)return false;
+  JINX_LEADERBOARD=normalized.leaderboard;
+  JINX_LEADERBOARD_META={
+    updated_at:normalized.updated_at,
+    settled_through:normalized.settled_through
+  };
+  if(normalized.badges.length)managerApplyActiveBadges(normalized.badges);
+  return true;
+}
+
+async function prefetchJinxLeaderboard(){
+  if(JINX_LEADERBOARD===null){
+    const cached=readStoredJinxLeaderboard();
+    if(cached)applyJinxLeaderboardPayload(cached);
+  }
+  if(JINX_LEADERBOARD_PREFETCH_PROMISE)return JINX_LEADERBOARD_PREFETCH_PROMISE;
+  JINX_LEADERBOARD_LOADING=JINX_LEADERBOARD===null;
+  JINX_LEADERBOARD_ERROR='';
+  JINX_LEADERBOARD_PREFETCH_PROMISE=loadJson('data/daily_jinx_leaderboard.json',{
+    key:'daily_jinx_leaderboard',
+    timeoutMs:4000
+  }).then(function(payload){
+    if(!applyJinxLeaderboardPayload(payload))throw new Error('invalid Daily Jinx leaderboard cache');
+    storeJinxLeaderboard(payload);
+  }).catch(function(err){
+    trackDataLoadError('daily_jinx_leaderboard_json',err);
+    if(JINX_LEADERBOARD===null){
+      JINX_LEADERBOARD_ERROR='毒奶榜缓存暂时加载失败，请稍后刷新。';
+    }
+  }).finally(function(){
+    JINX_LEADERBOARD_LOADING=false;
+    JINX_LEADERBOARD_PREFETCH_PROMISE=null;
+    if(ACTIVE_TAB==='jinx'&&JINX_VIEW==='leaderboard')renderJinxLeaderboard();
+  });
+  return JINX_LEADERBOARD_PREFETCH_PROMISE;
 }
 
 async function loadJinxLeaderboard(){
-  if(JINX_LEADERBOARD_LOADING)return;
-  JINX_LEADERBOARD_LOADING=true;
-  JINX_LEADERBOARD_ERROR='';
-  renderJinxLeaderboard();
-  try{
-    await loadJinxSettlements();
-    await managerLoadActiveBadges();
-    const settlements=normalizedJinxSettlements();
-    if(!settlements.length){
-      JINX_LEADERBOARD=[];
-      return;
-    }
-    const client=await ensureSupabaseClient();
-    const res=await client.rpc('daily_jinx_leaderboard',{p_settlements:settlements});
-    if(res.error)throw res.error;
-    JINX_LEADERBOARD=res.data||[];
-  }catch(err){
-    JINX_LEADERBOARD=[];
-    JINX_LEADERBOARD_ERROR=dailyJinxErrorText(err);
-    trackSupabaseError('daily_jinx.leaderboard',err,false);
-  }finally{
-    JINX_LEADERBOARD_LOADING=false;
-    renderJinxLeaderboard();
-  }
+  return prefetchJinxLeaderboard();
 }
 
 function renderJinxLeaderboard(){
@@ -6970,11 +6994,11 @@ function renderJinxLeaderboard(){
   if(!board)return;
   stopJinxBarrage();
   if(JINX_LEADERBOARD===null&&!JINX_LEADERBOARD_LOADING&&!JINX_LEADERBOARD_ERROR)loadJinxLeaderboard();
-  const meta=JINX_SETTLEMENT_DATA&&JINX_SETTLEMENT_DATA.settled_through?`结算至 ${esc(JINX_SETTLEMENT_DATA.settled_through)}`:'等待昨日赛果结算';
+  const meta=JINX_LEADERBOARD_META&&JINX_LEADERBOARD_META.settled_through?`结算至 ${esc(JINX_LEADERBOARD_META.settled_through)}`:'等待昨日赛果结算';
   let body='';
-  if(JINX_LEADERBOARD_LOADING){
+  if(JINX_LEADERBOARD_LOADING&&JINX_LEADERBOARD===null){
     body='<div class="loading">⏳ 正在加载毒奶榜...</div>';
-  }else if(JINX_LEADERBOARD_ERROR){
+  }else if(JINX_LEADERBOARD_ERROR&&JINX_LEADERBOARD===null){
     body='<div class="jinx-status r">'+esc(JINX_LEADERBOARD_ERROR)+'</div>';
   }else{
     const note='<div class="jinx-status">毒奶分规则：提交时间早于该球员比赛开始时间，且球员真实出局时，该球员当日在实时选人统计里有 x 人选择，所有毒中它的人各得 x 分；取消、推迟或未完赛不计分。榜单每天随昨日赛果更新。</div>';
@@ -7859,6 +7883,7 @@ function setBdF(g,f,btn){
 scheduleManagerPrewarm(ACTIVE_TAB==='manager');
 initAuth();
 if(managerLocalPreviewEnabled()&&new URLSearchParams(location.search).get('badge-grant-preview'))managerLoadBadgeGrantNotice();
+prefetchJinxLeaderboard();
 loadData();
 </script>
 <script src="assets/theme/full-site-badge-theme.js?v=20260719-2"></script>

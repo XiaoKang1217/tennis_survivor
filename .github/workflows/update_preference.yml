@@ -8,8 +8,14 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -17,8 +23,9 @@ jobs:
       - run: python -m unittest scripts.test_scoring
       - run: python scripts/fetch_history.py
       - run: python scripts/fetch_daily_jinx_settlements.py
+      - run: node scripts/update_daily_jinx_leaderboard.mjs
       - run: python scripts/build_data_manifest.py
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Auto update daily history data"
-          file_pattern: "data/history.json data/daily_jinx_settlements.json data/history/*.json data/preference/*.json data/manifest.json"
+          file_pattern: "data/history.json data/daily_jinx_settlements.json data/daily_jinx_leaderboard.json data/history/*.json data/preference/*.json data/manifest.json"

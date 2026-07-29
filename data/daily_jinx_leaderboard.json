@@ -1,0 +1,1282 @@
+{
+  "schema_version": 2,
+  "updated_at": "2026-07-29T08:39:05.044Z",
+  "source_updated_at": "2026-07-29 10:31:45",
+  "settled_through": "2026-07-28",
+  "ledger_sync": false,
+  "refresh_mode": "legacy_bootstrap",
+  "leaderboard": [
+    {
+      "tour": "ATP",
+      "display_name": "第七路单车",
+      "score": 1655,
+      "hit_count": 47,
+      "scored_days": 31
+    },
+    {
+      "tour": "ATP",
+      "display_name": "阿vvvvv",
+      "score": 1358,
+      "hit_count": 50,
+      "scored_days": 35
+    },
+    {
+      "tour": "ATP",
+      "display_name": "Mith",
+      "score": 1338,
+      "hit_count": 39,
+      "scored_days": 28
+    },
+    {
+      "tour": "ATP",
+      "display_name": "AKA90",
+      "score": 1168,
+      "hit_count": 42,
+      "scored_days": 31
+    },
+    {
+      "tour": "ATP",
+      "display_name": "12345",
+      "score": 862,
+      "hit_count": 25,
+      "scored_days": 17
+    },
+    {
+      "tour": "ATP",
+      "display_name": "xxx又坑人了",
+      "score": 833,
+      "hit_count": 25,
+      "scored_days": 16
+    },
+    {
+      "tour": "ATP",
+      "display_name": "莫斯特",
+      "score": 832,
+      "hit_count": 20,
+      "scored_days": 16
+    },
+    {
+      "tour": "ATP",
+      "display_name": "青花比目",
+      "score": 718,
+      "hit_count": 19,
+      "scored_days": 13
+    },
+    {
+      "tour": "ATP",
+      "display_name": "跟我一起摆烂",
+      "score": 608,
+      "hit_count": 25,
+      "scored_days": 18
+    },
+    {
+      "tour": "ATP",
+      "display_name": "就是玩",
+      "score": 596,
+      "hit_count": 22,
+      "scored_days": 14
+    },
+    {
+      "tour": "ATP",
+      "display_name": "白云静水",
+      "score": 446,
+      "hit_count": 15,
+      "scored_days": 13
+    },
+    {
+      "tour": "ATP",
+      "display_name": "h",
+      "score": 373,
+      "hit_count": 8,
+      "scored_days": 5
+    },
+    {
+      "tour": "ATP",
+      "display_name": "网球人",
+      "score": 340,
+      "hit_count": 11,
+      "scored_days": 7
+    },
+    {
+      "tour": "ATP",
+      "display_name": "F-orestcold",
+      "score": 331,
+      "hit_count": 5,
+      "scored_days": 3
+    },
+    {
+      "tour": "ATP",
+      "display_name": "x1234",
+      "score": 322,
+      "hit_count": 12,
+      "scored_days": 12
+    },
+    {
+      "tour": "ATP",
+      "display_name": "霍小耳",
+      "score": 268,
+      "hit_count": 12,
+      "scored_days": 10
+    },
+    {
+      "tour": "ATP",
+      "display_name": "impum",
+      "score": 217,
+      "hit_count": 8,
+      "scored_days": 7
+    },
+    {
+      "tour": "ATP",
+      "display_name": "小坂直美",
+      "score": 176,
+      "hit_count": 4,
+      "scored_days": 4
+    },
+    {
+      "tour": "ATP",
+      "display_name": "吴一饼",
+      "score": 154,
+      "hit_count": 4,
+      "scored_days": 3
+    },
+    {
+      "tour": "ATP",
+      "display_name": "门希克娃",
+      "score": 141,
+      "hit_count": 4,
+      "scored_days": 3
+    },
+    {
+      "tour": "ATP",
+      "display_name": "尊贵的娃老师",
+      "score": 100,
+      "hit_count": 3,
+      "scored_days": 3
+    },
+    {
+      "tour": "ATP",
+      "display_name": "海狸",
+      "score": 89,
+      "hit_count": 3,
+      "scored_days": 3
+    },
+    {
+      "tour": "ATP",
+      "display_name": "风尘才虚",
+      "score": 64,
+      "hit_count": 2,
+      "scored_days": 2
+    },
+    {
+      "tour": "ATP",
+      "display_name": "张的臻",
+      "score": 55,
+      "hit_count": 4,
+      "scored_days": 4
+    },
+    {
+      "tour": "ATP",
+      "display_name": "梁朝伟",
+      "score": 53,
+      "hit_count": 1,
+      "scored_days": 1
+    },
+    {
+      "tour": "ATP",
+      "display_name": "Elroy ZHANG",
+      "score": 53,
+      "hit_count": 1,
+      "scored_days": 1
+    },
+    {
+      "tour": "ATP",
+      "display_name": "樱沫雪99",
+      "score": 39,
+      "hit_count": 6,
+      "scored_days": 4
+    },
+    {
+      "tour": "ATP",
+      "display_name": "萨卡外",
+      "score": 26,
+      "hit_count": 1,
+      "scored_days": 1
+    },
+    {
+      "tour": "ATP",
+      "display_name": "2713噢",
+      "score": 22,
+      "hit_count": 1,
+      "scored_days": 1
+    },
+    {
+      "tour": "ATP",
+      "display_name": "初七",
+      "score": 20,
+      "hit_count": 1,
+      "scored_days": 1
+    },
+    {
+      "tour": "ATP",
+      "display_name": "15804031803",
+      "score": 12,
+      "hit_count": 1,
+      "scored_days": 1
+    },
+    {
+      "tour": "ATP",
+      "display_name": "martin",
+      "score": 11,
+      "hit_count": 4,
+      "scored_days": 3
+    },
+    {
+      "tour": "ATP",
+      "display_name": "大kk",
+      "score": 4,
+      "hit_count": 2,
+      "scored_days": 2
+    },
+    {
+      "tour": "ATP",
+      "display_name": "+835500913",
+      "score": 2,
+      "hit_count": 1,
+      "scored_days": 1
+    },
+    {
+      "tour": "ATP",
+      "display_name": "唯爱白富美",
+      "score": 2,
+      "hit_count": 1,
+      "scored_days": 1
+    },
+    {
+      "tour": "ATP",
+      "display_name": "滑板儿",
+      "score": 1,
+      "hit_count": 1,
+      "scored_days": 1
+    },
+    {
+      "tour": "ATP",
+      "display_name": "A.阿尼西莫娃",
+      "score": 1,
+      "hit_count": 1,
+      "scored_days": 1
+    },
+    {
+      "tour": "WTA",
+      "display_name": "第七路单车",
+      "score": 1881,
+      "hit_count": 53,
+      "scored_days": 37
+    },
+    {
+      "tour": "WTA",
+      "display_name": "Mith",
+      "score": 1502,
+      "hit_count": 44,
+      "scored_days": 32
+    },
+    {
+      "tour": "WTA",
+      "display_name": "阿vvvvv",
+      "score": 1402,
+      "hit_count": 55,
+      "scored_days": 37
+    },
+    {
+      "tour": "WTA",
+      "display_name": "AKA90",
+      "score": 1377,
+      "hit_count": 45,
+      "scored_days": 35
+    },
+    {
+      "tour": "WTA",
+      "display_name": "x1234",
+      "score": 1068,
+      "hit_count": 24,
+      "scored_days": 18
+    },
+    {
+      "tour": "WTA",
+      "display_name": "莫斯特",
+      "score": 992,
+      "hit_count": 26,
+      "scored_days": 20
+    },
+    {
+      "tour": "WTA",
+      "display_name": "xxx又坑人了",
+      "score": 926,
+      "hit_count": 34,
+      "scored_days": 24
+    },
+    {
+      "tour": "WTA",
+      "display_name": "就是玩",
+      "score": 778,
+      "hit_count": 26,
+      "scored_days": 16
+    },
+    {
+      "tour": "WTA",
+      "display_name": "跟我一起摆烂",
+      "score": 729,
+      "hit_count": 26,
+      "scored_days": 22
+    },
+    {
+      "tour": "WTA",
+      "display_name": "impum",
+      "score": 661,
+      "hit_count": 17,
+      "scored_days": 12
+    },
+    {
+      "tour": "WTA",
+      "display_name": "12345",
+      "score": 619,
+      "hit_count": 22,
+      "scored_days": 14
+    },
+    {
+      "tour": "WTA",
+      "display_name": "Roudric",
+      "score": 464,
+      "hit_count": 17,
+      "scored_days": 12
+    },
+    {
+      "tour": "WTA",
+      "display_name": "白云静水",
+      "score": 422,
+      "hit_count": 11,
+      "scored_days": 9
+    },
+    {
+      "tour": "WTA",
+      "display_name": "青花比目",
+      "score": 412,
+      "hit_count": 15,
+      "scored_days": 12
+    },
+    {
+      "tour": "WTA",
+      "display_name": "霍小耳",
+      "score": 348,
+      "hit_count": 11,
+      "scored_days": 8
+    },
+    {
+      "tour": "WTA",
+      "display_name": "网球人",
+      "score": 342,
+      "hit_count": 11,
+      "scored_days": 8
+    },
+    {
+      "tour": "WTA",
+      "display_name": "樱沫雪99",
+      "score": 284,
+      "hit_count": 11,
+      "scored_days": 8
+    },
+    {
+      "tour": "WTA",
+      "display_name": "F-orestcold",
+      "score": 206,
+      "hit_count": 4,
+      "scored_days": 3
+    },
+    {
+      "tour": "WTA",
+      "display_name": "张的臻",
+      "score": 166,
+      "hit_count": 7,
+      "scored_days": 5
+    },
+    {
+      "tour": "WTA",
+      "display_name": "rw75",
+      "score": 159,
+      "hit_count": 3,
+      "scored_days": 2
+    },
+    {
+      "tour": "WTA",
+      "display_name": "h",
+      "score": 135,
+      "hit_count": 6,
+      "scored_days": 6
+    },
+    {
+      "tour": "WTA",
+      "display_name": "冏西克",
+      "score": 75,
+      "hit_count": 4,
+      "scored_days": 2
+    },
+    {
+      "tour": "WTA",
+      "display_name": "海狸",
+      "score": 75,
+      "hit_count": 2,
+      "scored_days": 1
+    },
+    {
+      "tour": "WTA",
+      "display_name": "是月牙呦",
+      "score": 75,
+      "hit_count": 2,
+      "scored_days": 2
+    },
+    {
+      "tour": "WTA",
+      "display_name": "嘎里ga气",
+      "score": 69,
+      "hit_count": 2,
+      "scored_days": 1
+    },
+    {
+      "tour": "WTA",
+      "display_name": "尊贵的娃老师",
+      "score": 67,
+      "hit_count": 1,
+      "scored_days": 1
+    },
+    {
+      "tour": "WTA",
+      "display_name": "一***客",
+      "score": 65,
+      "hit_count": 1,
+      "scored_days": 1
+    },
+    {
+      "tour": "WTA",
+      "display_name": "小坂直美",
+      "score": 58,
+      "hit_count": 2,
+      "scored_days": 2
+    },
+    {
+      "tour": "WTA",
+      "display_name": "大kk",
+      "score": 54,
+      "hit_count": 5,
+      "scored_days": 3
+    },
+    {
+      "tour": "WTA",
+      "display_name": "谢谢我不熬夜的哦",
+      "score": 46,
+      "hit_count": 4,
+      "scored_days": 2
+    },
+    {
+      "tour": "WTA",
+      "display_name": "Vinty",
+      "score": 35,
+      "hit_count": 1,
+      "scored_days": 1
+    },
+    {
+      "tour": "WTA",
+      "display_name": "吴一饼",
+      "score": 31,
+      "hit_count": 2,
+      "scored_days": 2
+    },
+    {
+      "tour": "WTA",
+      "display_name": "carterguo",
+      "score": 29,
+      "hit_count": 3,
+      "scored_days": 3
+    },
+    {
+      "tour": "WTA",
+      "display_name": "我叫LCW",
+      "score": 28,
+      "hit_count": 3,
+      "scored_days": 3
+    },
+    {
+      "tour": "WTA",
+      "display_name": "martin",
+      "score": 25,
+      "hit_count": 5,
+      "scored_days": 4
+    },
+    {
+      "tour": "WTA",
+      "display_name": "小兮",
+      "score": 24,
+      "hit_count": 4,
+      "scored_days": 4
+    },
+    {
+      "tour": "WTA",
+      "display_name": "Rocky",
+      "score": 17,
+      "hit_count": 1,
+      "scored_days": 1
+    },
+    {
+      "tour": "WTA",
+      "display_name": "风尘才虚",
+      "score": 16,
+      "hit_count": 1,
+      "scored_days": 1
+    },
+    {
+      "tour": "WTA",
+      "display_name": "门希克娃",
+      "score": 11,
+      "hit_count": 2,
+      "scored_days": 1
+    },
+    {
+      "tour": "WTA",
+      "display_name": "薄荷薄荷",
+      "score": 11,
+      "hit_count": 1,
+      "scored_days": 1
+    },
+    {
+      "tour": "WTA",
+      "display_name": "A.阿尼西莫娃",
+      "score": 5,
+      "hit_count": 2,
+      "scored_days": 2
+    },
+    {
+      "tour": "WTA",
+      "display_name": "2713噢",
+      "score": 5,
+      "hit_count": 1,
+      "scored_days": 1
+    },
+    {
+      "tour": "WTA",
+      "display_name": "唯爱白富美",
+      "score": 5,
+      "hit_count": 1,
+      "scored_days": 1
+    },
+    {
+      "tour": "WTA",
+      "display_name": "本东奇",
+      "score": 3,
+      "hit_count": 1,
+      "scored_days": 1
+    },
+    {
+      "tour": "WTA",
+      "display_name": "好多鱼",
+      "score": 3,
+      "hit_count": 1,
+      "scored_days": 1
+    },
+    {
+      "tour": "WTA",
+      "display_name": "Elroy ZHANG",
+      "score": 3,
+      "hit_count": 1,
+      "scored_days": 1
+    },
+    {
+      "tour": "WTA",
+      "display_name": "初七",
+      "score": 2,
+      "hit_count": 1,
+      "scored_days": 1
+    },
+    {
+      "tour": "WTA",
+      "display_name": "蔓陀蘿公主",
+      "score": 2,
+      "hit_count": 1,
+      "scored_days": 1
+    }
+  ],
+  "badges": [
+    {
+      "display_name": "荞麦皮",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "是月牙呦",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "青花比目",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "斯瓦泰克",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "impum",
+      "badge_key": "swiatek-whirlwind",
+      "title": "斯瓦泰克旋风少女",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/swiatek-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/swiatek-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "德雨珀",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "15804031803",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "萨卡外",
+      "badge_key": "rotten-cabbage",
+      "title": "烂白菜烂之泪伤",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/rotten-cabbage-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/rotten-cabbage-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "锦暔",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "张的臻",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "Jerry",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "披头散发13",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "okok",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "一***客",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "网球人",
+      "badge_key": "rotten-cabbage",
+      "title": "烂白菜烂之泪伤",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/rotten-cabbage-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/rotten-cabbage-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "h",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "马戏团冠军",
+      "badge_key": "rotten-cabbage",
+      "title": "烂白菜烂之泪伤",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/rotten-cabbage-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/rotten-cabbage-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "rw75",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "xiaozaocha",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "abandon",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "袁天罡",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "莫斯特",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "抬头望望天",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "薄荷薄荷",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "peterong",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "12345",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "鸡",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "加油",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "无名之辈",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "猫崽孑",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "海狸男模经纪人",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "相信科学是非明",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "菊德维",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "我在江边喝奶茶",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "leslie",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "白云静水",
+      "badge_key": "federer-eternal",
+      "title": "费德勒优雅永恒",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/federer-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/federer-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "carterguo",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "大kk",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "唯爱白富美",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "人面魔蛛",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "佩今伸",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "滑板儿",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "用户8356886010",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "F-orestcold",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "加多宝",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "xiaohe",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "库里库里库",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "Jokic15",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "阿vvvvv",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "单依纯唯一滴老婆",
+      "badge_key": "zheng-queen",
+      "title": "郑钦文Queen",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v5/optimized/zheng-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/zheng-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "跟我一起摆烂",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "马斯克",
+      "badge_key": "alcaraz-duck",
+      "title": "阿卡鸭",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v5/optimized/alcaraz-badge-final-hq-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/alcaraz-badge-final-hq-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "日海岸",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "martin",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "本东奇",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "九墨",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "wennuan78",
+      "badge_key": "wang-xinyu-mermaid",
+      "title": "王欣瑜美人鱼",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v5/optimized/mermaid-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/mermaid-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "凌霄",
+      "badge_key": "djoko-goat",
+      "title": "德约GOAT",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v5/optimized/djokovic-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/djokovic-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "Mith",
+      "badge_key": "rublev-cat",
+      "title": "卢布喵",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v5/optimized/lubu-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/lubu-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "Leo_violin",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "西班牙世界杯冠军",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "沈女士",
+      "badge_key": "rublev-cat",
+      "title": "卢布喵",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v5/optimized/lubu-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/lubu-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "+835500913",
+      "badge_key": "alcaraz-duck",
+      "title": "阿卡鸭",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v5/optimized/alcaraz-badge-final-hq-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/alcaraz-badge-final-hq-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "风尘才虚",
+      "badge_key": "zheng-queen",
+      "title": "郑钦文Queen",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v5/optimized/zheng-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/zheng-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "test111",
+      "badge_key": "who-is-leather",
+      "title": "谁是皮革",
+      "subtitle": "炉友纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/who-leather-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/who-leather-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "Brandon",
+      "badge_key": "who-is-leather",
+      "title": "谁是皮革",
+      "subtitle": "炉友纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/who-leather-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/who-leather-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "Dagenais",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "尊贵的娃老师",
+      "badge_key": "alcaraz-bee-duck",
+      "title": "阿卡蜜蜂鸭",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/bee-duck-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/bee-duck-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "霍小耳",
+      "badge_key": "sinner-fox",
+      "title": "辛纳狐",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v5/optimized/sinner-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/sinner-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "天邪幻世",
+      "badge_key": "federer-eternal",
+      "title": "费德勒优雅永恒",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/federer-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/federer-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "小兮",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "我叫LCW",
+      "badge_key": "sinner-fox",
+      "title": "辛纳狐",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v5/optimized/sinner-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/sinner-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "嘎里ga气",
+      "badge_key": "swiatek-whirlwind",
+      "title": "斯瓦泰克旋风少女",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/swiatek-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/swiatek-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "Roudric",
+      "badge_key": "who-is-leather",
+      "title": "谁是皮革",
+      "subtitle": "炉友纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/who-leather-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/who-leather-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "Sirius",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    }
+  ]
+}

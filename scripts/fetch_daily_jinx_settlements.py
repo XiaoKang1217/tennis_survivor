@@ -205,6 +205,7 @@ def main():
         "updated_at": datetime.now(tz_cn).strftime("%Y-%m-%d %H:%M:%S"),
         "start_date": START_DATE.isoformat(),
         "settled_through": settled_through,
+        "refreshed_dates": sorted(successful_refresh_dates) if yesterday >= START_DATE else [],
         "settlements": settlements,
     }
     os.makedirs(os.path.dirname(OUT_PATH), exist_ok=True)

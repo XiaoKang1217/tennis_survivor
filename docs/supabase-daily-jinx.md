@@ -27,6 +27,8 @@ This document records the setup for the `每日毒奶` voting module.
 - Phone-like account nicknames are masked on the frontend before display, for example `15804031803` becomes `158****1803`.
 - Live-pick player-count snapshots are generated into `data/daily_jinx_pick_counts.json` by `scripts/fetch_current.py`.
 - Match-loss settlements, including each loser's `pick_count` and match start time, are generated into `data/daily_jinx_settlements.json` by `scripts/fetch_daily_jinx_settlements.py`; raw vote rows remain protected by RLS.
+- The browser never downloads or uploads the lifetime settlement history. `Update Daily Data` incrementally settles refreshed dates into a private score ledger and publishes the small `data/daily_jinx_leaderboard.json` display cache.
+- The leaderboard cache includes public equipped-badge fields, is prefetched on page entry, and is stored locally for stale-while-revalidate display.
 
 ## SQL Schema And RLS
 
@@ -95,7 +97,8 @@ with check ((select auth.uid()) = account_id);
 grant select, insert on public.daily_jinx_votes to authenticated;
 ```
 
-Leaderboard RPC:
+Legacy on-demand leaderboard RPC (kept for compatibility; the production
+frontend no longer calls it):
 
 ```sql
 create or replace function public.daily_jinx_leaderboard(p_settlements jsonb)
@@ -181,6 +184,34 @@ $$;
 revoke all on function public.daily_jinx_leaderboard(jsonb) from public;
 grant execute on function public.daily_jinx_leaderboard(jsonb) to anon, authenticated;
 ```
+
+## Incremental Production Leaderboard
+
+Run
+`supabase/migrations/202607290002_daily_jinx_incremental_leaderboard.sql`
+once. It creates:
+
+- `daily_jinx_score_ledger`: one idempotent row per vote/settlement hit.
+- `daily_jinx_leaderboard_cache`: the current ATP/WTA aggregate.
+- `daily_jinx_refresh_leaderboard(jsonb,date[],boolean)`: a service-role-only
+  refresh RPC.
+
+The first `Update Daily Data` execution performs a complete historical
+backfill. Later executions use `refreshed_dates` from
+`daily_jinx_settlements.json`, delete/recalculate only those authoritative
+dates, and therefore support result corrections without double-awarding
+points.
+
+The workflow runs:
+
+1. `fetch_daily_jinx_settlements.py`
+2. `update_daily_jinx_leaderboard.mjs`
+3. `build_data_manifest.py`
+
+The repository must already contain `SUPABASE_URL` and
+`SUPABASE_SERVICE_ROLE_KEY` Actions secrets. A database/cache failure stops the
+workflow before the static data commit, so a partial leaderboard is never
+published.
 
 Notes:
 
