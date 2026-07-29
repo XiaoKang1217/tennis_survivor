@@ -2752,7 +2752,7 @@
     "locked_at": "2026-07-26T15:20:00+08:00"
   },
   "round1_completed_at": null,
-  "round2_first_match_at": null,
+  "round2_first_match_at": "2026-07-29T17:00:00.000Z",
   "transfer_window_opens_at": null,
-  "transfer_window_closes_at": null
+  "transfer_window_closes_at": "2026-07-29T17:00:00.000Z"
 }

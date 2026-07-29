@@ -2366,8 +2366,8 @@
     "publication_version": 1,
     "locked_at": "2026-07-26T15:20:00+08:00"
   },
-  "round1_completed_at": null,
-  "round2_first_match_at": null,
-  "transfer_window_opens_at": null,
-  "transfer_window_closes_at": null
+  "round1_completed_at": "2026-07-29T02:29:30.801Z",
+  "round2_first_match_at": "2026-07-29T15:00:00.000Z",
+  "transfer_window_opens_at": "2026-07-29T02:29:30.801Z",
+  "transfer_window_closes_at": "2026-07-29T15:00:00.000Z"
 }
