@@ -1,10 +1,10 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-07-29T08:39:05.044Z",
-  "source_updated_at": "2026-07-29 10:31:45",
+  "updated_at": "2026-07-29T09:09:32.318Z",
+  "source_updated_at": "2026-07-29 17:09:30",
   "settled_through": "2026-07-28",
-  "ledger_sync": false,
-  "refresh_mode": "legacy_bootstrap",
+  "ledger_sync": true,
+  "refresh_mode": "full",
   "leaderboard": [
     {
       "tour": "ATP",
