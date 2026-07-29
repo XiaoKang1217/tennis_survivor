@@ -3959,7 +3959,7 @@ function managerRenderTransfer(){
   var c=managerCalc(),rules=managerRules(),players=c.players,pool=managerBuildPool().filter(function(p){return !managerSelected(p.id);}),submitted=managerSubmittedRecord();
   var tour=players[0]?players[0].tour:(MANAGER_TOUR||'ATP'),windowLine=managerTransferWindowLines().join('；');
   var windowItems=managerTransferWindowLines().map(function(line){return '<li>'+esc(line)+'。</li>';}).join('');
-  var crossText=managerCrossTourTransferEnabled()?'ATP/WTA 同一窗口开放，ATP/WTA 可以互换。':'ATP/WTA 分开判断；如果窗口一致，就同一时间开放。';
+  var crossText=managerCrossTourTransferEnabled()?'ATP/WTA 同一窗口开放，男女可以互换。':'ATP/WTA 分开判断；如果窗口一致，就同一时间开放。';
   var ruleHtml='<div class="manager-rule-grid"><div class="manager-rule-card"><b>窗口时间</b><ul class="manager-lines"><li>换人窗口期为 R1 所有比赛结束后，R2 所有比赛开始前。</li>'+windowItems+'<li>'+crossText+'</li><li>新球员下一场必须还没开赛。</li></ul></div><div class="manager-rule-card"><b>换人次数</b><ul class="manager-lines"><li>每站只允许换 1 次。</li><li>当前已用 '+MANAGER_TRANSFER_COUNT+'/1。</li><li>换人记录会进入我的收益。</li><li>换入前已取得的轮次只作基准，不追发此前奖金。</li></ul></div><div class="manager-rule-card"><b>扣费规则</b><ul class="manager-lines"><li>换人花费 = 新球员花费 + 换人手续费 - 换下球员返还的钱。</li><li>原球员未出局，退回 70% 原成本；原球员已出局，花费成本不退。</li><li>如果本次换人为净返还，优先退回本站签约金额度；超过已占用签约金的部分再退回本金。</li><li>手续费按新球员价格计算：250/500 为 10%，1000/大满贯为 15%。</li></ul></div></div>';
   if(!players.length)return ruleHtml+'<div class="manager-empty" style="margin-top:12px">先建立并提交阵容，开赛后的换人窗口会在这里操作。</div>';
   var fromId=managerFilterValue('manager-transfer-from',players[0].id),fromPlayer=players.find(function(p){return p.id===fromId;})||players[0];
@@ -4128,7 +4128,7 @@ function managerRenderRules(){
   var rules=managerRules(),current='当前本站：'+managerContestPacks().map(function(p){return p.tour+' '+managerLevelName(p.meta.level)+' '+(p.meta.drawSize||32)+'签';}).join(' + ')+'，买 '+rules.minPlayers+'-'+rules.maxPlayers+' 人。';
   var transferLines=['每站只能换 1 次。','换人窗口期为 R1 所有比赛结束后，R2 所有比赛开始前。']
     .concat(managerTransferWindowLines().map(function(line){return line+'。';}))
-    .concat(['ATP/WTA 分开判断；如果窗口一致，就同一时间开放。','换入前已取得的轮次只作基准，不追发此前奖金。','手续费按新球员价格 10%/15% 计算。']);
+    .concat([managerCrossTourTransferEnabled()?'ATP/WTA 同一窗口开放，男女可以互换。':'ATP/WTA 分开判断；如果窗口一致，就同一时间开放。','换入前已取得的轮次只作基准，不追发此前奖金。','手续费按新球员价格 10%/15% 计算。']);
   return '<div class="manager-rules">'+
     '<details open><summary>一、货币系统与获取渠道</summary><div class="rule-body"><div class="manager-rule-grid">'+
       managerRuleCard('真实可用额度',['本站可签约额度 = 经纪人钱包 + 本站签约金。','签约时优先消耗本站签约金。','超出部分占用经纪人钱包。'])+
@@ -4435,9 +4435,21 @@ function renderManagerDemo(force){
   var panelHead='<div class="manager-panel-h">'+panelTitle+(MANAGER_VIEW==='market'?managerEventMetaHtml(rules):'')+'</div>';
   var dialog=MANAGER_DIALOG?'<div class="manager-dialog"><div class="manager-dialog-card"><h3>'+esc(MANAGER_DIALOG.title)+'</h3><p>'+esc(MANAGER_DIALOG.msg).replace(/\n/g,'<br>')+'</p>'+(MANAGER_DIALOG.strong?'<div class="manager-dialog-strong">'+esc(MANAGER_DIALOG.strong).replace(/\n/g,'<br>')+'</div>':'')+'<div class="manager-actions">'+(MANAGER_DIALOG.confirmAction?'<button class="manager-clear" data-manager-action="close-dialog">'+esc(MANAGER_DIALOG.cancelLabel||'取消')+'</button><button class="manager-action" data-manager-action="'+esc(MANAGER_DIALOG.confirmAction)+'">'+esc(MANAGER_DIALOG.confirmLabel||'确定')+'</button>':'<button class="manager-action" data-manager-action="close-dialog">知道了</button>')+'</div></div></div>':'';
   var submissionWindow=managerSubmissionWindowInfo();
+  var transferWindows=managerContestPacks().map(function(pack){return managerTransferWindowInfo(pack.tour);});
+  var transferWindowLabel=managerTransferWindowLines().join('；');
+  var allTransferOpen=transferWindows.length>0&&transferWindows.every(function(info){return info.status==='open';});
+  var anyTransferBefore=transferWindows.some(function(info){return info.status==='before';});
+  var allTransferAfter=transferWindows.length>0&&transferWindows.every(function(info){return info.status==='after';});
+  var crossTourNotice=managerCrossTourTransferEnabled()?'；男女可以互换（ATP/WTA）':'';
   var stationNotice=submissionWindow.status==='open'
     ?managerStationName()+'已开售！阵容提交截止：'+submissionWindow.label
-    :(submissionWindow.status==='closed'?managerStationName()+'已截止提交，请等待换人窗口。':managerStationName()+'开售时间待确认。');
+    :(submissionWindow.status==='closed'
+      ?(allTransferOpen
+        ?managerStationName()+'换人窗口已开放！'+transferWindowLabel+crossTourNotice
+        :(anyTransferBefore
+          ?managerStationName()+'换人窗口：'+transferWindowLabel+crossTourNotice
+          :(allTransferAfter?managerStationName()+'换人窗口已结束。':managerStationName()+'已截止提交，请等待换人窗口。')))
+      :managerStationName()+'开售时间待确认。');
   var wechat='<div class="manager-wechat-card"><div class="manager-wechat-copy"><div class="manager-wechat-alert">'+esc(stationNotice)+'</div><div class="manager-wechat-line main">本游戏每周跟随巡回赛历开新赛事</div><div class="manager-wechat-line">如需 <span class="manager-wechat-em">开售提醒</span>、<span class="manager-wechat-em">换人窗口提醒</span> 请扫码进本游戏官方群</div></div><img class="manager-wechat-qr" src="assets/manager/wechat-group-qr.webp?v=20260726-2" alt="微信群二维码" width="92" height="122" loading="eager" decoding="async" fetchpriority="high"></div>';
   var qaBanner=managerLocalSimulationMode()?'<div class="manager-note" style="margin-bottom:10px"><b>'+(managerLocalQaMode()?'本地换人测试模式：':'本地模拟提交模式：')+'</b>'+(managerLocalQaMode()?'提交和换人窗口均已开放；':'可以正常测试选择球员、提交、撤回和换人；')+'这些阵容操作只保存在当前浏览器，不会写入线上 Supabase。</div>':'';
   var badgePreview=managerBadgePreviewHtml();

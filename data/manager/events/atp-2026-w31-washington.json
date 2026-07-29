@@ -19,7 +19,7 @@
   "main_draw_first_match_at": "2026-07-27T15:00:00.000Z",
   "submission_cutoff_at": "2026-07-27T22:45:00+08:00",
   "submission_closes_at": "2026-07-27T22:45:00+08:00",
-  "transfer_window_note": "本站换人窗口待确认；ATP/WTA 同一窗口开放，ATP/WTA 可以互换。",
+  "transfer_window_note": "本站换人窗口为 07/29 10:30 - 07/29 22:45；ATP/WTA 同一窗口开放，男女可以互换。",
   "cross_tour_transfer": true,
   "transfer_window_days": 2,
   "transfer_fee_rate": 0.1,
@@ -2753,6 +2753,6 @@
   },
   "round1_completed_at": null,
   "round2_first_match_at": "2026-07-29T17:00:00.000Z",
-  "transfer_window_opens_at": null,
-  "transfer_window_closes_at": "2026-07-29T17:00:00.000Z"
+  "transfer_window_opens_at": "2026-07-29T10:30:00+08:00",
+  "transfer_window_closes_at": "2026-07-29T22:45:00+08:00"
 }
