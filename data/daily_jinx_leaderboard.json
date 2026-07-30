@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-07-30T01:09:20.098Z",
-  "source_updated_at": "2026-07-30 09:09:18",
+  "updated_at": "2026-07-30T02:07:14.026Z",
+  "source_updated_at": "2026-07-30 10:07:12",
   "settled_through": "2026-07-29",
   "ledger_sync": true,
   "refresh_mode": "incremental",
@@ -72,16 +72,16 @@
     {
       "tour": "ATP",
       "display_name": "就是玩",
-      "score": 596,
-      "hit_count": 22,
-      "scored_days": 14
+      "score": 597,
+      "hit_count": 23,
+      "scored_days": 15
     },
     {
       "tour": "ATP",
       "display_name": "白云静水",
-      "score": 446,
-      "hit_count": 15,
-      "scored_days": 13
+      "score": 447,
+      "hit_count": 16,
+      "scored_days": 14
     },
     {
       "tour": "ATP",
