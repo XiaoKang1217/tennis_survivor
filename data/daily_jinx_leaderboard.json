@@ -1,10 +1,10 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-07-29T09:09:32.318Z",
-  "source_updated_at": "2026-07-29 17:09:30",
-  "settled_through": "2026-07-28",
+  "updated_at": "2026-07-30T01:09:20.098Z",
+  "source_updated_at": "2026-07-30 09:09:18",
+  "settled_through": "2026-07-29",
   "ledger_sync": true,
-  "refresh_mode": "full",
+  "refresh_mode": "incremental",
   "leaderboard": [
     {
       "tour": "ATP",
@@ -16,9 +16,9 @@
     {
       "tour": "ATP",
       "display_name": "阿vvvvv",
-      "score": 1358,
-      "hit_count": 50,
-      "scored_days": 35
+      "score": 1360,
+      "hit_count": 51,
+      "scored_days": 36
     },
     {
       "tour": "ATP",
@@ -44,9 +44,9 @@
     {
       "tour": "ATP",
       "display_name": "xxx又坑人了",
-      "score": 833,
-      "hit_count": 25,
-      "scored_days": 16
+      "score": 835,
+      "hit_count": 26,
+      "scored_days": 17
     },
     {
       "tour": "ATP",
@@ -246,6 +246,13 @@
     },
     {
       "tour": "ATP",
+      "display_name": "加多宝",
+      "score": 2,
+      "hit_count": 1,
+      "scored_days": 1
+    },
+    {
+      "tour": "ATP",
       "display_name": "唯爱白富美",
       "score": 2,
       "hit_count": 1,
@@ -268,37 +275,37 @@
     {
       "tour": "WTA",
       "display_name": "第七路单车",
-      "score": 1881,
-      "hit_count": 53,
-      "scored_days": 37
+      "score": 1935,
+      "hit_count": 54,
+      "scored_days": 38
     },
     {
       "tour": "WTA",
       "display_name": "Mith",
-      "score": 1502,
-      "hit_count": 44,
-      "scored_days": 32
+      "score": 1517,
+      "hit_count": 45,
+      "scored_days": 33
     },
     {
       "tour": "WTA",
       "display_name": "阿vvvvv",
-      "score": 1402,
-      "hit_count": 55,
-      "scored_days": 37
+      "score": 1471,
+      "hit_count": 57,
+      "scored_days": 38
     },
     {
       "tour": "WTA",
       "display_name": "AKA90",
-      "score": 1377,
-      "hit_count": 45,
-      "scored_days": 35
+      "score": 1446,
+      "hit_count": 47,
+      "scored_days": 36
     },
     {
       "tour": "WTA",
       "display_name": "x1234",
-      "score": 1068,
-      "hit_count": 24,
-      "scored_days": 18
+      "score": 1137,
+      "hit_count": 26,
+      "scored_days": 19
     },
     {
       "tour": "WTA",
@@ -310,23 +317,23 @@
     {
       "tour": "WTA",
       "display_name": "xxx又坑人了",
-      "score": 926,
-      "hit_count": 34,
-      "scored_days": 24
+      "score": 980,
+      "hit_count": 35,
+      "scored_days": 25
     },
     {
       "tour": "WTA",
       "display_name": "就是玩",
-      "score": 778,
-      "hit_count": 26,
-      "scored_days": 16
+      "score": 832,
+      "hit_count": 27,
+      "scored_days": 17
     },
     {
       "tour": "WTA",
       "display_name": "跟我一起摆烂",
-      "score": 729,
-      "hit_count": 26,
-      "scored_days": 22
+      "score": 798,
+      "hit_count": 28,
+      "scored_days": 23
     },
     {
       "tour": "WTA",
@@ -365,15 +372,15 @@
     },
     {
       "tour": "WTA",
-      "display_name": "霍小耳",
-      "score": 348,
-      "hit_count": 11,
-      "scored_days": 8
+      "display_name": "网球人",
+      "score": 396,
+      "hit_count": 12,
+      "scored_days": 9
     },
     {
       "tour": "WTA",
-      "display_name": "网球人",
-      "score": 342,
+      "display_name": "霍小耳",
+      "score": 348,
       "hit_count": 11,
       "scored_days": 8
     },
@@ -393,6 +400,13 @@
     },
     {
       "tour": "WTA",
+      "display_name": "h",
+      "score": 204,
+      "hit_count": 8,
+      "scored_days": 7
+    },
+    {
+      "tour": "WTA",
       "display_name": "张的臻",
       "score": 166,
       "hit_count": 7,
@@ -407,10 +421,10 @@
     },
     {
       "tour": "WTA",
-      "display_name": "h",
-      "score": 135,
-      "hit_count": 6,
-      "scored_days": 6
+      "display_name": "尊贵的娃老师",
+      "score": 121,
+      "hit_count": 2,
+      "scored_days": 2
     },
     {
       "tour": "WTA",
@@ -438,13 +452,6 @@
       "display_name": "嘎里ga气",
       "score": 69,
       "hit_count": 2,
-      "scored_days": 1
-    },
-    {
-      "tour": "WTA",
-      "display_name": "尊贵的娃老师",
-      "score": 67,
-      "hit_count": 1,
       "scored_days": 1
     },
     {
@@ -477,6 +484,13 @@
     },
     {
       "tour": "WTA",
+      "display_name": "martin",
+      "score": 40,
+      "hit_count": 6,
+      "scored_days": 5
+    },
+    {
+      "tour": "WTA",
       "display_name": "Vinty",
       "score": 35,
       "hit_count": 1,
@@ -502,13 +516,6 @@
       "score": 28,
       "hit_count": 3,
       "scored_days": 3
-    },
-    {
-      "tour": "WTA",
-      "display_name": "martin",
-      "score": 25,
-      "hit_count": 5,
-      "scored_days": 4
     },
     {
       "tour": "WTA",
