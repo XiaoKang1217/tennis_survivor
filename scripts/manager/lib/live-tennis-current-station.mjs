@@ -750,7 +750,14 @@ export function deriveEventWindows(event, matchRows, fetchedAt = new Date()) {
   const firstRound = matchRows.filter((row) => row.round_order === 1 && row.scheduled_at);
   const secondRound = matchRows.filter((row) => row.round_order === 2 && row.scheduled_at);
   const mainDrawFirstMatchAt = minIso(firstRound.map((row) => row.scheduled_at));
-  const round2FirstMatchAt = minIso(secondRound.map((row) => row.scheduled_at));
+  const detectedRound2FirstMatchAt = minIso(secondRound.map((row) => row.scheduled_at));
+  const configuredRound2FirstMatchAt = event.round2_first_match_at
+    || event.transfer_window_closes_at
+    || null;
+  const round2FirstMatchAt = minIso([
+    detectedRound2FirstMatchAt,
+    configuredRound2FirstMatchAt
+  ].filter(Boolean));
   const completedR1 = firstRound.filter((row) => ['completed', 'walkover', 'retired'].includes(row.status));
   const expectedR1 = expectedRoundOneMatches(event);
   const allR1Complete = expectedR1 > 0 && completedR1.length >= expectedR1;
