@@ -1,38 +1,38 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-07-30T02:07:14.026Z",
-  "source_updated_at": "2026-07-30 10:07:12",
-  "settled_through": "2026-07-29",
+  "updated_at": "2026-07-31T01:09:19.409Z",
+  "source_updated_at": "2026-07-31 09:09:17",
+  "settled_through": "2026-07-30",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
     {
       "tour": "ATP",
       "display_name": "第七路单车",
-      "score": 1655,
-      "hit_count": 47,
-      "scored_days": 31
+      "score": 1664,
+      "hit_count": 48,
+      "scored_days": 32
     },
     {
       "tour": "ATP",
       "display_name": "阿vvvvv",
-      "score": 1360,
-      "hit_count": 51,
-      "scored_days": 36
+      "score": 1369,
+      "hit_count": 52,
+      "scored_days": 37
     },
     {
       "tour": "ATP",
       "display_name": "Mith",
-      "score": 1338,
-      "hit_count": 39,
-      "scored_days": 28
+      "score": 1347,
+      "hit_count": 40,
+      "scored_days": 29
     },
     {
       "tour": "ATP",
       "display_name": "AKA90",
-      "score": 1168,
-      "hit_count": 42,
-      "scored_days": 31
+      "score": 1177,
+      "hit_count": 43,
+      "scored_days": 32
     },
     {
       "tour": "ATP",
@@ -44,16 +44,16 @@
     {
       "tour": "ATP",
       "display_name": "xxx又坑人了",
-      "score": 835,
-      "hit_count": 26,
-      "scored_days": 17
+      "score": 844,
+      "hit_count": 27,
+      "scored_days": 18
     },
     {
       "tour": "ATP",
       "display_name": "莫斯特",
-      "score": 832,
-      "hit_count": 20,
-      "scored_days": 16
+      "score": 841,
+      "hit_count": 21,
+      "scored_days": 17
     },
     {
       "tour": "ATP",
@@ -86,16 +86,23 @@
     {
       "tour": "ATP",
       "display_name": "h",
-      "score": 373,
-      "hit_count": 8,
-      "scored_days": 5
+      "score": 382,
+      "hit_count": 9,
+      "scored_days": 6
     },
     {
       "tour": "ATP",
       "display_name": "网球人",
-      "score": 340,
-      "hit_count": 11,
-      "scored_days": 7
+      "score": 354,
+      "hit_count": 13,
+      "scored_days": 8
+    },
+    {
+      "tour": "ATP",
+      "display_name": "x1234",
+      "score": 331,
+      "hit_count": 13,
+      "scored_days": 13
     },
     {
       "tour": "ATP",
@@ -103,13 +110,6 @@
       "score": 331,
       "hit_count": 5,
       "scored_days": 3
-    },
-    {
-      "tour": "ATP",
-      "display_name": "x1234",
-      "score": 322,
-      "hit_count": 12,
-      "scored_days": 12
     },
     {
       "tour": "ATP",
