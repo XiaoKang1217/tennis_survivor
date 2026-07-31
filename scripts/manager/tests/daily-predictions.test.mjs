@@ -7,6 +7,7 @@ const migration = fs.readFileSync('supabase/migrations/202607150001_manager_dail
 const immutableMigration = fs.readFileSync('supabase/migrations/202607170001_manager_daily_prediction_immutable_games.sql', 'utf8');
 const eventDateCompatMigration = fs.readFileSync('supabase/migrations/202607170002_manager_daily_prediction_event_date_compat.sql', 'utf8');
 const eventDateColumnMigration = fs.readFileSync('supabase/migrations/202607170003_manager_daily_prediction_event_date_column.sql', 'utf8');
+const predictionSummaryMigration = fs.readFileSync('supabase/migrations/202607310001_manager_prediction_summary.sql', 'utf8');
 const html = fs.readFileSync('index.html', 'utf8');
 const workflow = fs.readFileSync('.github/workflows/update_manager.yml', 'utf8');
 const stationPayload = fs.readFileSync('scripts/manager/lib/station-payload.mjs', 'utf8');
@@ -93,7 +94,7 @@ test('frontend exposes picks and separates personal prediction income without ch
   assert.match(html, /tour_manager_submit_daily_predictions/);
   assert.match(html, /当前为本地测试，不会写入线上数据/);
   assert.match(html, /今日竞猜 <span class="manager-prediction-reward">猜对一场 \+10 本金<\/span>/);
-  assert.match(html, /按每场真实截止时间开放，跨零点也不会提前隐藏/);
+  assert.match(html, /<p>比赛开始前可提交或修改。<\/p>/);
   assert.doesNotMatch(html, /每天各选一场 ATP、WTA 排名接近的比赛/);
   assert.doesNotMatch(html, /<br>排名差/);
   assert.doesNotMatch(html, /竞猜奖励会进入本金、我的收益和次日收益弹窗/);
@@ -107,6 +108,29 @@ test('frontend exposes picks and separates personal prediction income without ch
   assert.doesNotMatch(html, /prediction:Number\(x\.prediction_bonus\)/);
   assert.doesNotMatch(html, /<th>竞猜奖励<\/th>/);
   assert.match(html, /本站净收益榜只统计球员收益 \+ Combo，不含竞猜收益/);
+});
+
+test('personal prediction summary attributes yesterday by contest date and reconciles rewards to ledger', () => {
+  assert.match(predictionSummaryMigration, /tour_manager_get_my_prediction_summary/);
+  assert.match(predictionSummaryMigration, /v_previous_contest_date date := p_reference_date - 1/);
+  assert.match(predictionSummaryMigration, /g\.contest_date = v_previous_contest_date/);
+  assert.match(predictionSummaryMigration, /wl\.metadata ->> 'prediction_pick_id' = p\.id::text/);
+  assert.match(predictionSummaryMigration, /wl\.type = 'daily_prediction_reward'/);
+  assert.match(predictionSummaryMigration, /'previous_pending_count'/);
+  assert.match(predictionSummaryMigration, /'career_income'/);
+  assert.doesNotMatch(predictionSummaryMigration, /timezone\('Asia\/Shanghai', wl\.created_at\)/);
+  assert.match(predictionSummaryMigration, /grant execute on function public\.tour_manager_get_my_prediction_summary\(date\)\s+to authenticated/);
+  assert.match(predictionSummaryMigration, /revoke all on function public\.tour_manager_get_my_prediction_summary\(date\)\s+from public, anon/);
+});
+
+test('daily prediction page shows yesterday picks, yesterday reward, and career reward without blocking today games', () => {
+  assert.match(html, /tour_manager_get_my_prediction_summary/);
+  assert.match(html, /昨日竞猜选人/);
+  assert.match(html, /昨日竞猜收益/);
+  assert.match(html, /竞猜累计收益/);
+  assert.match(html, /昨日未参加竞猜/);
+  assert.match(html, /场待结算/);
+  assert.match(html, /今日竞猜仍可正常提交/);
 });
 
 test('local QA reads immutable Supabase questions and falls back from previous to current station', () => {

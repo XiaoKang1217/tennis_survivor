@@ -462,6 +462,12 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 .manager-prediction-intro h3{display:flex;align-items:center;flex-wrap:wrap;gap:9px;margin:0 0 5px;color:#5c421f;font-size:18px}
 .manager-prediction-intro p{margin:0;color:#7d6a4d;font-size:13px;line-height:1.65}
 .manager-prediction-reward{display:inline-flex;align-items:center;padding:4px 8px;border:1px solid #d5b77e;border-radius:6px;background:#fff8e9;color:#8a5a18;font-size:12px;font-weight:900;line-height:1.35}
+.manager-prediction-summary{display:grid;grid-template-columns:minmax(0,2fr) repeat(2,minmax(130px,1fr));gap:9px;margin:0 0 14px}
+.manager-prediction-summary-item{min-width:0;padding:10px 12px;border:1px solid #dfc79d;border-radius:8px;background:linear-gradient(180deg,#fffaf0,#fffdf8);color:#6f6049}
+.manager-prediction-summary-item span{display:block;margin-bottom:4px;color:#8a7657;font-size:11px;font-weight:850}
+.manager-prediction-summary-item b{display:block;overflow-wrap:anywhere;color:#5c421f;font-size:14px;line-height:1.5}
+.manager-prediction-summary-item b.income{color:#9a5a17;font-size:17px;font-variant-numeric:tabular-nums}
+.manager-prediction-summary-note{grid-column:1/-1;color:#806c4d;font-size:12px}
 .manager-prediction-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .manager-prediction-card{border:1px solid #dfc79d;border-radius:8px;background:#fffdf8;overflow:hidden}
 .manager-prediction-card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:#f7ead1;border-bottom:1px solid #e7d4b4}
@@ -479,7 +485,7 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 .manager-prediction-result.bad{background:#f8e9e3;color:#924c35}
 .manager-prediction-actions{display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-top:14px}
 .manager-prediction-actions .manager-note{margin-right:auto}
-@media(max-width:720px){.manager-prediction-grid{grid-template-columns:1fr}.manager-prediction-actions{align-items:stretch;flex-direction:column}.manager-prediction-actions .manager-note{margin-right:0}}
+@media(max-width:720px){.manager-prediction-summary{grid-template-columns:1fr 1fr}.manager-prediction-summary-item:first-child{grid-column:1/-1}.manager-prediction-grid{grid-template-columns:1fr}.manager-prediction-actions{align-items:stretch;flex-direction:column}.manager-prediction-actions .manager-note{margin-right:0}}
 .manager-sidebar-owner{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;min-width:0}
 .manager-sidebar-title{font-size:13px;font-weight:950;color:#5c421f}
 .manager-panel.manager-side.manager-badge-themed .manager-panel-h{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;min-height:124px;padding:16px;background:linear-gradient(135deg,color-mix(in srgb,var(--badge-primary,#ba8a3b) 82%,#3b1b09 18%),color-mix(in srgb,var(--badge-secondary,#dcc47d) 60%,#fff2c7 40%));overflow:hidden}
@@ -1135,6 +1141,11 @@ let MANAGER_DAILY_PREDICTIONS_LOADING=null;
 let MANAGER_DAILY_PREDICTIONS_ERROR='';
 let MANAGER_DAILY_PREDICTION_DRAFT={};
 let MANAGER_DAILY_PREDICTION_SAVING=false;
+let MANAGER_DAILY_PREDICTION_SUMMARY=null;
+let MANAGER_DAILY_PREDICTION_SUMMARY_KEY='';
+let MANAGER_DAILY_PREDICTION_SUMMARY_SYNC_AT=0;
+let MANAGER_DAILY_PREDICTION_SUMMARY_LOADING=null;
+let MANAGER_DAILY_PREDICTION_SUMMARY_ERROR='';
 let MANAGER_BADGES=[];
 let MANAGER_MY_BADGES=[];
 let MANAGER_ACTIVE_BADGE=null;
@@ -1732,6 +1743,10 @@ function managerResetVolatileAccountState(){
   MANAGER_DAILY_PREDICTIONS_KEY='';
   MANAGER_DAILY_PREDICTIONS_ERROR='';
   MANAGER_DAILY_PREDICTION_DRAFT={};
+  MANAGER_DAILY_PREDICTION_SUMMARY=null;
+  MANAGER_DAILY_PREDICTION_SUMMARY_KEY='';
+  MANAGER_DAILY_PREDICTION_SUMMARY_SYNC_AT=0;
+  MANAGER_DAILY_PREDICTION_SUMMARY_ERROR='';
   MANAGER_PREVIOUS_STATE=null;
   MANAGER_PREVIOUS_SYNC_KEY='';
   MANAGER_MY_BADGES=[];
@@ -2454,7 +2469,10 @@ function managerSetView(view){
   MANAGER_VIEW=view;
   if(view==='mine'&&!MANAGER_MY_VIEW)MANAGER_MY_VIEW='lineup';
   if(view==='hall'||view==='boards')managerLoadRemotePublicData().then(function(){if(MANAGER_VIEW===view)renderManagerDemo();}).catch(function(){if(MANAGER_VIEW===view)renderManagerDemo();});
-  if(view==='prediction')managerLoadDailyPredictions({force:true}).then(function(){if(MANAGER_VIEW===view)renderManagerDemo();}).catch(function(){if(MANAGER_VIEW===view)renderManagerDemo();});
+  if(view==='prediction'){
+    managerLoadDailyPredictions({force:true}).then(function(){if(MANAGER_VIEW===view)renderManagerDemo();}).catch(function(){if(MANAGER_VIEW===view)renderManagerDemo();});
+    managerLoadDailyPredictionSummary({force:true}).then(function(){if(MANAGER_VIEW===view)renderManagerDemo();}).catch(function(){if(MANAGER_VIEW===view)renderManagerDemo();});
+  }
   managerTrackView(view,view==='mine'?MANAGER_MY_VIEW:'','nav');
   renderManagerDemo();
   if(managerViewNeedsRemoteState(view))managerRefreshRemoteState(true);
@@ -2476,6 +2494,40 @@ function managerDailyPredictionSetHasOpenGame(data,now){
   }));
 }
 function managerPredictionDataKey(){return [managerDailyPredictionStationKeys().join(','),managerSeason(),managerChinaDateKey(),AUTH_USER&&AUTH_USER.id||'anon'].join('|');}
+function managerPredictionSummaryDataKey(){return [managerChinaDateKey(),AUTH_USER&&AUTH_USER.id||'anon'].join('|');}
+function managerDailyPredictionSummaryIsFresh(){
+  return !!(MANAGER_DAILY_PREDICTION_SUMMARY
+    && MANAGER_DAILY_PREDICTION_SUMMARY_KEY===managerPredictionSummaryDataKey()
+    && Date.now()-MANAGER_DAILY_PREDICTION_SUMMARY_SYNC_AT<60000);
+}
+async function managerLoadDailyPredictionSummary(opts){
+  opts=opts||{};
+  if(!AUTH_USER||!supabaseConfigured())return null;
+  var key=managerPredictionSummaryDataKey();
+  if(!opts.force&&managerDailyPredictionSummaryIsFresh())return MANAGER_DAILY_PREDICTION_SUMMARY;
+  if(MANAGER_DAILY_PREDICTION_SUMMARY_LOADING)return MANAGER_DAILY_PREDICTION_SUMMARY_LOADING;
+  MANAGER_DAILY_PREDICTION_SUMMARY_ERROR='';
+  MANAGER_DAILY_PREDICTION_SUMMARY_LOADING=(async function(){
+    try{
+      const client=await ensureSupabaseClient();
+      const res=await client.rpc('tour_manager_get_my_prediction_summary',{p_reference_date:managerChinaDateKey()});
+      if(res.error)throw res.error;
+      return res.data||null;
+    }catch(err){
+      MANAGER_DAILY_PREDICTION_SUMMARY_ERROR=authErrorText(err);
+      trackSupabaseError('manager.daily_prediction_summary',err,true);
+      return null;
+    }
+  })().then(function(data){
+    if(data){
+      MANAGER_DAILY_PREDICTION_SUMMARY=data;
+      MANAGER_DAILY_PREDICTION_SUMMARY_KEY=key;
+      MANAGER_DAILY_PREDICTION_SUMMARY_SYNC_AT=Date.now();
+    }
+    return data;
+  }).finally(function(){MANAGER_DAILY_PREDICTION_SUMMARY_LOADING=null;});
+  return MANAGER_DAILY_PREDICTION_SUMMARY_LOADING;
+}
 async function managerLoadDailyPredictions(opts){
   opts=opts||{};
   var key=managerPredictionDataKey();
@@ -4359,12 +4411,30 @@ function managerRenderDailyPredictions(){
   if(!MANAGER_DAILY_PREDICTIONS&&!MANAGER_DAILY_PREDICTIONS_LOADING){
     managerLoadDailyPredictions().then(function(){if(MANAGER_VIEW==='prediction')renderManagerDemo();}).catch(function(){});
   }
+  if(AUTH_USER&&!managerDailyPredictionSummaryIsFresh()&&!MANAGER_DAILY_PREDICTION_SUMMARY_LOADING){
+    managerLoadDailyPredictionSummary().then(function(){if(MANAGER_VIEW==='prediction')renderManagerDemo();}).catch(function(){});
+  }
   if(MANAGER_DAILY_PREDICTIONS_LOADING&&!MANAGER_DAILY_PREDICTIONS)return '<div class="manager-empty">正在加载今日竞猜...</div>';
   if(MANAGER_DAILY_PREDICTIONS_ERROR&&!MANAGER_DAILY_PREDICTIONS)return '<div class="manager-empty">今日竞猜暂时加载失败，请稍后刷新。<br><span class="manager-note">'+esc(MANAGER_DAILY_PREDICTIONS_ERROR)+'</span></div>';
   var games=MANAGER_DAILY_PREDICTIONS&&Array.isArray(MANAGER_DAILY_PREDICTIONS.games)?MANAGER_DAILY_PREDICTIONS.games:[];
   var contestDate=MANAGER_DAILY_PREDICTIONS&&MANAGER_DAILY_PREDICTIONS.contest_date||managerChinaDateKey();
-  var intro='<div class="manager-prediction-intro"><h3>'+esc(contestDate)+' 今日竞猜 <span class="manager-prediction-reward">猜对一场 +10 本金</span></h3><p>比赛开始前可提交或修改，按每场真实截止时间开放，跨零点也不会提前隐藏。</p></div>';
-  if(!games.length)return intro+'<div class="manager-empty">今天暂时没有满足条件的未开赛对阵。赛程更新后会自动生成。</div>';
+  var intro='<div class="manager-prediction-intro"><h3>'+esc(contestDate)+' 今日竞猜 <span class="manager-prediction-reward">猜对一场 +10 本金</span></h3><p>比赛开始前可提交或修改。</p></div>';
+  var summary=MANAGER_DAILY_PREDICTION_SUMMARY,summaryHtml='';
+  if(!AUTH_USER){
+    summaryHtml='<div class="manager-prediction-summary"><div class="manager-prediction-summary-item manager-prediction-summary-note">登录后可查看昨日竞猜选人、昨日竞猜收益和竞猜累计收益。</div></div>';
+  }else if(summary){
+    var previousPicks=Array.isArray(summary.previous_picks)?summary.previous_picks:[];
+    var pickText=previousPicks.length?previousPicks.map(function(p){return esc((p.tour?p.tour+'：':'')+(p.picked_player_name||'待确认'));}).join('　'):'昨日未参加竞猜';
+    var previousIncome=Number(summary.previous_income)||0,pending=Math.max(0,Number(summary.previous_pending_count)||0);
+    var previousIncomeText=pending?(previousIncome>0?('+'+previousIncome+' · '+pending+' 场待结算'):'待结算'):(previousIncome>0?('+'+previousIncome):'0');
+    var careerIncome=Math.max(0,Number(summary.career_income)||0);
+    summaryHtml='<div class="manager-prediction-summary"><div class="manager-prediction-summary-item"><span>'+esc(summary.previous_contest_date||'昨日')+' 昨日竞猜选人</span><b>'+pickText+'</b></div><div class="manager-prediction-summary-item"><span>昨日竞猜收益</span><b class="income">'+esc(previousIncomeText)+'</b></div><div class="manager-prediction-summary-item"><span>竞猜累计收益</span><b class="income">'+careerIncome+'</b></div></div>';
+  }else if(MANAGER_DAILY_PREDICTION_SUMMARY_LOADING){
+    summaryHtml='<div class="manager-prediction-summary"><div class="manager-prediction-summary-item manager-prediction-summary-note">正在读取昨日竞猜与累计收益...</div></div>';
+  }else if(MANAGER_DAILY_PREDICTION_SUMMARY_ERROR){
+    summaryHtml='<div class="manager-prediction-summary"><div class="manager-prediction-summary-item manager-prediction-summary-note">竞猜收益摘要暂时加载失败，今日竞猜仍可正常提交。</div></div>';
+  }
+  if(!games.length)return intro+summaryHtml+'<div class="manager-empty">今天暂时没有满足条件的未开赛对阵。赛程更新后会自动生成。</div>';
   var cards=games.map(function(game){
     var draft=MANAGER_DAILY_PREDICTION_DRAFT[game.id]||(game.my_pick&&game.my_pick.picked_player_key)||'';
     var cutoff=Date.parse(game.closes_at||game.scheduled_at),open=game.status==='open'&&Number.isFinite(cutoff)&&Date.now()<cutoff;
@@ -4384,7 +4454,7 @@ function managerRenderDailyPredictions(){
   var openGames=games.filter(function(game){var cutoff=Date.parse(game.closes_at||game.scheduled_at);return game.status==='open'&&Number.isFinite(cutoff)&&Date.now()<cutoff;});
   var loginNote=AUTH_USER||managerLocalQaMode()?'':'<div class="manager-note">登录后才能提交竞猜。</div>';
   var action=openGames.length?'<div class="manager-prediction-actions">'+loginNote+'<button class="manager-action" data-manager-action="prediction-submit" '+(MANAGER_DAILY_PREDICTION_SAVING?'disabled':'')+'>'+(MANAGER_DAILY_PREDICTION_SAVING?'提交中...':'提交今日竞猜')+'</button></div>':'';
-  return intro+'<div class="manager-prediction-grid">'+cards+'</div>'+action+'<div id="manager-msg" class="manager-msg">'+esc(MANAGER_LAST_MSG)+'</div>';
+  return intro+summaryHtml+'<div class="manager-prediction-grid">'+cards+'</div>'+action+'<div id="manager-msg" class="manager-msg">'+esc(MANAGER_LAST_MSG)+'</div>';
 }
 function managerMarketHeaderMeta(){
   var packs=managerContestPacks().filter(function(pack){return MANAGER_TOUR==='ALL'||pack.tour===MANAGER_TOUR;});
