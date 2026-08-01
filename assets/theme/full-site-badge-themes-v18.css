@@ -363,3 +363,28 @@ body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swia
 @media (prefers-reduced-motion:reduce) {
   body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]), body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) * { transition-duration:.01ms!important; animation-duration:.01ms!important; animation-iteration-count:1!important; }
 }
+
+/* Keep court semantics independent from each skin's decorative palette. */
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-panel-chip.surface.hard,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-pill.surface-specialist.hard {
+  color:#245f9e;
+  background:#dbeafe;
+  border-color:#93c5fd;
+}
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-panel-chip.surface.clay,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-pill.surface-specialist.clay {
+  color:#b54720;
+  background:#ffe3d1;
+  border-color:#f3b48e;
+}
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-panel-chip.surface.grass,
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-pill.surface-specialist.grass {
+  color:#357029;
+  background:#e7f6d8;
+  border-color:#b9dda0;
+}
+body.luwang-site-skin:is([data-site-theme="gauff_energy"],[data-site-theme="swiatek_whirlwind"],[data-site-theme="alcaraz_bee_duck"],[data-site-theme="who_is_leather"],[data-site-theme="rotten_cabbage"],[data-site-theme="federer_eternal"],[data-site-theme="nadal_clay_soul"]) .manager-pill.surface-specialist.hard-in {
+  color:#55448c;
+  background:#e8e4f5;
+  border-color:#bcb2df;
+}
