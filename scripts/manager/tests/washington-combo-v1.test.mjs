@@ -4,7 +4,14 @@ import fs from 'node:fs';
 import test from 'node:test';
 import vm from 'node:vm';
 
-const active = JSON.parse(fs.readFileSync('data/manager/active_events.json', 'utf8'));
+const finalPublication = JSON.parse(fs.readFileSync(
+  'data/manager/publications/2026-w31-washington-v4.json',
+  'utf8',
+));
+const active = {
+  station_key: finalPublication.station_key,
+  rules: finalPublication.snapshot.station_config.rules,
+};
 const html = fs.readFileSync('index.html', 'utf8');
 const migrationV1 = fs.readFileSync(
   'supabase/migrations/202607260001_manager_washington_combo_v1.sql',
@@ -101,7 +108,6 @@ test('Washington submission closes 15 minutes before the 23:00 first match', () 
 
 test('Washington cutoff files are cache-busted in the frontend data manifest', () => {
   for (const file of [
-    'data/manager/active_events.json',
     'data/manager/events/atp-2026-w31-washington.json',
     'data/manager/events/wta-2026-w31-washington.json',
     'data/manager/publications/2026-w31-washington-v3.json',

@@ -3,7 +3,6 @@ import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import test from 'node:test';
 
-const active = JSON.parse(fs.readFileSync('data/manager/active_events.json', 'utf8'));
 const atp = JSON.parse(fs.readFileSync('data/manager/events/atp-2026-w31-washington.json', 'utf8'));
 const wta = JSON.parse(fs.readFileSync('data/manager/events/wta-2026-w31-washington.json', 'utf8'));
 const publication = JSON.parse(
@@ -23,9 +22,9 @@ function contentVersion(file) {
 }
 
 test('Washington publishes one shared ATP/WTA transfer window', () => {
-  assert.equal(active.station_key, '2026-w31-washington');
-  assert.equal(active.rules.cross_tour_transfer, true);
-  assert.doesNotMatch(active.notes.join('\n'), /换人窗口待/);
+  assert.equal(publication.station_key, '2026-w31-washington');
+  assert.equal(publication.snapshot.station_config.rules.cross_tour_transfer, true);
+  assert.doesNotMatch(publication.snapshot.station_config.notes.join('\n'), /换人窗口待/);
 
   for (const event of [atp, wta]) {
     assert.equal(event.manual_schedule_windows, true);
@@ -66,7 +65,6 @@ test('frontend announces the live transfer window and cross-tour rule', () => {
 test('Washington transfer-window files are cache-busted in the data manifest', () => {
   const manifest = JSON.parse(fs.readFileSync('data/manifest.json', 'utf8'));
   for (const file of [
-    'data/manager/active_events.json',
     'data/manager/events/atp-2026-w31-washington.json',
     'data/manager/events/wta-2026-w31-washington.json',
     'data/manager/publications/2026-w31-washington-v4.json',
