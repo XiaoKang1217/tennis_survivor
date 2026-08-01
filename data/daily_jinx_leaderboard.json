@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-08-01T01:08:25.786Z",
-  "source_updated_at": "2026-08-01 09:08:23",
+  "updated_at": "2026-08-01T04:05:46.107Z",
+  "source_updated_at": "2026-08-01 12:05:44",
   "settled_through": "2026-07-31",
   "ledger_sync": true,
   "refresh_mode": "incremental",
@@ -9,50 +9,50 @@
     {
       "tour": "ATP",
       "display_name": "第七路单车",
-      "score": 1666,
-      "hit_count": 49,
+      "score": 1694,
+      "hit_count": 50,
       "scored_days": 33
     },
     {
       "tour": "ATP",
       "display_name": "阿vvvvv",
-      "score": 1371,
-      "hit_count": 53,
+      "score": 1399,
+      "hit_count": 54,
       "scored_days": 38
     },
     {
       "tour": "ATP",
       "display_name": "Mith",
-      "score": 1347,
-      "hit_count": 40,
-      "scored_days": 29
+      "score": 1375,
+      "hit_count": 41,
+      "scored_days": 30
     },
     {
       "tour": "ATP",
       "display_name": "AKA90",
-      "score": 1179,
-      "hit_count": 44,
+      "score": 1207,
+      "hit_count": 45,
       "scored_days": 33
+    },
+    {
+      "tour": "ATP",
+      "display_name": "xxx又坑人了",
+      "score": 872,
+      "hit_count": 28,
+      "scored_days": 19
+    },
+    {
+      "tour": "ATP",
+      "display_name": "莫斯特",
+      "score": 869,
+      "hit_count": 22,
+      "scored_days": 18
     },
     {
       "tour": "ATP",
       "display_name": "12345",
       "score": 862,
       "hit_count": 25,
-      "scored_days": 17
-    },
-    {
-      "tour": "ATP",
-      "display_name": "xxx又坑人了",
-      "score": 844,
-      "hit_count": 27,
-      "scored_days": 18
-    },
-    {
-      "tour": "ATP",
-      "display_name": "莫斯特",
-      "score": 841,
-      "hit_count": 21,
       "scored_days": 17
     },
     {
@@ -64,17 +64,17 @@
     },
     {
       "tour": "ATP",
+      "display_name": "就是玩",
+      "score": 626,
+      "hit_count": 25,
+      "scored_days": 16
+    },
+    {
+      "tour": "ATP",
       "display_name": "跟我一起摆烂",
       "score": 609,
       "hit_count": 26,
       "scored_days": 19
-    },
-    {
-      "tour": "ATP",
-      "display_name": "就是玩",
-      "score": 598,
-      "hit_count": 24,
-      "scored_days": 16
     },
     {
       "tour": "ATP",
@@ -85,17 +85,17 @@
     },
     {
       "tour": "ATP",
+      "display_name": "网球人",
+      "score": 383,
+      "hit_count": 15,
+      "scored_days": 9
+    },
+    {
+      "tour": "ATP",
       "display_name": "h",
       "score": 382,
       "hit_count": 9,
       "scored_days": 6
-    },
-    {
-      "tour": "ATP",
-      "display_name": "网球人",
-      "score": 355,
-      "hit_count": 14,
-      "scored_days": 9
     },
     {
       "tour": "ATP",
