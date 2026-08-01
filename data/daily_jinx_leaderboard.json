@@ -1,24 +1,24 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-07-31T03:09:55.550Z",
-  "source_updated_at": "2026-07-31 11:09:52",
-  "settled_through": "2026-07-30",
+  "updated_at": "2026-08-01T01:08:25.786Z",
+  "source_updated_at": "2026-08-01 09:08:23",
+  "settled_through": "2026-07-31",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
     {
       "tour": "ATP",
       "display_name": "第七路单车",
-      "score": 1664,
-      "hit_count": 48,
-      "scored_days": 32
+      "score": 1666,
+      "hit_count": 49,
+      "scored_days": 33
     },
     {
       "tour": "ATP",
       "display_name": "阿vvvvv",
-      "score": 1369,
-      "hit_count": 52,
-      "scored_days": 37
+      "score": 1371,
+      "hit_count": 53,
+      "scored_days": 38
     },
     {
       "tour": "ATP",
@@ -30,9 +30,9 @@
     {
       "tour": "ATP",
       "display_name": "AKA90",
-      "score": 1177,
-      "hit_count": 43,
-      "scored_days": 32
+      "score": 1179,
+      "hit_count": 44,
+      "scored_days": 33
     },
     {
       "tour": "ATP",
@@ -65,23 +65,23 @@
     {
       "tour": "ATP",
       "display_name": "跟我一起摆烂",
-      "score": 608,
-      "hit_count": 25,
-      "scored_days": 18
+      "score": 609,
+      "hit_count": 26,
+      "scored_days": 19
     },
     {
       "tour": "ATP",
       "display_name": "就是玩",
-      "score": 597,
-      "hit_count": 23,
-      "scored_days": 15
+      "score": 598,
+      "hit_count": 24,
+      "scored_days": 16
     },
     {
       "tour": "ATP",
       "display_name": "白云静水",
-      "score": 447,
-      "hit_count": 16,
-      "scored_days": 14
+      "score": 448,
+      "hit_count": 17,
+      "scored_days": 15
     },
     {
       "tour": "ATP",
@@ -93,9 +93,9 @@
     {
       "tour": "ATP",
       "display_name": "网球人",
-      "score": 354,
-      "hit_count": 13,
-      "scored_days": 8
+      "score": 355,
+      "hit_count": 14,
+      "scored_days": 9
     },
     {
       "tour": "ATP",
@@ -218,17 +218,17 @@
     },
     {
       "tour": "ATP",
+      "display_name": "martin",
+      "score": 13,
+      "hit_count": 5,
+      "scored_days": 4
+    },
+    {
+      "tour": "ATP",
       "display_name": "15804031803",
       "score": 12,
       "hit_count": 1,
       "scored_days": 1
-    },
-    {
-      "tour": "ATP",
-      "display_name": "martin",
-      "score": 11,
-      "hit_count": 4,
-      "scored_days": 3
     },
     {
       "tour": "ATP",
@@ -282,23 +282,23 @@
     {
       "tour": "WTA",
       "display_name": "Mith",
-      "score": 1517,
-      "hit_count": 45,
-      "scored_days": 33
+      "score": 1528,
+      "hit_count": 46,
+      "scored_days": 34
     },
     {
       "tour": "WTA",
       "display_name": "阿vvvvv",
-      "score": 1471,
-      "hit_count": 57,
-      "scored_days": 38
+      "score": 1477,
+      "hit_count": 58,
+      "scored_days": 39
     },
     {
       "tour": "WTA",
       "display_name": "AKA90",
-      "score": 1446,
-      "hit_count": 47,
-      "scored_days": 36
+      "score": 1452,
+      "hit_count": 48,
+      "scored_days": 37
     },
     {
       "tour": "WTA",
@@ -310,9 +310,9 @@
     {
       "tour": "WTA",
       "display_name": "莫斯特",
-      "score": 992,
-      "hit_count": 26,
-      "scored_days": 20
+      "score": 1003,
+      "hit_count": 27,
+      "scored_days": 21
     },
     {
       "tour": "WTA",
@@ -324,16 +324,16 @@
     {
       "tour": "WTA",
       "display_name": "就是玩",
-      "score": 832,
-      "hit_count": 27,
-      "scored_days": 17
+      "score": 843,
+      "hit_count": 28,
+      "scored_days": 18
     },
     {
       "tour": "WTA",
       "display_name": "跟我一起摆烂",
-      "score": 798,
-      "hit_count": 28,
-      "scored_days": 23
+      "score": 810,
+      "hit_count": 30,
+      "scored_days": 24
     },
     {
       "tour": "WTA",
@@ -485,9 +485,9 @@
     {
       "tour": "WTA",
       "display_name": "martin",
-      "score": 40,
-      "hit_count": 6,
-      "scored_days": 5
+      "score": 41,
+      "hit_count": 7,
+      "scored_days": 6
     },
     {
       "tour": "WTA",
