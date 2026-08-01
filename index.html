@@ -5213,8 +5213,15 @@ function managerIncomeLedgerRows(){
 function managerIncomeRowBelongsToStation(x,stationKey){
   return managerLedgerBelongsToStation(x.row,stationKey)||x.stationKey===stationKey;
 }
-function managerCurrentStationStarted(){
-  return managerContestPacks().some(function(pack){return managerEventStarted(pack.tour);});
+function managerCurrentStationR1Start(){
+  return managerEarliestDate(managerContestPacks().map(function(pack){
+    return pack&&pack.event&&pack.event.main_draw_first_match_at||null;
+  }));
+}
+function managerCurrentStationStarted(nowValue){
+  var start=managerCurrentStationR1Start();
+  var now=Number.isFinite(Number(nowValue))?Number(nowValue):Date.now();
+  return !!(start&&now>=start.getTime());
 }
 function managerDailyIncomeContext(){
   var prev=managerPreviousStationMeta();
