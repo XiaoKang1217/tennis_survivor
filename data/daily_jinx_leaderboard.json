@@ -1,24 +1,24 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-08-01T04:05:46.107Z",
-  "source_updated_at": "2026-08-01 12:05:44",
-  "settled_through": "2026-07-31",
+  "updated_at": "2026-08-02T04:18:19.431Z",
+  "source_updated_at": "2026-08-02 12:18:16",
+  "settled_through": "2026-08-01",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
     {
       "tour": "ATP",
       "display_name": "第七路单车",
-      "score": 1694,
-      "hit_count": 50,
-      "scored_days": 33
+      "score": 1703,
+      "hit_count": 52,
+      "scored_days": 34
     },
     {
       "tour": "ATP",
       "display_name": "阿vvvvv",
-      "score": 1399,
-      "hit_count": 54,
-      "scored_days": 38
+      "score": 1408,
+      "hit_count": 56,
+      "scored_days": 39
     },
     {
       "tour": "ATP",
@@ -30,23 +30,23 @@
     {
       "tour": "ATP",
       "display_name": "AKA90",
-      "score": 1207,
-      "hit_count": 45,
-      "scored_days": 33
+      "score": 1216,
+      "hit_count": 47,
+      "scored_days": 34
     },
     {
       "tour": "ATP",
       "display_name": "xxx又坑人了",
-      "score": 872,
-      "hit_count": 28,
-      "scored_days": 19
+      "score": 881,
+      "hit_count": 30,
+      "scored_days": 20
     },
     {
       "tour": "ATP",
       "display_name": "莫斯特",
-      "score": 869,
-      "hit_count": 22,
-      "scored_days": 18
+      "score": 874,
+      "hit_count": 23,
+      "scored_days": 19
     },
     {
       "tour": "ATP",
@@ -65,9 +65,9 @@
     {
       "tour": "ATP",
       "display_name": "就是玩",
-      "score": 626,
-      "hit_count": 25,
-      "scored_days": 16
+      "score": 635,
+      "hit_count": 27,
+      "scored_days": 17
     },
     {
       "tour": "ATP",
@@ -86,9 +86,9 @@
     {
       "tour": "ATP",
       "display_name": "网球人",
-      "score": 383,
-      "hit_count": 15,
-      "scored_days": 9
+      "score": 392,
+      "hit_count": 17,
+      "scored_days": 10
     },
     {
       "tour": "ATP",
@@ -275,30 +275,30 @@
     {
       "tour": "WTA",
       "display_name": "第七路单车",
-      "score": 1935,
-      "hit_count": 54,
-      "scored_days": 38
-    },
-    {
-      "tour": "WTA",
-      "display_name": "Mith",
-      "score": 1528,
-      "hit_count": 46,
-      "scored_days": 34
-    },
-    {
-      "tour": "WTA",
-      "display_name": "阿vvvvv",
-      "score": 1477,
-      "hit_count": 58,
+      "score": 1948,
+      "hit_count": 55,
       "scored_days": 39
     },
     {
       "tour": "WTA",
+      "display_name": "Mith",
+      "score": 1541,
+      "hit_count": 47,
+      "scored_days": 35
+    },
+    {
+      "tour": "WTA",
+      "display_name": "阿vvvvv",
+      "score": 1490,
+      "hit_count": 59,
+      "scored_days": 40
+    },
+    {
+      "tour": "WTA",
       "display_name": "AKA90",
-      "score": 1452,
-      "hit_count": 48,
-      "scored_days": 37
+      "score": 1465,
+      "hit_count": 49,
+      "scored_days": 38
     },
     {
       "tour": "WTA",
@@ -310,23 +310,23 @@
     {
       "tour": "WTA",
       "display_name": "莫斯特",
-      "score": 1003,
-      "hit_count": 27,
-      "scored_days": 21
+      "score": 1022,
+      "hit_count": 29,
+      "scored_days": 22
     },
     {
       "tour": "WTA",
       "display_name": "xxx又坑人了",
-      "score": 980,
-      "hit_count": 35,
-      "scored_days": 25
+      "score": 993,
+      "hit_count": 36,
+      "scored_days": 26
     },
     {
       "tour": "WTA",
       "display_name": "就是玩",
-      "score": 843,
-      "hit_count": 28,
-      "scored_days": 18
+      "score": 862,
+      "hit_count": 30,
+      "scored_days": 19
     },
     {
       "tour": "WTA",
@@ -365,17 +365,17 @@
     },
     {
       "tour": "WTA",
+      "display_name": "网球人",
+      "score": 415,
+      "hit_count": 14,
+      "scored_days": 10
+    },
+    {
+      "tour": "WTA",
       "display_name": "青花比目",
       "score": 412,
       "hit_count": 15,
       "scored_days": 12
-    },
-    {
-      "tour": "WTA",
-      "display_name": "网球人",
-      "score": 396,
-      "hit_count": 12,
-      "scored_days": 9
     },
     {
       "tour": "WTA",
@@ -752,15 +752,6 @@
       "subtitle": "赛事限定",
       "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
       "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
-      "display_name": "马戏团冠军",
-      "badge_key": "rotten-cabbage",
-      "title": "烂白菜烂之泪伤",
-      "subtitle": "球员纪念",
-      "image_url": "assets/manager/badges/ui-v18/optimized/rotten-cabbage-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v18/optimized/rotten-cabbage-badge-640.webp",
       "rarity": "limited"
     },
     {
@@ -1238,6 +1229,15 @@
       "subtitle": "球员纪念",
       "image_url": "assets/manager/badges/ui-v18/optimized/federer-badge-640.webp",
       "thumb_url": "assets/manager/badges/ui-v18/optimized/federer-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "马戏团冠军",
+      "badge_key": "who-is-leather",
+      "title": "谁是皮革",
+      "subtitle": "炉友纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/who-leather-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/who-leather-badge-640.webp",
       "rarity": "limited"
     },
     {
