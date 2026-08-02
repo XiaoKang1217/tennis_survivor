@@ -270,3 +270,160 @@ body .jinx-leader-table .badge-identity--row[data-badge="alcaraz_bee_duck"] .bad
   line-height:1;
   text-align:center;
 }
+
+/* Canonical manager-board identity geometry.
+   Every badge starts from the same icon and plaque anchors. Plaques keep their
+   source aspect ratio, while the outer lockup and text safe area stay stable. */
+[data-badge="sinner_fox"]{--manager-board-plate-ratio:640/242}
+[data-badge="alcaraz_duck"]{--manager-board-plate-ratio:640/282}
+[data-badge="djoko_goat"]{--manager-board-plate-ratio:640/207;--manager-board-text-top:24%;--manager-board-text-height:58%}
+[data-badge="rublev_cat"]{--manager-board-plate-ratio:640/229}
+[data-badge="zheng_queen"]{--manager-board-plate-ratio:640/269;--manager-board-text-top:17%;--manager-board-text-height:66%}
+[data-badge="wang_mermaid"]{--manager-board-plate-ratio:640/261}
+[data-badge="luwang_friend"]{--manager-board-plate-ratio:640/219}
+[data-badge="wimbledon_2026"]{--manager-board-plate-ratio:640/238}
+[data-badge="gauff_energy"]{--manager-board-plate-ratio:720/221;--manager-board-text-left:14%;--manager-board-text-width:72%}
+[data-badge="swiatek_whirlwind"]{--manager-board-plate-ratio:720/180}
+[data-badge="alcaraz_bee_duck"]{--manager-board-plate-ratio:720/272;--manager-board-text-left:24%;--manager-board-text-width:52%}
+[data-badge="who_is_leather"]{--manager-board-plate-ratio:720/179}
+[data-badge="rotten_cabbage"]{--manager-board-plate-ratio:720/176}
+[data-badge="federer_eternal"]{--manager-board-plate-ratio:720/172}
+[data-badge="nadal_clay_soul"]{--manager-board-plate-ratio:720/188}
+
+.manager-boards-page .manager-rank-table{
+  --manager-board-icon-size:56px;
+  --manager-board-plate-width:176px;
+  --manager-board-lockup-gap:8px;
+  --manager-board-lockup-height:80px;
+}
+.manager-boards-page .manager-station-board-table{min-width:760px!important}
+.manager-boards-page .manager-wallet-board-table{min-width:520px!important}
+.manager-boards-page .manager-career-income-table{min-width:1120px!important}
+.manager-boards-page .manager-rank-table th:first-child,
+.manager-boards-page .manager-rank-table td:first-child{
+  width:80px!important;
+}
+.manager-boards-page .manager-rank-table th:nth-child(2),
+.manager-boards-page .manager-rank-table td:nth-child(2){
+  width:272px!important;
+  min-width:272px!important;
+  max-width:272px!important;
+  text-align:left!important;
+}
+.manager-boards-page .manager-rank-table tbody td{
+  height:94px!important;
+  min-height:94px!important;
+}
+.manager-boards-page .manager-rank-table .badge-identity--row{
+  --badge-icon-size:var(--manager-board-icon-size)!important;
+  --badge-plate-width:var(--manager-board-plate-width)!important;
+  --badge-plate-height:auto!important;
+  position:relative!important;
+  width:calc(var(--manager-board-icon-size) + var(--manager-board-lockup-gap) + var(--manager-board-plate-width))!important;
+  max-width:none!important;
+  height:var(--manager-board-lockup-height)!important;
+  min-height:var(--manager-board-lockup-height)!important;
+  display:block!important;
+  padding:0!important;
+}
+.manager-boards-page .manager-rank-table .badge-identity--row .badge-identity__icon{
+  position:absolute!important;
+  top:50%!important;
+  left:0!important;
+  width:var(--manager-board-icon-size)!important;
+  height:var(--manager-board-icon-size)!important;
+  transform:translateY(-50%)!important;
+}
+.manager-boards-page .manager-rank-table .badge-identity--row .badge-identity__plate{
+  position:absolute!important;
+  top:50%!important;
+  left:calc(var(--manager-board-icon-size) + var(--manager-board-lockup-gap))!important;
+  width:var(--manager-board-plate-width)!important;
+  height:auto!important;
+  aspect-ratio:var(--manager-board-plate-ratio,640/240)!important;
+  display:block!important;
+  box-sizing:border-box!important;
+  margin:0!important;
+  padding:0!important;
+  background-position:center!important;
+  background-size:100% 100%!important;
+  transform:translateY(-50%)!important;
+}
+.manager-boards-page .manager-rank-table .badge-identity--row .badge-identity__name{
+  position:absolute!important;
+  top:var(--manager-board-text-top,18%)!important;
+  left:var(--manager-board-text-left,16%)!important;
+  width:var(--manager-board-text-width,68%)!important;
+  max-width:none!important;
+  height:var(--manager-board-text-height,64%)!important;
+  display:grid!important;
+  place-items:center!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+  font-size:14px!important;
+  line-height:1!important;
+  text-align:center!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  transform:none!important;
+}
+.manager-boards-page .manager-rank-table .badge-identity--row.is-name-compact .badge-identity__name{
+  font-size:12px!important;
+}
+.manager-boards-page .manager-rank-table .manager-user-name-plain{
+  min-height:var(--manager-board-lockup-height)!important;
+  display:inline-flex!important;
+  align-items:center!important;
+}
+.manager-boards-page .manager-career-income-table th:nth-child(n+3),
+.manager-boards-page .manager-career-income-table td:nth-child(n+3){
+  width:128px!important;
+  text-align:right!important;
+}
+
+/* The hero name uses the visual centre of the plaque, without per-skin nudges. */
+.manager-hall-card[data-badge="gauff_energy"] .manager-badge-hero-name[data-badge="gauff_energy"] b,
+.manager-panel.manager-side[data-badge="gauff_energy"] .manager-panel-h .manager-badge-hero-name[data-badge="gauff_energy"] b,
+.manager-badge-preview-overlay[data-badge="gauff_energy"] .manager-badge-preview-sidebar-head .manager-badge-hero-name[data-badge="gauff_energy"] b{
+  width:76%!important;
+  max-width:76%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  transform:none!important;
+}
+.manager-hall-card[data-badge="zheng_queen"] .manager-badge-hero-name[data-badge="zheng_queen"] b,
+.manager-panel.manager-side[data-badge="zheng_queen"] .manager-panel-h .manager-badge-hero-name[data-badge="zheng_queen"] b,
+.manager-badge-preview-overlay[data-badge="zheng_queen"] .manager-badge-preview-sidebar-head .manager-badge-hero-name[data-badge="zheng_queen"] b,
+.badge-identity--login[data-badge="zheng_queen"] .badge-identity__name{
+  transform:none!important;
+}
+
+@media(max-width:768px){
+  .manager-boards-page .manager-rank-table{
+    --manager-board-icon-size:46px;
+    --manager-board-plate-width:150px;
+    --manager-board-lockup-gap:6px;
+    --manager-board-lockup-height:68px;
+  }
+  .manager-boards-page .manager-station-board-table{min-width:700px!important}
+  .manager-boards-page .manager-wallet-board-table{min-width:470px!important}
+  .manager-boards-page .manager-career-income-table{min-width:1060px!important}
+  .manager-boards-page .manager-rank-table th:nth-child(2),
+  .manager-boards-page .manager-rank-table td:nth-child(2){
+    width:228px!important;
+    min-width:228px!important;
+    max-width:228px!important;
+  }
+  .manager-boards-page .manager-rank-table tbody td{
+    height:82px!important;
+    min-height:82px!important;
+  }
+  .manager-boards-page .manager-rank-table .badge-identity--row .badge-identity__name{
+    font-size:12px!important;
+  }
+  .manager-boards-page .manager-rank-table .badge-identity--row.is-name-compact .badge-identity__name{
+    font-size:10px!important;
+  }
+}
