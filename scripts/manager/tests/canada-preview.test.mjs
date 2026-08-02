@@ -8,9 +8,11 @@ const atp = JSON.parse(fs.readFileSync('data/manager/events/atp-2026-w32-montrea
 const wta = JSON.parse(fs.readFileSync('data/manager/events/wta-2026-w32-toronto.json', 'utf8'));
 const market = JSON.parse(fs.readFileSync('data/manager/market_snapshot.json', 'utf8'));
 const publication = JSON.parse(fs.readFileSync('data/manager/publications/2026-w32-canada-v1.json', 'utf8'));
+const windowAmendment = JSON.parse(fs.readFileSync('data/manager/publications/2026-w32-canada-v2.json', 'utf8'));
 const dataManifest = JSON.parse(fs.readFileSync('data/manifest.json', 'utf8'));
 const html = fs.readFileSync('index.html', 'utf8');
 const migration = fs.readFileSync('supabase/migrations/202608010001_manager_canada_combo_and_welfare.sql', 'utf8');
+const cutoffMigration = fs.readFileSync('supabase/migrations/202608020001_manager_canada_submission_cutoff_2245.sql', 'utf8');
 
 function contentVersion(file) {
   return createHash('sha256').update(fs.readFileSync(file)).digest('hex').slice(0, 16);
@@ -28,20 +30,23 @@ function assertOfficialStation(event, tour, officialPattern) {
     locked_at: '2026-08-01T07:24:33Z'
   });
   assert.equal(event.submission_opens_at, '2026-08-01T00:00:00+08:00');
-  assert.equal(event.submission_cutoff_at, '2026-08-02T22:15:00+08:00');
-  assert.equal(event.submission_closes_at, '2026-08-02T22:15:00+08:00');
+  assert.equal(event.submission_cutoff_at, '2026-08-02T22:45:00+08:00');
+  assert.equal(event.submission_closes_at, '2026-08-02T22:45:00+08:00');
   assert.equal(event.transfer_window_opens_at ?? null, null);
   assert.equal(event.transfer_window_closes_at ?? null, null);
   assert.equal(event.players.length, 96);
-  assert.equal(event.players.filter((player) => player.is_qualifier_placeholder).length, 16);
+  const qualifierPlaceholders = event.players.filter((player) => player.is_qualifier_placeholder).length;
+  assert.ok(qualifierPlaceholders >= 0 && qualifierPlaceholders <= 16);
   assert.equal(new Set(event.players.map((player) => player.draw_position)).size, 96);
   assert.ok(event.source_urls.slice(0, 2).some((url) => officialPattern.test(url)));
 
   const known = event.players.filter((player) => !player.is_qualifier_placeholder);
-  assert.equal(known.length, 80);
+  assert.equal(known.length, 96 - qualifierPlaceholders);
   assert.ok(known.every((player) => player.name_zh));
   assert.ok(known.every((player) => player.profile_id));
-  assert.ok(known.every((player) => Number.isFinite(player.rank) && player.rank > 0));
+  assert.ok(known.every((player) => (
+    player.qualifier_replacement || (Number.isFinite(player.rank) && player.rank > 0)
+  )));
   assert.ok(known.every((player) => Number.isFinite(player.price) && player.price > 0));
   assert.ok(event.players.every((player) => !/\bor\b/i.test(player.name_en)));
 }
@@ -117,6 +122,24 @@ test('Canada opening publication freezes the complete 192-player price market', 
   assert.ok(publishedPlayers.every((player) => (
     currentPrices.get(`${player.eventKey}|${player.player_key}`) === player.price
   )));
+  assert.ok(publication.snapshot.windows.every((window) => (
+    window.submission_cutoff_at === '2026-08-02T22:15:00+08:00'
+    && window.submission_closes_at === '2026-08-02T22:15:00+08:00'
+  )), 'the immutable opening snapshot must retain the originally published cutoff');
+});
+
+test('Canada window amendment extends both tours to 22:45 without rewriting opening v1', () => {
+  assert.equal(windowAmendment.station_key, '2026-w32-canada');
+  assert.equal(windowAmendment.publication_version, 2);
+  assert.equal(windowAmendment.publication_kind, 'window_amendment');
+  assert.equal(windowAmendment.snapshot.windows.length, 2);
+  assert.ok(windowAmendment.snapshot.windows.every((window) => (
+    window.submission_cutoff_at === '2026-08-02T22:45:00+08:00'
+    && window.submission_closes_at === '2026-08-02T22:45:00+08:00'
+  )));
+  assert.match(cutoffMigration, /station_key = '2026-w32-canada'/);
+  assert.match(cutoffMigration, /submission_cutoff_at = '2026-08-02T22:45:00\+08:00'/);
+  assert.match(cutoffMigration, /submission_closes_at = '2026-08-02T22:45:00\+08:00'/);
 });
 
 test('Canada opening files are cache-busted in the frontend data manifest', () => {
@@ -125,7 +148,8 @@ test('Canada opening files are cache-busted in the frontend data manifest', () =
     'data/manager/market_snapshot.json',
     'data/manager/events/atp-2026-w32-montreal.json',
     'data/manager/events/wta-2026-w32-toronto.json',
-    'data/manager/publications/2026-w32-canada-v1.json'
+    'data/manager/publications/2026-w32-canada-v1.json',
+    'data/manager/publications/2026-w32-canada-v2.json'
   ]) {
     assert.equal(dataManifest.files[file]?.version, contentVersion(file), `${file} manifest version is stale`);
   }

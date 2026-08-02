@@ -11,6 +11,16 @@ import fetch_breakdown as official_scoring
 BASE_URL = "https://www.live-tennis.cn"
 PICK_COUNTS_PATH = os.path.join('data', 'daily_jinx_pick_counts.json')
 
+# 2026 加拿大站与华盛顿站在 8 月 2 日存在官方赛历日期重叠。
+# 当天经纪人 Current Data 只统计加拿大站；此补丁次日自动失效，
+# 不改变后续赛事的通用自动选站逻辑。
+CURRENT_EVENT_DATE_OVERRIDES = {
+    '2026-08-02': {
+        'MS': '20421',  # ATP Montreal
+        'WS': '30806',  # WTA Toronto
+    },
+}
+
 REAL_MAX_DAY = {
     '香港':7,'布里斯班':8,'阿德莱德':6,'霍巴特':6,'澳网':13,
     '蒙彼利埃':7,'阿布扎比':7,'鹿特丹':7,'多哈':7,
@@ -163,24 +173,41 @@ def _pick_active_event(session, events, gender, cal_cache=None, today=None):
 
 def get_active_events(session, cal_cache=None, now_dt=None):
     """从菜单获取ATP/WTA候选赛事，并过滤掉提前露出的下一站空赛事。"""
+    today = now_dt.date() if now_dt else None
+    override = CURRENT_EVENT_DATE_OVERRIDES.get(today.isoformat()) if today else None
+    if override:
+        ms_eid = override['MS']
+        ws_eid = override['WS']
+        print(
+            f"  当日计分站补丁: 仅统计加拿大 ATP event={ms_eid}, "
+            f"WTA event={ws_eid}；忽略同日仍可选的华盛顿站"
+        )
+        return ms_eid, ws_eid
+
     resp = session.get(f'{BASE_URL}/zh/survivor/menu', timeout=15)
     html = resp.text
     ms_events = re.findall(r'href="https://www\.live-tennis\.cn/zh/survivor/event/([^/]+)/2026/MS/my"', html)
     ws_events = re.findall(r'href="https://www\.live-tennis\.cn/zh/survivor/event/([^/]+)/2026/WS/my"', html)
     print(f"菜单候选: ATP={ms_events[:5]}, WTA={ws_events[:5]}")
-    today = now_dt.date() if now_dt else None
     return (
         _pick_active_event(session, ms_events, 'MS', cal_cache, today),
         _pick_active_event(session, ws_events, 'WS', cal_cache, today),
     )
 
-def get_internal_id(session, event_id, gender):
+def get_internal_id(session, event_id, gender, attempts=1):
     url = f'{BASE_URL}/zh/survivor/event/{event_id}/2026/{gender}/score'
-    r = session.get(url, timeout=15)
-    m = re.search(r'url:\s*"https://www\.live-tennis\.cn/zh/survivor/event/(\d+)/score"', r.text)
-    if m: return m.group(1)
-    m2 = re.search(r'url:\s*"https://www\.live-tennis\.cn/zh/survivor/event/(\d+)/\d+/detail"', r.text)
-    return m2.group(1) if m2 else None
+    for attempt in range(max(1, attempts)):
+        r = session.get(url, timeout=15)
+        m = re.search(r'url:\s*"https://www\.live-tennis\.cn/zh/survivor/event/(\d+)/score"', r.text)
+        if m:
+            return m.group(1)
+        m2 = re.search(r'url:\s*"https://www\.live-tennis\.cn/zh/survivor/event/(\d+)/\d+/detail"', r.text)
+        if m2:
+            return m2.group(1)
+        if attempt + 1 < attempts:
+            print(f"  WARN: 获取内部ID失败 event={event_id} gender={gender}，准备重试 {attempt + 2}/{attempts}")
+            time.sleep(attempt + 1)
+    return None
 
 def get_event_name(session, event_id, gender):
     url = f'{BASE_URL}/zh/survivor/event/{event_id}/2026/{gender}/my'
@@ -706,8 +733,10 @@ def main():
     print(f"活跃比赛: ATP event={ms_eid}, WTA event={ws_eid}")
     
     # 2. 获取内部ID和比赛名
-    ms_iid = get_internal_id(session, ms_eid, 'MS')
-    ws_iid = get_internal_id(session, ws_eid, 'WS')
+    override_today = CURRENT_EVENT_DATE_OVERRIDES.get(now_dt.date().isoformat())
+    internal_id_attempts = 3 if override_today else 1
+    ms_iid = get_internal_id(session, ms_eid, 'MS', attempts=internal_id_attempts)
+    ws_iid = get_internal_id(session, ws_eid, 'WS', attempts=internal_id_attempts)
     if not ms_iid or not ws_iid:
         print("ERROR: 获取内部ID失败")
         sys.exit(1)
