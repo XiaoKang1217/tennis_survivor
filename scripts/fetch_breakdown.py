@@ -36,11 +36,41 @@ OFFICIAL_EVENT_ALIAS_OVERRIDES = {
     ('WTA', 'Washington Dc'): {'华盛顿'},
 }
 
+# data/official_calendar.json 目前缺少的已核验官方赛历项。
+# 补充项只在同 tour/year/event_key 不存在时注入，日后官方
+# 赛历文件补齐后会自动让位，不会生成重复记录。
+OFFICIAL_CALENDAR_SUPPLEMENTS = [
+    {
+        'tour': 'ATP',
+        'year': 2025,
+        'source': 'ATP official calendar supplement',
+        'event_key': '多伦多',
+        'city': 'TORONTO',
+        'name': 'NATIONAL BANK OPEN PRESENTED BY ROGERS',
+        'level': 'ATP MASTERS 1000',
+        'type': 'M1000',
+        'surface': 'hard_out',
+        'surface_code': 'H',
+        'in_outdoor': 'O',
+        'start_date': '2025-07-27',
+        'end_date': '2025-08-07',
+        'month': 7,
+        'draw_size': 96,
+        'aliases': [
+            'ATP MASTERS 1000',
+            'TORONTO',
+            'NATIONAL BANK OPEN PRESENTED BY ROGERS',
+            '多伦多',
+        ],
+    },
+]
+
 # 赛事轮换造成的单站失效日补丁。
-# 2025 加拿大站在蒙特利尔于 7 月 27 日开赛，但 2026 加拿大站轮换到
-# 多伦多并于 8 月 2 日开赛。华盛顿站期间仍应保留 2025 蒙特利尔积分，
+# 2025 加拿大站 ATP 在多伦多、WTA 在蒙特利尔；2026 两者轮换城市
+# 并于 8 月 2 日开赛。华盛顿站期间仍应保留 2025 加拿大站积分，
 # 等 2026 加拿大站真正开始后再按原有 18 站规则重选。
 EVENT_EXPIRY_DEFERRALS = {
+    ('ATP', 2025, '多伦多'): date(2026, 8, 2),
     ('WTA', 2025, '蒙特利尔'): date(2026, 8, 2),
 }
 
@@ -237,7 +267,25 @@ def load_official_calendar():
         print(f"  ⚠️ 官方赛历不存在: {OFFICIAL_CALENDAR_PATH}")
         return {'events': [], 'by_alias': {}}
 
-    events = payload.get('events') or []
+    events = list(payload.get('events') or [])
+    existing_event_keys = {
+        (
+            rec.get('tour'),
+            int(rec.get('year') or 0),
+            norm_event_key(rec.get('event_key')),
+        )
+        for rec in events
+    }
+    for supplement in OFFICIAL_CALENDAR_SUPPLEMENTS:
+        supplement_key = (
+            supplement.get('tour'),
+            int(supplement.get('year') or 0),
+            norm_event_key(supplement.get('event_key')),
+        )
+        if supplement_key not in existing_event_keys:
+            events.append(dict(supplement))
+            existing_event_keys.add(supplement_key)
+
     by_alias = {}
     for rec in events:
         tour = rec.get('tour')

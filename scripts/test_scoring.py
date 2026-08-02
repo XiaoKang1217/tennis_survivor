@@ -107,6 +107,18 @@ class InstantScoreTests(unittest.TestCase):
         self.assertEqual(washington_2026[0]['start_date'], '2026-07-27')
         self.assertEqual(washington_2026[0]['end_date'], '2026-08-02')
 
+    def test_atp_2025_toronto_official_calendar_supplement_is_available(self):
+        rows = self.official_calendar['by_alias'].get(
+            ('ATP', scoring.norm_event_key('多伦多')),
+            [],
+        )
+        toronto_2025 = [row for row in rows if row.get('year') == 2025]
+
+        self.assertEqual(len(toronto_2025), 1)
+        self.assertEqual(toronto_2025[0]['type'], 'M1000')
+        self.assertEqual(toronto_2025[0]['start_date'], '2025-07-27')
+        self.assertEqual(toronto_2025[0]['end_date'], '2025-08-07')
+
     def test_previous_year_event_not_opened_by_survivor_expires_and_is_not_reselected(self):
         survivor_events = scoring._build_survivor_events_index([
             {'year': 2026, 'tour': 'ATP', 'event_name': '伊斯特本'},
@@ -174,6 +186,38 @@ class InstantScoreTests(unittest.TestCase):
         self.assertFalse(during_washington['expired_by_survivor_calendar'])
         self.assertEqual(canada_start['year'], 2025)
         self.assertTrue(canada_start['expired_by_survivor_calendar'])
+
+    def test_atp_toronto_expiry_is_deferred_until_2026_canada_starts(self):
+        survivor_events = scoring._build_survivor_events_index([
+            {'year': 2026, 'tour': 'ATP', 'event_name': '华盛顿'},
+        ])
+
+        during_washington = scoring.choose_official_record(
+            '多伦多', 'MS', self.official_calendar, scoring.date(2026, 7, 27),
+            survivor_events=survivor_events
+        )
+        canada_start = scoring.choose_official_record(
+            '多伦多', 'MS', self.official_calendar, scoring.date(2026, 8, 2),
+            survivor_events=survivor_events
+        )
+
+        self.assertEqual(during_washington['year'], 2025)
+        self.assertFalse(during_washington['expired_by_survivor_calendar'])
+        self.assertEqual(canada_start['year'], 2025)
+        self.assertTrue(canada_start['expired_by_survivor_calendar'])
+
+    def test_atp_canada_deducts_expired_2025_toronto_points(self):
+        survivor_events = scoring._build_survivor_events_index([
+            {'year': 2026, 'tour': 'ATP', 'event_name': '蒙特利尔'},
+            {'year': 2026, 'tour': 'ATP', 'event_name': '华盛顿'},
+        ])
+        det = '<b>【多伦多(500)】</b><b>【华盛顿(100)】</b>'
+
+        score = calc_current_deduct_score(
+            det, 'MS', '蒙特利尔', self.official_calendar, 8, 2026, survivor_events
+        )
+
+        self.assertEqual(score, 500)
 
 
 if __name__ == '__main__':
