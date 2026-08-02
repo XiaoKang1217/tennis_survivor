@@ -15,8 +15,8 @@
   },
   "submission_opens_at": "2026-08-01T00:00:00+08:00",
   "manual_schedule_windows": true,
-  "schedule_status": "pending",
-  "main_draw_first_match_at": null,
+  "schedule_status": "partial",
+  "main_draw_first_match_at": "2026-08-02T15:00:00.000Z",
   "submission_cutoff_at": "2026-08-02T22:15:00+08:00",
   "submission_closes_at": "2026-08-02T22:15:00+08:00",
   "transfer_window_note": "换人窗口待确认。",
@@ -122,17 +122,17 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q1",
-      "name_zh": "资格赛选手 Q1",
-      "profile_id": "QUAL-1",
-      "country_code": null,
+      "name_en": "UCHIJIMA Moyuka",
+      "name_zh": "内岛萌夏",
+      "profile_id": "327241",
+      "country_code": "JPN",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 3,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/327241",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/30806/2026/device/0/horizontal/true",
-      "player_key": "WTA|qualifier-3",
+      "player_key": "WTA|uchijima-moyuka",
       "name_zh_source": "official draw qualifier placeholder",
       "scores": {
         "base": 39.74,
@@ -199,7 +199,18 @@
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.16
       },
-      "qualifier_replacement": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "WTA|qualifier-3",
+        "placeholder_name_en": "Qualifier Q1",
+        "placeholder_name_zh": "资格赛选手 Q1",
+        "placeholder_profile_id": "QUAL-1",
+        "replacement_player_key": "WTA|uchijima-moyuka",
+        "replacement_name_en": "UCHIJIMA Moyuka",
+        "replacement_name_zh": "内岛萌夏",
+        "replacement_profile_id": "327241",
+        "draw_position": 3,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/30806/2026/device/0/horizontal/true"
+      },
       "pre_r1_substitution": null
     },
     {
@@ -223,8 +234,8 @@
         "manual": 0
       },
       "price": 120,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "内岛萌夏",
+      "path_note": "首轮对阵 内岛萌夏。",
       "rank": 39,
       "points": 1244,
       "overall_elo": 1721.8,
@@ -770,17 +781,17 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q2",
-      "name_zh": "资格赛选手 Q2",
-      "profile_id": "QUAL-2",
-      "country_code": null,
+      "name_en": "Lucrezia STEFANINI",
+      "name_zh": "斯特凡尼尼",
+      "profile_id": "323149",
+      "country_code": "ITA",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 13,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/323149",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/30806/2026/device/0/horizontal/true",
-      "player_key": "WTA|qualifier-13",
+      "player_key": "WTA|lucrezia-stefanini",
       "name_zh_source": "official draw qualifier placeholder",
       "scores": {
         "base": 39.74,
@@ -847,7 +858,18 @@
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.16
       },
-      "qualifier_replacement": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "WTA|qualifier-13",
+        "placeholder_name_en": "Qualifier Q2",
+        "placeholder_name_zh": "资格赛选手 Q2",
+        "placeholder_profile_id": "QUAL-2",
+        "replacement_player_key": "WTA|lucrezia-stefanini",
+        "replacement_name_en": "Lucrezia STEFANINI",
+        "replacement_name_zh": "斯特凡尼尼",
+        "replacement_profile_id": "323149",
+        "draw_position": 13,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/30806/2026/device/0/horizontal/true"
+      },
       "pre_r1_substitution": null
     },
     {
@@ -871,8 +893,8 @@
         "manual": 0
       },
       "price": 155,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "斯特凡尼尼",
+      "path_note": "首轮对阵 斯特凡尼尼。",
       "rank": 59,
       "points": 1048,
       "overall_elo": 1807.6,
@@ -1742,17 +1764,17 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q3",
-      "name_zh": "资格赛选手 Q3",
-      "profile_id": "QUAL-3",
-      "country_code": null,
+      "name_en": "Emerson JONES",
+      "name_zh": "埃-琼斯",
+      "profile_id": "333111",
+      "country_code": "AUS",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 29,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/333111",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/30806/2026/device/0/horizontal/true",
-      "player_key": "WTA|qualifier-29",
+      "player_key": "WTA|emerson-jones",
       "name_zh_source": "official draw qualifier placeholder",
       "scores": {
         "base": 39.74,
@@ -1762,8 +1784,8 @@
         "manual": 0
       },
       "price": 90,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "塔拉鲁德",
+      "path_note": "首轮对阵 塔拉鲁德。",
       "rank": null,
       "points": null,
       "overall_elo": null,
@@ -1819,21 +1841,32 @@
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.16
       },
-      "qualifier_replacement": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "WTA|qualifier-29",
+        "placeholder_name_en": "Qualifier Q3",
+        "placeholder_name_zh": "资格赛选手 Q3",
+        "placeholder_profile_id": "QUAL-3",
+        "replacement_player_key": "WTA|emerson-jones",
+        "replacement_name_en": "Emerson JONES",
+        "replacement_name_zh": "埃-琼斯",
+        "replacement_profile_id": "333111",
+        "draw_position": 29,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/30806/2026/device/0/horizontal/true"
+      },
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q4",
-      "name_zh": "资格赛选手 Q4",
-      "profile_id": "QUAL-4",
-      "country_code": null,
+      "name_en": "Lanlana TARARUDEE",
+      "name_zh": "塔拉鲁德",
+      "profile_id": "329651",
+      "country_code": "THA",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 30,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/329651",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/30806/2026/device/0/horizontal/true",
-      "player_key": "WTA|qualifier-30",
+      "player_key": "WTA|lanlana-tararudee",
       "name_zh_source": "official draw qualifier placeholder",
       "scores": {
         "base": 39.74,
@@ -1843,8 +1876,8 @@
         "manual": 0
       },
       "price": 90,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "埃-琼斯",
+      "path_note": "首轮对阵 埃-琼斯。",
       "rank": null,
       "points": null,
       "overall_elo": null,
@@ -1900,7 +1933,18 @@
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.16
       },
-      "qualifier_replacement": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "WTA|qualifier-30",
+        "placeholder_name_en": "Qualifier Q4",
+        "placeholder_name_zh": "资格赛选手 Q4",
+        "placeholder_profile_id": "QUAL-4",
+        "replacement_player_key": "WTA|lanlana-tararudee",
+        "replacement_name_en": "Lanlana TARARUDEE",
+        "replacement_name_zh": "塔拉鲁德",
+        "replacement_profile_id": "329651",
+        "draw_position": 30,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/30806/2026/device/0/horizontal/true"
+      },
       "pre_r1_substitution": null
     },
     {
@@ -2086,8 +2130,8 @@
         "manual": 0
       },
       "price": 120,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "让让",
+      "path_note": "首轮对阵 让让。",
       "rank": 44,
       "points": 1160,
       "overall_elo": 1719.5,
@@ -2147,17 +2191,17 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q5",
-      "name_zh": "资格赛选手 Q5",
-      "profile_id": "QUAL-5",
-      "country_code": null,
+      "name_en": "Leolia JEANJEAN",
+      "name_zh": "让让",
+      "profile_id": "320313",
+      "country_code": "FRA",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 36,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/320313",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/30806/2026/device/0/horizontal/true",
-      "player_key": "WTA|qualifier-36",
+      "player_key": "WTA|leolia-jeanjean",
       "name_zh_source": "official draw qualifier placeholder",
       "scores": {
         "base": 39.74,
@@ -2224,7 +2268,18 @@
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.16
       },
-      "qualifier_replacement": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "WTA|qualifier-36",
+        "placeholder_name_en": "Qualifier Q5",
+        "placeholder_name_zh": "资格赛选手 Q5",
+        "placeholder_profile_id": "QUAL-5",
+        "replacement_player_key": "WTA|leolia-jeanjean",
+        "replacement_name_en": "Leolia JEANJEAN",
+        "replacement_name_zh": "让让",
+        "replacement_profile_id": "320313",
+        "draw_position": 36,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/30806/2026/device/0/horizontal/true"
+      },
       "pre_r1_substitution": null
     },
     {
@@ -2714,17 +2769,17 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q6",
-      "name_zh": "资格赛选手 Q6",
-      "profile_id": "QUAL-6",
-      "country_code": null,
+      "name_en": "Rebecca SRAMKOVA",
+      "name_zh": "施拉姆科娃",
+      "profile_id": "320228",
+      "country_code": "SVK",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 45,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/320228",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/30806/2026/device/0/horizontal/true",
-      "player_key": "WTA|qualifier-45",
+      "player_key": "WTA|rebecca-sramkova",
       "name_zh_source": "official draw qualifier placeholder",
       "scores": {
         "base": 39.74,
@@ -2734,8 +2789,8 @@
         "manual": 0
       },
       "price": 90,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "布林科娃",
+      "path_note": "首轮对阵 布林科娃。",
       "rank": null,
       "points": null,
       "overall_elo": null,
@@ -2791,21 +2846,32 @@
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.16
       },
-      "qualifier_replacement": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "WTA|qualifier-45",
+        "placeholder_name_en": "Qualifier Q6",
+        "placeholder_name_zh": "资格赛选手 Q6",
+        "placeholder_profile_id": "QUAL-6",
+        "replacement_player_key": "WTA|rebecca-sramkova",
+        "replacement_name_en": "Rebecca SRAMKOVA",
+        "replacement_name_zh": "施拉姆科娃",
+        "replacement_profile_id": "320228",
+        "draw_position": 45,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/30806/2026/device/0/horizontal/true"
+      },
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q7",
-      "name_zh": "资格赛选手 Q7",
-      "profile_id": "QUAL-7",
-      "country_code": null,
+      "name_en": "Anna BLINKOVA",
+      "name_zh": "布林科娃",
+      "profile_id": "324267",
+      "country_code": "RUS",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 46,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/324267",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/30806/2026/device/0/horizontal/true",
-      "player_key": "WTA|qualifier-46",
+      "player_key": "WTA|anna-blinkova",
       "name_zh_source": "official draw qualifier placeholder",
       "scores": {
         "base": 39.74,
@@ -2815,8 +2881,8 @@
         "manual": 0
       },
       "price": 90,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "施拉姆科娃",
+      "path_note": "首轮对阵 施拉姆科娃。",
       "rank": null,
       "points": null,
       "overall_elo": null,
@@ -2872,7 +2938,18 @@
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.16
       },
-      "qualifier_replacement": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "WTA|qualifier-46",
+        "placeholder_name_en": "Qualifier Q7",
+        "placeholder_name_zh": "资格赛选手 Q7",
+        "placeholder_profile_id": "QUAL-7",
+        "replacement_player_key": "WTA|anna-blinkova",
+        "replacement_name_en": "Anna BLINKOVA",
+        "replacement_name_zh": "布林科娃",
+        "replacement_profile_id": "324267",
+        "draw_position": 46,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/30806/2026/device/0/horizontal/true"
+      },
       "pre_r1_substitution": null
     },
     {
@@ -3038,17 +3115,17 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q8",
-      "name_zh": "资格赛选手 Q8",
-      "profile_id": "QUAL-8",
-      "country_code": null,
+      "name_en": "ITO Aoi",
+      "name_zh": "伊藤葵",
+      "profile_id": "329009",
+      "country_code": "JPN",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 51,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/329009",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/30806/2026/device/0/horizontal/true",
-      "player_key": "WTA|qualifier-51",
+      "player_key": "WTA|ito-aoi",
       "name_zh_source": "official draw qualifier placeholder",
       "scores": {
         "base": 39.74,
@@ -3115,7 +3192,18 @@
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.16
       },
-      "qualifier_replacement": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "WTA|qualifier-51",
+        "placeholder_name_en": "Qualifier Q8",
+        "placeholder_name_zh": "资格赛选手 Q8",
+        "placeholder_profile_id": "QUAL-8",
+        "replacement_player_key": "WTA|ito-aoi",
+        "replacement_name_en": "ITO Aoi",
+        "replacement_name_zh": "伊藤葵",
+        "replacement_profile_id": "329009",
+        "draw_position": 51,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/30806/2026/device/0/horizontal/true"
+      },
       "pre_r1_substitution": null
     },
     {
@@ -3139,8 +3227,8 @@
         "manual": 0
       },
       "price": 105,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "伊藤葵",
+      "path_note": "首轮对阵 伊藤葵。",
       "rank": 228,
       "points": 343,
       "overall_elo": 1446,
@@ -3200,17 +3288,17 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q9",
-      "name_zh": "资格赛选手 Q9",
-      "profile_id": "QUAL-9",
-      "country_code": null,
+      "name_en": "Lois BOISSON",
+      "name_zh": "布瓦松",
+      "profile_id": "328884",
+      "country_code": "FRA",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 53,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/328884",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/30806/2026/device/0/horizontal/true",
-      "player_key": "WTA|qualifier-53",
+      "player_key": "WTA|lois-boisson",
       "name_zh_source": "official draw qualifier placeholder",
       "scores": {
         "base": 39.74,
@@ -3277,7 +3365,18 @@
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.16
       },
-      "qualifier_replacement": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "WTA|qualifier-53",
+        "placeholder_name_en": "Qualifier Q9",
+        "placeholder_name_zh": "资格赛选手 Q9",
+        "placeholder_profile_id": "QUAL-9",
+        "replacement_player_key": "WTA|lois-boisson",
+        "replacement_name_en": "Lois BOISSON",
+        "replacement_name_zh": "布瓦松",
+        "replacement_profile_id": "328884",
+        "draw_position": 53,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/30806/2026/device/0/horizontal/true"
+      },
       "pre_r1_substitution": null
     },
     {
@@ -3301,8 +3400,8 @@
         "manual": 0
       },
       "price": 120,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "布瓦松",
+      "path_note": "首轮对阵 布瓦松。",
       "rank": 55,
       "points": 1062,
       "overall_elo": 1718.4,
@@ -4010,17 +4109,17 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q10",
-      "name_zh": "资格赛选手 Q10",
-      "profile_id": "QUAL-10",
-      "country_code": null,
+      "name_en": "Tatjana MARIA",
+      "name_zh": "玛利亚",
+      "profile_id": "310440",
+      "country_code": "GER",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 67,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/310440",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/30806/2026/device/0/horizontal/true",
-      "player_key": "WTA|qualifier-67",
+      "player_key": "WTA|tatjana-maria",
       "name_zh_source": "official draw qualifier placeholder",
       "scores": {
         "base": 39.74,
@@ -4087,7 +4186,18 @@
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.16
       },
-      "qualifier_replacement": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "WTA|qualifier-67",
+        "placeholder_name_en": "Qualifier Q10",
+        "placeholder_name_zh": "资格赛选手 Q10",
+        "placeholder_profile_id": "QUAL-10",
+        "replacement_player_key": "WTA|tatjana-maria",
+        "replacement_name_en": "Tatjana MARIA",
+        "replacement_name_zh": "玛利亚",
+        "replacement_profile_id": "310440",
+        "draw_position": 67,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/30806/2026/device/0/horizontal/true"
+      },
       "pre_r1_substitution": null
     },
     {
@@ -4111,8 +4221,8 @@
         "manual": 0
       },
       "price": 135,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "玛利亚",
+      "path_note": "首轮对阵 玛利亚。",
       "rank": 70,
       "points": 990,
       "overall_elo": 1826.7,
@@ -4172,17 +4282,17 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q11",
-      "name_zh": "资格赛选手 Q11",
-      "profile_id": "QUAL-11",
-      "country_code": null,
+      "name_en": "Victoria JIMENEZ KASINTSEVA",
+      "name_zh": "希门尼斯",
+      "profile_id": "330352",
+      "country_code": "AND",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 69,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/330352",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/30806/2026/device/0/horizontal/true",
-      "player_key": "WTA|qualifier-69",
+      "player_key": "WTA|victoria-jimenez-kasintseva",
       "name_zh_source": "official draw qualifier placeholder",
       "scores": {
         "base": 39.74,
@@ -4249,7 +4359,18 @@
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.16
       },
-      "qualifier_replacement": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "WTA|qualifier-69",
+        "placeholder_name_en": "Qualifier Q11",
+        "placeholder_name_zh": "资格赛选手 Q11",
+        "placeholder_profile_id": "QUAL-11",
+        "replacement_player_key": "WTA|victoria-jimenez-kasintseva",
+        "replacement_name_en": "Victoria JIMENEZ KASINTSEVA",
+        "replacement_name_zh": "希门尼斯",
+        "replacement_profile_id": "330352",
+        "draw_position": 69,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/30806/2026/device/0/horizontal/true"
+      },
       "pre_r1_substitution": null
     },
     {
@@ -4273,8 +4394,8 @@
         "manual": 0
       },
       "price": 110,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "希门尼斯",
+      "path_note": "首轮对阵 希门尼斯。",
       "rank": 71,
       "points": 989,
       "overall_elo": 1629.6,
@@ -4678,8 +4799,8 @@
         "manual": 0
       },
       "price": 120,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "斯蒂芬斯",
+      "path_note": "首轮对阵 斯蒂芬斯。",
       "rank": 86,
       "points": 867,
       "overall_elo": 1791.4,
@@ -4739,17 +4860,17 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q12",
-      "name_zh": "资格赛选手 Q12",
-      "profile_id": "QUAL-12",
-      "country_code": null,
+      "name_en": "Sloane STEPHENS",
+      "name_zh": "斯蒂芬斯",
+      "profile_id": "315683",
+      "country_code": "USA",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 78,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/315683",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/30806/2026/device/0/horizontal/true",
-      "player_key": "WTA|qualifier-78",
+      "player_key": "WTA|sloane-stephens",
       "name_zh_source": "official draw qualifier placeholder",
       "scores": {
         "base": 39.74,
@@ -4816,7 +4937,18 @@
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.16
       },
-      "qualifier_replacement": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "WTA|qualifier-78",
+        "placeholder_name_en": "Qualifier Q12",
+        "placeholder_name_zh": "资格赛选手 Q12",
+        "placeholder_profile_id": "QUAL-12",
+        "replacement_player_key": "WTA|sloane-stephens",
+        "replacement_name_en": "Sloane STEPHENS",
+        "replacement_name_zh": "斯蒂芬斯",
+        "replacement_profile_id": "315683",
+        "draw_position": 78,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/30806/2026/device/0/horizontal/true"
+      },
       "pre_r1_substitution": null
     },
     {
@@ -5144,17 +5276,17 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q13",
-      "name_zh": "资格赛选手 Q13",
-      "profile_id": "QUAL-13",
-      "country_code": null,
+      "name_en": "Alina KORNEEVA",
+      "name_zh": "科尔涅耶娃",
+      "profile_id": "331330",
+      "country_code": "RUS",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 85,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/331330",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/30806/2026/device/0/horizontal/true",
-      "player_key": "WTA|qualifier-85",
+      "player_key": "WTA|alina-korneeva",
       "name_zh_source": "official draw qualifier placeholder",
       "scores": {
         "base": 39.74,
@@ -5164,8 +5296,8 @@
         "manual": 0
       },
       "price": 90,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "波-库德梅托娃",
+      "path_note": "首轮对阵 波-库德梅托娃。",
       "rank": null,
       "points": null,
       "overall_elo": null,
@@ -5221,21 +5353,32 @@
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.16
       },
-      "qualifier_replacement": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "WTA|qualifier-85",
+        "placeholder_name_en": "Qualifier Q13",
+        "placeholder_name_zh": "资格赛选手 Q13",
+        "placeholder_profile_id": "QUAL-13",
+        "replacement_player_key": "WTA|alina-korneeva",
+        "replacement_name_en": "Alina KORNEEVA",
+        "replacement_name_zh": "科尔涅耶娃",
+        "replacement_profile_id": "331330",
+        "draw_position": 85,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/30806/2026/device/0/horizontal/true"
+      },
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q14",
-      "name_zh": "资格赛选手 Q14",
-      "profile_id": "QUAL-14",
-      "country_code": null,
+      "name_en": "Polina KUDERMETOVA",
+      "name_zh": "波-库德梅托娃",
+      "profile_id": "328897",
+      "country_code": "UZB",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 86,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/328897",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/30806/2026/device/0/horizontal/true",
-      "player_key": "WTA|qualifier-86",
+      "player_key": "WTA|polina-kudermetova",
       "name_zh_source": "official draw qualifier placeholder",
       "scores": {
         "base": 39.74,
@@ -5245,8 +5388,8 @@
         "manual": 0
       },
       "price": 90,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "科尔涅耶娃",
+      "path_note": "首轮对阵 科尔涅耶娃。",
       "rank": null,
       "points": null,
       "overall_elo": null,
@@ -5302,7 +5445,18 @@
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.16
       },
-      "qualifier_replacement": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "WTA|qualifier-86",
+        "placeholder_name_en": "Qualifier Q14",
+        "placeholder_name_zh": "资格赛选手 Q14",
+        "placeholder_profile_id": "QUAL-14",
+        "replacement_player_key": "WTA|polina-kudermetova",
+        "replacement_name_en": "Polina KUDERMETOVA",
+        "replacement_name_zh": "波-库德梅托娃",
+        "replacement_profile_id": "328897",
+        "draw_position": 86,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/30806/2026/device/0/horizontal/true"
+      },
       "pre_r1_substitution": null
     },
     {
@@ -5650,8 +5804,8 @@
         "manual": 0
       },
       "price": 110,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "戴伊",
+      "path_note": "首轮对阵 戴伊。",
       "rank": 69,
       "points": 998,
       "overall_elo": 1728.6,
@@ -5711,17 +5865,17 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q15",
-      "name_zh": "资格赛选手 Q15",
-      "profile_id": "QUAL-15",
-      "country_code": null,
+      "name_en": "Kayla DAY",
+      "name_zh": "戴伊",
+      "profile_id": "322534",
+      "country_code": "USA",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 94,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/322534",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/30806/2026/device/0/horizontal/true",
-      "player_key": "WTA|qualifier-94",
+      "player_key": "WTA|kayla-day",
       "name_zh_source": "official draw qualifier placeholder",
       "scores": {
         "base": 39.74,
@@ -5788,7 +5942,18 @@
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.16
       },
-      "qualifier_replacement": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "WTA|qualifier-94",
+        "placeholder_name_en": "Qualifier Q15",
+        "placeholder_name_zh": "资格赛选手 Q15",
+        "placeholder_profile_id": "QUAL-15",
+        "replacement_player_key": "WTA|kayla-day",
+        "replacement_name_en": "Kayla DAY",
+        "replacement_name_zh": "戴伊",
+        "replacement_profile_id": "322534",
+        "draw_position": 94,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/30806/2026/device/0/horizontal/true"
+      },
       "pre_r1_substitution": null
     },
     {
@@ -6946,8 +7111,8 @@
         "manual": 0
       },
       "price": 115,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "乔因特",
+      "path_note": "首轮对阵 乔因特。",
       "rank": 64,
       "points": 1008,
       "overall_elo": 1741.8,
@@ -7007,17 +7172,17 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q16",
-      "name_zh": "资格赛选手 Q16",
-      "profile_id": "QUAL-16",
-      "country_code": null,
+      "name_en": "Maya JOINT",
+      "name_zh": "乔因特",
+      "profile_id": "330544",
+      "country_code": "AUS",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 116,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/330544",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/30806/2026/device/0/horizontal/true",
-      "player_key": "WTA|qualifier-116",
+      "player_key": "WTA|maya-joint",
       "name_zh_source": "official draw qualifier placeholder",
       "scores": {
         "base": 39.74,
@@ -7084,7 +7249,18 @@
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.16
       },
-      "qualifier_replacement": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "WTA|qualifier-116",
+        "placeholder_name_en": "Qualifier Q16",
+        "placeholder_name_zh": "资格赛选手 Q16",
+        "placeholder_profile_id": "QUAL-16",
+        "replacement_player_key": "WTA|maya-joint",
+        "replacement_name_en": "Maya JOINT",
+        "replacement_name_zh": "乔因特",
+        "replacement_profile_id": "330544",
+        "draw_position": 116,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/30806/2026/device/0/horizontal/true"
+      },
       "pre_r1_substitution": null
     },
     {

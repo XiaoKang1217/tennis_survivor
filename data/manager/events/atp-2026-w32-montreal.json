@@ -15,8 +15,8 @@
   },
   "submission_opens_at": "2026-08-01T00:00:00+08:00",
   "manual_schedule_windows": true,
-  "schedule_status": "pending",
-  "main_draw_first_match_at": null,
+  "schedule_status": "partial",
+  "main_draw_first_match_at": "2026-08-02T15:00:00.000Z",
   "submission_cutoff_at": "2026-08-02T22:15:00+08:00",
   "submission_closes_at": "2026-08-02T22:15:00+08:00",
   "transfer_window_note": "换人窗口待确认。",
@@ -284,17 +284,17 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q1",
-      "name_zh": "资格赛选手 Q1",
-      "profile_id": "QUAL-1",
-      "country_code": null,
+      "name_en": "MOCHIZUKI Shintaro",
+      "name_zh": "望月慎太郎",
+      "profile_id": "M0HU",
+      "country_code": "JPN",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 5,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/M0HU",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true",
-      "player_key": "ATP|qualifier-5",
+      "player_key": "ATP|mochizuki-shintaro",
       "name_zh_source": "official draw qualifier placeholder",
       "scores": {
         "base": 39.74,
@@ -361,7 +361,18 @@
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.16
       },
-      "qualifier_replacement": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "ATP|qualifier-5",
+        "placeholder_name_en": "Qualifier Q1",
+        "placeholder_name_zh": "资格赛选手 Q1",
+        "placeholder_profile_id": "QUAL-1",
+        "replacement_player_key": "ATP|mochizuki-shintaro",
+        "replacement_name_en": "MOCHIZUKI Shintaro",
+        "replacement_name_zh": "望月慎太郎",
+        "replacement_profile_id": "M0HU",
+        "draw_position": 5,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true"
+      },
       "pre_r1_substitution": null
     },
     {
@@ -385,8 +396,8 @@
         "manual": 0
       },
       "price": 130,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "望月慎太郎",
+      "path_note": "首轮对阵 望月慎太郎。",
       "rank": 61,
       "points": 930,
       "overall_elo": 1786.5,
@@ -1580,17 +1591,17 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q2",
-      "name_zh": "资格赛选手 Q2",
-      "profile_id": "QUAL-2",
-      "country_code": null,
+      "name_en": "Alexei POPYRIN",
+      "name_zh": "波佩林",
+      "profile_id": "P09Z",
+      "country_code": "AUS",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 27,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/P09Z",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true",
-      "player_key": "ATP|qualifier-27",
+      "player_key": "ATP|alexei-popyrin",
       "name_zh_source": "official draw qualifier placeholder",
       "scores": {
         "base": 39.74,
@@ -1657,7 +1668,18 @@
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.16
       },
-      "qualifier_replacement": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "ATP|qualifier-27",
+        "placeholder_name_en": "Qualifier Q2",
+        "placeholder_name_zh": "资格赛选手 Q2",
+        "placeholder_profile_id": "QUAL-2",
+        "replacement_player_key": "ATP|alexei-popyrin",
+        "replacement_name_en": "Alexei POPYRIN",
+        "replacement_name_zh": "波佩林",
+        "replacement_profile_id": "P09Z",
+        "draw_position": 27,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true"
+      },
       "pre_r1_substitution": null
     },
     {
@@ -1681,8 +1703,8 @@
         "manual": 0
       },
       "price": 100,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "波佩林",
+      "path_note": "首轮对阵 波佩林。",
       "rank": 55,
       "points": 962,
       "overall_elo": 1737.9,
@@ -1742,17 +1764,17 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q3",
-      "name_zh": "资格赛选手 Q3",
-      "profile_id": "QUAL-3",
-      "country_code": null,
+      "name_en": "Duncan CHAN",
+      "name_zh": "邓肯-陈",
+      "profile_id": "C0OF",
+      "country_code": "CAN",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 29,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/C0OF",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true",
-      "player_key": "ATP|qualifier-29",
+      "player_key": "ATP|duncan-chan",
       "name_zh_source": "official draw qualifier placeholder",
       "scores": {
         "base": 39.74,
@@ -1819,7 +1841,18 @@
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.16
       },
-      "qualifier_replacement": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "ATP|qualifier-29",
+        "placeholder_name_en": "Qualifier Q3",
+        "placeholder_name_zh": "资格赛选手 Q3",
+        "placeholder_profile_id": "QUAL-3",
+        "replacement_player_key": "ATP|duncan-chan",
+        "replacement_name_en": "Duncan CHAN",
+        "replacement_name_zh": "邓肯-陈",
+        "replacement_profile_id": "C0OF",
+        "draw_position": 29,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true"
+      },
       "pre_r1_substitution": null
     },
     {
@@ -1843,8 +1876,8 @@
         "manual": 0
       },
       "price": 105,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "邓肯-陈",
+      "path_note": "首轮对阵 邓肯-陈。",
       "rank": 65,
       "points": 919,
       "overall_elo": 1750,
@@ -2248,8 +2281,8 @@
         "manual": 0
       },
       "price": 130,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "吉隆",
+      "path_note": "首轮对阵 吉隆。",
       "rank": 72,
       "points": 865,
       "overall_elo": 1821.6,
@@ -2309,17 +2342,17 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q4",
-      "name_zh": "资格赛选手 Q4",
-      "profile_id": "QUAL-4",
-      "country_code": null,
+      "name_en": "Marcos GIRON",
+      "name_zh": "吉隆",
+      "profile_id": "GC88",
+      "country_code": "USA",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 38,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/GC88",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true",
-      "player_key": "ATP|qualifier-38",
+      "player_key": "ATP|marcos-giron",
       "name_zh_source": "official draw qualifier placeholder",
       "scores": {
         "base": 39.74,
@@ -2386,7 +2419,18 @@
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.16
       },
-      "qualifier_replacement": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "ATP|qualifier-38",
+        "placeholder_name_en": "Qualifier Q4",
+        "placeholder_name_zh": "资格赛选手 Q4",
+        "placeholder_profile_id": "QUAL-4",
+        "replacement_player_key": "ATP|marcos-giron",
+        "replacement_name_en": "Marcos GIRON",
+        "replacement_name_zh": "吉隆",
+        "replacement_profile_id": "GC88",
+        "draw_position": 38,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true"
+      },
       "pre_r1_substitution": null
     },
     {
@@ -2714,17 +2758,17 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q5",
-      "name_zh": "资格赛选手 Q5",
-      "profile_id": "QUAL-5",
-      "country_code": null,
+      "name_en": "Jacob FEARNLEY",
+      "name_zh": "费恩利",
+      "profile_id": "F0BY",
+      "country_code": "GBR",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 45,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/F0BY",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true",
-      "player_key": "ATP|qualifier-45",
+      "player_key": "ATP|jacob-fearnley",
       "name_zh_source": "official draw qualifier placeholder",
       "scores": {
         "base": 39.74,
@@ -2791,7 +2835,18 @@
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.16
       },
-      "qualifier_replacement": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "ATP|qualifier-45",
+        "placeholder_name_en": "Qualifier Q5",
+        "placeholder_name_zh": "资格赛选手 Q5",
+        "placeholder_profile_id": "QUAL-5",
+        "replacement_player_key": "ATP|jacob-fearnley",
+        "replacement_name_en": "Jacob FEARNLEY",
+        "replacement_name_zh": "费恩利",
+        "replacement_profile_id": "F0BY",
+        "draw_position": 45,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true"
+      },
       "pre_r1_substitution": null
     },
     {
@@ -2815,8 +2870,8 @@
         "manual": 0
       },
       "price": 100,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "费恩利",
+      "path_note": "首轮对阵 费恩利。",
       "rank": 46,
       "points": 1005,
       "overall_elo": 1675.7,
@@ -3200,17 +3255,17 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q6",
-      "name_zh": "资格赛选手 Q6",
-      "profile_id": "QUAL-6",
-      "country_code": null,
+      "name_en": "Martin DAMM",
+      "name_zh": "达姆",
+      "profile_id": "D0DT",
+      "country_code": "USA",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 53,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/D0DT",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true",
-      "player_key": "ATP|qualifier-53",
+      "player_key": "ATP|martin-damm",
       "name_zh_source": "official draw qualifier placeholder",
       "scores": {
         "base": 39.74,
@@ -3220,8 +3275,8 @@
         "manual": 0
       },
       "price": 80,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "西西帕斯",
+      "path_note": "首轮对阵 西西帕斯。",
       "rank": null,
       "points": null,
       "overall_elo": null,
@@ -3277,21 +3332,32 @@
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.16
       },
-      "qualifier_replacement": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "ATP|qualifier-53",
+        "placeholder_name_en": "Qualifier Q6",
+        "placeholder_name_zh": "资格赛选手 Q6",
+        "placeholder_profile_id": "QUAL-6",
+        "replacement_player_key": "ATP|martin-damm",
+        "replacement_name_en": "Martin DAMM",
+        "replacement_name_zh": "达姆",
+        "replacement_profile_id": "D0DT",
+        "draw_position": 53,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true"
+      },
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q7",
-      "name_zh": "资格赛选手 Q7",
-      "profile_id": "QUAL-7",
-      "country_code": null,
+      "name_en": "Stefanos TSITSIPAS",
+      "name_zh": "西西帕斯",
+      "profile_id": "TE51",
+      "country_code": "GRE",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 54,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/TE51",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true",
-      "player_key": "ATP|qualifier-54",
+      "player_key": "ATP|stefanos-tsitsipas",
       "name_zh_source": "official draw qualifier placeholder",
       "scores": {
         "base": 39.74,
@@ -3301,8 +3367,8 @@
         "manual": 0
       },
       "price": 80,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "达姆",
+      "path_note": "首轮对阵 达姆。",
       "rank": null,
       "points": null,
       "overall_elo": null,
@@ -3358,7 +3424,18 @@
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.16
       },
-      "qualifier_replacement": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "ATP|qualifier-54",
+        "placeholder_name_en": "Qualifier Q7",
+        "placeholder_name_zh": "资格赛选手 Q7",
+        "placeholder_profile_id": "QUAL-7",
+        "replacement_player_key": "ATP|stefanos-tsitsipas",
+        "replacement_name_en": "Stefanos TSITSIPAS",
+        "replacement_name_zh": "西西帕斯",
+        "replacement_profile_id": "TE51",
+        "draw_position": 54,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true"
+      },
       "pre_r1_substitution": null
     },
     {
@@ -3686,17 +3763,17 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q8",
-      "name_zh": "资格赛选手 Q8",
-      "profile_id": "QUAL-8",
-      "country_code": null,
+      "name_en": "Adam WALTON",
+      "name_zh": "沃尔顿",
+      "profile_id": "W09E",
+      "country_code": "AUS",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 61,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/W09E",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true",
-      "player_key": "ATP|qualifier-61",
+      "player_key": "ATP|adam-walton",
       "name_zh_source": "official draw qualifier placeholder",
       "scores": {
         "base": 39.74,
@@ -3763,7 +3840,18 @@
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.16
       },
-      "qualifier_replacement": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "ATP|qualifier-61",
+        "placeholder_name_en": "Qualifier Q8",
+        "placeholder_name_zh": "资格赛选手 Q8",
+        "placeholder_profile_id": "QUAL-8",
+        "replacement_player_key": "ATP|adam-walton",
+        "replacement_name_en": "Adam WALTON",
+        "replacement_name_zh": "沃尔顿",
+        "replacement_profile_id": "W09E",
+        "draw_position": 61,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true"
+      },
       "pre_r1_substitution": null
     },
     {
@@ -3787,8 +3875,8 @@
         "manual": 0
       },
       "price": 100,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "沃尔顿",
+      "path_note": "首轮对阵 沃尔顿。",
       "rank": 74,
       "points": 810,
       "overall_elo": 1725.6,
@@ -4658,17 +4746,17 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q9",
-      "name_zh": "资格赛选手 Q9",
-      "profile_id": "QUAL-9",
-      "country_code": null,
+      "name_en": "Nicolas MEJIA",
+      "name_zh": "梅希亚",
+      "profile_id": "M0AW",
+      "country_code": "COL",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 77,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/M0AW",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true",
-      "player_key": "ATP|qualifier-77",
+      "player_key": "ATP|nicolas-mejia",
       "name_zh_source": "official draw qualifier placeholder",
       "scores": {
         "base": 39.74,
@@ -4735,7 +4823,18 @@
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.16
       },
-      "qualifier_replacement": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "ATP|qualifier-77",
+        "placeholder_name_en": "Qualifier Q9",
+        "placeholder_name_zh": "资格赛选手 Q9",
+        "placeholder_profile_id": "QUAL-9",
+        "replacement_player_key": "ATP|nicolas-mejia",
+        "replacement_name_en": "Nicolas MEJIA",
+        "replacement_name_zh": "梅希亚",
+        "replacement_profile_id": "M0AW",
+        "draw_position": 77,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true"
+      },
       "pre_r1_substitution": null
     },
     {
@@ -4759,8 +4858,8 @@
         "manual": 0
       },
       "price": 110,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "梅希亚",
+      "path_note": "首轮对阵 梅希亚。",
       "rank": 64,
       "points": 920,
       "overall_elo": 1712,
@@ -5650,8 +5749,8 @@
         "manual": 0
       },
       "price": 95,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "奥康尼尔",
+      "path_note": "首轮对阵 奥康尼尔。",
       "rank": 83,
       "points": 721,
       "overall_elo": 1637.4,
@@ -5711,17 +5810,17 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q10",
-      "name_zh": "资格赛选手 Q10",
-      "profile_id": "QUAL-10",
-      "country_code": null,
+      "name_en": "Christopher O",
+      "name_zh": "奥康尼尔",
+      "profile_id": "O483",
+      "country_code": "AUS",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 94,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/O483",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true",
-      "player_key": "ATP|qualifier-94",
+      "player_key": "ATP|christopher-o",
       "name_zh_source": "official draw qualifier placeholder",
       "scores": {
         "base": 39.74,
@@ -5788,7 +5887,18 @@
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.16
       },
-      "qualifier_replacement": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "ATP|qualifier-94",
+        "placeholder_name_en": "Qualifier Q10",
+        "placeholder_name_zh": "资格赛选手 Q10",
+        "placeholder_profile_id": "QUAL-10",
+        "replacement_player_key": "ATP|christopher-o",
+        "replacement_name_en": "Christopher O",
+        "replacement_name_zh": "奥康尼尔",
+        "replacement_profile_id": "O483",
+        "draw_position": 94,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true"
+      },
       "pre_r1_substitution": null
     },
     {
@@ -5954,17 +6064,17 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q11",
-      "name_zh": "资格赛选手 Q11",
-      "profile_id": "QUAL-11",
-      "country_code": null,
+      "name_en": "Benjamin BONZI",
+      "name_zh": "邦齐",
+      "profile_id": "BM95",
+      "country_code": "FRA",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 99,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/BM95",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true",
-      "player_key": "ATP|qualifier-99",
+      "player_key": "ATP|benjamin-bonzi",
       "name_zh_source": "official draw qualifier placeholder",
       "scores": {
         "base": 39.74,
@@ -6031,7 +6141,18 @@
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.16
       },
-      "qualifier_replacement": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "ATP|qualifier-99",
+        "placeholder_name_en": "Qualifier Q11",
+        "placeholder_name_zh": "资格赛选手 Q11",
+        "placeholder_profile_id": "QUAL-11",
+        "replacement_player_key": "ATP|benjamin-bonzi",
+        "replacement_name_en": "Benjamin BONZI",
+        "replacement_name_zh": "邦齐",
+        "replacement_profile_id": "BM95",
+        "draw_position": 99,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true"
+      },
       "pre_r1_substitution": null
     },
     {
@@ -6055,8 +6176,8 @@
         "manual": 0
       },
       "price": 125,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "邦齐",
+      "path_note": "首轮对阵 邦齐。",
       "rank": 56,
       "points": 961,
       "overall_elo": 1788,
@@ -6460,8 +6581,8 @@
         "manual": 0
       },
       "price": 115,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "雅凯",
+      "path_note": "首轮对阵 雅凯。",
       "rank": 108,
       "points": 595,
       "overall_elo": 1717.1,
@@ -6521,17 +6642,17 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q12",
-      "name_zh": "资格赛选手 Q12",
-      "profile_id": "QUAL-12",
-      "country_code": null,
+      "name_en": "Kyrian JACQUET",
+      "name_zh": "雅凯",
+      "profile_id": "J0AZ",
+      "country_code": "FRA",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 108,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/J0AZ",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true",
-      "player_key": "ATP|qualifier-108",
+      "player_key": "ATP|kyrian-jacquet",
       "name_zh_source": "official draw qualifier placeholder",
       "scores": {
         "base": 39.74,
@@ -6598,7 +6719,18 @@
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.16
       },
-      "qualifier_replacement": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "ATP|qualifier-108",
+        "placeholder_name_en": "Qualifier Q12",
+        "placeholder_name_zh": "资格赛选手 Q12",
+        "placeholder_profile_id": "QUAL-12",
+        "replacement_player_key": "ATP|kyrian-jacquet",
+        "replacement_name_en": "Kyrian JACQUET",
+        "replacement_name_zh": "雅凯",
+        "replacement_profile_id": "J0AZ",
+        "draw_position": 108,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true"
+      },
       "pre_r1_substitution": null
     },
     {
@@ -6926,17 +7058,17 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q13",
-      "name_zh": "资格赛选手 Q13",
-      "profile_id": "QUAL-13",
-      "country_code": null,
+      "name_en": "SHIMABUKURO Sho",
+      "name_zh": "岛袋将",
+      "profile_id": "SY67",
+      "country_code": "JPN",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 115,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/SY67",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true",
-      "player_key": "ATP|qualifier-115",
+      "player_key": "ATP|shimabukuro-sho",
       "name_zh_source": "official draw qualifier placeholder",
       "scores": {
         "base": 39.74,
@@ -7003,7 +7135,18 @@
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.16
       },
-      "qualifier_replacement": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "ATP|qualifier-115",
+        "placeholder_name_en": "Qualifier Q13",
+        "placeholder_name_zh": "资格赛选手 Q13",
+        "placeholder_profile_id": "QUAL-13",
+        "replacement_player_key": "ATP|shimabukuro-sho",
+        "replacement_name_en": "SHIMABUKURO Sho",
+        "replacement_name_zh": "岛袋将",
+        "replacement_profile_id": "SY67",
+        "draw_position": 115,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true"
+      },
       "pre_r1_substitution": null
     },
     {
@@ -7027,8 +7170,8 @@
         "manual": 0
       },
       "price": 125,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "岛袋将",
+      "path_note": "首轮对阵 岛袋将。",
       "rank": 82,
       "points": 721,
       "overall_elo": 1796.4,
@@ -7088,17 +7231,17 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q14",
-      "name_zh": "资格赛选手 Q14",
-      "profile_id": "QUAL-14",
-      "country_code": null,
+      "name_en": "Michael ZHENG",
+      "name_zh": "郑瑞",
+      "profile_id": "Z0BZ",
+      "country_code": "USA",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 117,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/Z0BZ",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true",
-      "player_key": "ATP|qualifier-117",
+      "player_key": "ATP|michael-zheng",
       "name_zh_source": "official draw qualifier placeholder",
       "scores": {
         "base": 39.74,
@@ -7165,7 +7308,18 @@
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.16
       },
-      "qualifier_replacement": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "ATP|qualifier-117",
+        "placeholder_name_en": "Qualifier Q14",
+        "placeholder_name_zh": "资格赛选手 Q14",
+        "placeholder_profile_id": "QUAL-14",
+        "replacement_player_key": "ATP|michael-zheng",
+        "replacement_name_en": "Michael ZHENG",
+        "replacement_name_zh": "郑瑞",
+        "replacement_profile_id": "Z0BZ",
+        "draw_position": 117,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true"
+      },
       "pre_r1_substitution": null
     },
     {
@@ -7189,8 +7343,8 @@
         "manual": 0
       },
       "price": 115,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "郑瑞",
+      "path_note": "首轮对阵 郑瑞。",
       "rank": 62,
       "points": 925,
       "overall_elo": 1753.5,
@@ -7412,17 +7566,17 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q15",
-      "name_zh": "资格赛选手 Q15",
-      "profile_id": "QUAL-15",
-      "country_code": null,
+      "name_en": "Aleksandar VUKIC",
+      "name_zh": "武基奇",
+      "profile_id": "V832",
+      "country_code": "AUS",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 123,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/V832",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true",
-      "player_key": "ATP|qualifier-123",
+      "player_key": "ATP|aleksandar-vukic",
       "name_zh_source": "official draw qualifier placeholder",
       "scores": {
         "base": 39.74,
@@ -7489,7 +7643,18 @@
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.16
       },
-      "qualifier_replacement": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "ATP|qualifier-123",
+        "placeholder_name_en": "Qualifier Q15",
+        "placeholder_name_zh": "资格赛选手 Q15",
+        "placeholder_profile_id": "QUAL-15",
+        "replacement_player_key": "ATP|aleksandar-vukic",
+        "replacement_name_en": "Aleksandar VUKIC",
+        "replacement_name_zh": "武基奇",
+        "replacement_profile_id": "V832",
+        "draw_position": 123,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true"
+      },
       "pre_r1_substitution": null
     },
     {
@@ -7513,8 +7678,8 @@
         "manual": 0
       },
       "price": 105,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "武基奇",
+      "path_note": "首轮对阵 武基奇。",
       "rank": 60,
       "points": 939,
       "overall_elo": 1730.5,
@@ -7594,8 +7759,8 @@
         "manual": 0
       },
       "price": 115,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "德罗盖",
+      "path_note": "首轮对阵 德罗盖。",
       "rank": 47,
       "points": 998,
       "overall_elo": 1758.5,
@@ -7655,17 +7820,17 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q16",
-      "name_zh": "资格赛选手 Q16",
-      "profile_id": "QUAL-16",
-      "country_code": null,
+      "name_en": "Titouan DROGUET",
+      "name_zh": "德罗盖",
+      "profile_id": "D0DW",
+      "country_code": "FRA",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 126,
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/D0DW",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true",
-      "player_key": "ATP|qualifier-126",
+      "player_key": "ATP|titouan-droguet",
       "name_zh_source": "official draw qualifier placeholder",
       "scores": {
         "base": 39.74,
@@ -7732,7 +7897,18 @@
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.16
       },
-      "qualifier_replacement": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "ATP|qualifier-126",
+        "placeholder_name_en": "Qualifier Q16",
+        "placeholder_name_zh": "资格赛选手 Q16",
+        "placeholder_profile_id": "QUAL-16",
+        "replacement_player_key": "ATP|titouan-droguet",
+        "replacement_name_en": "Titouan DROGUET",
+        "replacement_name_zh": "德罗盖",
+        "replacement_profile_id": "D0DW",
+        "draw_position": 126,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true"
+      },
       "pre_r1_substitution": null
     },
     {
