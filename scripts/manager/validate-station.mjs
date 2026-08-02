@@ -107,8 +107,13 @@ for (const { item, event } of events) {
   if (event.market_status === 'open') {
     if (!submissionCutoff) warnings.push(`${label}: market is open but this event has no per-event submission cutoff yet.`);
     if (!mainDrawFirstMatch) warnings.push(`${label}: market is open but this event has no per-event main_draw_first_match_at yet.`);
-    if (submissionCutoff && mainDrawFirstMatch && submissionCutoff >= mainDrawFirstMatch) {
-      errors.push(`${label}: submission cutoff must be before main_draw_first_match_at.`);
+    if (
+      submissionCutoff
+      && mainDrawFirstMatch
+      && submissionCutoff > mainDrawFirstMatch
+      && event.allow_submission_after_first_match !== true
+    ) {
+      errors.push(`${label}: submission cutoff must not be after main_draw_first_match_at.`);
     }
   }
   if (mainDrawFirstMatch && now >= mainDrawFirstMatch && !round1Completed) {

@@ -63,3 +63,23 @@ test('manual transfer close is the safety boundary when no R2 start is configure
   assert.equal(windows.round1_completed_at, '2026-07-29T14:44:00.000Z');
   assert.equal(windows.round2_first_match_at, '2026-07-29T14:45:00.000Z');
 });
+
+test('manual submission window is not overwritten when the live schedule is refreshed', () => {
+  const event = {
+    players: [player(1), player(2), player(3), player(4)],
+    manual_schedule_windows: true,
+    submission_cutoff_at: '2026-08-02T23:15:00+08:00',
+    submission_closes_at: '2026-08-02T23:15:00+08:00'
+  };
+  const rows = [{
+    round_order: 1,
+    scheduled_at: '2026-08-02T15:00:00.000Z',
+    status: 'scheduled'
+  }];
+
+  const windows = deriveEventWindows(event, rows, new Date('2026-08-02T14:50:00.000Z'));
+
+  assert.equal(windows.main_draw_first_match_at, '2026-08-02T15:00:00.000Z');
+  assert.equal(windows.submission_cutoff_at, '2026-08-02T23:15:00+08:00');
+  assert.equal(windows.submission_closes_at, '2026-08-02T23:15:00+08:00');
+});

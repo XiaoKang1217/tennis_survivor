@@ -778,11 +778,20 @@ export function deriveEventWindows(event, matchRows, fetchedAt = new Date()) {
     round1CompletedAt = latestR1Start;
   }
 
+  const preserveManualSubmissionWindow = Boolean(
+    event.manual_schedule_windows
+    && (event.submission_cutoff_at || event.submission_closes_at)
+  );
+
   return {
     schedule_status: matchRows.length ? 'partial' : (event.schedule_status || 'pending'),
     main_draw_first_match_at: mainDrawFirstMatchAt || event.main_draw_first_match_at || null,
-    submission_cutoff_at: mainDrawFirstMatchAt ? addMinutes(mainDrawFirstMatchAt, -15) : (event.submission_cutoff_at || null),
-    submission_closes_at: mainDrawFirstMatchAt ? addMinutes(mainDrawFirstMatchAt, -15) : (event.submission_closes_at || null),
+    submission_cutoff_at: preserveManualSubmissionWindow
+      ? (event.submission_cutoff_at || event.submission_closes_at)
+      : (mainDrawFirstMatchAt ? addMinutes(mainDrawFirstMatchAt, -15) : (event.submission_cutoff_at || null)),
+    submission_closes_at: preserveManualSubmissionWindow
+      ? (event.submission_closes_at || event.submission_cutoff_at)
+      : (mainDrawFirstMatchAt ? addMinutes(mainDrawFirstMatchAt, -15) : (event.submission_closes_at || null)),
     round1_completed_at: round1CompletedAt || event.round1_completed_at || null,
     round2_first_match_at: round2FirstMatchAt || event.round2_first_match_at || null,
     transfer_window_opens_at: round1CompletedAt || event.transfer_window_opens_at || null,
