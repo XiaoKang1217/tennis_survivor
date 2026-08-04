@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-08-02T04:18:19.431Z",
-  "source_updated_at": "2026-08-02 12:18:16",
-  "settled_through": "2026-08-01",
+  "updated_at": "2026-08-04T03:08:42.298Z",
+  "source_updated_at": "2026-08-04 11:08:40",
+  "settled_through": "2026-08-03",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
@@ -37,9 +37,9 @@
     {
       "tour": "ATP",
       "display_name": "xxx又坑人了",
-      "score": 881,
-      "hit_count": 30,
-      "scored_days": 20
+      "score": 892,
+      "hit_count": 31,
+      "scored_days": 21
     },
     {
       "tour": "ATP",
@@ -65,9 +65,9 @@
     {
       "tour": "ATP",
       "display_name": "就是玩",
-      "score": 635,
-      "hit_count": 27,
-      "scored_days": 17
+      "score": 655,
+      "hit_count": 28,
+      "scored_days": 18
     },
     {
       "tour": "ATP",
@@ -218,6 +218,13 @@
     },
     {
       "tour": "ATP",
+      "display_name": "我叫LCW",
+      "score": 20,
+      "hit_count": 1,
+      "scored_days": 1
+    },
+    {
+      "tour": "ATP",
       "display_name": "martin",
       "score": 13,
       "hit_count": 5,
@@ -289,9 +296,9 @@
     {
       "tour": "WTA",
       "display_name": "阿vvvvv",
-      "score": 1490,
-      "hit_count": 59,
-      "scored_days": 40
+      "score": 1506,
+      "hit_count": 60,
+      "scored_days": 41
     },
     {
       "tour": "WTA",
@@ -310,9 +317,9 @@
     {
       "tour": "WTA",
       "display_name": "莫斯特",
-      "score": 1022,
-      "hit_count": 29,
-      "scored_days": 22
+      "score": 1038,
+      "hit_count": 30,
+      "scored_days": 23
     },
     {
       "tour": "WTA",
@@ -358,17 +365,17 @@
     },
     {
       "tour": "WTA",
+      "display_name": "网球人",
+      "score": 429,
+      "hit_count": 15,
+      "scored_days": 11
+    },
+    {
+      "tour": "WTA",
       "display_name": "白云静水",
       "score": 422,
       "hit_count": 11,
       "scored_days": 9
-    },
-    {
-      "tour": "WTA",
-      "display_name": "网球人",
-      "score": 415,
-      "hit_count": 14,
-      "scored_days": 10
     },
     {
       "tour": "WTA",
@@ -415,9 +422,9 @@
     {
       "tour": "WTA",
       "display_name": "rw75",
-      "score": 159,
-      "hit_count": 3,
-      "scored_days": 2
+      "score": 160,
+      "hit_count": 4,
+      "scored_days": 3
     },
     {
       "tour": "WTA",
@@ -485,9 +492,9 @@
     {
       "tour": "WTA",
       "display_name": "martin",
-      "score": 41,
-      "hit_count": 7,
-      "scored_days": 6
+      "score": 43,
+      "hit_count": 9,
+      "scored_days": 7
     },
     {
       "tour": "WTA",
@@ -535,6 +542,13 @@
       "tour": "WTA",
       "display_name": "风尘才虚",
       "score": 16,
+      "hit_count": 1,
+      "scored_days": 1
+    },
+    {
+      "tour": "WTA",
+      "display_name": "用户8356886010",
+      "score": 14,
       "hit_count": 1,
       "scored_days": 1
     },
@@ -1205,15 +1219,6 @@
       "rarity": "limited"
     },
     {
-      "display_name": "尊贵的娃老师",
-      "badge_key": "alcaraz-bee-duck",
-      "title": "阿卡蜜蜂鸭",
-      "subtitle": "球员纪念",
-      "image_url": "assets/manager/badges/ui-v18/optimized/bee-duck-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v18/optimized/bee-duck-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "霍小耳",
       "badge_key": "sinner-fox",
       "title": "辛纳狐",
@@ -1241,6 +1246,24 @@
       "rarity": "limited"
     },
     {
+      "display_name": "尊贵的娃老师",
+      "badge_key": "gauff-energy",
+      "title": "高芙果切能量",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/gauff-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/gauff-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "塔姆科尔涅娃是我老婆",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
       "display_name": "小兮",
       "badge_key": "wimbledon-2026",
       "title": "温网限定",
@@ -1256,6 +1279,15 @@
       "subtitle": "球员纪念",
       "image_url": "assets/manager/badges/ui-v5/optimized/sinner-badge-640.webp",
       "thumb_url": "assets/manager/badges/ui-v5/optimized/sinner-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "鸦嘴兽",
+      "badge_key": "rotten-cabbage",
+      "title": "烂白菜烂之泪伤",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/rotten-cabbage-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/rotten-cabbage-badge-640.webp",
       "rarity": "limited"
     },
     {
