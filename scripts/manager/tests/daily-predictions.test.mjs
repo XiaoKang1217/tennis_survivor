@@ -10,6 +10,7 @@ const eventDateColumnMigration = fs.readFileSync('supabase/migrations/2026071700
 const predictionSummaryMigration = fs.readFileSync('supabase/migrations/202607310001_manager_prediction_summary.sql', 'utf8');
 const html = fs.readFileSync('index.html', 'utf8');
 const workflow = fs.readFileSync('.github/workflows/update_manager.yml', 'utf8');
+const canadaAtpReplacement = fs.readFileSync('scripts/manager/replace-canada-atp-daily-prediction.mjs', 'utf8');
 const stationPayload = fs.readFileSync('scripts/manager/lib/station-payload.mjs', 'utf8');
 const bastad = JSON.parse(fs.readFileSync('data/manager/events/atp-2026-w29-bastad.json', 'utf8'));
 const athens = JSON.parse(fs.readFileSync('data/manager/events/wta-2026-w29-athens.json', 'utf8'));
@@ -82,11 +83,25 @@ test('correct picks pay principal once and write an auditable wallet row', () =>
 
 test('daily workflow settles old games after match sync and then creates today games', () => {
   const settleIndex = workflow.indexOf('settle-current-or-previous-station.mjs');
+  const replacementIndex = workflow.indexOf('replace-canada-atp-daily-prediction.mjs');
   const predictionIndex = workflow.indexOf('update-daily-predictions.mjs');
   assert.ok(settleIndex >= 0);
-  assert.ok(predictionIndex > settleIndex);
+  assert.ok(replacementIndex > settleIndex);
+  assert.ok(predictionIndex > replacementIndex);
   assert.match(migration, /g\.contest_date <= p_through_date/);
   assert.match(migration, /m\.status in \('completed','walkover','retired','cancelled'\)/);
+});
+
+test('August 4 Canada ATP question is replaced only after expiry with a later scheduled match', () => {
+  assert.match(canadaAtpReplacement, /TARGET_DATE = '2026-08-04'/);
+  assert.match(canadaAtpReplacement, /EXPIRED_MATCH_KEY = `\$\{EVENT_KEY\}:MS109`/);
+  assert.match(canadaAtpReplacement, /REPLACEMENT_MATCH_KEY = `\$\{EVENT_KEY\}:MS074`/);
+  assert.match(canadaAtpReplacement, /game\.closes_at[\s\S]+Date\.now\(\)/);
+  assert.match(canadaAtpReplacement, /match\.status !== 'scheduled'/);
+  assert.match(canadaAtpReplacement, /tour_manager_daily_prediction_picks/);
+  assert.match(canadaAtpReplacement, /client\.delete\('tour_manager_daily_prediction_picks'/);
+  assert.match(canadaAtpReplacement, /manual_replacement_expired_question_20260804/);
+  assert.match(canadaAtpReplacement, /closes_at: match\.scheduled_at/);
 });
 
 test('frontend exposes picks and separates personal prediction income without changing the station leaderboard', () => {

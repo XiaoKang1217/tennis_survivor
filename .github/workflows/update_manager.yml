@@ -36,6 +36,8 @@ jobs:
 
       - run: node scripts/manager/settle-current-or-previous-station.mjs
 
+      - run: node scripts/manager/replace-canada-atp-daily-prediction.mjs
+
       - run: node scripts/manager/update-daily-predictions.mjs
 
       - run: node scripts/manager/validate-station.mjs
