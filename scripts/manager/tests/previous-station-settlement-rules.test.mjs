@@ -15,6 +15,25 @@ test('previous station settlement restores frozen publication rules', () => {
   assert.match(source, /combo:/);
 });
 
+test('postponed previous-station finals are refreshed through the current Beijing date', () => {
+  const source = fs.readFileSync('scripts/manager/settle-current-or-previous-station.mjs', 'utf8');
+
+  assert.match(source, /function beijingDateKey/);
+  assert.match(source, /resultThroughDate:\s*beijingDateKey\(\)/);
+  assert.match(source, /syncExtra\.push\('--to', resultThroughDate\)/);
+});
+
+test('current station remains gated until every previous-station final is complete', () => {
+  const source = fs.readFileSync('scripts/manager/settle-current-or-previous-station.mjs', 'utf8');
+  const gateIndex = source.indexOf('if (!finalsComplete(previousResult))');
+  const exitIndex = source.indexOf('process.exit(0)', gateIndex);
+  const currentIndex = source.indexOf('const currentResult = await refreshAndSettle');
+
+  assert.ok(gateIndex > -1);
+  assert.ok(exitIndex > gateIndex);
+  assert.ok(currentIndex > exitIndex);
+});
+
 test('missing station grant stays missing and is rejected before backend upsert', () => {
   const payload = buildStationPayload({
     active: { station_key: 'missing-rules', season: 2026 },

@@ -48,6 +48,10 @@ function refreshArgs(stationFile, extra = []) {
   ];
 }
 
+function beijingDateKey(date = new Date()) {
+  return new Date(date.getTime() + 8 * 60 * 60 * 1000).toISOString().slice(0, 10);
+}
+
 async function generatedPreviousActiveFile(previous) {
   if (!previous.publication_file) {
     throw new Error(`Previous station ${previous.station_key} is missing publication_file.`);
@@ -84,12 +88,14 @@ async function generatedPreviousActiveFile(previous) {
   return outFile;
 }
 
-async function refreshAndSettle(stationFile, stationKey, label) {
-  await run(`${label}: sync latest results`, refreshArgs(stationFile, [
+async function refreshAndSettle(stationFile, stationKey, label, { resultThroughDate = '' } = {}) {
+  const syncExtra = [
     '--write',
     '--sync',
     '--skip-draw'
-  ]));
+  ];
+  if (resultThroughDate) syncExtra.push('--to', resultThroughDate);
+  await run(`${label}: sync latest results`, refreshArgs(stationFile, syncExtra));
 
   const settleExtra = ['--skip-draw', '--skip-schedule', '--sync', '--settle'];
   if (settledForDate) settleExtra.push('--settled-for-date', settledForDate);
@@ -137,7 +143,15 @@ if (previous && previous.station_key && Array.isArray(previous.events) && previo
     console.log(`Previous station ${previous.station_key} is already settled; continue with current station.`);
   } else {
     const previousFile = await generatedPreviousActiveFile(previous);
-    const previousResult = await refreshAndSettle(previousFile, previous.station_key, `previous station ${previous.station_key}`);
+    // A postponed final can finish after the event's original end_date. Keep the
+    // normal previous-station gate, but read result pages through today so that
+    // a delayed final can actually unlock the current station.
+    const previousResult = await refreshAndSettle(
+      previousFile,
+      previous.station_key,
+      `previous station ${previous.station_key}`,
+      { resultThroughDate: beijingDateKey() }
+    );
     console.log(`Previous station settlement: ${resultLabel(previousResult)}`);
 
     if (!finalsComplete(previousResult)) {
