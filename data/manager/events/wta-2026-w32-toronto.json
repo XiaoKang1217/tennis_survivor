@@ -20,10 +20,10 @@
   "submission_cutoff_at": "2026-08-02T23:15:00+08:00",
   "submission_closes_at": "2026-08-02T23:15:00+08:00",
   "allow_submission_after_first_match": true,
-  "transfer_window_note": "换人窗口待确认。",
-  "cross_tour_transfer": false,
+  "transfer_window_note": "本站换人窗口为 08/04 11:00 - 08/04 23:59；ATP/WTA 同一窗口开放，男女可互换，手续费 15%。",
+  "cross_tour_transfer": true,
   "transfer_window_days": 2,
-  "transfer_fee_rate": 0.1,
+  "transfer_fee_rate": 0.15,
   "draw_size": 96,
   "start_date": "2026-08-01",
   "short_name": "Toronto",
@@ -8007,6 +8007,6 @@
   },
   "round1_completed_at": null,
   "round2_first_match_at": null,
-  "transfer_window_opens_at": null,
-  "transfer_window_closes_at": null
+  "transfer_window_opens_at": "2026-08-04T11:00:00+08:00",
+  "transfer_window_closes_at": "2026-08-04T23:59:00+08:00"
 }

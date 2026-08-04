@@ -10,11 +10,16 @@ const market = JSON.parse(fs.readFileSync('data/manager/market_snapshot.json', '
 const publication = JSON.parse(fs.readFileSync('data/manager/publications/2026-w32-canada-v1.json', 'utf8'));
 const windowAmendment = JSON.parse(fs.readFileSync('data/manager/publications/2026-w32-canada-v2.json', 'utf8'));
 const deadlineAmendment = JSON.parse(fs.readFileSync('data/manager/publications/2026-w32-canada-v3.json', 'utf8'));
+const transferWindowAmendment = JSON.parse(fs.readFileSync('data/manager/publications/2026-w32-canada-v4.json', 'utf8'));
 const dataManifest = JSON.parse(fs.readFileSync('data/manifest.json', 'utf8'));
 const html = fs.readFileSync('index.html', 'utf8');
 const migration = fs.readFileSync('supabase/migrations/202608010001_manager_canada_combo_and_welfare.sql', 'utf8');
 const cutoffMigration = fs.readFileSync('supabase/migrations/202608020001_manager_canada_submission_cutoff_2245.sql', 'utf8');
 const deadlineMigration = fs.readFileSync('supabase/migrations/202608020002_manager_canada_submission_cutoff_2315.sql', 'utf8');
+const transferWindowMigration = fs.readFileSync('supabase/migrations/202608040001_manager_canada_cross_tour_transfer_window.sql', 'utf8');
+
+const transferOpensAt = '2026-08-04T11:00:00+08:00';
+const transferClosesAt = '2026-08-04T23:59:00+08:00';
 
 function contentVersion(file) {
   return createHash('sha256').update(fs.readFileSync(file)).digest('hex').slice(0, 16);
@@ -35,8 +40,10 @@ function assertOfficialStation(event, tour, officialPattern) {
   assert.equal(event.submission_cutoff_at, '2026-08-02T23:15:00+08:00');
   assert.equal(event.submission_closes_at, '2026-08-02T23:15:00+08:00');
   assert.equal(event.allow_submission_after_first_match, true);
-  assert.equal(event.transfer_window_opens_at ?? null, null);
-  assert.equal(event.transfer_window_closes_at ?? null, null);
+  assert.equal(event.transfer_window_opens_at, transferOpensAt);
+  assert.equal(event.transfer_window_closes_at, transferClosesAt);
+  assert.equal(event.transfer_fee_rate, 0.15);
+  assert.equal(event.cross_tour_transfer, true);
   assert.equal(event.players.length, 96);
   const qualifierPlaceholders = event.players.filter((player) => player.is_qualifier_placeholder).length;
   assert.ok(qualifierPlaceholders >= 0 && qualifierPlaceholders <= 16);
@@ -58,6 +65,8 @@ test('Canada station is open with locked prices and confirmed sale and Combo rul
   assert.equal(active.station_key, '2026-w32-canada');
   assert.equal(active.status, 'open');
   assert.equal(active.rules.station_grant, 1000);
+  assert.equal(active.rules.cross_tour_transfer, true);
+  assert.equal(active.rules.transfer_fee_rate, 0.15);
   assert.equal(active.rules.combo_version, 'canada_2026_v1');
   assert.equal(active.rules.combo_design_status, 'confirmed');
   assert.equal(active.rules.combo.total_cap, 700);
@@ -159,6 +168,27 @@ test('Canada deadline amendment extends both tours to 23:15 without rewriting pr
   assert.match(deadlineMigration, /submission_closes_at = '2026-08-02T23:15:00\+08:00'/);
 });
 
+test('Canada transfer amendment opens one shared cross-tour window at a 15% fee', () => {
+  assert.equal(transferWindowAmendment.station_key, '2026-w32-canada');
+  assert.equal(transferWindowAmendment.publication_version, 4);
+  assert.equal(transferWindowAmendment.publication_kind, 'window_amendment');
+  assert.equal(transferWindowAmendment.snapshot.station_config.rules.cross_tour_transfer, true);
+  assert.equal(transferWindowAmendment.snapshot.station_config.rules.transfer_fee_rate, 0.15);
+  assert.ok(transferWindowAmendment.snapshot.windows.every((window) => (
+    window.transfer_window_opens_at === transferOpensAt
+    && window.transfer_window_closes_at === transferClosesAt
+    && window.transfer_fee_rate === 0.15
+  )));
+  assert.ok(transferWindowAmendment.snapshot.events.every((event) => (
+    event.cross_tour_transfer === true
+  )));
+  assert.match(transferWindowMigration, /station_key = '2026-w32-canada'/);
+  assert.match(transferWindowMigration, /2026-08-04T11:00:00\+08:00/);
+  assert.match(transferWindowMigration, /2026-08-04T23:59:00\+08:00/);
+  assert.match(transferWindowMigration, /transfer_fee_rate = 0\.15/);
+  assert.match(transferWindowMigration, /jsonb_build_object\('cross_tour_transfer', true\)/);
+});
+
 test('Canada opening files are cache-busted in the frontend data manifest', () => {
   for (const file of [
     'data/manager/active_events.json',
@@ -167,7 +197,8 @@ test('Canada opening files are cache-busted in the frontend data manifest', () =
     'data/manager/events/wta-2026-w32-toronto.json',
     'data/manager/publications/2026-w32-canada-v1.json',
     'data/manager/publications/2026-w32-canada-v2.json',
-    'data/manager/publications/2026-w32-canada-v3.json'
+    'data/manager/publications/2026-w32-canada-v3.json',
+    'data/manager/publications/2026-w32-canada-v4.json'
   ]) {
     assert.equal(dataManifest.files[file]?.version, contentVersion(file), `${file} manifest version is stale`);
   }
