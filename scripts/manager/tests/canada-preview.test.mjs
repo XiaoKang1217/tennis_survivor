@@ -10,16 +10,20 @@ const market = JSON.parse(fs.readFileSync('data/manager/market_snapshot.json', '
 const publication = JSON.parse(fs.readFileSync('data/manager/publications/2026-w32-canada-v1.json', 'utf8'));
 const windowAmendment = JSON.parse(fs.readFileSync('data/manager/publications/2026-w32-canada-v2.json', 'utf8'));
 const deadlineAmendment = JSON.parse(fs.readFileSync('data/manager/publications/2026-w32-canada-v3.json', 'utf8'));
-const transferWindowAmendment = JSON.parse(fs.readFileSync('data/manager/publications/2026-w32-canada-v4.json', 'utf8'));
+const originalTransferWindowAmendment = JSON.parse(fs.readFileSync('data/manager/publications/2026-w32-canada-v4.json', 'utf8'));
+const transferWindowRevision = JSON.parse(fs.readFileSync('data/manager/publications/2026-w32-canada-v5.json', 'utf8'));
 const dataManifest = JSON.parse(fs.readFileSync('data/manifest.json', 'utf8'));
 const html = fs.readFileSync('index.html', 'utf8');
 const migration = fs.readFileSync('supabase/migrations/202608010001_manager_canada_combo_and_welfare.sql', 'utf8');
 const cutoffMigration = fs.readFileSync('supabase/migrations/202608020001_manager_canada_submission_cutoff_2245.sql', 'utf8');
 const deadlineMigration = fs.readFileSync('supabase/migrations/202608020002_manager_canada_submission_cutoff_2315.sql', 'utf8');
 const transferWindowMigration = fs.readFileSync('supabase/migrations/202608040001_manager_canada_cross_tour_transfer_window.sql', 'utf8');
+const transferWindowRevisionMigration = fs.readFileSync('supabase/migrations/202608040002_manager_canada_transfer_window_1230_2259.sql', 'utf8');
 
-const transferOpensAt = '2026-08-04T11:00:00+08:00';
-const transferClosesAt = '2026-08-04T23:59:00+08:00';
+const originalTransferOpensAt = '2026-08-04T11:00:00+08:00';
+const originalTransferClosesAt = '2026-08-04T23:59:00+08:00';
+const transferOpensAt = '2026-08-04T12:30:00+08:00';
+const transferClosesAt = '2026-08-04T22:59:00+08:00';
 
 function contentVersion(file) {
   return createHash('sha256').update(fs.readFileSync(file)).digest('hex').slice(0, 16);
@@ -169,17 +173,17 @@ test('Canada deadline amendment extends both tours to 23:15 without rewriting pr
 });
 
 test('Canada transfer amendment opens one shared cross-tour window at a 15% fee', () => {
-  assert.equal(transferWindowAmendment.station_key, '2026-w32-canada');
-  assert.equal(transferWindowAmendment.publication_version, 4);
-  assert.equal(transferWindowAmendment.publication_kind, 'window_amendment');
-  assert.equal(transferWindowAmendment.snapshot.station_config.rules.cross_tour_transfer, true);
-  assert.equal(transferWindowAmendment.snapshot.station_config.rules.transfer_fee_rate, 0.15);
-  assert.ok(transferWindowAmendment.snapshot.windows.every((window) => (
-    window.transfer_window_opens_at === transferOpensAt
-    && window.transfer_window_closes_at === transferClosesAt
+  assert.equal(originalTransferWindowAmendment.station_key, '2026-w32-canada');
+  assert.equal(originalTransferWindowAmendment.publication_version, 4);
+  assert.equal(originalTransferWindowAmendment.publication_kind, 'window_amendment');
+  assert.equal(originalTransferWindowAmendment.snapshot.station_config.rules.cross_tour_transfer, true);
+  assert.equal(originalTransferWindowAmendment.snapshot.station_config.rules.transfer_fee_rate, 0.15);
+  assert.ok(originalTransferWindowAmendment.snapshot.windows.every((window) => (
+    window.transfer_window_opens_at === originalTransferOpensAt
+    && window.transfer_window_closes_at === originalTransferClosesAt
     && window.transfer_fee_rate === 0.15
   )));
-  assert.ok(transferWindowAmendment.snapshot.events.every((event) => (
+  assert.ok(originalTransferWindowAmendment.snapshot.events.every((event) => (
     event.cross_tour_transfer === true
   )));
   assert.match(transferWindowMigration, /station_key = '2026-w32-canada'/);
@@ -187,6 +191,27 @@ test('Canada transfer amendment opens one shared cross-tour window at a 15% fee'
   assert.match(transferWindowMigration, /2026-08-04T23:59:00\+08:00/);
   assert.match(transferWindowMigration, /transfer_fee_rate = 0\.15/);
   assert.match(transferWindowMigration, /jsonb_build_object\('cross_tour_transfer', true\)/);
+});
+
+test('Canada transfer revision narrows the shared cross-tour window to 12:30 - 22:59', () => {
+  assert.equal(transferWindowRevision.station_key, '2026-w32-canada');
+  assert.equal(transferWindowRevision.publication_version, 5);
+  assert.equal(transferWindowRevision.publication_kind, 'window_amendment');
+  assert.equal(transferWindowRevision.snapshot.station_config.rules.cross_tour_transfer, true);
+  assert.equal(transferWindowRevision.snapshot.station_config.rules.transfer_fee_rate, 0.15);
+  assert.ok(transferWindowRevision.snapshot.windows.every((window) => (
+    window.transfer_window_opens_at === transferOpensAt
+    && window.transfer_window_closes_at === transferClosesAt
+    && window.transfer_fee_rate === 0.15
+  )));
+  assert.ok(transferWindowRevision.snapshot.events.every((event) => (
+    event.cross_tour_transfer === true
+  )));
+  assert.match(transferWindowRevisionMigration, /station_key = '2026-w32-canada'/);
+  assert.match(transferWindowRevisionMigration, /2026-08-04T12:30:00\+08:00/);
+  assert.match(transferWindowRevisionMigration, /2026-08-04T22:59:00\+08:00/);
+  assert.match(transferWindowRevisionMigration, /transfer_fee_rate = 0\.15/);
+  assert.match(transferWindowRevisionMigration, /jsonb_build_object\('cross_tour_transfer', true\)/);
 });
 
 test('Canada opening files are cache-busted in the frontend data manifest', () => {
@@ -198,7 +223,8 @@ test('Canada opening files are cache-busted in the frontend data manifest', () =
     'data/manager/publications/2026-w32-canada-v1.json',
     'data/manager/publications/2026-w32-canada-v2.json',
     'data/manager/publications/2026-w32-canada-v3.json',
-    'data/manager/publications/2026-w32-canada-v4.json'
+    'data/manager/publications/2026-w32-canada-v4.json',
+    'data/manager/publications/2026-w32-canada-v5.json'
   ]) {
     assert.equal(dataManifest.files[file]?.version, contentVersion(file), `${file} manifest version is stale`);
   }

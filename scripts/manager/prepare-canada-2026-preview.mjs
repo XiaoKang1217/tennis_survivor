@@ -383,9 +383,9 @@ async function main() {
     submission_cutoff_at: '2026-08-02T23:15:00+08:00',
     submission_closes_at: '2026-08-02T23:15:00+08:00',
     allow_submission_after_first_match: true,
-    transfer_window_opens_at: '2026-08-04T11:00:00+08:00',
-    transfer_window_closes_at: '2026-08-04T23:59:00+08:00',
-    transfer_window_note: '本站换人窗口为 08/04 11:00 - 08/04 23:59；ATP/WTA 同一窗口开放，男女可互换，手续费 15%。',
+    transfer_window_opens_at: '2026-08-04T12:30:00+08:00',
+    transfer_window_closes_at: '2026-08-04T22:59:00+08:00',
+    transfer_window_note: '本站换人窗口为 08/04 12:30 - 08/04 22:59；ATP/WTA 同一窗口开放，男女可互换，手续费 15%。',
     cross_tour_transfer: true,
     transfer_window_days: 2,
     transfer_fee_rate: 0.15,
@@ -488,7 +488,7 @@ async function main() {
     notes: [
       '本站已正式开售；开售价格已按 publication v1 锁定，后续排名、Elo 或日常数据刷新不得改写本站签约价。',
       '本站签约金 1000；开售时间为北京时间 2026-08-01 00:00 至 2026-08-02 23:15。',
-      '本站换人窗口为北京时间 2026-08-04 11:00 - 23:59；ATP/WTA 同一窗口开放，男女可互换，手续费为换入球员价格的 15%。',
+      '本站换人窗口为北京时间 2026-08-04 12:30 - 22:59；ATP/WTA 同一窗口开放，男女可互换，手续费为换入球员价格的 15%。',
       '本站四项赛果 Combo 合计封顶 700；低保办为提交时即时签约折扣，独立于 Combo 收益封顶。',
       'ATP/WTA 主签的签位、对阵、种子、赛事级别、城市和场地以 ATP/WTA 官方 PDF 为真源；第三方页面只补中文名与公开 profile ID。',
       'ATP、WTA 各有 16 个资格赛待定签位，当前按官方签位独立保留，资格赛完成后再逐位替换。'
