@@ -1,31 +1,31 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-08-04T08:55:17.375Z",
-  "source_updated_at": "2026-08-04 16:55:15",
-  "settled_through": "2026-08-03",
+  "updated_at": "2026-08-05T03:08:30.180Z",
+  "source_updated_at": "2026-08-05 11:08:28",
+  "settled_through": "2026-08-04",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
     {
       "tour": "ATP",
       "display_name": "第七路单车",
-      "score": 1781,
-      "hit_count": 53,
-      "scored_days": 35
+      "score": 1822,
+      "hit_count": 54,
+      "scored_days": 36
     },
     {
       "tour": "ATP",
       "display_name": "阿vvvvv",
-      "score": 1486,
-      "hit_count": 57,
-      "scored_days": 40
+      "score": 1527,
+      "hit_count": 58,
+      "scored_days": 41
     },
     {
       "tour": "ATP",
       "display_name": "Mith",
-      "score": 1375,
-      "hit_count": 41,
-      "scored_days": 30
+      "score": 1416,
+      "hit_count": 42,
+      "scored_days": 31
     },
     {
       "tour": "ATP",
@@ -37,16 +37,16 @@
     {
       "tour": "ATP",
       "display_name": "xxx又坑人了",
-      "score": 970,
-      "hit_count": 32,
-      "scored_days": 22
+      "score": 1011,
+      "hit_count": 33,
+      "scored_days": 23
     },
     {
       "tour": "ATP",
       "display_name": "莫斯特",
-      "score": 874,
-      "hit_count": 23,
-      "scored_days": 19
+      "score": 915,
+      "hit_count": 24,
+      "scored_days": 20
     },
     {
       "tour": "ATP",
@@ -282,23 +282,23 @@
     {
       "tour": "WTA",
       "display_name": "第七路单车",
-      "score": 1948,
-      "hit_count": 55,
-      "scored_days": 39
+      "score": 1982,
+      "hit_count": 56,
+      "scored_days": 40
     },
     {
       "tour": "WTA",
       "display_name": "Mith",
-      "score": 1541,
-      "hit_count": 47,
-      "scored_days": 35
+      "score": 1575,
+      "hit_count": 48,
+      "scored_days": 36
     },
     {
       "tour": "WTA",
       "display_name": "阿vvvvv",
-      "score": 1506,
-      "hit_count": 60,
-      "scored_days": 41
+      "score": 1540,
+      "hit_count": 61,
+      "scored_days": 42
     },
     {
       "tour": "WTA",
@@ -310,23 +310,23 @@
     {
       "tour": "WTA",
       "display_name": "x1234",
-      "score": 1137,
-      "hit_count": 26,
-      "scored_days": 19
+      "score": 1171,
+      "hit_count": 27,
+      "scored_days": 20
     },
     {
       "tour": "WTA",
       "display_name": "莫斯特",
-      "score": 1038,
-      "hit_count": 30,
-      "scored_days": 23
+      "score": 1077,
+      "hit_count": 32,
+      "scored_days": 24
     },
     {
       "tour": "WTA",
       "display_name": "xxx又坑人了",
-      "score": 993,
-      "hit_count": 36,
-      "scored_days": 26
+      "score": 1027,
+      "hit_count": 37,
+      "scored_days": 27
     },
     {
       "tour": "WTA",
@@ -366,16 +366,16 @@
     {
       "tour": "WTA",
       "display_name": "网球人",
-      "score": 429,
-      "hit_count": 15,
-      "scored_days": 11
+      "score": 463,
+      "hit_count": 16,
+      "scored_days": 12
     },
     {
       "tour": "WTA",
       "display_name": "白云静水",
-      "score": 422,
-      "hit_count": 11,
-      "scored_days": 9
+      "score": 456,
+      "hit_count": 12,
+      "scored_days": 10
     },
     {
       "tour": "WTA",
