@@ -217,10 +217,8 @@ export async function fetchDrawPlayers(event, drawUrl) {
 
 export function parseDrawPlayersFromAjax(html, event, sourceUrl = '') {
   const part = eventTourPart(event);
-  const partStart = html.search(new RegExp(`<div\\b[^>]*class=["'][^"']*cDrawPart[^"']*["'][^>]*data-id=["']${part}["']`, 'i'));
-  if (partStart < 0) return [];
-  const nextPart = html.slice(partStart + 1).search(/<div\b[^>]*class=["'][^"']*cDrawPart[^"']*["'][^>]*data-id=["']/i);
-  const segment = nextPart >= 0 ? html.slice(partStart, partStart + 1 + nextPart) : html.slice(partStart);
+  const segment = selectCompleteDrawPartSegment(html, part);
+  if (!segment) return [];
   const slots = [];
 
   for (const row of segment.matchAll(/<tr>\s*<td[^>]*class=["'][^"']*cDrawSeq[^"']*["'][^>]*>\s*(\d+)\s*<\/td>([\s\S]*?)<\/tr>/gi)) {
@@ -604,10 +602,8 @@ export function parseDrawWalkoverMatchesFromAjax(html, event, sourceUrl = '') {
 
 function parseDrawCellsFromAjax(html, event) {
   const part = eventTourPart(event);
-  const partStart = html.search(new RegExp(`<div\\b[^>]*class=["'][^"']*cDrawPart[^"']*["'][^>]*data-id=["']${part}["']`, 'i'));
-  if (partStart < 0) return [];
-  const nextPart = html.slice(partStart + 1).search(/<div\b[^>]*class=["'][^"']*cDrawPart[^"']*["'][^>]*data-id=["']/i);
-  const segment = nextPart >= 0 ? html.slice(partStart, partStart + 1 + nextPart) : html.slice(partStart);
+  const segment = selectCompleteDrawPartSegment(html, part);
+  if (!segment) return [];
   const cells = [];
   for (const row of segment.matchAll(/<tr>\s*<td[^>]*class=["'][^"']*cDrawSeq[^"']*["'][^>]*>\s*(\d+)\s*<\/td>([\s\S]*?)<\/tr>/gi)) {
     const drawPosition = Number(row[1]);
@@ -648,6 +644,47 @@ function parseDrawCellsFromAjax(html, event) {
     }
   }
   return cells;
+}
+
+function selectCompleteDrawPartSegment(html, part) {
+  const source = String(html || '');
+  const starts = [...source.matchAll(/<div\b[^>]*>/gi)]
+    .filter((match) => /(?:^|\s)cDrawPart(?:\s|$)/i.test(attr(match[0], 'class')))
+    .map((match) => ({
+      index: match.index || 0,
+      part: attr(match[0], 'data-id').toUpperCase()
+    }));
+  const target = String(part || '').toUpperCase();
+  let best = null;
+
+  for (let i = 0; i < starts.length; i += 1) {
+    if (starts[i].part !== target) continue;
+    const end = starts[i + 1]?.index ?? source.length;
+    const segment = source.slice(starts[i].index, end);
+    const positions = new Set(
+      [...segment.matchAll(/<td[^>]*class=["'][^"']*cDrawSeq[^"']*["'][^>]*>\s*(\d+)\s*<\/td>/gi)]
+        .map((match) => Number(match[1]))
+        .filter(Number.isFinite)
+    );
+    const playerCells = [...segment.matchAll(/<pname\b[^>]*>/gi)].length;
+    // Prefer the most complete draw. When duplicate blocks are equally complete,
+    // keep the later one because the endpoint appends refreshed markup after its
+    // initial placeholder/stale block.
+    const score = [positions.size, playerCells];
+    if (!best || compareDrawPartScore(score, best.score) >= 0) {
+      best = { segment, score };
+    }
+  }
+
+  return best?.segment || '';
+}
+
+function compareDrawPartScore(a, b) {
+  for (let i = 0; i < Math.max(a.length, b.length); i += 1) {
+    const delta = Number(a[i] || 0) - Number(b[i] || 0);
+    if (delta !== 0) return delta;
+  }
+  return 0;
 }
 
 function walkoverStatusFromScore(score = '') {
