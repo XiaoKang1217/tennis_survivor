@@ -7913,17 +7913,17 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Felix AUGER-ALIASSIME",
-      "name_zh": "阿利亚西姆",
-      "profile_id": "AG37",
-      "country_code": "CAN",
-      "seed": 2,
+      "name_en": "Jaime FARIA",
+      "name_zh": "法里亚",
+      "profile_id": "F0F2",
+      "country_code": "POR",
+      "seed": null,
       "entry_type": "direct_acceptance",
       "draw_position": 128,
-      "photo_url": "https://static.live-tennis.cn/pic/ts/AG37",
+      "photo_url": "https://static.live-tennis.cn/pic/ts/F0F2",
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true",
-      "player_key": "ATP|felix-auger-aliassime",
+      "player_key": "ATP|jaime-faria",
       "name_zh_source": "https://www.live-tennis.cn/zh/draw/20421/2026",
       "scores": {
         "base": 91.68,
@@ -7991,7 +7991,21 @@
         "expected_pricing_effective_elo": 1998.72
       },
       "qualifier_replacement": null,
-      "pre_r1_substitution": null
+      "pre_r1_substitution": {
+        "out_player_key": "ATP|felix-auger-aliassime",
+        "out_name_en": "Felix AUGER-ALIASSIME",
+        "out_name_zh": "阿利亚西姆",
+        "out_profile_id": "AG37",
+        "replacement_player_key": "ATP|jaime-faria",
+        "replacement_name_en": "Jaime FARIA",
+        "replacement_name_zh": "法里亚",
+        "replacement_profile_id": "F0F2",
+        "draw_position": 128,
+        "reason": "pre_r1_withdrawal",
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/20421/2026/device/0/horizontal/true",
+        "contract_price_policy": "keep_original_contract_price",
+        "original_contract_price": 320
+      }
     }
   ],
   "pricing_formula": {
