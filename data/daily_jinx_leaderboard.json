@@ -1,45 +1,45 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-08-06T03:08:44.157Z",
-  "source_updated_at": "2026-08-06 11:08:41",
-  "settled_through": "2026-08-05",
+  "updated_at": "2026-08-08T03:08:31.973Z",
+  "source_updated_at": "2026-08-08 11:08:30",
+  "settled_through": "2026-08-07",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
     {
       "tour": "ATP",
       "display_name": "第七路单车",
-      "score": 1846,
-      "hit_count": 55,
-      "scored_days": 37
+      "score": 1915,
+      "hit_count": 56,
+      "scored_days": 38
     },
     {
       "tour": "ATP",
       "display_name": "阿vvvvv",
-      "score": 1527,
-      "hit_count": 58,
-      "scored_days": 41
+      "score": 1599,
+      "hit_count": 60,
+      "scored_days": 42
     },
     {
       "tour": "ATP",
       "display_name": "Mith",
-      "score": 1440,
-      "hit_count": 43,
-      "scored_days": 32
+      "score": 1509,
+      "hit_count": 44,
+      "scored_days": 33
     },
     {
       "tour": "ATP",
       "display_name": "AKA90",
-      "score": 1294,
-      "hit_count": 48,
-      "scored_days": 35
+      "score": 1363,
+      "hit_count": 49,
+      "scored_days": 36
     },
     {
       "tour": "ATP",
       "display_name": "xxx又坑人了",
-      "score": 1011,
-      "hit_count": 33,
-      "scored_days": 23
+      "score": 1080,
+      "hit_count": 34,
+      "scored_days": 24
     },
     {
       "tour": "ATP",
@@ -58,9 +58,9 @@
     {
       "tour": "ATP",
       "display_name": "就是玩",
-      "score": 763,
-      "hit_count": 31,
-      "scored_days": 20
+      "score": 832,
+      "hit_count": 32,
+      "scored_days": 21
     },
     {
       "tour": "ATP",
@@ -79,16 +79,16 @@
     {
       "tour": "ATP",
       "display_name": "白云静水",
-      "score": 472,
-      "hit_count": 18,
-      "scored_days": 16
+      "score": 544,
+      "hit_count": 21,
+      "scored_days": 18
     },
     {
       "tour": "ATP",
       "display_name": "网球人",
-      "score": 470,
-      "hit_count": 18,
-      "scored_days": 11
+      "score": 539,
+      "hit_count": 19,
+      "scored_days": 12
     },
     {
       "tour": "ATP",
@@ -226,9 +226,9 @@
     {
       "tour": "ATP",
       "display_name": "martin",
-      "score": 13,
-      "hit_count": 5,
-      "scored_days": 4
+      "score": 14,
+      "hit_count": 6,
+      "scored_days": 5
     },
     {
       "tour": "ATP",
@@ -282,9 +282,9 @@
     {
       "tour": "WTA",
       "display_name": "第七路单车",
-      "score": 2020,
-      "hit_count": 57,
-      "scored_days": 41
+      "score": 2060,
+      "hit_count": 58,
+      "scored_days": 42
     },
     {
       "tour": "WTA",
@@ -324,9 +324,9 @@
     {
       "tour": "WTA",
       "display_name": "xxx又坑人了",
-      "score": 1065,
-      "hit_count": 38,
-      "scored_days": 28
+      "score": 1105,
+      "hit_count": 39,
+      "scored_days": 29
     },
     {
       "tour": "WTA",
@@ -359,22 +359,22 @@
     {
       "tour": "WTA",
       "display_name": "白云静水",
-      "score": 494,
-      "hit_count": 13,
-      "scored_days": 11
+      "score": 534,
+      "hit_count": 14,
+      "scored_days": 12
+    },
+    {
+      "tour": "WTA",
+      "display_name": "网球人",
+      "score": 503,
+      "hit_count": 17,
+      "scored_days": 13
     },
     {
       "tour": "WTA",
       "display_name": "Roudric",
       "score": 464,
       "hit_count": 17,
-      "scored_days": 12
-    },
-    {
-      "tour": "WTA",
-      "display_name": "网球人",
-      "score": 463,
-      "hit_count": 16,
       "scored_days": 12
     },
     {
@@ -796,16 +796,16 @@
       "rarity": "limited"
     },
     {
-      "display_name": "袁天罡",
-      "badge_key": "wimbledon-2026",
-      "title": "温网限定",
-      "subtitle": "赛事限定",
-      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "display_name": "莫斯特",
+      "badge_key": "rotten-cabbage",
+      "title": "烂白菜烂之泪伤",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/rotten-cabbage-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/rotten-cabbage-badge-640.webp",
       "rarity": "limited"
     },
     {
-      "display_name": "莫斯特",
+      "display_name": "袁天罡",
       "badge_key": "wimbledon-2026",
       "title": "温网限定",
       "subtitle": "赛事限定",
