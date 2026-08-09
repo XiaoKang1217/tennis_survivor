@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-08-09T03:09:03.560Z",
-  "source_updated_at": "2026-08-09 11:09:01",
+  "updated_at": "2026-08-09T03:27:48.297Z",
+  "source_updated_at": "2026-08-09 11:27:46",
   "settled_through": "2026-08-08",
   "ledger_sync": true,
   "refresh_mode": "incremental",
@@ -324,8 +324,8 @@
     {
       "tour": "WTA",
       "display_name": "莫斯特",
-      "score": 1123,
-      "hit_count": 34,
+      "score": 1127,
+      "hit_count": 35,
       "scored_days": 26
     },
     {
