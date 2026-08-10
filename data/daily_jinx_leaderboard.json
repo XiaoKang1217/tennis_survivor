@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-08-09T03:27:48.297Z",
-  "source_updated_at": "2026-08-09 11:27:46",
-  "settled_through": "2026-08-08",
+  "updated_at": "2026-08-10T03:09:03.790Z",
+  "source_updated_at": "2026-08-10 11:09:01",
+  "settled_through": "2026-08-09",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
@@ -16,37 +16,37 @@
     {
       "tour": "ATP",
       "display_name": "阿vvvvv",
-      "score": 1611,
-      "hit_count": 61,
-      "scored_days": 43
+      "score": 1619,
+      "hit_count": 62,
+      "scored_days": 44
     },
     {
       "tour": "ATP",
       "display_name": "Mith",
-      "score": 1521,
-      "hit_count": 45,
-      "scored_days": 34
+      "score": 1529,
+      "hit_count": 46,
+      "scored_days": 35
     },
     {
       "tour": "ATP",
       "display_name": "AKA90",
-      "score": 1375,
-      "hit_count": 50,
-      "scored_days": 37
+      "score": 1383,
+      "hit_count": 51,
+      "scored_days": 38
     },
     {
       "tour": "ATP",
       "display_name": "xxx又坑人了",
-      "score": 1092,
-      "hit_count": 35,
-      "scored_days": 25
+      "score": 1100,
+      "hit_count": 36,
+      "scored_days": 26
     },
     {
       "tour": "ATP",
       "display_name": "莫斯特",
-      "score": 951,
-      "hit_count": 26,
-      "scored_days": 22
+      "score": 959,
+      "hit_count": 27,
+      "scored_days": 23
     },
     {
       "tour": "ATP",
@@ -58,9 +58,9 @@
     {
       "tour": "ATP",
       "display_name": "就是玩",
-      "score": 844,
-      "hit_count": 33,
-      "scored_days": 22
+      "score": 852,
+      "hit_count": 34,
+      "scored_days": 23
     },
     {
       "tour": "ATP",
@@ -78,17 +78,17 @@
     },
     {
       "tour": "ATP",
+      "display_name": "网球人",
+      "score": 559,
+      "hit_count": 21,
+      "scored_days": 14
+    },
+    {
+      "tour": "ATP",
       "display_name": "白云静水",
       "score": 556,
       "hit_count": 22,
       "scored_days": 19
-    },
-    {
-      "tour": "ATP",
-      "display_name": "网球人",
-      "score": 551,
-      "hit_count": 20,
-      "scored_days": 13
     },
     {
       "tour": "ATP",
@@ -352,9 +352,9 @@
     {
       "tour": "WTA",
       "display_name": "白云静水",
-      "score": 646,
-      "hit_count": 17,
-      "scored_days": 13
+      "score": 647,
+      "hit_count": 18,
+      "scored_days": 14
     },
     {
       "tour": "WTA",
