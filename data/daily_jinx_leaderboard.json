@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-08-10T03:09:03.790Z",
-  "source_updated_at": "2026-08-10 11:09:01",
-  "settled_through": "2026-08-09",
+  "updated_at": "2026-08-11T03:09:08.890Z",
+  "source_updated_at": "2026-08-11 11:09:07",
+  "settled_through": "2026-08-10",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
@@ -282,37 +282,37 @@
     {
       "tour": "WTA",
       "display_name": "第七路单车",
-      "score": 2164,
-      "hit_count": 60,
-      "scored_days": 43
-    },
-    {
-      "tour": "WTA",
-      "display_name": "Mith",
-      "score": 1697,
-      "hit_count": 51,
-      "scored_days": 38
-    },
-    {
-      "tour": "WTA",
-      "display_name": "阿vvvvv",
-      "score": 1682,
-      "hit_count": 64,
+      "score": 2186,
+      "hit_count": 61,
       "scored_days": 44
     },
     {
       "tour": "WTA",
-      "display_name": "AKA90",
-      "score": 1549,
-      "hit_count": 51,
+      "display_name": "Mith",
+      "score": 1719,
+      "hit_count": 52,
       "scored_days": 39
     },
     {
       "tour": "WTA",
+      "display_name": "阿vvvvv",
+      "score": 1714,
+      "hit_count": 66,
+      "scored_days": 45
+    },
+    {
+      "tour": "WTA",
+      "display_name": "AKA90",
+      "score": 1581,
+      "hit_count": 53,
+      "scored_days": 40
+    },
+    {
+      "tour": "WTA",
       "display_name": "xxx又坑人了",
-      "score": 1189,
-      "hit_count": 41,
-      "scored_days": 30
+      "score": 1221,
+      "hit_count": 43,
+      "scored_days": 31
     },
     {
       "tour": "WTA",
@@ -324,9 +324,9 @@
     {
       "tour": "WTA",
       "display_name": "莫斯特",
-      "score": 1127,
-      "hit_count": 35,
-      "scored_days": 26
+      "score": 1159,
+      "hit_count": 37,
+      "scored_days": 27
     },
     {
       "tour": "WTA",
@@ -344,17 +344,17 @@
     },
     {
       "tour": "WTA",
+      "display_name": "白云静水",
+      "score": 679,
+      "hit_count": 20,
+      "scored_days": 15
+    },
+    {
+      "tour": "WTA",
       "display_name": "impum",
       "score": 661,
       "hit_count": 17,
       "scored_days": 12
-    },
-    {
-      "tour": "WTA",
-      "display_name": "白云静水",
-      "score": 647,
-      "hit_count": 18,
-      "scored_days": 14
     },
     {
       "tour": "WTA",
