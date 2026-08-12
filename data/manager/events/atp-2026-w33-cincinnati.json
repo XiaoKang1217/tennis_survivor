@@ -7835,5 +7835,9 @@
     "generated_at": "2026-08-12T04:15:07.837Z",
     "preview_formula_version": "preview-expected-round-v2",
     "preview_generated_at": "2026-08-12T04:15:07.837Z"
-  }
+  },
+  "round1_completed_at": null,
+  "round2_first_match_at": null,
+  "transfer_window_opens_at": null,
+  "transfer_window_closes_at": null
 }
