@@ -33,8 +33,44 @@ export function comparableText(value = '') {
 }
 
 export function attr(value = '', name) {
-  const match = String(value || '').match(new RegExp(`${name}=["']([^"']*)["']`, 'i'));
-  return match ? decodeHtml(match[1]) : '';
+  const source = String(value || '');
+  const escapedName = escapeRegExp(name);
+  const quoted = source.match(new RegExp(`(?:^|\\s)${escapedName}\\s*=\\s*["']([^"']*)["']`, 'i'));
+  if (quoted) return decodeHtml(quoted[1]);
+  const bare = source.match(new RegExp(`(?:^|\\s)${escapedName}\\s*=\\s*([^\\s"'<>]+)`, 'i'));
+  return bare ? decodeHtml(bare[1]) : '';
+}
+
+function escapeRegExp(value = '') {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function hasClass(className = '', expected = '') {
+  return String(className || '').split(/\s+/).includes(expected);
+}
+
+function firstElementTextByClass(html = '', tagName = 'div', className = '') {
+  const source = String(html || '');
+  const tag = escapeRegExp(tagName);
+  for (const match of source.matchAll(new RegExp(`<${tag}\\b([^>]*)>`, 'gi'))) {
+    if (!hasClass(attr(match[1], 'class'), className)) continue;
+    const contentStart = (match.index || 0) + match[0].length;
+    const contentEnd = source.slice(contentStart).search(new RegExp(`<\\/${tag}>`, 'i'));
+    if (contentEnd < 0) return '';
+    return cleanText(source.slice(contentStart, contentStart + contentEnd));
+  }
+  return '';
+}
+
+function findLastTagStartByClass(html = '', tagName = 'div', className = '', beforeIndex = 0) {
+  const tag = escapeRegExp(tagName);
+  let found = -1;
+  for (const match of String(html || '').matchAll(new RegExp(`<${tag}\\b([^>]*)>`, 'gi'))) {
+    const index = match.index || 0;
+    if (index > beforeIndex) break;
+    if (hasClass(attr(match[1], 'class'), className)) found = index;
+  }
+  return found;
 }
 
 export async function fetchText(url) {
@@ -417,6 +453,65 @@ export async function fetchResultDate(dateKey) {
   return parseResultDateHtml(html, dateKey, url);
 }
 
+function resultStatusFromCode(statusCode = '', score = '') {
+  const baseStatus = statusCode === '2' ? 'completed' : (statusCode === '1' ? 'live' : 'scheduled');
+  return terminalStatusFromScore(score, baseStatus);
+}
+
+function parseResultPlayerRows(matchHtml = '', p1Name = '', p2Name = '') {
+  const rows = [...String(matchHtml || '').matchAll(/<tr\b([^>]*)>([\s\S]*?)<\/tr>/gi)].map((match) => {
+    const inner = match[2] || '';
+    return {
+      className: attr(match[1], 'class'),
+      html: inner,
+      text: cleanText(inner),
+      score: firstElementTextByClass(inner, 'td', 'cResultMatchScore')
+    };
+  });
+  const resultRows = rows.filter((row) => /cResultMatchMidTableRow/i.test(row.className));
+  if (resultRows.length >= 2) return resultRows.slice(0, 2);
+
+  const p1Needle = comparableText(p1Name);
+  const p2Needle = comparableText(p2Name);
+  const namedRows = rows.filter((row) => {
+    const haystack = comparableText(row.text);
+    return haystack && (
+      (p1Needle && haystack.includes(p1Needle))
+      || (p2Needle && haystack.includes(p2Needle))
+    );
+  });
+  return namedRows.length >= 2 ? namedRows.slice(0, 2) : rows.slice(0, 2);
+}
+
+function inferResultWinner({ rows = [], status = '', p1Id = '', p1Name = '', p2Id = '', p2Name = '' }) {
+  const winnerIndex = rows.findIndex((row) => hasClass(row.className, 'cResultMatchMidTableRowWinner'));
+  if (winnerIndex === 0 || winnerIndex === 1) {
+    return resultPlayerByIndex(winnerIndex, p1Id, p1Name, p2Id, p2Name);
+  }
+
+  if (!['completed', 'walkover', 'retired'].includes(status)) return null;
+
+  const loserIndex = rows.findIndex((row) => (
+    hasClass(row.className, 'cResultMatchMidTableRowLoser')
+    || resultRowHasLossMarker(row)
+  ));
+  if (loserIndex === 0) return resultPlayerByIndex(1, p1Id, p1Name, p2Id, p2Name);
+  if (loserIndex === 1) return resultPlayerByIndex(0, p1Id, p1Name, p2Id, p2Name);
+  return null;
+}
+
+function resultPlayerByIndex(index, p1Id, p1Name, p2Id, p2Name) {
+  if (index === 0) return { profileId: p1Id, name: p1Name };
+  if (index === 1) return { profileId: p2Id, name: p2Name };
+  return null;
+}
+
+function resultRowHasLossMarker(row = {}) {
+  return /\bloser\b|retired|\bret\.?\b|中退|伤退|退赛|withdraw/i.test(
+    `${row.className || ''} ${row.text || ''} ${row.score || ''}`
+  );
+}
+
 export function parseResultDateHtml(html, dateKey, sourceUrl) {
   const records = [];
   const blocks = [...html.matchAll(/id=["']iResult([^"']+)["']/gi)];
@@ -425,36 +520,35 @@ export function parseResultDateHtml(html, dateKey, sourceUrl) {
     const start = block.index || 0;
     const end = i + 1 < blocks.length ? (blocks[i + 1].index || html.length) : html.length;
     const segment = html.slice(start, end);
-    const eventName = cleanText(segment.match(/<div class=["']cResultTourInfoCity[^"']*["'][^>]*>([\s\S]*?)<\/div>/i)?.[1] || block[1]);
+    const eventName = firstElementTextByClass(segment, 'div', 'cResultTourInfoCity') || cleanText(block[1]);
 
     for (const stat of segment.matchAll(/open_stat\(([\s\S]*?)\)/g)) {
       const args = parseOpenStatArgs(stat[1]);
       if (args.length < 8) continue;
       const [eventId, tourCode, matchId, year, p1Id, p2Id, p1Name, p2Name] = args;
-      const matchStart = segment.lastIndexOf('<div class="cResultMatch', stat.index || 0);
+      const matchStart = findLastTagStartByClass(segment, 'div', 'cResultMatch', stat.index || 0);
       const matchEnd = segment.indexOf('</table>', (stat.index || 0));
       if (matchStart < 0 || matchEnd < 0) continue;
       const matchHtml = segment.slice(matchStart, matchEnd);
       if (/is-double=["']?1["']?/i.test(matchHtml)) continue;
-      const genderText = cleanText(matchHtml.match(/<div class=cResultMatchGender>([\s\S]*?)<\/div>/i)?.[1] || '');
-      const roundText = cleanText(matchHtml.match(/<div class=cResultMatchRound>([\s\S]*?)<\/div>/i)?.[1] || '');
+      const genderText = firstElementTextByClass(matchHtml, 'div', 'cResultMatchGender');
+      const roundText = firstElementTextByClass(matchHtml, 'div', 'cResultMatchRound');
       if (/Q|资格/.test(roundText)) continue;
       const tour = genderText === '男单' ? 'ATP' : (genderText === '女单' ? 'WTA' : '');
       if (!tour) continue;
-      const scheduledAt = unixToIso(matchHtml.match(/<div class=cResultMatchTime>(\d+)<\/div>/i)?.[1] || '');
+      const scheduledAt = unixToIso(firstElementTextByClass(matchHtml, 'div', 'cResultMatchTime'));
       const statusCode = matchHtml.match(/match-status=["']?(\d+)/i)?.[1] || '';
-      const status = statusCode === '2' ? 'completed' : (statusCode === '1' ? 'live' : 'scheduled');
-      const rowClasses = [...matchHtml.matchAll(/<tr class=["']([^"']*)["']/gi)].map((m) => m[1] || '');
-      let winnerName = null;
-      let winnerProfileId = null;
-      if (rowClasses[0]?.includes('cResultMatchMidTableRowWinner')) {
-        winnerName = p1Name;
-        winnerProfileId = p1Id;
-      } else if (rowClasses[1]?.includes('cResultMatchMidTableRowWinner')) {
-        winnerName = p2Name;
-        winnerProfileId = p2Id;
-      }
-      const score = cleanText(matchHtml.match(/<td[^>]*class=["'][^"']*cResultMatchScore[^"']*["'][^>]*>([\s\S]*?)<\/td>/i)?.[1] || '');
+      const score = firstElementTextByClass(matchHtml, 'td', 'cResultMatchScore');
+      const status = resultStatusFromCode(statusCode, score);
+      const resultRows = parseResultPlayerRows(matchHtml, p1Name, p2Name);
+      const winner = inferResultWinner({
+        rows: resultRows,
+        status,
+        p1Id,
+        p1Name,
+        p2Id,
+        p2Name
+      });
       records.push({
         date: dateKey,
         source_url: sourceUrl,
@@ -471,8 +565,8 @@ export function parseResultDateHtml(html, dateKey, sourceUrl) {
         player1_name: cleanText(p1Name),
         player2_profile_id: String(p2Id || ''),
         player2_name: cleanText(p2Name),
-        winner_profile_id: winnerProfileId ? String(winnerProfileId) : null,
-        winner_name: winnerName ? cleanText(winnerName) : null,
+        winner_profile_id: winner?.profileId ? String(winner.profileId) : null,
+        winner_name: winner?.name ? cleanText(winner.name) : null,
         score,
         raw_status_code: statusCode
       });
@@ -486,9 +580,13 @@ export function matchRowsForEvent(event, resultRecords, drawUrl = '') {
     || (event.source_urls || []).map(extractLiveTennisDrawId).find(Boolean)
     || '';
   const profileToPlayer = new Map();
+  const nameToPlayer = new Map();
   for (const player of event.players || []) {
     if (player.profile_id) {
       profileToPlayer.set(String(player.profile_id).replace(/^QUAL-/, 'QUAL'), player);
+    }
+    for (const nameKey of playerNameKeys(player)) {
+      if (!nameToPlayer.has(nameKey)) nameToPlayer.set(nameKey, player);
     }
   }
 
@@ -500,9 +598,12 @@ export function matchRowsForEvent(event, resultRecords, drawUrl = '') {
       : recordMatchesEventName(event, record);
     if (!sameEvent) continue;
     const roundKey = normalizeRoundKey(record.round_text, event);
-    const p1 = profileToPlayer.get(record.player1_profile_id);
-    const p2 = profileToPlayer.get(record.player2_profile_id);
-    const winner = record.winner_profile_id ? profileToPlayer.get(record.winner_profile_id) : null;
+    const status = terminalStatusFromScore(record.score, record.status);
+    const p1 = profileToPlayer.get(record.player1_profile_id) || playerByName(nameToPlayer, record.player1_name);
+    const p2 = profileToPlayer.get(record.player2_profile_id) || playerByName(nameToPlayer, record.player2_name);
+    const winner = record.winner_profile_id
+      ? profileToPlayer.get(record.winner_profile_id)
+      : playerByName(nameToPlayer, record.winner_name);
     const player1Key = p1?.player_key || (p1 ? canonicalPlayerKey(event.tour, p1) : null);
     const player2Key = p2?.player_key || (p2 ? canonicalPlayerKey(event.tour, p2) : null);
     const winnerKey = winner?.player_key || (winner ? canonicalPlayerKey(event.tour, winner) : null);
@@ -522,12 +623,31 @@ export function matchRowsForEvent(event, resultRecords, drawUrl = '') {
       winner_key: winnerKey,
       winner_name: winner?.name_zh || record.winner_name,
       score: record.score || null,
-      status: record.status,
+      status,
       source_url: record.source_url,
       raw: record
     });
   }
   return rows;
+}
+
+function playerNameKeys(player = {}) {
+  const keys = new Set();
+  for (const value of [player.name_en, player.name_zh, player.display_name, player.player_key]) {
+    const slugKey = slugify(value || '');
+    const textKey = comparableText(value || '');
+    if (slugKey) keys.add(slugKey);
+    if (textKey) keys.add(textKey);
+  }
+  return [...keys];
+}
+
+function playerByName(nameToPlayer, name = '') {
+  for (const key of playerNameKeys({ name_en: name, name_zh: name })) {
+    const player = nameToPlayer.get(key);
+    if (player) return player;
+  }
+  return null;
 }
 
 export function parseDrawWalkoverMatchesFromAjax(html, event, sourceUrl = '') {
@@ -693,6 +813,14 @@ function walkoverStatusFromScore(score = '') {
   if (/w\s*\/?\s*o|walkover|不战|退赛|withdraw/i.test(text)) return 'walkover';
   if (/\bret\.?\b|retired|中退|伤退/i.test(text)) return 'retired';
   return '';
+}
+
+function terminalStatusFromScore(score = '', fallbackStatus = '') {
+  return walkoverStatusFromScore(score) || fallbackStatus || 'scheduled';
+}
+
+export function isWalkoverOrRetirementStatus(status = '') {
+  return ['walkover', 'retired'].includes(status);
 }
 
 function stageForCellIndex(cellIndex, stages) {

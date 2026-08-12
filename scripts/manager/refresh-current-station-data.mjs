@@ -13,6 +13,7 @@ import {
   discoverDrawUrls,
   fetchDrawPlayers,
   fetchResultDate,
+  isWalkoverOrRetirementStatus,
   matchRowsForEvent,
   mergeDrawPlayers
 } from './lib/live-tennis-current-station.mjs';
@@ -74,7 +75,8 @@ for (const entry of events) {
     try {
       const parsed = await fetchDrawPlayers(nextEvent, report.draw_url);
       report.draw_players = parsed.players.length;
-      const drawWalkoverRows = (parsed.walkover_matches || []).filter((row) => row.status === 'walkover');
+      const drawWalkoverRows = (parsed.walkover_matches || [])
+        .filter((row) => isWalkoverOrRetirementStatus(row.status));
       report.draw_walkover_matches = drawWalkoverRows.length;
       report.warnings.push(...(parsed.warnings || []));
       entry.drawWalkoverRows = drawWalkoverRows;
@@ -97,7 +99,8 @@ for (const entry of events) {
   } else if (!skipDrawWalkovers && report.draw_url) {
     try {
       const parsed = await fetchDrawPlayers(nextEvent, report.draw_url);
-      const drawWalkoverRows = (parsed.walkover_matches || []).filter((row) => row.status === 'walkover');
+      const drawWalkoverRows = (parsed.walkover_matches || [])
+        .filter((row) => isWalkoverOrRetirementStatus(row.status));
       report.draw_walkover_matches = drawWalkoverRows.length;
       report.warnings.push(...(parsed.warnings || []));
       entry.drawWalkoverRows = drawWalkoverRows;
