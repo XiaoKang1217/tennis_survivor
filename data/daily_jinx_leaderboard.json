@@ -1,17 +1,17 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-08-11T03:09:08.890Z",
-  "source_updated_at": "2026-08-11 11:09:07",
-  "settled_through": "2026-08-10",
+  "updated_at": "2026-08-12T03:08:58.585Z",
+  "source_updated_at": "2026-08-12 11:08:56",
+  "settled_through": "2026-08-11",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
     {
       "tour": "ATP",
       "display_name": "第七路单车",
-      "score": 1927,
-      "hit_count": 57,
-      "scored_days": 39
+      "score": 1930,
+      "hit_count": 58,
+      "scored_days": 40
     },
     {
       "tour": "ATP",
@@ -37,9 +37,9 @@
     {
       "tour": "ATP",
       "display_name": "xxx又坑人了",
-      "score": 1100,
-      "hit_count": 36,
-      "scored_days": 26
+      "score": 1101,
+      "hit_count": 37,
+      "scored_days": 27
     },
     {
       "tour": "ATP",
@@ -78,17 +78,17 @@
     },
     {
       "tour": "ATP",
+      "display_name": "白云静水",
+      "score": 559,
+      "hit_count": 23,
+      "scored_days": 20
+    },
+    {
+      "tour": "ATP",
       "display_name": "网球人",
       "score": 559,
       "hit_count": 21,
       "scored_days": 14
-    },
-    {
-      "tour": "ATP",
-      "display_name": "白云静水",
-      "score": 556,
-      "hit_count": 22,
-      "scored_days": 19
     },
     {
       "tour": "ATP",
@@ -282,9 +282,9 @@
     {
       "tour": "WTA",
       "display_name": "第七路单车",
-      "score": 2186,
-      "hit_count": 61,
-      "scored_days": 44
+      "score": 2189,
+      "hit_count": 62,
+      "scored_days": 45
     },
     {
       "tour": "WTA",
@@ -310,9 +310,9 @@
     {
       "tour": "WTA",
       "display_name": "xxx又坑人了",
-      "score": 1221,
-      "hit_count": 43,
-      "scored_days": 31
+      "score": 1225,
+      "hit_count": 45,
+      "scored_days": 32
     },
     {
       "tour": "WTA",
@@ -345,9 +345,9 @@
     {
       "tour": "WTA",
       "display_name": "白云静水",
-      "score": 679,
-      "hit_count": 20,
-      "scored_days": 15
+      "score": 682,
+      "hit_count": 21,
+      "scored_days": 16
     },
     {
       "tour": "WTA",
