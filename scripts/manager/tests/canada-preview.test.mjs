@@ -6,7 +6,6 @@ import test from 'node:test';
 const active = JSON.parse(fs.readFileSync('data/manager/active_events.json', 'utf8'));
 const atp = JSON.parse(fs.readFileSync('data/manager/events/atp-2026-w32-montreal.json', 'utf8'));
 const wta = JSON.parse(fs.readFileSync('data/manager/events/wta-2026-w32-toronto.json', 'utf8'));
-const market = JSON.parse(fs.readFileSync('data/manager/market_snapshot.json', 'utf8'));
 const publication = JSON.parse(fs.readFileSync('data/manager/publications/2026-w32-canada-v1.json', 'utf8'));
 const windowAmendment = JSON.parse(fs.readFileSync('data/manager/publications/2026-w32-canada-v2.json', 'utf8'));
 const deadlineAmendment = JSON.parse(fs.readFileSync('data/manager/publications/2026-w32-canada-v3.json', 'utf8'));
@@ -65,18 +64,21 @@ function assertOfficialStation(event, tour, officialPattern) {
   assert.ok(event.players.every((player) => !/\bor\b/i.test(player.name_en)));
 }
 
-test('Canada station is open with locked prices and confirmed sale and Combo rules', () => {
-  assert.equal(active.station_key, '2026-w32-canada');
-  assert.equal(active.status, 'open');
-  assert.equal(active.rules.station_grant, 1000);
-  assert.equal(active.rules.cross_tour_transfer, true);
-  assert.equal(active.rules.transfer_fee_rate, 0.15);
-  assert.equal(active.rules.combo_version, 'canada_2026_v1');
-  assert.equal(active.rules.combo_design_status, 'confirmed');
-  assert.equal(active.rules.combo.total_cap, 700);
-  assert.deepEqual(active.rules.combo.dual_tour, { R16: 50, QF: 100, SF: 250, F: 450, W: 700 });
-  assert.equal(active.rules.combo.value_pick.max_price, 150);
-  assert.deepEqual(active.rules.combo.village_hope, {
+test('Canada station remains available as the frozen previous-station reference', () => {
+  const previousConfig = transferWindowRevision.snapshot.station_config;
+  assert.equal(active.previous_station.station_key, '2026-w32-canada');
+  assert.equal(active.previous_station.publication_version, 5);
+  assert.equal(active.previous_station.publication_file, 'publications/2026-w32-canada-v5.json');
+  assert.equal(previousConfig.status, 'open');
+  assert.equal(previousConfig.rules.station_grant, 1000);
+  assert.equal(previousConfig.rules.cross_tour_transfer, true);
+  assert.equal(previousConfig.rules.transfer_fee_rate, 0.15);
+  assert.equal(previousConfig.rules.combo_version, 'canada_2026_v1');
+  assert.equal(previousConfig.rules.combo_design_status, 'confirmed');
+  assert.equal(previousConfig.rules.combo.total_cap, 700);
+  assert.deepEqual(previousConfig.rules.combo.dual_tour, { R16: 50, QF: 100, SF: 250, F: 450, W: 700 });
+  assert.equal(previousConfig.rules.combo.value_pick.max_price, 150);
+  assert.deepEqual(previousConfig.rules.combo.village_hope, {
     selection: 'highest_original_price_at_submission',
     R16: 50,
     QF: 100,
@@ -84,7 +86,7 @@ test('Canada station is open with locked prices and confirmed sale and Combo rul
     F: 400,
     W: 700
   });
-  assert.deepEqual(active.rules.combo.welfare, {
+  assert.deepEqual(previousConfig.rules.combo.welfare, {
     principal_max: 500,
     min_players: 3,
     discount_rate: 0.2,
@@ -92,10 +94,8 @@ test('Canada station is open with locked prices and confirmed sale and Combo rul
     max_uses_per_season: 3,
     excluded_from_combo_cap: true
   });
-  assert.equal(active.pricing.market_prices_locked, true);
-  assert.equal(active.pricing.publication_version, 1);
-  assert.equal(active.pricing.locked_at, '2026-08-01T07:24:33Z');
-  assert.equal(active.events.length, 2);
+  assert.equal(transferWindowRevision.snapshot.pricing.player_count, 192);
+  assert.equal(transferWindowRevision.snapshot.events.length, 2);
 });
 
 test('ATP Montreal reproduces the official 96-player main draw', () => {
@@ -113,10 +113,10 @@ test('WTA Toronto reproduces the official 96-player main draw', () => {
 });
 
 test('Canada market snapshot contains all 192 priced draw entries', () => {
-  assert.equal(market.station_key, '2026-w32-canada');
-  assert.equal(market.events.length, 2);
-  assert.deepEqual(market.events.map((event) => event.players.length), [96, 96]);
-  assert.equal(market.events.flatMap((event) => event.players).length, 192);
+  assert.equal(publication.station_key, '2026-w32-canada');
+  assert.equal(publication.snapshot.market.length, 2);
+  assert.deepEqual(publication.snapshot.market.map((event) => event.players.length), [96, 96]);
+  assert.equal(publication.snapshot.market.flatMap((event) => event.players).length, 192);
 });
 
 test('Canada opening publication freezes the complete 192-player price market', () => {
@@ -128,16 +128,12 @@ test('Canada opening publication freezes the complete 192-player price market', 
   assert.equal(publication.snapshot.pricing.player_count, 192);
   assert.deepEqual(publication.snapshot.events.map((event) => event.market_status), ['open', 'open']);
 
-  const currentPrices = new Map(
-    market.events.flatMap((event) => event.players.map((player) => [`${event.event_key}|${player.player_key}`, player.price]))
-  );
   const publishedPlayers = publication.snapshot.market.flatMap((event) => (
     event.players.map((player) => ({ eventKey: event.event_key, ...player }))
   ));
   assert.equal(publishedPlayers.length, 192);
-  assert.ok(publishedPlayers.every((player) => (
-    currentPrices.get(`${player.eventKey}|${player.player_key}`) === player.price
-  )));
+  assert.equal(new Set(publishedPlayers.map((player) => `${player.eventKey}|${player.player_key}`)).size, 192);
+  assert.ok(publishedPlayers.every((player) => Number.isFinite(Number(player.price)) && Number(player.price) > 0));
   assert.ok(publication.snapshot.windows.every((window) => (
     window.submission_cutoff_at === '2026-08-02T22:15:00+08:00'
     && window.submission_closes_at === '2026-08-02T22:15:00+08:00'
@@ -231,7 +227,7 @@ test('Canada opening files are cache-busted in the frontend data manifest', () =
 });
 
 test('Canada Combo and the independent welfare discount are wired into the preview', () => {
-  assert.match(html, /if\(policy==='canada_2026_v1'\)return managerCanadaComboScenario\(gross,rounds\)/);
+  assert.match(html, /if\(policy==='canada_2026_v1'\|\|policy==='cincinnati_2026_v1'\)return managerCanadaComboScenario\(gross,rounds\)/);
   assert.match(html, /function managerCanadaComboScenario\(gross,rounds\)/);
   assert.match(html, /四项赛果 Combo 合计封顶 700/);
   assert.match(html, /低保办（独立于 700 封顶）/);
