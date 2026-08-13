@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { parseDrawPlayersFromAjax } from '../lib/live-tennis-current-station.mjs';
+import { canonicalPlayerKey } from '../lib/manager-utils.mjs';
+import { mergeDrawPlayers, parseDrawPlayersFromAjax } from '../lib/live-tennis-current-station.mjs';
 
 const event = {
   tour: 'WTA',
@@ -101,6 +102,57 @@ test('equally complete duplicate singles parts prefer the later refreshed markup
 
   assert.equal(players[0].profile_id, 'NEW1');
   assert.equal(players[0].entry_type, 'lucky_loser');
+});
+
+test('locked qualifier placeholders keep their published key when live draw positions drift', () => {
+  const lockedEvent = {
+    tour: 'WTA',
+    market_price_lock: {
+      publication_version: 1,
+      locked_at: '2026-08-12T01:00:00.000Z'
+    },
+    players: [
+      {
+        profile_id: '320301',
+        name_en: 'Katerina SINIAKOVA',
+        name_zh: '西尼亚科娃',
+        player_key: 'WTA|katerina-siniakova',
+        draw_position: 28,
+        is_qualifier_placeholder: false,
+        price: 145,
+        scores: { base: 60, surface: 60, draw: 60, form: 60, manual: 0 }
+      },
+      {
+        profile_id: 'QUAL-5',
+        name_en: 'Qualifier Q5',
+        name_zh: '资格赛选手 Q5',
+        player_key: 'WTA|qualifier-29',
+        draw_position: 29,
+        is_qualifier_placeholder: true,
+        price: 75,
+        scores: { base: 38, surface: 38, draw: 38, form: 38, manual: 0 }
+      }
+    ]
+  };
+  const parsedPlayers = [
+    {
+      profile_id: 'QUAL-5',
+      name_en: 'Qualifier Q5',
+      name_zh: '资格赛选手 Q5',
+      player_key: 'WTA|qualifier-28',
+      draw_position: 28,
+      is_qualifier_placeholder: true,
+      price: 0
+    }
+  ];
+
+  const merged = mergeDrawPlayers(lockedEvent, parsedPlayers, 'draw-source');
+  const q5 = merged.find((player) => player.profile_id === 'QUAL-5');
+
+  assert.equal(q5.player_key, 'WTA|qualifier-29');
+  assert.equal(canonicalPlayerKey('WTA', q5), 'WTA|qualifier-29');
+  assert.equal(q5.draw_position, 29);
+  assert.equal(q5.price, 75);
 });
 
 function drawRow(position, profileId, nameEn, nameZh, entrySign) {

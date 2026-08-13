@@ -65,6 +65,8 @@ export function slugify(value = '') {
 
 export function canonicalPlayerKey(tour, player = {}) {
   if (player.is_qualifier_placeholder || /^Qualifier\b/i.test(player.name_en || '')) {
+    const explicitKey = String(player.player_key || '');
+    if (explicitKey && /^\w+\|qualifier-/i.test(explicitKey)) return explicitKey;
     return `${tour}|qualifier-${player.draw_position || slugify(player.name_en || player.name_zh || 'q')}`;
   }
   const base = player.name_en || player.name_zh || player.player_key || '';

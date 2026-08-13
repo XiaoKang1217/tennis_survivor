@@ -367,7 +367,14 @@ export function mergeDrawPlayers(event, parsedPlayers, sourceUrl = '') {
       && !sameDrawPlayer(event.tour, oldByPosition, player)
     );
     const old = oldByIdentity || ((isQualifierPlacement || isPreR1Substitution) ? oldByPosition : null) || {};
-    const stableKey = (isQualifierPlacement || isPreR1Substitution) ? key : (old.player_key || key);
+    const preserveLockedQualifier = Boolean(
+      isMarketPriceLocked(event)
+      && old.is_qualifier_placeholder
+      && player.is_qualifier_placeholder
+    );
+    const stableKey = preserveLockedQualifier
+      ? (old.player_key || canonicalPlayerKey(event.tour, old))
+      : ((isQualifierPlacement || isPreR1Substitution) ? key : (old.player_key || key));
     const qualifierReplacement = isQualifierPlacement
       ? {
           placeholder_player_key: oldByPosition.player_key || canonicalPlayerKey(event.tour, oldByPosition),
@@ -404,6 +411,8 @@ export function mergeDrawPlayers(event, parsedPlayers, sourceUrl = '') {
       ...player,
       player_key: stableKey,
       is_qualifier_placeholder: !!player.is_qualifier_placeholder,
+      profile_id: preserveLockedQualifier ? (old.profile_id || player.profile_id) : player.profile_id,
+      draw_position: preserveLockedQualifier ? (old.draw_position ?? player.draw_position) : player.draw_position,
       name_en: (isQualifierPlacement || isPreR1Substitution) ? player.name_en : (old.name_en || player.name_en),
       name_zh: (isQualifierPlacement || isPreR1Substitution) ? player.name_zh : (old.name_zh || player.name_zh),
       rank: isPreR1Substitution ? (player.rank ?? old.rank ?? null) : (old.rank ?? player.rank ?? null),
@@ -425,6 +434,14 @@ export function mergeDrawPlayers(event, parsedPlayers, sourceUrl = '') {
       source: sourceUrl || player.source || old.source || 'live-tennis.cn draw ajax'
     };
   });
+}
+
+function isMarketPriceLocked(event = {}) {
+  return Boolean(
+    event.market_price_lock?.publication_version
+    || event.market_price_lock?.locked_at
+    || event.pricing?.market_prices_locked
+  );
 }
 
 function sameDrawPlayer(tour, a = {}, b = {}) {
