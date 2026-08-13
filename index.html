@@ -6468,7 +6468,8 @@ function resetFollowingFilters(){
 // ===== 数据加载 =====
 const CURRENT_REFRESH_MS=10*60*1000;
 
-async function loadData(){
+async function loadData(options){
+  const opts=options||{};
   try{
     const cur=await loadJson('data/current.json',{key:'current',timeoutMs:6000});
     GDATA=cur;
@@ -6478,10 +6479,12 @@ async function loadData(){
     if(cur.ms){document.getElementById('tab-ms-s').textContent='🎾 ATP '+(cur.ms.event_name||'')+(cur.ms.today_day?' Day'+cur.ms.today_day:'');renderScore('ms', cur.ms);}
     if(cur.ws){document.getElementById('tab-ws-s').textContent='🎾 WTA '+(cur.ws.event_name||'')+(cur.ws.today_day?' Day'+cur.ws.today_day:'');renderScore('ws', cur.ws);}
     if(ACTIVE_TAB==='jinx')renderDailyJinx();
-    if(ACTIVE_TAB==='manager')managerEnterFlow();
-    trackModuleView(ACTIVE_TAB);
-    scheduleManagerPrewarm();
-    scheduleSecondaryDataPrefetch();
+    if(!opts.deferStartupFollowups){
+      if(ACTIVE_TAB==='manager')managerEnterFlow();
+      trackModuleView(ACTIVE_TAB);
+      scheduleManagerPrewarm();
+      scheduleSecondaryDataPrefetch();
+    }
   }catch(e){
     console.error('实时数据加载失败',e);
     trackDataLoadError('current_json',e);
@@ -6489,6 +6492,17 @@ async function loadData(){
     document.getElementById('loading-ms').textContent='⚠️ 数据加载失败，请刷新页面';
     document.getElementById('loading-ws').textContent='⚠️ 数据加载失败，请刷新页面';
   }
+}
+
+async function bootstrapPage(){
+  await loadData({deferStartupFollowups:true});
+  scheduleManagerPrewarm(ACTIVE_TAB==='manager');
+  initAuth();
+  if(managerLocalPreviewEnabled()&&new URLSearchParams(location.search).get('badge-grant-preview'))managerLoadBadgeGrantNotice();
+  prefetchJinxLeaderboard();
+  if(ACTIVE_TAB==='manager')managerEnterFlow();
+  trackModuleView(ACTIVE_TAB);
+  scheduleSecondaryDataPrefetch();
 }
 
 function ensureHistData(){
@@ -8200,11 +8214,7 @@ function setBdF(g,f,btn){
   bdSearch(g);
 }
 
-scheduleManagerPrewarm(ACTIVE_TAB==='manager');
-initAuth();
-if(managerLocalPreviewEnabled()&&new URLSearchParams(location.search).get('badge-grant-preview'))managerLoadBadgeGrantNotice();
-prefetchJinxLeaderboard();
-loadData();
+bootstrapPage();
 </script>
 <script src="assets/theme/full-site-badge-theme.js?v=20260719-2"></script>
 </body>
