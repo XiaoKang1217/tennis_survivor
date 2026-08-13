@@ -335,6 +335,7 @@ export function parseDrawPlayersFromAjax(html, event, sourceUrl = '') {
 
 export function mergeDrawPlayers(event, parsedPlayers, sourceUrl = '') {
   const existing = event.players || [];
+  const marketLocked = isMarketPriceLocked(event);
   const byKey = new Map();
   const byProfile = new Map();
   const byName = new Map();
@@ -347,13 +348,48 @@ export function mergeDrawPlayers(event, parsedPlayers, sourceUrl = '') {
     if (player.draw_position) byDrawPosition.set(Number(player.draw_position), player);
   }
 
-  return parsedPlayers.map((player) => {
+  let lockedLuckyLoserIndex = 0;
+  return parsedPlayers.map((parsedPlayer) => {
+    const oldByPosition = parsedPlayer.draw_position ? byDrawPosition.get(Number(parsedPlayer.draw_position)) : null;
+    const isLockedExtraPlaceholder = Boolean(
+      marketLocked
+      && parsedPlayer.is_qualifier_placeholder
+      && oldByPosition
+      && !oldByPosition.is_qualifier_placeholder
+    );
+    const player = isLockedExtraPlaceholder
+      ? lockedLuckyLoserPlaceholder(event.tour, parsedPlayer, ++lockedLuckyLoserIndex)
+      : parsedPlayer;
     const key = player.player_key || canonicalPlayerKey(event.tour, player);
-    const oldByIdentity = byKey.get(key)
-      || byProfile.get(String(player.profile_id || ''))
-      || byName.get(slugify(player.name_en || player.name_zh || ''))
-      || null;
-    const oldByPosition = player.draw_position ? byDrawPosition.get(Number(player.draw_position)) : null;
+    const lockedQualifierByPosition = marketLocked
+      && parsedPlayer.is_qualifier_placeholder
+      && player.is_qualifier_placeholder
+      && oldByPosition?.is_qualifier_placeholder
+      ? oldByPosition
+      : null;
+    const forceLockedPositionSubstitution = Boolean(
+      marketLocked
+      && oldByPosition
+      && !oldByPosition.is_qualifier_placeholder
+      && !player.is_qualifier_placeholder
+      && !sameDrawPlayer(event.tour, oldByPosition, player)
+    );
+    const forceLockedQualifierPlacement = Boolean(
+      marketLocked
+      && oldByPosition?.is_qualifier_placeholder
+      && !player.is_qualifier_placeholder
+    );
+    const skipIdentityLookup = Boolean(
+      marketLocked
+      && (parsedPlayer.is_qualifier_placeholder || forceLockedPositionSubstitution || forceLockedQualifierPlacement)
+    );
+    const oldByIdentity = lockedQualifierByPosition
+      || (skipIdentityLookup
+        ? null
+        : (byKey.get(key)
+          || byProfile.get(String(player.profile_id || ''))
+          || byName.get(slugify(player.name_en || player.name_zh || ''))
+          || null));
     const isQualifierPlacement = Boolean(
       oldByPosition
       && oldByPosition.is_qualifier_placeholder
@@ -434,6 +470,23 @@ export function mergeDrawPlayers(event, parsedPlayers, sourceUrl = '') {
       source: sourceUrl || player.source || old.source || 'live-tennis.cn draw ajax'
     };
   });
+}
+
+function lockedLuckyLoserPlaceholder(tour, player = {}, index = 1) {
+  const drawPosition = Number(player.draw_position || 0);
+  const label = drawPosition || index;
+  const nameEn = `Lucky Loser ${label}`;
+  return {
+    ...player,
+    player_key: `${tour}|lucky-loser-${label}`,
+    profile_id: null,
+    country_code: null,
+    name_en: nameEn,
+    name_zh: `幸运落败者 ${label}`,
+    entry_type: 'lucky_loser',
+    is_qualifier_placeholder: false,
+    photo_url: null
+  };
 }
 
 function isMarketPriceLocked(event = {}) {

@@ -104,7 +104,7 @@ test('equally complete duplicate singles parts prefer the later refreshed markup
   assert.equal(players[0].entry_type, 'lucky_loser');
 });
 
-test('locked qualifier placeholders keep their published key when live draw positions drift', () => {
+test('locked qualifier placeholders keep their published key when live draw labels drift', () => {
   const lockedEvent = {
     tour: 'WTA',
     market_price_lock: {
@@ -112,6 +112,16 @@ test('locked qualifier placeholders keep their published key when live draw posi
       locked_at: '2026-08-12T01:00:00.000Z'
     },
     players: [
+      {
+        profile_id: '319998',
+        name_en: 'OSAKA Naomi',
+        name_zh: '大坂直美',
+        player_key: 'WTA|osaka-naomi',
+        draw_position: 17,
+        is_qualifier_placeholder: false,
+        price: 230,
+        scores: { base: 80, surface: 78, draw: 75, form: 76, manual: 0 }
+      },
       {
         profile_id: '320301',
         name_en: 'Katerina SINIAKOVA',
@@ -131,10 +141,29 @@ test('locked qualifier placeholders keep their published key when live draw posi
         is_qualifier_placeholder: true,
         price: 75,
         scores: { base: 38, surface: 38, draw: 38, form: 38, manual: 0 }
+      },
+      {
+        profile_id: 'QUAL-6',
+        name_en: 'Qualifier Q6',
+        name_zh: '资格赛选手 Q6',
+        player_key: 'WTA|qualifier-38',
+        draw_position: 38,
+        is_qualifier_placeholder: true,
+        price: 80,
+        scores: { base: 40, surface: 40, draw: 40, form: 40, manual: 0 }
       }
     ]
   };
   const parsedPlayers = [
+    {
+      profile_id: '320301',
+      name_en: 'Katerina SINIAKOVA',
+      name_zh: '西尼亚科娃',
+      player_key: 'WTA|katerina-siniakova',
+      draw_position: 17,
+      is_qualifier_placeholder: false,
+      price: 0
+    },
     {
       profile_id: 'QUAL-5',
       name_en: 'Qualifier Q5',
@@ -145,28 +174,54 @@ test('locked qualifier placeholders keep their published key when live draw posi
       price: 0
     },
     {
-      profile_id: '330001',
-      name_en: 'Replacement PLAYER',
-      name_zh: '替补球员',
-      player_key: 'WTA|replacement-player',
+      profile_id: 'QUAL-6',
+      name_en: 'Qualifier Q6',
+      name_zh: '资格赛选手 Q6',
+      player_key: 'WTA|qualifier-29',
       draw_position: 29,
-      is_qualifier_placeholder: false,
+      is_qualifier_placeholder: true,
+      price: 0
+    },
+    {
+      profile_id: 'QUAL-7',
+      name_en: 'Qualifier Q7',
+      name_zh: '资格赛选手 Q7',
+      player_key: 'WTA|qualifier-38',
+      draw_position: 38,
+      is_qualifier_placeholder: true,
       price: 0
     }
   ];
 
   const merged = mergeDrawPlayers(lockedEvent, parsedPlayers, 'draw-source');
-  const q5 = merged.find((player) => player.profile_id === 'QUAL-5');
-  const replacement = merged.find((player) => player.profile_id === '330001');
+  const siniakova = merged.find((player) => player.draw_position === 17);
+  const luckyLoser = merged.find((player) => player.draw_position === 28);
+  const q5 = merged.find((player) => player.draw_position === 29);
+  const q6 = merged.find((player) => player.draw_position === 38);
   const positions = merged.map((player) => player.draw_position);
+  const playerKeys = merged.map((player) => player.player_key);
 
+  assert.equal(siniakova.player_key, 'WTA|katerina-siniakova');
+  assert.equal(siniakova.price, 230);
+  assert.equal(siniakova.pre_r1_substitution.out_player_key, 'WTA|osaka-naomi');
+  assert.equal(siniakova.pre_r1_substitution.replacement_player_key, 'WTA|katerina-siniakova');
+  assert.equal(luckyLoser.player_key, 'WTA|lucky-loser-28');
+  assert.equal(canonicalPlayerKey('WTA', luckyLoser), 'WTA|lucky-loser-28');
+  assert.equal(luckyLoser.entry_type, 'lucky_loser');
+  assert.equal(luckyLoser.is_qualifier_placeholder, false);
+  assert.equal(luckyLoser.price, 145);
+  assert.equal(luckyLoser.pre_r1_substitution.out_player_key, 'WTA|katerina-siniakova');
+  assert.equal(luckyLoser.pre_r1_substitution.replacement_player_key, 'WTA|lucky-loser-28');
   assert.equal(q5.player_key, 'WTA|qualifier-29');
   assert.equal(canonicalPlayerKey('WTA', q5), 'WTA|qualifier-29');
-  assert.equal(q5.draw_position, 28);
+  assert.equal(q5.profile_id, 'QUAL-5');
   assert.equal(q5.price, 75);
-  assert.equal(replacement.qualifier_replacement.placeholder_player_key, 'WTA|qualifier-29');
-  assert.equal(replacement.draw_position, 29);
+  assert.equal(q6.player_key, 'WTA|qualifier-38');
+  assert.equal(canonicalPlayerKey('WTA', q6), 'WTA|qualifier-38');
+  assert.equal(q6.profile_id, 'QUAL-6');
+  assert.equal(q6.price, 80);
   assert.equal(new Set(positions).size, positions.length);
+  assert.equal(new Set(playerKeys).size, playerKeys.length);
 });
 
 function drawRow(position, profileId, nameEn, nameZh, entrySign) {
