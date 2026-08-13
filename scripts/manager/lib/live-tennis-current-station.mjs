@@ -412,7 +412,7 @@ export function mergeDrawPlayers(event, parsedPlayers, sourceUrl = '') {
       player_key: stableKey,
       is_qualifier_placeholder: !!player.is_qualifier_placeholder,
       profile_id: preserveLockedQualifier ? (old.profile_id || player.profile_id) : player.profile_id,
-      draw_position: preserveLockedQualifier ? (old.draw_position ?? player.draw_position) : player.draw_position,
+      draw_position: player.draw_position ?? old.draw_position,
       name_en: (isQualifierPlacement || isPreR1Substitution) ? player.name_en : (old.name_en || player.name_en),
       name_zh: (isQualifierPlacement || isPreR1Substitution) ? player.name_zh : (old.name_zh || player.name_zh),
       rank: isPreR1Substitution ? (player.rank ?? old.rank ?? null) : (old.rank ?? player.rank ?? null),

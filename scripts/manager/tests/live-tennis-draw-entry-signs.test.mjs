@@ -143,16 +143,30 @@ test('locked qualifier placeholders keep their published key when live draw posi
       draw_position: 28,
       is_qualifier_placeholder: true,
       price: 0
+    },
+    {
+      profile_id: '330001',
+      name_en: 'Replacement PLAYER',
+      name_zh: '替补球员',
+      player_key: 'WTA|replacement-player',
+      draw_position: 29,
+      is_qualifier_placeholder: false,
+      price: 0
     }
   ];
 
   const merged = mergeDrawPlayers(lockedEvent, parsedPlayers, 'draw-source');
   const q5 = merged.find((player) => player.profile_id === 'QUAL-5');
+  const replacement = merged.find((player) => player.profile_id === '330001');
+  const positions = merged.map((player) => player.draw_position);
 
   assert.equal(q5.player_key, 'WTA|qualifier-29');
   assert.equal(canonicalPlayerKey('WTA', q5), 'WTA|qualifier-29');
-  assert.equal(q5.draw_position, 29);
+  assert.equal(q5.draw_position, 28);
   assert.equal(q5.price, 75);
+  assert.equal(replacement.qualifier_replacement.placeholder_player_key, 'WTA|qualifier-29');
+  assert.equal(replacement.draw_position, 29);
+  assert.equal(new Set(positions).size, positions.length);
 });
 
 function drawRow(position, profileId, nameEn, nameZh, entrySign) {
