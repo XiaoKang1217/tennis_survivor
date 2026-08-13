@@ -15,7 +15,7 @@
   },
   "submission_opens_at": "2026-08-12T09:00:00+08:00",
   "manual_schedule_windows": true,
-  "schedule_status": "oop_pending_main_draw",
+  "schedule_status": "partial",
   "main_draw_first_match_at": "2026-08-13T16:00:00.000Z",
   "submission_cutoff_at": "2026-08-13T23:45:00+08:00",
   "submission_closes_at": "2026-08-13T23:45:00+08:00",
@@ -1020,19 +1020,19 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "OSAKA Naomi",
-      "name_zh": "大坂直美",
-      "profile_id": "319998",
-      "country_code": "JPN",
-      "seed": 11,
+      "name_en": "Katerina SINIAKOVA",
+      "name_zh": "西尼亚科娃",
+      "profile_id": "320301",
+      "country_code": "CZE",
+      "seed": 33,
       "entry_type": "direct_acceptance",
       "draw_position": 17,
       "first_round": "BYE",
       "path_note": "首轮轮空，直接进入下一轮。",
-      "photo_url": "https://static.live-tennis.cn/pic/ts/319998",
+      "photo_url": "https://static.live-tennis.cn/pic/ts/320301",
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/31017/2026/device/0/horizontal/true",
-      "player_key": "WTA|osaka-naomi",
+      "player_key": "WTA|katerina-siniakova",
       "name_zh_source": "https://www.live-tennis.cn/zh/draw/ajax/31017/2026/device/0/horizontal/true",
       "scores": {
         "base": 85.37,
@@ -1098,7 +1098,21 @@
         "expected_pricing_effective_elo": 1989.9
       },
       "qualifier_replacement": null,
-      "pre_r1_substitution": null
+      "pre_r1_substitution": {
+        "out_player_key": "WTA|osaka-naomi",
+        "out_name_en": "OSAKA Naomi",
+        "out_name_zh": "大坂直美",
+        "out_profile_id": "319998",
+        "replacement_player_key": "WTA|katerina-siniakova",
+        "replacement_name_en": "Katerina SINIAKOVA",
+        "replacement_name_zh": "西尼亚科娃",
+        "replacement_profile_id": "320301",
+        "draw_position": 17,
+        "reason": "pre_r1_withdrawal",
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/31017/2026/device/0/horizontal/true",
+        "contract_price_policy": "keep_original_contract_price",
+        "original_contract_price": 230
+      }
     },
     {
       "name_en": "Jessica BOUZAS MANEIRO",
@@ -1594,8 +1608,8 @@
       "seed": null,
       "entry_type": "direct_acceptance",
       "draw_position": 27,
-      "first_round": "西尼亚科娃",
-      "path_note": "首轮对阵 西尼亚科娃。",
+      "first_round": "资格赛选手",
+      "path_note": "首轮对阵 资格赛选手。",
       "photo_url": "https://static.live-tennis.cn/pic/ts/328896",
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/31017/2026/device/0/horizontal/true",
@@ -1668,19 +1682,19 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Katerina SINIAKOVA",
-      "name_zh": "西尼亚科娃",
-      "profile_id": "320301",
-      "country_code": "CZE",
+      "name_en": "Lucky Loser 28",
+      "name_zh": "幸运落败者 28",
+      "profile_id": null,
+      "country_code": null,
       "seed": null,
-      "entry_type": "direct_acceptance",
+      "entry_type": "lucky_loser",
       "draw_position": 28,
       "first_round": "季莫费耶娃",
       "path_note": "首轮对阵 季莫费耶娃。",
-      "photo_url": "https://static.live-tennis.cn/pic/ts/320301",
+      "photo_url": null,
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/31017/2026/device/0/horizontal/true",
-      "player_key": "WTA|katerina-siniakova",
+      "player_key": "WTA|lucky-loser-28",
       "name_zh_source": "https://www.live-tennis.cn/zh/draw/ajax/31017/2026/device/0/horizontal/true",
       "scores": {
         "base": 64.84,
@@ -1746,7 +1760,21 @@
         "expected_pricing_effective_elo": 1848.07
       },
       "qualifier_replacement": null,
-      "pre_r1_substitution": null
+      "pre_r1_substitution": {
+        "out_player_key": "WTA|katerina-siniakova",
+        "out_name_en": "Katerina SINIAKOVA",
+        "out_name_zh": "西尼亚科娃",
+        "out_profile_id": "320301",
+        "replacement_player_key": "WTA|lucky-loser-28",
+        "replacement_name_en": "Lucky Loser 28",
+        "replacement_name_zh": "幸运落败者 28",
+        "replacement_profile_id": null,
+        "draw_position": 28,
+        "reason": "pre_r1_withdrawal",
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/31017/2026/device/0/horizontal/true",
+        "contract_price_policy": "keep_original_contract_price",
+        "original_contract_price": 145
+      }
     },
     {
       "name_en": "Qualifier Q5",
