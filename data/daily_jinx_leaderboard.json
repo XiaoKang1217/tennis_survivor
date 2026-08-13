@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-08-12T03:08:58.585Z",
-  "source_updated_at": "2026-08-12 11:08:56",
-  "settled_through": "2026-08-11",
+  "updated_at": "2026-08-13T03:08:51.116Z",
+  "source_updated_at": "2026-08-13 11:08:49",
+  "settled_through": "2026-08-12",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
@@ -23,9 +23,9 @@
     {
       "tour": "ATP",
       "display_name": "Mith",
-      "score": 1529,
-      "hit_count": 46,
-      "scored_days": 35
+      "score": 1532,
+      "hit_count": 48,
+      "scored_days": 36
     },
     {
       "tour": "ATP",
@@ -37,9 +37,9 @@
     {
       "tour": "ATP",
       "display_name": "xxx又坑人了",
-      "score": 1101,
-      "hit_count": 37,
-      "scored_days": 27
+      "score": 1103,
+      "hit_count": 38,
+      "scored_days": 28
     },
     {
       "tour": "ATP",
@@ -688,15 +688,6 @@
       "rarity": "limited"
     },
     {
-      "display_name": "萨卡外",
-      "badge_key": "rotten-cabbage",
-      "title": "烂白菜烂之泪伤",
-      "subtitle": "球员纪念",
-      "image_url": "assets/manager/badges/ui-v18/optimized/rotten-cabbage-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v18/optimized/rotten-cabbage-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "锦暔",
       "badge_key": "wimbledon-2026",
       "title": "温网限定",
@@ -1135,6 +1126,15 @@
       "subtitle": "球员纪念",
       "image_url": "assets/manager/badges/ui-v5/optimized/djokovic-badge-640.webp",
       "thumb_url": "assets/manager/badges/ui-v5/optimized/djokovic-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "萨卡外",
+      "badge_key": "wang-xinyu-mermaid",
+      "title": "王欣瑜美人鱼",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v5/optimized/mermaid-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/mermaid-badge-640.webp",
       "rarity": "limited"
     },
     {
