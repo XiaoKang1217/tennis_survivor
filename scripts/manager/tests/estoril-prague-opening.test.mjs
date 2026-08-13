@@ -11,6 +11,7 @@ const events = [
   'data/manager/events/wta-2026-w30-prague.json'
 ].map((file) => JSON.parse(fs.readFileSync(file, 'utf8')));
 const html = fs.readFileSync('index.html', 'utf8');
+const groupQrStat = fs.statSync('assets/manager/wechat-group-qr.webp');
 const migration = fs.readFileSync(
   'supabase/migrations/202607190001_manager_dual_tour_champion_combo.sql',
   'utf8'
@@ -57,4 +58,5 @@ test('publication hashes match their frozen snapshots', () => {
 test('homepage uses the optimized current group QR code', () => {
   assert.match(html, /assets\/manager\/wechat-group-qr\.webp/);
   assert.doesNotMatch(html, /assets\/manager\/wechat-group-qr\.jpg/);
+  assert.ok(groupQrStat.size <= 25_000, `group QR should stay lightweight, got ${groupQrStat.size} bytes`);
 });
