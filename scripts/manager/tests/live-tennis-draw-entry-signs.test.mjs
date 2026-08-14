@@ -204,6 +204,7 @@ test('locked qualifier placeholders keep their published key when live draw labe
   assert.equal(siniakova.player_key, 'WTA|katerina-siniakova');
   assert.equal(siniakova.price, 230);
   assert.equal(siniakova.pre_r1_substitution.out_player_key, 'WTA|osaka-naomi');
+  assert.equal(siniakova.pre_r1_substitution.locked_publication_player_key, 'WTA|osaka-naomi');
   assert.equal(siniakova.pre_r1_substitution.replacement_player_key, 'WTA|katerina-siniakova');
   assert.equal(luckyLoser.player_key, 'WTA|lucky-loser-28');
   assert.equal(canonicalPlayerKey('WTA', luckyLoser), 'WTA|lucky-loser-28');
@@ -211,6 +212,7 @@ test('locked qualifier placeholders keep their published key when live draw labe
   assert.equal(luckyLoser.is_qualifier_placeholder, false);
   assert.equal(luckyLoser.price, 145);
   assert.equal(luckyLoser.pre_r1_substitution.out_player_key, 'WTA|katerina-siniakova');
+  assert.equal(luckyLoser.pre_r1_substitution.locked_publication_player_key, 'WTA|katerina-siniakova');
   assert.equal(luckyLoser.pre_r1_substitution.replacement_player_key, 'WTA|lucky-loser-28');
   assert.equal(q5.player_key, 'WTA|qualifier-29');
   assert.equal(canonicalPlayerKey('WTA', q5), 'WTA|qualifier-29');
@@ -222,6 +224,33 @@ test('locked qualifier placeholders keep their published key when live draw labe
   assert.equal(q6.price, 80);
   assert.equal(new Set(positions).size, positions.length);
   assert.equal(new Set(playerKeys).size, playerKeys.length);
+
+  const secondParsedPlayers = merged.map((player) => (
+    player.draw_position === 28
+      ? {
+          profile_id: '326160',
+          name_en: 'WANG Xiyu',
+          name_zh: '王曦雨',
+          player_key: 'WTA|wang-xiyu',
+          draw_position: 28,
+          entry_type: 'qualifier',
+          is_qualifier_placeholder: false,
+          price: 0
+        }
+      : player
+  ));
+  const secondMerged = mergeDrawPlayers(
+    { ...lockedEvent, players: merged },
+    secondParsedPlayers,
+    'updated-draw-source'
+  );
+  const wangXiyu = secondMerged.find((player) => player.draw_position === 28);
+
+  assert.equal(wangXiyu.player_key, 'WTA|wang-xiyu');
+  assert.equal(wangXiyu.price, 145);
+  assert.equal(wangXiyu.pre_r1_substitution.out_player_key, 'WTA|lucky-loser-28');
+  assert.equal(wangXiyu.pre_r1_substitution.locked_publication_player_key, 'WTA|katerina-siniakova');
+  assert.equal(wangXiyu.pre_r1_substitution.replacement_player_key, 'WTA|wang-xiyu');
 });
 
 function drawRow(position, profileId, nameEn, nameZh, entrySign) {
