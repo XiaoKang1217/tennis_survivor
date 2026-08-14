@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-08-13T03:08:51.116Z",
-  "source_updated_at": "2026-08-13 11:08:49",
-  "settled_through": "2026-08-12",
+  "updated_at": "2026-08-14T03:08:20.246Z",
+  "source_updated_at": "2026-08-14 11:08:18",
+  "settled_through": "2026-08-13",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
@@ -197,6 +197,13 @@
     },
     {
       "tour": "ATP",
+      "display_name": "五陵@神光",
+      "score": 33,
+      "hit_count": 1,
+      "scored_days": 1
+    },
+    {
+      "tour": "ATP",
       "display_name": "萨卡外",
       "score": 26,
       "hit_count": 1,
@@ -235,6 +242,13 @@
       "display_name": "15804031803",
       "score": 12,
       "hit_count": 1,
+      "scored_days": 1
+    },
+    {
+      "tour": "ATP",
+      "display_name": "rw75",
+      "score": 9,
+      "hit_count": 2,
       "scored_days": 1
     },
     {
@@ -282,37 +296,37 @@
     {
       "tour": "WTA",
       "display_name": "第七路单车",
-      "score": 2189,
-      "hit_count": 62,
-      "scored_days": 45
+      "score": 2373,
+      "hit_count": 64,
+      "scored_days": 46
     },
     {
       "tour": "WTA",
       "display_name": "Mith",
-      "score": 1719,
-      "hit_count": 52,
-      "scored_days": 39
-    },
-    {
-      "tour": "WTA",
-      "display_name": "阿vvvvv",
-      "score": 1714,
-      "hit_count": 66,
-      "scored_days": 45
-    },
-    {
-      "tour": "WTA",
-      "display_name": "AKA90",
-      "score": 1581,
+      "score": 1882,
       "hit_count": 53,
       "scored_days": 40
     },
     {
       "tour": "WTA",
+      "display_name": "阿vvvvv",
+      "score": 1877,
+      "hit_count": 67,
+      "scored_days": 46
+    },
+    {
+      "tour": "WTA",
+      "display_name": "AKA90",
+      "score": 1744,
+      "hit_count": 54,
+      "scored_days": 41
+    },
+    {
+      "tour": "WTA",
       "display_name": "xxx又坑人了",
-      "score": 1225,
-      "hit_count": 45,
-      "scored_days": 32
+      "score": 1398,
+      "hit_count": 47,
+      "scored_days": 33
     },
     {
       "tour": "WTA",
@@ -331,9 +345,9 @@
     {
       "tour": "WTA",
       "display_name": "就是玩",
-      "score": 908,
-      "hit_count": 32,
-      "scored_days": 21
+      "score": 1071,
+      "hit_count": 33,
+      "scored_days": 22
     },
     {
       "tour": "WTA",
@@ -341,6 +355,13 @@
       "score": 848,
       "hit_count": 31,
       "scored_days": 25
+    },
+    {
+      "tour": "WTA",
+      "display_name": "网球人",
+      "score": 702,
+      "hit_count": 20,
+      "scored_days": 15
     },
     {
       "tour": "WTA",
@@ -361,13 +382,6 @@
       "display_name": "12345",
       "score": 619,
       "hit_count": 22,
-      "scored_days": 14
-    },
-    {
-      "tour": "WTA",
-      "display_name": "网球人",
-      "score": 539,
-      "hit_count": 19,
       "scored_days": 14
     },
     {
@@ -414,6 +428,13 @@
     },
     {
       "tour": "WTA",
+      "display_name": "五陵@神光",
+      "score": 184,
+      "hit_count": 2,
+      "scored_days": 1
+    },
+    {
+      "tour": "WTA",
       "display_name": "张的臻",
       "score": 166,
       "hit_count": 7,
@@ -422,9 +443,9 @@
     {
       "tour": "WTA",
       "display_name": "rw75",
-      "score": 159,
-      "hit_count": 3,
-      "scored_days": 2
+      "score": 164,
+      "hit_count": 5,
+      "scored_days": 3
     },
     {
       "tour": "WTA",
@@ -625,15 +646,6 @@
   ],
   "badges": [
     {
-      "display_name": "荞麦皮",
-      "badge_key": "wimbledon-2026",
-      "title": "温网限定",
-      "subtitle": "赛事限定",
-      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "是月牙呦",
       "badge_key": "wimbledon-2026",
       "title": "温网限定",
@@ -685,6 +697,15 @@
       "subtitle": "赛事限定",
       "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
       "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "网球人",
+      "badge_key": "wang-xinyu-mermaid",
+      "title": "王欣瑜美人鱼",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v5/optimized/mermaid-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/mermaid-badge-640.webp",
       "rarity": "limited"
     },
     {
@@ -742,21 +763,21 @@
       "rarity": "limited"
     },
     {
-      "display_name": "网球人",
-      "badge_key": "rotten-cabbage",
-      "title": "烂白菜烂之泪伤",
-      "subtitle": "球员纪念",
-      "image_url": "assets/manager/badges/ui-v18/optimized/rotten-cabbage-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v18/optimized/rotten-cabbage-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "h",
       "badge_key": "wimbledon-2026",
       "title": "温网限定",
       "subtitle": "赛事限定",
       "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
       "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "荞麦皮",
+      "badge_key": "sinner-fox",
+      "title": "辛纳狐",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v5/optimized/sinner-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/sinner-badge-640.webp",
       "rarity": "limited"
     },
     {
@@ -904,15 +925,6 @@
       "rarity": "limited"
     },
     {
-      "display_name": "我在江边喝奶茶",
-      "badge_key": "wimbledon-2026",
-      "title": "温网限定",
-      "subtitle": "赛事限定",
-      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "leslie",
       "badge_key": "wimbledon-2026",
       "title": "温网限定",
@@ -932,6 +944,15 @@
     },
     {
       "display_name": "carterguo",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "Vinty",
       "badge_key": "wimbledon-2026",
       "title": "温网限定",
       "subtitle": "赛事限定",
@@ -1039,12 +1060,12 @@
       "rarity": "limited"
     },
     {
-      "display_name": "阿vvvvv",
-      "badge_key": "wimbledon-2026",
-      "title": "温网限定",
-      "subtitle": "赛事限定",
-      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "display_name": "我在江边喝奶茶",
+      "badge_key": "alcaraz-bee-duck",
+      "title": "阿卡蜜蜂鸭",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/bee-duck-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/bee-duck-badge-640.webp",
       "rarity": "limited"
     },
     {
@@ -1201,6 +1222,15 @@
       "rarity": "limited"
     },
     {
+      "display_name": "阿vvvvv",
+      "badge_key": "federer-eternal",
+      "title": "费德勒优雅永恒",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/federer-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/federer-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
       "display_name": "Brandon",
       "badge_key": "who-is-leather",
       "title": "谁是皮革",
@@ -1261,6 +1291,15 @@
       "subtitle": "赛事限定",
       "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
       "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "AKA90",
+      "badge_key": "gauff-energy",
+      "title": "高芙果切能量",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/gauff-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/gauff-badge-640.webp",
       "rarity": "limited"
     },
     {
