@@ -428,6 +428,11 @@ export function mergeDrawPlayers(event, parsedPlayers, sourceUrl = '') {
     const preR1Substitution = isPreR1Substitution
       ? {
           out_player_key: oldByPosition.player_key || canonicalPlayerKey(event.tour, oldByPosition),
+          locked_publication_player_key: oldByPosition.pre_r1_substitution?.locked_publication_player_key
+            || oldByPosition.qualifier_replacement?.placeholder_player_key
+            || oldByPosition.pre_r1_substitution?.out_player_key
+            || oldByPosition.player_key
+            || canonicalPlayerKey(event.tour, oldByPosition),
           out_name_en: oldByPosition.name_en || null,
           out_name_zh: oldByPosition.name_zh || null,
           out_profile_id: oldByPosition.profile_id || null,

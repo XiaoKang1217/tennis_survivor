@@ -151,7 +151,8 @@ for (const { item, event } of events) {
     if (!Number.isFinite(Number(player.price))) errors.push(`${label}: ${player.name_en || player.name_zh} missing numeric price.`);
 
     if (priceLock) {
-      const publishedKey = player.qualifier_replacement?.placeholder_player_key
+      const publishedKey = player.pre_r1_substitution?.locked_publication_player_key
+        || player.qualifier_replacement?.placeholder_player_key
         || player.pre_r1_substitution?.out_player_key
         || playerKey;
       const publishedPlayer = lockedMarketByEvent.get(event.event_key)?.get(publishedKey);
