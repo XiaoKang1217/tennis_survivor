@@ -7997,7 +7997,7 @@
     "preview_generated_at": "2026-08-12T04:15:09.632Z"
   },
   "round1_completed_at": null,
-  "round2_first_match_at": null,
+  "round2_first_match_at": "2026-08-15T14:45:00.000Z",
   "transfer_window_opens_at": "2026-08-15T10:00:00+08:00",
   "transfer_window_closes_at": "2026-08-15T22:45:00+08:00"
 }

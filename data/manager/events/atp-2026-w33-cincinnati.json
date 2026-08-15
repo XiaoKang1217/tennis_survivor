@@ -4581,8 +4581,8 @@
       "seed": null,
       "entry_type": "direct_acceptance",
       "draw_position": 75,
-      "first_round": "格里科斯普",
-      "path_note": "首轮对阵 格里科斯普。",
+      "first_round": "舍夫琴科",
+      "path_note": "首轮对阵 舍夫琴科。",
       "photo_url": "https://static.live-tennis.cn/pic/ts/V812",
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20422/2026/device/0/horizontal/true",
@@ -4655,19 +4655,19 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Tallon GRIEKSPOOR",
-      "name_zh": "格里科斯普",
-      "profile_id": "GJ37",
-      "country_code": "NED",
+      "name_en": "Aleksandr SHEVCHENKO",
+      "name_zh": "舍夫琴科",
+      "profile_id": "S0H2",
+      "country_code": "KAZ",
       "seed": null,
-      "entry_type": "direct_acceptance",
+      "entry_type": "lucky_loser",
       "draw_position": 76,
       "first_round": "范德尚舒尔普",
       "path_note": "首轮对阵 范德尚舒尔普。",
-      "photo_url": "https://static.live-tennis.cn/pic/ts/GJ37",
+      "photo_url": "https://static.live-tennis.cn/pic/ts/S0H2",
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/20422/2026/device/0/horizontal/true",
-      "player_key": "ATP|tallon-griekspoor",
+      "player_key": "ATP|aleksandr-shevchenko",
       "name_zh_source": "https://www.live-tennis.cn/zh/draw/ajax/20422/2026/device/0/horizontal/true",
       "scores": {
         "base": 39.9,
@@ -4733,7 +4733,22 @@
         "expected_pricing_effective_elo": 1799.62
       },
       "qualifier_replacement": null,
-      "pre_r1_substitution": null
+      "pre_r1_substitution": {
+        "out_player_key": "ATP|tallon-griekspoor",
+        "locked_publication_player_key": "ATP|tallon-griekspoor",
+        "out_name_en": "Tallon GRIEKSPOOR",
+        "out_name_zh": "格里科斯普",
+        "out_profile_id": "GJ37",
+        "replacement_player_key": "ATP|aleksandr-shevchenko",
+        "replacement_name_en": "Aleksandr SHEVCHENKO",
+        "replacement_name_zh": "舍夫琴科",
+        "replacement_profile_id": "S0H2",
+        "draw_position": 76,
+        "reason": "pre_r1_withdrawal",
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/20422/2026/device/0/horizontal/true",
+        "contract_price_policy": "keep_original_contract_price",
+        "original_contract_price": 110
+      }
     },
     {
       "name_en": "Christopher O",
@@ -7983,8 +7998,8 @@
     "preview_formula_version": "preview-expected-round-v2",
     "preview_generated_at": "2026-08-12T04:15:07.837Z"
   },
-  "round1_completed_at": null,
-  "round2_first_match_at": null,
+  "round1_completed_at": "2026-08-15T01:25:00.000Z",
+  "round2_first_match_at": "2026-08-15T14:45:00.000Z",
   "transfer_window_opens_at": "2026-08-15T10:00:00+08:00",
   "transfer_window_closes_at": "2026-08-15T22:45:00+08:00"
 }
