@@ -78,7 +78,8 @@ test('Update Daily Data settles before publishing the compact cache', () => {
 });
 
 test('frontend prefetched cache replaces lifetime browser-side scoring', () => {
-  assert.match(html, /prefetchJinxLeaderboard\(\);\s*loadData\(\);/);
+  assert.match(html, /async function bootstrapPage\(\)\{\s*await loadData\(\{deferStartupFollowups:true\}\);[\s\S]*prefetchJinxLeaderboard\(\);/);
+  assert.match(html, /bootstrapPage\(\);/);
   assert.match(html, /daily-jinx-leaderboard-v2/);
   assert.match(html, /data\/daily_jinx_leaderboard\.json/);
   assert.match(html, /readStoredJinxLeaderboard/);

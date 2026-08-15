@@ -1871,6 +1871,12 @@ function managerPlayerDisplayName(p,withOriginal){
   if(!p)return '球员';
   return withOriginal?managerDisplayNameWithOriginal(p.name,p.originalName):p.name;
 }
+function managerSamePlayer(p1,p2){
+  if(!p1||!p2)return false;
+  var left=[p1.id,p1.playerKey,p1.sourcePlayerKey].filter(Boolean).map(String);
+  var right=[p2.id,p2.playerKey,p2.sourcePlayerKey].filter(Boolean).map(String);
+  return left.some(function(id){return right.indexOf(id)>=0;});
+}
 function managerPlayerTitleHtml(p){
   p=p||{};
   var displayName=managerPlayerDisplayName(p,true);
@@ -3900,13 +3906,22 @@ function managerConfirmTransfer(est,rules){
   };
   renderManagerDemo();
 }
+function managerTransferMovesVillageHope(est,cachedCalc){
+  var c=cachedCalc||managerCalc(),hope=c&&c.villageHopePlayer;
+  return !!(est&&hope&&managerSamePlayer(hope,est.from));
+}
+function managerTransferVillageHopeText(est,cachedCalc){
+  if(!est)return '换人时不能重新自定义全村的希望。';
+  if(managerTransferMovesVillageHope(est,cachedCalc))return '换下的是当前全村的希望，换入球员 '+managerPlayerDisplayName(est.to,true)+' 自动继承。';
+  return '换人时不能重新自定义全村的希望；当前全村的希望保持不变，换入球员不会成为全村的希望。';
+}
 function managerTransferSuccessMessage(est){
   var route=est.delta>=0
     ?'本站签约金支付 $'+est.stationPay+'，本金支付 $'+est.walletCharge+'。'
     :'退回本站签约金 $'+est.stationReleased+'，退回本金 $'+est.walletRefund+'。';
   return '已将 '+managerPlayerDisplayName(est.from,true)+' 换成 '+managerPlayerDisplayName(est.to,true)+'。\n'
     +(est.delta>=0?'本次净花费 $'+est.delta+'。':'本次净返还 $'+Math.abs(est.delta)+'。')+'\n'
-    +route+'\n本站换人次数 1/1 已用。';
+    +route+'\n'+managerTransferVillageHopeText(est)+'\n本站换人次数 1/1 已用。';
 }
 async function managerTransferCommit(est,rules){
   if(managerRemoteWritesEnabled()){
@@ -3923,12 +3938,14 @@ async function managerTransferCommit(est,rules){
     return;
   }
   var fromId=est.from.id,toId=est.to.id;
+  var movesVillageHope=managerTransferMovesVillageHope(est);
   MANAGER_LINEUP=MANAGER_LINEUP.filter(function(id){return id!==fromId;});
   MANAGER_LINEUP.push(toId);
   MANAGER_SUNK_COST+=est.from.price-est.refund+est.fee;
   MANAGER_TRANSFER_COUNT+=1;
   delete MANAGER_PREDICTIONS[fromId];
   MANAGER_PREDICTIONS[toId]=MANAGER_PREDICTIONS[toId]||est.to.breakEven;
+  if(movesVillageHope)MANAGER_VILLAGE_HOPE_ID=toId;
   var rec=managerSubmittedRecord();
   if(rec){
     rec.transfers=[managerPlayerDisplayName(est.from,true)+' → '+managerPlayerDisplayName(est.to,true)+'，返还 '+est.refund+'，新约 '+est.to.price+'，手续费 '+est.fee,'返还去向：本站签约金 +'+est.stationReleased+'，本金 +'+est.walletRefund];
@@ -3936,6 +3953,10 @@ async function managerTransferCommit(est,rules){
     rec.stationGrantUsed=est.stationUsedAfter;
     rec.walletUsed=est.walletUsedAfter;
     rec.walletBalance=Math.max(0,(Number(rec.walletBalance)||0)+est.walletDelta);
+    if(movesVillageHope){
+      rec.villageHopePlayerId=est.to.id||est.to.playerKey||'';
+      rec.villageHopePlayerName=managerPlayerDisplayName(est.to,true);
+    }
     managerSaveLedger();
   }
   var transferIso=new Date().toISOString();
@@ -4212,7 +4233,7 @@ function managerRenderTransfer(){
   var tour=players[0]?players[0].tour:(MANAGER_TOUR||'ATP'),windowLine=managerTransferWindowLines().join('；');
   var windowItems=managerTransferWindowLines().map(function(line){return '<li>'+esc(line)+'。</li>';}).join('');
   var crossText=managerCrossTourTransferEnabled()?'ATP/WTA 同一窗口开放，男女可以互换。':'ATP/WTA 分开判断；如果窗口一致，就同一时间开放。';
-  var ruleHtml='<div class="manager-rule-grid"><div class="manager-rule-card"><b>窗口时间</b><ul class="manager-lines"><li>换人窗口期为 R1 所有比赛结束后，R2 所有比赛开始前。</li>'+windowItems+'<li>'+crossText+'</li><li>新球员下一场必须还没开赛。</li></ul></div><div class="manager-rule-card"><b>换人次数</b><ul class="manager-lines"><li>每站只允许换 1 次。</li><li>当前已用 '+MANAGER_TRANSFER_COUNT+'/1。</li><li>换人记录会进入我的收益。</li><li>换入前已取得的轮次只作基准，不追发此前奖金。</li></ul></div><div class="manager-rule-card"><b>扣费规则</b><ul class="manager-lines"><li>换人花费 = 新球员花费 + 换人手续费 - 换下球员返还的钱。</li><li>原球员未出局，退回 70% 原成本；原球员已出局，花费成本不退。</li><li>如果本次换人为净返还，优先退回本站签约金额度；超过已占用签约金的部分再退回本金。</li><li>手续费按新球员价格计算：250/500 为 10%，1000/大满贯为 15%。</li></ul></div></div>';
+  var ruleHtml='<div class="manager-rule-grid"><div class="manager-rule-card"><b>窗口时间</b><ul class="manager-lines"><li>换人窗口期为 R1 所有比赛结束后，R2 所有比赛开始前。</li>'+windowItems+'<li>'+crossText+'</li><li>新球员下一场必须还没开赛。</li></ul></div><div class="manager-rule-card"><b>换人次数</b><ul class="manager-lines"><li>每站只允许换 1 次。</li><li>当前已用 '+MANAGER_TRANSFER_COUNT+'/1。</li><li>换人记录会进入我的收益。</li><li>换入前已取得的轮次只作基准，不追发此前奖金。</li><li>换人时不能重新自定义全村的希望；只有换下当前全村的希望时，换入球员才会自动继承。</li></ul></div><div class="manager-rule-card"><b>扣费规则</b><ul class="manager-lines"><li>换人花费 = 新球员花费 + 换人手续费 - 换下球员返还的钱。</li><li>原球员未出局，退回 70% 原成本；原球员已出局，花费成本不退。</li><li>如果本次换人为净返还，优先退回本站签约金额度；超过已占用签约金的部分再退回本金。</li><li>手续费按新球员价格计算：250/500 为 10%，1000/大满贯为 15%。</li></ul></div></div>';
   if(!players.length)return ruleHtml+'<div class="manager-empty" style="margin-top:12px">先建立并提交阵容，开赛后的换人窗口会在这里操作。</div>';
   var fromId=managerFilterValue('manager-transfer-from',players[0].id),fromPlayer=players.find(function(p){return p.id===fromId;})||players[0];
   fromId=fromPlayer.id;
@@ -4223,7 +4244,7 @@ function managerRenderTransfer(){
   var est=managerTransferEstimate(fromId,toId);
   var fromOpts=players.map(function(p){return '<option value="'+esc(p.id)+'" '+(fromId===p.id?'selected':'')+'>'+esc(managerPlayerDisplayName(p,true))+' · $'+p.price+'</option>';}).join('');
   var toInput=managerTransferInputValue(selectedTo,searchValue),toMenu=managerTransferMenuOptions(pool,searchValue,toId,100);
-  var detail=est?'<div class="manager-sim" style="margin-top:12px"><div class="manager-sim-row"><span>换下合同</span><b>'+esc(managerPlayerDisplayName(est.from,true))+' 原价 $'+est.from.price+'；返还 $'+est.refund+'（'+esc(est.refundNote)+'）</b></div><div class="manager-sim-row"><span>换上合同</span><b>'+esc(managerPlayerDisplayName(est.to,true))+' 扣 $'+est.to.price+'</b></div><div class="manager-sim-row"><span>手续费</span><b>扣 $'+est.fee+'（新球员 '+Math.round(rules.transferFee*100)+'%）</b></div><div class="manager-sim-row"><span>本次合计</span><b>'+(est.delta>=0?'总花费 $':'返还额度 $')+Math.abs(est.delta)+'</b></div><div class="manager-sim-row"><span>'+(est.delta>=0?'扣款拆分':'返还去向')+'</span><b>'+(est.delta>=0?'本站签约金花费 $'+est.stationPay+'；本金花费 $'+est.walletCharge:'退回本站签约金 $'+est.stationReleased+'；退回本金 $'+est.walletRefund)+'</b></div></div>':'';
+  var detail=est?'<div class="manager-sim" style="margin-top:12px"><div class="manager-sim-row"><span>换下合同</span><b>'+esc(managerPlayerDisplayName(est.from,true))+' 原价 $'+est.from.price+'；返还 $'+est.refund+'（'+esc(est.refundNote)+'）</b></div><div class="manager-sim-row"><span>换上合同</span><b>'+esc(managerPlayerDisplayName(est.to,true))+' 扣 $'+est.to.price+'</b></div><div class="manager-sim-row"><span>全村的希望</span><b>'+esc(managerTransferVillageHopeText(est,c))+'</b></div><div class="manager-sim-row"><span>手续费</span><b>扣 $'+est.fee+'（新球员 '+Math.round(rules.transferFee*100)+'%）</b></div><div class="manager-sim-row"><span>本次合计</span><b>'+(est.delta>=0?'总花费 $':'返还额度 $')+Math.abs(est.delta)+'</b></div><div class="manager-sim-row"><span>'+(est.delta>=0?'扣款拆分':'返还去向')+'</span><b>'+(est.delta>=0?'本站签约金花费 $'+est.stationPay+'；本金花费 $'+est.walletCharge:'退回本站签约金 $'+est.stationReleased+'；退回本金 $'+est.walletRefund)+'</b></div></div>':'';
   return ruleHtml+'<div class="manager-note" style="margin-top:12px">'+esc(windowLine)+(submitted?'':' 请先提交阵容，当前只做费用预估，不会扣钱。')+'</div><div class="manager-filter" style="margin-top:12px"><label>换下球员</label><select id="manager-transfer-from">'+fromOpts+'</select><label>换上球员</label><div class="manager-transfer-combo"><div class="manager-transfer-input-wrap"><input id="manager-transfer-to-search" placeholder="搜索球员 / ATP / WTA" value="'+esc(toInput)+'" autocomplete="off" aria-expanded="'+(MANAGER_TRANSFER_MENU_OPEN?'true':'false')+'"><button type="button" class="manager-transfer-toggle" data-manager-action="transfer-toggle" aria-label="展开换上球员列表">▼</button></div><div class="manager-transfer-menu" id="manager-transfer-menu" '+(MANAGER_TRANSFER_MENU_OPEN?'':'hidden')+'>'+toMenu+'</div></div>'+detail+'<button class="manager-action warn" data-manager-action="transfer" style="margin-top:10px">检查并换人</button></div>';
 }
 function managerRenderLedger(){

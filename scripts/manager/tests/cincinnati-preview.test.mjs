@@ -6,11 +6,20 @@ const active = JSON.parse(fs.readFileSync('data/manager/active_events.json', 'ut
 const atp = JSON.parse(fs.readFileSync('data/manager/events/atp-2026-w33-cincinnati.json', 'utf8'));
 const wta = JSON.parse(fs.readFileSync('data/manager/events/wta-2026-w33-cincinnati.json', 'utf8'));
 const market = JSON.parse(fs.readFileSync('data/manager/market_snapshot.json', 'utf8'));
+const transferPublication = JSON.parse(fs.readFileSync('data/manager/publications/2026-w33-cincinnati-v2.json', 'utf8'));
+const dataManifest = JSON.parse(fs.readFileSync('data/manifest.json', 'utf8'));
 const html = fs.readFileSync('index.html', 'utf8');
-const migration = fs.readFileSync(
+const customVillageHopeMigration = fs.readFileSync(
   'supabase/migrations/202608120001_manager_custom_village_hope_submission.sql',
   'utf8',
 );
+const transferWindowMigration = fs.readFileSync(
+  'supabase/migrations/202608150001_manager_cincinnati_transfer_window.sql',
+  'utf8',
+);
+
+const transferOpensAt = '2026-08-15T10:00:00+08:00';
+const transferClosesAt = '2026-08-15T22:45:00+08:00';
 
 function assertCincinnatiEvent(event, tour, eventId) {
   assert.equal(event.tour, tour);
@@ -26,6 +35,10 @@ function assertCincinnatiEvent(event, tour, eventId) {
   assert.equal(event.submission_cutoff_at, '2026-08-13T23:45:00+08:00');
   assert.equal(event.submission_closes_at, '2026-08-13T23:45:00+08:00');
   assert.equal(event.allow_submission_after_first_match, true);
+  assert.equal(event.transfer_window_opens_at, transferOpensAt);
+  assert.equal(event.transfer_window_closes_at, transferClosesAt);
+  assert.match(event.transfer_window_note, /男女可互换/);
+  assert.match(event.transfer_window_note, /换入球员自动继承全村希望|换入球员自动继承全村的希望/);
   assert.equal(event.transfer_fee_rate, 0.15);
   assert.equal(event.cross_tour_transfer, true);
   assert.deepEqual(event.market_price_lock, {
@@ -33,15 +46,20 @@ function assertCincinnatiEvent(event, tour, eventId) {
     locked_at: '2026-08-12T01:00:00.000Z',
   });
   assert.equal(event.players.length, 96);
-  assert.equal(event.players.filter((player) => player.is_qualifier_placeholder).length, 12);
+  assert.equal(event.players.filter((player) => player.is_qualifier_placeholder).length, 0);
+  assert.equal(event.players.filter((player) => player.entry_type === 'qualifier').length, 12);
+  assert.equal(event.players.filter((player) => player.entry_type === 'lucky_loser').length, 1);
   assert.equal(new Set(event.players.map((player) => player.draw_position)).size, 96);
 
-  const known = event.players.filter((player) => !player.is_qualifier_placeholder);
-  assert.equal(known.length, 84);
-  assert.ok(known.every((player) => Number.isFinite(player.rank) && player.rank > 0));
-  assert.ok(known.every((player) => Number.isFinite(player.overall_elo) && player.overall_elo > 0));
-  assert.ok(known.every((player) => Number.isFinite(player.surface_elo) && player.surface_elo > 0));
-  assert.ok(known.every((player) => Number.isFinite(player.price) && player.price > 0));
+  const ranked = event.players.filter((player) => (
+    !player.is_qualifier_placeholder
+    && !['qualifier', 'lucky_loser'].includes(player.entry_type)
+  ));
+  assert.equal(ranked.length, 83);
+  assert.ok(ranked.every((player) => Number.isFinite(player.rank) && player.rank > 0));
+  assert.ok(ranked.every((player) => Number.isFinite(player.overall_elo) && player.overall_elo > 0));
+  assert.ok(ranked.every((player) => Number.isFinite(player.surface_elo) && player.surface_elo > 0));
+  assert.ok(event.players.every((player) => Number.isFinite(player.price) && player.price > 0));
   assert.ok(event.players.every((player) => !/\bor\b/i.test(player.name_en)));
 }
 
@@ -76,6 +94,8 @@ test('Cincinnati station is open with 1000 grant and Montreal-compatible Combo r
   assert.equal(active.pricing.publication_version, 1);
   assert.equal(active.pricing.locked_at, '2026-08-12T01:00:00.000Z');
   assert.equal(active.previous_station.station_key, '2026-w32-canada');
+  assert.ok(active.notes.some((note) => note.includes('2026-08-15 10:00 - 22:45')));
+  assert.ok(active.notes.some((note) => note.includes('换人不支持自定义全村的希望')));
 });
 
 test('Cincinnati ATP and WTA draws are priced from latest ranking and Elo snapshots', () => {
@@ -100,12 +120,35 @@ test('Cincinnati custom village hope is wired through UI, calculator, and RPC', 
   assert.match(html, /managerSetVillageHope\(hopeSel\.value,\{skipRender:!!hopeSel\.closest\('\.manager-dialog'\)\}\)/);
   assert.match(html, /p_village_hope_player_key/);
   assert.match(html, /rpcName='tour_manager_submit_lineup_v2'/);
-  assert.match(migration, /create or replace function public\.tour_manager_submit_lineup_v2/);
-  assert.match(migration, /v_selection = 'user_selected_at_submission'/);
-  assert.match(migration, /raise exception 'village_hope_required'/);
-  assert.match(migration, /raise exception 'invalid_village_hope_player'/);
-  assert.match(migration, /set village_hope_player_key = v_selected_key/);
-  assert.match(migration, /'\{is_village_hope\}'/);
+  assert.match(customVillageHopeMigration, /create or replace function public\.tour_manager_submit_lineup_v2/);
+  assert.match(customVillageHopeMigration, /v_selection = 'user_selected_at_submission'/);
+  assert.match(customVillageHopeMigration, /raise exception 'village_hope_required'/);
+  assert.match(customVillageHopeMigration, /raise exception 'invalid_village_hope_player'/);
+  assert.match(customVillageHopeMigration, /set village_hope_player_key = v_selected_key/);
+  assert.match(customVillageHopeMigration, /'\{is_village_hope\}'/);
+});
+
+test('Cincinnati transfer window is shared and preserves frozen village hope', () => {
+  assert.equal(transferPublication.station_key, '2026-w33-cincinnati');
+  assert.equal(transferPublication.publication_version, 2);
+  assert.equal(transferPublication.publication_kind, 'window_amendment');
+  assert.ok(transferPublication.snapshot.windows.every((window) => (
+    window.transfer_window_opens_at === transferOpensAt
+    && window.transfer_window_closes_at === transferClosesAt
+    && window.transfer_fee_rate === 0.15
+  )));
+  assert.ok(transferPublication.snapshot.events.every((event) => (
+    Number(event.market_price_lock.publication_version) === 1
+  )));
+  assert.match(transferWindowMigration, /station_key = '2026-w33-cincinnati'/);
+  assert.match(transferWindowMigration, /2026-08-15T10:00:00\+08:00/);
+  assert.match(transferWindowMigration, /2026-08-15T22:45:00\+08:00/);
+  assert.match(transferWindowMigration, /new\.station_key <> '2026-w33-cincinnati'/);
+  assert.match(transferWindowMigration, /village_hope_player_key = v_in_key/);
+  assert.match(transferWindowMigration, /'\{is_village_hope\}'/);
+  assert.match(html, /function managerTransferMovesVillageHope\(est,cachedCalc\)/);
+  assert.match(html, /换人时不能重新自定义全村的希望/);
+  assert.ok(dataManifest.files['data/manager/publications/2026-w33-cincinnati-v2.json']);
 });
 
 test('leaderboard exposes current and previous station net-income tabs', () => {

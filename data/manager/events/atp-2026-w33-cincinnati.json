@@ -20,7 +20,7 @@
   "submission_cutoff_at": "2026-08-13T23:45:00+08:00",
   "submission_closes_at": "2026-08-13T23:45:00+08:00",
   "allow_submission_after_first_match": true,
-  "transfer_window_note": "辛辛那提换人窗口待用户确认；未确认前不开放换人。",
+  "transfer_window_note": "本站换人窗口为 08/15 10:00 - 08/15 22:45；ATP/WTA 同一窗口开放，男女可互换。换人不支持自定义全村的希望：若换下提交时冻结的全村希望，换入球员自动继承全村希望；否则全村希望保持不变。",
   "cross_tour_transfer": true,
   "transfer_window_days": 2,
   "transfer_fee_rate": 0.15,
@@ -7985,6 +7985,6 @@
   },
   "round1_completed_at": null,
   "round2_first_match_at": null,
-  "transfer_window_opens_at": null,
-  "transfer_window_closes_at": null
+  "transfer_window_opens_at": "2026-08-15T10:00:00+08:00",
+  "transfer_window_closes_at": "2026-08-15T22:45:00+08:00"
 }
