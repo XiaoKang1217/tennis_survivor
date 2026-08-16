@@ -2,6 +2,11 @@ name: Update Tour Manager Data
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "scripts/manager/replace-cincinnati-atp-daily-prediction.mjs"
 
 jobs:
   update:
@@ -37,6 +42,8 @@ jobs:
       - run: node scripts/manager/settle-current-or-previous-station.mjs
 
       - run: node scripts/manager/replace-canada-atp-daily-prediction.mjs
+
+      - run: node scripts/manager/replace-cincinnati-atp-daily-prediction.mjs
 
       - run: node scripts/manager/update-daily-predictions.mjs
 
