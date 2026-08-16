@@ -2,12 +2,19 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import test from 'node:test';
 import vm from 'node:vm';
+import {
+  MEDIAN_SELECTION_METHOD,
+  MEDIAN_SELECTION_START_DATE,
+  selectMedianRankingGapMatch
+} from '../lib/daily-prediction-selection.mjs';
 
 const migration = fs.readFileSync('supabase/migrations/202607150001_manager_daily_predictions.sql', 'utf8');
 const immutableMigration = fs.readFileSync('supabase/migrations/202607170001_manager_daily_prediction_immutable_games.sql', 'utf8');
 const eventDateCompatMigration = fs.readFileSync('supabase/migrations/202607170002_manager_daily_prediction_event_date_compat.sql', 'utf8');
 const eventDateColumnMigration = fs.readFileSync('supabase/migrations/202607170003_manager_daily_prediction_event_date_column.sql', 'utf8');
 const predictionSummaryMigration = fs.readFileSync('supabase/migrations/202607310001_manager_prediction_summary.sql', 'utf8');
+const medianSelectionMigration = fs.readFileSync('supabase/migrations/202608160001_manager_daily_prediction_median_rank_gap.sql', 'utf8');
+const dailyPredictionUpdater = fs.readFileSync('scripts/manager/update-daily-predictions.mjs', 'utf8');
 const html = fs.readFileSync('index.html', 'utf8');
 const workflow = fs.readFileSync('.github/workflows/update_manager.yml', 'utf8');
 const canadaAtpReplacement = fs.readFileSync('scripts/manager/replace-canada-atp-daily-prediction.mjs', 'utf8');
@@ -16,12 +23,35 @@ const stationPayload = fs.readFileSync('scripts/manager/lib/station-payload.mjs'
 const bastad = JSON.parse(fs.readFileSync('data/manager/events/atp-2026-w29-bastad.json', 'utf8'));
 const athens = JSON.parse(fs.readFileSync('data/manager/events/wta-2026-w29-athens.json', 'utf8'));
 
-test('daily games freeze one ATP and WTA match by smallest ranking gap', () => {
+test('legacy daily games freeze one ATP and WTA match by smallest ranking gap', () => {
   assert.match(migration, /unique \(station_key, contest_date, tour\)/);
   assert.match(migration, /foreach v_tour in array array\['ATP','WTA'\]/);
   assert.match(migration, /order by\s+abs\(p1\.ranking - p2\.ranking\) asc/i);
   assert.match(migration, /m\.scheduled_at > now\(\)/);
   assert.match(migration, /closes_at[^;]+scheduled_at/i);
+});
+
+test('daily games switch to the upper-median ranking gap on August 17', () => {
+  assert.equal(MEDIAN_SELECTION_START_DATE, '2026-08-17');
+  assert.equal(MEDIAN_SELECTION_METHOD, 'median_world_rank_gap_official_event_day');
+  assert.equal(selectMedianRankingGapMatch([
+    { match_key: 'a', ranking_gap: 2, scheduled_at: '2026-08-17T15:00:00Z' },
+    { match_key: 'b', ranking_gap: 9, scheduled_at: '2026-08-17T16:00:00Z' },
+    { match_key: 'c', ranking_gap: 30, scheduled_at: '2026-08-17T17:00:00Z' }
+  ]).match_key, 'b');
+  assert.equal(selectMedianRankingGapMatch([
+    { match_key: 'a', ranking_gap: 2, scheduled_at: '2026-08-17T15:00:00Z' },
+    { match_key: 'b', ranking_gap: 9, scheduled_at: '2026-08-17T16:00:00Z' },
+    { match_key: 'c', ranking_gap: 30, scheduled_at: '2026-08-17T17:00:00Z' },
+    { match_key: 'd', ranking_gap: 70, scheduled_at: '2026-08-17T18:00:00Z' }
+  ]).match_key, 'c');
+  assert.match(dailyPredictionUpdater, /today >= MEDIAN_SELECTION_START_DATE/);
+  assert.match(dailyPredictionUpdater, /refreshDailyPredictionGamesByMedian/);
+  assert.match(medianSelectionMigration, /p_contest_date >= date '2026-08-17'/);
+  assert.match(medianSelectionMigration, /row_number\(\) over/);
+  assert.match(medianSelectionMigration, /count\(\*\) over \(\) as candidate_count/);
+  assert.match(medianSelectionMigration, /floor\(candidate_count::numeric \/ 2\)::int \+ 1/);
+  assert.match(medianSelectionMigration, /median_world_rank_gap_official_event_day/);
 });
 
 test('daily selection groups the full official event day across China midnight', () => {
@@ -36,7 +66,7 @@ test('daily selection groups the full official event day across China midnight',
 });
 
 test('the first published station/date/tour question is immutable', () => {
-  for (const sql of [migration, immutableMigration]) {
+  for (const sql of [migration, immutableMigration, medianSelectionMigration]) {
     assert.match(sql, /if exists \([\s\S]+?g\.station_key = p_station_key[\s\S]+?g\.contest_date = p_contest_date[\s\S]+?g\.tour = v_tour[\s\S]+?continue;/);
     assert.doesNotMatch(sql, /delete from public\.tour_manager_daily_prediction_games/);
     assert.match(sql, /'replaced_total', 0/);
