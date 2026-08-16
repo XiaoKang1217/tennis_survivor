@@ -11,6 +11,7 @@ const predictionSummaryMigration = fs.readFileSync('supabase/migrations/20260731
 const html = fs.readFileSync('index.html', 'utf8');
 const workflow = fs.readFileSync('.github/workflows/update_manager.yml', 'utf8');
 const canadaAtpReplacement = fs.readFileSync('scripts/manager/replace-canada-atp-daily-prediction.mjs', 'utf8');
+const cincinnatiAtpReplacement = fs.readFileSync('scripts/manager/replace-cincinnati-atp-daily-prediction.mjs', 'utf8');
 const stationPayload = fs.readFileSync('scripts/manager/lib/station-payload.mjs', 'utf8');
 const bastad = JSON.parse(fs.readFileSync('data/manager/events/atp-2026-w29-bastad.json', 'utf8'));
 const athens = JSON.parse(fs.readFileSync('data/manager/events/wta-2026-w29-athens.json', 'utf8'));
@@ -84,12 +85,30 @@ test('correct picks pay principal once and write an auditable wallet row', () =>
 test('daily workflow settles old games after match sync and then creates today games', () => {
   const settleIndex = workflow.indexOf('settle-current-or-previous-station.mjs');
   const replacementIndex = workflow.indexOf('replace-canada-atp-daily-prediction.mjs');
+  const cincinnatiReplacementIndex = workflow.indexOf('- run: node scripts/manager/replace-cincinnati-atp-daily-prediction.mjs');
   const predictionIndex = workflow.indexOf('update-daily-predictions.mjs');
   assert.ok(settleIndex >= 0);
   assert.ok(replacementIndex > settleIndex);
-  assert.ok(predictionIndex > replacementIndex);
+  assert.ok(cincinnatiReplacementIndex > replacementIndex);
+  assert.ok(predictionIndex > cincinnatiReplacementIndex);
   assert.match(migration, /g\.contest_date <= p_through_date/);
   assert.match(migration, /m\.status in \('completed','walkover','retired','cancelled'\)/);
+});
+
+test('August 16 Cincinnati ATP question is replaced with the closest-ranked later match', () => {
+  assert.match(cincinnatiAtpReplacement, /TARGET_DATE = '2026-08-16'/);
+  assert.match(cincinnatiAtpReplacement, /EXPIRED_MATCH_KEY = `\$\{EVENT_KEY\}:MS032`/);
+  assert.match(cincinnatiAtpReplacement, /REPLACEMENT_MATCH_KEY = `\$\{EVENT_KEY\}:MS049`/);
+  assert.match(cincinnatiAtpReplacement, /game\.status !== 'open'/);
+  assert.match(cincinnatiAtpReplacement, /sourceMatches\[0\]\.status !== 'completed'/);
+  assert.match(cincinnatiAtpReplacement, /match\.raw\?\.date !== TARGET_DATE/);
+  assert.match(cincinnatiAtpReplacement, /match\.status !== 'scheduled'/);
+  assert.match(cincinnatiAtpReplacement, /tour_manager_daily_prediction_picks/);
+  assert.match(cincinnatiAtpReplacement, /client\.delete\('tour_manager_daily_prediction_picks'/);
+  assert.match(cincinnatiAtpReplacement, /manual_replacement_expired_question_20260816/);
+  assert.match(cincinnatiAtpReplacement, /ranking_gap: Math\.abs\(player1\.ranking - player2\.ranking\)/);
+  assert.match(cincinnatiAtpReplacement, /status: 'eq\.open'/);
+  assert.match(workflow, /push:[\s\S]+branches:[\s\S]+main[\s\S]+replace-cincinnati-atp-daily-prediction\.mjs/);
 });
 
 test('August 4 Canada ATP question is replaced only after expiry with a later scheduled match', () => {
