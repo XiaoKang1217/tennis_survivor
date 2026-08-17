@@ -1,31 +1,31 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-08-16T03:09:06.404Z",
-  "source_updated_at": "2026-08-16 11:09:05",
-  "settled_through": "2026-08-15",
+  "updated_at": "2026-08-17T03:09:09.367Z",
+  "source_updated_at": "2026-08-17 11:09:06",
+  "settled_through": "2026-08-16",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
     {
       "tour": "ATP",
       "display_name": "第七路单车",
-      "score": 1972,
-      "hit_count": 60,
-      "scored_days": 41
+      "score": 2021,
+      "hit_count": 61,
+      "scored_days": 42
     },
     {
       "tour": "ATP",
       "display_name": "阿vvvvv",
-      "score": 1619,
-      "hit_count": 62,
-      "scored_days": 44
+      "score": 1628,
+      "hit_count": 63,
+      "scored_days": 45
     },
     {
       "tour": "ATP",
       "display_name": "Mith",
-      "score": 1532,
-      "hit_count": 48,
-      "scored_days": 36
+      "score": 1581,
+      "hit_count": 49,
+      "scored_days": 37
     },
     {
       "tour": "ATP",
@@ -37,9 +37,9 @@
     {
       "tour": "ATP",
       "display_name": "xxx又坑人了",
-      "score": 1160,
-      "hit_count": 41,
-      "scored_days": 30
+      "score": 1209,
+      "hit_count": 42,
+      "scored_days": 31
     },
     {
       "tour": "ATP",
@@ -72,9 +72,9 @@
     {
       "tour": "ATP",
       "display_name": "跟我一起摆烂",
-      "score": 633,
-      "hit_count": 27,
-      "scored_days": 20
+      "score": 682,
+      "hit_count": 28,
+      "scored_days": 21
     },
     {
       "tour": "ATP",
@@ -86,9 +86,9 @@
     {
       "tour": "ATP",
       "display_name": "网球人",
-      "score": 574,
-      "hit_count": 22,
-      "scored_days": 15
+      "score": 583,
+      "hit_count": 23,
+      "scored_days": 16
     },
     {
       "tour": "ATP",
@@ -162,6 +162,13 @@
     },
     {
       "tour": "ATP",
+      "display_name": "五陵@神光",
+      "score": 82,
+      "hit_count": 2,
+      "scored_days": 2
+    },
+    {
+      "tour": "ATP",
       "display_name": "风尘才虚",
       "score": 64,
       "hit_count": 2,
@@ -194,13 +201,6 @@
       "score": 39,
       "hit_count": 6,
       "scored_days": 4
-    },
-    {
-      "tour": "ATP",
-      "display_name": "五陵@神光",
-      "score": 33,
-      "hit_count": 1,
-      "scored_days": 1
     },
     {
       "tour": "ATP",
@@ -247,9 +247,9 @@
     {
       "tour": "ATP",
       "display_name": "rw75",
-      "score": 9,
-      "hit_count": 2,
-      "scored_days": 1
+      "score": 10,
+      "hit_count": 3,
+      "scored_days": 2
     },
     {
       "tour": "ATP",
@@ -303,9 +303,9 @@
     {
       "tour": "WTA",
       "display_name": "Mith",
-      "score": 1882,
-      "hit_count": 53,
-      "scored_days": 40
+      "score": 1884,
+      "hit_count": 54,
+      "scored_days": 41
     },
     {
       "tour": "WTA",
