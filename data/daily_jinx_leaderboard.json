@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-08-17T03:09:09.367Z",
-  "source_updated_at": "2026-08-17 11:09:06",
-  "settled_through": "2026-08-16",
+  "updated_at": "2026-08-18T03:09:07.450Z",
+  "source_updated_at": "2026-08-18 11:09:05",
+  "settled_through": "2026-08-17",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
@@ -1087,6 +1087,15 @@
       "rarity": "limited"
     },
     {
+      "display_name": "+835500913",
+      "badge_key": "federer-eternal",
+      "title": "费德勒优雅永恒",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/federer-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/federer-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
       "display_name": "日海岸",
       "badge_key": "wimbledon-2026",
       "title": "温网限定",
@@ -1186,15 +1195,6 @@
       "rarity": "limited"
     },
     {
-      "display_name": "+835500913",
-      "badge_key": "alcaraz-duck",
-      "title": "阿卡鸭",
-      "subtitle": "球员纪念",
-      "image_url": "assets/manager/badges/ui-v5/optimized/alcaraz-badge-final-hq-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/alcaraz-badge-final-hq-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "风尘才虚",
       "badge_key": "zheng-queen",
       "title": "郑钦文Queen",
@@ -1246,6 +1246,15 @@
       "subtitle": "赛事限定",
       "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
       "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "Rocky",
+      "badge_key": "gauff-energy",
+      "title": "高芙果切能量",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/gauff-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/gauff-badge-640.webp",
       "rarity": "limited"
     },
     {
