@@ -1,17 +1,17 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-08-18T03:09:07.450Z",
-  "source_updated_at": "2026-08-18 11:09:05",
-  "settled_through": "2026-08-17",
+  "updated_at": "2026-08-19T03:09:18.060Z",
+  "source_updated_at": "2026-08-19 11:09:15",
+  "settled_through": "2026-08-18",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
     {
       "tour": "ATP",
       "display_name": "第七路单车",
-      "score": 2021,
-      "hit_count": 61,
-      "scored_days": 42
+      "score": 2061,
+      "hit_count": 62,
+      "scored_days": 43
     },
     {
       "tour": "ATP",
@@ -37,9 +37,9 @@
     {
       "tour": "ATP",
       "display_name": "xxx又坑人了",
-      "score": 1209,
-      "hit_count": 42,
-      "scored_days": 31
+      "score": 1211,
+      "hit_count": 43,
+      "scored_days": 32
     },
     {
       "tour": "ATP",
@@ -100,9 +100,9 @@
     {
       "tour": "ATP",
       "display_name": "x1234",
-      "score": 331,
-      "hit_count": 13,
-      "scored_days": 13
+      "score": 373,
+      "hit_count": 15,
+      "scored_days": 14
     },
     {
       "tour": "ATP",
@@ -193,6 +193,13 @@
       "display_name": "Elroy ZHANG",
       "score": 53,
       "hit_count": 1,
+      "scored_days": 1
+    },
+    {
+      "tour": "ATP",
+      "display_name": "Oreache",
+      "score": 42,
+      "hit_count": 2,
       "scored_days": 1
     },
     {
@@ -338,9 +345,9 @@
     {
       "tour": "WTA",
       "display_name": "x1234",
-      "score": 1186,
-      "hit_count": 28,
-      "scored_days": 21
+      "score": 1190,
+      "hit_count": 29,
+      "scored_days": 22
     },
     {
       "tour": "WTA",
@@ -605,6 +612,13 @@
       "tour": "WTA",
       "display_name": "唯爱白富美",
       "score": 5,
+      "hit_count": 1,
+      "scored_days": 1
+    },
+    {
+      "tour": "WTA",
+      "display_name": "Oreache",
+      "score": 4,
       "hit_count": 1,
       "scored_days": 1
     },
@@ -952,6 +966,15 @@
       "rarity": "limited"
     },
     {
+      "display_name": "莫斯特",
+      "badge_key": "rotten-cabbage",
+      "title": "烂白菜烂之泪伤",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/rotten-cabbage-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/rotten-cabbage-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
       "display_name": "大kk",
       "badge_key": "wimbledon-2026",
       "title": "温网限定",
@@ -1219,15 +1242,6 @@
       "subtitle": "球员纪念",
       "image_url": "assets/manager/badges/ui-v18/optimized/federer-badge-640.webp",
       "thumb_url": "assets/manager/badges/ui-v18/optimized/federer-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
-      "display_name": "莫斯特",
-      "badge_key": "who-is-leather",
-      "title": "谁是皮革",
-      "subtitle": "炉友纪念",
-      "image_url": "assets/manager/badges/ui-v18/optimized/who-leather-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v18/optimized/who-leather-badge-640.webp",
       "rarity": "limited"
     },
     {
