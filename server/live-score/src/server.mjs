@@ -6,6 +6,7 @@ import { ApiTennisClient } from './api-tennis-client.mjs';
 import { LivePoller } from './poller.mjs';
 import { ChineseLocalizer } from './localizer.mjs';
 import { OfficialScheduleValidator } from './official-validator.mjs';
+import { LiveTennisApiClient } from './livetennisapi-client.mjs';
 
 const config = loadConfig();
 const cache = new JsonCache(config.cacheFile);
@@ -20,7 +21,14 @@ const officialValidator = new OfficialScheduleValidator({
   baseUrl: config.officialWtaBase,
   ttlMs: config.officialTtlMs
 });
-const poller = new LivePoller({ client, cache, config, localizer, officialValidator });
+// Optional secondary live-score source; stays null unless LIVETENNISAPI_KEY is set.
+const secondaryLive = config.liveTennisApiKey
+  ? new LiveTennisApiClient({
+    apiKey: config.liveTennisApiKey,
+    apiBase: config.liveTennisApiBase
+  })
+  : null;
+const poller = new LivePoller({ client, cache, config, localizer, officialValidator, secondaryLive });
 const streams = new Set();
 
 function cors(req, res) {
@@ -135,7 +143,7 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'OPTIONS') { cors(req, res); return res.writeHead(204).end(); }
     if (req.method !== 'GET') return json(req, res, 405, { error: 'method_not_allowed' });
     const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
-    if (url.pathname === '/health') return json(req, res, 200, { ok: true, apiConfigured: Boolean(config.apiKey), updatedAt: poller.snapshot.updatedAt });
+    if (url.pathname === '/health') return json(req, res, 200, { ok: true, apiConfigured: Boolean(config.apiKey), secondaryLiveConfigured: Boolean(secondaryLive), updatedAt: poller.snapshot.updatedAt });
     if (url.pathname === '/api/v1/live/today') return json(req, res, 200, poller.snapshot, poller.snapshot.hasLive ? 2 : 30);
     if (url.pathname === '/api/v1/live/day') {
       const date = url.searchParams.get('date') || '';
