@@ -1,0 +1,30 @@
+{
+  "season": 2026,
+  "name": "Monterrey Open",
+  "level": "500",
+  "surface": "hard_out",
+  "start_date": "2026-08-23",
+  "end_date": "2026-08-29",
+  "country": "Mexico",
+  "timezone": "America/Monterrey",
+  "draw_status": "pending",
+  "market_status": "draw_pending",
+  "schedule_status": "partial",
+  "draw_size": 32,
+  "short_name": "Monterrey",
+  "name_zh": "蒙特雷",
+  "city": "Monterrey",
+  "event_key": "wta-2026-w34-monterrey-monterrey-open",
+  "tour": "WTA",
+  "event_id": "31039",
+  "display_name": "WTA 蒙特雷",
+  "source_urls": [
+    "https://www.live-tennis.cn/zh/draw/31039/2026",
+    "https://www.live-tennis.cn/zh/draw/ajax/31039/2026/device/0/horizontal/true"
+  ],
+  "market_message": "本站仅作为每日竞猜赛程源同步，不开放巡回赛经纪人市场。",
+  "players": [],
+  "pricing_formula": {
+    "formula_version": "prediction-only"
+  }
+}

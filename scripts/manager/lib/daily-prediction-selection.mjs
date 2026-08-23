@@ -59,6 +59,7 @@ function positiveRanking(value) {
 export async function refreshDailyPredictionGamesByMedian({
   client,
   stationKey,
+  sourceStationKey = stationKey,
   season = 2026,
   contestDate,
   now = new Date()
@@ -85,7 +86,7 @@ export async function refreshDailyPredictionGamesByMedian({
     }
 
     const events = await client.select('tour_manager_events', {
-      station_key: `eq.${stationKey}`,
+      station_key: `eq.${sourceStationKey || stationKey}`,
       season: `eq.${season}`,
       tour: `eq.${tour}`,
       select: 'event_key,metadata'
@@ -183,6 +184,7 @@ export async function refreshDailyPredictionGamesByMedian({
 
   return {
     station_key: stationKey,
+    source_station_key: sourceStationKey || stationKey,
     season,
     contest_date: contestDate,
     selection_method: MEDIAN_SELECTION_METHOD,

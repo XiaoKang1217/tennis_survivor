@@ -49,12 +49,14 @@ function mergeDerivedWindows(event, windows) {
 }
 
 const { active, events } = await loadActiveStation(activeFile);
-const drawUrls = await discoverDrawUrls(events, active.season);
+const predictionEvents = await loadDailyPredictionEvents(active);
+const refreshTargets = events.concat(predictionEvents);
+const drawUrls = await discoverDrawUrls(refreshTargets, active.season);
 const refreshedEvents = [];
 const allMatchRows = [];
 const reports = [];
 
-for (const entry of events) {
+for (const entry of refreshTargets) {
   const { item, event } = entry;
   let nextEvent = { ...event, players: [...(event.players || [])] };
   const report = {
@@ -164,6 +166,7 @@ if (write) {
 const out = {
   generated_at: fetchedAt.toISOString(),
   station_key: active.station_key,
+  daily_prediction_source_station_key: active.daily_prediction?.source_station_key || null,
   season: active.season,
   write,
   sync,
@@ -179,9 +182,11 @@ await writeJson(outFile, out);
 
 if (sync) {
   const photos = await readJson(photoFile).catch(() => ({ players: {} }));
+  const managerEvents = refreshedEvents.filter((entry) => entry.scope !== 'daily_prediction');
+  const dailyPredictionEvents = refreshedEvents.filter((entry) => entry.scope === 'daily_prediction');
   const payload = buildStationPayload({
     active,
-    events: refreshedEvents,
+    events: managerEvents,
     photoMap: photos.players || {},
     priceVersion: args['price-version'] || 1,
     priceStatus: args['price-status'] || 'draft'
@@ -204,6 +209,35 @@ if (sync) {
     throw new Error(
       `station grant sync mismatch for ${active.station_key}: configured=${configuredGrant} backend=${syncedGrant}`
     );
+  }
+  if (dailyPredictionEvents.length) {
+    const predictionActive = {
+      ...active,
+      station_key: active.daily_prediction?.source_station_key || `${active.station_key}-daily-prediction-source`,
+      station_name: active.daily_prediction?.station_name || '每日竞猜赛程源',
+      rules: {
+        station_grant: 0,
+        combo_version: 'prediction_only',
+        combo: {}
+      }
+    };
+    const predictionPayload = buildStationPayload({
+      active: predictionActive,
+      events: dailyPredictionEvents,
+      photoMap: photos.players || {},
+      priceVersion: args['price-version'] || 1,
+      priceStatus: 'draft'
+    });
+    await client.upsert('tour_manager_events', predictionPayload.eventRows, 'event_key');
+    if (predictionPayload.playerRows.length) {
+      await client.upsert('tour_manager_players', predictionPayload.playerRows, 'tour,player_key');
+    }
+    if (predictionPayload.drawRows.length) {
+      await client.upsert('tour_manager_draw_entries', predictionPayload.drawRows, 'event_key,draw_version,draw_position');
+    }
+    if (predictionPayload.eventPlayerRows.length) {
+      await client.upsert('tour_manager_event_players', predictionPayload.eventPlayerRows, 'event_key,player_key');
+    }
   }
   if (syncMatchRows.length) {
     await client.upsert('tour_manager_matches', syncMatchRows, 'event_key,match_key');
@@ -257,6 +291,17 @@ function dedupeMatchRows(rows) {
     }
   }
   return [...byKey.values()];
+}
+
+async function loadDailyPredictionEvents(active) {
+  const config = active.daily_prediction || {};
+  const entries = [];
+  for (const item of config.events || []) {
+    if (item.active === false) continue;
+    const event = await readJson(`data/manager/${item.data_file}`);
+    entries.push({ item, event, scope: 'daily_prediction' });
+  }
+  return entries;
 }
 
 function matchRowCompleteness(row) {

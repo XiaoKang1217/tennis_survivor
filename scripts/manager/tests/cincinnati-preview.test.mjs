@@ -21,7 +21,7 @@ const transferWindowMigration = fs.readFileSync(
 const transferOpensAt = '2026-08-15T10:00:00+08:00';
 const transferClosesAt = '2026-08-15T22:45:00+08:00';
 
-function assertCincinnatiEvent(event, tour, eventId) {
+function assertCincinnatiEvent(event, tour, eventId, expected) {
   assert.equal(event.tour, tour);
   assert.equal(event.level, '1000');
   assert.equal(event.city, 'Cincinnati');
@@ -48,14 +48,14 @@ function assertCincinnatiEvent(event, tour, eventId) {
   assert.equal(event.players.length, 96);
   assert.equal(event.players.filter((player) => player.is_qualifier_placeholder).length, 0);
   assert.equal(event.players.filter((player) => player.entry_type === 'qualifier').length, 12);
-  assert.equal(event.players.filter((player) => player.entry_type === 'lucky_loser').length, 1);
+  assert.equal(event.players.filter((player) => player.entry_type === 'lucky_loser').length, expected.luckyLosers);
   assert.equal(new Set(event.players.map((player) => player.draw_position)).size, 96);
 
   const ranked = event.players.filter((player) => (
     !player.is_qualifier_placeholder
     && !['qualifier', 'lucky_loser'].includes(player.entry_type)
   ));
-  assert.equal(ranked.length, 83);
+  assert.equal(ranked.length, expected.rankedDirect);
   assert.ok(ranked.every((player) => Number.isFinite(player.rank) && player.rank > 0));
   assert.ok(ranked.every((player) => Number.isFinite(player.overall_elo) && player.overall_elo > 0));
   assert.ok(ranked.every((player) => Number.isFinite(player.surface_elo) && player.surface_elo > 0));
@@ -99,8 +99,8 @@ test('Cincinnati station is open with 1000 grant and Montreal-compatible Combo r
 });
 
 test('Cincinnati ATP and WTA draws are priced from latest ranking and Elo snapshots', () => {
-  assertCincinnatiEvent(atp, 'ATP', '422');
-  assertCincinnatiEvent(wta, 'WTA', '1017');
+  assertCincinnatiEvent(atp, 'ATP', '422', { luckyLosers: 2, rankedDirect: 82 });
+  assertCincinnatiEvent(wta, 'WTA', '1017', { luckyLosers: 1, rankedDirect: 83 });
   assert.equal(market.station_key, '2026-w33-cincinnati');
   assert.deepEqual(market.events.map((event) => event.players.length), [96, 96]);
   assert.equal(market.source_status.ATP.ranking_rows, 1200);

@@ -5,6 +5,7 @@ import vm from 'node:vm';
 import {
   MEDIAN_SELECTION_METHOD,
   MEDIAN_SELECTION_START_DATE,
+  refreshDailyPredictionGamesByMedian,
   selectMedianRankingGapMatch
 } from '../lib/daily-prediction-selection.mjs';
 
@@ -20,6 +21,8 @@ const workflow = fs.readFileSync('.github/workflows/update_manager.yml', 'utf8')
 const canadaAtpReplacement = fs.readFileSync('scripts/manager/replace-canada-atp-daily-prediction.mjs', 'utf8');
 const cincinnatiAtpReplacement = fs.readFileSync('scripts/manager/replace-cincinnati-atp-daily-prediction.mjs', 'utf8');
 const stationPayload = fs.readFileSync('scripts/manager/lib/station-payload.mjs', 'utf8');
+const refreshCurrentStation = fs.readFileSync('scripts/manager/refresh-current-station-data.mjs', 'utf8');
+const activeEvents = JSON.parse(fs.readFileSync('data/manager/active_events.json', 'utf8'));
 const bastad = JSON.parse(fs.readFileSync('data/manager/events/atp-2026-w29-bastad.json', 'utf8'));
 const athens = JSON.parse(fs.readFileSync('data/manager/events/wta-2026-w29-athens.json', 'utf8'));
 
@@ -63,6 +66,82 @@ test('daily selection groups the full official event day across China midnight',
   assert.match(stationPayload, /timezone: event\.timezone \|\| null/);
   assert.equal(bastad.timezone, 'Europe/Stockholm');
   assert.equal(athens.timezone, 'Europe/Athens');
+});
+
+test('daily predictions can use a prediction-only source station while rewarding the active station', async () => {
+  assert.equal(activeEvents.daily_prediction.starts_on, '2026-08-24');
+  assert.equal(activeEvents.daily_prediction.station_key, activeEvents.station_key);
+  assert.equal(activeEvents.daily_prediction.source_station_key, '2026-w34-winston-salem-monterrey-predictions');
+  assert.match(dailyPredictionUpdater, /predictionSourceStationKey/);
+  assert.match(dailyPredictionUpdater, /sourceStationKey: predictionSourceStationKey/);
+  assert.match(refreshCurrentStation, /loadDailyPredictionEvents/);
+  assert.match(refreshCurrentStation, /source_station_key/);
+  assert.match(refreshCurrentStation, /predictionPayload\.eventRows/);
+  assert.match(refreshCurrentStation, /predictionPayload\.eventPlayerRows/);
+
+  const inserted = [];
+  const eventQueries = [];
+  const client = {
+    async select(table, query) {
+      if (table === 'tour_manager_daily_prediction_games' && query.station_key) return [];
+      if (table === 'tour_manager_events') {
+        eventQueries.push(query);
+        const tour = query.tour.replace(/^eq\./, '');
+        return [{ event_key: `${tour.toLowerCase()}-source-event`, metadata: { timezone: 'UTC' } }];
+      }
+      if (table === 'tour_manager_matches') {
+        const eventKey = query.event_key.replace(/^eq\./, '');
+        const tour = eventKey.startsWith('atp') ? 'ATP' : 'WTA';
+        return [
+          {
+            event_key: eventKey,
+            match_key: `${eventKey}:m1`,
+            match_order: 1,
+            scheduled_at: '2026-08-24T16:00:00.000Z',
+            player1_key: `${tour}|a`,
+            player1_name: `${tour} A`,
+            player2_key: `${tour}|b`,
+            player2_name: `${tour} B`,
+            raw: { date: '2026-08-24' }
+          }
+        ];
+      }
+      if (table === 'tour_manager_event_players') {
+        const eventKey = query.event_key.replace(/^eq\./, '');
+        const tour = eventKey.startsWith('atp') ? 'ATP' : 'WTA';
+        return [
+          { event_key: eventKey, player_key: `${tour}|a`, name_zh: `${tour} A`, ranking: 41 },
+          { event_key: eventKey, player_key: `${tour}|b`, name_zh: `${tour} B`, ranking: 49 }
+        ];
+      }
+      return [];
+    },
+    async insert(table, rows) {
+      assert.equal(table, 'tour_manager_daily_prediction_games');
+      inserted.push(...rows);
+      return rows.map((row, index) => ({ ...row, id: `game-${index}` }));
+    }
+  };
+  const result = await refreshDailyPredictionGamesByMedian({
+    client,
+    stationKey: '2026-w33-cincinnati',
+    sourceStationKey: '2026-w34-winston-salem-monterrey-predictions',
+    season: 2026,
+    contestDate: '2026-08-24',
+    now: new Date('2026-08-23T12:00:00.000Z')
+  });
+  assert.equal(result.created, 2);
+  assert.equal(result.station_key, '2026-w33-cincinnati');
+  assert.equal(result.source_station_key, '2026-w34-winston-salem-monterrey-predictions');
+  assert.deepEqual(eventQueries.map((query) => query.station_key), [
+    'eq.2026-w34-winston-salem-monterrey-predictions',
+    'eq.2026-w34-winston-salem-monterrey-predictions'
+  ]);
+  assert.deepEqual(inserted.map((row) => row.station_key), [
+    '2026-w33-cincinnati',
+    '2026-w33-cincinnati'
+  ]);
+  assert.ok(inserted.every((row) => /-source-event$/.test(row.event_key)));
 });
 
 test('the first published station/date/tour question is immutable', () => {

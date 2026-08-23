@@ -25,10 +25,17 @@ function chinaDateKey(value = new Date(), offsetDays = 0) {
 const today = args.date || chinaDateKey();
 const throughDate = args['through-date'] || chinaDateKey(new Date(`${today}T04:00:00Z`), -1);
 const client = new SupabaseRestClient({ dryRun });
+const predictionConfig = active.daily_prediction || {};
+const predictionStationKey = predictionConfig.station_key || active.station_key;
+const predictionSourceStationKey = (
+  predictionConfig.starts_on
+  && today >= predictionConfig.starts_on
+  && predictionConfig.source_station_key
+) ? predictionConfig.source_station_key : predictionStationKey;
 
 if (dryRun) {
   console.log(`DRY RUN settle predictions through ${throughDate}`);
-  console.log(`DRY RUN refresh ${active.station_key} predictions for ${today} with ${today >= MEDIAN_SELECTION_START_DATE ? 'median ranking gap' : 'legacy closest ranking gap'}`);
+  console.log(`DRY RUN refresh ${predictionStationKey} predictions for ${today} from source ${predictionSourceStationKey} with ${today >= MEDIAN_SELECTION_START_DATE ? 'median ranking gap' : 'legacy closest ranking gap'}`);
   process.exit(0);
 }
 
@@ -41,12 +48,13 @@ console.log(`Daily prediction settlement: ${JSON.stringify(settlement)}`);
 const refresh = today >= MEDIAN_SELECTION_START_DATE
   ? await refreshDailyPredictionGamesByMedian({
     client,
-    stationKey: active.station_key,
+    stationKey: predictionStationKey,
+    sourceStationKey: predictionSourceStationKey,
     season: Number(active.season) || 2026,
     contestDate: today
   })
   : await client.rpc('tour_manager_refresh_daily_prediction_games', {
-    p_station_key: active.station_key,
+    p_station_key: predictionStationKey,
     p_season: Number(active.season) || 2026,
     p_contest_date: today
   });

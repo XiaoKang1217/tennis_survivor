@@ -1,0 +1,30 @@
+{
+  "season": 2026,
+  "name": "Winston-Salem Open",
+  "level": "250",
+  "surface": "hard_out",
+  "start_date": "2026-08-23",
+  "end_date": "2026-08-29",
+  "country": "United States",
+  "timezone": "America/New_York",
+  "draw_status": "pending",
+  "market_status": "draw_pending",
+  "schedule_status": "partial",
+  "draw_size": 48,
+  "short_name": "Winston-Salem",
+  "name_zh": "温斯顿塞勒姆",
+  "city": "Winston-Salem",
+  "event_key": "atp-2026-w34-winston-salem-winston-salem-open",
+  "tour": "ATP",
+  "event_id": "26242",
+  "display_name": "ATP 温斯顿塞勒姆",
+  "source_urls": [
+    "https://www.live-tennis.cn/zh/draw/26242/2026",
+    "https://www.live-tennis.cn/zh/draw/ajax/26242/2026/device/0/horizontal/true"
+  ],
+  "market_message": "本站仅作为每日竞猜赛程源同步，不开放巡回赛经纪人市场。",
+  "players": [],
+  "pricing_formula": {
+    "formula_version": "prediction-only"
+  }
+}

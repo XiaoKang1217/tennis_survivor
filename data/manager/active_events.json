@@ -4,6 +4,27 @@
   "station_name": "ATP 辛辛那提 + WTA 辛辛那提",
   "survivor_aligned": true,
   "status": "open",
+  "announcement": "由于站长阳了，本周暂停一周。美网将于8.21正赛签表出了之后准时上线，欢迎参与！",
+  "daily_prediction": {
+    "starts_on": "2026-08-24",
+    "station_key": "2026-w33-cincinnati",
+    "source_station_key": "2026-w34-winston-salem-monterrey-predictions",
+    "station_name": "ATP 温斯顿塞勒姆 + WTA 蒙特雷",
+    "events": [
+      {
+        "tour": "ATP",
+        "event_key": "atp-2026-w34-winston-salem-winston-salem-open",
+        "data_file": "events/atp-2026-w34-winston-salem.json",
+        "active": true
+      },
+      {
+        "tour": "WTA",
+        "event_key": "wta-2026-w34-monterrey-monterrey-open",
+        "data_file": "events/wta-2026-w34-monterrey.json",
+        "active": true
+      }
+    ]
+  },
   "rules": {
     "station_grant": 1000,
     "cross_tour_transfer": true,
