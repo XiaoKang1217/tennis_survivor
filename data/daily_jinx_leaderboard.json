@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-08-23T03:09:13.086Z",
-  "source_updated_at": "2026-08-23 11:09:11",
-  "settled_through": "2026-08-22",
+  "updated_at": "2026-08-24T03:09:19.387Z",
+  "source_updated_at": "2026-08-24 11:09:17",
+  "settled_through": "2026-08-23",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
@@ -30,16 +30,16 @@
     {
       "tour": "ATP",
       "display_name": "AKA90",
-      "score": 1426,
-      "hit_count": 57,
-      "scored_days": 42
+      "score": 1447,
+      "hit_count": 58,
+      "scored_days": 43
     },
     {
       "tour": "ATP",
       "display_name": "xxx又坑人了",
-      "score": 1236,
-      "hit_count": 45,
-      "scored_days": 34
+      "score": 1257,
+      "hit_count": 46,
+      "scored_days": 35
     },
     {
       "tour": "ATP",
@@ -51,9 +51,9 @@
     {
       "tour": "ATP",
       "display_name": "就是玩",
-      "score": 900,
-      "hit_count": 41,
-      "scored_days": 27
+      "score": 911,
+      "hit_count": 42,
+      "scored_days": 28
     },
     {
       "tour": "ATP",
@@ -86,9 +86,9 @@
     {
       "tour": "ATP",
       "display_name": "网球人",
-      "score": 620,
-      "hit_count": 29,
-      "scored_days": 20
+      "score": 641,
+      "hit_count": 30,
+      "scored_days": 21
     },
     {
       "tour": "ATP",
@@ -317,9 +317,9 @@
     {
       "tour": "WTA",
       "display_name": "Mith",
-      "score": 1923,
-      "hit_count": 58,
-      "scored_days": 43
+      "score": 1925,
+      "hit_count": 59,
+      "scored_days": 44
     },
     {
       "tour": "WTA",
@@ -750,6 +750,15 @@
       "rarity": "limited"
     },
     {
+      "display_name": "唯爱白富美",
+      "badge_key": "wang-xinyu-mermaid",
+      "title": "王欣瑜美人鱼",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v5/optimized/mermaid-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/mermaid-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
       "display_name": "披头散发13",
       "badge_key": "wimbledon-2026",
       "title": "温网限定",
@@ -921,15 +930,6 @@
       "rarity": "limited"
     },
     {
-      "display_name": "leslie",
-      "badge_key": "wimbledon-2026",
-      "title": "温网限定",
-      "subtitle": "赛事限定",
-      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "carterguo",
       "badge_key": "wimbledon-2026",
       "title": "温网限定",
@@ -958,15 +958,6 @@
     },
     {
       "display_name": "大kk",
-      "badge_key": "wimbledon-2026",
-      "title": "温网限定",
-      "subtitle": "赛事限定",
-      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
-      "display_name": "唯爱白富美",
       "badge_key": "wimbledon-2026",
       "title": "温网限定",
       "subtitle": "赛事限定",
@@ -1021,15 +1012,6 @@
     },
     {
       "display_name": "加多宝",
-      "badge_key": "wimbledon-2026",
-      "title": "温网限定",
-      "subtitle": "赛事限定",
-      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
-      "display_name": "xiaohe",
       "badge_key": "wimbledon-2026",
       "title": "温网限定",
       "subtitle": "赛事限定",
@@ -1263,6 +1245,15 @@
       "rarity": "limited"
     },
     {
+      "display_name": "xiaohe",
+      "badge_key": "alcaraz-bee-duck",
+      "title": "阿卡蜜蜂鸭",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/bee-duck-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/bee-duck-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
       "display_name": "霍小耳",
       "badge_key": "sinner-fox",
       "title": "辛纳狐",
@@ -1359,6 +1350,15 @@
       "subtitle": "球员纪念",
       "image_url": "assets/manager/badges/ui-v18/optimized/swiatek-badge-640.webp",
       "thumb_url": "assets/manager/badges/ui-v18/optimized/swiatek-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "leslie",
+      "badge_key": "alcaraz-bee-duck",
+      "title": "阿卡蜜蜂鸭",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/bee-duck-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/bee-duck-badge-640.webp",
       "rarity": "limited"
     },
     {
