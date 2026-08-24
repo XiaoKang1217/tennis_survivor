@@ -1064,9 +1064,9 @@
   "pricing_formula": {
     "formula_version": "prediction-only"
   },
-  "main_draw_first_match_at": "2026-08-24T01:30:00.000Z",
-  "submission_cutoff_at": "2026-08-24T01:15:00.000Z",
-  "submission_closes_at": "2026-08-24T01:15:00.000Z",
+  "main_draw_first_match_at": "2026-08-24T01:40:00.000Z",
+  "submission_cutoff_at": "2026-08-24T01:25:00.000Z",
+  "submission_closes_at": "2026-08-24T01:25:00.000Z",
   "round1_completed_at": null,
   "round2_first_match_at": null,
   "transfer_window_opens_at": null,
