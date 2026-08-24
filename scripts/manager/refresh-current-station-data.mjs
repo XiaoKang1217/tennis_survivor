@@ -111,7 +111,12 @@ for (const entry of refreshTargets) {
     }
   }
 
-  refreshedEvents.push({ item, event: nextEvent, drawWalkoverRows: entry.drawWalkoverRows || [] });
+  refreshedEvents.push({
+    item,
+    event: nextEvent,
+    scope: entry.scope,
+    drawWalkoverRows: entry.drawWalkoverRows || []
+  });
   reports.push(report);
 }
 

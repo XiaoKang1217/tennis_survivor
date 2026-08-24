@@ -76,6 +76,7 @@ test('daily predictions can use a prediction-only source station while rewarding
   assert.match(dailyPredictionUpdater, /sourceStationKey: predictionSourceStationKey/);
   assert.match(refreshCurrentStation, /loadDailyPredictionEvents/);
   assert.match(refreshCurrentStation, /source_station_key/);
+  assert.match(refreshCurrentStation, /scope:\s*entry\.scope/);
   assert.match(refreshCurrentStation, /predictionPayload\.eventRows/);
   assert.match(refreshCurrentStation, /predictionPayload\.eventPlayerRows/);
 
