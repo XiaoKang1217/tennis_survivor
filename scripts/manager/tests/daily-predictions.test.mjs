@@ -145,6 +145,77 @@ test('daily predictions can use a prediction-only source station while rewarding
   assert.ok(inserted.every((row) => /-source-event$/.test(row.event_key)));
 });
 
+test('daily predictions fall back to latest ranking snapshots when source event players have no ranking', async () => {
+  const inserted = [];
+  const rankingQueries = [];
+  const client = {
+    async select(table, query) {
+      if (table === 'tour_manager_daily_prediction_games' && query.station_key) return [];
+      if (table === 'tour_manager_events') {
+        const tour = query.tour.replace(/^eq\./, '');
+        return [{ event_key: `${tour.toLowerCase()}-source-event`, metadata: { timezone: 'UTC' } }];
+      }
+      if (table === 'tour_manager_matches') {
+        const eventKey = query.event_key.replace(/^eq\./, '');
+        const tour = eventKey.startsWith('atp') ? 'ATP' : 'WTA';
+        return [
+          {
+            event_key: eventKey,
+            match_key: `${eventKey}:m1`,
+            match_order: 1,
+            scheduled_at: '2026-08-24T16:00:00.000Z',
+            player1_key: `${tour}|a`,
+            player1_name: `${tour} A`,
+            player2_key: `${tour}|b`,
+            player2_name: `${tour} B`,
+            raw: { date: '2026-08-24' }
+          }
+        ];
+      }
+      if (table === 'tour_manager_event_players') {
+        const eventKey = query.event_key.replace(/^eq\./, '');
+        const tour = eventKey.startsWith('atp') ? 'ATP' : 'WTA';
+        return [
+          { event_key: eventKey, player_key: `${tour}|a`, name_zh: `${tour} A`, ranking: null },
+          { event_key: eventKey, player_key: `${tour}|b`, name_zh: `${tour} B`, ranking: null }
+        ];
+      }
+      if (table === 'tour_manager_ranking_snapshots') {
+        rankingQueries.push(query);
+        const tour = query.tour.replace(/^eq\./, '');
+        return [
+          { player_key: `${tour}|a`, name_en: `${tour} A`, rank: 40, ranking_date: '2026-08-24' },
+          { player_key: `${tour}|b`, name_en: `${tour} B`, rank: 47, ranking_date: '2026-08-24' },
+          { player_key: `${tour}|a`, name_en: `${tour} A`, rank: 42, ranking_date: '2026-08-17' }
+        ];
+      }
+      return [];
+    },
+    async insert(table, rows) {
+      assert.equal(table, 'tour_manager_daily_prediction_games');
+      inserted.push(...rows);
+      return rows.map((row, index) => ({ ...row, id: `game-${index}` }));
+    }
+  };
+  const result = await refreshDailyPredictionGamesByMedian({
+    client,
+    stationKey: '2026-w33-cincinnati',
+    sourceStationKey: '2026-w34-winston-salem-monterrey-predictions',
+    season: 2026,
+    contestDate: '2026-08-24',
+    now: new Date('2026-08-24T01:30:00.000Z')
+  });
+
+  assert.equal(result.created, 2);
+  assert.deepEqual(result.missing_tours, []);
+  assert.equal(rankingQueries.length, 2);
+  assert.ok(rankingQueries.every((query) => query.player_key.includes('"')));
+  assert.deepEqual(inserted.map((row) => [row.tour, row.player1_ranking, row.player2_ranking]), [
+    ['ATP', 40, 47],
+    ['WTA', 40, 47]
+  ]);
+});
+
 test('the first published station/date/tour question is immutable', () => {
   for (const sql of [migration, immutableMigration, medianSelectionMigration]) {
     assert.match(sql, /if exists \([\s\S]+?g\.station_key = p_station_key[\s\S]+?g\.contest_date = p_contest_date[\s\S]+?g\.tour = v_tour[\s\S]+?continue;/);

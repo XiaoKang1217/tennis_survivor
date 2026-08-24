@@ -56,6 +56,47 @@ function positiveRanking(value) {
   return Number.isInteger(ranking) && ranking > 0 ? ranking : null;
 }
 
+function postgrestInValue(value) {
+  return `"${String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
+}
+
+async function loadLatestRankingSnapshots(client, tour, playerKeys = []) {
+  const keys = [...new Set(playerKeys.filter(Boolean))];
+  if (!keys.length) return new Map();
+  const out = new Map();
+  const chunkSize = 80;
+  for (let i = 0; i < keys.length; i += chunkSize) {
+    const chunk = keys.slice(i, i + chunkSize);
+    const rows = await client.select('tour_manager_ranking_snapshots', {
+      tour: `eq.${tour}`,
+      player_key: `in.(${chunk.map(postgrestInValue).join(',')})`,
+      select: 'player_key,name_en,rank,ranking_date',
+      order: 'ranking_date.desc'
+    });
+    for (const row of rows) {
+      if (out.has(row.player_key)) continue;
+      const rank = positiveRanking(row.rank);
+      if (!rank) continue;
+      out.set(row.player_key, { ...row, ranking: rank });
+    }
+  }
+  return out;
+}
+
+function playerWithRankingFallback({ eventKey, playerKey, playerByKey, rankingByKey }) {
+  const player = playerByKey.get(`${eventKey}|${playerKey}`);
+  const playerRanking = positiveRanking(player?.ranking);
+  if (playerRanking) return { ...player, ranking: playerRanking };
+  const snapshot = rankingByKey.get(playerKey);
+  if (!snapshot) return player || null;
+  return {
+    ...(player || { event_key: eventKey, player_key: playerKey }),
+    ranking: snapshot.ranking,
+    ranking_source: playerRanking ? 'event_player' : 'ranking_snapshot',
+    name_en: player?.name_en || snapshot.name_en || null
+  };
+}
+
 export async function refreshDailyPredictionGamesByMedian({
   client,
   stationKey,
@@ -129,13 +170,34 @@ export async function refreshDailyPredictionGamesByMedian({
       `${player.event_key}|${player.player_key}`,
       player
     ]));
+    const candidatePlayerKeys = sameEventDay.flatMap((match) => [
+      match.player1_key,
+      match.player2_key
+    ]).filter(Boolean);
+    const missingRankingKeys = candidatePlayerKeys.filter((playerKey) => {
+      const eventPlayer = sameEventDay
+        .map((match) => playerByKey.get(`${match.event_key}|${playerKey}`))
+        .find(Boolean);
+      return !positiveRanking(eventPlayer?.ranking);
+    });
+    const rankingByKey = await loadLatestRankingSnapshots(client, tour, missingRankingKeys);
     const usedMatches = new Set(usedGroups.flat().map((game) => `${game.event_key}|${game.match_key}`));
 
     const candidates = sameEventDay.flatMap((match) => {
       if (!match.player1_key || !match.player2_key) return [];
       if (usedMatches.has(`${match.event_key}|${match.match_key}`)) return [];
-      const player1 = playerByKey.get(`${match.event_key}|${match.player1_key}`);
-      const player2 = playerByKey.get(`${match.event_key}|${match.player2_key}`);
+      const player1 = playerWithRankingFallback({
+        eventKey: match.event_key,
+        playerKey: match.player1_key,
+        playerByKey,
+        rankingByKey
+      });
+      const player2 = playerWithRankingFallback({
+        eventKey: match.event_key,
+        playerKey: match.player2_key,
+        playerByKey,
+        rankingByKey
+      });
       const player1Ranking = positiveRanking(player1?.ranking);
       const player2Ranking = positiveRanking(player2?.ranking);
       if (!player1Ranking || !player2Ranking) return [];
