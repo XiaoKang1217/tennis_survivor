@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-08-24T03:09:19.387Z",
-  "source_updated_at": "2026-08-24 11:09:17",
+  "updated_at": "2026-08-24T12:40:23.743Z",
+  "source_updated_at": "2026-08-24 20:40:22",
   "settled_through": "2026-08-23",
   "ledger_sync": true,
   "refresh_mode": "incremental",
@@ -310,9 +310,9 @@
     {
       "tour": "WTA",
       "display_name": "阿vvvvv",
-      "score": 1929,
-      "hit_count": 71,
-      "scored_days": 49
+      "score": 2007,
+      "hit_count": 73,
+      "scored_days": 50
     },
     {
       "tour": "WTA",
@@ -324,16 +324,16 @@
     {
       "tour": "WTA",
       "display_name": "AKA90",
-      "score": 1804,
-      "hit_count": 60,
-      "scored_days": 45
+      "score": 1824,
+      "hit_count": 61,
+      "scored_days": 46
     },
     {
       "tour": "WTA",
       "display_name": "xxx又坑人了",
-      "score": 1500,
-      "hit_count": 55,
-      "scored_days": 39
+      "score": 1578,
+      "hit_count": 57,
+      "scored_days": 40
     },
     {
       "tour": "WTA",
@@ -352,9 +352,9 @@
     {
       "tour": "WTA",
       "display_name": "就是玩",
-      "score": 1140,
-      "hit_count": 39,
-      "scored_days": 25
+      "score": 1160,
+      "hit_count": 40,
+      "scored_days": 26
     },
     {
       "tour": "WTA",
@@ -365,17 +365,17 @@
     },
     {
       "tour": "WTA",
-      "display_name": "白云静水",
-      "score": 789,
-      "hit_count": 27,
+      "display_name": "网球人",
+      "score": 840,
+      "hit_count": 28,
       "scored_days": 20
     },
     {
       "tour": "WTA",
-      "display_name": "网球人",
-      "score": 762,
-      "hit_count": 26,
-      "scored_days": 19
+      "display_name": "白云静水",
+      "score": 789,
+      "hit_count": 27,
+      "scored_days": 20
     },
     {
       "tour": "WTA",
