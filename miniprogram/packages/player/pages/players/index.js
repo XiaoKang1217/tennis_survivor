@@ -3,6 +3,7 @@
 const { buildThemeData, syncPageTheme } = require('../../../../core/theme');
 const { createSWRCache } = require('../../../../core/swr-cache');
 const { loadProjectionResource, readTrustedProjection } = require('../../../../core/projection-resource');
+const { mediaUrl } = require('../../../../core/media');
 
 const IOC_TO_ISO = Object.freeze({
   ARG: 'AR', AUS: 'AU', AUT: 'AT', BEL: 'BE', BLR: 'BY', BRA: 'BR',
@@ -54,10 +55,9 @@ function flag(code) {
     127397 + letter.charCodeAt(0)));
 }
 
-function portrait(candidate) {
+function portrait(candidate, size = '96', fallback = '') {
   const value = fact(candidate);
-  if (typeof value === 'string') return value;
-  return value?.publicUrl || value?.url || '';
+  return mediaUrl(value ?? candidate, { size, fallback });
 }
 
 function playerDisplayName(entry, fallback = '球员姓名暂缺') {
@@ -171,8 +171,8 @@ function profileEntries(value, authority, rankingKind = 'official') {
       points,
       movementText: movement.text,
       movementTone: movement.tone,
-      portraitUrl: portrait(entry.portrait),
-      heroImageUrl: portrait(entry.heroImage),
+      portraitUrl: portrait(entry.portrait, '96'),
+      heroImageUrl: portrait(entry.heroImage, '720') || portrait(entry.portrait, '720'),
       followTargetId: entry.viewerFollowState?.player?.targetId || `${authority}:${entry.playerId}`,
       followed: entry.viewerFollowState?.player?.followed === true,
       followCount: followCountValue(entry.followCount),
@@ -204,7 +204,7 @@ function officialEntries(value, authority) {
       points: entry.points,
       movementText: movement.text,
       movementTone: movement.tone,
-      portraitUrl: portrait(entry.portraitUrl || entry.portrait),
+      portraitUrl: portrait(entry.portraitUrl || entry.portrait, '96'),
       followTargetId: entry.viewerFollowState?.player?.targetId || `${authority}:${entry.playerId}`,
       followed: entry.viewerFollowState?.player?.followed === true,
       followCount: followCountValue(entry.followCount),
@@ -240,7 +240,7 @@ function raceEntries(value, authority) {
       points: entry.points,
       movementText: movement.text,
       movementTone: movement.tone,
-      portraitUrl: portrait(member?.portraitUrl || member?.portrait),
+      portraitUrl: portrait(member?.portraitUrl || member?.portrait, '96'),
       followTargetId: entry.viewerFollowState?.player?.targetId
         || (member?.playerId ? `${authority}:${member.playerId}` : ''),
       followed: entry.viewerFollowState?.player?.followed === true,
@@ -262,7 +262,7 @@ function leaderboardEntries(value) {
     const displayName = playerDisplayName(entry);
     const age = fact(entry.personal?.age);
     const position = fact(entry.officialRanking?.position) ?? fact(entry.position);
-    const cardImageUrl = portrait(entry.heroImage) || portrait(entry.portrait);
+    const cardImageUrl = portrait(entry.heroImage, '720') || portrait(entry.portrait, '720');
     return Object.freeze({
       id: entry.playerId,
       leaderboardPosition: entry.leaderboardPosition,
@@ -275,8 +275,8 @@ function leaderboardEntries(value) {
       rankingLabel: rankingText(position),
       followCount: followCountValue(entry.followCount),
       followCountLabel: followCountText(entry.followCount),
-      portraitUrl: portrait(entry.portrait),
-      heroImageUrl: portrait(entry.heroImage),
+      portraitUrl: portrait(entry.portrait, '96'),
+      heroImageUrl: portrait(entry.heroImage, '720') || portrait(entry.portrait, '720'),
       cardImageUrl,
       followTargetId: entry.viewerFollowState?.player?.targetId
         || entry.targetId

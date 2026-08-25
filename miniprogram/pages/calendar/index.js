@@ -3,6 +3,7 @@
 const { buildThemeData, syncPageTheme } = require('../../core/theme');
 const { createSWRCache } = require('../../core/swr-cache');
 const { loadProjectionResource, readTrustedProjection } = require('../../core/projection-resource');
+const { normalizeLevelCode, levelLabel } = require('../../core/localization');
 
 const CALENDAR_CACHE_SCHEMA = 'calendar-projection-bff/1';
 
@@ -23,6 +24,19 @@ const MONTHS = Object.freeze(Array.from({ length: 12 }, (_, index) => ({
 function field(candidate, fallback = '') {
   return candidate && candidate.state === 'available' && candidate.value !== null
     ? String(candidate.value) : fallback;
+}
+
+function isMachineLabel(value) {
+  const source = String(value || '').trim();
+  return /^[a-z]{2,}[a-z0-9_]*$/u.test(source) || /^[A-Z]{2,}_[A-Z0-9_]+$/u.test(source);
+}
+
+function readableLevel(summary = {}) {
+  const rawTier = field(summary.tierDisplayName);
+  const code = normalizeLevelCode(field(summary.levelCode) || rawTier);
+  const localized = levelLabel(code);
+  if (localized) return localized;
+  return rawTier && !isMachineLabel(rawTier) ? rawTier : field(summary.levelCode);
 }
 
 function todayIso() {
@@ -106,7 +120,7 @@ function calendarItem(item) {
     authority: field(item.summary.authority),
     bucket: String(item.identity.tourBucket || ''),
     requestTour: calendarDrawTour(item),
-    level: field(item.summary.tierDisplayName) || field(item.summary.levelCode),
+    level: readableLevel(item.summary),
     surface: field(item.summary.surface),
     followTargetId: item.identity.tournamentFollowKey || item.identity.tournamentEditionId,
     followed: item.viewerFollowState?.tournament?.followed === true,
@@ -122,11 +136,21 @@ function calendarItem(item) {
 }
 
 function calendarDrawTour(item) {
+  const authority = field(item?.summary?.authority).toUpperCase();
+  const authorities = Array.isArray(item?.summary?.authorities)
+    ? item.summary.authorities.map(value => String(value || '').trim().toUpperCase()).filter(Boolean)
+    : [];
+  if (item?.summary?.isJoint === true
+    || authority === 'ATP/WTA'
+    || authority === 'WTA/ATP'
+    || (authorities.includes('ATP') && authorities.includes('WTA'))) {
+    return '';
+  }
   const bucket = String(item?.identity?.tourBucket || '').toLowerCase();
   if (bucket === 'wta' || bucket === 'wta_125') return 'wta';
   if (bucket === 'atp' || bucket === 'atp_challenger') return 'atp';
-  const authority = field(item?.summary?.authority).toLowerCase();
-  if (authority === 'wta' || authority === 'atp') return authority;
+  const simpleAuthority = authority.toLowerCase();
+  if (simpleAuthority === 'wta' || simpleAuthority === 'atp') return simpleAuthority;
   return '';
 }
 

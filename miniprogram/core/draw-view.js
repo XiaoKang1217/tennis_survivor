@@ -29,7 +29,7 @@ function firstText(...values) {
 
 function participantName(slot) {
   if (slot?.state === 'bye') return '轮空';
-  if (slot?.state === 'pending') return '胜者待定';
+  if (slot?.state === 'pending') return '待定';
   const members = participantMembers(slot);
   if (members.length > 1) return members.map(member => member.name).join(' / ');
   return members[0]?.name || '待定';
@@ -40,7 +40,7 @@ function participantMembers(slot) {
     Object.freeze({ id: 'bye', name: '轮空', country: '' })
   ]);
   if (slot?.state === 'pending') return Object.freeze([
-    Object.freeze({ id: 'pending', name: '胜者待定', country: '' })
+    Object.freeze({ id: 'pending', name: '待定', country: '' })
   ]);
   const participant = slot?.participant || slot?.entry || slot?.side || {};
   const sourceMembers = Array.isArray(participant.members)
@@ -79,7 +79,7 @@ function memberView(member, index) {
       member.nameZh,
       member.name,
       member.displayName
-    ) || (index === 0 ? '成员待定' : ''),
+    ) || (index === 0 ? '待定' : ''),
     country: firstText(member.countryMark, member.countryCode, member.country?.code)
   });
 }
@@ -168,8 +168,8 @@ function drawColumns(presentation) {
   const slots = new Map((presentation?.slots || []).map(slot => [slot.slotId, slot]));
   const rounds = presentation?.rounds || [];
   const sourceMatches = presentation?.matches || [];
-  const cardHeight = 196;
-  const stride = 228;
+  const cardHeight = 124;
+  const stride = 146;
   const columnDrafts = rounds.map((round, roundIndex) => {
     const matches = sourceMatches
       .filter(match => match.roundId === round.roundId)
@@ -178,6 +178,8 @@ function drawColumns(presentation) {
       .map((match, matchIndex) => {
         const first = slots.get(match.slotIds?.[0]);
         const second = slots.get(match.slotIds?.[1]);
+        const firstMembers = participantMembers(first);
+        const secondMembers = participantMembers(second);
         const winnerId = field(match.winnerSideId);
         const bracketIndex = Number.isFinite(Number(match.bracketIndex))
           ? Number(match.bracketIndex) : matchIndex;
@@ -197,8 +199,10 @@ function drawColumns(presentation) {
           canOpen: match.canOpenMatch,
           status: visibleStatus(match.statusLabel),
           scoreText: localizedOutcomeText(match.scoreText),
-          first: participantName(first),
-          second: participantName(second),
+          first: firstMembers.map(member => member.name).filter(Boolean).join(' / ') || participantName(first),
+          second: secondMembers.map(member => member.name).filter(Boolean).join(' / ') || participantName(second),
+          firstMembers,
+          secondMembers,
           firstSeed: field(first?.seedNumber),
           secondSeed: field(second?.seedNumber),
           firstEntry: entryLabel(first?.entryLabelZh || first?.entryCode),
@@ -251,8 +255,9 @@ function drawColumns(presentation) {
           champion: true,
           nodeStyle: `top:${Math.max(0, boardHeight / 2 - cardHeight / 2)}rpx`,
           hasIncoming: true,
-          incomingStyle: 'top:87rpx;height:1rpx',
+          incomingStyle: 'top:68rpx;height:1rpx',
           first: participantName(winnerSlot),
+          firstMembers: participantMembers(winnerSlot),
           firstSeed: field(winnerSlot?.seedNumber),
           firstEntry: entryLabel(winnerSlot?.entryLabelZh || winnerSlot?.entryCode),
           status: '冠军'
@@ -451,12 +456,12 @@ function officialMetadataView(metadata, scope = {}) {
       })).sort((first, second) => first.sequence - second.sequence)
     : [];
   const withdrawals = [
-    ...recordsFrom(metadata?.withdrawals, 'withdrawal'),
-    ...incidentRecords(metadata?.incidents, ['withdrawal'])
+    ...recordsFrom(metadata?.withdrawals, 'withdrawal', scope),
+    ...incidentRecords(metadata?.incidents, ['withdrawal'], scope)
   ];
   const drawChanges = [
-    ...recordsFrom(metadata?.drawChanges, 'draw_change'),
-    ...incidentRecords(metadata?.incidents, ['replacement', 'draw_change', 'alternate'])
+    ...recordsFrom(metadata?.drawChanges, 'draw_change', scope),
+    ...incidentRecords(metadata?.incidents, ['replacement', 'draw_change', 'alternate'], scope)
   ];
   return Object.freeze({
     roundAwards: Object.freeze(roundAwards),
@@ -485,19 +490,50 @@ function prizeBasisLabel(value) {
   return '';
 }
 
-function recordsFrom(values, fallbackKind) {
+function recordsFrom(values, fallbackKind, scope = {}) {
   return Array.isArray(values)
-    ? values.map((value, index) => recordView(value, fallbackKind, index)).filter(Boolean)
+    ? values
+      .filter(value => recordBelongsToDraw(value, scope) && !isMatchOutcomeRecord(value))
+      .map((value, index) => recordView(value, fallbackKind, index))
+      .filter(Boolean)
     : [];
 }
 
-function incidentRecords(values, kinds) {
+function incidentRecords(values, kinds, scope = {}) {
   return Array.isArray(values)
     ? values
-      .filter(value => kinds.includes(String(value?.kind || '')))
+      .filter(value => kinds.includes(String(value?.kind || ''))
+        && recordBelongsToDraw(value, scope)
+        && !isMatchOutcomeRecord(value))
       .map((value, index) => recordView(value, value.kind, index))
       .filter(Boolean)
     : [];
+}
+
+function recordBelongsToDraw(value, scope = {}) {
+  if (!scope) return true;
+  const drawId = firstText(scope.drawId, scope.id);
+  const recordDrawId = firstText(value?.drawId, value?.scope?.drawId, value?.draw?.drawId);
+  if (recordDrawId && drawId && recordDrawId !== drawId) return false;
+  const stage = String(scope.stage || '');
+  const recordStage = firstText(value?.stage, value?.scope?.stage);
+  if (recordStage && stage && recordStage !== stage) return false;
+  const discipline = String(scope.discipline || '');
+  const recordDiscipline = firstText(value?.discipline, value?.scope?.discipline);
+  return !(recordDiscipline && discipline && recordDiscipline !== discipline);
+}
+
+function isMatchOutcomeRecord(value) {
+  const raw = [
+    value?.kind,
+    value?.type,
+    value?.resultKind,
+    value?.result?.kind,
+    value?.statusCode,
+    value?.status?.code,
+    value?.outcomeCode
+  ].map(item => String(item || '').trim().toUpperCase()).filter(Boolean);
+  return raw.some(item => /^(RET|RETIREMENT|W\/O|WO|WALKOVER|DEF|DEFAULT|DSQ|NS|NO_SHOW)$/u.test(item));
 }
 
 function recordView(value, fallbackKind, index) {

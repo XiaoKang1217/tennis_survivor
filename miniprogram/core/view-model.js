@@ -1,6 +1,7 @@
 'use strict';
 
 const localization = require('./localization');
+const { mediaUrl } = require('./media');
 
 const FILTERS = Object.freeze([
   { id: 'all', label: '全部' },
@@ -91,12 +92,7 @@ function member(member) {
   const portrait = member.portraitAvailability?.state === 'available'
     ? member.portraitAvailability.value || {} : {};
   const portraitAssetKey = String(portrait.publicAssetKey || '');
-  const portraitUrl = String(
-    portrait.publicUrl
-      || portrait.url
-      || (/^https?:\/\//i.test(portraitAssetKey) || portraitAssetKey.startsWith('/')
-        ? portraitAssetKey : '')
-  );
+  const portraitUrl = mediaUrl(member.portraitAvailability, { size: '240' });
   return Object.freeze({
     playerId: availableField(member.playerId) === null
       ? '' : String(availableField(member.playerId)),

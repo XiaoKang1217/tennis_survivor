@@ -127,7 +127,7 @@ test('following matches render by date feed instead of tournament court grouping
 test('following player badge prefers half-body media and keeps controls off the photo', () => {
   const markup = read('pages/following/index.wxml');
   const script = read('pages/following/index.js');
-  assert.match(script, /portrait\(item\.heroImage\) \|\| portrait\(item\.portrait\)/);
+  assert.match(script, /portrait\(item\.heroImage,\s*'96'\) \|\| portrait\(item\.portrait,\s*'96'\)/);
   const photoBlocks = markup.match(/<view class="player-photo">[\s\S]*?<\/view>/g) || [];
   assert.equal(photoBlocks.length, 1);
   for (const block of photoBlocks) assert.doesNotMatch(block, /player-heart/);

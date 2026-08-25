@@ -87,6 +87,9 @@ function normalizeLevelCode(value) {
     .replace(/-/gu, '_');
   if (!source) return '';
   if (source === 'atp_1000') return 'masters_1000';
+  if (source === 'atp_500' || source === 'atp_250') return source.replace('atp', 'tour');
+  const challenger = /^ch_(50|75|100|125|175)$/u.exec(source);
+  if (challenger) return `challenger_${challenger[1]}`;
   const itf = /^([mw])_(15|25|35|50|75|100)$/u.exec(source);
   if (itf) return `itf_${itf[1]}${itf[2]}`;
   return source;

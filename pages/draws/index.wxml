@@ -1,13 +1,6 @@
 <page-meta page-style="{{themePageStyle}}" background-color="{{themeCanvas}}" background-text-style="{{themeBackgroundTextStyle}}"/>
 <view class="safe-page draw-page theme-{{uiTheme}}">
-  <view class="page-head">
-    <view class="title-row" style="padding-top:{{topInset}}px">
-      <view class="title-copy">
-        <text class="eyebrow">赛事签表</text>
-        <text class="title">赛事签表</text>
-        <text class="title-caption">查看各轮对阵与赛果</text>
-      </view>
-    </view>
+  <view class="page-head" style="padding-top:{{topInset}}px">
     <view class="module-nav">
       <view class="module" bindtap="openScores"><ui-icon name="score" size="20"/><text>实时比分</text></view>
       <view class="module active"><ui-icon name="draw" size="20" color="{{themeAccentStrong}}"/><text>赛事签表</text></view>
@@ -22,11 +15,11 @@
       <text class="summary-title">{{selectedTournamentSummary.title}}</text>
       <text wx:if="{{selectedTournamentSummary.meta}}" class="summary-meta">{{selectedTournamentSummary.meta}}</text>
       <text wx:elif="{{weekRange}}" class="summary-meta">本周签表 · {{weekRange}}</text>
-      <text wx:if="{{selectedTournamentSummary.surface || selectedTournamentSummary.status}}" class="summary-meta">{{selectedTournamentSummary.surface}} {{selectedTournamentSummary.status}}</text>
+      <text wx:if="{{selectedTournamentSummary.status}}" class="summary-meta">{{selectedTournamentSummary.status}}</text>
     </view>
     <view class="summary-actions">
-      <button bindtap="openTournamentDetail" disabled="{{!selectedTournamentId}}">赛事详情</button>
-      <button class="primary" bindtap="openTournamentSelector">切换赛事</button>
+      <button class="detail-link" bindtap="openTournamentDetail" disabled="{{!selectedTournamentId}}">赛事详情</button>
+      <button class="primary" bindtap="openTournamentSelector"><ui-icon name="filter" size="15" color="#fff"/><text>切换赛事</text></button>
     </view>
   </view>
 

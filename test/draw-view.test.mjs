@@ -119,6 +119,39 @@ test('draw metadata presents current-draw awards and separates withdrawals from 
   assert.doesNotMatch(JSON.stringify(result.incidents), /Match Result|RET/u);
 });
 
+test('draw metadata is isolated by selected draw and ignores match outcomes', () => {
+  const result = officialMetadataView({
+    roundAwards: [
+      {
+        drawId: 'ws-main', roundKey: 'winner', roundLabel: 'Winner',
+        prizeMoney: { raw: '$1,000' }, rankingPoints: { value: 100 }
+      },
+      {
+        drawId: 'wd-main', roundKey: 'winner', roundLabel: 'Winner',
+        prizeMoney: { raw: '$2,000' }, rankingPoints: { value: 200 }
+      }
+    ],
+    withdrawals: [
+      { id: 'w1', drawId: 'ws-main', displayName: '女单球员', reason: '伤病' },
+      { id: 'w2', drawId: 'wd-main', displayName: '女双球员', reason: '赛程' },
+      { id: 'ret1', drawId: 'ws-main', kind: 'RET', displayName: '比赛中途退赛' }
+    ],
+    drawChanges: [
+      { id: 'c1', drawId: 'ws-main', kind: 'replacement', originalName: 'A', replacementName: 'B' },
+      { id: 'c2', drawId: 'wd-main', kind: 'replacement', originalName: 'C', replacementName: 'D' }
+    ],
+    incidents: [
+      { id: 'wo1', drawId: 'ws-main', kind: 'withdrawal', resultKind: 'W/O', displayName: '赛前退赛结果' },
+      { id: 'i1', drawId: 'ws-main', kind: 'withdrawal', displayName: '赛前退出名单', reason: '身体不适' }
+    ]
+  }, { drawId: 'ws-main', stage: 'main_draw', discipline: 'singles' });
+
+  assert.deepEqual(result.roundAwards.map(item => item.prize), ['$1,000']);
+  assert.deepEqual(result.withdrawals.map(item => item.name), ['女单球员', '赛前退出名单']);
+  assert.deepEqual(result.drawChanges.map(item => item.originalName), ['A']);
+  assert.doesNotMatch(JSON.stringify(result), /女双球员|比赛中途退赛|赛前退赛结果/u);
+});
+
 test('draw view does not invent champion node before official winner exists', () => {
   const presentation = {
     rounds: [{ roundId: 'round-final', displayNameZh: '决赛' }],
@@ -155,7 +188,7 @@ test('draw view does not invent champion node before official winner exists', ()
   assert.equal(columns[0].title, '决赛');
 });
 
-test('draw view labels unresolved advancement slots as winner pending', () => {
+test('draw view labels unresolved advancement slots as pending', () => {
   const presentation = {
     rounds: [{ roundId: 'round-2', displayNameZh: '第二轮' }],
     slots: [
@@ -184,7 +217,7 @@ test('draw view labels unresolved advancement slots as winner pending', () => {
     }]
   };
   const [column] = drawColumns(presentation);
-  assert.equal(column.matches[0].second, '胜者待定');
+  assert.equal(column.matches[0].second, '待定');
   assert.equal(column.matches[0].hasFirstScores, false);
   assert.equal(column.matches[0].hasSecondScores, false);
 });
@@ -320,9 +353,23 @@ test('draw page exposes final vertical structure and independent landscape route
     'utf8'
   );
   assert.match(landscape, /退出横屏/);
+  assert.match(landscape, /查找球员/);
   assert.match(landscape, /当前轮次/);
   assert.match(landscape, /总览/);
+  assert.match(landscape, /bindscroll="onBoardScroll"/);
   assert.match(landscape, /mini-map/);
+  const landscapeStyle = readFileSync(
+    resolve(miniRoot, 'packages/tournament/pages/draw-landscape/index.wxss'),
+    'utf8'
+  );
+  assert.doesNotMatch(landscapeStyle, /430rpx/u);
+  assert.match(landscapeStyle, /width:248rpx/u);
+  assert.match(landscapeStyle, /word-break:keep-all/u);
+  const landscapeConfig = readFileSync(
+    resolve(miniRoot, 'packages/tournament/pages/draw-landscape/index.json'),
+    'utf8'
+  );
+  assert.match(landscapeConfig, /"pageOrientation":\s*"landscape"/u);
   const wxss = readFileSync(
     resolve(miniRoot, 'pages/draws/index.wxss'),
     'utf8'

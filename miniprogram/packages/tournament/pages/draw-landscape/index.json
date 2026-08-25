@@ -4,5 +4,6 @@
     "client-state": "/components/client-state/index"
   },
   "navigationStyle": "custom",
-  "disableScroll": true
+  "disableScroll": true,
+  "pageOrientation": "landscape"
 }

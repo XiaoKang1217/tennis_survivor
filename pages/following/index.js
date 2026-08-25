@@ -6,6 +6,7 @@ const { loadProjectionResource, readTrustedProjection } = require('../../core/pr
 const { matchView } = require('../../core/view-model');
 const { beijingDate } = require('../../core/schedule-date');
 const { followingPath } = require('../../services/follow-service');
+const { mediaUrl } = require('../../core/media');
 
 const PAGE_SIZE = 20;
 const FOLLOWING_CACHE_SCHEMA = 'follow-context-bff/1';
@@ -58,10 +59,9 @@ function fieldText(candidate, fallback = '') {
     ? fallback : String(value);
 }
 
-function portrait(candidate) {
+function portrait(candidate, size = '96') {
   const value = fact(candidate);
-  if (typeof value === 'string') return value;
-  return value?.publicUrl || value?.url || '';
+  return mediaUrl(value ?? candidate, { size });
 }
 
 function countryFlag(value) {
@@ -213,7 +213,7 @@ function playerView(item) {
     countryMark: countryFlag(countryCode),
     authority,
     authorityClass: authority.toLowerCase(),
-    portraitUrl: portrait(item.heroImage) || portrait(item.portrait),
+    portraitUrl: portrait(item.heroImage, '96') || portrait(item.portrait, '96'),
     rankBadge: rankText(officialPosition),
     rankingLabel: rankText(officialPosition),
     raceLabel: rankText(racePosition),

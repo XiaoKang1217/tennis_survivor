@@ -5,13 +5,18 @@ const { createSWRCache } = require('../../core/swr-cache');
 const { loadProjectionResource, readTrustedProjection } = require('../../core/projection-resource');
 const { drawShare, enablePageShare } = require('../../core/share');
 const { updatePageShareImages } = require('../../core/share-poster');
-const { normalizeLevelCode, levelLabel } = require('../../core/localization');
+const {
+  CALENDAR_CACHE_SCHEMA,
+  calendarCacheKey,
+  tournamentOptionsFromCalendarProjection,
+  weekRangeLabel,
+  yearOf
+} = require('../../core/draw-week-index');
 
 const {
   drawGroupLabel,
   drawRoundView,
   drawSelectionView,
-  field,
   officialMetadataView
 } = require('../../core/draw-view');
 
@@ -19,8 +24,7 @@ const DRAW_INDEX_SCHEMA = 'draw-index-projection/1';
 const DRAW_BODY_SCHEMA = 'draw-body-projection/1';
 
 function drawIndexCacheKey(tournamentEditionId, tour = '') {
-  const normalized = normalizeDrawTour(tour);
-  return 'draw_index:' + tournamentEditionId + (normalized ? ':' + normalized : '');
+  return 'draw_index:' + tournamentEditionId + ':' + (normalizeDrawTour(tour) || 'all');
 }
 function drawBodyCacheKey(drawId) { return 'draw_body:' + drawId; }
 
@@ -40,117 +44,12 @@ function filterTourQuery(value) {
   return text === 'ATP' || text === 'WTA' ? text.toLowerCase() : '';
 }
 
-const LEVEL_PRIORITY = Object.freeze({
-  grand_slam: 10000,
-  masters_1000: 9000,
-  wta_1000: 9000,
-  tour_500: 8000,
-  wta_500: 8000,
-  tour_250: 7000,
-  wta_250: 7000,
-  challenger_175: 6175,
-  challenger_125: 6125,
-  wta_125: 6125,
-  challenger_100: 6100,
-  challenger_75: 6075,
-  challenger_50: 6050,
-  itf_w100: 5100,
-  itf_w75: 5075,
-  itf_w50: 5050,
-  itf_w35: 5035,
-  itf_m25: 5025,
-  itf_m15: 5015,
-  itf_w15: 5015
-});
-
-const TOUR_PRIORITY = Object.freeze({ ATP: 3, WTA: 2, ITF: 1, UNKNOWN: 0 });
 const CONTENT_TABS = Object.freeze([
   Object.freeze({ id: 'draw', label: '签表' }),
   Object.freeze({ id: 'awards', label: '奖金积分' }),
   Object.freeze({ id: 'withdrawals', label: '退赛' }),
   Object.freeze({ id: 'changes', label: '签表变动' })
 ]);
-
-function currentWeekRange(value = '') {
-  const now = new Date();
-  const fallback = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
-    + `-${String(now.getDate()).padStart(2, '0')}`;
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value || fallback);
-  if (!match) return '';
-  const date = new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3])));
-  const weekday = date.getUTCDay() || 7;
-  date.setUTCDate(date.getUTCDate() - weekday + 1);
-  const end = new Date(date);
-  end.setUTCDate(end.getUTCDate() + 6);
-  const startLabel = `${date.getUTCMonth() + 1}月${date.getUTCDate()}日`;
-  const endLabel = date.getUTCMonth() === end.getUTCMonth()
-    ? `${end.getUTCDate()}日` : `${end.getUTCMonth() + 1}月${end.getUTCDate()}日`;
-  return `${startLabel}—${endLabel}`;
-}
-
-function tournamentOptions(projection) {
-  const values = new Map();
-  for (const match of projection?.payload?.matches || []) {
-    const id = match.tournament?.id;
-    if (!id) continue;
-    const players = projection.payload.matches
-      .filter(item => item.tournament?.id === id)
-      .flatMap(item => item.participants || [])
-      .flatMap(side => side.members || [])
-      .flatMap(member => [
-        field(member.displayNameZh),
-        field(member.displayNameOriginal)
-      ])
-      .filter(Boolean);
-    const level = match.tournament?.levelCode
-      || match.tournament?.level
-      || match.competitionLevel
-      || '';
-    const levelCode = normalizeLevelCode(field(level) || String(level || ''));
-    const tourOrg = match.tournament?.tourOrg || 'UNKNOWN';
-    const tourFilter = /^challenger_/u.test(levelCode) ? 'CHALLENGER'
-      : levelCode === 'wta_125' ? 'WTA'
-        : tourOrg;
-    const existing = values.get(id);
-    const tourFilters = new Set(existing?.tourFilters || []);
-    if (tourFilter) tourFilters.add(tourFilter);
-    const requestTour = existing?.requestTour || normalizeDrawTour(tourOrg);
-    const title = existing?.title || field(match.tournament.displayNameZh, '赛事');
-    const location = existing?.location || field(match.tournament.locationNameZh);
-    const levelDisplay = existing?.levelDisplay || levelLabel(levelCode) || String(tourOrg || '赛事');
-    const surface = existing?.surface || field(match.surface?.displayNameZh, match.surface?.code || '');
-    const tournamentMeta = [tourOrg, levelDisplay, location].filter(Boolean).join(' · ');
-    values.set(id, Object.freeze({
-      id,
-      title,
-      location,
-      surface,
-      tourOrg: existing && existing.tourOrg !== tourOrg ? 'ATP/WTA' : tourOrg,
-      tourFilters: Object.freeze([...tourFilters]),
-      requestTour,
-      levelCode: existing?.levelCode || levelCode,
-      levelDisplay,
-      meta: tournamentMeta,
-      status: field(match.tournament?.statusLabel, ''),
-      searchText: [
-        existing?.searchText || '',
-        title,
-        location,
-        levelDisplay,
-        ...players
-      ].join(' ').toLocaleLowerCase('zh-CN')
-    }));
-  }
-  return [...values.values()].sort((first, second) => {
-    const firstLevel = LEVEL_PRIORITY[first.levelCode] || 0;
-    const secondLevel = LEVEL_PRIORITY[second.levelCode] || 0;
-    if (firstLevel !== secondLevel) return secondLevel - firstLevel;
-    const firstTour = TOUR_PRIORITY[first.tourOrg] || 0;
-    const secondTour = TOUR_PRIORITY[second.tourOrg] || 0;
-    if (firstTour !== secondTour) return secondTour - firstTour;
-    return first.title.localeCompare(second.title, 'zh-CN');
-  });
-}
 
 function filteredTournaments(tournaments, tourFilter, query) {
   const search = String(query || '').trim().toLocaleLowerCase('zh-CN');
@@ -210,7 +109,7 @@ function tournamentSummary(tournaments, id, title) {
   return Object.freeze({
     title: item?.title || title || '选择赛事',
     level: item?.levelDisplay || '',
-    meta: item?.meta || '',
+    meta: item?.summaryMeta || item?.meta || '',
     location: item?.location || '',
     surface: item?.surface || '',
     status: item?.status || ''
@@ -259,7 +158,7 @@ Page({
       { id: 'ITF', label: 'ITF' }
     ],
     tourFilter: 'all',
-    weekRange: currentWeekRange(),
+    weekRange: weekRangeLabel(),
     query: '',
     selectorOpen: false,
     selectedTournamentId: '',
@@ -304,37 +203,15 @@ Page({
     this.currentPresentation = null;
     this.setData({
       topInset: info.statusBarHeight || 44,
-      weekRange: currentWeekRange(options.date || ''),
+      weekRange: weekRangeLabel(options.date || ''),
       selectedTournamentId: optionValue(options.tournamentEditionId),
       selectedTitle: optionValue(options.title),
       selectedTour: this.initialTour,
       tourFilter: tourFilterFromQuery(this.initialTour),
       selectedTournamentSummary: tournamentSummary([], optionValue(options.tournamentEditionId), optionValue(options.title))
     });
-    let selectedDuringSubscribe = false;
-    this.unsubscribe = getApp().services.scoreStore.subscribe(projection => {
-      const tournaments = tournamentOptions(projection);
-      const filtered = filteredTournaments(
-        tournaments,
-        this.data.tourFilter,
-        this.data.query
-      );
-      this.setData({
-        tournaments,
-        filteredTournaments: filtered,
-        selectedTournamentSummary: tournamentSummary(
-          tournaments,
-          this.data.selectedTournamentId,
-          this.data.selectedTitle
-        ),
-        weekRange: currentWeekRange(projection?.payload?.scheduleGroupDate || this.matchDate)
-      });
-      if (!this.data.selectedTournamentId && filtered[0]) {
-        selectedDuringSubscribe = true;
-        this.selectTournamentById(filtered[0].id, filtered[0].title, filtered[0].requestTour);
-      }
-    });
-    if (this.data.selectedTournamentId && !selectedDuringSubscribe) void this.loadIndex();
+    void this.loadDrawWeekIndex();
+    if (this.data.selectedTournamentId) void this.loadIndex();
   },
 
   onShow() {
@@ -342,7 +219,7 @@ Page({
     enablePageShare();
   },
 
-  onUnload() { this.unsubscribe?.(); },
+  onUnload() {},
   onShareAppMessage() {
     return drawShare(this.data, { date: this.matchDate }).appMessage;
   },
@@ -367,6 +244,59 @@ Page({
   openTournamentSelector() { this.setData({ selectorOpen: true }); },
   closeTournamentSelector() { this.setData({ selectorOpen: false }); },
   stopTap() {},
+
+  async loadDrawWeekIndex() {
+    const year = yearOf(this.matchDate);
+    const cacheKey = calendarCacheKey(year);
+    const cached = readTrustedProjection(this.cache, cacheKey, CALENDAR_CACHE_SCHEMA);
+    if (cached?.payload) this.applyDrawWeekProjection(cached.payload);
+    else if (!this.data.selectedTournamentId) this.setData({ loading: true, failed: false });
+    try {
+      const result = await loadProjectionResource({
+        http: this.http,
+        cache: this.cache,
+        resourceKey: cacheKey,
+        schemaVersion: CALENDAR_CACHE_SCHEMA,
+        path: '/api/v1/bff/calendar/' + year,
+        requestOptions: {
+          authMode: 'none',
+          header: { 'x-luwang-client-contract-version': CALENDAR_CACHE_SCHEMA }
+        },
+        validate(value) {
+          if (value?.bffContractVersion !== CALENDAR_CACHE_SCHEMA
+            || !Array.isArray(value.presentation?.items)) {
+            throw new Error('calendar_projection_invalid');
+          }
+          return value;
+        }
+      });
+      this.applyDrawWeekProjection(result.value);
+    } catch {
+      if (!this.data.selectedTournamentId && !cached?.payload) {
+        this.setData({ loading: false, failed: true });
+      }
+    }
+  },
+
+  applyDrawWeekProjection(projection) {
+    const tournaments = tournamentOptionsFromCalendarProjection(projection, this.matchDate);
+    const filtered = filteredTournaments(tournaments, this.data.tourFilter, this.data.query);
+    this.setData({
+      tournaments,
+      filteredTournaments: filtered,
+      selectedTournamentSummary: tournamentSummary(
+        tournaments,
+        this.data.selectedTournamentId,
+        this.data.selectedTitle
+      ),
+      weekRange: weekRangeLabel(this.matchDate),
+      loading: this.data.selectedTournamentId ? this.data.loading : false,
+      failed: this.data.selectedTournamentId ? this.data.failed : false
+    });
+    if (!this.data.selectedTournamentId && filtered[0]) {
+      this.selectTournamentById(filtered[0].id, filtered[0].title, filtered[0].requestTour);
+    }
+  },
 
   chooseTournament(event) {
     this.selectTournamentById(
@@ -533,7 +463,9 @@ Page({
         playerQuery: '',
         playerResults: [],
         focusedPlayerId: '',
-        focusedPlayerName: ''
+        focusedPlayerName: '',
+        shareCardImageUrl: '',
+        shareTimelineImageUrl: ''
       } : {})
     });
     if (cached?.payload) this.applyDrawProjection(cached.payload, drawId, { fromCache: true });

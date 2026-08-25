@@ -5,6 +5,7 @@ const { createSWRCache } = require('../../../../core/swr-cache');
 const { loadProjectionResource, readTrustedProjection } = require('../../../../core/projection-resource');
 const { enablePageShare, playerShare } = require('../../../../core/share');
 const { updatePageShareImages } = require('../../../../core/share-poster');
+const { mediaUrl } = require('../../../../core/media');
 
 const PLAYER_PROFILE_CACHE_SCHEMA = 'player-profile-bff/2';
 function playerProfileCacheKey(tour, playerId) {
@@ -302,8 +303,14 @@ Page({
     const profileAvailable = profile?.bffContractVersion === 'player-profile-bff/2';
     if (profileAvailable) {
       const value = profile.display || {};
-      const portrait = value.portrait?.value;
-      const hero = value.heroImage?.value;
+      const portraitUrl = mediaUrl(value.portrait, {
+        size: '240',
+        fallback: this.data.portraitUrl
+      });
+      const heroImageUrl = mediaUrl(value.heroImage, {
+        size: '240',
+        fallback: this.data.heroImageUrl
+      }) || portraitUrl;
       const entry = profile.payload?.entry || {};
       const followState = value.viewerFollowState?.player
         || profile.payload?.viewerFollowState?.player
@@ -335,8 +342,8 @@ Page({
         countryCode: display(value.countryCode, this.data.countryCode),
         followTargetId: followState.targetId || `${this.data.tour}:${this.data.playerId}`,
         followed: followState.followed === true,
-        portraitUrl: portrait?.publicUrl || portrait?.url || this.data.portraitUrl,
-        heroImageUrl: hero?.publicUrl || hero?.url || this.data.heroImageUrl,
+        portraitUrl,
+        heroImageUrl,
         facts: [
           { label: '出生日期', value: display(value.birthDate) },
           { label: '身高', value: display(value.height) },
