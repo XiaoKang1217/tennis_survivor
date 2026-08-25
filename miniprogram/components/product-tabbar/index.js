@@ -13,26 +13,26 @@ Component({
     theme: { type: String, value: 'clean-blue' }
   },
   data: {
-    activeColor: '#339cff',
-    inactiveColor: '#66788a'
+    activeColor: '#1769df',
+    inactiveColor: '#64758a'
   },
   observers: {
     theme(value) {
       const palette = value === 'daylight'
-        ? { activeColor: '#54775e', inactiveColor: '#8b8b7e' }
+        ? { activeColor: '#187a59', inactiveColor: '#6a756c' }
         : value === 'dark'
-          ? { activeColor: '#38bdf8', inactiveColor: '#94a3b8' }
-          : { activeColor: '#339cff', inactiveColor: '#66788a' };
+          ? { activeColor: '#9bc4ff', inactiveColor: '#a7b7cb' }
+          : { activeColor: '#1769df', inactiveColor: '#64758a' };
       this.setData(palette);
     }
   },
   lifetimes: {
     attached() {
       const palette = this.data.theme === 'daylight'
-        ? { activeColor: '#54775e', inactiveColor: '#8b8b7e' }
+        ? { activeColor: '#187a59', inactiveColor: '#6a756c' }
         : this.data.theme === 'dark'
-          ? { activeColor: '#38bdf8', inactiveColor: '#94a3b8' }
-          : { activeColor: '#339cff', inactiveColor: '#66788a' };
+          ? { activeColor: '#9bc4ff', inactiveColor: '#a7b7cb' }
+          : { activeColor: '#1769df', inactiveColor: '#64758a' };
       this.setData(palette);
     }
   },

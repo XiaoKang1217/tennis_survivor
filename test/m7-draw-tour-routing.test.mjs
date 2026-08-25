@@ -25,6 +25,30 @@ function drawIndexPayload(overrides = {}) {
   };
 }
 
+const available = value => ({ state: 'available', value, reasonCode: null, message: null });
+
+function scheduleProjection(matches) {
+  return {
+    payload: {
+      scheduleGroupDate: '2026-08-25',
+      matches
+    }
+  };
+}
+
+function tournamentScheduleMatch(tourOrg) {
+  return {
+    tournament: {
+      id: 'UO',
+      tourOrg,
+      levelCode: 'grand_slam',
+      locationNameZh: available('纽约'),
+      displayNameZh: available('美国网球公开赛')
+    },
+    participants: []
+  };
+}
+
 function loadPageDefinition(path) {
   const pagePath = require.resolve(path);
   delete require.cache[pagePath];
@@ -173,5 +197,70 @@ test('calendar draw-selection entries carry tour into the draw page', () => {
 
   assert.match(wx.redirected, /^\/pages\/draws\/index\?/u);
   assert.match(wx.redirected, /tournamentEditionId=UO/u);
-  assert.match(wx.redirected, /tour=wta/u);
+	  assert.match(wx.redirected, /tour=wta/u);
+	});
+
+test('calendar page uses the single aggregate projection without tour-bucket fallback', async () => {
+  const script = readFileSync(resolve(miniRoot, 'pages/calendar/index.js'), 'utf8');
+  assert.doesNotMatch(script, /SOURCE_BUCKETS|fetchBucketCalendarFallback|tour-calendar-bff|Promise\.allSettled/u);
+
+  const definition = loadPageDefinition('../miniprogram/pages/calendar/index');
+  const wx = wxRuntime();
+  const requests = [];
+  const context = pageContext(definition, wx, {
+    async request(path) {
+      requests.push(path);
+      throw new Error('calendar_aggregate_unavailable');
+    }
+  }, { year: 2026 });
+
+  await definition.load.call(context);
+
+  assert.deepEqual(requests, ['/api/v1/bff/calendar/2026']);
+  assert.equal(context.data.failed, true);
+});
+
+test('draw page auto-select keeps WTA tour for joint US Open events', async () => {
+  const definition = loadPageDefinition('../miniprogram/pages/draws/index');
+  const wx = wxRuntime();
+  const previousWx = globalThis.wx;
+  const previousGetApp = globalThis.getApp;
+  const requests = [];
+  globalThis.wx = wx;
+  globalThis.getApp = () => ({
+    services: {
+      http: {
+        async request(path, options) {
+          requests.push({ path, options });
+          return { statusCode: 200, data: drawIndexPayload({ items: [] }), etag: 'wta-index' };
+        }
+      },
+      scoreStore: {
+        subscribe(callback) {
+          callback(scheduleProjection([
+            tournamentScheduleMatch('ATP'),
+            tournamentScheduleMatch('WTA')
+          ]));
+          return () => undefined;
+        }
+      }
+    }
+  });
+  const context = pageContext(definition, wx, null);
+
+  try {
+    definition.onLoad.call(context, { tour: 'wta' });
+    await new Promise(resolve => setTimeout(resolve, 20));
+  } finally {
+    if (previousWx === undefined) delete globalThis.wx;
+    else globalThis.wx = previousWx;
+    if (previousGetApp === undefined) delete globalThis.getApp;
+    else globalThis.getApp = previousGetApp;
+  }
+
+  assert.equal(context.data.selectedTournamentId, 'UO');
+  assert.equal(context.data.selectedTour, 'wta');
+  assert.equal(requests.length, 1);
+  assert.match(requests[0].path, /tournamentEditionId=UO/u);
+  assert.match(requests[0].path, /tour=wta/u);
 });

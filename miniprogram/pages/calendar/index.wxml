@@ -1,6 +1,6 @@
 <view class="safe-page module-page theme-{{uiTheme}}">
   <block wx:if="{{isDaylight}}">
-    <view class="daylight-brand-head" style="padding-top:{{topInset + 8}}px"><text class="daylight-kicker">{{drawSelectionMode ? 'PAST DRAWS' : 'TOUR CALENDAR'}}</text><text class="daylight-page-title">{{drawSelectionMode ? '选择过往签表' : '巡回赛历'}}</text><text class="daylight-caption">{{drawSelectionMode ? '按时间线定位赛事签表' : '按周查看全球巡回赛'}}</text></view>
+    <view class="daylight-brand-head" style="padding-top:{{topInset + 8}}px"><text class="daylight-kicker">{{drawSelectionMode ? '过往签表' : '巡回赛历'}}</text><text class="daylight-page-title">{{drawSelectionMode ? '选择过往签表' : '巡回赛历'}}</text><text class="daylight-caption">{{drawSelectionMode ? '按时间线定位赛事签表' : '按周查看全球巡回赛'}}</text></view>
     <view class="daylight-module-nav"><button bindtap="openScores" aria-label="比分"><text>比分</text></button><button bindtap="openDraws" aria-label="签表"><text>签表</text></button><button class="active" aria-label="赛历"><text>赛历</text></button><button bindtap="openParticipation" aria-label="动态"><text>动态</text></button></view>
     <view class="daylight-calendar-tools">
       <view class="daylight-season"><view bindtap="previousYear"><ui-icon name="back" size="15" color="#748078"/></view><text>{{year}} 赛季</text><view bindtap="nextYear"><ui-icon name="chevron" size="15" color="#748078"/></view></view>

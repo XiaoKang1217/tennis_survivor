@@ -3,13 +3,13 @@
   <block wx:if="{{isDaylight}}">
     <view class="daylight-detail-head" style="padding-top:{{topInset}}px"><view bindtap="back" role="button"><ui-icon name="back" size="18" color="#54775e"/></view><view><text>球员资料</text><text>{{tour || 'ATP · WTA'}}</text></view><view/></view>
     <view class="daylight-player-hero">
-      <view class="daylight-player-identity"><text class="daylight-hero-eyebrow">{{tour || 'ATP · WTA'}} PLAYER</text><text class="daylight-player-name-main">{{name}}</text><text wx:if="{{originalName}}" class="daylight-player-original-name">{{originalName}}</text><text class="daylight-player-meta-line">{{countryCode || '国家/地区待更新'}}<text wx:if="{{tour}}"> · {{tour}}</text></text><view><view wx:if="{{position}}"><text>世界排名</text><text>{{position}}</text></view><view wx:if="{{points}}"><text>当前积分</text><text>{{points}}</text></view></view></view>
+      <view class="daylight-player-identity"><text class="daylight-hero-eyebrow">{{tour || 'ATP · WTA'}} 球员</text><text class="daylight-player-name-main">{{name}}</text><text wx:if="{{originalName}}" class="daylight-player-original-name">{{originalName}}</text><text class="daylight-player-meta-line">{{countryCode || '国家/地区待更新'}}<text wx:if="{{tour}}"> · {{tour}}</text></text><view><view wx:if="{{position}}"><text>世界排名</text><text>{{position}}</text></view><view wx:if="{{points}}"><text>当前积分</text><text>{{points}}</text></view></view></view>
       <view class="daylight-player-visual"><image wx:if="{{heroImageUrl}}" src="{{heroImageUrl}}" mode="aspectFit"/><image wx:elif="{{portraitUrl}}" src="{{portraitUrl}}" mode="aspectFill"/><ui-icon wx:else name="player" size="50" color="#54775e"/></view>
     </view>
     <view class="profile-actions"><view class="profile-follow-button" bindtap="togglePlayerFollow" role="button"><ui-icon name="heart" size="16" color="#ffffff"/><text>{{followed ? '已关注球员' : '关注球员'}}</text></view><button class="profile-share-button" open-type="share" hover-class="none"><ui-icon name="share" size="16" color="#54775e"/><text>分享</text></button></view>
     <view wx:if="{{statsAvailable}}" class="daylight-player-summary">
-      <view><view><text class="daylight-section-title">本赛季</text><text>SEASON</text></view><view><view><text>{{season.rank}}</text><text>本周排名</text></view><view><text>{{season.winLoss}}</text><text>胜 / 负</text></view><view><text>{{season.titles}}</text><text>冠军</text></view><view><text>{{season.prizeMoney}}</text><text>奖金</text></view></view></view>
-      <view><view><text class="daylight-section-title">职业生涯</text><text>CAREER</text></view><view><view><text>{{career.bestRank}}</text><text>最高排名</text></view><view><text>{{career.winLoss}}</text><text>胜 / 负</text></view><view><text>{{career.titles}}</text><text>冠军</text></view><view><text>{{career.prizeMoney}}</text><text>奖金</text></view></view></view>
+      <view><view><text class="daylight-section-title">本赛季</text><text>赛季</text></view><view><view><text>{{season.rank}}</text><text>本周排名</text></view><view><text>{{season.winLoss}}</text><text>胜 / 负</text></view><view><text>{{season.titles}}</text><text>冠军</text></view><view><text>{{season.prizeMoney}}</text><text>奖金</text></view></view></view>
+      <view><view><text class="daylight-section-title">职业生涯</text><text>生涯</text></view><view><view><text>{{career.bestRank}}</text><text>最高排名</text></view><view><text>{{career.winLoss}}</text><text>胜 / 负</text></view><view><text>{{career.titles}}</text><text>冠军</text></view><view><text>{{career.prizeMoney}}</text><text>奖金</text></view></view></view>
     </view>
     <data-notice wx:if="{{deliveryState}}" state="{{deliveryState}}" message="{{deliveryMessage}}" dataAsOf="{{dataAsOf}}" compact/>
     <view wx:if="{{loading}}" class="daylight-page-state"><client-state state="loading" label="正在读取球员资料" message="资料、排名和生涯统计同步加载"/></view>
@@ -41,7 +41,7 @@
       <view wx:else class="portrait placeholder"><ui-icon name="player" size="48" color="#1677d2"/></view>
     </view>
     <view class="identity">
-      <text class="hero-eyebrow">{{tour || 'ATP · WTA'}} PLAYER</text>
+      <text class="hero-eyebrow">{{tour || 'ATP · WTA'}} 球员</text>
       <text class="player-name">{{name}}</text>
       <text wx:if="{{originalName}}" class="player-original-name">{{originalName}}</text>
       <text class="player-meta">{{countryCode || '国家/地区待更新'}}<text wx:if="{{tour}}"> · {{tour}}</text></text>
@@ -55,7 +55,7 @@
 
   <view wx:if="{{statsAvailable}}" class="summary-panel">
     <view class="summary-group">
-      <view class="summary-group-head"><text>本赛季</text><text>SEASON</text></view>
+      <view class="summary-group-head"><text>本赛季</text><text>赛季</text></view>
       <view class="summary-grid">
         <view><text class="summary-value">{{season.rank}}</text><text>本周排名</text></view>
         <view><text class="summary-value">{{season.winLoss}}</text><text>胜 / 负</text></view>
@@ -64,7 +64,7 @@
       </view>
     </view>
     <view class="summary-group">
-      <view class="summary-group-head"><text>职业生涯</text><text>CAREER</text></view>
+      <view class="summary-group-head"><text>职业生涯</text><text>生涯</text></view>
       <view class="summary-grid">
         <view><text class="summary-value">{{career.bestRank}}</text><text>最高排名</text></view>
         <view><text class="summary-value">{{career.winLoss}}</text><text>胜 / 负</text></view>

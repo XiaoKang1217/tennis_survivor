@@ -35,6 +35,13 @@ function sideScores(score, side) {
   });
 }
 
+function localizedOutcomeText(value) {
+  return String(value || '')
+    .replace(/\bRET\b/gu, '中途退赛')
+    .replace(/\bW\/?O\b/giu, '赛前退赛')
+    .trim();
+}
+
 function drawColumns(presentation) {
   const slots = new Map((presentation?.slots || []).map(slot => [slot.slotId, slot]));
   const rounds = presentation?.rounds || [];
@@ -66,8 +73,8 @@ function drawColumns(presentation) {
           incomingStyle: `top:${(cardHeight - connectorHeight) / 2}rpx;height:${connectorHeight}rpx`,
           matchId: field(match.matchId),
           canOpen: match.canOpenMatch,
-          status: match.statusLabel,
-          scoreText: match.scoreText || '',
+          status: localizedOutcomeText(match.statusLabel),
+          scoreText: localizedOutcomeText(match.scoreText),
           first: participantName(first),
           second: participantName(second),
           firstSeed: field(first?.seedNumber),
@@ -171,8 +178,8 @@ const INCIDENT_LABELS = Object.freeze({
   withdrawal: '退赛',
   replacement: '替补',
   draw_change: '签表变动',
-  retirement: '中途退赛 · RET',
-  walkover: '赛前退赛 · WO',
+  retirement: '中途退赛',
+  walkover: '赛前退赛',
   retirement_or_walkover: '退赛 / 赛前晋级'
 });
 
@@ -283,6 +290,7 @@ module.exports = Object.freeze({
   drawGroupLabel,
   drawColumns,
   field,
+  localizedOutcomeText,
   officialMetadataView,
   participantName,
   sideScores,

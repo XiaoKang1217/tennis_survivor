@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
 import test from 'node:test';
@@ -50,6 +50,43 @@ test('daylight and dark reuse the standard product structure at runtime', () => 
   assert.doesNotMatch(detailMarkup, /match\.group !== 'completed'/);
   assert.match(cardCss, /\.match-card\.theme-daylight/);
   assert.match(cardCss, /\.match-card\.theme-dark/);
+});
+
+test('visual truth tokens and svg paths are migrated without the sample portrait', () => {
+  const globalCss = read('app.wxss');
+  const themeScript = read('core/theme.js');
+  const icons = read('components/ui-icon/index.js');
+  assert.match(globalCss, /--brand:\s*#1769df/);
+  assert.match(globalCss, /--canvas:\s*#f1f6fd/);
+  assert.match(globalCss, /--brand:\s*#187a59/);
+  assert.match(globalCss, /--canvas:\s*#0d1522/);
+  assert.match(themeScript, /#1769df/);
+  assert.match(themeScript, /#187a59/);
+  assert.match(themeScript, /#6ba8ff/);
+  assert.match(icons, /M4 13\.5c2-5\.8/u);
+  assert.match(icons, /rect x="3" y="3\.5" width="6" height="4"/u);
+  assert.equal(
+    existsSync(resolve(miniRoot, 'assets/player-share-portrait-sample.png')),
+    false
+  );
+});
+
+test('product copy avoids decorative english eyebrows', () => {
+  const markup = [
+    'pages/account/index.wxml',
+    'pages/calendar/index.wxml',
+    'pages/following/index.wxml',
+    'pages/legal/index.wxml',
+    'pages/participation/index.wxml',
+    'pages/player-detail/index.wxml',
+    'pages/players/index.wxml',
+    'pages/scores/index.wxml',
+    'pages/tournament-detail/index.wxml'
+  ].map(read).join('\n');
+  assert.doesNotMatch(
+    markup,
+    /LIVE TENNIS|PLAYER CENTER|TOUR CALENDAR|PAST DRAWS|MY TENNIS|ENTRY BOARD|ACCOUNT|TOURNAMENT|LEGAL|SEASON|CAREER|PLAYER/u
+  );
 });
 
 test('daylight match cards preserve the complete real score identity', () => {

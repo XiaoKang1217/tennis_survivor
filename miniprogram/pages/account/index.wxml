@@ -1,6 +1,6 @@
 <view class="safe-page account-page theme-{{uiTheme}}">
   <block wx:if="{{isDaylight}}">
-    <view class="daylight-brand-head" style="padding-top:{{topInset + 10}}px"><text class="daylight-kicker">ACCOUNT</text><text class="daylight-page-title">我的</text></view>
+    <view class="daylight-brand-head" style="padding-top:{{topInset + 10}}px"><text class="daylight-kicker">我的</text><text class="daylight-page-title">我的</text></view>
     <view class="daylight-account-content">
       <view class="daylight-profile-card daylight-card" bindtap="openProfileGate" role="button">
         <view class="daylight-account-avatar"><image wx:if="{{profile.avatarUrl}}" src="{{profile.avatarUrl}}" mode="aspectFill"/><ui-icon wx:else name="profile" size="28" color="#54775e"/></view>

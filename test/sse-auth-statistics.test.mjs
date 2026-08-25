@@ -9,7 +9,7 @@ import {
 
 const require = createRequire(import.meta.url);
 const { Utf8StreamDecoder, SseParser } = require('../miniprogram/core/sse-parser');
-const { AuthSession } = require('../miniprogram/services/auth-session');
+const { AuthSession, stableAccountScope } = require('../miniprogram/services/auth-session');
 const { wxRequest, HttpClient } = require('../miniprogram/services/http-client');
 const { StatisticsStore } = require('../miniprogram/core/statistics-store');
 const {
@@ -50,19 +50,24 @@ test('automatic user login stores only the short session and refreshes without e
     return {
       statusCode: 200,
       data: {
-        contractVersion: 'score-bff/2',
-        accessToken: 'a'.repeat(64),
-        expiresAt: new Date(Date.now() + 3_600_000).toISOString()
-      }
-    };
-  });
+	        contractVersion: 'score-bff/2',
+	        accessToken: 'a'.repeat(64),
+	        expiresAt: new Date(Date.now() + 3_600_000).toISOString(),
+	        accountId: 'account-alpha'
+	      }
+	    };
+	  });
   assert.equal(await auth.ensure(), 'a'.repeat(64));
   assert.equal(auth.state, 'ready');
-  assert.deepEqual(Object.keys([...runtime.storage.values()][0]).sort(),
-    ['accessToken', 'expiresAt']);
-  assert.equal(requests[0].data.code, 'single_use_code_kept_inside_runtime');
-  assert.doesNotMatch(JSON.stringify([...runtime.storage.values()]), /single_use_code/);
-});
+	  assert.deepEqual(Object.keys([...runtime.storage.values()][0]).sort(),
+	    ['accessToken', 'accountScope', 'expiresAt']);
+	  assert.equal(
+	    runtime.storage.get('luwang_v2_user_session_v1').accountScope,
+	    stableAccountScope('account-alpha')
+	  );
+	  assert.equal(requests[0].data.code, 'single_use_code_kept_inside_runtime');
+	  assert.doesNotMatch(JSON.stringify([...runtime.storage.values()]), /single_use_code|account-alpha/);
+	});
 
 test('an expiring session refreshes once for concurrent callers while trusted content may remain visible', async () => {
   const runtime = wxRuntime();
@@ -89,8 +94,31 @@ test('an expiring session refreshes once for concurrent callers while trusted co
   assert.deepEqual(tokens, Array(3).fill('b'.repeat(64)));
   assert.equal(exchangeCount, 1);
   assert.deepEqual(states, ['authenticating', 'refreshing', 'ready']);
-  assert.equal(runtime.storage.get('luwang_v2_user_session_v1').accessToken,
-    'b'.repeat(64));
+	  assert.equal(runtime.storage.get('luwang_v2_user_session_v1').accessToken,
+	    'b'.repeat(64));
+	});
+
+test('session token renewal preserves the stable account scope when the backend identity is unchanged', async () => {
+  const runtime = wxRuntime();
+  const scope = stableAccountScope('account-stable');
+  runtime.storage.set('luwang_v2_user_session_v1', {
+    accessToken: 'a'.repeat(64),
+    expiresAt: new Date(Date.now() - 1_000).toISOString(),
+    accountScope: scope
+  });
+  const auth = new AuthSession(runtime, async () => ({
+    statusCode: 200,
+    data: {
+      contractVersion: 'score-bff/2',
+      accessToken: 'b'.repeat(64),
+      expiresAt: new Date(Date.now() + 3_600_000).toISOString(),
+      accountId: 'account-stable'
+    }
+  }));
+
+  assert.equal(await auth.ensure(), 'b'.repeat(64));
+  assert.equal(auth.currentAccountScope(), scope);
+  assert.equal(runtime.storage.get('luwang_v2_user_session_v1').accountScope, scope);
 });
 
 test('public HTTP reads default to authMode none and do not attach bearer', async () => {

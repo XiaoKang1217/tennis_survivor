@@ -42,25 +42,66 @@ class SwrCache {
     this.maxEntryBytes = options.maxEntryBytes || DEFAULT_MAX_ENTRY_BYTES;
     this.pendingWrites = new Map();
     this.flushTimer = null;
+    this.indexLoaded = false;
+    this.index = [];
+  }
+
+  sanitizeIndex(value) {
+    return value && typeof value === 'object' && Array.isArray(value.items)
+      ? value.items.filter(item =>
+        item
+        && typeof item.resourceKey === 'string'
+        && typeof item.key === 'string'
+        && item.key === stableKey(item.resourceKey))
+        .map(item => ({
+          resourceKey: item.resourceKey,
+          key: item.key,
+          size: Number.isFinite(Number(item.size)) ? Math.max(0, Number(item.size)) : 0,
+          touchedAt: Number.isFinite(Number(item.touchedAt)) ? Number(item.touchedAt) : 0
+        }))
+      : null;
+  }
+
+  loadIndex() {
+    if (this.indexLoaded) return this.index;
+    try {
+      const value = this.wx.getStorageSync(INDEX_KEY);
+      const items = this.sanitizeIndex(value);
+      if (items === null && value !== undefined && value !== null) {
+        try { this.wx.removeStorageSync?.(INDEX_KEY); } catch { /* best effort */ }
+      }
+      this.index = items || [];
+    } catch {
+      this.index = [];
+    }
+    this.indexLoaded = true;
+    return this.index;
   }
 
   getIndex() {
-    try {
-      const value = this.wx.getStorageSync(INDEX_KEY);
-      return value && typeof value === 'object' && Array.isArray(value.items)
-        ? value.items.filter(item => item && typeof item.key === 'string')
-        : [];
-    } catch { return []; }
+    return this.loadIndex().map(item => ({ ...item }));
   }
 
   setIndex(items) {
-    this.scheduleRawWrite(INDEX_KEY, { items });
+    this.index = this.sanitizeIndex({ items }) || [];
+    this.indexLoaded = true;
+    this.scheduleRawWrite(INDEX_KEY, { items: this.index });
+  }
+
+  pendingEntry(key, resourceKey, schemaVersion) {
+    if (!this.pendingWrites.has(key)) return null;
+    return normalizeEntry(this.pendingWrites.get(key), resourceKey, schemaVersion);
+  }
+
+  storedEntry(key, resourceKey, schemaVersion) {
+    return normalizeEntry(this.wx.getStorageSync(key), resourceKey, schemaVersion);
   }
 
   read(resourceKey, schemaVersion = '') {
     const key = stableKey(resourceKey);
     try {
-      const entry = normalizeEntry(this.wx.getStorageSync(key), resourceKey, schemaVersion);
+      const entry = this.pendingEntry(key, resourceKey, schemaVersion)
+        || this.storedEntry(key, resourceKey, schemaVersion);
       if (!entry) {
         this.remove(resourceKey);
         return null;
@@ -88,6 +129,12 @@ class SwrCache {
     const size = byteSize(entry);
     if (!Number.isFinite(size) || size > this.maxEntryBytes) return false;
     const key = stableKey(resourceKey);
+    const existing = this.pendingEntry(key, resourceKey, entry.schemaVersion)
+      || this.storedEntry(key, resourceKey, entry.schemaVersion);
+    if (existing && Number(existing.projectionVersion || 0) > entry.projectionVersion) {
+      this.touch(resourceKey, key, byteSize(existing));
+      return false;
+    }
     this.scheduleRawWrite(key, entry);
     this.touch(resourceKey, key, size);
     this.evict();
@@ -96,6 +143,7 @@ class SwrCache {
 
   remove(resourceKey) {
     const key = stableKey(resourceKey);
+    this.pendingWrites.delete(key);
     try { this.wx.removeStorage?.({ key }); } catch { /* best effort */ }
     try { this.wx.removeStorageSync?.(key); } catch { /* best effort */ }
     this.setIndex(this.getIndex().filter(item => item.resourceKey !== resourceKey));
@@ -104,7 +152,7 @@ class SwrCache {
   touch(resourceKey, key, size) {
     const items = this.getIndex().filter(item => item.resourceKey !== resourceKey);
     items.unshift({ resourceKey, key, size: Number(size) || 0, touchedAt: nowMs() });
-    this.setIndex(items.slice(0, this.maxEntries));
+    this.setIndex(items);
   }
 
   evict() {
@@ -118,6 +166,7 @@ class SwrCache {
       else drop.push(item);
     }
     for (const item of drop) {
+      this.pendingWrites.delete(item.key);
       try { this.wx.removeStorage?.({ key: item.key }); } catch { /* best effort */ }
       try { this.wx.removeStorageSync?.(item.key); } catch { /* best effort */ }
     }

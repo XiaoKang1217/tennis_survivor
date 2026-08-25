@@ -11,6 +11,7 @@ const {
 } = require('../../core/schedule-date');
 
 const SCORE_CACHE_SCHEMA = 'scores-today-projection/1';
+const DEFAULT_DATE_CACHE_SCHEMA = 'scores-default-date-selection/1';
 const INITIAL_LOADING_GRACE_MS = 8_000;
 const TOUR_FILTERS = Object.freeze([
   { id: 'all', label: '全部赛事' },
@@ -121,11 +122,27 @@ function groupStructure(groups) {
 function stableJson(value) { return JSON.stringify(value); }
 
 function scoreCacheKey(date) { return 'scores_today:' + date; }
+function defaultDateCacheKey(preferredDate) { return 'scores_default_date:' + preferredDate; }
 
 function cachedProjection(wxRuntime, date) {
   const entry = createSWRCache(wxRuntime).read(scoreCacheKey(date), SCORE_CACHE_SCHEMA);
   const projection = entry?.payload;
   return projection?.payload?.scheduleGroupDate === date ? projection : null;
+}
+
+function cachedDefaultSelection(wxRuntime, preferredDate) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(preferredDate || '')) return null;
+  const entry = createSWRCache(wxRuntime).read(
+    defaultDateCacheKey(preferredDate),
+    DEFAULT_DATE_CACHE_SCHEMA
+  );
+  const value = entry?.payload;
+  const selectedDate = value?.selectedDate;
+  const projection = value?.projection;
+  if (value?.preferredDate !== preferredDate
+    || !/^\d{4}-\d{2}-\d{2}$/.test(selectedDate || '')
+    || projection?.payload?.scheduleGroupDate !== selectedDate) return null;
+  return { selectedDate, projection };
 }
 
 function writeCachedProjection(wxRuntime, projection) {
@@ -137,6 +154,20 @@ function writeCachedProjection(wxRuntime, projection) {
     dataAsOf: projection.projectionGeneratedAt || projection.dataAsOf || '',
     etag: projection.etag || '',
     payload: projection
+  });
+}
+
+function writeCachedDefaultSelection(wxRuntime, preferredDate, projection) {
+  const selectedDate = projection?.payload?.scheduleGroupDate;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(preferredDate || '')
+    || !/^\d{4}-\d{2}-\d{2}$/.test(selectedDate || '')) return;
+  writeCachedProjection(wxRuntime, projection);
+  createSWRCache(wxRuntime).write(defaultDateCacheKey(preferredDate), {
+    schemaVersion: DEFAULT_DATE_CACHE_SCHEMA,
+    projectionVersion: projection.projectionVersion,
+    dataAsOf: projection.projectionGeneratedAt || projection.dataAsOf || '',
+    etag: projection.etag || '',
+    payload: { preferredDate, selectedDate, projection }
   });
 }
 
@@ -234,7 +265,9 @@ Page({
       ? (menu.top - statusBarHeight) * 2 + menu.height
       : 44;
     const explicitDate = /^\d{4}-\d{2}-\d{2}$/.test(options.date || '');
-    const selectedDate = explicitDate ? options.date : beijingDate();
+    const preferredDate = explicitDate ? options.date : beijingDate();
+    const defaultSelection = explicitDate ? null : cachedDefaultSelection(wx, preferredDate);
+    const selectedDate = defaultSelection?.selectedDate || preferredDate;
     this.followedIds = new Set();
     this.followOverrides = new Map();
     this.followCountOverrides = new Map();
@@ -242,7 +275,7 @@ Page({
     this.allGroups = [];
     this.fullMatchCount = 0;
     this.visibleMatchLimit = INITIAL_VISIBLE_MATCH_LIMIT;
-    this.defaultBeijingDate = selectedDate;
+    this.defaultBeijingDate = preferredDate;
     this.setData({
       topInset: statusBarHeight,
       navigationBarHeight,
@@ -271,16 +304,18 @@ Page({
       }),
       services.scoreStore.subscribe(projection => this.applyProjection(projection))
     ];
-    const cached = cachedProjection(wx, selectedDate);
+    const cached = defaultSelection?.projection || cachedProjection(wx, selectedDate);
     if (cached) this.services.scoreStore.snapshot(cached);
-    this.initialStartPromise = this.startInitialDate(selectedDate, {
-      resolveCarryover: !explicitDate
+    this.initialStartPromise = this.startInitialDate(preferredDate, {
+      resolveCarryover: !explicitDate,
+      selectedDate,
+      initialProjection: defaultSelection?.projection || null
     }).finally(() => { this.initialStartPromise = null; });
   },
 
   async startInitialDate(preferredDate, options = {}) {
-    let selectedDate = preferredDate;
-    let initialProjection = null;
+    let selectedDate = options.selectedDate || preferredDate;
+    let initialProjection = options.initialProjection || null;
     if (options.resolveCarryover) {
       try {
         initialProjection = await this.services.scoreClient.fetchProjectionForDate(
@@ -290,10 +325,10 @@ Page({
         const resolvedDate = initialProjection?.payload?.scheduleGroupDate;
         if (/^\d{4}-\d{2}-\d{2}$/.test(resolvedDate || '')) {
           selectedDate = resolvedDate;
+          writeCachedDefaultSelection(wx, preferredDate, initialProjection);
         }
       } catch {
-        selectedDate = preferredDate;
-        initialProjection = null;
+        initialProjection = options.initialProjection || null;
       }
     }
     this.defaultBeijingDate = preferredDate;

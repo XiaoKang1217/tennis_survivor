@@ -1,6 +1,6 @@
 <view class="safe-page following-page theme-{{uiTheme}}">
   <block wx:if="{{isDaylight}}">
-    <view class="daylight-brand-head" style="padding-top:{{topInset + 8}}px"><text class="daylight-kicker">MY TENNIS</text><text class="daylight-page-title">我的关注</text><text class="daylight-caption">比赛、球员与赛事动态</text></view>
+    <view class="daylight-brand-head" style="padding-top:{{topInset + 8}}px"><text class="daylight-kicker">我的关注</text><text class="daylight-page-title">我的关注</text><text class="daylight-caption">比赛、球员与赛事动态</text></view>
     <view class="follow-tabs follow-tabs-daylight">
       <view wx:for="{{tabs}}" wx:key="id" data-kind="{{item.id}}" bindtap="selectKind" class="follow-tab {{selectedKind === item.id ? 'active' : ''}}" role="button"><text>{{item.label}}</text><text>{{item.count}}</text></view>
     </view>

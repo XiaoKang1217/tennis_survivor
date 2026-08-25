@@ -18,13 +18,15 @@ function tiebreakLabel(setNumber, game, scoringRules) {
   const rules = scoringRules && typeof scoringRules === 'object' ? scoringRules : {};
   if (rules.decidingSetIsMatchTiebreak === true
     && Number(rules.bestOfSets) === Number(setNumber)) {
-    return `抢${Number(rules.matchTiebreakTargetPoints) || 10}`;
+    const target = Number(rules.matchTiebreakTargetPoints);
+    return Number.isFinite(target) && target > 0 ? `抢${target}` : '';
   }
   if (Number(rules.bestOfSets) === Number(setNumber)
     && Number(rules.finalSetTiebreakTargetPoints) > 7) {
     return `抢${Number(rules.finalSetTiebreakTargetPoints)}`;
   }
-  return `抢${Number(rules.regularTiebreakTargetPoints) || 7}`;
+  const target = Number(rules.regularTiebreakTargetPoints);
+  return Number.isFinite(target) && target > 0 ? `抢${target}` : '';
 }
 
 function pointByPointView(projection, participantNames, scoringRules = null) {

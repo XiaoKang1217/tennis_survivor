@@ -1,6 +1,6 @@
 <view class="safe-page scores-page theme-{{uiTheme}}">
   <block wx:if="{{isDaylight}}">
-    <view class="daylight-brand-head" style="padding-top:{{topInset + 8}}px"><text class="daylight-kicker">LIVE TENNIS</text><text class="daylight-page-title">今日比赛</text><text class="daylight-caption">实时比分与官方赛程</text></view>
+    <view class="daylight-brand-head" style="padding-top:{{topInset + 8}}px"><text class="daylight-kicker">实时比赛</text><text class="daylight-page-title">今日比赛</text><text class="daylight-caption">实时比分与官方赛程</text></view>
     <view class="daylight-module-nav"><button class="active" aria-label="比分"><text>比分</text></button><button bindtap="openDraws" aria-label="签表"><text>签表</text></button><button bindtap="openCalendar" aria-label="赛历"><text>赛历</text></button><button bindtap="openParticipation" aria-label="动态"><text>动态</text></button></view>
 
     <block>

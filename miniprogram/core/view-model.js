@@ -9,24 +9,6 @@ const FILTERS = Object.freeze([
   { id: 'followed', label: '我的关注' }
 ]);
 
-const STATUS_PRIORITY = Object.freeze({
-  unknown: 0,
-  scheduled: 1,
-  delayed: 2,
-  postponed: 2,
-  live: 3,
-  interrupted: 3,
-  suspended: 3,
-  cancelled: 4,
-  walkover: 4,
-  retired: 4,
-  defaulted: 4,
-  disqualified: 4,
-  no_show: 4,
-  abandoned: 4,
-  finished: 4
-});
-
 const LEVEL_PRIORITY = Object.freeze({
   grand_slam: 10000,
   masters_1000: 9000,
@@ -351,16 +333,20 @@ function scoreRulesView(value) {
   const matchTiebreakTargetPoints = Number(rules.matchTiebreakTargetPoints);
   const finalSetTiebreakTargetPoints = Number(rules.finalSetTiebreakTargetPoints);
   const regularTiebreakTargetPoints = Number(rules.regularTiebreakTargetPoints);
-  const gameRule = rules.gameRule === 'no_ad' ? 'no_ad' : 'advantage';
+  const gameRule = rules.gameRule === 'no_ad'
+    ? 'no_ad'
+    : rules.gameRule === 'advantage' ? 'advantage' : '';
   const formatTarget = target => Number.isFinite(target) ? `抢${target}` : '';
   const decidingLabel = rules.decidingSetIsMatchTiebreak === true
-    ? `决胜盘${formatTarget(matchTiebreakTargetPoints || 10)}`
+    ? Number.isFinite(matchTiebreakTargetPoints)
+      ? `决胜盘${formatTarget(matchTiebreakTargetPoints)}`
+      : ''
     : Number.isFinite(finalSetTiebreakTargetPoints) && finalSetTiebreakTargetPoints !== 7
       ? `决胜盘${formatTarget(finalSetTiebreakTargetPoints)}`
-      : `普通${formatTarget(regularTiebreakTargetPoints || 7)}`;
-  const setLabel = bestOfSets === 5
+      : '';
+  const setLabel = bestOfSets === 5 && setsToWin === 3
     ? '五盘三胜'
-    : setsToWin === 2 || bestOfSets === 3 ? '三盘两胜' : '';
+    : bestOfSets === 3 && setsToWin === 2 ? '三盘两胜' : '';
   const gameLabel = gameRule === 'no_ad' ? '无占先' : '';
   const summary = [setLabel, decidingLabel, gameLabel].filter(Boolean).join(' · ');
   return Object.freeze({
@@ -590,93 +576,8 @@ function filtered(matches, filter, followedIds, query, options = {}) {
   ].some(value => String(value).toLocaleLowerCase('zh-CN').includes(search)));
 }
 
-function normalizedIdentity(value) {
-  return String(value || '').normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLocaleLowerCase('en-US')
-    .replace(/[^\p{L}\p{N}]+/gu, '');
-}
-
-function aliasKeys(match) {
-  const playerSides = match.sides.map(side => side.members
-    .map(item => item.playerId)
-    .filter(Boolean)
-    .sort()
-    .join('+'));
-  const players = match.sides.flatMap(side => side.members
-    .map(item => item.playerId)
-    .filter(Boolean));
-  const nameSides = match.sides.map(side => side.members
-    .map(item => normalizedIdentity(item.originalName || item.name))
-    .filter(Boolean)
-    .sort()
-    .join('+'));
-  const context = [
-    match.tournamentId || normalizedIdentity(match.tournamentName),
-    match.scheduleGroupDate,
-    match.discipline
-  ];
-  const hasResolvedPlayers = playerSides.every(Boolean)
-    && players.length >= 2
-    && new Set(players).size === players.length;
-  return Object.freeze({
-    strong: hasResolvedPlayers
-      ? JSON.stringify([...context, 'canonical_players', playerSides.sort()])
-      : '',
-    fallback: nameSides.every(Boolean)
-      ? JSON.stringify([...context, 'exact_names', nameSides.sort()])
-      : ''
-  });
-}
-
-function preferredAlias(first, second) {
-  const firstPriority = STATUS_PRIORITY[first.statusCode] || 0;
-  const secondPriority = STATUS_PRIORITY[second.statusCode] || 0;
-  if (firstPriority !== secondPriority) {
-    return firstPriority > secondPriority ? first : second;
-  }
-  const firstDataAt = Date.parse(first.dataAsOf);
-  const secondDataAt = Date.parse(second.dataAsOf);
-  if (Number.isFinite(firstDataAt) && Number.isFinite(secondDataAt)
-    && firstDataAt !== secondDataAt) {
-    return firstDataAt > secondDataAt ? first : second;
-  }
-  return first;
-}
-
-function collapsedAliases(matches) {
-  const collapsed = [];
-  const keysByIndex = [];
-  for (const match of matches) {
-    const keys = aliasKeys(match);
-    const index = keysByIndex.findIndex(candidate => {
-      const exactCanonicalPlayers = keys.strong
-        && keys.strong === candidate.strong;
-      const safeExactNameFallback = keys.fallback
-        && keys.fallback === candidate.fallback
-        && (!keys.strong || !candidate.strong);
-      return exactCanonicalPlayers || safeExactNameFallback;
-    });
-    if (index < 0) {
-      collapsed.push(match);
-      keysByIndex.push(keys);
-      continue;
-    }
-    const current = collapsed[index];
-    const selected = preferredAlias(current, match);
-    const followCount = Math.max(Number(current.followCount || 0), Number(match.followCount || 0));
-    collapsed[index] = Object.freeze({
-      ...selected,
-      followed: current.followed || match.followed,
-      followCount,
-      followCountLabel: followCountText(followCount)
-    });
-  }
-  return collapsed;
-}
-
 function groupedMatches(projection, filter, followedIds, query = '', options = {}) {
-  const matches = collapsedAliases(filtered(
+  const matches = filtered(
     projection.payload.matches.map(match => {
       const value = matchView(match, { includeModules: false });
       const override = options.followOverrides instanceof Map
@@ -699,7 +600,7 @@ function groupedMatches(projection, filter, followedIds, query = '', options = {
     followedIds,
     query,
     options
-  ));
+  );
   const tournaments = new Map();
   for (const match of matches) {
     const tournamentKey = match.groupingTournamentKey;

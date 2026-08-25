@@ -11,36 +11,36 @@ const THEME_IDS = new Set(THEMES.map((theme) => theme.id));
 const THEME_PALETTE = Object.freeze({
   'clean-blue': Object.freeze({
     label: '简洁蓝白',
-    accent: '#339cff',
-    accentStrong: '#1677d2',
-    ink: '#1a1c1f',
-    muted: '#526171',
-    subtle: '#66788a',
+    accent: '#1769df',
+    accentStrong: '#0f4fac',
+    ink: '#10233f',
+    muted: '#64758a',
+    subtle: '#64758a',
     surface: '#ffffff',
-    canvas: '#edf5fc',
-    iconMuted: '#66788a'
+    canvas: '#f1f6fd',
+    iconMuted: '#64758a'
   }),
   dark: Object.freeze({
     label: '黑夜模式',
-    accent: '#60a5fa',
-    accentStrong: '#38bdf8',
-    ink: '#e5eef8',
-    muted: '#cbd5e1',
-    subtle: '#94a3b8',
-    surface: '#111827',
-    canvas: '#07111f',
-    iconMuted: '#94a3b8'
+    accent: '#6ba8ff',
+    accentStrong: '#9bc4ff',
+    ink: '#f5f8fc',
+    muted: '#a7b7cb',
+    subtle: '#a7b7cb',
+    surface: '#152135',
+    canvas: '#0d1522',
+    iconMuted: '#a7b7cb'
   }),
   daylight: Object.freeze({
     label: '日光赛场',
-    accent: '#d88b62',
-    accentStrong: '#54775e',
-    ink: '#233028',
-    muted: '#748078',
-    subtle: '#8b8b7e',
-    surface: '#fffdf7',
-    canvas: '#f5f1e6',
-    iconMuted: '#8b8b7e'
+    accent: '#187a59',
+    accentStrong: '#10573f',
+    ink: '#213228',
+    muted: '#6a756c',
+    subtle: '#6a756c',
+    surface: '#fffdf8',
+    canvas: '#f5f0e7',
+    iconMuted: '#6a756c'
   })
 });
 

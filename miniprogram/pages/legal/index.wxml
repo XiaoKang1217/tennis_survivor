@@ -4,7 +4,7 @@
       <ui-icon name="back" size="18" color="#1f2a37"/>
     </view>
     <view class="legal-title-wrap">
-      <text class="legal-kicker">LEGAL</text>
+      <text class="legal-kicker">协议与隐私</text>
       <text class="legal-title">{{doc.title}}</text>
       <text class="legal-subtitle">{{doc.subtitle}}</text>
     </view>

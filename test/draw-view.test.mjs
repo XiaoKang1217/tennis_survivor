@@ -8,6 +8,7 @@ const require = createRequire(import.meta.url);
 const {
   drawColumns,
   officialMetadataView,
+  localizedOutcomeText,
   tournamentDrawFacts
 } = require('../miniprogram/core/draw-view');
 const miniRoot = resolve(import.meta.dirname, '../miniprogram');
@@ -72,7 +73,13 @@ test('draw view keeps Q/WC, winner, every-set score and tiebreak mini points', (
     { games: '6', tiebreak: '5' },
     { games: '1', tiebreak: '' }
   ]);
-  assert.equal(column.matches[0].scoreText, '7-6(5) 2-1 RET');
+  assert.equal(column.matches[0].scoreText, '7-6(5) 2-1 中途退赛');
+});
+
+test('draw outcome labels use Chinese display text for special results', () => {
+  assert.equal(localizedOutcomeText('RET'), '中途退赛');
+  assert.equal(localizedOutcomeText('W/O'), '赛前退赛');
+  assert.equal(localizedOutcomeText('6-4 2-1 RET'), '6-4 2-1 中途退赛');
 });
 
 test('draw metadata presents all awards through champion and honest incidents', () => {

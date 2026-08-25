@@ -4,9 +4,6 @@ const { buildThemeData, syncPageTheme } = require('../../core/theme');
 const { createSWRCache } = require('../../core/swr-cache');
 const { loadProjectionResource, readTrustedProjection } = require('../../core/projection-resource');
 
-const SOURCE_BUCKETS = Object.freeze([
-  'atp', 'wta', 'atp_challenger', 'wta_125', 'itf'
-]);
 const CALENDAR_CACHE_SCHEMA = 'calendar-projection-bff/1';
 
 function calendarCacheKey(year) { return 'calendar_projection:' + year; }
@@ -163,9 +160,6 @@ function calendarProjectionItems(value) {
   if (value?.bffContractVersion === 'calendar-projection-bff/1') {
     return Array.isArray(value.presentation?.items) ? value.presentation.items : [];
   }
-  if (value?.bffContractVersion === 'tour-calendar-bff/1') {
-    return Array.isArray(value.presentation?.items) ? value.presentation.items : [];
-  }
   return [];
 }
 
@@ -259,18 +253,13 @@ Page({
         });
         return;
       }
-      try {
-        const projection = await this.fetchBucketCalendarFallback(options);
-        this.applyCalendarProjection(projection, { fromCache: false });
-      } catch {
-        this.setData({ loading: false, failed: true });
-      }
+      this.setData({ loading: false, failed: true });
     }
   },
 
   async fetchAggregateCalendar(options = {}) {
     const cacheKey = calendarCacheKey(this.data.year);
-    const refreshQuery = options.force ? '?_refresh=' + Date.now() : '';
+    const refreshQuery = options.force ? '?_refresh=calendar' : '';
     const result = await loadProjectionResource({
       http: this.http,
       cache: this.cache,
@@ -293,30 +282,6 @@ Page({
       }
     });
     return result.value;
-  },
-
-  async fetchBucketCalendarFallback(options = {}) {
-    const refreshQuery = options.force ? '?_refresh=' + Date.now() : '';
-    const contract = {
-      authMode: 'none',
-      header: { 'x-luwang-client-contract-version': 'tour-calendar-bff/1' },
-      noCache: options.force === true
-    };
-    const results = await Promise.allSettled(SOURCE_BUCKETS.map(bucket =>
-      this.http.request('/api/v1/bff/tour-calendar/' + bucket + '/' + this.data.year + refreshQuery, contract)));
-    const projections = results
-      .filter(result => result.status === 'fulfilled')
-      .map(result => result.value)
-      .filter(value => value?.bffContractVersion === 'tour-calendar-bff/1'
-        && Array.isArray(value.presentation?.items));
-    if (projections.length === 0) throw new Error('calendar_fallback_empty');
-    return {
-      bffContractVersion: 'calendar-projection-bff/1',
-      projectionVersion: Math.max(...projections.map(value => Number(value.projectionVersion) || 0), 0),
-      dataAsOf: projections.map(value => projectionDataAsOf(value)).filter(Boolean).sort().slice(-1)[0] || '',
-      delivery: { state: projections.some(value => !projectionCurrent(value)) ? 'stale' : 'current' },
-      presentation: { items: projections.flatMap(value => value.presentation.items) }
-    };
   },
 
   applyCalendarProjection(projection, options = {}) {

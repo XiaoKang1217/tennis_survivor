@@ -9,6 +9,58 @@ const AUTH_STATES = Object.freeze([
   'ready', 'authenticating', 'refreshing', 'failed'
 ]);
 
+function cleanStableIdentity(value) {
+  const source = String(value || '').trim();
+  if (!source || source.length > 160) return '';
+  const lowered = source.toLowerCase();
+  const blocked = ['session' + '_key', 'open' + 'id', 'union' + 'id', 'token'];
+  if (blocked.some(item => lowered.includes(item))) return '';
+  return source;
+}
+
+function stableAccountScope(value) {
+  const source = cleanStableIdentity(value);
+  if (!source) return '';
+  let first = 2166136261;
+  let second = 2166136261 ^ 0x9e3779b9;
+  for (let index = 0; index < source.length; index += 1) {
+    const code = source.charCodeAt(index);
+    first ^= code;
+    first = Math.imul(first, 16777619) >>> 0;
+    second ^= code + index;
+    second = Math.imul(second, 16777619) >>> 0;
+  }
+  return `${first.toString(16).padStart(8, '0')}${second.toString(16).padStart(8, '0')}`;
+}
+
+function normalizeAccountScope(value) {
+  const source = String(value || '').trim().toLowerCase();
+  return /^[0-9a-f]{16}$/u.test(source) ? source : '';
+}
+
+function accountScopeFromBody(body) {
+  const candidates = [
+    body?.accountScope,
+    body?.accountId,
+    body?.userId,
+    body?.viewerId,
+    body?.subject,
+    body?.sub,
+    body?.account?.id,
+    body?.user?.id,
+    body?.profile?.accountId,
+    body?.profile?.userId,
+    body?.profile?.viewerId
+  ];
+  for (const candidate of candidates) {
+    const existingScope = normalizeAccountScope(candidate);
+    if (existingScope) return existingScope;
+    const scope = stableAccountScope(candidate);
+    if (scope) return scope;
+  }
+  return '';
+}
+
 class AuthSession {
   constructor(wxRuntime, request,
     loginTimeoutMilliseconds = WECHAT_LOGIN_TIMEOUT_MILLISECONDS) {
@@ -28,7 +80,11 @@ class AuthSession {
       if (!candidate || typeof candidate !== 'object') return null;
       if (!/^[0-9a-f]{64}$/.test(candidate.accessToken)
         || !Number.isFinite(Date.parse(candidate.expiresAt))) return null;
-      return { accessToken: candidate.accessToken, expiresAt: candidate.expiresAt };
+      return {
+        accessToken: candidate.accessToken,
+        expiresAt: candidate.expiresAt,
+        accountScope: normalizeAccountScope(candidate.accountScope)
+      };
     } catch {
       return null;
     }
@@ -42,6 +98,10 @@ class AuthSession {
 
   currentAccessToken() {
     return this.isUsable(this.session) ? this.session.accessToken : '';
+  }
+
+  currentAccountScope() {
+    return this.isUsable(this.session) ? normalizeAccountScope(this.session.accountScope) : '';
   }
 
   subscribe(listener) {
@@ -66,7 +126,11 @@ class AuthSession {
     this.setState(preserveContent ? 'refreshing' : 'authenticating');
     this.pending = this.login().then(session => {
       this.session = session;
-      this.wx.setStorageSync(STORAGE_KEY, session);
+      this.wx.setStorageSync(STORAGE_KEY, {
+        accessToken: session.accessToken,
+        expiresAt: session.expiresAt,
+        ...(session.accountScope ? { accountScope: session.accountScope } : {})
+      });
       this.setState('ready');
       safeEvents.emit('wechat_login_succeeded');
       return session.accessToken;
@@ -129,8 +193,18 @@ class AuthSession {
       || !Number.isFinite(Date.parse(body.expiresAt))) {
       throw new Error('wechat_login_response_invalid');
     }
-    return { accessToken: body.accessToken, expiresAt: body.expiresAt };
+    return {
+      accessToken: body.accessToken,
+      expiresAt: body.expiresAt,
+      accountScope: accountScopeFromBody(body)
+    };
   }
 }
 
-module.exports = Object.freeze({ AuthSession, AUTH_STATES });
+module.exports = Object.freeze({
+  AuthSession,
+  AUTH_STATES,
+  stableAccountScope,
+  normalizeAccountScope,
+  accountScopeFromBody
+});

@@ -1,8 +1,10 @@
 'use strict';
 
 const config = require('../config');
+const { normalizeAccountScope, stableAccountScope } = require('./auth-session');
 
-const PROFILE_STORAGE_KEY = 'luwang_v2_user_profile_v1';
+const LEGACY_PROFILE_STORAGE_KEY = 'luwang_v2_user_profile_v1';
+const PROFILE_STORAGE_PREFIX = 'luwang_v2_user_profile_v2:';
 const LEGAL_VERSION = '2026-08-19';
 
 function cleanText(value, maxLength) {
@@ -17,6 +19,10 @@ function maskedPhone(value) {
 
 function normalizeProfile(value) {
   const source = value && typeof value === 'object' ? value : {};
+  const accountScope = normalizeAccountScope(source.accountScope)
+    || stableAccountScope(
+      source.accountId || source.userId || source.viewerId || source.subject || source.sub
+    );
   const nickname = cleanText(source.nickname || source.nickName || source.displayName, 40);
   const avatarUrl = cleanText(source.avatarUrl, 2048);
   const phoneNumber = cleanText(source.phoneNumber, 32);
@@ -30,8 +36,14 @@ function normalizeProfile(value) {
     phoneMask,
     countryCode,
     completed,
+    accountScope,
     updatedAt: cleanText(source.updatedAt, 40)
   };
+}
+
+function profileStorageKey(scope) {
+  const accountScope = normalizeAccountScope(scope);
+  return accountScope ? `${PROFILE_STORAGE_PREFIX}${accountScope}` : '';
 }
 
 function wxReadFileBase64(wxRuntime, filePath) {
@@ -111,37 +123,70 @@ class AccountService {
     this.auth = auth;
     this.http = http;
     this.listeners = new Set();
-    this.profile = this.readStored();
+    this.activeScope = this.currentScope();
+    this.profile = this.readStored(this.activeScope);
   }
 
-  readStored() {
+  currentScope() {
+    return normalizeAccountScope(this.auth?.currentAccountScope?.());
+  }
+
+  readStored(scope = this.currentScope()) {
+    const key = profileStorageKey(scope);
+    if (!key) return normalizeProfile(null);
     try {
-      return normalizeProfile(this.wx.getStorageSync(PROFILE_STORAGE_KEY));
+      const profile = normalizeProfile(this.wx.getStorageSync(key));
+      return profile.accountScope === scope ? profile : normalizeProfile(null);
     } catch {
       return normalizeProfile(null);
     }
   }
 
-  writeStored(profile) {
-    this.profile = normalizeProfile(profile);
-    try { this.wx.setStorageSync(PROFILE_STORAGE_KEY, this.profile); } catch { /* bounded */ }
+  loadCurrentScope() {
+    const scope = this.currentScope();
+    if (scope === this.activeScope) return this.profile;
+    this.activeScope = scope;
+    this.profile = this.readStored(scope);
     this.emit();
     return this.profile;
   }
 
-  clearStored() {
+  writeStored(profile, requestedScope = '') {
+    const value = normalizeProfile(profile);
+    const scope = normalizeAccountScope(requestedScope)
+      || value.accountScope
+      || this.currentScope();
+    this.activeScope = scope;
+    this.profile = normalizeProfile({ ...value, accountScope: scope });
+    const key = profileStorageKey(scope);
+    if (key) {
+      try { this.wx.setStorageSync(key, this.profile); } catch { /* bounded */ }
+    }
+    this.emit();
+    return this.profile;
+  }
+
+  clearStored(scope = this.activeScope || this.currentScope()) {
+    const key = profileStorageKey(scope);
     this.profile = normalizeProfile(null);
-    try { this.wx.removeStorageSync?.(PROFILE_STORAGE_KEY); } catch { /* bounded */ }
+    this.activeScope = '';
+    try {
+      if (key) this.wx.removeStorageSync?.(key);
+      this.wx.removeStorageSync?.(LEGACY_PROFILE_STORAGE_KEY);
+    } catch { /* bounded */ }
     this.emit();
     return this.profile;
   }
 
   logout() {
+    const scope = this.activeScope || this.currentScope();
+    this.clearStored(scope);
     this.auth.invalidate();
-    return this.clearStored();
+    return this.profile;
   }
 
   subscribe(listener) {
+    this.loadCurrentScope();
     this.listeners.add(listener);
     listener(this.profile);
     return () => this.listeners.delete(listener);
@@ -152,23 +197,25 @@ class AccountService {
   }
 
   currentProfile() {
-    return this.profile;
+    return this.loadCurrentScope();
   }
 
-  isComplete(profile = this.profile) {
-    const value = normalizeProfile(profile);
+  isComplete(profile) {
+    const value = normalizeProfile(profile === undefined ? this.loadCurrentScope() : profile);
     return Boolean(value.nickname && value.avatarUrl);
   }
 
   async refresh() {
     await this.auth.ensure();
+    this.loadCurrentScope();
     const response = await this.http.request('/api/v1/me/profile', {
       method: 'GET',
       authRequired: true
     });
+    const responseProfile = response?.profile || {};
     return this.writeStored({
       ...this.profile,
-      ...(response?.profile || {})
+      ...responseProfile
     });
   }
 
@@ -200,6 +247,7 @@ class AccountService {
     if (!avatarUrl) throw new Error('profile_avatar_required');
     if (!legalConsent.accepted) throw new Error('profile_legal_consent_required');
     await this.auth.ensure();
+    this.loadCurrentScope();
     if (!savedAvatarUrl(avatarUrl)) {
       avatarUrl = await this.uploadAvatar(avatarUrl);
     }
@@ -219,8 +267,10 @@ class AccountService {
 
 module.exports = Object.freeze({
   AccountService,
-  PROFILE_STORAGE_KEY,
+  LEGACY_PROFILE_STORAGE_KEY,
+  PROFILE_STORAGE_PREFIX,
   LEGAL_VERSION,
+  profileStorageKey,
   normalizeProfile,
   normalizeLegalConsent,
   maskedPhone

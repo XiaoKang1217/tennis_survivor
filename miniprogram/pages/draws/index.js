@@ -138,9 +138,13 @@ function tournamentOptions(projection) {
 
 function filteredTournaments(tournaments, tourFilter, query) {
   const search = String(query || '').trim().toLocaleLowerCase('zh-CN');
+  const requestedTour = filterTourQuery(tourFilter);
   return tournaments.filter(item =>
     (tourFilter === 'all' || item.tourFilters?.includes(tourFilter))
-    && (!search || item.searchText.includes(search)));
+    && (!search || item.searchText.includes(search)))
+    .map(item => requestedTour
+      ? Object.freeze({ ...item, requestTour: requestedTour })
+      : item);
 }
 
 function optionValue(value, fallback = '') {
@@ -203,6 +207,7 @@ Page({
       selectedTour: this.initialTour,
       tourFilter: tourFilterFromQuery(this.initialTour)
     });
+    let selectedDuringSubscribe = false;
     this.unsubscribe = getApp().services.scoreStore.subscribe(projection => {
       const tournaments = tournamentOptions(projection);
       const filtered = filteredTournaments(
@@ -216,10 +221,11 @@ Page({
         weekRange: currentWeekRange(projection?.payload?.scheduleGroupDate || this.matchDate)
       });
       if (!this.data.selectedTournamentId && filtered[0]) {
-        this.selectTournamentById(filtered[0].id, filtered[0].title);
+        selectedDuringSubscribe = true;
+        this.selectTournamentById(filtered[0].id, filtered[0].title, filtered[0].requestTour);
       }
     });
-    if (this.data.selectedTournamentId) void this.loadIndex();
+    if (this.data.selectedTournamentId && !selectedDuringSubscribe) void this.loadIndex();
   },
   onShow() {
     syncPageTheme(this);
@@ -268,7 +274,9 @@ Page({
       shareCardImageUrl: '',
       shareTimelineImageUrl: ''
     });
-    if (filtered[0]) this.selectTournamentById(filtered[0].id, filtered[0].title);
+    if (filtered[0]) {
+      this.selectTournamentById(filtered[0].id, filtered[0].title, filtered[0].requestTour);
+    }
   },
 
   updateQuery(event) {

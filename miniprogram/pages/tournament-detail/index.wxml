@@ -6,7 +6,7 @@
     <block wx:elif="{{detailLoaded}}">
       <view class="daylight-event-hero">
         <text class="daylight-event-number">{{detail.classification[0].available ? detail.classification[0].value : 'TOUR'}}</text>
-        <text class="daylight-event-kicker">TOURNAMENT</text>
+        <text class="daylight-event-kicker">赛事</text>
         <text wx:if="{{detail.name.available}}" class="daylight-event-name">{{detail.name.value}}</text><text wx:else class="daylight-event-name">{{detail.name.message}}</text>
         <view class="daylight-event-meta"><text class="life-{{detail.lifecycle.code}}">{{detail.lifecycle.available ? detail.lifecycle.value : detail.lifecycle.message}}</text><block wx:for="{{detail.classification}}" wx:key="label"><text wx:if="{{item.available}}">{{item.value}}</text></block></view>
       </view>

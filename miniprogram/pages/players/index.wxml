@@ -1,7 +1,7 @@
 <view class="safe-page players-page theme-{{uiTheme}}">
   <block wx:if="{{isDaylight}}">
     <product-tabbar active="players" theme="{{uiTheme}}"/>
-    <view class="daylight-brand-head" style="padding-top:{{topInset + 8}}px"><text class="daylight-kicker">PLAYER CENTER</text><text class="daylight-page-title">球员中心</text><text class="daylight-caption">排名、走势与球员资料</text></view>
+    <view class="daylight-brand-head" style="padding-top:{{topInset + 8}}px"><text class="daylight-kicker">球员中心</text><text class="daylight-page-title">球员中心</text><text class="daylight-caption">排名、走势与球员资料</text></view>
     <view class="daylight-player-sections"><scroll-view scroll-x enhanced show-scrollbar="{{false}}"><view class="daylight-player-section-inner"><view wx:for="{{sections}}" wx:key="id" data-section="{{item.id}}" bindtap="selectSection" class="daylight-player-section-item {{section === item.id ? 'active' : ''}}">{{item.label}}</view></view></scroll-view></view>
     <view class="daylight-player-controls">
       <view wx:if="{{section === 'ranking' || section === 'h2h'}}" class="daylight-authority daylight-segmented"><view wx:for="{{rankTabs}}" wx:key="id" data-authority="{{item.id}}" bindtap="selectAuthority" class="{{authority === item.id ? 'selected' : ''}}">{{item.label}}</view></view>
@@ -109,7 +109,7 @@
   <product-tabbar active="players" theme="{{uiTheme}}" />
   <view class="module-head" style="padding-top:{{topInset}}px">
     <view class="module-title-copy">
-      <text class="eyebrow">PLAYER CENTER</text>
+      <text class="eyebrow">球员中心</text>
       <text class="title">球员中心</text>
       <text class="title-caption">排名、走势与球员资料</text>
     </view>

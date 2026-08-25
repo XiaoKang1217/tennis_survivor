@@ -60,8 +60,10 @@ test('white-blue visual language preserves tournament, court, match and detail h
   const cardCss = read('components/match-card/index.wxss');
   const detailMarkup = read('pages/match-detail/index.wxml');
   const detailCss = read('pages/match-detail/index.wxss');
-  assert.match(globalCss, /--brand:\s*#339cff/);
-  assert.match(globalCss, /--canvas:\s*#edf5fc/);
+  assert.match(globalCss, /--brand:\s*#1769df/);
+  assert.match(globalCss, /--canvas:\s*#f1f6fd/);
+  assert.match(globalCss, /--brand:\s*#187a59/);
+  assert.match(globalCss, /--canvas:\s*#0d1522/);
   assert.match(scoreMarkup, /tournament-mark/);
   assert.match(scoreMarkup, /court-head/);
   assert.match(scoreCss, /surface-hard[\s\S]*var\(--brand-soft\)/);
