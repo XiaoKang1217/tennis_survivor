@@ -1,0 +1,77 @@
+<page-meta page-style="{{themePageStyle}}" background-color="{{themeCanvas}}" background-text-style="{{themeBackgroundTextStyle}}"/>
+<view class="landscape-page theme-{{uiTheme}}">
+  <view class="landscape-toolbar" style="{{toolbarStyle}}">
+    <button class="exit-button" bindtap="exitLandscape">退出横屏</button>
+    <view class="toolbar-title">
+      <text>{{title}}</text>
+      <text>{{drawLabel}}</text>
+    </view>
+    <view class="zoom-actions">
+      <button bindtap="zoomOut">－</button>
+      <button bindtap="zoomIn">＋</button>
+    </view>
+    <view class="toolbar-search">
+      <ui-icon name="search" size="14" color="{{themeIconMuted}}"/>
+      <input value="{{playerQuery}}" bindinput="updatePlayerQuery" placeholder="查找球员" confirm-type="search"/>
+    </view>
+    <view class="toolbar-actions">
+      <button bindtap="jumpCurrentRound">当前轮次</button>
+      <button bindtap="showOverview">总览</button>
+      <button bindtap="readableSize">可读大小</button>
+    </view>
+  </view>
+
+  <view wx:if="{{loading && !columns.length}}" class="landscape-state">
+    <client-state state="loading" label="签表加载中" message=""/>
+  </view>
+  <view wx:elif="{{failed && !columns.length}}" class="landscape-state">
+    <client-state state="failed" label="签表暂不可用" message="请退出后重试"/>
+  </view>
+  <scroll-view wx:else scroll-x scroll-y enhanced scroll-left="{{scrollLeft}}" scroll-top="{{scrollTop}}" scroll-into-view="{{scrollIntoView}}" bindscroll="onBoardScroll" class="landscape-board">
+    <view class="bracket-board {{overview ? 'overview' : ''}}" style="{{boardScaleStyle}}">
+      <view wx:for="{{columns}}" wx:key="id" id="{{item.viewId}}" class="bracket-column {{item.selected ? 'selected-round' : ''}}">
+        <text class="round-title">{{item.title}}</text>
+        <view class="round-body" style="height:{{item.height}}rpx">
+          <button wx:for="{{item.matches}}" wx:for-item="match" wx:key="id" id="{{match.viewId}}" style="{{match.nodeStyle}}" data-match-id="{{match.matchId}}" bindtap="openMatch" class="bracket-node {{match.champion ? 'champion-node' : ''}} {{match.highlighted ? 'path-node' : ''}}">
+            <view wx:if="{{match.hasIncoming}}" class="connector-in" style="{{match.incomingStyle}}"></view>
+            <block wx:if="{{match.champion}}">
+              <view class="champion-line">
+                <text class="seed seed-slot">{{match.firstSeed}}</text>
+                <view class="node-members">
+                  <text wx:for="{{match.firstMembers}}" wx:for-item="member" wx:key="id" class="node-name">{{member.name}}</text>
+                </view>
+                <text wx:if="{{match.firstEntry}}" class="entry">{{match.firstEntry}}</text>
+              </view>
+              <text class="node-status">冠军</text>
+            </block>
+            <block wx:else>
+              <view class="node-side {{match.firstWon ? 'winner' : ''}}">
+                <text class="seed seed-slot">{{match.firstSeed}}</text>
+                <view class="node-members">
+                  <text wx:for="{{match.firstMembers}}" wx:for-item="member" wx:key="id" class="node-name">{{member.name}}</text>
+                </view>
+                <view wx:if="{{match.hasFirstScores}}" class="node-scores">
+                  <text wx:for="{{match.firstScores}}" wx:key="index">{{item.games}}<text wx:if="{{item.tiebreak}}" class="tiebreak">{{item.tiebreak}}</text></text>
+                </view>
+              </view>
+              <view class="node-side {{match.secondWon ? 'winner' : ''}}">
+                <text class="seed seed-slot">{{match.secondSeed}}</text>
+                <view class="node-members">
+                  <text wx:for="{{match.secondMembers}}" wx:for-item="member" wx:key="id" class="node-name">{{member.name}}</text>
+                </view>
+                <view wx:if="{{match.hasSecondScores}}" class="node-scores">
+                  <text wx:for="{{match.secondScores}}" wx:key="index">{{item.games}}<text wx:if="{{item.tiebreak}}" class="tiebreak">{{item.tiebreak}}</text></text>
+                </view>
+              </view>
+              <view wx:if="{{match.scoreText || match.status}}" class="node-foot">
+                <text>{{match.scoreText}}</text>
+                <text>{{match.status}}</text>
+              </view>
+            </block>
+          </button>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+  <view class="mini-map"><view style="{{minimapViewportStyle}}"></view></view>
+</view>

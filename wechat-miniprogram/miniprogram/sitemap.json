@@ -1,0 +1,4 @@
+{
+  "desc": "炉的网球 V2 内部验收版",
+  "rules": [{ "action": "disallow", "page": "*" }]
+}

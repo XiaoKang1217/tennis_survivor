@@ -1,0 +1,59 @@
+<view wx:if="{{open}}" class="profile-gate-layer theme-{{theme}}" catchtouchmove="noop">
+  <view class="profile-gate-mask" bindtap="close"/>
+  <view class="profile-gate-sheet" catchtap="noop">
+    <view class="profile-gate-handle"/>
+    <view class="profile-gate-head">
+      <view class="profile-gate-head-main">
+        <text class="profile-gate-title">{{dialogTitle}}</text>
+        <text class="profile-gate-subtitle">{{dialogSubtitle}}</text>
+      </view>
+      <view class="profile-gate-close" bindtap="close" role="button" aria-label="关闭"><ui-icon name="close" size="18" color="{{theme === 'daylight' ? '#8b8b7e' : (theme === 'dark' ? '#94a3b8' : '#66788a')}}"/></view>
+    </view>
+
+    <view class="profile-gate-disclosure">
+      <view class="profile-gate-disclosure-title">授权前说明</view>
+      <text>我们将收集你选择的头像、填写的昵称和登录标识，用于关注同步、提醒和个人中心展示。头像和昵称会先经过内容安全审核；拒绝授权不影响浏览比分、赛程、签表和球员信息。</text>
+    </view>
+
+    <view class="profile-agreement">
+      <view class="profile-agreement-copy">
+        <text>我已阅读并同意</text>
+        <text class="profile-agreement-link" catchtap="openTerms">《用户协议》</text>
+        <text>和</text>
+        <text class="profile-agreement-link" catchtap="openPrivacy">《隐私政策》</text>
+      </view>
+    </view>
+
+    <button wx:if="{{!agreementAccepted}}" id="profile-privacy-agree" class="profile-agree-button" open-type="agreePrivacyAuthorization" bindagreeprivacyauthorization="onAgreePrivacyAuthorization">
+      我已阅读并同意
+    </button>
+
+    <block wx:else>
+      <view class="profile-gate-form">
+        <button class="profile-avatar-button" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar" aria-label="选择头像">
+          <image wx:if="{{avatarUrl}}" src="{{avatarUrl}}" mode="aspectFill" lazy-load="{{true}}"/>
+          <view wx:else class="profile-avatar-empty">
+            <ui-icon name="profile" size="27" color="{{theme === 'daylight' ? '#54775e' : (theme === 'dark' ? '#38bdf8' : '#1677d2')}}"/>
+            <text>选择头像</text>
+          </view>
+          <view wx:if="{{avatarUrl}}" class="profile-avatar-edit">更换</view>
+        </button>
+        <view class="profile-field">
+          <text>昵称</text>
+          <input type="nickname" value="{{nickname}}" focus="{{nicknameFocus}}" bindinput="onNicknameInput" bindblur="onNicknameBlur" placeholder="点击选择微信昵称或输入昵称" maxlength="40"/>
+          <text class="profile-field-tip">点击输入框，微信会在键盘上方推荐昵称</text>
+        </view>
+      </view>
+
+      <view class="profile-gate-note">
+        <ui-icon name="lock" size="15" color="{{theme === 'daylight' ? '#8b8b7e' : (theme === 'dark' ? '#94a3b8' : '#66788a')}}"/>
+        <text>保存后会先完成内容安全审核，审核通过才会更新个人资料。</text>
+      </view>
+      <text wx:if="{{errorMessage}}" class="profile-gate-error">{{errorMessage}}</text>
+
+      <button id="profile-save" class="profile-submit-button" bindtap="onSubmitProfile" loading="{{submitting}}" disabled="{{submitting}}">
+        {{submitting ? '正在审核' : submitLabel}}
+      </button>
+    </block>
+  </view>
+</view>

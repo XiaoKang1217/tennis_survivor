@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#101820"/>
+      <stop offset="0.52" stop-color="#1677d2"/>
+      <stop offset="1" stop-color="#22c55e"/>
+    </linearGradient>
+  </defs>
+  <rect width="500" height="500" rx="46" fill="url(#bg)"/>
+  <rect x="58" y="84" width="384" height="332" rx="34" fill="rgba(255,255,255,.93)"/>
+  <rect x="82" y="126" width="124" height="188" rx="26" fill="#dcecff"/>
+  <circle cx="144" cy="188" r="38" fill="#1677d2"/>
+  <path d="M96 292c12-42 38-62 78-62s66 20 78 62" fill="none" stroke="#1677d2" stroke-width="16" stroke-linecap="round"/>
+  <text x="236" y="146" fill="#1677d2" font-size="28" font-weight="800" font-family="PingFang SC, Arial, sans-serif">炉网</text>
+  <text x="236" y="208" fill="#111827" font-size="44" font-weight="900" font-family="PingFang SC, Arial, sans-serif">球员资料</text>
+  <text x="236" y="254" fill="#526171" font-size="24" font-weight="600" font-family="PingFang SC, Arial, sans-serif">排名 · 战绩 · 赛事</text>
+  <rect x="236" y="314" width="86" height="52" rx="14" fill="#1677d2"/>
+  <text x="279" y="348" text-anchor="middle" fill="#ffffff" font-size="24" font-weight="900" font-family="PingFang SC, Arial, sans-serif">关注</text>
+  <rect x="334" y="314" width="72" height="52" rx="14" fill="#ecf4ff"/>
+  <text x="370" y="348" text-anchor="middle" fill="#1677d2" font-size="24" font-weight="900" font-family="Arial, sans-serif">ATP</text>
+</svg>

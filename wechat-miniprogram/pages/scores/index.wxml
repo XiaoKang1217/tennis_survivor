@@ -1,0 +1,104 @@
+<view class="safe-page scores-page theme-{{uiTheme}}">
+  <view class="page-head">
+    <view class="title-row" style="padding-top:{{topInset}}px">
+      <view class="title-copy">
+        <text class="title">炉网</text>
+      </view>
+    </view>
+
+    <view class="module-nav">
+      <view class="module active" role="button"><ui-icon name="score" size="20" color="#1677d2"/><text>实时比分</text></view>
+      <view class="module" bindtap="openDraws" role="button"><ui-icon name="draw" size="20"/><text>赛事签表</text></view>
+      <view class="module" bindtap="openCalendar" role="button"><ui-icon name="calendar" size="20"/><text>巡回赛历</text></view>
+      <view class="module" bindtap="openParticipation" role="button"><ui-icon name="entry" size="20"/><text>参赛动态</text></view>
+    </view>
+  </view>
+
+  <block>
+    <view class="controls">
+      <view class="search-row">
+        <view class="search-box">
+          <ui-icon name="search" size="17" />
+          <input value="{{query}}" focus="{{searchFocused}}" bindinput="onSearch" confirm-type="search" placeholder="搜索比赛、赛事或球员" />
+        </view>
+        <view class="filter-action" bindtap="openFilterSheet" role="button"><ui-icon name="filter" size="17" color="#1677d2"/><text>筛选<text wx:if="{{activeFilterCount}}">·{{activeFilterCount}}</text></text></view>
+      </view>
+
+      <view class="date-switcher">
+        <view class="date-arrow" bindtap="previousDate" role="button" aria-label="前一官方赛程日"><ui-icon name="back" size="20" /></view>
+        <picker class="date-picker" mode="date" value="{{selectedDate}}" bindchange="selectDate">
+          <view class="date-label"><text>{{dateLabel}}</text><text class="date-caption">北京时间</text></view>
+        </picker>
+        <view class="date-arrow" bindtap="nextDate" role="button" aria-label="后一官方赛程日"><ui-icon name="chevron" size="20" /></view>
+      </view>
+
+      <view class="quick-filters" role="group" aria-label="比赛快捷筛选">
+        <view wx:for="{{filters}}" wx:key="id" data-id="{{item.id}}" bindtap="selectFilter" role="button" class="quick-filter {{selectedFilter === item.id ? 'selected' : ''}}">{{item.label}}</view>
+      </view>
+    </view>
+
+    <view wx:if="{{hasProjection}}" class="freshness-bar"><view class="freshness-dot {{dataDeliveryState === 'unavailable' ? 'unavailable' : ''}}"/><text class="freshness-time">{{dataDeliveryState === 'unavailable' ? '暂未更新' : (dataUpdatedTime ? '更新于 ' + dataUpdatedTime : '已同步')}}</text></view>
+    <view wx:if="{{showTransportNotice}}" class="transport-notice state-{{clientTransportState}}"><ui-icon name="connection" size="15" color="#526171"/><text>{{clientTransportMessage}}</text></view>
+    <view wx:if="{{showDataNotice}}" class="data-notice-wrap"><data-notice state="{{dataDeliveryState}}" message="{{dataDeliveryMessage}}" dataAsOf="{{dataAsOf}}" compact /></view>
+
+    <view wx:if="{{!hasProjection && clientTransportState !== 'offline' && projectionLoadState !== 'failed'}}" class="page-state">
+      <client-state state="loading" label="今日赛程加载中" message="比分与赛果会自动实时更新" />
+    </view>
+    <view wx:elif="{{!hasProjection}}" class="page-state">
+      <client-state state="failed" label="这一天的赛程加载失败" message="{{projectionLoadMessage || '请重试，或切换其他日期'}}" retryable bind:retry="retryScores" />
+    </view>
+    <view wx:elif="{{matchCount === 0}}" class="page-state">
+      <client-state state="empty" label="没有找到比赛" message="换个筛选条件、关键词或日期试试" />
+    </view>
+
+    <view wx:else class="score-list">
+      <view wx:for="{{groups}}" wx:key="id" class="tournament-block surface-{{item.surfaceCode}}">
+        <view class="tournament-head" data-id="{{item.id}}" bindtap="toggleTournament" role="button" aria-expanded="{{!collapsedTournaments[item.id]}}">
+          <view class="tournament-mark tournament-logo-group {{item.logos.length > 1 ? 'is-joint' : ''}}">
+            <block wx:if="{{item.logos.length}}">
+              <view wx:for="{{item.logos}}" wx:for-item="logo" wx:key="path" class="tournament-logo-box logo-{{logo.kind}}">
+                <image src="{{logo.path}}" mode="aspectFit" lazy-load="{{true}}"/>
+              </view>
+            </block>
+            <view wx:if="{{!item.logos.length}}" class="tournament-logo-box tournament-logo-fallback"><text>{{item.tourOrg || '网球'}}</text><text>{{item.level}}</text></view>
+          </view>
+          <view class="tournament-copy">
+            <text class="tournament-name">{{item.title}}</text>
+            <text wx:if="{{item.displayMeta}}" class="tournament-meta">{{item.displayMeta}}</text>
+            <text wx:if="{{item.displayCountry}}" class="tournament-venue">{{item.displayCountry}}</text>
+          </view>
+          <view class="tournament-follow-action" data-id="{{item.followTargetId}}" data-followed="{{!item.followed}}" catchtap="toggleTournamentFollow" role="button"><ui-icon name="heart" size="16" color="{{item.followed ? '#1677d2' : '#66788a'}}"/></view>
+          <view class="collapse-action"><ui-icon name="{{collapsedTournaments[item.id] ? 'expand' : 'collapse'}}" size="17" /></view>
+        </view>
+        <view wx:if="{{!collapsedTournaments[item.id]}}" class="tournament-body">
+          <view wx:for="{{item.courts}}" wx:for-item="court" wx:key="id" class="court-block">
+            <view class="court-head" data-id="{{court.id}}" bindtap="toggleCourt" role="button" aria-expanded="{{!collapsedCourts[court.id]}}">
+              <view class="court-identity"><view class="court-accent"/><text>{{court.name}}</text></view>
+              <text class="court-count">{{court.matches.length}} 场</text>
+              <ui-icon name="{{collapsedCourts[court.id] ? 'expand' : 'collapse'}}" size="14" />
+            </view>
+            <view wx:if="{{!collapsedCourts[court.id]}}" class="matches">
+              <match-card wx:for="{{court.matches}}" wx:for-item="match" wx:key="id" match="{{match}}" theme="{{uiTheme}}" bind:open="openMatch" bind:follow="toggleFollow" />
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view wx:if="{{hasMoreMatches}}" class="load-more" bindtap="loadMoreMatches" role="button">
+      <text>加载更多（{{visibleMatchCount}}/{{matchCount}}）</text>
+    </view>
+
+    <product-tabbar active="matches" theme="{{uiTheme}}" />
+
+    <view wx:if="{{filterSheetOpen}}" class="filter-backdrop" bindtap="closeFilterSheet">
+      <view class="filter-sheet" catchtap="noop">
+        <view class="filter-sheet-head"><text>筛选比赛</text><view class="sheet-close" bindtap="closeFilterSheet" role="button"><ui-icon name="close" size="19" /></view></view>
+        <view class="filter-group"><text class="filter-group-title">比赛状态</text><view class="filter-options"><view wx:for="{{filters}}" wx:key="id" data-id="{{item.id}}" bindtap="selectFilter" class="filter-option {{selectedFilter === item.id ? 'selected' : ''}}">{{item.label}}</view></view></view>
+        <view class="filter-group"><text class="filter-group-title">赛事类别</text><view class="filter-options"><view wx:for="{{tourFilters}}" wx:key="id" data-id="{{item.id}}" bindtap="selectTour" class="filter-option {{selectedTour === item.id ? 'selected' : ''}}">{{item.label}}</view></view></view>
+        <view class="filter-group"><text class="filter-group-title">比赛项目</text><view class="filter-options"><view wx:for="{{disciplineFilters}}" wx:key="id" data-id="{{item.id}}" bindtap="selectDiscipline" class="filter-option {{selectedDiscipline === item.id ? 'selected' : ''}}">{{item.label}}</view></view></view>
+        <view class="filter-sheet-actions"><view class="filter-sheet-reset" bindtap="resetFilters" role="button">重置</view><view class="filter-sheet-done" bindtap="closeFilterSheet" role="button">查看 {{matchCount}} 场比赛</view></view>
+      </view>
+    </view>
+  </block>
+  <profile-gate id="profileGate" theme="{{uiTheme}}"/>
+</view>

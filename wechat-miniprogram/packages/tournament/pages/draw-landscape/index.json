@@ -1,0 +1,9 @@
+{
+  "usingComponents": {
+    "ui-icon": "/components/ui-icon/index",
+    "client-state": "/components/client-state/index"
+  },
+  "navigationStyle": "custom",
+  "disableScroll": true,
+  "pageOrientation": "landscape"
+}

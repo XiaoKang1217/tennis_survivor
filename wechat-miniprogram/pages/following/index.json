@@ -1,0 +1,9 @@
+{
+  "usingComponents": {
+    "client-state": "/components/client-state/index",
+    "data-notice": "/components/data-notice/index",
+    "match-card": "/components/match-card/index",
+    "product-tabbar": "/components/product-tabbar/index",
+    "profile-gate": "/components/profile-gate/index"
+  }
+}

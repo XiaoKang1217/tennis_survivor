@@ -1,0 +1,35 @@
+<view class="safe-page legal-page">
+  <view class="legal-head" style="padding-top:{{topInset}}px">
+    <view class="legal-back" bindtap="goBack" role="button" aria-label="返回">
+      <ui-icon name="back" size="18" color="#1f2a37"/>
+    </view>
+    <view class="legal-title-wrap">
+      <text class="legal-kicker">协议与隐私</text>
+      <text class="legal-title">{{doc.title}}</text>
+      <text class="legal-subtitle">{{doc.subtitle}}</text>
+    </view>
+  </view>
+
+  <scroll-view scroll-y class="legal-scroll">
+    <view class="legal-meta">
+      <text>适用产品：炉网小程序</text>
+      <text>更新日期：{{updatedAt}}</text>
+      <text>生效日期：{{updatedAt}}</text>
+    </view>
+
+    <view wx:if="{{type === 'privacy'}}" class="legal-official" bindtap="openWechatPrivacyContract" role="button">
+      <view>
+        <text>微信官方隐私保护指引</text>
+        <text>查看微信小程序隐私保护指引</text>
+      </view>
+      <ui-icon name="chevron" size="15" color="#66788a"/>
+    </view>
+
+    <view class="legal-section" wx:for="{{doc.sections}}" wx:key="heading">
+      <text class="legal-section-title">{{index + 1}}. {{item.heading}}</text>
+      <text class="legal-paragraph" wx:for="{{item.body}}" wx:for-item="paragraph" wx:key="*this">{{paragraph}}</text>
+    </view>
+
+    <view class="legal-bottom-space"/>
+  </scroll-view>
+</view>

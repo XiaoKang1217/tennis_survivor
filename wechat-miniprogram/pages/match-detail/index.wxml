@@ -1,0 +1,167 @@
+<page-meta page-style="{{themePageStyle}}" background-color="{{themeCanvas}}" background-text-style="{{themeBackgroundTextStyle}}"/>
+<view class="safe-page detail-page theme-{{uiTheme}}">
+  <view class="detail-head" style="padding-top:{{topInset}}px">
+    <view class="head-action" bindtap="back" role="button" aria-label="返回"><ui-icon name="back" size="19" color="{{themeAccentStrong}}" /></view>
+    <view class="head-title"><text>比赛详情</text><text wx:if="{{match && match.tournamentName}}" class="head-subtitle">{{match.tournamentName}}</text></view>
+    <view class="head-spacer"/>
+  </view>
+
+  <view wx:if="{{loading && !match}}" class="page-state">
+    <client-state state="loading" label="正在读取比赛详情" message="比分、数据和记录将分区呈现" />
+  </view>
+  <view wx:elif="{{failed && !match}}" class="page-state">
+    <client-state state="failed" label="比赛详情暂不可用" message="已有列表比分不会因此被清空" retryable bind:retry="loadMatch" />
+  </view>
+
+  <block wx:elif="{{match}}">
+    <view class="score-hero">
+      <view class="match-context">
+        <text wx:if="{{match.tournamentTourOrg}}" class="tour-badge">{{match.tournamentTourOrg}}</text>
+        <text>{{match.disciplineLabel}}<text wx:if="{{match.roundLabel}}"> · {{match.roundLabel}}</text></text>
+        <text wx:if="{{match.scoringSummary}}" class="scoring-context">{{match.scoringSummary}}</text>
+        <text wx:if="{{match.court}}" class="court-context">{{match.court}}</text>
+      </view>
+
+      <view class="score-stage">
+        <view class="hero-grid">
+          <view wx:for="{{match.sides}}" wx:key="sideId" wx:for-index="sideIndex" class="hero-player side-{{sideIndex}}">
+            <view class="hero-identity">
+              <view wx:if="{{sideIndex === 0 && item.primaryFollowTargetId}}" class="hero-player-follow {{item.primaryFollowed ? 'followed' : ''}}" data-id="{{item.primaryFollowTargetId}}" data-followed="{{!item.primaryFollowed}}" catchtap="togglePlayerFollow" role="button"><ui-icon name="heart" size="13" color="{{item.primaryFollowed ? '#fff' : '#1677d2'}}"/><text>{{item.primaryFollowed ? '已关注' : '关注'}}</text></view>
+              <view class="portrait-stack {{item.isDoubles ? 'doubles' : 'singles'}}">
+                <view wx:for="{{item.members}}" wx:key="playerId" wx:for-item="member" class="portrait" data-player-id="{{member.playerId}}" data-tour="{{match.tournamentTourOrg}}" data-name="{{member.name}}" data-original-name="{{member.originalName}}" data-country-code="{{member.countryCode}}" data-portrait-url="{{member.portraitUrl}}" catchtap="openPlayerFromPortrait">
+                  <image wx:if="{{member.portraitUrl}}" src="{{member.portraitUrl}}" mode="aspectFill" lazy-load="{{true}}"/>
+                  <ui-icon wx:else name="player" size="{{item.isDoubles ? 20 : 26}}" color="#66788a"/>
+                </view>
+                <view class="portrait-mark"><text wx:if="{{item.countryMark}}">{{item.countryMark}}</text><ui-icon wx:else name="info" size="12" color="#66788a"/></view>
+              </view>
+              <view wx:if="{{sideIndex === 1 && item.primaryFollowTargetId}}" class="hero-player-follow {{item.primaryFollowed ? 'followed' : ''}}" data-id="{{item.primaryFollowTargetId}}" data-followed="{{!item.primaryFollowed}}" catchtap="togglePlayerFollow" role="button"><ui-icon name="heart" size="13" color="{{item.primaryFollowed ? '#fff' : '#1677d2'}}"/><text>{{item.primaryFollowed ? '已关注' : '关注'}}</text></view>
+            </view>
+            <view class="hero-name-wrap"><text class="hero-name">{{item.names}}</text><text wx:if="{{item.isWinner}}" class="winner">胜</text></view>
+            <view class="hero-player-meta">
+              <text wx:if="{{item.seedLabel}}">{{item.seedLabel}}</text>
+              <text wx:if="{{item.rankLabel}}">{{item.rankLabel}}</text>
+              <text wx:if="{{item.countryLabel}}">{{item.countryLabel}}</text>
+            </view>
+            <view wx:if="{{item.preOddsLabel || item.liveOddsLabel}}" class="hero-odds-lines">
+              <text wx:if="{{item.preOddsLabel}}" class="hero-odds"><text class="odds-mini-label">赛前</text>{{item.preOddsLabel}}</text>
+              <text wx:if="{{item.liveOddsLabel}}" class="hero-odds"><text class="odds-mini-label">实时</text>{{item.liveOddsLabel}}</text>
+            </view>
+          </view>
+
+          <view class="hero-center">
+            <view class="hero-status status-{{match.statusTone}}"><view wx:if="{{match.showLivePulse}}" class="live-dot"/><text>{{match.preMatch ? match.statusLabel : match.contextStatusText}}</text></view>
+            <text wx:if="{{match.annotation}}" class="hero-annotation">{{match.annotation}}</text>
+            <text wx:if="{{match.preMatch}}" class="hero-time">{{match.scheduleText}}</text>
+            <text wx:else class="versus-label">VS</text>
+          </view>
+        </view>
+
+        <view wx:if="{{!match.preMatch && match.scoreVisible && (match.leftScoreCells.length || match.currentGame)}}" class="score-board">
+          <view class="center-score-panel">
+          <view class="score-board-head">
+            <text>球员</text>
+            <view wx:if="{{match.leftScoreCells.length}}" class="set-score-track score-axis">
+              <text wx:for="{{match.leftScoreCells}}" wx:key="setNumber" wx:for-item="cell">S{{cell.setNumber}}</text>
+            </view>
+            <text wx:if="{{match.currentGame}}" class="game-heading">局分</text>
+          </view>
+          <view class="score-board-row {{match.sides[0].isWinner ? 'winner-row' : ''}}">
+            <view class="score-player-cell"><text class="score-player-name">{{match.sides[0].names}}</text><text wx:if="{{match.sides[0].isServer && match.group !== 'ended'}}" class="score-server-badge">{{match.sides[0].serveLabel}}</text></view>
+            <view wx:if="{{match.leftScoreCells.length}}" class="set-score-track">
+              <view wx:for="{{match.leftScoreCells}}" wx:key="setNumber" wx:for-item="cell" class="side-score-chip {{cell.current ? 'current' : ''}} {{cell.matchTiebreak ? 'match-tiebreak' : ''}}"><text>{{cell.value}}</text><text wx:if="{{cell.tiebreak}}" class="mini">{{cell.tiebreak}}</text><text wx:if="{{cell.kindLabel}}" class="set-kind-label">{{cell.kindLabel}}</text></view>
+            </view>
+            <text wx:if="{{match.currentGame}}" class="game-score {{match.currentGame.firstHighlighted ? 'latest' : ''}}">{{match.currentGame.first}}</text>
+          </view>
+          <view class="score-board-row {{match.sides[1].isWinner ? 'winner-row' : ''}}">
+            <view class="score-player-cell"><text class="score-player-name">{{match.sides[1].names}}</text><text wx:if="{{match.sides[1].isServer && match.group !== 'ended'}}" class="score-server-badge">{{match.sides[1].serveLabel}}</text></view>
+            <view wx:if="{{match.rightScoreCells.length}}" class="set-score-track">
+              <view wx:for="{{match.rightScoreCells}}" wx:key="setNumber" wx:for-item="cell" class="side-score-chip {{cell.current ? 'current' : ''}} {{cell.matchTiebreak ? 'match-tiebreak' : ''}}"><text>{{cell.value}}</text><text wx:if="{{cell.tiebreak}}" class="mini">{{cell.tiebreak}}</text><text wx:if="{{cell.kindLabel}}" class="set-kind-label">{{cell.kindLabel}}</text></view>
+            </view>
+            <text wx:if="{{match.currentGame}}" class="game-score {{match.currentGame.secondHighlighted ? 'latest' : ''}}">{{match.currentGame.second}}</text>
+          </view>
+          </view>
+        </view>
+        <text wx:elif="{{!match.preMatch && match.scorePlaceholder}}" class="score-placeholder">{{match.scorePlaceholder}}</text>
+        <text wx:if="{{match.currentGame && match.currentGame.decidingPointLabel}}" class="deciding-point-note">{{match.currentGame.decidingPointLabel}}</text>
+      </view>
+
+      <view class="score-footnote"><text wx:if="{{match.updatedTime}}">更新于 {{match.updatedTime}}</text></view>
+      <data-notice wx:if="{{match.dataDeliveryState !== 'current'}}" state="{{match.dataDeliveryState}}" message="{{match.deliveryNotice}}" compact />
+    </view>
+
+    <view class="detail-actions"><text class="detail-follow-count">{{match.followCountLabel}}</text><view class="follow-button" bindtap="toggleMatchFollow" role="button"><ui-icon name="heart" size="17" color="#ffffff"/><text>{{match.followed ? '已关注' : '关注比赛'}}</text></view><button class="share-button" open-type="share" hover-class="none" aria-label="分享比赛"><ui-icon name="share" size="17" color="{{themeAccentStrong}}"/><text>分享</text></button></view>
+
+    <view class="match-modules">
+      <view class="module-tabs">
+        <view class="module-tabs-inner">
+          <view wx:for="{{tabs}}" wx:key="id" data-id="{{item.id}}" bindtap="selectTab" role="button" class="tab {{activeTab === item.id ? 'active' : ''}}"><text>{{item.label}}</text></view>
+        </view>
+      </view>
+
+      <view wx:if="{{moduleState}}" class="module-card">
+        <view class="module-head"><text>{{moduleState.label}}</text><text wx:if="{{moduleUpdatedTime}}">更新于 {{moduleUpdatedTime}}</text></view>
+        <view wx:if="{{activeTab === 'statistics' && !statistics && statisticsTransportState !== 'connected'}}" class="transport-notice state-{{statisticsTransportState}}"><ui-icon name="connection" size="15"/><text>{{statisticsTransportMessage}}</text></view>
+        <view wx:if="{{activeTab === 'point_by_point' && !pointByPoint && pointByPointTransportState !== 'connected'}}" class="transport-notice state-{{pointByPointTransportState}}"><ui-icon name="connection" size="15"/><text>{{pointByPointTransportMessage}}</text></view>
+
+        <block wx:if="{{activeTab === 'statistics' && statistics && (moduleState.state === 'content' || (moduleState.state === 'delayed' && moduleState.preservesLastTrustedContent))}}">
+          <data-notice wx:if="{{moduleState.state === 'delayed'}}" state="delayed" message="{{moduleState.message}}" compact />
+          <view class="statistics-head"><text>{{statistics.names[0]}}</text><text>{{moduleState.label}}</text><text>{{statistics.names[1]}}</text></view>
+          <view wx:for="{{statistics.rows}}" wx:key="metricId" class="stat-row"><text>{{item.first}}</text><text class="stat-label">{{item.label}}</text><text>{{item.second}}</text></view>
+          <view wx:if="{{statistics.duration}}" class="duration"><ui-icon name="clock" size="15"/><text>{{statistics.duration}}</text></view>
+        </block>
+        <block wx:elif="{{activeTab === 'point_by_point' && pointByPoint && (moduleState.state === 'content' || (moduleState.state === 'delayed' && moduleState.preservesLastTrustedContent))}}">
+          <data-notice wx:if="{{moduleState.state === 'delayed'}}" state="delayed" message="{{moduleState.message}}" compact />
+          <view class="point-set-tabs">
+            <button wx:for="{{pointByPoint.sets}}" wx:key="setNumber" data-set="{{item.setNumber}}" bindtap="selectPointSet" class="{{item.isActive ? 'active' : ''}}"><text>{{item.title}}</text><text wx:if="{{item.isCurrent}}" class="point-live">最新</text></button>
+          </view>
+          <view wx:if="{{pointByPoint.activeSet}}" class="point-set current">
+            <view class="point-set-head"><view><text>{{pointByPoint.activeSet.title}}</text><text wx:if="{{pointByPoint.activeSet.isCurrent}}" class="point-live">最新</text></view><text>{{pointByPoint.activeSet.games.length}} 局</text></view>
+            <view wx:for="{{pointByPoint.activeSet.games}}" wx:key="gameNumber" wx:for-item="game" class="point-game {{game.isLatest ? 'latest' : ''}}">
+              <view class="point-game-head"><view><text>{{game.title}}</text><text wx:if="{{game.tiebreak}}" class="tiebreak-tag">{{game.tiebreakLabel}}</text></view><text class="point-final">{{game.finalScore}}</text></view>
+              <text wx:if="{{game.serverLabel}}" class="point-server">{{game.serverLabel}}</text>
+              <view wx:if="{{!game.empty}}" class="point-tokens">
+                <view wx:for="{{game.points}}" wx:key="sequence" wx:for-item="point" class="point-token {{point.breakPoint ? 'break-point' : ''}}"><text class="point-index">{{point.sequence}}</text><text>{{point.score}}</text></view>
+              </view>
+              <text wx:else class="point-empty">本局尚无可展示逐分</text>
+            </view>
+          </view>
+        </block>
+        <block wx:elif="{{activeTab === 'h2h' && h2h && (moduleState.state === 'content' || (moduleState.state === 'delayed' && moduleState.preservesLastTrustedContent))}}">
+          <data-notice wx:if="{{moduleState.state === 'delayed'}}" state="delayed" message="{{moduleState.message}}" compact />
+          <view class="h2h-score">
+            <view><text>{{h2h.names[0]}}</text><text>{{h2h.firstWins === null ? '—' : h2h.firstWins}}</text></view>
+            <view><text>交手记录</text><text>{{h2h.total}} 场</text></view>
+            <view><text>{{h2h.names[1]}}</text><text>{{h2h.secondWins === null ? '—' : h2h.secondWins}}</text></view>
+          </view>
+          <view wx:if="{{h2h.encounters.length}}" class="h2h-history">
+            <view wx:for="{{h2h.encounters}}" wx:key="id" class="h2h-match">
+              <view class="h2h-match-top"><text wx:if="{{item.tournament}}">{{item.tournament}}</text><text>{{item.date}}</text></view>
+              <view class="h2h-match-meta"><text wx:if="{{item.level}}">{{item.level}}</text><text wx:if="{{item.round}}">{{item.round}}</text><text wx:if="{{item.surface}}">{{item.surface}}</text></view>
+              <text wx:if="{{item.result}}" class="h2h-result">{{item.result}}</text>
+              <view wx:if="{{item.winner}}" class="h2h-winner"><text>赢家</text><text>{{item.winner}}</text></view>
+            </view>
+          </view>
+          <view wx:else class="h2h-empty">双方暂无已收录的正式比赛交手</view>
+        </block>
+        <block wx:elif="{{activeTab === 'progression_path' && progression && moduleState.state === 'content'}}">
+          <view class="progression-board">
+            <view wx:for="{{progression.paths}}" wx:key="name" class="progression-player">
+              <text class="progression-name">{{item.name}}</text>
+              <view wx:if="{{item.entries.length}}" class="progression-track">
+                <view wx:for="{{item.entries}}" wx:key="id" wx:for-item="entry" class="progression-step {{entry.current ? 'current' : ''}} {{entry.advanced ? 'advanced' : ''}}">
+                  <view class="progression-dot"/>
+                  <view class="progression-copy"><text>{{entry.round}}</text><text>对阵 {{entry.opponent}}</text></view>
+                  <text class="progression-status">{{entry.current ? '本场' : entry.status}}</text>
+                </view>
+              </view>
+              <text wx:else class="progression-empty">暂无晋级路径</text>
+            </view>
+          </view>
+        </block>
+        <module-state wx:else state="{{moduleState.state}}" label="{{moduleState.label}}" message="{{moduleState.message}}" retryable="{{moduleState.retryable}}" preservesLastTrustedContent="{{moduleState.preservesLastTrustedContent}}" bind:retry="retryModule" />
+      </view>
+    </view>
+  </block>
+  <canvas class="share-card-canvas" canvas-id="share-card-canvas"></canvas>
+  <profile-gate id="profileGate" theme="{{uiTheme}}"/>
+</view>

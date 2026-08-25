@@ -1,0 +1,24 @@
+<view class="safe-page participation-page theme-{{uiTheme}}">
+    <view class="page-head">
+      <view class="title-row" style="padding-top:{{topInset}}px">
+        <view class="title-copy">
+          <text class="eyebrow">参赛动态</text>
+          <text class="title">比赛</text>
+          <text class="title-caption">退赛、替补与名单变化</text>
+        </view>
+      </view>
+      <view class="module-nav">
+        <view class="module" bindtap="openScores"><ui-icon name="score" size="20"/><text>实时比分</text></view>
+        <view class="module" bindtap="openDraws"><ui-icon name="draw" size="20"/><text>赛事签表</text></view>
+        <view class="module" bindtap="openCalendar"><ui-icon name="calendar" size="20"/><text>巡回赛历</text></view>
+        <view class="module active"><ui-icon name="entry" size="20" color="#1677d2"/><text>参赛动态</text></view>
+      </view>
+    </view>
+
+    <view class="page-state">
+      <client-state state="empty" label="{{emptyLabel}}" message="{{emptyMessage}}"/>
+    </view>
+
+    <product-tabbar active="matches" theme="{{uiTheme}}"/>
+  <profile-gate id="profileGate" theme="{{uiTheme}}"/>
+</view>

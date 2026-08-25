@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#075fa8"/>
+      <stop offset="0.48" stop-color="#22a2c8"/>
+      <stop offset="1" stop-color="#54775e"/>
+    </linearGradient>
+  </defs>
+  <rect width="500" height="500" rx="46" fill="url(#bg)"/>
+  <rect x="58" y="86" width="384" height="328" rx="34" fill="rgba(255,255,255,.93)"/>
+  <text x="84" y="140" fill="#1677d2" font-size="28" font-weight="800" font-family="PingFang SC, Arial, sans-serif">炉网</text>
+  <text x="84" y="202" fill="#111827" font-size="44" font-weight="900" font-family="PingFang SC, Arial, sans-serif">赛事签表</text>
+  <text x="84" y="248" fill="#526171" font-size="25" font-weight="600" font-family="PingFang SC, Arial, sans-serif">晋级路径 · 轮次 · 比分</text>
+  <path d="M104 326h96M104 370h96M200 348h54M254 304h112M254 392h112" fill="none" stroke="#1677d2" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="104" cy="326" r="12" fill="#22c55e"/>
+  <circle cx="104" cy="370" r="12" fill="#22c55e"/>
+  <circle cx="254" cy="304" r="12" fill="#d88b62"/>
+  <circle cx="254" cy="392" r="12" fill="#d88b62"/>
+</svg>

@@ -1,0 +1,65 @@
+<view class="safe-page module-page theme-{{uiTheme}}">
+  <view class="page-head">
+    <view class="title-row" style="padding-top:{{topInset}}px">
+      <view class="title-copy">
+        <text class="eyebrow">{{drawSelectionMode ? '过往签表' : '巡回赛历'}}</text>
+        <text class="title">{{drawSelectionMode ? '过往签表' : '巡回赛历'}}</text>
+        <text class="title-caption">{{drawSelectionMode ? '按日期查找赛事' : '按周查看ATP、WTA赛事'}}</text>
+      </view>
+    </view>
+    <view class="module-nav">
+      <view class="module" bindtap="openScores"><ui-icon name="score" size="20"/><text>实时比分</text></view>
+      <view class="module" bindtap="openDraws"><ui-icon name="draw" size="20"/><text>赛事签表</text></view>
+      <view class="module active"><ui-icon name="calendar" size="20" color="#1677d2"/><text>巡回赛历</text></view>
+      <view class="module" bindtap="openParticipation"><ui-icon name="entry" size="20"/><text>参赛动态</text></view>
+    </view>
+  </view>
+
+  <view class="calendar-tools">
+    <view class="season-row">
+      <view class="season-arrow" bindtap="previousYear" role="button"><ui-icon name="back" size="16" color="#66788a"/></view>
+      <text>{{year}} 赛季</text>
+      <view class="season-arrow" bindtap="nextYear" role="button"><ui-icon name="chevron" size="16" color="#66788a"/></view>
+    </view>
+    <scroll-view class="month-tabs" scroll-x enhanced show-scrollbar="{{false}}" scroll-into-view="month-{{activeMonth}}">
+      <view class="month-tabs-inner">
+        <view wx:for="{{months}}" wx:key="id" id="month-{{item.id}}" data-month="{{item.id}}" bindtap="selectMonth" role="button" class="month-tab {{activeMonth === item.id ? 'active' : ''}}">{{item.label}}</view>
+      </view>
+    </scroll-view>
+    <view class="calendar-filters">
+      <view wx:for="{{buckets}}" wx:key="id" data-id="{{item.id}}" bindtap="selectBucket" role="button" class="calendar-filter {{activeBucket === item.id ? 'active' : ''}}">{{item.label}}</view>
+    </view>
+  </view>
+
+  <data-notice wx:if="{{deliveryState}}" state="{{deliveryState}}" message="{{deliveryMessage}}" dataAsOf="{{dataAsOf}}" compact/>
+  <view wx:if="{{loading && !items.length}}" class="page-state"><client-state state="loading" label="赛历加载中" message="赛历马上显示"/></view>
+  <view wx:elif="{{failed && !items.length}}" class="page-state"><client-state state="failed" label="赛历暂不可用" message="请稍后重试" retryable bind:retry="load"/></view>
+  <view wx:elif="{{!items.length}}" class="page-state"><client-state state="empty" label="本月没有符合条件的赛事" message="换个月份或赛事类别试试"/></view>
+  <view wx:else class="week-view">
+    <view class="week-head">
+      <view class="week-arrow {{activeWeekIndex === 0 ? 'disabled' : ''}}" bindtap="previousWeek" role="button"><ui-icon name="back" size="17" color="#526171"/></view>
+      <view class="week-copy"><text>第 {{activeWeek.number}} 周</text><text>{{activeWeek.range}}</text></view>
+      <view class="week-arrow {{activeWeekIndex === weeks.length - 1 ? 'disabled' : ''}}" bindtap="nextWeek" role="button"><ui-icon name="chevron" size="17" color="#526171"/></view>
+    </view>
+    <view class="calendar-timeline">
+      <view wx:for="{{items}}" wx:key="id" class="calendar-entry" data-id="{{item.id}}" data-title="{{item.title}}" data-tour="{{item.requestTour}}" bindtap="openTournament" role="button">
+        <view class="calendar-date"><text>{{item.dateDays}}</text><text>{{item.dateMonth}}</text></view>
+        <view class="timeline-mark"><view class="timeline-dot life-{{item.lifecycleCode}}"/></view>
+        <view class="calendar-content">
+          <text class="life-text life-{{item.lifecycleCode}}">{{item.lifecycle}}</text>
+          <text class="calendar-title">{{item.title}}</text>
+          <view class="calendar-meta">
+            <text wx:if="{{item.location}}">{{item.location}}</text>
+            <text wx:if="{{item.surface}}">{{item.surface}}</text>
+            <text wx:if="{{item.level}}">{{item.level}}</text>
+          </view>
+        </view>
+        <text class="sr-only">查看赛事详情</text>
+        <view class="calendar-follow" data-id="{{item.followTargetId}}" data-followed="{{!item.followed}}" catchtap="toggleTournamentFollow" role="button"><ui-icon name="heart" size="15" color="{{item.followed ? '#1677d2' : '#7a8998'}}"/></view>
+        <ui-icon name="chevron" size="15" color="#7a8998"/>
+      </view>
+    </view>
+  </view>
+  <product-tabbar active="matches" theme="{{uiTheme}}" />
+  <profile-gate id="profileGate" theme="{{uiTheme}}"/>
+</view>

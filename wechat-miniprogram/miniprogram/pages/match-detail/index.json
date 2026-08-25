@@ -1,0 +1,12 @@
+{
+  "usingComponents": {
+    "ui-icon": "/components/ui-icon/index",
+    "match-card": "/components/match-card/index",
+    "data-notice": "/components/data-notice/index",
+    "module-state": "/components/module-state/index",
+    "client-state": "/components/client-state/index",
+    "profile-gate": "/components/profile-gate/index"
+  },
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark"
+}

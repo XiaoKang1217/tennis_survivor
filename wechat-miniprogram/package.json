@@ -1,0 +1,14 @@
+{
+  "name": "@luwang/native-mini-program",
+  "version": "0.1.0-internal",
+  "private": true,
+  "scripts": {
+    "sync:miniprogram": "node scripts/sync-miniprogram-mirror.mjs",
+    "test": "node --test test/*.test.mjs",
+    "verify:mirror": "node scripts/verify-miniprogram-mirror.mjs",
+    "verify": "node scripts/verify-package.mjs && node scripts/verify-r4-gates.mjs && node scripts/verify-miniprogram-mirror.mjs && node --test test/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
