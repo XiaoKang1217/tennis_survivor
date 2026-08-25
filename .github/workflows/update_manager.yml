@@ -7,6 +7,7 @@ on:
       - main
     paths:
       - "scripts/manager/replace-cincinnati-atp-daily-prediction.mjs"
+      - "scripts/manager/replace-cincinnati-wta-daily-prediction-20260825.mjs"
 
 jobs:
   update:
@@ -44,6 +45,8 @@ jobs:
       - run: node scripts/manager/replace-canada-atp-daily-prediction.mjs
 
       - run: node scripts/manager/replace-cincinnati-atp-daily-prediction.mjs
+
+      - run: node scripts/manager/replace-cincinnati-wta-daily-prediction-20260825.mjs
 
       - run: node scripts/manager/update-daily-predictions.mjs
 

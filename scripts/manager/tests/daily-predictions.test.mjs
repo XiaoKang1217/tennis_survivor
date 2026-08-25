@@ -5,6 +5,7 @@ import vm from 'node:vm';
 import {
   MEDIAN_SELECTION_METHOD,
   MEDIAN_SELECTION_START_DATE,
+  MIN_SELECTION_LEAD_MINUTES,
   refreshDailyPredictionGamesByMedian,
   selectMedianRankingGapMatch
 } from '../lib/daily-prediction-selection.mjs';
@@ -20,6 +21,7 @@ const html = fs.readFileSync('index.html', 'utf8');
 const workflow = fs.readFileSync('.github/workflows/update_manager.yml', 'utf8');
 const canadaAtpReplacement = fs.readFileSync('scripts/manager/replace-canada-atp-daily-prediction.mjs', 'utf8');
 const cincinnatiAtpReplacement = fs.readFileSync('scripts/manager/replace-cincinnati-atp-daily-prediction.mjs', 'utf8');
+const cincinnatiWtaReplacement = fs.readFileSync('scripts/manager/replace-cincinnati-wta-daily-prediction-20260825.mjs', 'utf8');
 const stationPayload = fs.readFileSync('scripts/manager/lib/station-payload.mjs', 'utf8');
 const refreshCurrentStation = fs.readFileSync('scripts/manager/refresh-current-station-data.mjs', 'utf8');
 const activeEvents = JSON.parse(fs.readFileSync('data/manager/active_events.json', 'utf8'));
@@ -55,6 +57,67 @@ test('daily games switch to the upper-median ranking gap on August 17', () => {
   assert.match(medianSelectionMigration, /count\(\*\) over \(\) as candidate_count/);
   assert.match(medianSelectionMigration, /floor\(candidate_count::numeric \/ 2\)::int \+ 1/);
   assert.match(medianSelectionMigration, /median_world_rank_gap_official_event_day/);
+});
+
+test('daily selection skips matches that start too soon for users to pick', async () => {
+  assert.equal(MIN_SELECTION_LEAD_MINUTES, 120);
+  const inserted = [];
+  const matchQueries = [];
+  const client = {
+    async select(table, query) {
+      if (table === 'tour_manager_daily_prediction_games' && query.station_key) return [];
+      if (table === 'tour_manager_events') {
+        const tour = query.tour.replace(/^eq\./, '');
+        return [{ event_key: `${tour.toLowerCase()}-source-event`, metadata: { timezone: 'UTC' } }];
+      }
+      if (table === 'tour_manager_matches') {
+        matchQueries.push(query);
+        const eventKey = query.event_key.replace(/^eq\./, '');
+        const tour = eventKey.startsWith('atp') ? 'ATP' : 'WTA';
+        return [
+          {
+            event_key: eventKey,
+            match_key: `${eventKey}:later`,
+            match_order: 2,
+            scheduled_at: '2026-08-25T05:00:00.000Z',
+            player1_key: `${tour}|a`,
+            player1_name: `${tour} A`,
+            player2_key: `${tour}|b`,
+            player2_name: `${tour} B`,
+            raw: { date: '2026-08-25' }
+          }
+        ];
+      }
+      if (table === 'tour_manager_event_players') {
+        const eventKey = query.event_key.replace(/^eq\./, '');
+        const tour = eventKey.startsWith('atp') ? 'ATP' : 'WTA';
+        return [
+          { event_key: eventKey, player_key: `${tour}|a`, name_zh: `${tour} A`, ranking: 41 },
+          { event_key: eventKey, player_key: `${tour}|b`, name_zh: `${tour} B`, ranking: 49 }
+        ];
+      }
+      return [];
+    },
+    async insert(table, rows) {
+      assert.equal(table, 'tour_manager_daily_prediction_games');
+      inserted.push(...rows);
+      return rows.map((row, index) => ({ ...row, id: `game-${index}` }));
+    }
+  };
+  const result = await refreshDailyPredictionGamesByMedian({
+    client,
+    stationKey: '2026-w33-cincinnati',
+    sourceStationKey: '2026-w34-winston-salem-monterrey-predictions',
+    season: 2026,
+    contestDate: '2026-08-25',
+    now: new Date('2026-08-25T02:00:00.000Z')
+  });
+  assert.equal(result.created, 2);
+  assert.deepEqual(matchQueries.map((query) => query.scheduled_at), [
+    'gt.2026-08-25T04:00:00.000Z',
+    'gt.2026-08-25T04:00:00.000Z'
+  ]);
+  assert.ok(inserted.every((row) => row.match_key.endsWith(':later')));
 });
 
 test('daily selection groups the full official event day across China midnight', () => {
@@ -267,13 +330,27 @@ test('daily workflow settles old games after match sync and then creates today g
   const settleIndex = workflow.indexOf('settle-current-or-previous-station.mjs');
   const replacementIndex = workflow.indexOf('replace-canada-atp-daily-prediction.mjs');
   const cincinnatiReplacementIndex = workflow.indexOf('- run: node scripts/manager/replace-cincinnati-atp-daily-prediction.mjs');
+  const cincinnatiWtaReplacementIndex = workflow.indexOf('- run: node scripts/manager/replace-cincinnati-wta-daily-prediction-20260825.mjs');
   const predictionIndex = workflow.indexOf('update-daily-predictions.mjs');
   assert.ok(settleIndex >= 0);
   assert.ok(replacementIndex > settleIndex);
   assert.ok(cincinnatiReplacementIndex > replacementIndex);
-  assert.ok(predictionIndex > cincinnatiReplacementIndex);
+  assert.ok(cincinnatiWtaReplacementIndex > cincinnatiReplacementIndex);
+  assert.ok(predictionIndex > cincinnatiWtaReplacementIndex);
   assert.match(migration, /g\.contest_date <= p_through_date/);
   assert.match(migration, /m\.status in \('completed','walkover','retired','cancelled'\)/);
+});
+
+test('August 25 Cincinnati WTA question is replaced with a later playable match', () => {
+  assert.match(cincinnatiWtaReplacement, /TARGET_DATE = '2026-08-25'/);
+  assert.match(cincinnatiWtaReplacement, /TOO_EARLY_MATCH_KEY = `\$\{EVENT_KEY\}:LS019`/);
+  assert.match(cincinnatiWtaReplacement, /REPLACEMENT_MATCH_KEY = `\$\{EVENT_KEY\}:LS014`/);
+  assert.match(cincinnatiWtaReplacement, /MIN_REPLACEMENT_LEAD_MINUTES = 120/);
+  assert.match(cincinnatiWtaReplacement, /match\.raw\?\.date !== TARGET_DATE/);
+  assert.match(cincinnatiWtaReplacement, /manual_replacement_too_early_question_20260825/);
+  assert.match(cincinnatiWtaReplacement, /tour_manager_ranking_snapshots/);
+  assert.match(cincinnatiWtaReplacement, /client\.delete\('tour_manager_daily_prediction_picks'/);
+  assert.match(workflow, /replace-cincinnati-wta-daily-prediction-20260825\.mjs/);
 });
 
 test('August 16 Cincinnati ATP question is replaced with the closest-ranked later match', () => {

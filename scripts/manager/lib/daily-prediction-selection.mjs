@@ -1,5 +1,6 @@
 export const MEDIAN_SELECTION_START_DATE = '2026-08-17';
 export const MEDIAN_SELECTION_METHOD = 'median_world_rank_gap_official_event_day';
+export const MIN_SELECTION_LEAD_MINUTES = 120;
 
 function dateKeyInTimezone(value, timezone = 'UTC') {
   const date = new Date(value);
@@ -103,11 +104,14 @@ export async function refreshDailyPredictionGamesByMedian({
   sourceStationKey = stationKey,
   season = 2026,
   contestDate,
-  now = new Date()
+  now = new Date(),
+  minLeadMinutes = MIN_SELECTION_LEAD_MINUTES
 }) {
   if (!stationKey || !contestDate) throw new Error('stationKey and contestDate are required');
   const nowDate = new Date(now);
   if (!Number.isFinite(nowDate.getTime())) throw new Error(`Invalid refresh time: ${now}`);
+  const minLeadMs = Math.max(0, Number(minLeadMinutes) || 0) * 60000;
+  const candidateStartsAfter = new Date(nowDate.getTime() + minLeadMs);
 
   let created = 0;
   let existing = 0;
@@ -136,7 +140,7 @@ export async function refreshDailyPredictionGamesByMedian({
     const matchGroups = await Promise.all(events.map((event) => client.select('tour_manager_matches', {
       event_key: `eq.${event.event_key}`,
       status: 'eq.scheduled',
-      scheduled_at: `gt.${nowDate.toISOString()}`,
+      scheduled_at: `gt.${candidateStartsAfter.toISOString()}`,
       select: 'event_key,match_key,match_order,scheduled_at,player1_key,player1_name,player2_key,player2_name,raw'
     })));
     const upcoming = matchGroups.flat().sort((a, b) => (
