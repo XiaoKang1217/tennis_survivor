@@ -3,12 +3,19 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
-const productionRoot = join(root, 'miniprogram');
+const project = JSON.parse(readFileSync(join(root, 'project.config.json'), 'utf8'));
+const productionRoot = resolve(root, project.miniprogramRoot || '.');
 const resourceSizeLimitBytes = 200 * 1024;
 const files = [];
 function walk(directory) {
   for (const name of readdirSync(directory)) {
     const path = join(directory, name);
+    const relativePath = relative(productionRoot, path);
+    const firstSegment = relativePath.split('/')[0];
+    const ignored = project.packOptions?.ignore || [];
+    const ignoredFolder = ignored.some(item =>
+      item?.type === 'folder' && item.value === firstSegment);
+    if (ignoredFolder || name.startsWith('.')) continue;
     if (statSync(path).isDirectory()) walk(path); else files.push(path);
   }
 }
@@ -32,7 +39,6 @@ for (const path of files) {
   assert.doesNotMatch(text, /fixture|mock/i,
     `${label} contains visual or mock data in production code`);
 }
-const project = JSON.parse(readFileSync(join(root, 'project.config.json'), 'utf8'));
 assert.equal(project.compileType, 'miniprogram');
 assert.equal(project.appid, 'wxd3c0a5f7ff64178d');
 assert.equal(project.setting.urlCheck, true);

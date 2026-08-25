@@ -1,0 +1,92 @@
+<view class="safe-page following-page theme-{{uiTheme}}">
+  <block wx:if="{{isDaylight}}">
+    <view class="daylight-brand-head" style="padding-top:{{topInset + 8}}px"><text class="daylight-kicker">我的关注</text><text class="daylight-page-title">我的关注</text><text class="daylight-caption">比赛、球员与赛事动态</text></view>
+    <view class="follow-tabs follow-tabs-daylight">
+      <view wx:for="{{tabs}}" wx:key="id" data-kind="{{item.id}}" bindtap="selectKind" class="follow-tab {{selectedKind === item.id ? 'active' : ''}}" role="button"><text>{{item.label}}</text><text>{{item.count}}</text></view>
+    </view>
+    <view class="follow-summary follow-summary-daylight"><text>共 {{count}} 项关注</text><text>{{playerCount}} 球员 · {{matchCount}} 比赛 · {{tournamentCount}} 赛事</text></view>
+    <view wx:if="{{deliveryMessage}}" class="follow-notice"><data-notice state="{{deliveryState}}" message="{{deliveryMessage}}" dataAsOf="{{dataAsOf}}" compact="{{true}}"/></view>
+    <view wx:if="{{loading && !items.length}}" class="follow-state follow-state-daylight"><client-state state="loading" label="正在加载关注" message=""/></view>
+    <view wx:elif="{{failed}}" class="follow-state follow-state-daylight daylight-card"><client-state state="failed" label="关注暂不可用" message="请下拉刷新或稍后重试" retryable bind:retry="load"/></view>
+    <view wx:elif="{{!count}}" class="follow-state follow-state-daylight daylight-card"><client-state state="empty" label="还没有关注" message="可关注比赛、赛事或球员"/></view>
+    <view wx:else class="follow-feed follow-feed-daylight">
+      <view wx:for="{{dateGroups}}" wx:key="id" class="follow-date-group">
+        <view class="follow-date-head"><text>{{item.label}}</text><text>{{item.countLabel}}</text></view>
+        <block wx:for="{{item.items}}" wx:for-item="entry" wx:key="key">
+          <view wx:if="{{entry.type === 'player'}}" class="player-badge player-badge-daylight" data-id="{{entry.player.id}}" bindtap="openPlayer" role="button">
+            <view class="player-photo">
+              <image wx:if="{{entry.player.portraitUrl}}" src="{{entry.player.portraitUrl}}" mode="aspectFit" lazy-load="{{true}}"/>
+              <ui-icon wx:else name="player" size="30" color="#8aa0b5"/>
+              <text class="rank-badge">{{entry.player.rankBadge}}</text>
+            </view>
+            <view class="player-badge-copy">
+              <view class="player-name-row"><text class="player-name">{{entry.player.name}}</text><text class="tour-wordmark {{entry.player.authorityClass}}">{{entry.player.authority}}</text><view class="player-heart" data-id="{{entry.player.followTargetId}}" catchtap="togglePlayerFollow" role="button"><ui-icon name="heart" size="17" color="#ff3b30"/></view></view>
+              <view class="player-country-row"><text wx:if="{{entry.player.countryMark}}">{{entry.player.countryMark}}</text><text>{{entry.player.originalName || entry.player.countryCode || '国家/地区待更新'}}</text><view class="verified-dot"/></view>
+              <view class="player-stats">
+                <view><text>世界排名</text><text>{{entry.player.rankingLabel}}</text><text class="movement movement-{{entry.player.movementTone}}">{{entry.player.movementText}}</text></view>
+                <view><text>Race排名</text><text>{{entry.player.raceLabel}}</text></view>
+                <view><text>年龄</text><text>{{entry.player.ageLabel}}</text></view>
+              </view>
+              <view class="player-tags"><text class="primary">{{entry.player.seasonTitlesLabel}}</text><text>{{entry.player.recentRecordLabel}}</text></view>
+              <text class="player-activity">{{entry.player.followCountLabel}}</text>
+            </view>
+          </view>
+          <view wx:elif="{{entry.type === 'tournament'}}" class="follow-event-card follow-event-card-daylight" data-id="{{entry.tournament.id}}" bindtap="openTournament" role="button">
+            <view class="event-main"><text class="event-kind">赛事</text><text class="event-title">{{entry.tournament.title}}</text><text class="event-meta">{{entry.tournament.subtitle}}</text><text wx:if="{{entry.tournament.dates}}" class="event-date">{{entry.tournament.dates}}</text></view>
+            <view class="event-side"><text wx:if="{{entry.tournament.lifecycle}}">{{entry.tournament.lifecycle}}</text><view data-id="{{entry.tournament.followTargetId}}" catchtap="toggleTournamentFollow" role="button"><ui-icon name="heart" size="17" color="#54775e"/></view></view>
+          </view>
+          <match-card wx:else match="{{entry.match}}" theme="{{uiTheme}}" bind:open="openMatch" bind:follow="toggleFollow"/>
+        </block>
+      </view>
+      <view wx:if="{{loadingMore}}" class="follow-load-more">继续加载中</view>
+      <view wx:elif="{{hasMore}}" class="follow-load-more" bindtap="loadMore" role="button">加载更多</view>
+      <view wx:else class="follow-load-more">已显示当前全部关注</view>
+    </view>
+  </block>
+  <block wx:else>
+    <view class="root-head" style="padding-top:{{topInset}}px"><text class="eyebrow">我的比赛</text><text class="title">我的关注</text></view>
+    <view class="follow-tabs">
+      <view wx:for="{{tabs}}" wx:key="id" data-kind="{{item.id}}" bindtap="selectKind" class="follow-tab {{selectedKind === item.id ? 'active' : ''}}" role="button"><text>{{item.label}}</text><text>{{item.count}}</text></view>
+    </view>
+    <view class="follow-summary"><text>共 {{count}} 项关注</text><text>{{playerCount}} 球员 · {{matchCount}} 比赛 · {{tournamentCount}} 赛事</text></view>
+    <view wx:if="{{deliveryMessage}}" class="follow-notice"><data-notice state="{{deliveryState}}" message="{{deliveryMessage}}" dataAsOf="{{dataAsOf}}" compact="{{true}}"/></view>
+    <view wx:if="{{loading && !items.length}}" class="follow-state"><client-state state="loading" label="正在加载关注" message=""/></view>
+    <view wx:elif="{{failed}}" class="follow-state"><client-state state="failed" label="关注暂不可用" message="请下拉刷新或稍后重试" retryable bind:retry="load"/></view>
+    <view wx:elif="{{!count}}" class="follow-state"><client-state state="empty" label="还没有关注" message="可关注比赛、赛事或球员"/></view>
+    <view wx:else class="follow-feed">
+      <view wx:for="{{dateGroups}}" wx:key="id" class="follow-date-group">
+        <view class="follow-date-head"><text>{{item.label}}</text><text>{{item.countLabel}}</text></view>
+        <block wx:for="{{item.items}}" wx:for-item="entry" wx:key="key">
+          <view wx:if="{{entry.type === 'player'}}" class="player-badge" data-id="{{entry.player.id}}" bindtap="openPlayer" role="button">
+            <view class="player-photo">
+              <image wx:if="{{entry.player.portraitUrl}}" src="{{entry.player.portraitUrl}}" mode="aspectFit" lazy-load="{{true}}"/>
+              <ui-icon wx:else name="player" size="30" color="#8aa0b5"/>
+              <text class="rank-badge">{{entry.player.rankBadge}}</text>
+            </view>
+            <view class="player-badge-copy">
+              <view class="player-name-row"><text class="player-name">{{entry.player.name}}</text><text class="tour-wordmark {{entry.player.authorityClass}}">{{entry.player.authority}}</text><view class="player-heart" data-id="{{entry.player.followTargetId}}" catchtap="togglePlayerFollow" role="button"><ui-icon name="heart" size="17" color="#ff3b30"/></view></view>
+              <view class="player-country-row"><text wx:if="{{entry.player.countryMark}}">{{entry.player.countryMark}}</text><text>{{entry.player.originalName || entry.player.countryCode || '国家/地区待更新'}}</text><view class="verified-dot"/></view>
+              <view class="player-stats">
+                <view><text>世界排名</text><text>{{entry.player.rankingLabel}}</text><text class="movement movement-{{entry.player.movementTone}}">{{entry.player.movementText}}</text></view>
+                <view><text>Race排名</text><text>{{entry.player.raceLabel}}</text></view>
+                <view><text>年龄</text><text>{{entry.player.ageLabel}}</text></view>
+              </view>
+              <view class="player-tags"><text class="primary">{{entry.player.seasonTitlesLabel}}</text><text>{{entry.player.recentRecordLabel}}</text></view>
+              <text class="player-activity">{{entry.player.followCountLabel}}</text>
+            </view>
+          </view>
+          <view wx:elif="{{entry.type === 'tournament'}}" class="follow-event-card" data-id="{{entry.tournament.id}}" bindtap="openTournament" role="button">
+            <view class="event-main"><text class="event-kind">赛事</text><text class="event-title">{{entry.tournament.title}}</text><text class="event-meta">{{entry.tournament.subtitle}}</text><text wx:if="{{entry.tournament.dates}}" class="event-date">{{entry.tournament.dates}}</text></view>
+            <view class="event-side"><text wx:if="{{entry.tournament.lifecycle}}">{{entry.tournament.lifecycle}}</text><view data-id="{{entry.tournament.followTargetId}}" catchtap="toggleTournamentFollow" role="button"><ui-icon name="heart" size="17" color="#1677d2"/></view></view>
+          </view>
+          <match-card wx:else match="{{entry.match}}" theme="{{uiTheme}}" bind:open="openMatch" bind:follow="toggleFollow"/>
+        </block>
+      </view>
+      <view wx:if="{{loadingMore}}" class="follow-load-more">继续加载中</view>
+      <view wx:elif="{{hasMore}}" class="follow-load-more" bindtap="loadMore" role="button">加载更多</view>
+      <view wx:else class="follow-load-more">已显示当前全部关注</view>
+    </view>
+  </block>
+  <product-tabbar active="following" theme="{{uiTheme}}"/>
+  <profile-gate id="profileGate" theme="{{uiTheme}}"/>
+</view>

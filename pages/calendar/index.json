@@ -1,0 +1,11 @@
+{
+  "usingComponents": {
+    "ui-icon": "/components/ui-icon/index",
+    "client-state": "/components/client-state/index",
+    "data-notice": "/components/data-notice/index",
+    "product-tabbar": "/components/product-tabbar/index",
+    "profile-gate": "/components/profile-gate/index"
+  },
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark"
+}

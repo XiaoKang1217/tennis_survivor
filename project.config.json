@@ -2,15 +2,22 @@
   "appid": "wxd3c0a5f7ff64178d",
   "compileType": "miniprogram",
   "libVersion": "trial",
-  "miniprogramRoot": "miniprogram/",
   "packOptions": {
     "ignore": [
+      {
+        "value": "miniprogram",
+        "type": "folder"
+      },
       {
         "value": "test",
         "type": "folder"
       },
       {
         "value": "scripts",
+        "type": "folder"
+      },
+      {
+        "value": "ui-reference",
         "type": "folder"
       }
     ],
