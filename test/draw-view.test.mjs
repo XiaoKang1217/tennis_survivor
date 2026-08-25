@@ -342,6 +342,7 @@ test('draw page exposes final vertical structure and independent landscape route
   assert.match(wxml, /查找球员/);
   assert.match(wxml, /横屏看全签表/);
   assert.match(wxml, /roundMatches/);
+  assert.match(wxml, /match-card-head/);
   assert.match(wxml, /side\.members/);
   assert.match(wxml, /side\.scores/);
   assert.doesNotMatch(wxml, /签表顶点|签表变动与退赛|搜索本周赛事或球员|全屏/);
@@ -363,7 +364,7 @@ test('draw page exposes final vertical structure and independent landscape route
     'utf8'
   );
   assert.doesNotMatch(landscapeStyle, /430rpx/u);
-  assert.match(landscapeStyle, /width:248rpx/u);
+  assert.match(landscapeStyle, /width:320rpx/u);
   assert.match(landscapeStyle, /word-break:keep-all/u);
   const landscapeConfig = readFileSync(
     resolve(miniRoot, 'packages/tournament/pages/draw-landscape/index.json'),

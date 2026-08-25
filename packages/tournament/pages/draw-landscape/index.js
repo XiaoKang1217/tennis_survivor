@@ -6,9 +6,9 @@ const { loadProjectionResource, readTrustedProjection } = require('../../../../c
 const { drawColumns } = require('../../../../core/draw-view');
 
 const DRAW_BODY_SCHEMA = 'draw-body-projection/1';
-const NODE_WIDTH = 248;
-const COLUMN_GAP = 34;
-const BOARD_PADDING_X = 38;
+const NODE_WIDTH = 320;
+const COLUMN_GAP = 54;
+const BOARD_PADDING_X = 30;
 const BOARD_PADDING_BOTTOM = 70;
 
 function drawBodyCacheKey(drawId) { return 'draw_body:' + drawId; }
@@ -99,8 +99,8 @@ Page({
     selectedRoundId: '',
     columns: [],
     scrollIntoView: '',
-    scale: .9,
-    boardScaleStyle: 'transform:scale(.9);transform-origin:0 0;',
+    scale: 1,
+    boardScaleStyle: 'transform:scale(1);transform-origin:0 0;',
     overview: false,
     playerQuery: '',
     boardWidth: 0,
@@ -183,10 +183,10 @@ Page({
   jumpCurrentRound() {
     if (this.data.scrollIntoView) this.setData({ scrollIntoView: this.data.scrollIntoView });
   },
-  showOverview() { this.setScale(.58, true); },
+  showOverview() { this.setScale(.52, true); },
   readableSize() { this.setScale(1, false); },
-  zoomIn() { this.setScale(Math.min(1.08, this.data.scale + .08), false); },
-  zoomOut() { this.setScale(Math.max(.58, this.data.scale - .08), this.data.scale - .08 <= .58); },
+  zoomIn() { this.setScale(Math.min(1.12, this.data.scale + .08), false); },
+  zoomOut() { this.setScale(Math.max(.52, this.data.scale - .08), this.data.scale - .08 <= .52); },
   setScale(scale, overview) {
     const rounded = Math.round(scale * 100) / 100;
     const nextData = { ...this.data, scale: rounded };

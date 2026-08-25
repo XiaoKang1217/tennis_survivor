@@ -225,7 +225,7 @@
   padding:62rpx 24rpx 0;
 }
 .draw-content{
-  padding:12rpx 20rpx 42rpx;
+  padding:10rpx 18rpx 42rpx;
 }
 .draw-column{
   display:flex;
@@ -378,7 +378,7 @@
 .round-match-list{
   display:flex;
   flex-direction:column;
-  gap:10rpx;
+  gap:12rpx;
 }
 .round-match-card{
   width:100%;
@@ -386,9 +386,9 @@
   padding:0;
   overflow:hidden;
   border:1rpx solid var(--line);
-  border-radius:20rpx;
+  border-radius:18rpx;
   background:var(--surface);
-  box-shadow:0 10rpx 26rpx rgba(21,55,96,.06);
+  box-shadow:0 8rpx 22rpx rgba(21,55,96,.06);
   text-align:left;
   box-sizing:border-box;
 }
@@ -397,12 +397,41 @@
   box-shadow:0 0 0 3rpx var(--brand-soft),0 10rpx 26rpx rgba(21,55,96,.06);
 }
 .round-match-card.static{
-  opacity:.88;
+  opacity:.96;
+}
+.match-card-head{
+  min-height:48rpx;
+  padding:0 14rpx 0 18rpx;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12rpx;
+  border-bottom:1rpx solid var(--line);
+  background:var(--surface-subtle);
+  box-sizing:border-box;
+}
+.match-card-head>text:first-child{
+  color:var(--ink-subtle);
+  font-size:18rpx;
+  font-weight:760;
+}
+.status-pill{
+  max-width:180rpx;
+  padding:5rpx 10rpx;
+  overflow:hidden;
+  border-radius:11rpx;
+  background:var(--brand-soft);
+  color:var(--brand-strong);
+  font-size:18rpx;
+  font-weight:800;
+  line-height:1.15;
+  text-overflow:ellipsis;
+  white-space:nowrap;
 }
 .match-side{
   position:relative;
-  min-height:78rpx;
-  padding:10rpx 14rpx 10rpx 20rpx;
+  min-height:84rpx;
+  padding:11rpx 14rpx 11rpx 20rpx;
   display:grid;
   grid-template-columns:minmax(0,1fr) auto;
   align-items:center;
@@ -476,9 +505,9 @@
   max-width:100%;
   overflow:hidden;
   color:var(--ink);
-  font-size:23rpx;
-  line-height:1.24;
-  font-weight:650;
+  font-size:25rpx;
+  line-height:1.26;
+  font-weight:720;
   text-overflow:ellipsis;
   white-space:nowrap;
   word-break:keep-all;
@@ -517,7 +546,7 @@
   line-height:1;
 }
 .match-foot{
-  min-height:44rpx;
+  min-height:42rpx;
   padding:8rpx 14rpx;
   display:flex;
   align-items:center;

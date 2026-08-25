@@ -93,6 +93,10 @@
       </view>
       <view class="round-match-list">
         <button wx:for="{{roundMatches}}" wx:key="id" data-match-id="{{item.matchId}}" bindtap="openMatch" class="round-match-card {{item.canOpen ? 'can-open' : 'static'}} {{item.focused ? 'focused' : ''}}">
+          <view class="match-card-head">
+            <text>第 {{item.matchNumber}} 场</text>
+            <text wx:if="{{item.status}}" class="status-pill">{{item.status}}</text>
+          </view>
           <view wx:for="{{item.sides}}" wx:for-item="side" wx:key="id" class="match-side {{side.isWinner ? 'winner' : ''}} {{side.focused ? 'focused-side' : ''}}">
             <view class="side-copy">
               <view class="side-badges">
@@ -112,7 +116,7 @@
           </view>
           <view wx:if="{{item.scoreText || item.status}}" class="match-foot">
             <text wx:if="{{item.scoreText}}">{{item.scoreText}}</text>
-            <text wx:if="{{item.status}}" class="status">{{item.status}}</text>
+            <text wx:if="{{item.status && !item.scoreText}}" class="status">{{item.status}}</text>
           </view>
         </button>
       </view>

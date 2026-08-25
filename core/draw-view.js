@@ -168,8 +168,8 @@ function drawColumns(presentation) {
   const slots = new Map((presentation?.slots || []).map(slot => [slot.slotId, slot]));
   const rounds = presentation?.rounds || [];
   const sourceMatches = presentation?.matches || [];
-  const cardHeight = 124;
-  const stride = 146;
+  const cardHeight = 146;
+  const stride = 172;
   const columnDrafts = rounds.map((round, roundIndex) => {
     const matches = sourceMatches
       .filter(match => match.roundId === round.roundId)
@@ -255,7 +255,7 @@ function drawColumns(presentation) {
           champion: true,
           nodeStyle: `top:${Math.max(0, boardHeight / 2 - cardHeight / 2)}rpx`,
           hasIncoming: true,
-          incomingStyle: 'top:68rpx;height:1rpx',
+          incomingStyle: 'top:79rpx;height:1rpx',
           first: participantName(winnerSlot),
           firstMembers: participantMembers(winnerSlot),
           firstSeed: field(winnerSlot?.seedNumber),
@@ -316,6 +316,7 @@ function roundMatchView(match, slots, index, focusedPlayerId = '') {
   const focused = firstSide.focused || secondSide.focused;
   return Object.freeze({
     id: match.nodeId || match.matchId?.value || `match-${index}`,
+    matchNumber: index + 1,
     matchId: field(match.matchId),
     canOpen: Boolean(match.canOpenMatch && field(match.matchId)),
     status: visibleStatus(match.statusLabel),

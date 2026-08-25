@@ -450,53 +450,62 @@ function drawTournamentPoster(ctx, detail, bg, width, height, square = false) {
   }
 }
 
-function drawParticipants(ctx, names, x, y, width, height, activeIndex = -1) {
+function drawParticipants(ctx, names, x, y, width, height, activeIndex = -1, dark = false) {
   names.slice(0, 8).forEach((name, index) => {
     const row = Math.floor(index % 4);
     const right = index >= 4;
-    const itemX = right ? x + width - 128 : x;
-    const itemY = y + row * 34;
+    const itemWidth = Math.floor((width - 44) / 2);
+    const itemX = right ? x + width - itemWidth : x;
+    const itemY = y + row * (height + 8);
     const active = index === activeIndex;
-    fillRoundRect(ctx, itemX, itemY, 122, height, 4, active ? BRAND_BLUE : '#FFFFFF');
-    strokeRoundRect(ctx, itemX, itemY, 122, height, 4, active ? BRAND_BLUE : '#AFC0D3');
-    fillText(ctx, String(index + 1), itemX + 14, itemY + 7, 11, active ? '#FFFFFF' : INK, { weight: 650 });
-    fitText(ctx, name, itemX + 42, itemY + 6, 74, 13, 10, active ? '#FFFFFF' : INK, { weight: 650 });
+    const bg = active ? YELLOW : dark ? 'rgba(255,255,255,0.12)' : '#FFFFFF';
+    const border = active ? YELLOW : dark ? 'rgba(216,236,255,0.28)' : '#AFC0D3';
+    const textColor = active ? INK : dark ? '#FFFFFF' : INK;
+    fillRoundRect(ctx, itemX, itemY, itemWidth, height, 7, bg);
+    strokeRoundRect(ctx, itemX, itemY, itemWidth, height, 7, border);
+    fillText(ctx, String(index + 1), itemX + 14, itemY + height / 2, 12, textColor, {
+      baseline: 'middle',
+      weight: 800
+    });
+    fitText(ctx, name, itemX + 42, itemY + height / 2 - 8, itemWidth - 52, 15, 11, textColor, { weight: 760 });
   });
 }
 
-function drawBracketLines(ctx, x, y, width, square = false) {
-  ctx.setStrokeStyle(BRAND_BLUE);
+function drawBracketLines(ctx, x, y, width, square = false, color = BRAND_BLUE) {
+  ctx.setStrokeStyle(color);
   ctx.setLineWidth(square ? 3 : 2);
-  const leftX = x + 122;
+  const itemWidth = Math.floor((width - 44) / 2);
+  const rowStep = square ? 40 : 36;
+  const leftX = x + itemWidth;
   const midX = x + width / 2;
-  const rightX = x + width - 128;
-  [0, 34, 68, 102].forEach(offset => {
+  const rightX = x + width - itemWidth;
+  [0, rowStep, rowStep * 2, rowStep * 3].forEach(offset => {
     ctx.beginPath();
-    ctx.moveTo(leftX, y + offset + 13);
-    ctx.lineTo(leftX + 62, y + offset + 13);
-    ctx.moveTo(rightX, y + offset + 13);
-    ctx.lineTo(rightX - 62, y + offset + 13);
+    ctx.moveTo(leftX, y + offset + 15);
+    ctx.lineTo(leftX + 52, y + offset + 15);
+    ctx.moveTo(rightX, y + offset + 15);
+    ctx.lineTo(rightX - 52, y + offset + 15);
     ctx.stroke();
   });
-  [[13, 47], [81, 115]].forEach(pair => {
+  [[15, rowStep + 15], [rowStep * 2 + 15, rowStep * 3 + 15]].forEach(pair => {
     ctx.beginPath();
-    ctx.moveTo(leftX + 62, y + pair[0]);
-    ctx.lineTo(leftX + 62, y + pair[1]);
-    ctx.moveTo(rightX - 62, y + pair[0]);
-    ctx.lineTo(rightX - 62, y + pair[1]);
+    ctx.moveTo(leftX + 52, y + pair[0]);
+    ctx.lineTo(leftX + 52, y + pair[1]);
+    ctx.moveTo(rightX - 52, y + pair[0]);
+    ctx.lineTo(rightX - 52, y + pair[1]);
     ctx.stroke();
   });
   ctx.beginPath();
-  ctx.moveTo(leftX + 62, y + 30);
-  ctx.lineTo(midX - 16, y + 30);
-  ctx.lineTo(midX - 16, y + 98);
-  ctx.lineTo(leftX + 62, y + 98);
-  ctx.moveTo(rightX - 62, y + 30);
-  ctx.lineTo(midX + 16, y + 30);
-  ctx.lineTo(midX + 16, y + 98);
-  ctx.lineTo(rightX - 62, y + 98);
-  ctx.moveTo(midX - 16, y + 64);
-  ctx.lineTo(midX + 16, y + 64);
+  ctx.moveTo(leftX + 52, y + rowStep - 3);
+  ctx.lineTo(midX - 18, y + rowStep - 3);
+  ctx.lineTo(midX - 18, y + rowStep * 3 - 3);
+  ctx.lineTo(leftX + 52, y + rowStep * 3 - 3);
+  ctx.moveTo(rightX - 52, y + rowStep - 3);
+  ctx.lineTo(midX + 18, y + rowStep - 3);
+  ctx.lineTo(midX + 18, y + rowStep * 3 - 3);
+  ctx.lineTo(rightX - 52, y + rowStep * 3 - 3);
+  ctx.moveTo(midX - 18, y + rowStep * 2 - 3);
+  ctx.lineTo(midX + 18, y + rowStep * 2 - 3);
   ctx.stroke();
 }
 
@@ -513,29 +522,40 @@ function drawNamesFromColumns(data) {
 }
 
 function drawDrawPoster(ctx, data, width, height, square = false) {
-  drawLinear(ctx, 0, 0, width, height, '#FFFFFF', '#FBF4EA');
-  logo(ctx, square ? 22 : 24, 22, false);
+  drawLinear(ctx, 0, 0, width, height, '#051C3C', '#0B5EB8', true);
+  ctx.setFillStyle('rgba(1,14,34,0.24)');
+  ctx.fillRect(0, 0, width, height);
+  ctx.setStrokeStyle('rgba(216,236,255,0.28)');
+  ctx.setLineWidth(2);
+  ctx.beginPath();
+  ctx.moveTo(58, square ? 222 : 190);
+  ctx.lineTo(width - 58, square ? 222 : 190);
+  ctx.moveTo(58, square ? 360 : 314);
+  ctx.lineTo(width - 58, square ? 360 : 314);
+  ctx.moveTo(width / 2, square ? 206 : 178);
+  ctx.lineTo(width / 2, square ? 382 : 330);
+  ctx.stroke();
+  logo(ctx, square ? 22 : 24, 22);
   const title = cleanText(data?.selectedTitle, '赛事签表');
   const draw = (Array.isArray(data?.draws) ? data.draws : [])
     .find(item => item.drawId === data?.selectedDrawId);
   const label = cleanText(draw?.label, '签表');
   const names = drawNamesFromColumns(data);
   if (square) {
-    fillText(ctx, limited(title, 9), 44, 112, 39, INK);
-    fillText(ctx, label, 44, 166, 22, BRAND_BLUE);
-    drawParticipants(ctx, names, 45, 235, 410, 28, 0);
-    drawBracketLines(ctx, 45, 235, 410, true);
+    fillText(ctx, '签表', width - 42, 88, 70, 'rgba(234,242,5,0.88)', { align: 'right', weight: 900 });
+    fitText(ctx, title, 42, 130, 310, 41, 28, '#FFFFFF');
+    pill(ctx, 42, 196, 124, 34, limited(label, 8), YELLOW, INK);
+    fillRoundRect(ctx, 32, 254, 436, 174, 16, 'rgba(1,14,34,0.42)');
+    drawParticipants(ctx, names, 48, 276, 404, 31, 0, true);
+    drawBracketLines(ctx, 48, 276, 404, true, 'rgba(234,242,5,0.92)');
   } else {
-    fillText(ctx, limited(title, 12), width / 2, 78, 35, INK, { align: 'center' });
-    fillText(ctx, label, width / 2, 122, 19, BRAND_BLUE, { align: 'center' });
-    ctx.setStrokeStyle('#BFCBE0');
-    ctx.beginPath();
-    ctx.moveTo(105, 160);
-    ctx.lineTo(395, 160);
-    ctx.stroke();
-    fillText(ctx, names.length ? '参赛签位与晋级路径' : '签表信息', width / 2, 188, 18, INK, { align: 'center' });
-    drawParticipants(ctx, names, 28, 225, 444, 26, 0);
-    drawBracketLines(ctx, 28, 225, 444);
+    fillText(ctx, '签表', width - 36, 66, 58, 'rgba(234,242,5,0.88)', { align: 'right', weight: 900 });
+    fitText(ctx, title, 40, 92, 310, 34, 25, '#FFFFFF');
+    pill(ctx, 40, 142, 126, 32, limited(label, 8), YELLOW, INK);
+    fillText(ctx, names.length ? '参赛签位 · 晋级路径' : '签表信息', 40, 188, 18, '#DCEBFF', { weight: 700 });
+    fillRoundRect(ctx, 28, 224, 444, 120, 16, 'rgba(1,14,34,0.42)');
+    drawParticipants(ctx, names, 44, 246, 412, 28, 0, true);
+    drawBracketLines(ctx, 44, 246, 412, false, 'rgba(234,242,5,0.92)');
     bottomLine(ctx, width, height);
   }
 }
