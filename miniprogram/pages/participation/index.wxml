@@ -1,0 +1,17 @@
+<view class="safe-page participation-page theme-{{uiTheme}}">
+  <block wx:if="{{isDaylight}}">
+    <view class="daylight-brand-head" style="padding-top:{{topInset + 8}}px"><text class="daylight-kicker">TOUR WATCH</text><text class="daylight-page-title">参赛动态</text><text class="daylight-caption">退赛、替补与参赛名单</text></view>
+    <view class="daylight-module-nav"><button bindtap="openScores" aria-label="比分"><text>比分</text></button><button bindtap="openDraws" aria-label="签表"><text>签表</text></button><button bindtap="openCalendar" aria-label="赛历"><text>赛历</text></button><button class="active" aria-label="动态"><text>动态</text></button></view>
+    <view class="daylight-participation-content">
+      <view class="daylight-participation-tabs daylight-segmented"><view class="active">最新动态</view><view>未来赛事</view></view>
+      <view class="daylight-summary daylight-card"><view><text>—</text><text>新增</text></view><view><text>—</text><text>退赛</text></view><view><text>—</text><text>替补</text></view><view><text>—</text><text>名单更新</text></view></view>
+      <view class="daylight-empty-update daylight-card"><view class="daylight-empty-mark">↗</view><text class="daylight-section-title">参赛动态正在准备</text><text>当前接口尚未返回可信参赛变更；接入真实数据后，会按时间与赛事级别排列在这里。</text></view>
+    </view>
+  </block>
+  <block wx:else>
+    <view class="page-head"><view class="title-row" style="padding-top:{{topInset}}px"><view class="title-copy"><text class="eyebrow">网球数据产品</text><text class="title">比赛</text></view></view>
+    <view class="module-nav"><view class="module" bindtap="openScores"><ui-icon name="score" size="20"/><text>实时比分</text></view><view class="module" bindtap="openDraws"><ui-icon name="draw" size="20"/><text>赛事签表</text></view><view class="module" bindtap="openCalendar"><ui-icon name="calendar" size="20"/><text>巡回赛历</text></view><view class="module active"><ui-icon name="entry" size="20" color="#1677d2"/><text>参赛动态</text></view></view></view>
+    <view class="page-state"><client-state state="empty" label="参赛动态正在准备" message="赛事退赛、替补与参赛名单会在这里统一展示"/></view>
+  </block>
+  <product-tabbar active="matches" theme="{{uiTheme}}"/>
+</view>

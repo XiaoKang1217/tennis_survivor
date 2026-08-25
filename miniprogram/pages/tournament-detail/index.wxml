@@ -1,0 +1,175 @@
+<view class="safe-page tournament-detail-page theme-{{uiTheme}}">
+  <block wx:if="{{isDaylight}}">
+    <view class="daylight-detail-head" style="padding-top:{{topInset}}px"><view bindtap="back" role="button"><ui-icon name="back" size="18" color="#ffffff"/></view><text>赛事详情</text><view/></view>
+    <view wx:if="{{loading && !detailLoaded}}" class="daylight-page-state"><client-state state="loading" label="正在读取赛事资料" message="赛历、场馆和历史资料同步加载"/></view>
+    <view wx:elif="{{failed && !detailLoaded}}" class="daylight-page-state"><client-state state="failed" label="赛事资料暂不可用" message="{{failureMessage}}" retryable bind:retry="load"/></view>
+    <block wx:elif="{{detailLoaded}}">
+      <view class="daylight-event-hero">
+        <text class="daylight-event-number">{{detail.classification[0].available ? detail.classification[0].value : 'TOUR'}}</text>
+        <text class="daylight-event-kicker">TOURNAMENT</text>
+        <text wx:if="{{detail.name.available}}" class="daylight-event-name">{{detail.name.value}}</text><text wx:else class="daylight-event-name">{{detail.name.message}}</text>
+        <view class="daylight-event-meta"><text class="life-{{detail.lifecycle.code}}">{{detail.lifecycle.available ? detail.lifecycle.value : detail.lifecycle.message}}</text><block wx:for="{{detail.classification}}" wx:key="label"><text wx:if="{{item.available}}">{{item.value}}</text></block></view>
+      </view>
+      <view class="daylight-event-actions"><view bindtap="openDraws" role="button"><ui-icon name="draw" size="19" color="#ffffff"/><text>查看签表</text></view><view bindtap="toggleTournamentFollow" role="button"><ui-icon name="heart" size="19" color="#54775e"/><text>{{detail.followed ? '已关注' : '关注赛事'}}</text></view><button open-type="share" hover-class="none" aria-label="分享赛事"><ui-icon name="share" size="19" color="#54775e"/><text>分享</text></button></view>
+      <data-notice wx:if="{{deliveryState}}" state="{{deliveryState}}" message="{{deliveryMessage}}" dataAsOf="{{dataAsOf}}" compact/>
+      <view wx:if="{{loading}}" class="daylight-refresh">正在更新赛事资料</view><view wx:if="{{refreshFailed}}" class="daylight-refresh warning">刷新未完成，页面保留上次可信资料</view>
+      <view class="daylight-event-content">
+        <view class="daylight-event-section daylight-card"><text class="daylight-section-title">赛事概览</text><view class="daylight-event-facts"><view wx:for="{{detail.classification}}" wx:key="label"><text>{{item.label}}</text><text class="{{item.available ? '' : 'pending'}}">{{item.available ? item.value : item.message}}</text></view><view wx:for="{{detail.dates}}" wx:key="label"><text>{{item.label}}</text><text class="{{item.available ? '' : 'pending'}}">{{item.available ? item.value : item.message}}</text></view></view></view>
+
+        <view class="daylight-event-section daylight-card"><text class="daylight-section-title">地点与场地</text><view class="daylight-event-facts"><view wx:for="{{detail.location}}" wx:key="label"><text>{{item.label}}</text><text class="{{item.available ? '' : 'pending'}}">{{item.available ? item.value : item.message}}</text></view></view><view wx:if="{{detail.sites.length}}" class="daylight-venues"><view wx:for="{{detail.sites}}" wx:key="id"><text>{{item.name.available ? item.name.value : item.name.message}}</text><text>{{item.city.available ? item.city.value : item.city.message}}<text wx:if="{{item.country.available}}"> · {{item.country.value}}</text></text></view></view><view wx:if="{{detail.courts.length}}" class="daylight-courts"><view wx:for="{{detail.courts}}" wx:key="id"><view class="daylight-court-line"/><view><text>{{item.name.available ? item.name.value : item.name.message}}</text><text>{{item.surface.available ? item.surface.value : item.surface.message}}</text></view></view></view><text wx:if="{{!detail.sites.length && !detail.courts.length}}" class="daylight-empty">场馆与球场资料尚未收录</text></view>
+
+        <view class="daylight-event-section daylight-card"><text class="daylight-section-title">奖金与积分</text><block wx:if="{{awardGroups.length}}"><view wx:for="{{awardGroups}}" wx:key="id" class="daylight-event-awards"><text>{{item.label}}</text><scroll-view scroll-x><view><view wx:for="{{item.rows}}" wx:key="id"><text>{{item.round}}</text><text>{{item.prize}}</text><text>{{item.points}}</text></view></view></scroll-view></view></block><text wx:elif="{{drawFactsLoading}}" class="daylight-empty">正在读取官方每轮奖金与积分</text><text wx:elif="{{drawFactsUnavailable}}" class="daylight-empty">奖金与积分资料暂不可用，签表仍可正常查看</text><text wx:else class="daylight-empty">官方尚未发布可核验的每轮奖金与积分</text><view wx:if="{{drawIncidents.length}}" class="daylight-event-incidents"><text>退赛与签表变动</text><view wx:for="{{drawIncidents}}" wx:key="id"><text>{{item.kind}}</text><text>{{item.name}}</text><text wx:if="{{item.reason}}">{{item.reason}}</text></view></view></view>
+
+        <view wx:if="{{detail.providerSections.length}}" class="daylight-event-section daylight-card"><block wx:for="{{detail.providerSections}}" wx:key="id"><text class="daylight-section-title provider-title">{{item.title}}</text><view class="daylight-provider"><view wx:for="{{item.rows}}" wx:for-item="row" wx:key="key"><text>{{row.label}}</text><text class="{{row.available ? '' : 'pending'}}">{{row.available ? row.value : row.message}}</text></view></view></block></view>
+
+        <view wx:if="{{detail.hasHistory}}" class="daylight-event-section daylight-card"><text class="daylight-section-title">历届冠军与纪录</text><view wx:if="{{detail.champions.length}}" class="daylight-history"><text>历届冠军</text><view wx:for="{{detail.champions}}" wx:key="id"><view><text>{{item.names}}</text><text>{{item.year.available ? item.year.value : item.year.message}} · {{item.discipline}}</text></view><text wx:if="{{item.result.available}}">{{item.result.value}}</text></view></view><view wx:if="{{detail.records.length}}" class="daylight-history"><text>赛事纪录</text><view wx:for="{{detail.records}}" wx:key="id"><text>{{item.name}}</text><view><text wx:if="{{item.titleCount.available}}">冠军 {{item.titleCount.value}}</text><text wx:if="{{item.matchWins.available}}">胜场 {{item.matchWins.value}}</text><text wx:if="{{item.scope.available}}">{{item.scope.value}}</text></view></view></view></view>
+
+        <view class="daylight-event-section daylight-card"><text class="daylight-section-title">数据状态</text><view class="daylight-provider"><view><text>资料可用性</text><text>{{detail.dataStatus.availability}}</text></view><view><text>资料完整度</text><text>{{detail.dataStatus.completeness}}</text></view><view wx:if="{{detail.dataStatus.updatedAt}}"><text>更新时间</text><text>{{detail.dataStatus.updatedAt}} 北京时间</text></view></view><text wx:if="{{detail.dataStatus.gapMessage}}" class="daylight-data-message">{{detail.dataStatus.gapMessage}}</text><text wx:if="{{detail.dataStatus.notice}}" class="daylight-data-message">{{detail.dataStatus.notice}}</text></view>
+      </view>
+    </block>
+  </block>
+  <block wx:else>
+  <view class="detail-head" style="padding-top:{{topInset}}px">
+    <button bindtap="back" aria-label="返回"><ui-icon name="back" size="22" color="#fff"/></button>
+    <text>赛事详情</text>
+    <view/>
+  </view>
+
+  <view wx:if="{{loading && !detailLoaded}}" class="page-state">
+    <client-state state="loading" label="正在读取赛事资料" message="赛历、场馆和历史资料同步加载"/>
+  </view>
+  <view wx:elif="{{failed && !detailLoaded}}" class="page-state">
+    <client-state state="failed" label="赛事资料暂不可用" message="{{failureMessage}}" retryable bind:retry="load"/>
+  </view>
+
+  <block wx:elif="{{detailLoaded}}">
+    <view class="hero">
+      <text class="hero-eyebrow">赛事资料</text>
+      <text wx:if="{{detail.name.available}}" class="tournament-name">{{detail.name.value}}</text>
+      <text wx:else class="tournament-name pending-name">{{detail.name.message}}</text>
+      <view class="hero-meta">
+        <text class="lifecycle lifecycle-{{detail.lifecycle.code}}">{{detail.lifecycle.available ? detail.lifecycle.value : detail.lifecycle.message}}</text>
+        <block wx:for="{{detail.classification}}" wx:key="label"><text wx:if="{{item.available}}" class="hero-chip">{{item.value}}</text></block>
+      </view>
+    </view>
+
+    <data-notice wx:if="{{deliveryState}}" state="{{deliveryState}}" message="{{deliveryMessage}}" dataAsOf="{{dataAsOf}}" compact/>
+    <view wx:if="{{loading}}" class="refresh-state"><view class="refresh-dot"/><text>正在更新赛事资料</text></view>
+    <view wx:if="{{refreshFailed}}" class="refresh-warning"><ui-icon name="info" size="16" color="#9a5b00"/><text>刷新未完成，页面保留上次可信资料</text></view>
+
+    <view class="section">
+      <text class="section-title">级别与体系</text>
+      <view class="fact-list">
+        <view wx:for="{{detail.classification}}" wx:key="label" class="fact-row">
+          <text class="fact-label">{{item.label}}</text>
+          <text class="{{item.available ? 'fact-value' : 'fact-pending'}}">{{item.available ? item.value : item.message}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="section">
+      <text class="section-title">日期与状态</text>
+      <view class="fact-list">
+        <view wx:for="{{detail.dates}}" wx:key="label" class="fact-row">
+          <text class="fact-label">{{item.label}}</text>
+          <text class="{{item.available ? 'fact-value' : 'fact-pending'}}">{{item.available ? item.value : item.message}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="section awards-section">
+      <text class="section-title">奖金与积分</text>
+      <block wx:if="{{awardGroups.length}}">
+        <view wx:for="{{awardGroups}}" wx:key="id" class="award-group">
+          <text class="group-title">{{item.label}}</text>
+          <scroll-view scroll-x class="award-scroll">
+            <view class="award-row"><view wx:for="{{item.rows}}" wx:key="id" class="award-cell"><text>{{item.round}}</text><text>{{item.prize}}</text><text>{{item.points}}</text></view></view>
+          </scroll-view>
+        </view>
+      </block>
+      <view wx:elif="{{drawFactsLoading}}" class="section-empty">正在读取官方每轮奖金与积分</view>
+      <view wx:elif="{{drawFactsUnavailable}}" class="section-empty">奖金与积分资料暂不可用，签表仍可正常查看</view>
+      <view wx:else class="section-empty">官方尚未发布可核验的每轮奖金与积分</view>
+      <view wx:if="{{drawIncidents.length}}" class="incident-group">
+        <text class="group-title">退赛与签表变动</text>
+        <view wx:for="{{drawIncidents}}" wx:key="id" class="incident-row"><text class="incident-kind">{{item.kind}}</text><text class="incident-name">{{item.name}}</text><text wx:if="{{item.reason}}" class="incident-reason">{{item.reason}}</text></view>
+      </view>
+    </view>
+
+    <view class="section">
+      <text class="section-title">地点与场地</text>
+      <view class="fact-list">
+        <view wx:for="{{detail.location}}" wx:key="label" class="fact-row">
+          <text class="fact-label">{{item.label}}</text>
+          <text class="{{item.available ? 'fact-value' : 'fact-pending'}}">{{item.available ? item.value : item.message}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{detail.providerSections.length}}" class="section provider-section">
+      <block wx:for="{{detail.providerSections}}" wx:key="id">
+        <text class="section-title">{{item.title}}</text>
+        <view class="fact-list provider-list">
+          <view wx:for="{{item.rows}}" wx:for-item="row" wx:key="key" class="fact-row provider-row">
+            <text class="fact-label">{{row.label}}</text>
+            <text class="{{row.available ? 'fact-value' : 'fact-pending'}}">{{row.available ? row.value : row.message}}</text>
+          </view>
+        </view>
+      </block>
+    </view>
+
+    <view class="section">
+      <text class="section-title">场馆与球场</text>
+      <view wx:if="{{detail.sites.length}}" class="venue-list">
+        <view wx:for="{{detail.sites}}" wx:key="id" class="venue-card">
+          <text class="venue-name {{item.name.available ? '' : 'fact-pending'}}">{{item.name.available ? item.name.value : item.name.message}}</text>
+          <text class="venue-meta">{{item.city.available ? item.city.value : item.city.message}}<text wx:if="{{item.country.available}}"> · {{item.country.value}}</text></text>
+        </view>
+      </view>
+      <view wx:if="{{detail.courts.length}}" class="court-list">
+        <view wx:for="{{detail.courts}}" wx:key="id" class="court-card">
+          <ui-icon name="court" size="18" color="#1677d2"/>
+          <view><text class="court-name {{item.name.available ? '' : 'fact-pending'}}">{{item.name.available ? item.name.value : item.name.message}}</text><text class="court-surface">{{item.surface.available ? item.surface.value : item.surface.message}}</text></view>
+        </view>
+      </view>
+      <view wx:if="{{!detail.sites.length && !detail.courts.length}}" class="section-empty">场馆与球场资料尚未收录</view>
+    </view>
+
+    <view wx:if="{{detail.hasHistory}}" class="section">
+      <text class="section-title">历届冠军与纪录</text>
+      <view wx:if="{{detail.champions.length}}" class="history-group">
+        <text class="group-title">历届冠军</text>
+        <view wx:for="{{detail.champions}}" wx:key="id" class="history-row">
+          <view><text class="history-name">{{item.names}}</text><text class="history-meta">{{item.year.available ? item.year.value : item.year.message}} · {{item.discipline}}</text></view>
+          <text wx:if="{{item.result.available}}" class="history-result">{{item.result.value}}</text>
+        </view>
+      </view>
+      <view wx:if="{{detail.records.length}}" class="history-group">
+        <text class="group-title">赛事纪录</text>
+        <view wx:for="{{detail.records}}" wx:key="id" class="record-row">
+          <text class="history-name">{{item.name}}</text>
+          <view class="record-values"><text wx:if="{{item.titleCount.available}}">冠军 {{item.titleCount.value}}</text><text wx:if="{{item.matchWins.available}}">胜场 {{item.matchWins.value}}</text><text wx:if="{{item.scope.available}}">{{item.scope.value}}</text></view>
+        </view>
+      </view>
+    </view>
+
+    <view class="section data-section">
+      <text class="section-title">数据状态</text>
+      <view class="fact-row"><text class="fact-label">资料可用性</text><text class="fact-value">{{detail.dataStatus.availability}}</text></view>
+      <view class="fact-row"><text class="fact-label">资料完整度</text><text class="fact-value">{{detail.dataStatus.completeness}}</text></view>
+      <view wx:if="{{detail.dataStatus.updatedAt}}" class="fact-row"><text class="fact-label">更新时间</text><text class="fact-value">{{detail.dataStatus.updatedAt}} 北京时间</text></view>
+      <text wx:if="{{detail.dataStatus.gapMessage}}" class="data-message">{{detail.dataStatus.gapMessage}}</text>
+      <text wx:if="{{detail.dataStatus.notice}}" class="data-message">{{detail.dataStatus.notice}}</text>
+    </view>
+
+    <view class="draw-entry">
+      <button bindtap="openDraws"><view><ui-icon name="draw" size="21" color="#fff"/><text>查看签表</text></view><ui-icon name="chevron" size="18" color="#fff"/></button>
+      <button bindtap="toggleTournamentFollow"><view><ui-icon name="heart" size="21" color="#fff"/><text>{{detail.followed ? '已关注赛事' : '关注赛事'}}</text></view><ui-icon name="chevron" size="18" color="#fff"/></button>
+      <button class="share-entry-button" open-type="share" hover-class="none"><view><ui-icon name="share" size="21" color="#1677d2"/><text>分享赛事</text></view><ui-icon name="chevron" size="18" color="#1677d2"/></button>
+      <text>进入本届赛事的单打、双打与资格赛签表</text>
+    </view>
+  </block>
+  </block>
+  <canvas class="share-card-canvas" canvas-id="share-card-canvas"></canvas>
+  <profile-gate id="profileGate" theme="{{uiTheme}}"/>
+</view>

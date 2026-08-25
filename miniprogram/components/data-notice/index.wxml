@@ -1,0 +1,7 @@
+<view wx:if="{{state !== 'live' || !compact}}" class="notice notice-{{state}} {{compact ? 'compact' : ''}} theme-{{theme}}">
+  <ui-icon name="info" size="15" color="{{state === 'unavailable' ? (theme === 'daylight' ? '#b6533d' : (theme === 'dark' ? '#fb7185' : '#a13d42')) : state === 'delayed' || state === 'stale' ? (theme === 'daylight' ? '#b95a3b' : (theme === 'dark' ? '#fbbf24' : '#1677d2')) : (theme === 'daylight' ? '#748078' : (theme === 'dark' ? '#38bdf8' : '#1677d2'))}}" />
+  <view class="notice-copy">
+    <text wx:if="{{message}}">{{message}}</text>
+    <text wx:if="{{displayTime}}" class="time">更新于 {{displayTime}}</text>
+  </view>
+</view>

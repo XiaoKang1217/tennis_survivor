@@ -1,0 +1,349 @@
+page {
+  --brand: #339cff;
+  --brand-strong: #1677d2;
+  --brand-soft: #e5f2ff;
+  --brand-ink: #075fa8;
+  --brand-wash: #f2f8ff;
+  --ink: #1a1c1f;
+  --ink-strong: #101820;
+  --ink-muted: #526171;
+  --ink-subtle: #66788a;
+  --line: #e5edf5;
+  --line-strong: #d4e1ed;
+  --surface: #ffffff;
+  --surface-subtle: #f7fafc;
+  --canvas: #edf5fc;
+  --canvas-subtle: #f3f7fb;
+  --live: #d92d20;
+  --warning: #a35b00;
+  --success: #20a66a;
+  --danger: #d2453a;
+  --special: #7c3aed;
+  --radius-sm: 12rpx;
+  --radius-md: 18rpx;
+  --radius-lg: 26rpx;
+  --shadow-card: 0 10rpx 32rpx rgba(35, 72, 104, .07);
+  --shadow-float: 0 18rpx 48rpx rgba(28, 68, 102, .13);
+  min-height: 100%;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+  font-size: 28rpx;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+}
+
+button { font: inherit; }
+button::after { border: 0; }
+
+.safe-page {
+  min-height: 100vh;
+  padding-bottom: calc(36rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+button { min-height: 88rpx; box-sizing: border-box; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.theme-daylight {
+  --brand: #d88b62;
+  --brand-strong: #54775e;
+  --brand-soft: #e6eee3;
+  --brand-ink: #40634b;
+  --brand-wash: #f9f6eb;
+  --ink: #233028;
+  --ink-strong: #18251e;
+  --ink-muted: #748078;
+  --ink-subtle: #8b8b7e;
+  --line: #d8d5c8;
+  --line-strong: #c8c6ba;
+  --surface: #fffdf7;
+  --surface-subtle: #f9f6eb;
+  --canvas: #f5f1e6;
+  --canvas-subtle: #f8f5eb;
+  --live: #c6543b;
+  --warning: #b95a3b;
+  --success: #3e7856;
+  --danger: #b6533d;
+  --special: #9d617b;
+  --radius-sm: 12rpx;
+  --radius-md: 16rpx;
+  --radius-lg: 18rpx;
+  --shadow-card: none;
+  --shadow-float: 0 18rpx 52rpx rgba(35,48,40,.12);
+  min-height: 100vh;
+  background: #f5f1e6;
+  color: #233028;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+}
+
+.theme-dark {
+  --brand: #60a5fa;
+  --brand-strong: #38bdf8;
+  --brand-soft: #102a43;
+  --brand-ink: #bae6fd;
+  --brand-wash: #0b1f33;
+  --ink: #e5eef8;
+  --ink-strong: #f8fafc;
+  --ink-muted: #cbd5e1;
+  --ink-subtle: #94a3b8;
+  --line: #263648;
+  --line-strong: #33465c;
+  --surface: #111827;
+  --surface-subtle: #162233;
+  --canvas: #07111f;
+  --canvas-subtle: #0b1626;
+  --live: #f87171;
+  --warning: #fbbf24;
+  --success: #34d399;
+  --danger: #fb7185;
+  --special: #c084fc;
+  --shadow-card: none;
+  --shadow-float: 0 18rpx 52rpx rgba(0,0,0,.34);
+  min-height: 100vh;
+  background: var(--canvas);
+  color: var(--ink);
+}
+
+.daylight-display {
+  font-family: "Songti SC", STSong, Georgia, serif;
+  font-weight: 700;
+  letter-spacing: .5rpx;
+}
+
+.daylight-brand-head {
+  min-height: 172rpx;
+  padding: 20rpx 32rpx 28rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  box-sizing: border-box;
+  background: #f9f6eb;
+  border-bottom: 1rpx solid #d8d5c8;
+}
+
+.daylight-kicker {
+  color: #d88b62;
+  font-size: 18rpx;
+  font-weight: 750;
+  letter-spacing: 5rpx;
+  text-transform: uppercase;
+}
+
+.daylight-page-title {
+  margin-top: 7rpx;
+  color: #233028;
+  font-family: "Songti SC", STSong, Georgia, serif;
+  font-size: 54rpx;
+  font-weight: 700;
+  line-height: 1.05;
+}
+
+.daylight-caption {
+  margin-top: 8rpx;
+  color: #8b8b7e;
+  font-size: 21rpx;
+  line-height: 1.35;
+}
+
+.daylight-module-nav {
+  width: 100%;
+  min-width: 0;
+  height: 94rpx;
+  padding: 0 12rpx;
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1rpx solid #d8d5c8;
+  background: #fffdf7;
+  box-sizing: border-box;
+}
+
+.daylight-module-nav > button {
+  position: relative;
+  min-width: 0;
+  flex: 1 1 25%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #8b8b7e;
+  font-size: 23rpx;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.daylight-module-nav > button::after { border: 0; }
+
+.daylight-module-nav > button.active {
+  color: #54775e;
+  font-weight: 700;
+}
+
+.daylight-module-nav > button.active::before {
+  position: absolute;
+  right: 22rpx;
+  bottom: 0;
+  left: 22rpx;
+  height: 5rpx;
+  background: #d88b62;
+  content: "";
+}
+
+.daylight-segmented {
+  min-width: 0;
+  padding: 6rpx;
+  display: flex;
+  gap: 4rpx;
+  border: 1rpx solid #d8d5c8;
+  border-radius: 16rpx;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+.daylight-segmented > view,
+.daylight-segmented > button {
+  min-width: 0;
+  min-height: 66rpx;
+  margin: 0;
+  padding: 0 14rpx;
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12rpx;
+  background: transparent;
+  color: #748078;
+  font-size: 22rpx;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.daylight-segmented > .active,
+.daylight-segmented > .selected {
+  background: #dfe9de;
+  color: #40634b;
+  font-weight: 700;
+}
+
+.daylight-card {
+  width: 100%;
+  max-width: 100%;
+  border: 1rpx solid #d8d5c8;
+  border-radius: 18rpx;
+  background: #fffdf7;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.daylight-section-title {
+  color: #233028;
+  font-family: "Songti SC", STSong, Georgia, serif;
+  font-size: 31rpx;
+  font-weight: 700;
+}
+
+.daylight-hairline { border-top: 1rpx solid #ece8dd; }
+
+@media (max-width: 350px) {
+  .daylight-brand-head { padding-right: 24rpx; padding-left: 24rpx; }
+  .daylight-page-title { font-size: 48rpx; }
+  .daylight-module-nav > button { font-size: 21rpx; }
+  .daylight-module-nav > button.active::before { right: 14rpx; left: 14rpx; }
+  .daylight-segmented > view,
+  .daylight-segmented > button { padding-right: 8rpx; padding-left: 8rpx; font-size: 20rpx; }
+}
+
+.daylight-months-inner {
+  height: 94rpx;
+  padding: 0 18rpx;
+  display: inline-flex;
+  align-items: stretch;
+  gap: 8rpx;
+  box-sizing: border-box;
+}
+
+.daylight-month {
+  position: relative;
+  min-width: 106rpx;
+  height: 94rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8b8b7e;
+  font-family: "Songti SC", STSong, Georgia, serif;
+  font-size: 25rpx;
+  font-weight: 650;
+  box-sizing: border-box;
+}
+
+.daylight-month.active { color: #54775e; font-weight: 700; }
+.daylight-month.active::after {
+  position: absolute;
+  right: 18rpx;
+  bottom: 0;
+  left: 18rpx;
+  height: 5rpx;
+  background: #d88b62;
+  content: "";
+}
+
+.daylight-player-section-inner {
+  height: 82rpx;
+  padding: 0 18rpx;
+  display: inline-flex;
+  gap: 6rpx;
+  box-sizing: border-box;
+}
+
+.daylight-player-section-item {
+  position: relative;
+  min-width: 142rpx;
+  height: 82rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8b8b7e;
+  font-size: 21rpx;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.daylight-player-section-item.active { color: #54775e; font-weight: 700; }
+.daylight-player-section-item.active::after {
+  position: absolute;
+  right: 20rpx;
+  bottom: 0;
+  left: 20rpx;
+  height: 5rpx;
+  background: #d88b62;
+  content: "";
+}
+
+.share-card-canvas {
+  position: fixed;
+  left: -9999px;
+  top: -9999px;
+  width: 500px;
+  height: 500px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (max-width: 350px) {
+  .daylight-player-section-item { min-width: 122rpx; }
+}

@@ -1,0 +1,64 @@
+<view class="match-card theme-{{theme}} template-{{match.template}}" bindtap="open" role="button" aria-label="查看比赛详情">
+  <view class="card-head">
+    <view class="match-meta">
+      <text class="meta-part schedule">{{match.scheduleText}}</text>
+      <text wx:if="{{match.roundLabel}}" class="meta-part">{{match.roundLabel}}</text>
+      <text wx:if="{{match.disciplineLabel}}" class="meta-part">{{match.disciplineLabel}}</text>
+      <text wx:if="{{match.qualifyingLabel}}" class="meta-part">{{match.qualifyingLabel}}</text>
+      <text wx:if="{{match.scoringSummary}}" class="meta-part">{{match.scoringSummary}}</text>
+    </view>
+    <view class="status status-{{match.statusTone}}"><view wx:if="{{match.showLivePulse}}" class="live-dot"/><text>{{match.statusLabel}}</text></view>
+  </view>
+
+  <view class="score-grid">
+    <view wx:for="{{match.sides}}" wx:key="sideId" class="score-line">
+      <view class="card-player">
+        <view class="player-primary {{match.hasSeed ? 'has-seed' : 'no-seed'}}">
+          <view wx:if="{{match.hasSeed}}" class="seed-slot"><text wx:if="{{item.seedLabel}}" class="seed">{{item.seedLabel}}</text></view>
+          <view wx:if="{{item.isDoubles}}" class="doubles-side">
+            <view class="doubles-primary">
+              <block wx:for="{{item.members}}" wx:for-item="member" wx:for-index="memberIndex" wx:key="index">
+                <view class="doubles-member">
+                  <view class="doubles-flag {{member.countryMark ? '' : 'unknown'}}"><text wx:if="{{member.countryMark}}">{{member.countryMark}}</text><ui-icon wx:else name="player" size="12" color="{{theme === 'daylight' ? '#8b8b7e' : (theme === 'dark' ? '#94a3b8' : '#66788a')}}" /></view>
+                  <text class="doubles-name">{{member.name}}</text>
+                </view>
+                <text wx:if="{{memberIndex === 0}}" class="doubles-divider">/</text>
+              </block>
+              <text wx:if="{{item.oddsLabel}}" class="name-odds doubles-odds">{{item.oddsLabel}}</text>
+            </view>
+            <text wx:if="{{item.rankLabel}}" class="doubles-ranking">{{item.rankLabel}}</text>
+          </view>
+          <view wx:else class="member-list">
+            <view wx:for="{{item.members}}" wx:for-item="member" wx:for-index="memberIndex" wx:key="index" class="member-row">
+              <view class="country-stack">
+                <view class="identity-mark {{member.countryMark ? '' : 'unknown'}}"><text wx:if="{{member.countryMark}}" class="identity-flag">{{member.countryMark}}</text><ui-icon wx:else name="player" size="14" color="{{theme === 'daylight' ? '#8b8b7e' : (theme === 'dark' ? '#94a3b8' : '#66788a')}}" /></view>
+                <text wx:if="{{member.countryLabel}}" class="country-code">{{member.countryLabel}}</text>
+              </view>
+              <view class="name-wrap"><view class="member-name-line"><text class="side-name">{{member.name}}</text><text wx:if="{{memberIndex === 0 && item.oddsLabel}}" class="name-odds">{{item.oddsLabel}}</text></view><text wx:if="{{member.rankingLabel}}" class="member-ranking">{{member.rankingLabel}}</text></view>
+            </view>
+          </view>
+          <text wx:if="{{item.isWinner}}" class="win-stamp">赢</text>
+        </view>
+      </view>
+      <view class="serve-slot"><text wx:if="{{item.isServer && match.group !== 'ended'}}" class="serve-label">{{item.serveLabel}}</text></view>
+      <view wx:if="{{match.scoreVisible}}" class="sets-row">
+        <text wx:for="{{item.setScores}}" wx:key="index" class="set-score {{item.current ? 'current-set' : ''}} {{item.matchTiebreak ? 'match-tiebreak' : ''}}">{{item.value}}<text wx:if="{{item.tiebreak}}" class="tiebreak">{{item.tiebreak}}</text></text>
+      </view>
+      <text wx:if="{{match.scoreVisible && item.currentPoint}}" class="game-point {{item.currentPointHighlighted ? 'last-point' : ''}}">{{item.currentPoint}}</text>
+    </view>
+    <text wx:if="{{!match.scoreVisible && match.scorePlaceholder}}" class="score-placeholder">{{match.scorePlaceholder}}</text>
+  </view>
+
+  <text wx:if="{{match.currentGame && match.currentGame.decidingPointLabel}}" class="annotation">{{match.currentGame.decidingPointLabel}}</text>
+  <text wx:if="{{match.annotation && match.scoreVisible}}" class="annotation">{{match.annotation}}</text>
+  <view class="card-foot">
+    <text wx:if="{{match.deliveryNotice}}" class="dto-note">{{match.deliveryNotice}}</text>
+    <view class="card-action-wrap">
+      <text class="match-follow-count">{{match.followCountLabel}}</text>
+      <view class="card-actions">
+        <view class="follow-action {{match.followed ? 'followed' : ''}}" catchtap="toggleFollow" role="button" aria-label="关注比赛"><ui-icon name="heart" size="15" color="{{match.followed ? '#fff' : (theme === 'daylight' ? '#54775e' : (theme === 'dark' ? '#38bdf8' : '#1677d2'))}}" /><text>{{match.followed ? '已关注' : '关注'}}</text></view>
+        <button class="open-detail" catchtap="open"><text>详情</text><ui-icon name="chevron" size="13" color="{{theme === 'daylight' ? '#54775e' : (theme === 'dark' ? '#38bdf8' : '#1677d2')}}" /></button>
+      </view>
+    </view>
+  </view>
+</view>

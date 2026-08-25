@@ -1,0 +1,344 @@
+<view class="safe-page players-page theme-{{uiTheme}}">
+  <block wx:if="{{isDaylight}}">
+    <product-tabbar active="players" theme="{{uiTheme}}"/>
+    <view class="daylight-brand-head" style="padding-top:{{topInset + 8}}px"><text class="daylight-kicker">PLAYER CENTER</text><text class="daylight-page-title">球员中心</text><text class="daylight-caption">排名、走势与球员资料</text></view>
+    <view class="daylight-player-sections"><scroll-view scroll-x enhanced show-scrollbar="{{false}}"><view class="daylight-player-section-inner"><view wx:for="{{sections}}" wx:key="id" data-section="{{item.id}}" bindtap="selectSection" class="daylight-player-section-item {{section === item.id ? 'active' : ''}}">{{item.label}}</view></view></scroll-view></view>
+    <view class="daylight-player-controls">
+      <view wx:if="{{section === 'ranking' || section === 'h2h'}}" class="daylight-authority daylight-segmented"><view wx:for="{{rankTabs}}" wx:key="id" data-authority="{{item.id}}" bindtap="selectAuthority" class="{{authority === item.id ? 'selected' : ''}}">{{item.label}}</view></view>
+      <view wx:if="{{section === 'follows'}}" class="daylight-follow-tabs daylight-segmented"><view wx:for="{{followTabs}}" wx:key="id" data-tour="{{item.id}}" bindtap="selectFollowTour" class="{{followTour === item.id ? 'selected' : ''}}">{{item.label}}</view></view>
+      <view wx:if="{{section === 'ranking'}}" class="daylight-ranking-kinds daylight-segmented"><view wx:for="{{rankingKinds}}" wx:key="id" data-kind="{{item.id}}" bindtap="selectRankingKind" class="{{rankingKind === item.id ? 'selected' : ''}}">{{item.label}}</view></view>
+      <view wx:if="{{section === 'ranking' || section === 'follows'}}" class="daylight-player-search"><ui-icon name="search" size="16" color="#748078"/><input value="{{query}}" bindinput="onSearch" placeholder="搜索球员、英文名或国家/地区"/></view>
+    </view>
+    <data-notice wx:if="{{deliveryState}}" state="{{deliveryState}}" message="{{deliveryMessage}}" dataAsOf="{{dataAsOf}}" compact/>
+
+    <view wx:if="{{section === 'h2h'}}" class="daylight-h2h-panel">
+      <view class="daylight-h2h-inputs h2h-inputs daylight-card">
+        <view class="h2h-search-field first">
+          <view class="h2h-input-box">
+            <input value="{{h2hPlayer1}}" data-side="first" bindinput="onH2hInput" placeholder="搜索球员一（中文/English）"/>
+          </view>
+          <view wx:if="{{h2hSearching1}}" class="h2h-search-hint">搜索中</view>
+          <view wx:elif="{{h2hSearchMessage1}}" class="h2h-search-hint">{{h2hSearchMessage1}}</view>
+          <view wx:if="{{h2hOptions1.length}}" class="h2h-options">
+            <view wx:for="{{h2hOptions1}}" wx:key="playerId" class="h2h-option" data-side="first" data-index="{{index}}" catchtap="selectH2hPlayer">
+              <text class="h2h-option-name">{{item.name}}</text>
+              <text class="h2h-option-meta"><text wx:if="{{item.originalName}}">{{item.originalName}} · </text><text wx:if="{{item.countryMark}}">{{item.countryMark}} </text>{{item.countryCode}}<text wx:if="{{item.position}}"> · #{{item.position}}</text></text>
+            </view>
+          </view>
+        </view>
+        <view class="h2h-vs">VS</view>
+        <view class="h2h-search-field second">
+          <view class="h2h-input-box">
+            <input value="{{h2hPlayer2}}" data-side="second" bindinput="onH2hInput" placeholder="搜索球员二（中文/English）"/>
+          </view>
+          <view wx:if="{{h2hSearching2}}" class="h2h-search-hint">搜索中</view>
+          <view wx:elif="{{h2hSearchMessage2}}" class="h2h-search-hint">{{h2hSearchMessage2}}</view>
+          <view wx:if="{{h2hOptions2.length}}" class="h2h-options">
+            <view wx:for="{{h2hOptions2}}" wx:key="playerId" class="h2h-option" data-side="second" data-index="{{index}}" catchtap="selectH2hPlayer">
+              <text class="h2h-option-name">{{item.name}}</text>
+              <text class="h2h-option-meta"><text wx:if="{{item.originalName}}">{{item.originalName}} · </text><text wx:if="{{item.countryMark}}">{{item.countryMark}} </text>{{item.countryCode}}<text wx:if="{{item.position}}"> · #{{item.position}}</text></text>
+            </view>
+          </view>
+        </view>
+        <button class="h2h-submit" loading="{{h2hLoading}}" bindtap="searchH2h">查询 H2H</button>
+      </view>
+      <view wx:if="{{h2hLoading}}" class="daylight-page-state"><client-state state="loading" label="正在读取 H2H" message=""/></view>
+      <view wx:elif="{{h2hEmpty}}" class="daylight-page-state"><client-state state="empty" label="{{h2hMessage}}" message="请选择下拉搜索结果后重试"/></view>
+      <view wx:elif="{{h2hFailed}}" class="daylight-page-state"><client-state state="failed" label="{{h2hMessage}}" message="" retryable bind:retry="searchH2h"/></view>
+      <view wx:elif="{{h2hResult}}" class="daylight-h2h-result daylight-card">
+        <view class="daylight-h2h-score">
+          <view><text>{{h2hResult.player1Name}}</text><text>{{h2hResult.player1Country}}</text></view>
+          <view><text>{{h2hResult.player1Wins}} — {{h2hResult.player2Wins}}</text><text>{{h2hResult.totalMatches}} 场交手</text></view>
+          <view><text>{{h2hResult.player2Name}}</text><text>{{h2hResult.player2Country}}</text></view>
+        </view>
+        <view wx:if="{{h2hResult.history.length}}" class="daylight-h2h-history">
+          <text>交手历史</text>
+          <view wx:for="{{h2hResult.history}}" wx:key="sourceMatchId" class="daylight-h2h-match-row">
+            <view class="daylight-h2h-match-main">
+              <text>{{item.dateText}}</text>
+              <text>{{item.tournamentName}}</text>
+            </view>
+            <text wx:if="{{item.metaText}}" class="daylight-h2h-match-meta">{{item.metaText}}</text>
+            <view class="daylight-h2h-match-outcome">
+              <text wx:if="{{item.winnerLabel}}" class="daylight-h2h-match-winner">{{item.winnerLabel}}</text>
+              <text wx:if="{{item.resultLabel}}" class="daylight-h2h-match-score">{{item.resultLabel}}</text>
+            </view>
+          </view>
+        </view>
+        <view wx:for="{{h2hResult.sections}}" wx:key="id" class="daylight-h2h-section">
+          <text>{{item.title}}</text>
+          <view wx:for="{{item.rows}}" wx:for-item="row" wx:key="key"><text>{{row.label}}</text><text>{{row.player1Value || '—'}}</text><text>{{row.player2Value || '—'}}</text></view>
+        </view>
+      </view>
+    </view>
+    <view wx:elif="{{section === 'flowers'}}" class="daylight-page-state"><client-state state="empty" label="送花榜稍后接入" message="先看排名与球员资料"/></view>
+    <view wx:elif="{{section === 'follows'}}" class="follow-leaderboard-list daylight-follow-leaderboard-list">
+      <view wx:if="{{loading && !visiblePlayers.length}}" class="daylight-page-state"><client-state state="loading" label="正在读取关注榜" message="按关注人数加载球员"/></view>
+      <view wx:elif="{{failed && !visiblePlayers.length}}" class="daylight-page-state"><client-state state="failed" label="关注榜暂不可用" message="请下拉刷新或稍后重试" retryable bind:retry="load"/></view>
+      <view wx:elif="{{!visiblePlayers.length}}" class="daylight-page-state"><client-state state="empty" label="暂无关注榜数据" message="换个筛选或稍后再看"/></view>
+      <block wx:else>
+        <view wx:for="{{visiblePlayers}}" wx:key="id" class="leaderboard-card daylight-leaderboard-card" data-id="{{item.id}}" data-index="{{index}}" bindtap="openPlayer" role="button">
+          <text class="leaderboard-rank">{{item.leaderboardPosition || '—'}}</text>
+          <view class="leaderboard-photo"><image wx:if="{{item.cardImageUrl}}" src="{{item.cardImageUrl}}" mode="aspectFill"/><ui-icon wx:else name="player" size="25" color="#748078"/></view>
+          <view class="leaderboard-copy">
+            <view class="leaderboard-name-row"><view><text class="leaderboard-name">{{item.name}}</text><text wx:if="{{item.originalName}}" class="leaderboard-original">{{item.originalName}}</text></view><view class="player-follow-action {{item.followed ? 'followed' : ''}}" data-id="{{item.followTargetId}}" data-followed="{{!item.followed}}" catchtap="togglePlayerFollow" role="button"><ui-icon name="heart" size="14" color="{{item.followed ? '#fff' : '#54775e'}}"/><text>{{item.followed ? '已关注' : '关注'}}</text></view></view>
+            <view class="leaderboard-meta"><text wx:if="{{item.countryMark}}">{{item.countryMark}} </text><text>{{item.countryCode || '国家/地区待更新'}}</text><text>{{item.ageLabel}}</text><text>{{item.rankingLabel}}</text></view>
+            <text class="leaderboard-follow-count">{{item.followCountLabel}}</text>
+          </view>
+          <ui-icon name="chevron" size="14" color="#8b8b7e"/>
+        </view>
+        <view wx:if="{{loadingMore}}" class="daylight-list-tail">继续加载中</view><button wx:elif="{{hasMore}}" class="daylight-list-tail" bindtap="loadMore">加载更多</button><view wx:else class="daylight-list-tail">已显示当前全部球员</view>
+      </block>
+    </view>
+    <view wx:elif="{{loading && !visiblePlayers.length}}" class="daylight-page-state"><client-state state="loading" label="正在读取球员" message="按排名加载首批球员资料"/></view>
+    <view wx:elif="{{failed && !visiblePlayers.length}}" class="daylight-page-state"><client-state state="failed" label="球员资料暂不可用" message="请下拉刷新或稍后重试" retryable bind:retry="load"/></view>
+    <view wx:elif="{{!visiblePlayers.length}}" class="daylight-page-state"><client-state state="empty" label="没有匹配的球员" message="换一个姓名或国家/地区试试"/></view>
+    <view wx:else class="daylight-player-list">
+      <view class="daylight-ranking-head"><text>排名与球员</text><text>积分 / 变化</text></view>
+      <view wx:for="{{visiblePlayers}}" wx:key="id" class="daylight-player-row" data-id="{{item.id}}" data-index="{{index}}" bindtap="openPlayer" role="button">
+        <text class="daylight-rank rank-{{item.position}}">{{item.position || '—'}}</text>
+        <view class="daylight-portrait"><image wx:if="{{item.portraitUrl}}" src="{{item.portraitUrl}}" mode="aspectFill"/><ui-icon wx:else name="player" size="21" color="#748078"/></view>
+        <view class="daylight-player-copy"><view class="daylight-player-name-row"><text class="daylight-player-name">{{item.name}}</text><view class="player-follow-action {{item.followed ? 'followed' : ''}}" data-id="{{item.followTargetId}}" data-followed="{{!item.followed}}" catchtap="togglePlayerFollow" role="button"><ui-icon name="heart" size="14" color="{{item.followed ? '#fff' : '#54775e'}}"/><text>{{item.followed ? '已关注' : '关注'}}</text></view></view><text wx:if="{{item.originalName}}" class="daylight-player-original">{{item.originalName}}</text><text class="daylight-player-meta"><text wx:if="{{item.countryMark}}">{{item.countryMark}} </text>{{item.countryCode || '国家/地区待更新'}} · {{item.followCountLabel}}<text wx:if="{{item.extraMeta}}"> · {{item.extraMeta}}</text></text></view>
+        <view class="daylight-player-points"><text wx:if="{{item.points !== null}}">{{item.points}}</text><text class="movement-{{item.movementTone}}">{{item.movementText}}</text></view>
+        <ui-icon name="chevron" size="14" color="#8b8b7e"/>
+      </view>
+      <view wx:if="{{loadingMore}}" class="daylight-list-tail">继续加载中</view><button wx:elif="{{hasMore}}" class="daylight-list-tail" bindtap="loadMore">加载更多</button><view wx:else class="daylight-list-tail">已显示当前全部球员</view>
+    </view>
+  </block>
+  <block wx:else>
+  <product-tabbar active="players" theme="{{uiTheme}}" />
+  <view class="module-head" style="padding-top:{{topInset}}px">
+    <view class="module-title-copy">
+      <text class="eyebrow">PLAYER CENTER</text>
+      <text class="title">球员中心</text>
+      <text class="title-caption">排名、走势与球员资料</text>
+    </view>
+    <view class="module-head-mark"><text>ATP</text><text>WTA</text></view>
+  </view>
+
+  <view class="player-module-nav">
+    <view
+      wx:for="{{sections}}"
+      wx:key="id"
+      data-section="{{item.id}}"
+      bindtap="selectSection"
+      role="button"
+      class="{{section === item.id ? 'active' : ''}}"
+    >{{item.label}}</view>
+  </view>
+
+  <view class="player-controls">
+    <view wx:if="{{section === 'ranking' || section === 'h2h'}}" class="rank-tabs">
+      <view
+        wx:for="{{rankTabs}}"
+        wx:key="id"
+        data-authority="{{item.id}}"
+        bindtap="selectAuthority"
+        role="button"
+        class="{{authority === item.id ? 'selected' : ''}}"
+      >{{item.label}}</view>
+    </view>
+    <view wx:if="{{section === 'follows'}}" class="rank-tabs follow-tabs">
+      <view
+        wx:for="{{followTabs}}"
+        wx:key="id"
+        data-tour="{{item.id}}"
+        bindtap="selectFollowTour"
+        role="button"
+        class="{{followTour === item.id ? 'selected' : ''}}"
+      >{{item.label}}</view>
+    </view>
+    <view wx:if="{{section === 'ranking'}}" class="rank-tabs ranking-kind-tabs">
+      <view
+        wx:for="{{rankingKinds}}"
+        wx:key="id"
+        data-kind="{{item.id}}"
+        bindtap="selectRankingKind"
+        role="button"
+        class="{{rankingKind === item.id ? 'selected' : ''}}"
+      >{{item.label}}</view>
+    </view>
+
+    <view wx:if="{{section === 'ranking' || section === 'follows'}}" class="search-box">
+      <ui-icon name="search" size="16" color="#7b8997"/>
+      <input value="{{query}}" bindinput="onSearch" placeholder="搜索球员、英文名或国家/地区"/>
+    </view>
+  </view>
+
+  <data-notice
+    wx:if="{{deliveryState}}"
+    state="{{deliveryState}}"
+    message="{{deliveryMessage}}"
+    dataAsOf="{{dataAsOf}}"
+    compact
+  />
+
+  <view wx:if="{{section === 'h2h'}}" class="h2h-panel">
+    <view class="h2h-inputs">
+      <view class="h2h-search-field first">
+        <view class="h2h-input-box">
+          <input value="{{h2hPlayer1}}" data-side="first" bindinput="onH2hInput" placeholder="搜索球员一（中文/English）"/>
+        </view>
+        <view wx:if="{{h2hSearching1}}" class="h2h-search-hint">搜索中</view>
+        <view wx:elif="{{h2hSearchMessage1}}" class="h2h-search-hint">{{h2hSearchMessage1}}</view>
+        <view wx:if="{{h2hOptions1.length}}" class="h2h-options">
+          <view wx:for="{{h2hOptions1}}" wx:key="playerId" class="h2h-option" data-side="first" data-index="{{index}}" catchtap="selectH2hPlayer">
+            <text class="h2h-option-name">{{item.name}}</text>
+            <text class="h2h-option-meta"><text wx:if="{{item.originalName}}">{{item.originalName}} · </text><text wx:if="{{item.countryMark}}">{{item.countryMark}} </text>{{item.countryCode}}<text wx:if="{{item.position}}"> · #{{item.position}}</text></text>
+          </view>
+        </view>
+      </view>
+      <view class="h2h-vs">VS</view>
+      <view class="h2h-search-field second">
+        <view class="h2h-input-box">
+          <input value="{{h2hPlayer2}}" data-side="second" bindinput="onH2hInput" placeholder="搜索球员二（中文/English）"/>
+        </view>
+        <view wx:if="{{h2hSearching2}}" class="h2h-search-hint">搜索中</view>
+        <view wx:elif="{{h2hSearchMessage2}}" class="h2h-search-hint">{{h2hSearchMessage2}}</view>
+        <view wx:if="{{h2hOptions2.length}}" class="h2h-options">
+          <view wx:for="{{h2hOptions2}}" wx:key="playerId" class="h2h-option" data-side="second" data-index="{{index}}" catchtap="selectH2hPlayer">
+            <text class="h2h-option-name">{{item.name}}</text>
+            <text class="h2h-option-meta"><text wx:if="{{item.originalName}}">{{item.originalName}} · </text><text wx:if="{{item.countryMark}}">{{item.countryMark}} </text>{{item.countryCode}}<text wx:if="{{item.position}}"> · #{{item.position}}</text></text>
+          </view>
+        </view>
+      </view>
+      <button class="h2h-submit" loading="{{h2hLoading}}" bindtap="searchH2h">查询 H2H</button>
+    </view>
+    <view wx:if="{{h2hLoading}}" class="page-state compact-state">
+      <client-state state="loading" label="正在读取 H2H" message=""/>
+    </view>
+    <view wx:elif="{{h2hEmpty}}" class="page-state compact-state">
+      <client-state state="empty" label="{{h2hMessage}}" message="请选择下拉搜索结果后重试"/>
+    </view>
+    <view wx:elif="{{h2hFailed}}" class="page-state compact-state">
+      <client-state state="failed" label="{{h2hMessage}}" message="" retryable bind:retry="searchH2h"/>
+    </view>
+    <view wx:elif="{{h2hResult}}" class="h2h-result">
+      <view class="h2h-scoreboard">
+        <view class="h2h-side">
+          <text class="h2h-player">{{h2hResult.player1Name}}</text>
+          <text class="h2h-country">{{h2hResult.player1Country}}</text>
+        </view>
+        <view class="h2h-score">
+          <text>{{h2hResult.player1Wins}}</text>
+          <text class="h2h-score-separator">-</text>
+          <text>{{h2hResult.player2Wins}}</text>
+          <text class="h2h-total">{{h2hResult.totalMatches}} 场交手</text>
+        </view>
+        <view class="h2h-side right">
+          <text class="h2h-player">{{h2hResult.player2Name}}</text>
+          <text class="h2h-country">{{h2hResult.player2Country}}</text>
+        </view>
+      </view>
+      <view wx:if="{{!h2hResult.hasMeetings}}" class="h2h-empty-line">0-0</view>
+      <view wx:if="{{h2hResult.history.length}}" class="h2h-section">
+        <view class="h2h-section-title">交手历史</view>
+        <view
+          wx:for="{{h2hResult.history}}"
+          wx:key="sourceMatchId"
+          class="h2h-match-row"
+        >
+          <view class="h2h-match-main">
+            <text class="h2h-match-date">{{item.dateText}}</text>
+            <text class="h2h-match-title">{{item.tournamentName}}</text>
+          </view>
+          <text wx:if="{{item.metaText}}" class="h2h-match-meta">{{item.metaText}}</text>
+          <view class="h2h-match-outcome">
+            <text wx:if="{{item.winnerLabel}}" class="h2h-match-winner">{{item.winnerLabel}}</text>
+            <text wx:if="{{item.resultLabel}}" class="h2h-match-result">{{item.resultLabel}}</text>
+          </view>
+        </view>
+      </view>
+      <view
+        wx:for="{{h2hResult.sections}}"
+        wx:key="id"
+        class="h2h-section"
+      >
+        <view class="h2h-section-title">{{item.title}}</view>
+        <view class="h2h-stat-head">
+          <text></text>
+          <text>{{h2hResult.player1Name}}</text>
+          <text>{{h2hResult.player2Name}}</text>
+        </view>
+        <view wx:for="{{item.rows}}" wx:for-item="row" wx:key="key" class="h2h-stat-row">
+          <text>{{row.label}}</text>
+          <text>{{row.player1Value || '—'}}</text>
+          <text>{{row.player2Value || '—'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+  <view wx:elif="{{section === 'flowers'}}" class="page-state">
+    <client-state state="empty" label="送花榜稍后接入" message="先看排名与球员资料"/>
+  </view>
+  <view wx:elif="{{section === 'follows'}}" class="follow-leaderboard-list">
+    <view wx:if="{{loading && !visiblePlayers.length}}" class="page-state">
+      <client-state state="loading" label="正在读取关注榜" message="按关注人数加载球员"/>
+    </view>
+    <view wx:elif="{{failed && !visiblePlayers.length}}" class="page-state">
+      <client-state state="failed" label="关注榜暂不可用" message="请下拉刷新或稍后重试" retryable bind:retry="load"/>
+    </view>
+    <view wx:elif="{{!visiblePlayers.length}}" class="page-state">
+      <client-state state="empty" label="暂无关注榜数据" message="换个筛选或稍后再看"/>
+    </view>
+    <block wx:else>
+      <view wx:for="{{visiblePlayers}}" wx:key="id" class="leaderboard-card" data-id="{{item.id}}" data-index="{{index}}" bindtap="openPlayer" role="button">
+        <text class="leaderboard-rank">{{item.leaderboardPosition || '—'}}</text>
+        <view class="leaderboard-photo"><image wx:if="{{item.cardImageUrl}}" src="{{item.cardImageUrl}}" mode="aspectFill"/><ui-icon wx:else name="player" size="25" color="#7d8b99"/></view>
+        <view class="leaderboard-copy">
+          <view class="leaderboard-name-row"><view><text class="leaderboard-name">{{item.name}}</text><text wx:if="{{item.originalName}}" class="leaderboard-original">{{item.originalName}}</text></view><view class="player-follow-action {{item.followed ? 'followed' : ''}}" data-id="{{item.followTargetId}}" data-followed="{{!item.followed}}" catchtap="togglePlayerFollow" role="button"><ui-icon name="heart" size="14" color="{{item.followed ? '#fff' : '#1677d2'}}"/><text>{{item.followed ? '已关注' : '关注'}}</text></view></view>
+          <view class="leaderboard-meta"><text wx:if="{{item.countryMark}}">{{item.countryMark}} </text><text>{{item.countryCode || '国家/地区待更新'}}</text><text>{{item.ageLabel}}</text><text>{{item.rankingLabel}}</text></view>
+          <text class="leaderboard-follow-count">{{item.followCountLabel}}</text>
+        </view>
+        <ui-icon name="chevron" size="14" color="#9aa7b3"/>
+      </view>
+      <view wx:if="{{loadingMore}}" class="list-tail">继续加载中</view>
+      <button wx:elif="{{hasMore}}" class="list-tail load-more" bindtap="loadMore">加载更多</button>
+      <view wx:else class="list-tail">已显示当前全部球员</view>
+    </block>
+  </view>
+  <view wx:elif="{{loading && !visiblePlayers.length}}" class="page-state">
+    <client-state state="loading" label="正在读取球员" message="按排名加载首批球员资料"/>
+  </view>
+  <view wx:elif="{{failed && !visiblePlayers.length}}" class="page-state">
+    <client-state state="failed" label="球员资料暂不可用" message="请下拉刷新或稍后重试" retryable bind:retry="load"/>
+  </view>
+  <view wx:elif="{{!visiblePlayers.length}}" class="page-state">
+    <client-state state="empty" label="没有匹配的球员" message="换一个姓名或国家/地区试试"/>
+  </view>
+  <view wx:else class="player-list">
+    <view class="player-list-head"><text>排名与球员</text><text>积分 / 变化</text></view>
+    <view
+      wx:for="{{visiblePlayers}}"
+      wx:key="id"
+      class="player-row"
+      data-id="{{item.id}}"
+      data-index="{{index}}"
+      bindtap="openPlayer"
+      role="button"
+    >
+      <text class="rank-number rank-top-{{item.position}}">{{item.position || '—'}}</text>
+      <image wx:if="{{item.portraitUrl}}" class="portrait" src="{{item.portraitUrl}}" mode="aspectFill"/>
+      <view wx:else class="portrait placeholder">
+        <ui-icon name="player" size="22" color="#7d8b99"/>
+      </view>
+      <view class="player-main">
+        <view class="player-name-row"><text class="player-name">{{item.name}}</text><view class="player-follow-action {{item.followed ? 'followed' : ''}}" data-id="{{item.followTargetId}}" data-followed="{{!item.followed}}" catchtap="togglePlayerFollow" role="button"><ui-icon name="heart" size="14" color="{{item.followed ? '#fff' : '#1677d2'}}"/><text>{{item.followed ? '已关注' : '关注'}}</text></view></view>
+        <text wx:if="{{item.originalName}}" class="player-original">{{item.originalName}}</text>
+        <text class="player-meta">
+          <text wx:if="{{item.countryMark}}">{{item.countryMark}} </text>{{item.countryCode || '国家/地区待更新'}} · {{item.followCountLabel}}<text wx:if="{{item.extraMeta}}"> · {{item.extraMeta}}</text>
+        </text>
+      </view>
+      <view class="player-result">
+        <text wx:if="{{item.points !== null}}" class="points-value">{{item.points}}</text>
+        <view class="movement {{item.movementTone}}"><text>{{item.movementText}}</text></view>
+      </view>
+      <ui-icon name="chevron" size="14" color="#9aa7b3"/>
+    </view>
+    <view wx:if="{{loadingMore}}" class="list-tail">继续加载中</view>
+    <button wx:elif="{{hasMore}}" class="list-tail load-more" bindtap="loadMore">加载更多</button>
+    <view wx:else class="list-tail">已显示当前全部球员</view>
+  </view>
+
+  </block>
+</view>

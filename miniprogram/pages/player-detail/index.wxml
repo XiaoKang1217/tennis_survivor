@@ -1,0 +1,196 @@
+<page-meta page-style="{{themePageStyle}}" background-color="{{themeCanvas}}" background-text-style="{{themeBackgroundTextStyle}}"/>
+<view class="safe-page detail-page theme-{{uiTheme}}">
+  <block wx:if="{{isDaylight}}">
+    <view class="daylight-detail-head" style="padding-top:{{topInset}}px"><view bindtap="back" role="button"><ui-icon name="back" size="18" color="#54775e"/></view><view><text>球员资料</text><text>{{tour || 'ATP · WTA'}}</text></view><view/></view>
+    <view class="daylight-player-hero">
+      <view class="daylight-player-identity"><text class="daylight-hero-eyebrow">{{tour || 'ATP · WTA'}} PLAYER</text><text class="daylight-player-name-main">{{name}}</text><text wx:if="{{originalName}}" class="daylight-player-original-name">{{originalName}}</text><text class="daylight-player-meta-line">{{countryCode || '国家/地区待更新'}}<text wx:if="{{tour}}"> · {{tour}}</text></text><view><view wx:if="{{position}}"><text>世界排名</text><text>{{position}}</text></view><view wx:if="{{points}}"><text>当前积分</text><text>{{points}}</text></view></view></view>
+      <view class="daylight-player-visual"><image wx:if="{{heroImageUrl}}" src="{{heroImageUrl}}" mode="aspectFit"/><image wx:elif="{{portraitUrl}}" src="{{portraitUrl}}" mode="aspectFill"/><ui-icon wx:else name="player" size="50" color="#54775e"/></view>
+    </view>
+    <view class="profile-actions"><view class="profile-follow-button" bindtap="togglePlayerFollow" role="button"><ui-icon name="heart" size="16" color="#ffffff"/><text>{{followed ? '已关注球员' : '关注球员'}}</text></view><button class="profile-share-button" open-type="share" hover-class="none"><ui-icon name="share" size="16" color="#54775e"/><text>分享</text></button></view>
+    <view wx:if="{{statsAvailable}}" class="daylight-player-summary">
+      <view><view><text class="daylight-section-title">本赛季</text><text>SEASON</text></view><view><view><text>{{season.rank}}</text><text>本周排名</text></view><view><text>{{season.winLoss}}</text><text>胜 / 负</text></view><view><text>{{season.titles}}</text><text>冠军</text></view><view><text>{{season.prizeMoney}}</text><text>奖金</text></view></view></view>
+      <view><view><text class="daylight-section-title">职业生涯</text><text>CAREER</text></view><view><view><text>{{career.bestRank}}</text><text>最高排名</text></view><view><text>{{career.winLoss}}</text><text>胜 / 负</text></view><view><text>{{career.titles}}</text><text>冠军</text></view><view><text>{{career.prizeMoney}}</text><text>奖金</text></view></view></view>
+    </view>
+    <data-notice wx:if="{{deliveryState}}" state="{{deliveryState}}" message="{{deliveryMessage}}" dataAsOf="{{dataAsOf}}" compact/>
+    <view wx:if="{{loading}}" class="daylight-page-state"><client-state state="loading" label="正在读取球员资料" message="资料、排名和生涯统计同步加载"/></view>
+    <view wx:elif="{{failed}}" class="daylight-page-state"><client-state state="failed" label="球员资料暂不可用" message="请稍后重试" retryable bind:retry="load"/></view>
+    <block wx:else>
+      <view class="daylight-profile-tabs daylight-segmented"><view wx:for="{{tabs}}" wx:key="id" data-tab="{{item.id}}" bindtap="selectTab" class="{{activeTab === item.id ? 'active' : ''}}">{{item.label}}</view></view>
+      <view wx:if="{{activeTab === 'basic'}}" class="daylight-profile-section daylight-card"><text class="daylight-section-title">基本资料</text><view class="daylight-facts"><view wx:for="{{facts}}" wx:key="label"><text>{{item.label}}</text><text>{{item.value}}</text></view></view></view>
+      <block wx:elif="{{activeTab === 'career'}}">
+        <view wx:if="{{hasTitleBadges}}" class="daylight-profile-section daylight-card"><text class="daylight-section-title">冠军与荣誉</text><view class="daylight-achievements"><view wx:for="{{titleBadges}}" wx:key="id" class="{{item.active ? 'active' : ''}} {{item.unknown ? 'unknown' : ''}}"><view><image wx:if="{{item.assetPath}}" src="{{item.assetPath}}" mode="aspectFit"/><text wx:else>{{item.emblemText || item.label}}</text><text wx:if="{{item.countText}}">{{item.countText}}</text></view><text>{{item.label}}</text></view></view></view>
+        <view wx:if="{{hasLevelRecords}}" class="daylight-profile-section daylight-card"><text class="daylight-section-title">级别战绩</text><view class="daylight-record-grid"><view wx:for="{{levelRecords}}" wx:key="id"><text>{{item.label}}</text><text>{{item.winLoss}}</text></view></view></view>
+        <view wx:if="{{hasSurfaceRecords}}" class="daylight-profile-section daylight-card"><text class="daylight-section-title">场地战绩</text><view class="daylight-record-grid"><view wx:for="{{surfaceRecords}}" wx:key="id"><text>{{item.label}}</text><text>{{item.winLoss}}</text></view></view></view>
+        <view class="daylight-profile-section daylight-card"><text class="daylight-section-title">发球数据</text><view wx:if="{{hasServeMetrics}}" class="daylight-serve-list"><view wx:for="{{serveMetrics}}" wx:key="id"><view><text>{{item.label}}</text><text>{{item.value}}</text></view><view><view wx:if="{{item.hasBar}}" style="width:{{item.barPercent}}%"/></view></view></view><text wx:else class="daylight-empty-note">发球数据暂无可信官方累计值</text></view>
+        <view class="daylight-profile-section daylight-card"><text class="daylight-section-title">生涯技术统计</text><view wx:if="{{hasTechnicalGroups}}" class="daylight-technical-groups"><view wx:for="{{technicalGroups}}" wx:key="id"><text>{{item.label}}</text><view><view wx:for="{{item.metrics}}" wx:key="id" wx:for-item="metric"><text>{{metric.label}}</text><text>{{metric.value}}</text><view wx:if="{{metric.hasBar}}"><view style="width:{{metric.barPercent}}%"/></view></view></view></view></view><text wx:else class="daylight-empty-note">生涯技术统计正在补齐</text></view>
+      </block>
+      <view wx:elif="{{activeTab === 'recent'}}" class="daylight-profile-section daylight-card"><text class="daylight-section-title">近期赛事</text><view wx:if="{{hasRecentEvents}}" class="daylight-recent-list"><view wx:for="{{recentEvents}}" wx:key="key"><view><text>{{item.tournamentName}}</text><text wx:if="{{item.dateText}}">{{item.dateText}}</text></view><text wx:if="{{item.metaText}}" class="daylight-recent-meta">{{item.metaText}}</text><text wx:if="{{item.resultLabel}}" class="daylight-recent-result {{item.resultTone}}">{{item.resultLabel}}</text><text wx:if="{{item.summary}}" class="daylight-recent-summary">{{item.summary}}</text></view></view><text wx:else class="daylight-empty-note">近期赛事正在补齐</text></view>
+    </block>
+  </block>
+  <block wx:else>
+  <view class="detail-head" style="padding-top:{{topInset}}px">
+    <view class="back-action" bindtap="back" role="button"><ui-icon name="back" size="19" color="{{themeAccentStrong}}"/></view>
+    <text>球员资料</text>
+    <view/>
+  </view>
+
+  <view class="hero">
+    <view class="profile-visual">
+      <image wx:if="{{heroImageUrl}}" class="hero-player" src="{{heroImageUrl}}" mode="aspectFit"/>
+      <image wx:elif="{{portraitUrl}}" class="portrait" src="{{portraitUrl}}" mode="aspectFill"/>
+      <view wx:else class="portrait placeholder"><ui-icon name="player" size="48" color="#1677d2"/></view>
+    </view>
+    <view class="identity">
+      <text class="hero-eyebrow">{{tour || 'ATP · WTA'}} PLAYER</text>
+      <text class="player-name">{{name}}</text>
+      <text wx:if="{{originalName}}" class="player-original-name">{{originalName}}</text>
+      <text class="player-meta">{{countryCode || '国家/地区待更新'}}<text wx:if="{{tour}}"> · {{tour}}</text></text>
+      <view class="rank-line">
+        <view wx:if="{{position}}"><text>世界排名</text><text>{{position}}</text></view>
+        <view wx:if="{{points}}"><text>当前积分</text><text>{{points}}</text></view>
+      </view>
+    </view>
+  </view>
+  <view class="profile-actions"><view class="profile-follow-button" bindtap="togglePlayerFollow" role="button"><ui-icon name="heart" size="16" color="#ffffff"/><text>{{followed ? '已关注球员' : '关注球员'}}</text></view><button class="profile-share-button" open-type="share" hover-class="none"><ui-icon name="share" size="16" color="{{themeAccentStrong}}"/><text>分享</text></button></view>
+
+  <view wx:if="{{statsAvailable}}" class="summary-panel">
+    <view class="summary-group">
+      <view class="summary-group-head"><text>本赛季</text><text>SEASON</text></view>
+      <view class="summary-grid">
+        <view><text class="summary-value">{{season.rank}}</text><text>本周排名</text></view>
+        <view><text class="summary-value">{{season.winLoss}}</text><text>胜 / 负</text></view>
+        <view><text class="summary-value">{{season.titles}}</text><text>冠军</text></view>
+        <view><text class="summary-value money">{{season.prizeMoney}}</text><text>奖金</text></view>
+      </view>
+    </view>
+    <view class="summary-group">
+      <view class="summary-group-head"><text>职业生涯</text><text>CAREER</text></view>
+      <view class="summary-grid">
+        <view><text class="summary-value">{{career.bestRank}}</text><text>最高排名</text></view>
+        <view><text class="summary-value">{{career.winLoss}}</text><text>胜 / 负</text></view>
+        <view><text class="summary-value">{{career.titles}}</text><text>冠军</text></view>
+        <view><text class="summary-value money">{{career.prizeMoney}}</text><text>奖金</text></view>
+      </view>
+    </view>
+  </view>
+
+  <data-notice wx:if="{{deliveryState}}" state="{{deliveryState}}" message="{{deliveryMessage}}" dataAsOf="{{dataAsOf}}" compact/>
+  <view wx:if="{{loading}}" class="page-state">
+    <client-state state="loading" label="正在读取球员资料" message="资料、排名和生涯统计同步加载"/>
+  </view>
+  <view wx:elif="{{failed}}" class="page-state">
+    <client-state state="failed" label="球员资料暂不可用" message="请稍后重试" retryable bind:retry="load"/>
+  </view>
+  <block wx:else>
+    <view class="profile-tabs">
+      <view
+        wx:for="{{tabs}}"
+        wx:key="id"
+        data-tab="{{item.id}}"
+        bindtap="selectTab"
+        role="button"
+        class="{{activeTab === item.id ? 'active' : ''}}"
+      >{{item.label}}</view>
+    </view>
+
+    <view wx:if="{{activeTab === 'basic'}}" class="section">
+      <text class="section-title">基本资料</text>
+      <view class="facts">
+        <view wx:for="{{facts}}" wx:key="label" class="fact">
+          <text>{{item.label}}</text>
+          <text>{{item.value}}</text>
+        </view>
+      </view>
+    </view>
+
+    <block wx:elif="{{activeTab === 'career'}}">
+      <view wx:if="{{hasTitleBadges}}" class="section">
+        <view class="achievement-grid">
+          <view wx:for="{{titleBadges}}" wx:key="id" class="achievement {{item.active ? 'active' : ''}} {{item.unknown ? 'unknown' : ''}}">
+            <view class="achievement-icon">
+              <image wx:if="{{item.assetPath}}" src="{{item.assetPath}}" mode="aspectFit"/>
+              <text wx:else>{{item.emblemText || item.label}}</text>
+              <view wx:if="{{item.countText}}" class="achievement-count">{{item.countText}}</view>
+            </view>
+            <text>{{item.label}}</text>
+          </view>
+        </view>
+        <view class="section-foot">更新于{{dataAsOf || '暂无'}}</view>
+      </view>
+
+      <view wx:if="{{hasLevelRecords}}" class="section">
+        <text class="section-title">级别战绩</text>
+        <view class="record-grid">
+          <view wx:for="{{levelRecords}}" wx:key="id" class="record-cell">
+            <text>{{item.label}}</text>
+            <text>{{item.winLoss}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view wx:if="{{hasSurfaceRecords}}" class="section">
+        <text class="section-title">场地战绩</text>
+        <view class="record-grid surface">
+          <view wx:for="{{surfaceRecords}}" wx:key="id" class="record-cell">
+            <text>{{item.label}}</text>
+            <text>{{item.winLoss}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="section">
+        <text class="section-title">发球数据</text>
+        <view wx:if="{{hasServeMetrics}}" class="serve-list">
+          <view wx:for="{{serveMetrics}}" wx:key="id" class="serve-row">
+            <view class="serve-line">
+              <text>{{item.label}}</text>
+              <text>{{item.value}}</text>
+            </view>
+            <view class="serve-track">
+              <view wx:if="{{item.hasBar}}" class="serve-fill" style="width:{{item.barPercent}}%"></view>
+            </view>
+          </view>
+        </view>
+        <view wx:else class="empty-note">发球数据暂无可信官方累计值</view>
+      </view>
+
+      <view class="section">
+        <text class="section-title">生涯技术统计</text>
+        <view wx:if="{{hasTechnicalGroups}}" class="technical-groups">
+          <view wx:for="{{technicalGroups}}" wx:key="id" class="technical-group">
+            <text class="technical-title">{{item.label}}</text>
+            <view class="technical-grid">
+              <view wx:for="{{item.metrics}}" wx:key="id" wx:for-item="metric" class="technical-cell">
+                <text>{{metric.label}}</text>
+                <text>{{metric.value}}</text>
+                <view wx:if="{{metric.hasBar}}" class="technical-track">
+                  <view class="technical-fill" style="width:{{metric.barPercent}}%"></view>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+        <view wx:else class="empty-note">生涯技术统计正在补齐</view>
+      </view>
+    </block>
+
+    <view wx:elif="{{activeTab === 'recent'}}" class="section">
+      <text class="section-title">近期赛事</text>
+      <view wx:if="{{hasRecentEvents}}" class="recent-list">
+        <view wx:for="{{recentEvents}}" wx:key="key" class="recent-card">
+          <view>
+            <text>{{item.tournamentName}}</text>
+            <text wx:if="{{item.dateText}}">{{item.dateText}}</text>
+          </view>
+          <text wx:if="{{item.metaText}}" class="recent-meta">{{item.metaText}}</text>
+          <text wx:if="{{item.resultLabel}}" class="recent-result {{item.resultTone}}">{{item.resultLabel}}</text>
+          <text wx:if="{{item.summary}}" class="recent-summary">{{item.summary}}</text>
+        </view>
+      </view>
+      <view wx:else class="empty-note">近期赛事正在补齐</view>
+    </view>
+  </block>
+  </block>
+  <canvas class="share-card-canvas" canvas-id="share-card-canvas"></canvas>
+  <profile-gate id="profileGate" theme="{{uiTheme}}"/>
+</view>
