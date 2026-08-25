@@ -5,7 +5,7 @@ import { createRequire } from 'node:module';
 import { presentation, todayProjection } from './support.mjs';
 
 const require = createRequire(import.meta.url);
-const { groupedMatches, matchView } = require('../miniprogram/core/view-model');
+const { groupedMatches, matchView } = require('../core/view-model');
 
 test('score grouping preserves two server matchIds for same event date discipline and players', () => {
   const firstMatchId = '019c13ac-7b00-7005-8000-000000000901';
@@ -49,7 +49,7 @@ test('match view keeps the production matchId as the only display identity', () 
 
 test('client display layer does not contain alias collapse or Mega reconcile code', () => {
   const viewModel = readFileSync(
-    new URL('../miniprogram/core/view-model.js', import.meta.url),
+    new URL('../core/view-model.js', import.meta.url),
     'utf8'
   );
 

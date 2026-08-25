@@ -7,7 +7,7 @@ const {
   loadProjectionResource,
   normalizeProjectionResponse,
   readTrustedProjection
-} = require('../miniprogram/core/projection-resource');
+} = require('../core/projection-resource');
 
 function cache(seed = null) {
   const writes = [];

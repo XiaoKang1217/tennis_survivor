@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { createRequire } from 'node:module';
 
-const root = resolve(import.meta.dirname, '../miniprogram');
+const root = resolve(import.meta.dirname, '..');
 const read = path => readFileSync(resolve(root, path), 'utf8');
 const require = createRequire(import.meta.url);
 
@@ -117,7 +117,7 @@ test('client transport and BFF delivery are rendered as independent dimensions',
 });
 
 test('match detail module tabs tolerate lightweight list projections', () => {
-  const { modulesView } = require('../miniprogram/core/detail-modules');
+  const { modulesView } = require('../core/detail-modules');
   const tabs = modulesView(undefined);
   assert.deepEqual(tabs.map(tab => tab.id), [
     'statistics',

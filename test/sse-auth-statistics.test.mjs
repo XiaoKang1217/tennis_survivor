@@ -8,14 +8,14 @@ import {
 } from './support.mjs';
 
 const require = createRequire(import.meta.url);
-const { Utf8StreamDecoder, SseParser } = require('../miniprogram/core/sse-parser');
-const { AuthSession, stableAccountScope } = require('../miniprogram/services/auth-session');
-const { wxRequest, HttpClient } = require('../miniprogram/services/http-client');
-const { StatisticsStore } = require('../miniprogram/core/statistics-store');
+const { Utf8StreamDecoder, SseParser } = require('../core/sse-parser');
+const { AuthSession, stableAccountScope } = require('../services/auth-session');
+const { wxRequest, HttpClient } = require('../services/http-client');
+const { StatisticsStore } = require('../core/statistics-store');
 const {
   CompletionStatisticsStore
-} = require('../miniprogram/core/completion-statistics-store');
-const { statisticsView } = require('../miniprogram/core/statistics-view-model');
+} = require('../core/completion-statistics-store');
+const { statisticsView } = require('../core/statistics-view-model');
 
 test('SSE parser preserves split multibyte Chinese and multiple events', () => {
   const encoder = new TextEncoder();

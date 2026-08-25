@@ -5,14 +5,14 @@ import { resolve } from 'node:path';
 import test from 'node:test';
 
 const require = createRequire(import.meta.url);
-const miniRoot = resolve(import.meta.dirname, '../miniprogram');
+const miniRoot = resolve(import.meta.dirname, '..');
 const read = relative => readFileSync(resolve(miniRoot, relative), 'utf8');
 const {
   drawShare,
   matchShare,
   playerShare,
   tournamentShare
-} = require('../miniprogram/core/share');
+} = require('../core/share');
 
 test('four share types prefer generated cards and keep production fallbacks', () => {
   const match = matchShare(

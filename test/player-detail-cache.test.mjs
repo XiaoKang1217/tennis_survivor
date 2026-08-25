@@ -3,7 +3,7 @@ import { createRequire } from 'node:module';
 import test from 'node:test';
 
 const require = createRequire(import.meta.url);
-const { createSWRCache } = require('../miniprogram/core/swr-cache');
+const { createSWRCache } = require('../core/swr-cache');
 
 function cacheStorageKey(resourceKey) {
   return 'luwang_swr_entry_v1:' + encodeURIComponent(resourceKey);
@@ -46,7 +46,7 @@ function profile(overrides = {}) {
 }
 
 function loadPageDefinition() {
-  const pagePath = require.resolve('../miniprogram/pages/player-detail/index');
+  const pagePath = require.resolve('../pages/player-detail/index');
   delete require.cache[pagePath];
   let definition;
   const previousPage = globalThis.Page;

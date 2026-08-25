@@ -4,9 +4,9 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import test from 'node:test';
 
-const miniRoot = resolve(import.meta.dirname, '..', 'miniprogram');
+const miniRoot = resolve(import.meta.dirname, '..');
 const require = createRequire(import.meta.url);
-const { createSWRCache } = require('../miniprogram/core/swr-cache');
+const { createSWRCache } = require('../core/swr-cache');
 const read = relative => readFileSync(resolve(miniRoot, relative), 'utf8');
 
 function cacheStorageKey(resourceKey) {
@@ -62,7 +62,7 @@ function followingProjection() {
 }
 
 function loadPageDefinition() {
-  const pagePath = require.resolve('../miniprogram/pages/following/index');
+  const pagePath = require.resolve('../pages/following/index');
   delete require.cache[pagePath];
   let definition;
   const previousPage = globalThis.Page;

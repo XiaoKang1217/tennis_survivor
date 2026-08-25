@@ -3,7 +3,7 @@
     <view class="daylight-brand-head" style="padding-top:{{topInset + 8}}px">
       <text class="daylight-kicker">参赛动态</text>
       <text class="daylight-page-title">参赛动态</text>
-      <text class="daylight-caption">新增、退赛与替补</text>
+      <text class="daylight-caption">退赛、替补与名单变化</text>
     </view>
     <view class="daylight-module-nav">
       <button bindtap="openScores" aria-label="比分"><text>比分</text></button>
@@ -11,33 +11,8 @@
       <button bindtap="openCalendar" aria-label="赛历"><text>赛历</text></button>
       <button class="active" aria-label="动态"><text>动态</text></button>
     </view>
-    <data-notice wx:if="{{deliveryState}}" state="{{deliveryState}}" message="{{deliveryMessage}}" dataAsOf="{{dataAsOf}}" compact/>
-    <view class="participation-summary daylight-summary">
-      <view wx:for="{{summaryItems}}" wx:key="id" class="summary-item">
-        <text>{{item.count}}</text>
-        <text>{{item.label}}</text>
-      </view>
-    </view>
-    <view wx:if="{{loading && !hasEvents}}" class="daylight-page-state">
-      <client-state state="loading" label="参赛动态加载中" message=""/>
-    </view>
-    <view wx:elif="{{failed && !hasEvents}}" class="daylight-page-state">
-      <client-state state="failed" label="参赛动态暂不可用" message="请稍后重试" retryable bind:retry="load"/>
-    </view>
-    <view wx:elif="{{!hasEvents}}" class="daylight-page-state">
-      <client-state state="empty" label="暂无参赛动态" message="当前没有新增、退赛或替补记录"/>
-    </view>
-    <view wx:else class="participation-list daylight-participation-list">
-      <view wx:for="{{eventItems}}" wx:key="id" class="participation-card tone-{{item.kind}}">
-        <view class="participation-card-head">
-          <text class="participation-kind">{{item.kindLabel}}</text>
-          <text wx:if="{{item.dateLabel}}" class="participation-date">{{item.dateLabel}}</text>
-        </view>
-        <text class="participation-title">{{item.title}}</text>
-        <text wx:if="{{item.subtitle}}" class="participation-subtitle">{{item.subtitle}}</text>
-        <text wx:if="{{item.reason}}" class="participation-note">{{item.reason}}</text>
-        <text wx:if="{{item.status}}" class="participation-status">{{item.status}}</text>
-      </view>
+    <view class="daylight-page-state">
+      <client-state state="empty" label="{{emptyLabel}}" message="{{emptyMessage}}"/>
     </view>
     <product-tabbar active="matches" theme="{{uiTheme}}"/>
   </block>
@@ -47,7 +22,7 @@
         <view class="title-copy">
           <text class="eyebrow">参赛动态</text>
           <text class="title">比赛</text>
-          <text class="title-caption">新增、退赛与替补</text>
+          <text class="title-caption">退赛、替补与名单变化</text>
         </view>
       </view>
       <view class="module-nav">
@@ -58,34 +33,8 @@
       </view>
     </view>
 
-    <data-notice wx:if="{{deliveryState}}" state="{{deliveryState}}" message="{{deliveryMessage}}" dataAsOf="{{dataAsOf}}" compact/>
-    <view class="participation-summary">
-      <view wx:for="{{summaryItems}}" wx:key="id" class="summary-item">
-        <text>{{item.count}}</text>
-        <text>{{item.label}}</text>
-      </view>
-    </view>
-
-    <view wx:if="{{loading && !hasEvents}}" class="page-state">
-      <client-state state="loading" label="参赛动态加载中" message=""/>
-    </view>
-    <view wx:elif="{{failed && !hasEvents}}" class="page-state">
-      <client-state state="failed" label="参赛动态暂不可用" message="请稍后重试" retryable bind:retry="load"/>
-    </view>
-    <view wx:elif="{{!hasEvents}}" class="page-state">
-      <client-state state="empty" label="暂无参赛动态" message="当前没有新增、退赛或替补记录"/>
-    </view>
-    <view wx:else class="participation-list">
-      <view wx:for="{{eventItems}}" wx:key="id" class="participation-card tone-{{item.kind}}">
-        <view class="participation-card-head">
-          <text class="participation-kind">{{item.kindLabel}}</text>
-          <text wx:if="{{item.dateLabel}}" class="participation-date">{{item.dateLabel}}</text>
-        </view>
-        <text class="participation-title">{{item.title}}</text>
-        <text wx:if="{{item.subtitle}}" class="participation-subtitle">{{item.subtitle}}</text>
-        <text wx:if="{{item.reason}}" class="participation-note">{{item.reason}}</text>
-        <text wx:if="{{item.status}}" class="participation-status">{{item.status}}</text>
-      </view>
+    <view class="page-state">
+      <client-state state="empty" label="{{emptyLabel}}" message="{{emptyMessage}}"/>
     </view>
 
     <product-tabbar active="matches" theme="{{uiTheme}}"/>

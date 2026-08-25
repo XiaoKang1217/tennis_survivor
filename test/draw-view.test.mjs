@@ -10,8 +10,8 @@ const {
   officialMetadataView,
   localizedOutcomeText,
   tournamentDrawFacts
-} = require('../miniprogram/core/draw-view');
-const miniRoot = resolve(import.meta.dirname, '../miniprogram');
+} = require('../core/draw-view');
+const miniRoot = resolve(import.meta.dirname, '..');
 
 const available = value => ({
   state: 'available', value, reasonCode: null, message: null

@@ -42,9 +42,15 @@ for (const path of files) {
 assert.equal(project.compileType, 'miniprogram');
 assert.equal(project.appid, 'wxd3c0a5f7ff64178d');
 assert.equal(project.setting.urlCheck, true);
+assert.equal(project.miniprogramRoot, undefined, 'project root must stay the actual upload root');
 const config = readFileSync(join(productionRoot, 'config.js'), 'utf8');
 assert.match(config, /bffBaseUrl:\s*'https:\/\/api\.tennisapi\.online'/);
 assert.match(config, /streamBaseUrl:\s*'https:\/\/stream\.tennisapi\.online'/);
 assert.doesNotMatch(config, /calibrationMilliseconds:\s*5_000/);
 assert.match(config, /score-bff\/3/);
 assert.match(config, /score-realtime\/3/);
+
+for (const file of readdirSync(join(root, 'test')).filter(name => name.endsWith('.test.mjs'))) {
+  const source = readFileSync(join(root, 'test', file), 'utf8');
+  assert.doesNotMatch(source, /\.\.\/miniprogram/u, `${file} targets the generated mirror`);
+}

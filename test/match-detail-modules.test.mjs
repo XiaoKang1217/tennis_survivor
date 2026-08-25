@@ -5,9 +5,9 @@ import { resolve } from 'node:path';
 import test from 'node:test';
 import { matchId, presentation } from './support.mjs';
 
-const miniRoot = resolve(import.meta.dirname, '../miniprogram');
+const miniRoot = resolve(import.meta.dirname, '..');
 const require = createRequire(import.meta.url);
-const { createSWRCache } = require('../miniprogram/core/swr-cache');
+const { createSWRCache } = require('../core/swr-cache');
 
 function cacheStorageKey(resourceKey) {
   return 'luwang_swr_entry_v1:' + encodeURIComponent(resourceKey);
@@ -22,7 +22,7 @@ function sourceSlice(source, startMarker, endMarker) {
 }
 
 function loadPageDefinition() {
-  const pagePath = require.resolve('../miniprogram/pages/match-detail/index');
+  const pagePath = require.resolve('../pages/match-detail/index');
   delete require.cache[pagePath];
   let definition;
   const previousPage = globalThis.Page;

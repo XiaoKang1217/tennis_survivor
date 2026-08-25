@@ -5,12 +5,12 @@ import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
 
 const require = createRequire(import.meta.url);
-const miniRoot = resolve(import.meta.dirname, '../miniprogram');
+const miniRoot = resolve(import.meta.dirname, '..');
 const read = path => readFileSync(resolve(miniRoot, path), 'utf8');
 const {
   noticeState,
   tournamentDetailView
-} = require('../miniprogram/core/tournament-detail-view');
+} = require('../core/tournament-detail-view');
 
 const editionId = '019c13ac-7b00-7005-8000-000000000701';
 const available = value => ({
@@ -108,7 +108,7 @@ function bff(overrides = {}) {
 }
 
 function loadPageDefinition() {
-  const pagePath = require.resolve('../miniprogram/pages/tournament-detail/index');
+  const pagePath = require.resolve('../pages/tournament-detail/index');
   delete require.cache[pagePath];
   let definition;
   const previousPage = globalThis.Page;

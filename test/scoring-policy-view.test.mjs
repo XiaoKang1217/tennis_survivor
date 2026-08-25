@@ -5,10 +5,10 @@ import { resolve } from 'node:path';
 import test from 'node:test';
 
 const require = createRequire(import.meta.url);
-const miniRoot = resolve(import.meta.dirname, '../miniprogram');
+const miniRoot = resolve(import.meta.dirname, '..');
 const read = path => readFileSync(resolve(miniRoot, path), 'utf8');
-const { pointByPointView } = require('../miniprogram/core/point-by-point-view-model');
-const { scoreRulesView } = require('../miniprogram/core/view-model');
+const { pointByPointView } = require('../core/point-by-point-view-model');
+const { scoreRulesView } = require('../core/view-model');
 
 test('score rules view exposes set format, final tiebreak and no-ad labels', () => {
   assert.equal(scoreRulesView({

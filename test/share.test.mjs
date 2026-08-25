@@ -8,7 +8,7 @@ const {
   matchShare,
   playerShare,
   tournamentShare
-} = require('../miniprogram/core/share');
+} = require('../core/share');
 
 test('match sharing builds a full page path and timeline query', () => {
   const share = matchShare({

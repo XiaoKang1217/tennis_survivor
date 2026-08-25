@@ -4,7 +4,7 @@ import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
 import test from 'node:test';
 
-const miniRoot = resolve(import.meta.dirname, '..', 'miniprogram');
+const miniRoot = resolve(import.meta.dirname, '..');
 const read = relative => readFileSync(resolve(miniRoot, relative), 'utf8');
 
 test('the three skins are persistent and keep clean blue as the safe default', () => {

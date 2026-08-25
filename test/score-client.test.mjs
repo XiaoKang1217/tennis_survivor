@@ -9,9 +9,9 @@ const {
   MANUAL_REFRESH_REQUEST_TIMEOUT_MS,
   SCORE_CACHE_SCHEMA,
   scoreCacheKey
-} = require('../miniprogram/services/score-client');
-const { ScoreStore } = require('../miniprogram/core/score-store');
-const config = require('../miniprogram/config');
+} = require('../services/score-client');
+const { ScoreStore } = require('../core/score-store');
+const config = require('../config');
 
 function cacheStorageKey(resourceKey) {
   return 'luwang_swr_entry_v1:' + encodeURIComponent(resourceKey);

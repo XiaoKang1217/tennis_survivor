@@ -5,8 +5,8 @@ import { resolve } from 'node:path';
 import test from 'node:test';
 
 const require = createRequire(import.meta.url);
-const miniRoot = resolve(import.meta.dirname, '../miniprogram');
-const { createSWRCache } = require('../miniprogram/core/swr-cache');
+const miniRoot = resolve(import.meta.dirname, '..');
+const { createSWRCache } = require('../core/swr-cache');
 
 function cacheStorageKey(resourceKey) {
   return 'luwang_swr_entry_v1:' + encodeURIComponent(resourceKey);
@@ -96,7 +96,7 @@ function pageContext(definition, wx, http, data = {}) {
 }
 
 test('draw page keeps WTA US Open requests and cache isolated by tour', async () => {
-  const definition = loadPageDefinition('../miniprogram/pages/draws/index');
+  const definition = loadPageDefinition('../pages/draws/index');
   const cachedPayload = drawIndexPayload();
   const wx = wxRuntime({
     [cacheStorageKey('draw_index:UO:wta')]: {
@@ -132,7 +132,7 @@ test('draw page keeps WTA US Open requests and cache isolated by tour', async ()
 });
 
 test('draw page all-tour requests do not reuse the WTA draw cache', async () => {
-  const definition = loadPageDefinition('../miniprogram/pages/draws/index');
+  const definition = loadPageDefinition('../pages/draws/index');
   const wx = wxRuntime({
     [cacheStorageKey('draw_index:UO:wta')]: {
       resourceKey: 'draw_index:UO:wta',
@@ -168,7 +168,7 @@ test('calendar draw-selection entries carry tour into the draw page', () => {
   const wxml = readFileSync(resolve(miniRoot, 'pages/calendar/index.wxml'), 'utf8');
   assert.match(wxml, /data-tour="\{\{item\.requestTour\}\}"/u);
 
-  const definition = loadPageDefinition('../miniprogram/pages/calendar/index');
+  const definition = loadPageDefinition('../pages/calendar/index');
   const wx = wxRuntime();
   const previousWx = globalThis.wx;
   globalThis.wx = wx;
@@ -204,7 +204,7 @@ test('calendar page uses the single aggregate projection without tour-bucket fal
   const script = readFileSync(resolve(miniRoot, 'pages/calendar/index.js'), 'utf8');
   assert.doesNotMatch(script, /SOURCE_BUCKETS|fetchBucketCalendarFallback|tour-calendar-bff|Promise\.allSettled/u);
 
-  const definition = loadPageDefinition('../miniprogram/pages/calendar/index');
+  const definition = loadPageDefinition('../pages/calendar/index');
   const wx = wxRuntime();
   const requests = [];
   const context = pageContext(definition, wx, {
@@ -221,7 +221,7 @@ test('calendar page uses the single aggregate projection without tour-bucket fal
 });
 
 test('draw page auto-select keeps WTA tour for joint US Open events', async () => {
-  const definition = loadPageDefinition('../miniprogram/pages/draws/index');
+  const definition = loadPageDefinition('../pages/draws/index');
   const wx = wxRuntime();
   const previousWx = globalThis.wx;
   const previousGetApp = globalThis.getApp;

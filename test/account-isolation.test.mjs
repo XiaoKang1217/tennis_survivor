@@ -7,8 +7,8 @@ const {
   AccountService,
   LEGACY_PROFILE_STORAGE_KEY,
   profileStorageKey
-} = require('../miniprogram/services/account-service');
-const { stableAccountScope } = require('../miniprogram/services/auth-session');
+} = require('../services/account-service');
+const { stableAccountScope } = require('../services/auth-session');
 
 function wxRuntime(seed = {}) {
   const storage = new Map(Object.entries(seed));

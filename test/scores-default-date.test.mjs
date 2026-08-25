@@ -4,9 +4,9 @@ import { createRequire } from 'node:module';
 import { presentation, todayProjection } from './support.mjs';
 
 const require = createRequire(import.meta.url);
-const { ScoreStore } = require('../miniprogram/core/score-store');
-const { beijingDate, moveDate } = require('../miniprogram/core/schedule-date');
-const { createSWRCache } = require('../miniprogram/core/swr-cache');
+const { ScoreStore } = require('../core/score-store');
+const { beijingDate, moveDate } = require('../core/schedule-date');
+const { createSWRCache } = require('../core/swr-cache');
 
 const SCORE_CACHE_SCHEMA = 'scores-today-projection/1';
 const DEFAULT_DATE_CACHE_SCHEMA = 'scores-default-date-selection/1';
@@ -47,7 +47,7 @@ function swrEntry(resourceKey, schemaVersion, projectionVersion, payload) {
 }
 
 function loadPageDefinition() {
-  const pagePath = require.resolve('../miniprogram/pages/scores/index');
+  const pagePath = require.resolve('../pages/scores/index');
   delete require.cache[pagePath];
   let definition;
   const previousPage = globalThis.Page;

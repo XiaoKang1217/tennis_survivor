@@ -3,7 +3,7 @@ import test from 'node:test';
 import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
-const { SwrCache } = require('../miniprogram/core/swr-cache');
+const { SwrCache } = require('../core/swr-cache');
 
 const INDEX_KEY = 'luwang_swr_index_v1';
 const entryKey = resourceKey => `luwang_swr_entry_v1:${encodeURIComponent(resourceKey)}`;
