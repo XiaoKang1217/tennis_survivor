@@ -376,7 +376,7 @@ Page({
     }
     const title = event.currentTarget.dataset.title || '';
     wx.navigateTo({
-      url: `/pages/tournament-detail/index?tournamentEditionId=${encodeURIComponent(id)}`
+      url: `/packages/tournament/pages/tournament-detail/index?tournamentEditionId=${encodeURIComponent(id)}`
       + `&title=${encodeURIComponent(title)}`
       + (item?.requestTour ? `&tour=${encodeURIComponent(item.requestTour)}` : '')
     });

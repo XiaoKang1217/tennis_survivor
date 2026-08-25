@@ -5,14 +5,14 @@ const { createSWRCache } = require('../../core/swr-cache');
 const { loadProjectionResource, readTrustedProjection } = require('../../core/projection-resource');
 const { drawShare, enablePageShare } = require('../../core/share');
 const { updatePageShareImages } = require('../../core/share-poster');
-const { normalizeLevelCode } = require('../../core/localization');
+const { normalizeLevelCode, levelLabel } = require('../../core/localization');
 
 const {
   drawGroupLabel,
-  drawColumns,
+  drawRoundView,
+  drawSelectionView,
   field,
-  officialMetadataView,
-  tournamentDrawFacts
+  officialMetadataView
 } = require('../../core/draw-view');
 
 const DRAW_INDEX_SCHEMA = 'draw-index-projection/1';
@@ -64,6 +64,12 @@ const LEVEL_PRIORITY = Object.freeze({
 });
 
 const TOUR_PRIORITY = Object.freeze({ ATP: 3, WTA: 2, ITF: 1, UNKNOWN: 0 });
+const CONTENT_TABS = Object.freeze([
+  Object.freeze({ id: 'draw', label: '签表' }),
+  Object.freeze({ id: 'awards', label: '奖金积分' }),
+  Object.freeze({ id: 'withdrawals', label: '退赛' }),
+  Object.freeze({ id: 'changes', label: '签表变动' })
+]);
 
 function currentWeekRange(value = '') {
   const now = new Date();
@@ -109,18 +115,28 @@ function tournamentOptions(projection) {
     const tourFilters = new Set(existing?.tourFilters || []);
     if (tourFilter) tourFilters.add(tourFilter);
     const requestTour = existing?.requestTour || normalizeDrawTour(tourOrg);
+    const title = existing?.title || field(match.tournament.displayNameZh, '赛事');
+    const location = existing?.location || field(match.tournament.locationNameZh);
+    const levelDisplay = existing?.levelDisplay || levelLabel(levelCode) || String(tourOrg || '赛事');
+    const surface = existing?.surface || field(match.surface?.displayNameZh, match.surface?.code || '');
+    const tournamentMeta = [tourOrg, levelDisplay, location].filter(Boolean).join(' · ');
     values.set(id, Object.freeze({
       id,
-      title: existing?.title || field(match.tournament.displayNameZh, '赛事'),
-      location: existing?.location || field(match.tournament.locationNameZh),
+      title,
+      location,
+      surface,
       tourOrg: existing && existing.tourOrg !== tourOrg ? 'ATP/WTA' : tourOrg,
       tourFilters: Object.freeze([...tourFilters]),
       requestTour,
       levelCode: existing?.levelCode || levelCode,
+      levelDisplay,
+      meta: tournamentMeta,
+      status: field(match.tournament?.statusLabel, ''),
       searchText: [
         existing?.searchText || '',
-        field(match.tournament.displayNameZh),
-        field(match.tournament.locationNameZh),
+        title,
+        location,
+        levelDisplay,
         ...players
       ].join(' ').toLocaleLowerCase('zh-CN')
     }));
@@ -157,6 +173,76 @@ function optionValue(value, fallback = '') {
   }
 }
 
+function emptyDrawData() {
+  return {
+    drawOptions: [],
+    projectOptions: [],
+    stageOptions: [],
+    selectedDrawId: '',
+    selectedDrawLabel: '',
+    rounds: [],
+    roundTabs: [],
+    selectedRoundId: '',
+    selectedRoundTitle: '',
+    selectedRoundMatchCount: 0,
+    roundMatches: [],
+    roundAwards: [],
+    withdrawals: [],
+    drawChanges: [],
+    playerQuery: '',
+    playerResults: [],
+    focusedPlayerId: '',
+    focusedPlayerName: '',
+    shareCardImageUrl: '',
+    shareTimelineImageUrl: ''
+  };
+}
+
+function activeTabs(active) {
+  return CONTENT_TABS.map(item => Object.freeze({
+    ...item,
+    selected: item.id === active
+  }));
+}
+
+function tournamentSummary(tournaments, id, title) {
+  const item = tournaments.find(value => value.id === id);
+  return Object.freeze({
+    title: item?.title || title || '选择赛事',
+    level: item?.levelDisplay || '',
+    meta: item?.meta || '',
+    location: item?.location || '',
+    surface: item?.surface || '',
+    status: item?.status || ''
+  });
+}
+
+function playerSearchResults(rounds, query) {
+  const search = String(query || '').trim().toLocaleLowerCase('zh-CN');
+  if (!search) return [];
+  const values = new Map();
+  for (const round of rounds || []) {
+    for (const match of round.matches || []) {
+      for (const side of match.sides || []) {
+        for (const member of side.members || []) {
+          if (!member.name || !member.name.toLocaleLowerCase('zh-CN').includes(search)) continue;
+          const id = member.id || member.name;
+          if (!values.has(id)) {
+            values.set(id, Object.freeze({
+              id,
+              name: member.name,
+              roundId: round.id,
+              roundTitle: round.title,
+              matchId: match.matchId
+            }));
+          }
+        }
+      }
+    }
+  }
+  return [...values.values()].slice(0, 8);
+}
+
 Page({
   data: {
     ...buildThemeData(),
@@ -175,16 +261,32 @@ Page({
     tourFilter: 'all',
     weekRange: currentWeekRange(),
     query: '',
-    fullscreen: false,
+    selectorOpen: false,
     selectedTournamentId: '',
     selectedTitle: '',
     selectedTour: '',
+    selectedTournamentSummary: tournamentSummary([], '', ''),
     draws: [],
+    activeContentTab: 'draw',
+    contentTabs: activeTabs('draw'),
+    drawOptions: [],
+    projectOptions: [],
+    stageOptions: [],
     selectedDrawId: '',
-    columns: [],
+    selectedDrawLabel: '',
+    rounds: [],
+    roundTabs: [],
+    selectedRoundId: '',
+    selectedRoundTitle: '',
+    selectedRoundMatchCount: 0,
+    roundMatches: [],
     roundAwards: [],
-    awardGroups: [],
-    drawIncidents: [],
+    withdrawals: [],
+    drawChanges: [],
+    playerQuery: '',
+    playerResults: [],
+    focusedPlayerId: '',
+    focusedPlayerName: '',
     deliveryState: '',
     deliveryMessage: '',
     dataAsOf: '',
@@ -199,13 +301,15 @@ Page({
     this.matchDate = options.date || '';
     this.initialDrawId = optionValue(options.drawId);
     this.initialTour = normalizeDrawTour(optionValue(options.tour));
+    this.currentPresentation = null;
     this.setData({
       topInset: info.statusBarHeight || 44,
       weekRange: currentWeekRange(options.date || ''),
       selectedTournamentId: optionValue(options.tournamentEditionId),
       selectedTitle: optionValue(options.title),
       selectedTour: this.initialTour,
-      tourFilter: tourFilterFromQuery(this.initialTour)
+      tourFilter: tourFilterFromQuery(this.initialTour),
+      selectedTournamentSummary: tournamentSummary([], optionValue(options.tournamentEditionId), optionValue(options.title))
     });
     let selectedDuringSubscribe = false;
     this.unsubscribe = getApp().services.scoreStore.subscribe(projection => {
@@ -218,6 +322,11 @@ Page({
       this.setData({
         tournaments,
         filteredTournaments: filtered,
+        selectedTournamentSummary: tournamentSummary(
+          tournaments,
+          this.data.selectedTournamentId,
+          this.data.selectedTitle
+        ),
         weekRange: currentWeekRange(projection?.payload?.scheduleGroupDate || this.matchDate)
       });
       if (!this.data.selectedTournamentId && filtered[0]) {
@@ -227,6 +336,7 @@ Page({
     });
     if (this.data.selectedTournamentId && !selectedDuringSubscribe) void this.loadIndex();
   },
+
   onShow() {
     syncPageTheme(this);
     enablePageShare();
@@ -246,6 +356,17 @@ Page({
   openCalendar() { wx.redirectTo({ url: '/pages/calendar/index' }); },
   openPastDraws() { wx.redirectTo({ url: '/pages/calendar/index?mode=draws' }); },
   openParticipation() { wx.redirectTo({ url: '/pages/participation/index' }); },
+  openTournamentDetail() {
+    if (!this.data.selectedTournamentId) return;
+    wx.navigateTo({
+      url: '/packages/tournament/pages/tournament-detail/index?tournamentEditionId='
+        + encodeURIComponent(this.data.selectedTournamentId)
+    });
+  },
+
+  openTournamentSelector() { this.setData({ selectorOpen: true }); },
+  closeTournamentSelector() { this.setData({ selectorOpen: false }); },
+  stopTap() {},
 
   chooseTournament(event) {
     this.selectTournamentById(
@@ -259,24 +380,21 @@ Page({
     const tourFilter = event.currentTarget.dataset.id || 'all';
     const filtered = filteredTournaments(this.data.tournaments, tourFilter, this.data.query);
     this.initialDrawId = '';
+    this.currentPresentation = null;
     this.setData({
       tourFilter,
       filteredTournaments: filtered,
       selectedTournamentId: '',
       selectedTitle: '',
       selectedTour: '',
+      selectedTournamentSummary: tournamentSummary([], '', ''),
       draws: [],
-      selectedDrawId: '',
-      columns: [],
-      roundAwards: [],
-      awardGroups: [],
-      drawIncidents: [],
-      shareCardImageUrl: '',
-      shareTimelineImageUrl: ''
+      ...emptyDrawData(),
+      failed: false,
+      deliveryState: '',
+      deliveryMessage: '',
+      dataAsOf: ''
     });
-    if (filtered[0]) {
-      this.selectTournamentById(filtered[0].id, filtered[0].title, filtered[0].requestTour);
-    }
   },
 
   updateQuery(event) {
@@ -285,25 +403,21 @@ Page({
     this.setData({ query, filteredTournaments: filtered });
   },
 
-  toggleFullscreen() {
-    this.setData({ fullscreen: !this.data.fullscreen });
-  },
-
   selectTournamentById(id, title, tour = '') {
     this.initialDrawId = '';
+    this.currentPresentation = null;
     this.setData({
       selectedTournamentId: id,
       selectedTitle: title,
       selectedTour: normalizeDrawTour(tour),
+      selectedTournamentSummary: tournamentSummary(this.data.tournaments, id, title),
+      selectorOpen: false,
       draws: [],
-      selectedDrawId: '',
-      columns: [],
-      roundAwards: [],
-      awardGroups: [],
-      drawIncidents: [],
-      shareCardImageUrl: '',
-      shareTimelineImageUrl: '',
-      failed: false
+      ...emptyDrawData(),
+      failed: false,
+      deliveryState: '',
+      deliveryMessage: '',
+      dataAsOf: ''
     }, () => void this.loadIndex());
   },
 
@@ -346,14 +460,20 @@ Page({
       ...item,
       label: drawGroupLabel(item)
     }));
-    const facts = tournamentDrawFacts(draws);
+    const selection = drawSelectionView(draws, this.initialDrawId);
     this.setData({
       draws,
+      drawOptions: selection.drawOptions,
+      projectOptions: selection.projectOptions,
+      stageOptions: selection.stageOptions,
+      selectedDrawLabel: selection.selectedDrawLabel,
       loading: false,
       failed: false,
-      awardGroups: facts.awardGroups,
-      drawIncidents: facts.incidents,
-      deliveryState: options.fromCache ? 'stale' : this.data.deliveryState,
+      roundAwards: [],
+      withdrawals: [],
+      drawChanges: [],
+      deliveryState: options.fromCache ? 'stale' : '',
+      deliveryMessage: options.fromCache ? '已显示上次签表' : '',
       dataAsOf: value.dataAsOf || this.data.dataAsOf
     });
     const requestedDrawId = this.initialDrawId
@@ -378,16 +498,43 @@ Page({
   },
 
   chooseDraw(event) { void this.loadDraw(event.currentTarget.dataset.id); },
+  chooseProject(event) { void this.loadDraw(event.currentTarget.dataset.drawId); },
+  chooseStage(event) { void this.loadDraw(event.currentTarget.dataset.drawId); },
+
+  chooseContentTab(event) {
+    const activeContentTab = event.currentTarget.dataset.id || 'draw';
+    this.setData({ activeContentTab, contentTabs: activeTabs(activeContentTab) });
+  },
 
   async loadDraw(drawId) {
+    if (!drawId) return;
     const switching = this.data.selectedDrawId !== drawId;
     const cacheKey = drawBodyCacheKey(drawId);
     const cached = readTrustedProjection(this.cache, cacheKey, DRAW_BODY_SCHEMA);
+    const selection = drawSelectionView(this.data.draws, drawId);
     this.setData({
       loading: !cached?.payload,
       selectedDrawId: drawId,
+      selectedDrawLabel: selection.selectedDrawLabel,
+      drawOptions: selection.drawOptions,
+      projectOptions: selection.projectOptions,
+      stageOptions: selection.stageOptions,
       failed: false,
-      ...(switching && !cached?.payload ? { columns: [], roundAwards: [] } : {})
+      ...(switching ? {
+        rounds: [],
+        roundTabs: [],
+        selectedRoundId: '',
+        selectedRoundTitle: '',
+        selectedRoundMatchCount: 0,
+        roundMatches: [],
+        roundAwards: [],
+        withdrawals: [],
+        drawChanges: [],
+        playerQuery: '',
+        playerResults: [],
+        focusedPlayerId: '',
+        focusedPlayerName: ''
+      } : {})
     });
     if (cached?.payload) this.applyDrawProjection(cached.payload, drawId, { fromCache: true });
     try {
@@ -420,25 +567,102 @@ Page({
       || !Array.isArray(value.presentation?.rounds)) {
       throw new Error('draw_projection_invalid');
     }
-    const metadata = officialMetadataView(value.presentation.officialMetadata, value);
+    this.currentPresentation = value.presentation;
+    const metadata = officialMetadataView(value.presentation.officialMetadata, { ...value, drawId });
+    const selection = drawSelectionView(this.data.draws.length ? this.data.draws : [value], drawId);
+    const roundView = drawRoundView(
+      value.presentation,
+      this.data.selectedRoundId,
+      this.data.focusedPlayerId
+    );
     this.setData({
       loading: false,
       failed: false,
-      columns: drawColumns(value.presentation),
+      selectedDrawId: drawId,
+      selectedDrawLabel: selection.selectedDrawLabel,
+      drawOptions: selection.drawOptions,
+      projectOptions: selection.projectOptions,
+      stageOptions: selection.stageOptions,
+      rounds: roundView.rounds,
+      roundTabs: roundView.roundTabs,
+      selectedRoundId: roundView.selectedRoundId,
+      selectedRoundTitle: roundView.selectedRoundTitle,
+      selectedRoundMatchCount: roundView.selectedRoundMatchCount,
+      roundMatches: roundView.roundMatches,
       roundAwards: metadata.roundAwards,
-      awardGroups: this.data.awardGroups.length > 0
-        ? this.data.awardGroups
-        : [{ id: drawId, label: drawGroupLabel(value), rows: metadata.roundAwards }]
-          .filter(item => item.rows.length > 0),
-      drawIncidents: this.data.drawIncidents.length > 0
-        ? this.data.drawIncidents : metadata.incidents,
+      withdrawals: metadata.withdrawals,
+      drawChanges: metadata.drawChanges,
       deliveryState: options.fromCache ? 'stale'
-        : value.delivery.state === 'current' ? 'live' : 'delayed',
-      deliveryMessage: options.fromCache ? '已显示上次签表，正在更新' : value.delivery.message,
-      dataAsOf: value.dataAsOf
+        : value.delivery?.state === 'current' ? 'live' : 'delayed',
+      deliveryMessage: options.fromCache ? '已显示上次签表' : '签表已更新',
+      dataAsOf: value.dataAsOf || value.delivery?.dataAsOf || ''
     }, () => {
       void updatePageShareImages(this, 'draw', this.data);
     });
+  },
+
+  chooseRound(event) {
+    this.refreshRoundView(event.currentTarget.dataset.id || '');
+  },
+
+  refreshRoundView(roundId = this.data.selectedRoundId) {
+    if (!this.currentPresentation) return;
+    const roundView = drawRoundView(
+      this.currentPresentation,
+      roundId,
+      this.data.focusedPlayerId
+    );
+    this.setData({
+      rounds: roundView.rounds,
+      roundTabs: roundView.roundTabs,
+      selectedRoundId: roundView.selectedRoundId,
+      selectedRoundTitle: roundView.selectedRoundTitle,
+      selectedRoundMatchCount: roundView.selectedRoundMatchCount,
+      roundMatches: roundView.roundMatches
+    });
+  },
+
+  updatePlayerQuery(event) {
+    const playerQuery = event.detail.value || '';
+    this.setData({
+      playerQuery,
+      playerResults: playerSearchResults(this.data.rounds, playerQuery)
+    });
+  },
+
+  focusPlayer(event) {
+    const focusedPlayerId = event.currentTarget.dataset.id || '';
+    const focusedPlayerName = event.currentTarget.dataset.name || '';
+    const roundId = event.currentTarget.dataset.roundId || this.data.selectedRoundId;
+    this.setData({ focusedPlayerId, focusedPlayerName, playerResults: [] }, () => {
+      this.refreshRoundView(roundId);
+    });
+  },
+
+  clearPlayerFocus() {
+    this.setData({
+      focusedPlayerId: '',
+      focusedPlayerName: '',
+      playerQuery: '',
+      playerResults: []
+    }, () => this.refreshRoundView(this.data.selectedRoundId));
+  },
+
+  openLandscapeDraw() {
+    if (!this.data.selectedDrawId) return;
+    const params = [
+      ['drawId', this.data.selectedDrawId],
+      ['tournamentEditionId', this.data.selectedTournamentId],
+      ['title', this.data.selectedTournamentSummary.title],
+      ['drawLabel', this.data.selectedDrawLabel],
+      ['tour', this.data.selectedTour],
+      ['roundId', this.data.selectedRoundId],
+      ['date', this.matchDate || '']
+    ]
+      .filter(([, value]) => value)
+      .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+      .join('&');
+    wx.navigateTo({ url: `/packages/tournament/pages/draw-landscape/index?${params}` });
   },
 
   openMatch(event) {

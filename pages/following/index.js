@@ -80,7 +80,7 @@ function datePart(value) {
 
 function dateLabel(value) {
   const date = datePart(value);
-  if (!date) return '日期待确认';
+  if (!date) return '日期暂缺';
   if (date === beijingDate()) return '今天';
   const [, month, day] = /^(\d{4})-(\d{2})-(\d{2})$/u.exec(date) || [];
   return month && day ? `${Number(month)}月${Number(day)}日` : date;
@@ -157,7 +157,7 @@ function tournamentView(item) {
     id: Array.isArray(item.calendarEventIds) && item.calendarEventIds[0]
       ? item.calendarEventIds[0] : item.targetId,
     followTargetId: item.targetId,
-    title: item.title || '赛事名称待更新',
+    title: item.title || '赛事名称暂缺',
     subtitle: [
       item.location,
       item.level,
@@ -189,7 +189,7 @@ function playerView(item) {
   const [authorityValue, sourcePlayerId] = targetId.includes(':')
     ? targetId.split(/:(.*)/u) : [item.authority || '', item.sourcePlayerId || ''];
   const authority = String(item.authority || authorityValue || '').toUpperCase();
-  const displayName = fieldText(item.displayName, '球员姓名待更新');
+  const displayName = fieldText(item.displayName, '球员姓名暂缺');
   const originalName = fieldText(item.displayNameOriginal);
   const countryCode = fieldText(item.countryCode);
   const officialPosition = item.officialRanking?.position ?? item.position;
@@ -459,7 +459,7 @@ Page({
           loadingMore: false,
           failed: false,
           deliveryState: 'stale',
-          deliveryMessage: '刷新失败，继续显示本地可信关注'
+          deliveryMessage: '刷新暂未成功，已保留上次关注'
         });
         return;
       }
@@ -503,7 +503,7 @@ Page({
       deliveryState: options.fromCache ? 'stale'
         : value?.delivery?.state === 'current' ? 'live' : value?.delivery?.state || '',
       deliveryMessage: options.fromCache
-        ? '显示本地可信关注，正在后台更新'
+        ? '已显示上次关注，正在刷新'
         : '',
       dataAsOf
     });
@@ -523,13 +523,15 @@ Page({
   openTournament(event) {
     const id = event.currentTarget.dataset.id;
     if (!id) return;
-    wx.navigateTo({ url: `/pages/tournament-detail/index?tournamentEditionId=${encodeURIComponent(id)}` });
+    wx.navigateTo({
+      url: `/packages/tournament/pages/tournament-detail/index?tournamentEditionId=${encodeURIComponent(id)}`
+    });
   },
   openPlayer(event) {
     const [tour, playerId] = String(event.currentTarget.dataset.id || '').split(/:(.*)/u);
     if (!tour || !playerId) return;
     wx.navigateTo({
-      url: `/pages/player-detail/index?playerId=${encodeURIComponent(playerId)}`
+      url: `/packages/player/pages/player-detail/index?playerId=${encodeURIComponent(playerId)}`
         + `&tour=${encodeURIComponent(tour)}`
     });
   },

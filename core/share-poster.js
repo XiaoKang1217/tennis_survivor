@@ -7,7 +7,6 @@ const INK = '#08152F';
 const MUTED = '#67758A';
 const YELLOW = '#EAF205';
 const RED = '#E92828';
-const STADIUM_BG = '/assets/share/stadium-bg.jpg';
 const imageInfoCache = Object.create(null);
 
 function cleanText(value, fallback = '') {
@@ -185,11 +184,10 @@ function drawLinear(ctx, x, y, width, height, from, to, vertical = false) {
 }
 
 function logo(ctx, x, y, light = true) {
-  fillText(ctx, '炉网', x, y, 17, light ? '#FFFFFF' : BRAND_BLUE);
-  fillText(ctx, 'LUWANG', x + 42, y + 5, 10, light ? '#FFFFFF' : BRAND_BLUE, { weight: 650 });
+  fillText(ctx, '炉网｜网球，此刻发生', x, y, 15, light ? '#FFFFFF' : BRAND_BLUE, { weight: 650 });
   ctx.setFillStyle(YELLOW);
   ctx.beginPath();
-  ctx.arc(x + 91, y + 10, 7, 0, Math.PI * 2);
+  ctx.arc(x + 162, y + 9, 6, 0, Math.PI * 2);
   ctx.fill();
 }
 
@@ -391,8 +389,8 @@ function drawPlayerCard(ctx, data, image, width, height) {
 function drawPlayerSquare(ctx, data, image, width, height) {
   drawLinear(ctx, 0, 0, width, height, '#03142E', '#071F47');
   logo(ctx, 22, 22);
-  fillText(ctx, `${limited(cleanText(data?.name, '球员'), 8)}的`, 42, 104, 45, '#FFFFFF');
-  fillText(ctx, '下一站', 42, 158, 45, '#FFFFFF');
+  fillText(ctx, limited(cleanText(data?.name, '球员资料'), 8), 42, 116, 45, '#FFFFFF');
+  fillText(ctx, '球员资料', 42, 170, 34, '#FFFFFF');
   fillText(ctx, playerRank(data) || '', 214, 226, 170, 'rgba(18,107,255,0.35)', { align: 'center' });
   fillText(ctx, `${cleanText(data?.tour, 'ATP')} 世界第 ${playerRank(data) || '—'}`, 52, 330, 22, '#FFFFFF');
   const recent = nextOrRecent(data);
@@ -523,8 +521,8 @@ function drawDrawPoster(ctx, data, width, height, square = false) {
   const label = cleanText(draw?.label, '签表');
   const names = drawNamesFromColumns(data);
   if (square) {
-    fillText(ctx, '冠军，还要赢三场', 44, 112, 39, INK);
-    fillText(ctx, `${limited(title, 9)} · ${label}`, 165, 170, 17, INK, { align: 'center' });
+    fillText(ctx, limited(title, 9), 44, 112, 39, INK);
+    fillText(ctx, label, 44, 166, 22, BRAND_BLUE);
     drawParticipants(ctx, names, 45, 235, 410, 28, 0);
     drawBracketLines(ctx, 45, 235, 410, true);
   } else {
@@ -535,7 +533,7 @@ function drawDrawPoster(ctx, data, width, height, square = false) {
     ctx.moveTo(105, 160);
     ctx.lineTo(395, 160);
     ctx.stroke();
-    fillText(ctx, '冠军之路，已经来到最后八人', width / 2, 188, 18, INK, { align: 'center' });
+    fillText(ctx, names.length ? '参赛签位与晋级路径' : '签表信息', width / 2, 188, 18, INK, { align: 'center' });
     drawParticipants(ctx, names, 28, 225, 444, 26, 0);
     drawBracketLines(ctx, 28, 225, 444);
     bottomLine(ctx, width, height);
@@ -607,9 +605,8 @@ async function createPoster(page, kind, data, variant) {
     });
   }
   if (kind === 'tournament') {
-    const background = await getImageInfo(STADIUM_BG);
     return drawWithCanvas(page, width, height, ctx => {
-      drawTournamentPoster(ctx, data, background, width, height, variant === 'timeline');
+      drawTournamentPoster(ctx, data, null, width, height, variant === 'timeline');
     });
   }
   return drawWithCanvas(page, width, height, ctx => {

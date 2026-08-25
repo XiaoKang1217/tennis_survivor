@@ -441,7 +441,7 @@ Page({
           dataAsOf: '',
           dataUpdatedTime: '',
           dataDeliveryState: 'checking',
-          dataDeliveryMessage: '正在同步赛程',
+          dataDeliveryMessage: '赛程加载中',
           projectionLoadState: 'loading',
           projectionLoadMessage: '',
           showDataNotice: false
@@ -693,7 +693,7 @@ Page({
 
   openDraws() { wx.redirectTo({ url: '/pages/draws/index' }); },
   openCalendar() { wx.redirectTo({ url: '/pages/calendar/index' }); },
-  openPlayers() { wx.navigateTo({ url: '/pages/players/index' }); },
+  openPlayers() { wx.navigateTo({ url: '/packages/player/pages/players/index' }); },
   openParticipation() { wx.redirectTo({ url: '/pages/participation/index' }); },
 
   retryAuth() {

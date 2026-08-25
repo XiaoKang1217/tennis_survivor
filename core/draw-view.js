@@ -1,19 +1,87 @@
 'use strict';
 
+function text(value) {
+  if (value === null || value === undefined) return '';
+  if (typeof value === 'string') return value.trim();
+  if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+  if (typeof value !== 'object') return '';
+  if (value.state === 'available' || value.state === 'known') {
+    return text(value.displayText) || text(value.value);
+  }
+  return text(value.displayText)
+    || text(value.label)
+    || text(value.name)
+    || text(value.title)
+    || text(value.value);
+}
+
 function field(candidate, fallback = '') {
-  return candidate && candidate.state === 'available' && candidate.value !== null
-    ? String(candidate.value) : fallback;
+  return text(candidate) || fallback;
+}
+
+function firstText(...values) {
+  for (const value of values) {
+    const candidate = text(value);
+    if (candidate) return candidate;
+  }
+  return '';
 }
 
 function participantName(slot) {
-  if (slot?.state === 'pending') return '胜者待定';
-  if (slot?.participant) {
-    return field(slot.participant.displayNameZh)
-      || field(slot.participant.displayNameOriginal)
-      || (slot?.state === 'pending' ? '胜者待定' : '参赛方待确认');
-  }
   if (slot?.state === 'bye') return '轮空';
-  return slot?.state === 'pending' ? '胜者待定' : '参赛方待确认';
+  if (slot?.state === 'pending') return '胜者待定';
+  const members = participantMembers(slot);
+  if (members.length > 1) return members.map(member => member.name).join(' / ');
+  return members[0]?.name || '待定';
+}
+
+function participantMembers(slot) {
+  if (slot?.state === 'bye') return Object.freeze([
+    Object.freeze({ id: 'bye', name: '轮空', country: '' })
+  ]);
+  if (slot?.state === 'pending') return Object.freeze([
+    Object.freeze({ id: 'pending', name: '胜者待定', country: '' })
+  ]);
+  const participant = slot?.participant || slot?.entry || slot?.side || {};
+  const sourceMembers = Array.isArray(participant.members)
+    ? participant.members : Array.isArray(slot?.members) ? slot.members : [];
+  const members = sourceMembers
+    .map((member, index) => memberView(member, index))
+    .filter(member => member.name);
+  if (members.length > 0) return Object.freeze(members);
+  const name = firstText(
+    participant.displayNameZh,
+    participant.displayNameOriginal,
+    participant.nameZh,
+    participant.name,
+    participant.displayName,
+    slot?.displayNameZh,
+    slot?.displayNameOriginal
+  );
+  if (name) return Object.freeze([
+    Object.freeze({
+      id: firstText(participant.playerId, participant.id, slot?.participantSideId) || 'participant',
+      name,
+      country: firstText(participant.countryMark, participant.countryCode, participant.country?.code)
+    })
+  ]);
+  return Object.freeze([
+    Object.freeze({ id: 'unknown', name: '待定', country: '' })
+  ]);
+}
+
+function memberView(member, index) {
+  return Object.freeze({
+    id: firstText(member.playerId, member.id) || `member-${index}`,
+    name: firstText(
+      member.displayNameZh,
+      member.displayNameOriginal,
+      member.nameZh,
+      member.name,
+      member.displayName
+    ) || (index === 0 ? '成员待定' : ''),
+    country: firstText(member.countryMark, member.countryCode, member.country?.code)
+  });
 }
 
 function sideIdentity(slot) {
@@ -42,6 +110,60 @@ function localizedOutcomeText(value) {
     .trim();
 }
 
+function visibleStatus(value) {
+  const label = localizedOutcomeText(value);
+  if (!label || /^(已完赛|完赛|正常完赛|Completed)$/iu.test(label)) return '';
+  return label;
+}
+
+function roundTitle(label, index = 0) {
+  const value = String(label || '').trim();
+  const normalized = value.toUpperCase().replace(/[_-]+/g, ' ');
+  const code = normalized.replace(/\s+/g, '');
+  if (/资格赛.*决胜轮|QUALIF(?:YING|IER).*FINAL|^QR$/u.test(value + normalized)) return '资格赛决胜轮';
+  const qualifying = /QUALIF(?:YING|IER).*?(\d+)/u.exec(normalized)?.[1]
+    || /^Q([1-9])$/u.exec(code)?.[1];
+  if (qualifying) {
+    const number = Number(qualifying);
+    if (number === 1) return '资格赛第一轮';
+    if (number === 2) return '资格赛第二轮';
+    if (number === 3) return '资格赛决胜轮';
+    return `资格赛第${number}轮`;
+  }
+  const roundNumber = /ROUND\s*([1-9])\b/u.exec(normalized)?.[1]
+    || /^ROUND_?([1-9])$/u.exec(code)?.[1];
+  if (roundNumber) return ordinalRound(Number(roundNumber));
+  const roundOf = /(?:ROUND OF |R)(128|96|64|48|32|16)\b/u.exec(normalized)?.[1];
+  if (roundOf) return roundOfTitle(roundOf, index);
+  if (/半决赛/u.test(value) || /SEMI|\bSF\b/u.test(normalized)) return '半决赛';
+  if (/1\/4|¼|四分之一/u.test(value) || /QUARTER|\bQF\b/u.test(normalized)) return '四分之一决赛';
+  if (/冠军/u.test(value) || /CHAMPION|WINNER/u.test(normalized)) return '冠军';
+  if (/决赛/u.test(value) || /\b(?:FINAL|F)\b/u.test(normalized)) return '决赛';
+  const names = ['第一轮', '第二轮', '第三轮', '第四轮', '第五轮'];
+  return names[index] || value || '轮次';
+}
+
+function ordinalRound(number) {
+  return ['第一轮', '第二轮', '第三轮', '第四轮', '第五轮'][number - 1]
+    || `第${number}轮`;
+}
+
+function roundOfTitle(value, index) {
+  const labels = Object.freeze({
+    128: '第一轮',
+    96: '第二轮',
+    64: '第二轮',
+    48: '第三轮',
+    32: '三十二强',
+    16: '十六强'
+  });
+  return labels[value] || ordinalRound(index + 1);
+}
+
+function localizedRound(label, index = 0) {
+  return roundTitle(label, index);
+}
+
 function drawColumns(presentation) {
   const slots = new Map((presentation?.slots || []).map(slot => [slot.slotId, slot]));
   const rounds = presentation?.rounds || [];
@@ -54,8 +176,8 @@ function drawColumns(presentation) {
       .sort((first, second) => Number(first.bracketIndex ?? 0)
         - Number(second.bracketIndex ?? 0))
       .map((match, matchIndex) => {
-        const first = slots.get(match.slotIds[0]);
-        const second = slots.get(match.slotIds[1]);
+        const first = slots.get(match.slotIds?.[0]);
+        const second = slots.get(match.slotIds?.[1]);
         const winnerId = field(match.winnerSideId);
         const bracketIndex = Number.isFinite(Number(match.bracketIndex))
           ? Number(match.bracketIndex) : matchIndex;
@@ -73,14 +195,14 @@ function drawColumns(presentation) {
           incomingStyle: `top:${(cardHeight - connectorHeight) / 2}rpx;height:${connectorHeight}rpx`,
           matchId: field(match.matchId),
           canOpen: match.canOpenMatch,
-          status: localizedOutcomeText(match.statusLabel),
+          status: visibleStatus(match.statusLabel),
           scoreText: localizedOutcomeText(match.scoreText),
           first: participantName(first),
           second: participantName(second),
           firstSeed: field(first?.seedNumber),
           secondSeed: field(second?.seedNumber),
-          firstEntry: first?.entryLabelZh || '',
-          secondEntry: second?.entryLabelZh || '',
+          firstEntry: entryLabel(first?.entryLabelZh || first?.entryCode),
+          secondEntry: entryLabel(second?.entryLabelZh || second?.entryCode),
           firstScores,
           secondScores,
           hasFirstScores: firstScores.length > 0,
@@ -92,7 +214,7 @@ function drawColumns(presentation) {
     const height = Math.max(stride, ...matches.map(match => match.top + cardHeight + 96));
     return Object.freeze({
       id: round.roundId,
-      title: roundTitle(round.displayNameZh, roundIndex),
+      title: roundTitle(round.displayNameZh || round.roundKey || round.roundCode, roundIndex),
       champion: false,
       height,
       matches: Object.freeze(matches.map(match => {
@@ -132,56 +254,99 @@ function drawColumns(presentation) {
           incomingStyle: 'top:87rpx;height:1rpx',
           first: participantName(winnerSlot),
           firstSeed: field(winnerSlot?.seedNumber),
-          firstEntry: winnerSlot?.entryLabelZh || '',
-          status: '已晋级'
+          firstEntry: entryLabel(winnerSlot?.entryLabelZh || winnerSlot?.entryCode),
+          status: '冠军'
         })
       ])
     })
   ]);
 }
 
-function roundTitle(label, index) {
-  const value = String(label || '').trim();
-  const normalized = value.toUpperCase().replace(/[_-]+/g, ' ');
-  if (/半决赛/u.test(value)) return '半决赛';
-  if (/1\/4|¼|四分之一/u.test(value)) return '¼决赛';
-  if (/决赛/u.test(value) && !/半决赛/u.test(value)) return '决赛';
-  if (/冠军/u.test(value)) return '冠军';
-  if (/SEMI|\bSF\b/.test(normalized)) return '半决赛';
-  if (/QUARTER|\bQF\b/.test(normalized)) return '¼决赛';
-  if (/\b(?:FINAL|F)\b/.test(normalized)) return '决赛';
-  if (/CHAMPION|WINNER/.test(normalized)) return '冠军';
-  const names = ['第一轮', '第二轮', '第三轮', '第四轮', '第五轮'];
-  return names[index] || value || '轮次';
+function drawRoundView(presentation, selectedRoundId = '', focusedPlayerId = '') {
+  const slots = new Map((presentation?.slots || []).map(slot => [slot.slotId, slot]));
+  const rounds = (presentation?.rounds || []).map((round, index) => Object.freeze({
+    id: round.roundId,
+    title: roundTitle(round.displayNameZh || round.roundKey || round.roundCode, index),
+    current: Boolean(round.current || round.isCurrent || round.isActive)
+  }));
+  const defaultRoundId = selectedRoundId && rounds.some(round => round.id === selectedRoundId)
+    ? selectedRoundId
+    : firstText(
+      presentation?.currentRoundId,
+      presentation?.activeRoundId,
+      presentation?.defaultRoundId
+    ) || rounds.find(round => round.current)?.id || rounds[0]?.id || '';
+  const roundItems = rounds.map(round => {
+    const matches = (presentation?.matches || [])
+      .filter(match => match.roundId === round.id)
+      .sort((first, second) => Number(first.bracketIndex ?? 0)
+        - Number(second.bracketIndex ?? 0))
+      .map((match, index) => roundMatchView(match, slots, index, focusedPlayerId));
+    return Object.freeze({
+      ...round,
+      selected: round.id === defaultRoundId,
+      matchCount: matches.length,
+      hasFocusedPlayer: Boolean(focusedPlayerId)
+        && matches.some(match => match.focused),
+      matches: Object.freeze(matches)
+    });
+  });
+  const selectedRound = roundItems.find(round => round.selected) || roundItems[0];
+  return Object.freeze({
+    selectedRoundId: selectedRound?.id || '',
+    selectedRoundTitle: selectedRound?.title || '',
+    selectedRoundMatchCount: selectedRound?.matchCount || 0,
+    roundTabs: Object.freeze(roundItems.map(({ matches: _matches, ...round }) => Object.freeze(round))),
+    roundMatches: selectedRound?.matches || Object.freeze([]),
+    rounds: Object.freeze(roundItems)
+  });
 }
 
-function localizedRound(label) {
-  const value = String(label || '').trim();
-  const normalized = value.toUpperCase().replace(/[_-]+/g, ' ');
-  const roundOf = /(?:ROUND OF |R)(128|64|32|16)\b/.exec(normalized)?.[1];
-  if (roundOf) return `${roundOf}强`;
-  if (/半决赛/u.test(value)) return '半决赛';
-  if (/1\/4|¼|四分之一/u.test(value)) return '¼决赛';
-  if (/冠军/u.test(value)) return '冠军';
-  if (/决赛/u.test(value) && !/半决赛/u.test(value)) return '决赛';
-  if (/SEMI|\bSF\b/.test(normalized)) return '半决赛';
-  if (/QUARTER|\bQF\b/.test(normalized)) return '¼决赛';
-  if (/CHAMPION|WINNER/.test(normalized)) return '冠军';
-  if (/QUALIFIER/.test(normalized) && !/ROUND/.test(normalized)) return '晋级正赛';
-  const qualifying = /QUALIF(?:YING|IER).*?(\d+)/.exec(normalized)?.[1];
-  if (qualifying) return `资格赛第${qualifying}轮`;
-  if (/\b(?:FINAL|F)\b/.test(normalized)) return '决赛';
-  return value || '轮次';
+function roundMatchView(match, slots, index, focusedPlayerId = '') {
+  const first = slots.get(match.slotIds?.[0]);
+  const second = slots.get(match.slotIds?.[1]);
+  const winnerId = field(match.winnerSideId);
+  const firstSide = sideView(first, match.score, 1, winnerId, focusedPlayerId);
+  const secondSide = sideView(second, match.score, 2, winnerId, focusedPlayerId);
+  const focused = firstSide.focused || secondSide.focused;
+  return Object.freeze({
+    id: match.nodeId || match.matchId?.value || `match-${index}`,
+    matchId: field(match.matchId),
+    canOpen: Boolean(match.canOpenMatch && field(match.matchId)),
+    status: visibleStatus(match.statusLabel),
+    scoreText: localizedOutcomeText(match.scoreText),
+    focused,
+    sides: Object.freeze([firstSide, secondSide])
+  });
 }
 
-const INCIDENT_LABELS = Object.freeze({
-  withdrawal: '退赛',
-  replacement: '替补',
-  draw_change: '签表变动',
-  retirement: '中途退赛',
-  walkover: '赛前退赛',
-  retirement_or_walkover: '退赛 / 赛前晋级'
-});
+function sideView(slot, score, side, winnerId, focusedPlayerId = '') {
+  const members = participantMembers(slot);
+  return Object.freeze({
+    id: sideIdentity(slot) || `side-${side}`,
+    seed: field(slot?.seedNumber),
+    entry: entryLabel(slot?.entryLabelZh || slot?.entryCode),
+    isWinner: Boolean(winnerId) && winnerId === sideIdentity(slot),
+    scores: sideScores(score, side),
+    hasScores: sideScores(score, side).length > 0,
+    focused: Boolean(focusedPlayerId) && members.some(member => member.id === focusedPlayerId),
+    members
+  });
+}
+
+function entryLabel(value) {
+  const raw = String(value || '').trim();
+  const normalized = raw.toUpperCase();
+  const labels = Object.freeze({
+    WC: '外卡',
+    Q: '资格赛晋级',
+    LL: '幸运落败者',
+    ALT: '替补',
+    PR: '保护排名',
+    SR: '保护排名'
+  });
+  return labels[normalized] ? `${labels[normalized]} · ${normalized}` : raw;
+}
 
 function drawDisciplineLabel(item) {
   const discipline = String(item?.discipline || '');
@@ -210,45 +375,165 @@ function drawStageLabel(item) {
 }
 
 function drawGroupLabel(item) {
-  return `${drawStageLabel(item)} · ${drawDisciplineLabel(item)}`;
+  return `${drawDisciplineLabel(item)} · ${drawStageLabel(item)}`;
+}
+
+function drawSelectionView(items, selectedDrawId = '') {
+  const draws = (Array.isArray(items) ? items : []).map(item => Object.freeze({
+    ...item,
+    projectKey: drawProjectKey(item),
+    projectLabel: drawDisciplineLabel(item),
+    stageKey: String(item?.stage || 'unknown'),
+    stageLabel: drawStageLabel(item),
+    label: drawGroupLabel(item)
+  }));
+  const active = draws.find(item => item.drawId === selectedDrawId) || draws[0] || null;
+  const projectKeys = new Set();
+  const projectOptions = [];
+  for (const item of draws) {
+    if (projectKeys.has(item.projectKey)) continue;
+    projectKeys.add(item.projectKey);
+    projectOptions.push(Object.freeze({
+      id: item.projectKey,
+      label: item.projectLabel,
+      drawId: preferredDrawForProject(draws, item.projectKey, active?.stageKey)?.drawId || item.drawId,
+      selected: item.projectKey === active?.projectKey
+    }));
+  }
+  const stageOptions = draws
+    .filter(item => item.projectKey === active?.projectKey)
+    .map(item => Object.freeze({
+      id: item.stageKey,
+      label: item.stageLabel,
+      drawId: item.drawId,
+      selected: item.drawId === active?.drawId
+    }));
+  return Object.freeze({
+    drawOptions: Object.freeze(draws),
+    activeDraw: active,
+    selectedDrawLabel: active?.label || '',
+    projectOptions: Object.freeze(projectOptions),
+    stageOptions: Object.freeze(stageOptions)
+  });
+}
+
+function drawProjectKey(item) {
+  return `${drawDisciplineLabel(item)}:${String(item?.discipline || '')}:${String(item?.tourOrg || '')}`;
+}
+
+function preferredDrawForProject(draws, projectKey, stageKey) {
+  return draws.find(item => item.projectKey === projectKey && item.stageKey === stageKey)
+    || draws.find(item => item.projectKey === projectKey);
 }
 
 function awardBelongsToDraw(award, scope) {
   if (!scope) return true;
+  const drawId = firstText(scope.drawId, scope.id);
+  if (award?.drawId && drawId && award.drawId !== drawId) return false;
   const stage = String(scope.stage || '');
   const discipline = String(scope.discipline || '');
   return (!stage || !award?.stage || award.stage === stage)
     && (!discipline || !award?.discipline || award.discipline === discipline);
 }
 
-function officialMetadataView(metadata, scope) {
+function officialMetadataView(metadata, scope = {}) {
   const roundAwards = Array.isArray(metadata?.roundAwards)
     ? metadata.roundAwards.filter(value =>
-        awardBelongsToDraw(value, scope)).map(value => Object.freeze({
-        id: `${value.sourceRoundId || value.roundKey || value.roundLabel}`,
-        round: localizedRound(value.roundLabel || value.roundKey),
-        prize: value.prizeMoney?.raw || [
-          value.prizeMoney?.currency,
-          value.prizeMoney?.amount ?? value.prizeMoney?.value
-        ].filter(item => item !== undefined && item !== null && item !== '').join(' '),
+        awardBelongsToDraw(value, scope)).map((value, index) => Object.freeze({
+        id: firstText(value.sourceRoundId, value.roundId, value.roundKey, value.roundLabel)
+          || `round-award-${index}`,
+        round: localizedRound(value.roundLabel || value.roundKey, index),
+        prize: moneyLabel(value.prizeMoney),
+        prizeBasis: prizeBasisLabel(value),
         points: Number.isFinite(value.rankingPoints?.value)
-          ? `${value.rankingPoints.value} 分` : value.rankingPoints?.raw || '',
+          ? `${value.rankingPoints.value} 分` : firstText(value.rankingPoints?.raw, '—'),
         sequence: awardSequence(value)
       })).sort((first, second) => first.sequence - second.sequence)
     : [];
-  const incidents = Array.isArray(metadata?.incidents)
-    ? metadata.incidents.map((value, index) => Object.freeze({
-        id: `${value.kind}:${value.displayNameZh || value.displayName}:${index}`,
-        kind: INCIDENT_LABELS[value.kind] || '签表变动',
-        name: String(value.displayNameZh || value.nameZh || value.displayName || '球员待确认'),
-        reason: String(value.descriptionZh || value.reasonZh
-          || value.reason || value.rawReason || '')
-      }))
-    : [];
+  const withdrawals = [
+    ...recordsFrom(metadata?.withdrawals, 'withdrawal'),
+    ...incidentRecords(metadata?.incidents, ['withdrawal'])
+  ];
+  const drawChanges = [
+    ...recordsFrom(metadata?.drawChanges, 'draw_change'),
+    ...incidentRecords(metadata?.incidents, ['replacement', 'draw_change', 'alternate'])
+  ];
   return Object.freeze({
     roundAwards: Object.freeze(roundAwards),
-    incidents: Object.freeze(incidents)
+    withdrawals: Object.freeze(withdrawals),
+    drawChanges: Object.freeze(drawChanges),
+    incidents: Object.freeze([...withdrawals, ...drawChanges])
   });
+}
+
+function moneyLabel(value) {
+  return firstText(value?.raw, [
+    firstText(value?.currency),
+    firstText(value?.amount, value?.value)
+  ].filter(Boolean).join(' '), '—');
+}
+
+function prizeBasisLabel(value) {
+  const raw = firstText(
+    value.prizeBasis,
+    value.prizeMoney?.basis,
+    value.prizeMoney?.scope,
+    value.prizeMoney?.unit
+  ).toLocaleLowerCase('en-US');
+  if (/team|pair|队/u.test(raw)) return '每队';
+  if (/person|player|individual|人/u.test(raw)) return '每人';
+  return '';
+}
+
+function recordsFrom(values, fallbackKind) {
+  return Array.isArray(values)
+    ? values.map((value, index) => recordView(value, fallbackKind, index)).filter(Boolean)
+    : [];
+}
+
+function incidentRecords(values, kinds) {
+  return Array.isArray(values)
+    ? values
+      .filter(value => kinds.includes(String(value?.kind || '')))
+      .map((value, index) => recordView(value, value.kind, index))
+      .filter(Boolean)
+    : [];
+}
+
+function recordView(value, fallbackKind, index) {
+  if (!value || typeof value !== 'object') return null;
+  const kind = recordKindLabel(value.kind || fallbackKind);
+  return Object.freeze({
+    id: firstText(value.id, value.changeId, value.withdrawalId)
+      || `${fallbackKind}:${firstText(value.displayNameZh, value.displayName, value.name, index)}`,
+    kind,
+    name: firstText(value.displayNameZh, value.nameZh, value.displayName, value.name, value.playerName, '—'),
+    originalName: firstText(value.originalDisplayNameZh, value.originalName, value.oldName),
+    replacementName: firstText(value.replacementDisplayNameZh, value.replacementName, value.newName),
+    round: localizedRound(firstText(value.roundLabel, value.roundKey, value.roundId)),
+    position: firstText(value.positionLabel, value.position),
+    time: compactDate(firstText(value.effectiveAt, value.occurredAt, value.updatedAt, value.dateLabel)),
+    reason: firstText(value.descriptionZh, value.reasonZh, value.reason, value.rawReason, value.note)
+  });
+}
+
+function recordKindLabel(value) {
+  const labels = Object.freeze({
+    withdrawal: '退赛',
+    replacement: '替补',
+    alternate: '替补',
+    draw_change: '签表变动'
+  });
+  return labels[value] || '签表变动';
+}
+
+function compactDate(value) {
+  const raw = text(value);
+  if (!raw) return '';
+  const match = /^(\d{4})-(\d{2})-(\d{2})(?:[T\s](\d{2}):(\d{2}))?/.exec(raw);
+  if (!match) return raw;
+  const date = `${Number(match[2])}月${Number(match[3])}日`;
+  return match[4] ? `${date} ${match[4]}:${match[5]}` : date;
 }
 
 function awardSequence(value) {
@@ -256,9 +541,9 @@ function awardSequence(value) {
   if (/winner|champion/u.test(key)) return 80;
   if (/final/u.test(key) && !/semi|quarter/u.test(key)) return 70;
   if (/semi/u.test(key)) return 60;
-  if (/quarter/u.test(key)) return 50;
-  const roundOf = /(?:round[_ ]of[_ ]|r)(128|64|32|16)/u.exec(key)?.[1];
-  if (roundOf) return { 128: 10, 64: 20, 32: 30, 16: 40 }[roundOf];
+  if (/quarter|qf/u.test(key)) return 50;
+  const roundOf = /(?:round[_ ]of[_ ]|r)(128|96|64|48|32|16)/u.exec(key)?.[1];
+  if (roundOf) return { 128: 10, 96: 15, 64: 20, 48: 25, 32: 30, 16: 40 }[roundOf];
   const qualifier = /qualif.*?(\d+)/u.exec(key)?.[1];
   return qualifier ? Number(qualifier) : 45;
 }
@@ -287,11 +572,15 @@ function tournamentDrawFacts(items) {
 }
 
 module.exports = Object.freeze({
-  drawGroupLabel,
   drawColumns,
+  drawGroupLabel,
+  drawRoundView,
+  drawSelectionView,
   field,
   localizedOutcomeText,
+  localizedRound,
   officialMetadataView,
+  participantMembers,
   participantName,
   sideScores,
   tournamentDrawFacts

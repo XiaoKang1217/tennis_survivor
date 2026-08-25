@@ -4,14 +4,55 @@
     "pages/match-detail/index",
     "pages/draws/index",
     "pages/calendar/index",
-    "pages/tournament-detail/index",
     "pages/participation/index",
-    "pages/players/index",
-    "pages/player-detail/index",
     "pages/following/index",
     "pages/account/index",
     "pages/legal/index"
   ],
+  "subpackages": [
+    {
+      "root": "packages/player",
+      "pages": [
+        "pages/players/index",
+        "pages/player-detail/index"
+      ]
+    },
+    {
+      "root": "packages/tournament",
+      "pages": [
+        "pages/tournament-detail/index",
+        "pages/draw-landscape/index"
+      ]
+    }
+  ],
+  "preloadRule": {
+    "pages/scores/index": {
+      "network": "all",
+      "packages": [
+        "packages/player",
+        "packages/tournament"
+      ]
+    },
+    "pages/draws/index": {
+      "network": "all",
+      "packages": [
+        "packages/tournament"
+      ]
+    },
+    "pages/calendar/index": {
+      "network": "all",
+      "packages": [
+        "packages/tournament"
+      ]
+    },
+    "pages/following/index": {
+      "network": "all",
+      "packages": [
+        "packages/player",
+        "packages/tournament"
+      ]
+    }
+  },
   "window": {
     "navigationStyle": "custom",
     "backgroundColor": "#f1f6fd",

@@ -1,32 +1,10 @@
 <view class="safe-page account-page theme-{{uiTheme}}">
-  <block wx:if="{{isDaylight}}">
-    <view class="daylight-brand-head" style="padding-top:{{topInset + 10}}px"><text class="daylight-kicker">我的</text><text class="daylight-page-title">我的</text></view>
-    <view class="daylight-account-content">
-      <view class="daylight-profile-card daylight-card" bindtap="openProfileGate" role="button">
-        <view class="daylight-account-avatar"><image wx:if="{{profile.avatarUrl}}" src="{{profile.avatarUrl}}" mode="aspectFill"/><ui-icon wx:else name="profile" size="28" color="#54775e"/></view>
-        <view class="daylight-profile-copy"><text class="daylight-profile-name">{{profile.nickname}}</text></view>
-        <view class="daylight-profile-action"><text>{{profile.actionLabel}}</text><ui-icon name="chevron" size="14" color="#8b8b7e"/></view>
-      </view>
-      <button class="daylight-auth-button {{profile.completed ? 'is-logout' : ''}}" bindtap="toggleLogin">{{profile.authActionLabel}}</button>
-
-      <view class="daylight-settings-group">
-        <view class="daylight-settings daylight-card">
-          <view bindtap="openThemeSheet" role="button"><view><text>界面皮肤</text></view><view class="daylight-setting-value"><text>{{themeLabel}}</text><ui-icon name="chevron" size="14" color="#8b8b7e"/></view></view>
-          <view bindtap="openTerms" role="button"><view><text>用户协议</text></view><view class="daylight-setting-value"><text>查看</text><ui-icon name="chevron" size="14" color="#8b8b7e"/></view></view>
-          <view bindtap="openPrivacyPolicy" role="button"><view><text>隐私政策</text></view><view class="daylight-setting-value"><text>查看</text><ui-icon name="chevron" size="14" color="#8b8b7e"/></view></view>
-        </view>
-      </view>
-    </view>
-  </block>
-
-  <block wx:else>
     <view class="root-head" style="padding-top:{{topInset}}px"><text class="eyebrow">个人中心</text><text class="title">我的</text></view>
-    <view class="account-card" bindtap="openProfileGate" role="button"><view class="account-avatar"><image wx:if="{{profile.avatarUrl}}" src="{{profile.avatarUrl}}" mode="aspectFill"/><ui-icon wx:else name="profile" size="28" color="#1677d2"/></view><view class="account-copy"><text class="account-title">{{profile.nickname}}</text></view><view class="account-action">{{profile.actionLabel}} ›</view></view>
+    <view class="account-card" bindtap="openProfileGate" role="button"><view class="account-avatar"><image wx:if="{{profile.avatarUrl}}" src="{{profile.avatarUrl}}" mode="aspectFill" lazy-load="{{true}}"/><ui-icon wx:else name="profile" size="28" color="#1677d2"/></view><view class="account-copy"><text class="account-title">{{profile.nickname}}</text></view><view class="account-action"><text>{{profile.actionLabel}}</text><ui-icon name="chevron" size="14" color="#1677d2"/></view></view>
     <button class="account-auth-button {{profile.completed ? 'is-logout' : ''}}" bindtap="toggleLogin">{{profile.authActionLabel}}</button>
-    <view class="settings-card"><view bindtap="openThemeSheet" role="button"><text>界面皮肤</text><text>{{themeLabel}} ›</text></view><view bindtap="openTerms" role="button"><text>用户协议</text><text>查看 ›</text></view><view bindtap="openPrivacyPolicy" role="button"><text>隐私政策</text><text>查看 ›</text></view></view>
-  </block>
+    <view class="settings-card"><view bindtap="openThemeSheet" role="button"><text>界面主题</text><view class="setting-value"><text>{{themeLabel}}</text><ui-icon name="chevron" size="14" color="{{themeAccentStrong}}"/></view></view><view bindtap="openTerms" role="button"><text>用户协议</text><view class="setting-value"><text>查看</text><ui-icon name="chevron" size="14" color="{{themeAccentStrong}}"/></view></view><view bindtap="openPrivacyPolicy" role="button"><text>隐私政策</text><view class="setting-value"><text>查看</text><ui-icon name="chevron" size="14" color="{{themeAccentStrong}}"/></view></view></view>
 
-  <view wx:if="{{themeSheetOpen}}" class="theme-sheet-layer" catchtouchmove="noop"><view class="theme-sheet-mask" bindtap="closeThemeSheet"/><view class="theme-sheet"><view class="theme-sheet-handle"/><view class="theme-sheet-head"><view><text>选择界面皮肤</text><text>组件结构保持一致，只切换配色</text></view><view bindtap="closeThemeSheet" role="button"><ui-icon name="close" size="18" color="{{themeMuted}}"/></view></view><view class="theme-options"><view wx:for="{{themeOptions}}" wx:key="id" class="theme-option {{uiTheme === item.id ? 'selected' : ''}}" data-theme="{{item.id}}" bindtap="chooseTheme" role="button"><view class="theme-preview preview-{{item.id}}"><view/><view/><view/></view><view class="theme-option-copy"><text>{{item.label}}</text><text>{{item.description}}</text></view><view class="theme-check">{{uiTheme === item.id ? '✓' : ''}}</view></view></view></view></view>
+  <view wx:if="{{themeSheetOpen}}" class="theme-sheet-layer" catchtouchmove="noop"><view class="theme-sheet-mask" bindtap="closeThemeSheet"/><view class="theme-sheet"><view class="theme-sheet-handle"/><view class="theme-sheet-head"><view><text>选择界面主题</text><text>选择你喜欢的界面配色</text></view><view bindtap="closeThemeSheet" role="button"><ui-icon name="close" size="18" color="{{themeMuted}}"/></view></view><view class="theme-options"><view wx:for="{{themeOptions}}" wx:key="id" class="theme-option {{uiTheme === item.id ? 'selected' : ''}}" data-theme="{{item.id}}" bindtap="chooseTheme" role="button"><view class="theme-preview preview-{{item.id}}"><view/><view/><view/></view><view class="theme-option-copy"><text>{{item.label}}</text><text>{{item.description}}</text></view><view class="theme-check"><ui-icon wx:if="{{uiTheme === item.id}}" name="check" size="16" color="{{item.id === 'daylight' ? '#54775e' : themeAccentStrong}}"/></view></view></view></view></view>
   <product-tabbar active="account" theme="{{uiTheme}}"/>
   <profile-gate id="profileGate" theme="{{uiTheme}}"/>
 </view>

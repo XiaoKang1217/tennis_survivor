@@ -46,7 +46,7 @@ function profile(overrides = {}) {
 }
 
 function loadPageDefinition() {
-  const pagePath = require.resolve('../pages/player-detail/index');
+  const pagePath = require.resolve('../packages/player/pages/player-detail/index');
   delete require.cache[pagePath];
   let definition;
   const previousPage = globalThis.Page;

@@ -1,22 +1,4 @@
 <view class="safe-page participation-page theme-{{uiTheme}}">
-  <block wx:if="{{isDaylight}}">
-    <view class="daylight-brand-head" style="padding-top:{{topInset + 8}}px">
-      <text class="daylight-kicker">参赛动态</text>
-      <text class="daylight-page-title">参赛动态</text>
-      <text class="daylight-caption">退赛、替补与名单变化</text>
-    </view>
-    <view class="daylight-module-nav">
-      <button bindtap="openScores" aria-label="比分"><text>比分</text></button>
-      <button bindtap="openDraws" aria-label="签表"><text>签表</text></button>
-      <button bindtap="openCalendar" aria-label="赛历"><text>赛历</text></button>
-      <button class="active" aria-label="动态"><text>动态</text></button>
-    </view>
-    <view class="daylight-page-state">
-      <client-state state="empty" label="{{emptyLabel}}" message="{{emptyMessage}}"/>
-    </view>
-    <product-tabbar active="matches" theme="{{uiTheme}}"/>
-  </block>
-  <block wx:else>
     <view class="page-head">
       <view class="title-row" style="padding-top:{{topInset}}px">
         <view class="title-copy">
@@ -38,6 +20,5 @@
     </view>
 
     <product-tabbar active="matches" theme="{{uiTheme}}"/>
-  </block>
   <profile-gate id="profileGate" theme="{{uiTheme}}"/>
 </view>

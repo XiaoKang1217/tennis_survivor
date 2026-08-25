@@ -11,7 +11,7 @@ const MODULE_ICONS = Object.freeze({
 const MODULE_LABELS = Object.freeze({
   statistics: '比赛统计',
   point_by_point: '逐分',
-  h2h: 'H2H',
+  h2h: '交手记录',
   progression_path: '晋级路径'
 });
 

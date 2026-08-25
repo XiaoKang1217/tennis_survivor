@@ -2,20 +2,20 @@
 
 const SHARE_IMAGES = Object.freeze({
   match: Object.freeze({
-    card: '/assets/share/match-card.jpg',
-    timeline: '/assets/share/match-square.jpg'
+    card: '',
+    timeline: ''
   }),
   tournament: Object.freeze({
-    card: '/assets/share/tournament-card.jpg',
-    timeline: '/assets/share/tournament-square.jpg'
+    card: '',
+    timeline: ''
   }),
   player: Object.freeze({
-    card: '/assets/share/player-card.jpg',
-    timeline: '/assets/share/player-square.jpg'
+    card: '',
+    timeline: ''
   }),
   draw: Object.freeze({
-    card: '/assets/share/draw-card.jpg',
-    timeline: '/assets/share/draw-square.jpg'
+    card: '',
+    timeline: ''
   })
 });
 
@@ -154,7 +154,7 @@ function tournamentShare(detail, fallback = {}) {
     appMessage: Object.freeze({
       title,
       path: tournamentEditionId
-        ? withQuery('/pages/tournament-detail/index', params)
+        ? withQuery('/packages/tournament/pages/tournament-detail/index', params)
         : '/pages/calendar/index',
       imageUrl: shareImage(fallback.cardImageUrl, SHARE_IMAGES.tournament.card)
     }),
@@ -187,7 +187,9 @@ function playerShare(data = {}) {
   return Object.freeze({
     appMessage: Object.freeze({
       title,
-      path: playerId ? withQuery('/pages/player-detail/index', params) : '/pages/players/index',
+      path: playerId
+        ? withQuery('/packages/player/pages/player-detail/index', params)
+        : '/packages/player/pages/players/index',
       imageUrl: shareImage(data.shareCardImageUrl, SHARE_IMAGES.player.card)
     }),
     timeline: Object.freeze({

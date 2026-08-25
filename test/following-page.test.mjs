@@ -129,9 +129,9 @@ test('following player badge prefers half-body media and keeps controls off the 
   const script = read('pages/following/index.js');
   assert.match(script, /portrait\(item\.heroImage\) \|\| portrait\(item\.portrait\)/);
   const photoBlocks = markup.match(/<view class="player-photo">[\s\S]*?<\/view>/g) || [];
-  assert.equal(photoBlocks.length, 2);
+  assert.equal(photoBlocks.length, 1);
   for (const block of photoBlocks) assert.doesNotMatch(block, /player-heart/);
-  assert.equal((markup.match(/mode="aspectFit"/g) || []).length, 2);
+  assert.equal((markup.match(/mode="aspectFit"/g) || []).length, 1);
   assert.equal((markup.match(/mode="aspectFill"/g) || []).length, 0);
 });
 
@@ -151,8 +151,8 @@ test('following player badge shows titles, recent form and follower count', () =
 });
 
 test('player follows leaderboard is wired to large cards and real pagination', () => {
-  const markup = read('pages/players/index.wxml');
-  const script = read('pages/players/index.js');
+  const markup = read('packages/player/pages/players/index.wxml');
+  const script = read('packages/player/pages/players/index.js');
   assert.match(script, /followTabs/);
   assert.match(script, /loadFollowLeaderboard/);
   assert.match(markup, /follow-leaderboard-list/);
@@ -162,7 +162,7 @@ test('player follows leaderboard is wired to large cards and real pagination', (
 });
 
 test('player ranking search queries full basic profile inventory', () => {
-  const script = read('pages/players/index.js');
+  const script = read('packages/player/pages/players/index.js');
   assert.match(script, /const useProfileSearch = Boolean\(searchQuery\);/);
   assert.match(script, /\/api\/v2\/bff\/player-basic-profiles\/\$\{encodeURIComponent\(authority\)\}/);
   assert.match(script, /useProfileSearch\s*\?\s*profileEntries\(value, authority, rankingKind\)/);
@@ -217,7 +217,7 @@ test('following page keeps account-scoped trusted cache visible when refresh fai
   assert.equal(context.data.count, 1);
   assert.equal(context.data.items[0].player.name, '扬尼克·辛纳');
   assert.equal(context.data.deliveryState, 'stale');
-  assert.equal(context.data.deliveryMessage, '刷新失败，继续显示本地可信关注');
+  assert.equal(context.data.deliveryMessage, '刷新暂未成功，已保留上次关注');
 });
 
 test('following page does not show cached user data without a current account scope', async () => {

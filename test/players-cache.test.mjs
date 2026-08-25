@@ -69,7 +69,7 @@ function h2hProjection() {
 }
 
 function loadPageDefinition() {
-  const pagePath = require.resolve('../pages/players/index');
+  const pagePath = require.resolve('../packages/player/pages/players/index');
   delete require.cache[pagePath];
   let definition;
   const previousPage = globalThis.Page;
@@ -189,5 +189,5 @@ test('players h2h keeps trusted result visible when refresh fails', async () => 
   assert.equal(requests[0].options.ifNoneMatch, 'etag-h2h');
   assert.equal(context.data.h2hFailed, false);
   assert.equal(context.data.h2hResult.totalMatches, 10);
-  assert.equal(context.data.h2hMessage, '刷新失败，继续显示本地可信 H2H');
+  assert.equal(context.data.h2hMessage, '刷新暂未成功，已保留上次交手记录');
 });

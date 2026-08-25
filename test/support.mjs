@@ -100,7 +100,7 @@ export function presentation(overrides = {}) {
     modules: {
       statistics: { id: 'statistics', label: '比赛统计', state: 'content', message: null, dataAsOf: '2026-08-06T23:30:01.000Z', preservesLastTrustedContent: true, retryable: true },
       point_by_point: { id: 'point_by_point', label: '逐分', state: 'empty', message: '当前没有逐分数据', dataAsOf: null, preservesLastTrustedContent: false, retryable: false },
-      h2h: { id: 'h2h', label: 'H2H', state: 'delayed', message: '交手记录仍在确认', dataAsOf: null, preservesLastTrustedContent: true, retryable: true },
+      h2h: { id: 'h2h', label: '交手记录', state: 'delayed', message: '交手记录仍在确认', dataAsOf: null, preservesLastTrustedContent: true, retryable: true },
       progression_path: { id: 'progression_path', label: '晋级路径', state: 'failed', message: '晋级路径暂不可用', dataAsOf: null, preservesLastTrustedContent: false, retryable: true }
     },
     actions: [],

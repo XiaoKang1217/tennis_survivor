@@ -1,88 +1,205 @@
 <page-meta page-style="{{themePageStyle}}" background-color="{{themeCanvas}}" background-text-style="{{themeBackgroundTextStyle}}"/>
-<view class="safe-page draw-page theme-{{uiTheme}} {{fullscreen ? 'fullscreen' : ''}}">
-  <block wx:if="{{isDaylight}}">
-    <view wx:if="{{!fullscreen}}" class="daylight-brand-head" style="padding-top:{{topInset + 8}}px"><text class="daylight-kicker">赛事签表</text><text class="daylight-page-title">赛事签表</text><text class="daylight-caption">轮次、晋级路径与实时赛果</text></view>
-    <view wx:if="{{!fullscreen}}" class="daylight-module-nav"><button bindtap="openScores" aria-label="比分"><text>比分</text></button><button class="active" aria-label="签表"><text>签表</text></button><button bindtap="openCalendar" aria-label="赛历"><text>赛历</text></button><button bindtap="openParticipation" aria-label="动态"><text>动态</text></button></view>
-    <view wx:if="{{!fullscreen}}" class="daylight-draw-controls">
-      <view class="daylight-period"><view><text class="daylight-section-title">本周签表</text><text>{{weekRange}}</text></view><view bindtap="openPastDraws" role="button"><ui-icon name="calendar" size="15" color="#54775e"/><text>过往签表</text><ui-icon name="chevron" size="13" color="#54775e"/></view></view>
-      <view class="daylight-tour-tabs daylight-segmented"><view wx:for="{{tourFilters}}" wx:key="id" data-id="{{item.id}}" bindtap="chooseTour" class="{{tourFilter === item.id ? 'selected' : ''}}">{{item.label}}</view></view>
-      <view class="daylight-draw-search"><ui-icon name="search" size="16" color="#748078"/><input value="{{query}}" bindinput="updateQuery" placeholder="搜索本周赛事或球员" confirm-type="search"/></view>
-      <scroll-view wx:if="{{filteredTournaments.length}}" scroll-x enhanced show-scrollbar="{{false}}" class="daylight-tournament-picker"><view><view wx:for="{{filteredTournaments}}" wx:key="id" data-id="{{item.id}}" data-title="{{item.title}}" data-tour="{{item.requestTour}}" bindtap="chooseTournament" class="{{selectedTournamentId === item.id ? 'selected' : ''}}"><text>{{item.title}}</text><text>{{item.location || item.tourOrg}} · {{item.levelCode}}</text></view></view></scroll-view>
+<view class="safe-page draw-page theme-{{uiTheme}}">
+  <view class="page-head">
+    <view class="title-row" style="padding-top:{{topInset}}px">
+      <view class="title-copy">
+        <text class="eyebrow">赛事签表</text>
+        <text class="title">赛事签表</text>
+        <text class="title-caption">查看各轮对阵与赛果</text>
+      </view>
     </view>
-    <view wx:if="{{draws.length}}" class="daylight-draw-picker"><scroll-view scroll-x enhanced show-scrollbar="{{false}}"><view><button wx:for="{{draws}}" wx:key="drawId" data-id="{{item.drawId}}" bindtap="chooseDraw" class="{{selectedDrawId === item.drawId ? 'selected' : ''}}">{{item.label}}</button></view></scroll-view><button class="draw-share-button" open-type="share" hover-class="none"><ui-icon name="share" size="15" color="#54775e"/><text>分享</text></button><button bindtap="toggleFullscreen"><ui-icon name="fullscreen" size="15" color="#54775e"/><text>{{fullscreen ? '退出' : '全屏'}}</text></button></view>
-    <data-notice wx:if="{{deliveryState}}" state="{{deliveryState}}" message="{{deliveryMessage}}" dataAsOf="{{dataAsOf}}" compact/>
-    <view wx:if="{{loading && !columns.length}}" class="daylight-page-state"><client-state state="loading" label="签表加载中" message="签表马上显示"/></view>
-    <view wx:elif="{{failed && !columns.length}}" class="daylight-page-state"><client-state state="failed" label="该赛事签表暂不可用" message="可以切换其他赛事或稍后重试" retryable bind:retry="loadIndex"/></view>
-    <view wx:elif="{{!selectedTournamentId}}" class="daylight-page-state"><client-state state="empty" label="请选择赛事" message="从本周赛事中选择，或进入过往签表时间线"/></view>
-    <view wx:elif="{{!columns.length && !loading}}" class="daylight-page-state"><client-state state="empty" label="该赛事暂无签表" message="签表发布后会自动显示"/></view>
-    <scroll-view wx:else scroll-x scroll-y class="draw-board daylight-draw-board"><view class="rounds daylight-rounds"><view wx:for="{{columns}}" wx:key="id" class="round-column daylight-round-column"><text class="round-title daylight-round-title">{{item.title}}</text><view class="round-body" style="height:{{item.height}}rpx"><button wx:for="{{item.matches}}" wx:for-item="match" wx:key="id" style="{{match.nodeStyle}}" class="draw-match daylight-draw-match {{match.champion ? 'champion-match' : ''}}" data-match-id="{{match.matchId}}" bindtap="openMatch"><view wx:if="{{match.hasIncoming}}" class="connector-in" style="{{match.incomingStyle}}"/><block wx:if="{{match.champion}}"><view class="champion-row"><text wx:if="{{match.firstSeed}}" class="seed">{{match.firstSeed}}</text><text class="participant">{{match.first}}</text><text wx:if="{{match.firstEntry}}" class="entry">{{match.firstEntry}}</text></view><view class="match-meta"><text class="score-text">签表顶点</text><text class="draw-status">{{match.status}}</text></view></block><block wx:else><view class="side-row {{match.firstWon ? 'winner' : ''}} {{match.hasFirstScores ? 'has-score' : 'no-score'}}"><text class="seed">{{match.firstSeed}}</text><text class="participant">{{match.first}}</text><text class="entry">{{match.firstEntry}}</text><view wx:if="{{match.hasFirstScores}}" class="set-scores"><text wx:for="{{match.firstScores}}" wx:key="index" class="set-score">{{item.games}}<text wx:if="{{item.tiebreak}}" class="tiebreak">({{item.tiebreak}})</text></text></view></view><view class="side-row {{match.secondWon ? 'winner' : ''}} {{match.hasSecondScores ? 'has-score' : 'no-score'}}"><text class="seed">{{match.secondSeed}}</text><text class="participant">{{match.second}}</text><text class="entry">{{match.secondEntry}}</text><view wx:if="{{match.hasSecondScores}}" class="set-scores"><text wx:for="{{match.secondScores}}" wx:key="index" class="set-score">{{item.games}}<text wx:if="{{item.tiebreak}}" class="tiebreak">({{item.tiebreak}})</text></text></view></view><view class="match-meta"><text wx:if="{{match.scoreText}}" class="score-text">{{match.scoreText}}</text><text class="draw-status">{{match.status}}</text></view></block></button></view></view></view></scroll-view>
-    <view wx:if="{{!fullscreen && (awardGroups.length || drawIncidents.length)}}" class="daylight-draw-insights"><view><text class="daylight-section-title">赛事信息</text><text>奖金、积分与签表变动</text></view><view wx:if="{{awardGroups.length}}" class="daylight-draw-facts daylight-card"><text>每轮奖金与积分</text><view wx:for="{{awardGroups}}" wx:key="id" class="daylight-award-group"><text>{{item.label}}</text><scroll-view scroll-x><view><view wx:for="{{item.rows}}" wx:key="id"><text>{{item.round}}</text><text>{{item.prize}}</text><text>{{item.points}}</text></view></view></scroll-view></view></view><view wx:if="{{drawIncidents.length}}" class="daylight-draw-facts daylight-card"><text>签表变动与退赛</text><view wx:for="{{drawIncidents}}" wx:key="id" class="daylight-incident"><text>{{item.kind}}</text><text>{{item.name}}</text><text wx:if="{{item.reason}}">{{item.reason}}</text></view></view></view>
-    <product-tabbar wx:if="{{!fullscreen}}" active="matches" theme="{{uiTheme}}"/>
-  </block>
-  <block wx:else>
-  <view wx:if="{{!fullscreen}}" class="page-head"><view class="title-row" style="padding-top:{{topInset}}px"><view class="title-copy"><text class="eyebrow">赛事签表</text><text class="title">赛事签表</text><text class="title-caption">轮次、晋级路径与实时赛果</text></view></view>
-  <view class="module-nav"><view class="module" bindtap="openScores"><ui-icon name="score" size="20"/><text>实时比分</text></view><view class="module active"><ui-icon name="draw" size="20" color="#1677d2"/><text>赛事签表</text></view><view class="module" bindtap="openCalendar"><ui-icon name="calendar" size="20"/><text>巡回赛历</text></view><view class="module" bindtap="openParticipation"><ui-icon name="entry" size="20"/><text>参赛动态</text></view></view></view>
-  <view wx:if="{{!fullscreen}}" class="draw-controls">
-    <view class="draw-period-head">
-      <view class="draw-period-copy"><text>本周签表</text><text>{{weekRange}}</text></view>
-      <view class="past-draws-entry" bindtap="openPastDraws" role="button"><ui-icon name="calendar" size="15" color="#1677d2"/><text>过往签表</text><ui-icon name="chevron" size="13" color="#1677d2"/></view>
+    <view class="module-nav">
+      <view class="module" bindtap="openScores"><ui-icon name="score" size="20"/><text>实时比分</text></view>
+      <view class="module active"><ui-icon name="draw" size="20" color="{{themeAccentStrong}}"/><text>赛事签表</text></view>
+      <view class="module" bindtap="openCalendar"><ui-icon name="calendar" size="20"/><text>巡回赛历</text></view>
+      <view class="module" bindtap="openParticipation"><ui-icon name="entry" size="20"/><text>参赛动态</text></view>
     </view>
-    <view class="draw-toolbar">
-      <view class="tour-filter"><view wx:for="{{tourFilters}}" wx:key="id" data-id="{{item.id}}" bindtap="chooseTour" role="button" class="{{tourFilter === item.id ? 'selected' : ''}}">{{item.label}}</view></view>
-      <view class="draw-search-wrap"><ui-icon name="search" size="16" color="#7a8998"/><input class="draw-search" value="{{query}}" bindinput="updateQuery" placeholder="搜索本周赛事或球员" confirm-type="search" /></view>
-    </view>
-    <scroll-view wx:if="{{filteredTournaments.length}}" scroll-x enhanced show-scrollbar="{{false}}" class="tournament-picker"><view class="tournament-picker-inner"><view wx:for="{{filteredTournaments}}" wx:key="id" data-id="{{item.id}}" data-title="{{item.title}}" data-tour="{{item.requestTour}}" bindtap="chooseTournament" role="button" class="tournament-option {{selectedTournamentId === item.id ? 'selected' : ''}}"><text>{{item.title}}</text><text>{{item.location || item.tourOrg}} · {{item.levelCode}}</text></view></view></scroll-view>
   </view>
-  <view wx:if="{{draws.length}}" class="draw-picker">
-    <scroll-view scroll-x enhanced show-scrollbar="{{false}}" class="draw-type-scroll"><view class="draw-types"><button wx:for="{{draws}}" wx:key="drawId" data-id="{{item.drawId}}" bindtap="chooseDraw" class="{{selectedDrawId === item.drawId ? 'selected' : ''}}">{{item.label}}</button></view></scroll-view>
-    <button class="draw-share-button" open-type="share" hover-class="none"><ui-icon name="share" size="15" color="{{themeAccentStrong}}"/><text>分享</text></button>
-    <button class="fullscreen-toggle" bindtap="toggleFullscreen"><ui-icon name="fullscreen" size="15" color="{{themeAccentStrong}}"/><text>{{fullscreen ? '退出' : '全屏'}}</text></button>
+
+  <view class="draw-summary">
+    <view class="summary-copy">
+      <text wx:if="{{selectedTournamentSummary.level}}" class="draw-level">{{selectedTournamentSummary.level}}</text>
+      <text class="summary-title">{{selectedTournamentSummary.title}}</text>
+      <text wx:if="{{selectedTournamentSummary.meta}}" class="summary-meta">{{selectedTournamentSummary.meta}}</text>
+      <text wx:elif="{{weekRange}}" class="summary-meta">本周签表 · {{weekRange}}</text>
+      <text wx:if="{{selectedTournamentSummary.surface || selectedTournamentSummary.status}}" class="summary-meta">{{selectedTournamentSummary.surface}} {{selectedTournamentSummary.status}}</text>
+    </view>
+    <view class="summary-actions">
+      <button bindtap="openTournamentDetail" disabled="{{!selectedTournamentId}}">赛事详情</button>
+      <button class="primary" bindtap="openTournamentSelector">切换赛事</button>
+    </view>
   </view>
+
+  <view wx:if="{{draws.length}}" class="draw-selectors">
+    <view class="selector-block">
+      <text>项目</text>
+      <scroll-view scroll-x enhanced show-scrollbar="{{false}}" class="choice-scroll">
+        <view class="choice-row">
+          <button wx:for="{{projectOptions}}" wx:key="id" data-draw-id="{{item.drawId}}" bindtap="chooseProject" class="{{item.selected ? 'selected' : ''}}">{{item.label}}</button>
+        </view>
+      </scroll-view>
+    </view>
+    <view class="selector-block">
+      <text>阶段</text>
+      <scroll-view scroll-x enhanced show-scrollbar="{{false}}" class="choice-scroll">
+        <view class="choice-row">
+          <button wx:for="{{stageOptions}}" wx:key="id" data-draw-id="{{item.drawId}}" bindtap="chooseStage" class="{{item.selected ? 'selected' : ''}}">{{item.label}}</button>
+        </view>
+      </scroll-view>
+    </view>
+    <view class="draw-tab-row">
+      <button wx:for="{{contentTabs}}" wx:key="id" data-id="{{item.id}}" bindtap="chooseContentTab" class="{{item.selected ? 'selected' : ''}}">{{item.label}}</button>
+    </view>
+  </view>
+
   <data-notice wx:if="{{deliveryState}}" state="{{deliveryState}}" message="{{deliveryMessage}}" dataAsOf="{{dataAsOf}}" compact/>
-  <view wx:if="{{loading && !columns.length}}" class="page-state"><client-state state="loading" label="签表加载中" message="签表马上显示"/></view>
-  <view wx:elif="{{failed && !columns.length}}" class="page-state"><client-state state="failed" label="该赛事签表暂不可用" message="可以切换其他赛事或稍后重试" retryable bind:retry="loadIndex"/></view>
-  <view wx:elif="{{!selectedTournamentId}}" class="page-state"><client-state state="empty" label="请选择赛事" message="从比分页或巡回赛历进入赛事签表"/></view>
-  <view wx:elif="{{!columns.length && !loading}}" class="page-state"><client-state state="empty" label="该赛事暂无签表" message="签表发布后会自动显示"/></view>
-  <scroll-view wx:else scroll-x scroll-y class="draw-board">
-    <view class="rounds">
-      <view wx:for="{{columns}}" wx:key="id" class="round-column">
-        <text class="round-title">{{item.title}}</text>
-        <view class="round-body" style="height:{{item.height}}rpx">
-        <button wx:for="{{item.matches}}" wx:for-item="match" wx:key="id" style="{{match.nodeStyle}}" class="draw-match {{match.champion ? 'champion-match' : ''}}" data-match-id="{{match.matchId}}" bindtap="openMatch">
-          <view wx:if="{{match.hasIncoming}}" class="connector-in" style="{{match.incomingStyle}}"></view>
-          <block wx:if="{{match.champion}}">
-            <view class="champion-row"><text wx:if="{{match.firstSeed}}" class="seed">{{match.firstSeed}}</text><text class="participant">{{match.first}}</text><text wx:if="{{match.firstEntry}}" class="entry">{{match.firstEntry}}</text></view>
-            <view class="match-meta"><text class="score-text">签表顶点</text><text class="draw-status">{{match.status}}</text></view>
-          </block>
-          <block wx:else>
-            <view class="side-row {{match.firstWon ? 'winner' : ''}} {{match.hasFirstScores ? 'has-score' : 'no-score'}}"><text class="seed">{{match.firstSeed}}</text><text class="participant">{{match.first}}</text><text class="entry">{{match.firstEntry}}</text><view wx:if="{{match.hasFirstScores}}" class="set-scores"><text wx:for="{{match.firstScores}}" wx:key="index" class="set-score">{{item.games}}<text wx:if="{{item.tiebreak}}" class="tiebreak">({{item.tiebreak}})</text></text></view></view>
-            <view class="side-row {{match.secondWon ? 'winner' : ''}} {{match.hasSecondScores ? 'has-score' : 'no-score'}}"><text class="seed">{{match.secondSeed}}</text><text class="participant">{{match.second}}</text><text class="entry">{{match.secondEntry}}</text><view wx:if="{{match.hasSecondScores}}" class="set-scores"><text wx:for="{{match.secondScores}}" wx:key="index" class="set-score">{{item.games}}<text wx:if="{{item.tiebreak}}" class="tiebreak">({{item.tiebreak}})</text></text></view></view>
-            <view class="match-meta"><text wx:if="{{match.scoreText}}" class="score-text">{{match.scoreText}}</text><text class="draw-status">{{match.status}}</text></view>
-          </block>
-        </button>
+
+  <view wx:if="{{loading && !roundMatches.length}}" class="page-state">
+    <client-state state="loading" label="签表加载中" message=""/>
+  </view>
+  <view wx:elif="{{failed && !roundMatches.length}}" class="page-state">
+    <client-state state="failed" label="签表暂不可用" message="请重试，或切换其他赛事" retryable bind:retry="loadIndex"/>
+  </view>
+  <view wx:elif="{{!selectedTournamentId}}" class="page-state">
+    <client-state state="empty" label="选择赛事" message="从本周签表中选择赛事，或进入过往签表"/>
+  </view>
+  <view wx:elif="{{!draws.length && !loading}}" class="page-state">
+    <client-state state="empty" label="暂无签表" message="签表尚未公布"/>
+  </view>
+
+  <view wx:if="{{selectedTournamentId && draws.length && !loading && !failed}}" class="draw-content">
+    <view wx:if="{{activeContentTab === 'draw'}}" class="draw-column">
+      <view class="draw-toolbar">
+        <view class="player-search">
+          <ui-icon name="search" size="16" color="{{themeIconMuted}}"/>
+          <input value="{{playerQuery}}" bindinput="updatePlayerQuery" placeholder="查找球员" confirm-type="search"/>
+        </view>
+        <button bindtap="openLandscapeDraw"><ui-icon name="landscape" size="16" color="{{themeAccentStrong}}"/><text>横屏看全签表</text></button>
+      </view>
+      <view wx:if="{{playerResults.length}}" class="player-results">
+        <view wx:for="{{playerResults}}" wx:key="id" data-id="{{item.id}}" data-name="{{item.name}}" data-round-id="{{item.roundId}}" bindtap="focusPlayer">
+          <text>{{item.name}}</text>
+          <text>{{item.roundTitle}}</text>
         </view>
       </view>
-    </view>
-  </scroll-view>
-  <view wx:if="{{!fullscreen && (awardGroups.length || drawIncidents.length)}}" class="draw-insights">
-    <view class="insights-head"><text>赛事信息</text><text>奖金、积分与签表变动</text></view>
-    <view wx:if="{{awardGroups.length}}" class="draw-facts-card">
-      <text class="facts-title">每轮奖金与积分</text>
-      <view wx:for="{{awardGroups}}" wx:key="id" class="award-group">
-        <text class="award-group-title">{{item.label}}</text>
-        <scroll-view scroll-x class="award-scroll">
-          <view class="award-row">
-            <view wx:for="{{item.rows}}" wx:key="id" class="award-cell"><text>{{item.round}}</text><text>{{item.prize}}</text><text>{{item.points}}</text></view>
+      <view wx:if="{{focusedPlayerName}}" class="focus-chip">
+        <text>{{focusedPlayerName}}</text>
+        <button bindtap="clearPlayerFocus">清除定位</button>
+      </view>
+      <scroll-view scroll-x enhanced show-scrollbar="{{false}}" class="round-scroll">
+        <view class="round-tabs">
+          <button wx:for="{{roundTabs}}" wx:key="id" data-id="{{item.id}}" bindtap="chooseRound" class="{{item.selected ? 'selected' : ''}} {{item.hasFocusedPlayer ? 'has-focus' : ''}}">{{item.title}}</button>
+        </view>
+      </scroll-view>
+      <view class="round-heading">
+        <view>
+          <text>{{selectedRoundTitle}}</text>
+          <text>共 {{selectedRoundMatchCount}} 场</text>
+        </view>
+        <text>当前轮次</text>
+      </view>
+      <view class="round-match-list">
+        <button wx:for="{{roundMatches}}" wx:key="id" data-match-id="{{item.matchId}}" bindtap="openMatch" class="round-match-card {{item.canOpen ? 'can-open' : 'static'}} {{item.focused ? 'focused' : ''}}">
+          <view wx:for="{{item.sides}}" wx:for-item="side" wx:key="id" class="match-side {{side.isWinner ? 'winner' : ''}} {{side.focused ? 'focused-side' : ''}}">
+            <view class="side-copy">
+              <view class="side-badges">
+                <text wx:if="{{side.seed}}" class="seed">{{side.seed}}</text>
+                <text wx:if="{{side.entry}}" class="entry">{{side.entry}}</text>
+              </view>
+              <view class="member-list">
+                <view wx:for="{{side.members}}" wx:for-item="member" wx:key="id">
+                  <text wx:if="{{member.country}}" class="country">{{member.country}}</text>
+                  <text class="member-name">{{member.name}}</text>
+                </view>
+              </view>
+            </view>
+            <view wx:if="{{side.hasScores}}" class="score-grid">
+              <text wx:for="{{side.scores}}" wx:for-item="score" wx:key="index">{{score.games}}<text wx:if="{{score.tiebreak}}" class="tiebreak">{{score.tiebreak}}</text></text>
+            </view>
           </view>
-        </scroll-view>
+          <view wx:if="{{item.scoreText || item.status}}" class="match-foot">
+            <text wx:if="{{item.scoreText}}">{{item.scoreText}}</text>
+            <text wx:if="{{item.status}}" class="status">{{item.status}}</text>
+          </view>
+        </button>
       </view>
     </view>
-    <view wx:if="{{drawIncidents.length}}" class="draw-facts-card">
-      <text class="facts-title">签表变动与退赛</text>
-      <view wx:for="{{drawIncidents}}" wx:key="id" class="incident-row"><text class="incident-kind">{{item.kind}}</text><text class="incident-name">{{item.name}}</text><text wx:if="{{item.reason}}" class="incident-reason">{{item.reason}}</text></view>
+
+    <view wx:if="{{activeContentTab === 'awards'}}" class="draw-facts-card">
+      <view class="facts-head">
+        <text>奖金积分</text>
+        <text>{{selectedDrawLabel}}</text>
+      </view>
+      <view wx:if="{{roundAwards.length}}" class="award-table">
+        <view class="award-header"><text>轮次</text><text>奖金</text><text>积分</text></view>
+        <view wx:for="{{roundAwards}}" wx:key="id" class="award-row">
+          <text>{{item.round}}</text>
+          <text>{{item.prize}}<text wx:if="{{item.prizeBasis}}" class="basis"> · {{item.prizeBasis}}</text></text>
+          <text>{{item.points}}</text>
+        </view>
+      </view>
+      <client-state wx:else state="empty" label="暂无奖金积分" message="官方尚未公布各轮奖金与积分"/>
+    </view>
+
+    <view wx:if="{{activeContentTab === 'withdrawals'}}" class="draw-facts-card">
+      <view class="facts-head">
+        <text>退赛</text>
+        <text>{{selectedDrawLabel}}</text>
+      </view>
+      <view wx:if="{{withdrawals.length}}" class="record-list">
+        <view wx:for="{{withdrawals}}" wx:key="id" class="record-row">
+          <text>{{item.name}}</text>
+          <text wx:if="{{item.time}}">{{item.time}}</text>
+          <text wx:if="{{item.reason}}">{{item.reason}}</text>
+        </view>
+      </view>
+      <client-state wx:else state="empty" label="本签表暂无退赛记录" message=""/>
+    </view>
+
+    <view wx:if="{{activeContentTab === 'changes'}}" class="draw-facts-card">
+      <view class="facts-head">
+        <text>签表变动</text>
+        <text>{{selectedDrawLabel}}</text>
+      </view>
+      <view wx:if="{{drawChanges.length}}" class="record-list">
+        <view wx:for="{{drawChanges}}" wx:key="id" class="record-row">
+          <text>{{item.kind}}</text>
+          <text>{{item.originalName || item.name}}<text wx:if="{{item.replacementName}}"> → {{item.replacementName}}</text></text>
+          <text wx:if="{{item.round || item.position}}">{{item.round}} {{item.position}}</text>
+          <text wx:if="{{item.time}}">{{item.time}}</text>
+        </view>
+      </view>
+      <client-state wx:else state="empty" label="本签表暂无变动" message=""/>
     </view>
   </view>
+
+  <view wx:if="{{selectorOpen}}" class="selector-mask" catchtap="closeTournamentSelector">
+    <view class="selector-panel" catchtap="stopTap">
+      <view class="selector-head">
+        <text>切换赛事</text>
+        <button bindtap="closeTournamentSelector">关闭</button>
+      </view>
+      <view class="selector-period">
+        <text>本周</text>
+        <text>{{weekRange}}</text>
+        <button bindtap="openPastDraws">过往签表</button>
+      </view>
+      <view class="tour-filter">
+        <view wx:for="{{tourFilters}}" wx:key="id" data-id="{{item.id}}" bindtap="chooseTour" class="{{tourFilter === item.id ? 'selected' : ''}}">{{item.label}}</view>
+      </view>
+      <view class="event-search">
+        <ui-icon name="search" size="16" color="{{themeIconMuted}}"/>
+        <input value="{{query}}" bindinput="updateQuery" placeholder="搜索赛事" confirm-type="search"/>
+      </view>
+      <scroll-view scroll-y class="event-list">
+        <view wx:for="{{filteredTournaments}}" wx:key="id" data-id="{{item.id}}" data-title="{{item.title}}" data-tour="{{item.requestTour}}" bindtap="chooseTournament" class="event-row {{selectedTournamentId === item.id ? 'selected' : ''}}">
+          <text>{{item.title}}</text>
+          <text>{{item.meta}}</text>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
   <product-tabbar active="matches" theme="{{uiTheme}}" />
-  </block>
   <canvas class="share-card-canvas" canvas-id="share-card-canvas"></canvas>
 </view>

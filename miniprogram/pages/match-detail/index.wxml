@@ -1,50 +1,19 @@
 <page-meta page-style="{{themePageStyle}}" background-color="{{themeCanvas}}" background-text-style="{{themeBackgroundTextStyle}}"/>
 <view class="safe-page detail-page theme-{{uiTheme}}">
-  <block wx:if="{{isDaylight}}"><view class="daylight-detail-head" style="padding-top:{{topInset}}px"><view bindtap="back" role="button"><ui-icon name="back" size="18" color="#54775e"/></view><view><text>比赛详情</text><text wx:if="{{match && match.tournamentName}}">{{match.tournamentName}}</text></view><view/></view></block>
-  <block wx:else>
   <view class="detail-head" style="padding-top:{{topInset}}px">
     <view class="head-action" bindtap="back" role="button" aria-label="返回"><ui-icon name="back" size="19" color="{{themeAccentStrong}}" /></view>
     <view class="head-title"><text>比赛详情</text><text wx:if="{{match && match.tournamentName}}" class="head-subtitle">{{match.tournamentName}}</text></view>
     <view class="head-spacer"/>
   </view>
-  </block>
 
   <view wx:if="{{loading && !match}}" class="page-state">
-    <client-state state="loading" label="正在读取比赛详情" message="比分区和各数据模块独立加载" />
+    <client-state state="loading" label="正在读取比赛详情" message="比分、数据和记录将分区呈现" />
   </view>
   <view wx:elif="{{failed && !match}}" class="page-state">
     <client-state state="failed" label="比赛详情暂不可用" message="已有列表比分不会因此被清空" retryable bind:retry="loadMatch" />
   </view>
 
   <block wx:elif="{{match}}">
-    <block wx:if="{{isDaylight}}">
-      <view class="daylight-match-context"><text wx:if="{{match.tournamentTourOrg}}">{{match.tournamentTourOrg}}</text><text>{{match.disciplineLabel}}<text wx:if="{{match.roundLabel}}"> · {{match.roundLabel}}</text></text><text wx:if="{{match.scoringSummary}}">{{match.scoringSummary}}</text><text wx:if="{{match.court}}">{{match.court}}</text></view>
-      <view class="daylight-match-hero daylight-card">
-        <view class="daylight-match-stage">
-          <view wx:for="{{match.sides}}" wx:key="sideId" wx:for-index="sideIndex" class="daylight-hero-side side-{{sideIndex}}">
-            <view class="daylight-hero-identity">
-              <view wx:if="{{sideIndex === 0 && item.primaryFollowTargetId}}" class="hero-player-follow {{item.primaryFollowed ? 'followed' : ''}}" data-id="{{item.primaryFollowTargetId}}" data-followed="{{!item.primaryFollowed}}" catchtap="togglePlayerFollow" role="button"><ui-icon name="heart" size="13" color="{{item.primaryFollowed ? '#fff' : '#54775e'}}"/><text>{{item.primaryFollowed ? '已关注' : '关注'}}</text></view>
-              <view class="daylight-hero-portraits {{item.isDoubles ? 'doubles' : ''}}"><view wx:for="{{item.members}}" wx:key="playerId" wx:for-item="member" class="daylight-portrait-tap" data-player-id="{{member.playerId}}" data-tour="{{match.tournamentTourOrg}}" data-name="{{member.name}}" data-original-name="{{member.originalName}}" data-country-code="{{member.countryCode}}" data-portrait-url="{{member.portraitUrl}}" catchtap="openPlayerFromPortrait"><image wx:if="{{member.portraitUrl}}" src="{{member.portraitUrl}}" mode="aspectFill"/><ui-icon wx:else name="player" size="{{item.isDoubles ? 19 : 25}}" color="#748078"/></view><text wx:if="{{item.countryMark}}">{{item.countryMark}}</text></view>
-              <view wx:if="{{sideIndex === 1 && item.primaryFollowTargetId}}" class="hero-player-follow {{item.primaryFollowed ? 'followed' : ''}}" data-id="{{item.primaryFollowTargetId}}" data-followed="{{!item.primaryFollowed}}" catchtap="togglePlayerFollow" role="button"><ui-icon name="heart" size="13" color="{{item.primaryFollowed ? '#fff' : '#54775e'}}"/><text>{{item.primaryFollowed ? '已关注' : '关注'}}</text></view>
-            </view>
-            <view class="daylight-hero-name"><text>{{item.names}}</text><text wx:if="{{item.isWinner}}">胜</text></view>
-            <text class="daylight-hero-meta"><text wx:if="{{item.seedLabel}}">{{item.seedLabel}} · </text><text wx:if="{{item.rankLabel}}">{{item.rankLabel}} · </text>{{item.countryLabel}}</text>
-            <view wx:if="{{item.preOddsLabel || item.liveOddsLabel}}" class="daylight-hero-odds"><text wx:if="{{item.preOddsLabel}}">赛前 {{item.preOddsLabel}}</text><text wx:if="{{item.liveOddsLabel}}">实时 {{item.liveOddsLabel}}</text></view>
-          </view>
-          <view class="daylight-hero-center"><view class="tone-{{match.statusTone}}"><view wx:if="{{match.showLivePulse}}"/><text>{{match.preMatch ? match.statusLabel : match.contextStatusText}}</text></view><text wx:if="{{match.annotation}}">{{match.annotation}}</text><text wx:if="{{match.preMatch}}" class="daylight-hero-time">{{match.scheduleText}}</text><text wx:else class="daylight-versus">VS</text></view>
-        </view>
-        <view wx:if="{{!match.preMatch && match.scoreVisible && (match.leftScoreCells.length || match.currentGame)}}" class="daylight-score-board">
-          <view class="daylight-score-head"><text>球员</text><view wx:if="{{match.leftScoreCells.length}}"><text wx:for="{{match.leftScoreCells}}" wx:key="setNumber" wx:for-item="cell">S{{cell.setNumber}}</text></view><text wx:if="{{match.currentGame}}">局分</text></view>
-          <view class="daylight-score-row {{match.sides[0].isWinner ? 'winner' : ''}}"><view class="daylight-score-player-cell"><text>{{match.sides[0].names}}</text><text wx:if="{{match.sides[0].isServer && match.group !== 'ended'}}" class="daylight-score-server">{{match.sides[0].serveLabel}}</text></view><view><view wx:for="{{match.leftScoreCells}}" wx:key="setNumber" wx:for-item="cell" class="{{cell.current ? 'current' : ''}} {{cell.matchTiebreak ? 'match-tiebreak' : ''}}"><text>{{cell.value}}</text><text wx:if="{{cell.tiebreak}}">{{cell.tiebreak}}</text><text wx:if="{{cell.kindLabel}}" class="set-kind-label">{{cell.kindLabel}}</text></view></view><text wx:if="{{match.currentGame}}" class="{{match.currentGame.firstHighlighted ? 'current-game' : ''}}">{{match.currentGame.first}}</text></view>
-          <view class="daylight-score-row {{match.sides[1].isWinner ? 'winner' : ''}}"><view class="daylight-score-player-cell"><text>{{match.sides[1].names}}</text><text wx:if="{{match.sides[1].isServer && match.group !== 'ended'}}" class="daylight-score-server">{{match.sides[1].serveLabel}}</text></view><view><view wx:for="{{match.rightScoreCells}}" wx:key="setNumber" wx:for-item="cell" class="{{cell.current ? 'current' : ''}} {{cell.matchTiebreak ? 'match-tiebreak' : ''}}"><text>{{cell.value}}</text><text wx:if="{{cell.tiebreak}}">{{cell.tiebreak}}</text><text wx:if="{{cell.kindLabel}}" class="set-kind-label">{{cell.kindLabel}}</text></view></view><text wx:if="{{match.currentGame}}" class="{{match.currentGame.secondHighlighted ? 'current-game' : ''}}">{{match.currentGame.second}}</text></view>
-        </view>
-        <text wx:elif="{{!match.preMatch && match.scorePlaceholder}}" class="daylight-score-placeholder">{{match.scorePlaceholder}}</text>
-        <text wx:if="{{match.currentGame && match.currentGame.decidingPointLabel}}" class="deciding-point-note">{{match.currentGame.decidingPointLabel}}</text>
-        <view class="daylight-score-foot"><text wx:if="{{match.updatedTime}}">更新于 {{match.updatedTime}}</text><data-notice wx:if="{{match.dataDeliveryState !== 'current'}}" state="{{match.dataDeliveryState}}" message="{{match.deliveryNotice}}" compact/></view>
-      </view>
-      <view class="daylight-detail-actions"><text class="detail-follow-count">{{match.followCountLabel}}</text><view bindtap="toggleMatchFollow" role="button"><ui-icon name="heart" size="17" color="#ffffff"/><text>{{match.followed ? '已关注' : '关注比赛'}}</text></view><button class="daylight-share-button" open-type="share" hover-class="none" aria-label="分享比赛"><ui-icon name="share" size="17" color="#54775e"/><text>分享</text></button></view>
-    </block>
-    <block wx:else>
     <view class="score-hero">
       <view class="match-context">
         <text wx:if="{{match.tournamentTourOrg}}" class="tour-badge">{{match.tournamentTourOrg}}</text>
@@ -60,7 +29,7 @@
               <view wx:if="{{sideIndex === 0 && item.primaryFollowTargetId}}" class="hero-player-follow {{item.primaryFollowed ? 'followed' : ''}}" data-id="{{item.primaryFollowTargetId}}" data-followed="{{!item.primaryFollowed}}" catchtap="togglePlayerFollow" role="button"><ui-icon name="heart" size="13" color="{{item.primaryFollowed ? '#fff' : '#1677d2'}}"/><text>{{item.primaryFollowed ? '已关注' : '关注'}}</text></view>
               <view class="portrait-stack {{item.isDoubles ? 'doubles' : 'singles'}}">
                 <view wx:for="{{item.members}}" wx:key="playerId" wx:for-item="member" class="portrait" data-player-id="{{member.playerId}}" data-tour="{{match.tournamentTourOrg}}" data-name="{{member.name}}" data-original-name="{{member.originalName}}" data-country-code="{{member.countryCode}}" data-portrait-url="{{member.portraitUrl}}" catchtap="openPlayerFromPortrait">
-                  <image wx:if="{{member.portraitUrl}}" src="{{member.portraitUrl}}" mode="aspectFill"/>
+                  <image wx:if="{{member.portraitUrl}}" src="{{member.portraitUrl}}" mode="aspectFill" lazy-load="{{true}}"/>
                   <ui-icon wx:else name="player" size="{{item.isDoubles ? 20 : 26}}" color="#66788a"/>
                 </view>
                 <view class="portrait-mark"><text wx:if="{{item.countryMark}}">{{item.countryMark}}</text><ui-icon wx:else name="info" size="12" color="#66788a"/></view>
@@ -121,7 +90,6 @@
     </view>
 
     <view class="detail-actions"><text class="detail-follow-count">{{match.followCountLabel}}</text><view class="follow-button" bindtap="toggleMatchFollow" role="button"><ui-icon name="heart" size="17" color="#ffffff"/><text>{{match.followed ? '已关注' : '关注比赛'}}</text></view><button class="share-button" open-type="share" hover-class="none" aria-label="分享比赛"><ui-icon name="share" size="17" color="{{themeAccentStrong}}"/><text>分享</text></button></view>
-    </block>
 
     <view class="match-modules">
       <view class="module-tabs">
@@ -186,7 +154,7 @@
                   <text class="progression-status">{{entry.current ? '本场' : entry.status}}</text>
                 </view>
               </view>
-              <text wx:else class="progression-empty">该球员当前没有已连接的签表路径</text>
+              <text wx:else class="progression-empty">暂无晋级路径</text>
             </view>
           </view>
         </block>

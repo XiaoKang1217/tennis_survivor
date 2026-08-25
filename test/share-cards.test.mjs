@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
 import test from 'node:test';
@@ -60,13 +60,24 @@ test('share poster canvas covers match player draw and tournament pages', () => 
   assert.match(poster, /function drawPlayerCard/u);
   assert.match(poster, /function drawDrawPoster/u);
   assert.match(poster, /function drawTournamentPoster/u);
+  assert.match(poster, /炉网｜网球，此刻发生/u);
+  assert.doesNotMatch(poster, /冠军，还要赢三场|冠军之路|下一站|LUWANG/u);
   assert.doesNotMatch(poster, /player-share-portrait-sample/u);
-  for (const page of ['match-detail', 'player-detail', 'draws', 'tournament-detail']) {
-    assert.match(read(`pages/${page}/index.js`), /updatePageShareImages/u, page);
-    assert.match(read(`pages/${page}/index.wxml`), /share-card-canvas/u, page);
+  for (const page of [
+    'pages/match-detail',
+    'packages/player/pages/player-detail',
+    'pages/draws',
+    'packages/tournament/pages/tournament-detail'
+  ]) {
+    assert.match(read(`${page}/index.js`), /updatePageShareImages/u, page);
+    assert.match(read(`${page}/index.wxml`), /share-card-canvas/u, page);
   }
   assert.equal(
     existsSync(resolve(miniRoot, 'assets/player-share-portrait-sample.png')),
     false
+  );
+  assert.deepEqual(
+    readdirSync(resolve(miniRoot, 'assets/share')).filter(name => /\.jpe?g$/iu.test(name)),
+    []
   );
 });

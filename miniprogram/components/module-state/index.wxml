@@ -2,7 +2,7 @@
   <view wx:if="{{state === 'loading'}}" class="loading-mark" />
   <ui-icon wx:else name="{{state === 'failed' ? 'retry' : 'info'}}" size="26" color="{{state === 'failed' ? (theme === 'daylight' ? '#b6533d' : (theme === 'dark' ? '#fb7185' : '#a13d42')) : (theme === 'daylight' ? '#748078' : (theme === 'dark' ? '#94a3b8' : '#61728a'))}}" />
   <text class="title">{{label}}</text>
-  <text wx:if="{{message}}" class="message">{{message}}</text>
+  <text wx:if="{{displayMessage}}" class="message">{{displayMessage}}</text>
   <text wx:if="{{dataAsOf}}" class="data-as-of">{{dataAsOf}}</text>
   <button wx:if="{{state === 'failed' && retryable}}" class="retry" bindtap="retry">重新加载</button>
 </view>

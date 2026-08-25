@@ -31,7 +31,7 @@
     <block wx:else>
       <view class="profile-gate-form">
         <button class="profile-avatar-button" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar" aria-label="选择头像">
-          <image wx:if="{{avatarUrl}}" src="{{avatarUrl}}" mode="aspectFill"/>
+          <image wx:if="{{avatarUrl}}" src="{{avatarUrl}}" mode="aspectFill" lazy-load="{{true}}"/>
           <view wx:else class="profile-avatar-empty">
             <ui-icon name="profile" size="27" color="{{theme === 'daylight' ? '#54775e' : (theme === 'dark' ? '#38bdf8' : '#1677d2')}}"/>
             <text>选择头像</text>

@@ -74,6 +74,9 @@
 
 .account-action {
   flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
   color: var(--brand-strong);
   font-size: 22rpx;
   font-weight: 650;
@@ -125,7 +128,14 @@
   font-weight: 650;
 }
 
-.settings-card text:last-child {
+.settings-card .setting-value {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+}
+
+.settings-card .setting-value text {
   color: var(--ink-subtle);
   font-size: 22rpx;
 }

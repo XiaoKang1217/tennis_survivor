@@ -25,22 +25,30 @@ test('the three skins are persistent and keep clean blue as the safe default', (
 });
 
 test('daylight and dark reuse the standard product structure at runtime', () => {
-  const pages = [
-    'account', 'calendar', 'draws', 'following', 'match-detail',
-    'participation', 'player-detail', 'players', 'scores', 'tournament-detail'
+  const pagePaths = [
+    'pages/account/index',
+    'pages/calendar/index',
+    'pages/draws/index',
+    'pages/following/index',
+    'pages/match-detail/index',
+    'pages/participation/index',
+    'packages/player/pages/player-detail/index',
+    'packages/player/pages/players/index',
+    'pages/scores/index',
+    'packages/tournament/pages/tournament-detail/index'
   ];
   const require = createRequire(import.meta.url);
   const theme = require(resolve(miniRoot, 'core/theme.js'));
   assert.equal(theme.buildThemeData('daylight').isDaylight, false);
   assert.equal(theme.buildThemeData('daylight').isWarm, true);
   assert.equal(theme.buildThemeData('dark').isDark, true);
-  for (const page of pages) {
-    const markup = read(`pages/${page}/index.wxml`);
-    assert.match(markup, /theme-\{\{uiTheme\}\}/, page);
-    assert.match(markup, /wx:else/, page);
-    const script = read(`pages/${page}/index.js`);
-    assert.match(script, /buildThemeData/, page);
-    assert.match(script, /syncPageTheme/, page);
+  for (const pagePath of pagePaths) {
+    const markup = read(`${pagePath}.wxml`);
+    assert.match(markup, /theme-\{\{uiTheme\}\}/, pagePath);
+    assert.doesNotMatch(markup, /isDaylight/, pagePath);
+    const script = read(`${pagePath}.js`);
+    assert.match(script, /buildThemeData/, pagePath);
+    assert.match(script, /syncPageTheme/, pagePath);
   }
   const cardMarkup = read('components/match-card/index.wxml');
   const cardCss = read('components/match-card/index.wxss');
@@ -78,10 +86,10 @@ test('product copy avoids decorative english eyebrows', () => {
     'pages/following/index.wxml',
     'pages/legal/index.wxml',
     'pages/participation/index.wxml',
-    'pages/player-detail/index.wxml',
-    'pages/players/index.wxml',
+    'packages/player/pages/player-detail/index.wxml',
+    'packages/player/pages/players/index.wxml',
     'pages/scores/index.wxml',
-    'pages/tournament-detail/index.wxml'
+    'packages/tournament/pages/tournament-detail/index.wxml'
   ].map(read).join('\n');
   assert.doesNotMatch(
     markup,
@@ -102,7 +110,7 @@ test('daylight match cards preserve the complete real score identity', () => {
 test('account provides the named skin switch without removing the blue skin', () => {
   const markup = read('pages/account/index.wxml');
   const script = read('pages/account/index.js');
-  assert.match(markup, /界面皮肤/);
+  assert.match(markup, /界面主题/);
   assert.match(markup, /用户协议/);
   assert.match(markup, /隐私政策/);
   assert.match(markup, /toggleLogin/);
@@ -118,8 +126,13 @@ test('account provides the named skin switch without removing the blue skin', ()
 });
 
 test('full-width themed pages explicitly contain horizontal overflow', () => {
-  for (const page of ['players', 'calendar', 'match-detail', 'player-detail']) {
-    const css = read(`pages/${page}/index.wxss`);
+  for (const page of [
+    'packages/player/pages/players',
+    'pages/calendar',
+    'pages/match-detail',
+    'packages/player/pages/player-detail'
+  ]) {
+    const css = read(`${page}/index.wxss`);
     assert.match(css, /overflow-x:hidden/, page);
     assert.match(css, /theme-daylight/, page);
   }

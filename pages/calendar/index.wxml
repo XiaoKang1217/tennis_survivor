@@ -1,37 +1,10 @@
 <view class="safe-page module-page theme-{{uiTheme}}">
-  <block wx:if="{{isDaylight}}">
-    <view class="daylight-brand-head" style="padding-top:{{topInset + 8}}px"><text class="daylight-kicker">{{drawSelectionMode ? '过往签表' : '巡回赛历'}}</text><text class="daylight-page-title">{{drawSelectionMode ? '选择过往签表' : '巡回赛历'}}</text><text class="daylight-caption">{{drawSelectionMode ? '按时间线定位赛事签表' : '按周查看全球巡回赛'}}</text></view>
-    <view class="daylight-module-nav"><button bindtap="openScores" aria-label="比分"><text>比分</text></button><button bindtap="openDraws" aria-label="签表"><text>签表</text></button><button class="active" aria-label="赛历"><text>赛历</text></button><button bindtap="openParticipation" aria-label="动态"><text>动态</text></button></view>
-    <view class="daylight-calendar-tools">
-      <view class="daylight-season"><view bindtap="previousYear"><ui-icon name="back" size="15" color="#748078"/></view><text>{{year}} 赛季</text><view bindtap="nextYear"><ui-icon name="chevron" size="15" color="#748078"/></view></view>
-      <scroll-view class="daylight-months" scroll-x enhanced show-scrollbar="{{false}}" scroll-into-view="daylight-month-{{activeMonth}}"><view class="daylight-months-inner"><view wx:for="{{months}}" wx:key="id" id="daylight-month-{{item.id}}" data-month="{{item.id}}" bindtap="selectMonth" class="daylight-month {{activeMonth === item.id ? 'active' : ''}}">{{item.label}}</view></view></scroll-view>
-      <view class="daylight-calendar-filters daylight-segmented"><view wx:for="{{buckets}}" wx:key="id" data-id="{{item.id}}" bindtap="selectBucket" class="{{activeBucket === item.id ? 'active' : ''}}">{{item.label}}</view></view>
-    </view>
-    <data-notice wx:if="{{deliveryState}}" state="{{deliveryState}}" message="{{deliveryMessage}}" dataAsOf="{{dataAsOf}}" compact/>
-    <view wx:if="{{loading && !items.length}}" class="daylight-page-state"><client-state state="loading" label="赛历加载中" message="赛历马上显示"/></view>
-    <view wx:elif="{{failed && !items.length}}" class="daylight-page-state"><client-state state="failed" label="赛历暂不可用" message="请稍后重试" retryable bind:retry="load"/></view>
-    <view wx:elif="{{!items.length}}" class="daylight-page-state"><client-state state="empty" label="本月暂无对应赛事" message="可以切换月份或赛事类别"/></view>
-    <view wx:else class="daylight-week-view">
-      <view class="daylight-week-head"><view class="{{activeWeekIndex === 0 ? 'disabled' : ''}}" bindtap="previousWeek"><ui-icon name="back" size="16" color="#54775e"/></view><view><text class="daylight-section-title">第 {{activeWeek.number}} 周</text><text>{{activeWeek.range}}</text></view><view class="{{activeWeekIndex === weeks.length - 1 ? 'disabled' : ''}}" bindtap="nextWeek"><ui-icon name="chevron" size="16" color="#54775e"/></view></view>
-      <view class="daylight-timeline">
-        <view wx:for="{{items}}" wx:key="id" class="daylight-calendar-entry" data-id="{{item.id}}" data-title="{{item.title}}" data-tour="{{item.requestTour}}" bindtap="openTournament" role="button">
-          <view class="daylight-calendar-date"><text>{{item.dateDays}}</text><text>{{item.dateMonth}}</text></view>
-          <view class="daylight-timeline-rail"><view class="life-{{item.lifecycleCode}}"/></view>
-          <view class="daylight-calendar-copy"><text class="daylight-life life-{{item.lifecycleCode}}">{{item.lifecycle}}</text><text class="daylight-calendar-title">{{item.title}}</text><view><text wx:if="{{item.location}}">{{item.location}}</text><text wx:if="{{item.surface}}">{{item.surface}}</text><text wx:if="{{item.level}}">{{item.level}}</text></view></view>
-          <view class="calendar-follow" data-id="{{item.followTargetId}}" data-followed="{{!item.followed}}" catchtap="toggleTournamentFollow" role="button"><ui-icon name="heart" size="15" color="{{item.followed ? '#54775e' : '#748078'}}"/></view>
-          <ui-icon name="chevron" size="15" color="#748078"/>
-        </view>
-      </view>
-    </view>
-    <product-tabbar active="matches" theme="{{uiTheme}}"/>
-  </block>
-  <block wx:else>
   <view class="page-head">
     <view class="title-row" style="padding-top:{{topInset}}px">
       <view class="title-copy">
         <text class="eyebrow">{{drawSelectionMode ? '过往签表' : '巡回赛历'}}</text>
-        <text class="title">{{drawSelectionMode ? '选择过往签表' : '巡回赛历'}}</text>
-        <text class="title-caption">{{drawSelectionMode ? '按月份与周选择赛事' : '按周查看 ATP 与 WTA 赛程'}}</text>
+        <text class="title">{{drawSelectionMode ? '过往签表' : '巡回赛历'}}</text>
+        <text class="title-caption">{{drawSelectionMode ? '按日期查找赛事' : '按周查看ATP、WTA赛事'}}</text>
       </view>
     </view>
     <view class="module-nav">
@@ -61,7 +34,7 @@
   <data-notice wx:if="{{deliveryState}}" state="{{deliveryState}}" message="{{deliveryMessage}}" dataAsOf="{{dataAsOf}}" compact/>
   <view wx:if="{{loading && !items.length}}" class="page-state"><client-state state="loading" label="赛历加载中" message="赛历马上显示"/></view>
   <view wx:elif="{{failed && !items.length}}" class="page-state"><client-state state="failed" label="赛历暂不可用" message="请稍后重试" retryable bind:retry="load"/></view>
-  <view wx:elif="{{!items.length}}" class="page-state"><client-state state="empty" label="本月暂无对应赛事" message="可以切换月份或赛事类别"/></view>
+  <view wx:elif="{{!items.length}}" class="page-state"><client-state state="empty" label="本月没有符合条件的赛事" message="换个月份或赛事类别试试"/></view>
   <view wx:else class="week-view">
     <view class="week-head">
       <view class="week-arrow {{activeWeekIndex === 0 ? 'disabled' : ''}}" bindtap="previousWeek" role="button"><ui-icon name="back" size="17" color="#526171"/></view>
@@ -88,6 +61,5 @@
     </view>
   </view>
   <product-tabbar active="matches" theme="{{uiTheme}}" />
-  </block>
   <profile-gate id="profileGate" theme="{{uiTheme}}"/>
 </view>

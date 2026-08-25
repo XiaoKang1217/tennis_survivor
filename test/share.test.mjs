@@ -24,8 +24,8 @@ test('match sharing builds a full page path and timeline query', () => {
   assert.match(share.appMessage.title, /^炉网赛果｜辛纳 vs 阿尔卡拉斯/u);
   assert.match(share.appMessage.path, /^\/pages\/match-detail\/index\?/u);
   assert.match(share.appMessage.path, /matchId=sc_1234567890abcdef1234567890abcdef/u);
-  assert.equal(share.appMessage.imageUrl, '/assets/share/match-card.jpg');
-  assert.equal(share.timeline.imageUrl, '/assets/share/match-square.jpg');
+  assert.equal(share.appMessage.imageUrl, '');
+  assert.equal(share.timeline.imageUrl, '');
   assert.doesNotMatch(share.timeline.query, /^\/pages\//u);
 });
 
@@ -36,7 +36,7 @@ test('tournament sharing keeps edition identity and title fallback', () => {
     tour: 'wta'
   });
   assert.match(share.appMessage.title, /辛辛那提公开赛/u);
-  assert.match(share.appMessage.path, /^\/pages\/tournament-detail\/index\?/u);
+  assert.match(share.appMessage.path, /^\/packages\/tournament\/pages\/tournament-detail\/index\?/u);
   assert.match(share.appMessage.path, /tournamentEditionId=tour-2026-cincy/u);
   assert.match(share.appMessage.path, /tour=wta/u);
   assert.match(share.timeline.query, /shared=tournament/u);
@@ -55,7 +55,7 @@ test('player sharing uses compact identity parameters only', () => {
     portraitUrl: 'https://example.invalid/portrait.png'
   });
   assert.match(share.appMessage.title, /世界排名 1/u);
-  assert.match(share.appMessage.path, /^\/pages\/player-detail\/index\?/u);
+  assert.match(share.appMessage.path, /^\/packages\/player\/pages\/player-detail\/index\?/u);
   assert.match(share.appMessage.path, /playerId=sinner-jan/u);
   assert.doesNotMatch(share.appMessage.path, /portraitUrl/u);
 });

@@ -108,7 +108,7 @@ function bff(overrides = {}) {
 }
 
 function loadPageDefinition() {
-  const pagePath = require.resolve('../pages/tournament-detail/index');
+  const pagePath = require.resolve('../packages/tournament/pages/tournament-detail/index');
   delete require.cache[pagePath];
   let definition;
   const previousPage = globalThis.Page;
@@ -171,7 +171,7 @@ test('tournament detail view renders contract facts without inventing missing va
   }));
   assert.equal(partial.name.available, false);
   assert.equal(partial.name.value, '');
-  assert.equal(partial.name.message, '赛事名称待确认');
+  assert.equal(partial.name.message, '赛事名称暂缺');
   assert.equal(partial.dates.every(item => item.available === false), true);
   assert.equal(partial.location.every(item => item.available === false), true);
   assert.equal(partial.hasHistory, false);
@@ -267,10 +267,10 @@ test('tournament detail composes official draw awards through champion', async (
   }, { tournamentEditionId: editionId });
   await definition.load.call(context);
   assert.equal(context.data.awardGroups.length, 1);
-  assert.equal(context.data.awardGroups[0].label, '正赛 · 单打');
+  assert.equal(context.data.awardGroups[0].label, '单打 · 正赛');
   assert.deepEqual(
     context.data.awardGroups[0].rows.map(value => value.round),
-    ['128强', '冠军']
+    ['第一轮', '冠军']
   );
   assert.equal(context.data.drawFactsUnavailable, false);
 });
@@ -315,21 +315,25 @@ test('calendar routes to detail and detail exposes only the edition draw action'
   const app = JSON.parse(read('app.json'));
   const calendar = read('pages/calendar/index.js');
   const calendarMarkup = read('pages/calendar/index.wxml');
-  const detail = read('pages/tournament-detail/index.js');
-  const markup = read('pages/tournament-detail/index.wxml');
-  assert.ok(app.pages.includes('pages/tournament-detail/index'));
-  assert.match(calendar, /wx\.navigateTo\(\{[\s\S]*\/pages\/tournament-detail\/index\?tournamentEditionId=/);
+  const detail = read('packages/tournament/pages/tournament-detail/index.js');
+  const markup = read('packages/tournament/pages/tournament-detail/index.wxml');
+  assert.equal(app.pages.includes('pages/tournament-detail/index'), false);
+  assert.ok(app.subpackages.some(pack =>
+    pack.root === 'packages/tournament'
+    && pack.pages.includes('pages/tournament-detail/index')));
+  assert.ok(app.preloadRule['pages/calendar/index'].packages.includes('packages/tournament'));
+  assert.match(calendar, /wx\.navigateTo\(\{[\s\S]*\/packages\/tournament\/pages\/tournament-detail\/index\?tournamentEditionId=/);
   assert.match(calendarMarkup, /查看赛事详情/);
   assert.match(detail, /\/api\/v1\/bff\/tournaments\/\$\{encodeURIComponent\(tournamentEditionId\)\}/);
   assert.match(detail, /\/pages\/draws\/index\?tournamentEditionId=/);
-  assert.match(markup, /级别与体系/);
-  assert.match(markup, /日期与状态/);
+  assert.match(markup, /赛事级别/);
+  assert.match(markup, /比赛日期/);
   assert.match(markup, /地点与场地/);
   assert.match(markup, /场馆与球场/);
   assert.match(markup, /历届冠军与纪录/);
-  assert.match(markup, /数据状态/);
+  assert.match(markup, /资料说明/);
   assert.match(markup, /奖金与积分/);
-  assert.match(markup, /官方每轮奖金与积分/);
+  assert.match(markup, /各轮奖金与积分加载中/);
   assert.match(markup, /查看签表/);
   assert.match(markup, /client-state state="loading"/);
   assert.match(markup, /client-state state="failed"/);

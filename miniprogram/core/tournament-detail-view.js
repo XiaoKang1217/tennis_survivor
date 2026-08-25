@@ -35,15 +35,15 @@ const SCOPE_LABELS = Object.freeze({
 });
 const AVAILABILITY_LABELS = Object.freeze({
   available: '资料可用',
-  partial: '部分资料待补齐',
-  stale: '显示上次可信资料',
+  partial: '部分资料暂缺',
+  stale: '显示上次资料',
   unavailable: '资料暂不可用',
-  not_observed: '资料状态待确认'
+  not_observed: '资料状态暂缺'
 });
 const COMPLETENESS_LABELS = Object.freeze({
   complete: '完整',
   partial: '部分完整',
-  unknown: '待确认'
+  unknown: '暂缺'
 });
 
 function text(value) {
@@ -51,12 +51,21 @@ function text(value) {
   return String(value).trim();
 }
 
+function displayMessage(message, fallbackLabel = '') {
+  const value = text(message)
+    .replace(new RegExp(['待', '确认'].join(''), 'gu'), '暂缺')
+    .replace(new RegExp(['待', '更新'].join(''), 'gu'), '暂缺')
+    .replace(new RegExp(['本地', '可', '信'].join(''), 'gu'), '上次')
+    .replace(new RegExp(['后台', '更新'].join(''), 'gu'), '刷新');
+  return value || (fallbackLabel ? `${fallbackLabel}暂缺` : '');
+}
+
 function pending(label, message) {
   return Object.freeze({
     label,
     available: false,
     value: '',
-    message: text(message) || `${label}待确认`
+    message: displayMessage(message, label)
   });
 }
 
@@ -110,7 +119,7 @@ function lifecycle(presentation) {
         code: display.code
       })
     : Object.freeze({
-        ...pending('赛事状态', label || '赛事状态待确认'),
+        ...pending('赛事状态', label || '赛事状态暂缺'),
         code: 'unknown'
       });
 }
@@ -132,7 +141,7 @@ function courtView(court) {
       '球场场地',
       court?.surface,
       value => dictionary(SURFACE_LABELS, value),
-      '球场场地待确认'
+      '球场场地暂缺'
     )
   });
 }
@@ -141,32 +150,32 @@ function championView(champion, index) {
   const displayNames = Array.isArray(champion?.displayNames)
     ? champion.displayNames.map(text).filter(Boolean) : [];
   if (displayNames.length === 0) return null;
-  const year = factField('年份', champion?.year, String, '年份待确认');
+  const year = factField('年份', champion?.year, String, '年份暂缺');
   const result = factField(
-    '决赛结果', champion?.resultDisplay, text, '决赛结果待确认'
+    '决赛结果', champion?.resultDisplay, text, '决赛结果暂缺'
   );
   return Object.freeze({
     id: `${year.available ? year.value : 'unknown'}-${index}`,
     names: displayNames.join(' / '),
     discipline: dictionary(DISCIPLINE_LABELS, champion?.discipline)
-      || '项目待确认',
+      || '项目暂缺',
     year,
     result
   });
 }
 
 function recordView(record, index) {
-  const name = factField('球员', record?.displayName, text, '球员待确认');
+  const name = factField('球员', record?.displayName, text, '球员暂缺');
   if (!name.available) return null;
-  const matchWins = factField('胜场', record?.matchWins, String, '胜场待确认');
+  const matchWins = factField('胜场', record?.matchWins, String, '胜场暂缺');
   const titleCount = factField(
-    '冠军数', record?.titleCount, String, '冠军数待确认'
+    '冠军数', record?.titleCount, String, '冠军数暂缺'
   );
   const scope = factField(
     '统计范围',
     record?.scope,
     value => dictionary(SCOPE_LABELS, value),
-    '统计范围待确认'
+    '统计范围暂缺'
   );
   return Object.freeze({
     id: `${name.value}-${index}`,
@@ -185,7 +194,7 @@ function providerRowView(row) {
     label,
     available: row?.value?.state === 'available' && row.value.value !== null,
     value: text(row?.value?.value),
-    message: text(row?.value?.message) || '暂无'
+    message: displayMessage(row?.value?.message) || '暂无'
   });
 }
 
@@ -225,7 +234,7 @@ function tournamentDetailView(presentation) {
       '赛事级别',
       presentation.classification.levelCode,
       value => levelLabel(text(value)) || (text(value) === 'unknown' ? '' : text(value)),
-      '赛事级别待确认'
+      '赛事级别暂缺'
     )
   );
   const classification = Object.freeze([
@@ -234,24 +243,24 @@ function tournamentDetailView(presentation) {
       '巡回赛类别',
       presentation.classification.circuit,
       value => dictionary(CIRCUIT_LABELS, value),
-      '巡回赛类别待确认'
+      '巡回赛类别暂缺'
     ),
     tier,
     productField(
       '年龄组',
       presentation.classification.ageGroup,
       value => dictionary(AGE_GROUP_LABELS, value),
-      '年龄组待确认'
+      '年龄组暂缺'
     )
   ]);
   const dates = Object.freeze([
     productField(
       '开始日期', presentation.datesAndStatus.officialStartLocalDate,
-      text, '赛事开始日期待确认'
+      text, '赛事开始日期暂缺'
     ),
     productField(
       '结束日期', presentation.datesAndStatus.officialEndLocalDate,
-      text, '赛事结束日期待确认'
+      text, '赛事结束日期暂缺'
     ),
     lifecycle(presentation)
   ]);
@@ -259,32 +268,32 @@ function tournamentDetailView(presentation) {
     preferred(
       productField(
         '国家或地区', presentation.locationAndSurface.countryDisplayName,
-        text, '国家或地区待确认'
+        text, '国家或地区暂缺'
       ),
       productField(
         '国家或地区', presentation.locationAndSurface.countryCode,
-        text, '国家或地区待确认'
+        text, '国家或地区暂缺'
       )
     ),
     productField(
       '城市', presentation.locationAndSurface.cityDisplayName,
-      text, '城市待确认'
+      text, '城市暂缺'
     ),
     productField(
       '场馆', presentation.locationAndSurface.venueDisplayName,
-      text, '场馆待确认'
+      text, '场馆暂缺'
     ),
     productField(
       '场地',
       presentation.locationAndSurface.surface,
       value => dictionary(SURFACE_LABELS, value),
-      '场地类型待确认'
+      '场地类型暂缺'
     ),
     productField(
       '室内外',
       presentation.locationAndSurface.environment,
       value => dictionary(ENVIRONMENT_LABELS, value),
-      '室内外待确认'
+      '室内外暂缺'
     )
   ]);
   const champions = Object.freeze((Array.isArray(presentation.history.pastChampions)
@@ -321,8 +330,8 @@ function tournamentDetailView(presentation) {
     hasHistory: champions.length > 0 || records.length > 0,
     providerSections,
     dataStatus: Object.freeze({
-      availability: AVAILABILITY_LABELS[availability] || '资料状态待确认',
-      completeness: COMPLETENESS_LABELS[completeness] || '待确认',
+      availability: AVAILABILITY_LABELS[availability] || '资料状态暂缺',
+      completeness: COMPLETENESS_LABELS[completeness] || '暂缺',
       gapMessage: gaps > 0 ? `${gaps} 项资料仍待补齐` : '',
       notice: text(presentation.delivery.dataNotice),
       dataAsOf: text(presentation.delivery.dataAsOf),

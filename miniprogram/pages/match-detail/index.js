@@ -350,7 +350,7 @@ function progressionView(presentation, match) {
         sequence: round?.sequence || 999,
         round: round?.displayNameZh || '比赛轮次',
         opponent: participantName(pair[ownIndex === 0 ? 1 : 0]),
-        status: node.statusLabel || '比赛状态待更新',
+        status: node.statusLabel || '赛况暂缺',
         current: available(node.matchId) === match.id,
         advanced: available(node.advancingSideId) === side.sideId
           || available(node.winnerSideId) === side.sideId
@@ -376,7 +376,7 @@ function readyProgression(value, match) {
         id: String(entry.id || ''),
         round: String(entry.round || '比赛轮次'),
         opponent: String(entry.opponent || '对手待确定'),
-        status: String(entry.status || '比赛状态待更新'),
+        status: String(entry.status || '赛况暂缺'),
         current: Boolean(entry.current),
         advanced: Boolean(entry.advanced)
       })))
@@ -905,7 +905,7 @@ Page({
         const delayed = this.data.h2h.deliveryState !== 'current';
         declared = Object.freeze({
           id,
-          label: 'H2H',
+          label: '交手记录',
           state: delayed ? 'delayed' : 'content',
           dataAsOf: this.data.h2h.dataAsOf,
           message: delayed ? this.data.h2h.deliveryMessage : '',
@@ -914,11 +914,11 @@ Page({
           preservesLastTrustedContent: delayed
         });
       } else if (this.data.h2hLoadState === 'loading') {
-        declared = Object.freeze({ ...declared, state: 'loading', message: '正在读取交手记录' });
+        declared = Object.freeze({ ...declared, state: 'loading', message: '交手记录加载中' });
       } else if (this.data.h2hLoadState === 'empty') {
         declared = Object.freeze({ ...declared, state: 'empty', message: '暂无可用交手记录' });
       } else {
-        declared = Object.freeze({ ...declared, state: 'loading', message: '正在读取交手记录' });
+        declared = Object.freeze({ ...declared, state: 'loading', message: '交手记录加载中' });
       }
     }
     if (id === 'progression_path') {
@@ -934,13 +934,13 @@ Page({
           preservesLastTrustedContent: false
         });
       } else if (this.data.progressionLoadState === 'loading') {
-        declared = Object.freeze({ ...declared, state: 'loading', message: '正在读取赛事签表' });
+        declared = Object.freeze({ ...declared, state: 'loading', message: '赛事签表加载中' });
       } else if (this.data.progressionLoadState === 'failed') {
         declared = Object.freeze({ ...declared, state: 'failed', message: '晋级路径加载失败', retryable: true });
       } else if (this.data.progressionLoadState === 'empty') {
-        declared = Object.freeze({ ...declared, state: 'empty', message: '当前签表暂无可展示的晋级路径' });
+        declared = Object.freeze({ ...declared, state: 'empty', message: '暂无晋级路径' });
       } else {
-        declared = Object.freeze({ ...declared, state: 'loading', message: '正在读取赛事签表' });
+        declared = Object.freeze({ ...declared, state: 'loading', message: '赛事签表加载中' });
       }
     }
     this.setData({
@@ -1060,7 +1060,7 @@ Page({
     const countryCode = String(event.currentTarget.dataset.countryCode || '');
     const portraitUrl = String(event.currentTarget.dataset.portraitUrl || '');
     wx.navigateTo({
-      url: `/pages/player-detail/index?playerId=${encodeURIComponent(playerId)}`
+      url: `/packages/player/pages/player-detail/index?playerId=${encodeURIComponent(playerId)}`
         + `&name=${encodeURIComponent(name)}`
         + `&originalName=${encodeURIComponent(originalName)}`
         + `&countryCode=${encodeURIComponent(countryCode)}`

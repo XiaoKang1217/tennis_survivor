@@ -4,6 +4,7 @@ import { join, relative, resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
 const project = JSON.parse(readFileSync(join(root, 'project.config.json'), 'utf8'));
+const app = JSON.parse(readFileSync(join(root, 'app.json'), 'utf8'));
 const productionRoot = resolve(root, project.miniprogramRoot || '.');
 const resourceSizeLimitBytes = 200 * 1024;
 const files = [];
@@ -43,6 +44,19 @@ assert.equal(project.compileType, 'miniprogram');
 assert.equal(project.appid, 'wxd3c0a5f7ff64178d');
 assert.equal(project.setting.urlCheck, true);
 assert.equal(project.miniprogramRoot, undefined, 'project root must stay the actual upload root');
+const subpackages = Array.isArray(app.subpackages) ? app.subpackages : [];
+const subpackageRoots = subpackages.map(item => item.root).sort();
+assert.deepEqual(subpackageRoots, ['packages/player', 'packages/tournament']);
+assert.equal(app.pages.includes('pages/players/index'), false,
+  'players page must stay out of the main package');
+assert.equal(app.pages.includes('pages/player-detail/index'), false,
+  'player detail page must stay out of the main package');
+assert.equal(app.pages.includes('pages/tournament-detail/index'), false,
+  'tournament detail page must stay out of the main package');
+assert.equal(app.pages.includes('pages/draw-landscape/index'), false,
+  'landscape draw page must stay out of the main package');
+assert.ok(app.preloadRule?.['pages/scores/index']?.packages?.includes('packages/player'));
+assert.ok(app.preloadRule?.['pages/scores/index']?.packages?.includes('packages/tournament'));
 const config = readFileSync(join(productionRoot, 'config.js'), 'utf8');
 assert.match(config, /bffBaseUrl:\s*'https:\/\/api\.tennisapi\.online'/);
 assert.match(config, /streamBaseUrl:\s*'https:\/\/stream\.tennisapi\.online'/);

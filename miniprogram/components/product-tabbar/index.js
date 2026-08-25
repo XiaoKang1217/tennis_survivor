@@ -2,7 +2,7 @@
 
 const ROUTES = Object.freeze({
   matches: '/pages/scores/index',
-  players: '/pages/players/index',
+  players: '/packages/player/pages/players/index',
   following: '/pages/following/index',
   account: '/pages/account/index'
 });

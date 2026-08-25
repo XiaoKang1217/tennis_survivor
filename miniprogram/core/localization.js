@@ -30,7 +30,7 @@ const LEVEL_LABELS = Object.freeze({
   junior_j100: 'J100',
   junior_j60: 'J60',
   junior_j30: 'J30',
-  unknown: '级别待确认'
+  unknown: '级别暂缺'
 });
 
 const DISCIPLINE_LABELS = Object.freeze({
@@ -38,7 +38,7 @@ const DISCIPLINE_LABELS = Object.freeze({
   doubles: '双打',
   mixed_doubles: '混双',
   mixed: '混双',
-  unknown: '项目待确认'
+  unknown: '项目暂缺'
 });
 
 const STAGE_LABELS = Object.freeze({
@@ -46,7 +46,7 @@ const STAGE_LABELS = Object.freeze({
   main_draw: '正赛',
   round_robin: '小组赛',
   playoff: '附加赛',
-  unknown: '阶段待确认'
+  unknown: '阶段暂缺'
 });
 
 const ROUND_LABELS = Object.freeze({
@@ -67,7 +67,7 @@ const ROUND_LABELS = Object.freeze({
   R48: '48强',
   R32: '32强',
   R16: '16强',
-  QF: '¼决赛',
+  QF: '四分之一决赛',
   SF: '半决赛',
   F: '决赛',
   BRONZE: '铜牌赛',
@@ -79,7 +79,7 @@ const ROUND_LABELS = Object.freeze({
   RR: '小组赛',
   ER: '附加轮',
   CR: '安慰赛',
-  unknown: '轮次待确认'
+  unknown: '轮次暂缺'
 });
 
 function normalizeLevelCode(value) {

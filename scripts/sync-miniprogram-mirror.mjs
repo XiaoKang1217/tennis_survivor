@@ -12,6 +12,7 @@ const mirroredEntries = Object.freeze([
   'assets',
   'components',
   'core',
+  'packages',
   'pages',
   'services',
   'styles'
