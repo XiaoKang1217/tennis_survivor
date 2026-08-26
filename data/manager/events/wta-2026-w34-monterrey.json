@@ -798,19 +798,19 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Anastasia POTAPOVA",
-      "name_zh": "波塔波娃",
-      "profile_id": "325601",
-      "country_code": "AUT",
-      "seed": 4,
-      "entry_type": "direct_acceptance",
+      "name_en": "LIANG En-Shuo",
+      "name_zh": "梁恩硕",
+      "profile_id": "324830",
+      "country_code": "TPE",
+      "seed": null,
+      "entry_type": "lucky_loser",
       "draw_position": 24,
       "first_round": "BYE",
       "path_note": "首轮轮空，直接进入下一轮。",
-      "photo_url": "https://static.live-tennis.cn/pic/ts/325601",
+      "photo_url": "https://static.live-tennis.cn/pic/ts/324830",
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/31039/2026/device/0/horizontal/true",
-      "player_key": "WTA|anastasia-potapova",
+      "player_key": "WTA|liang-en-shuo",
       "rank": null,
       "points": null,
       "overall_elo": null,
@@ -832,7 +832,22 @@
       "tier": null,
       "pricing_detail": null,
       "qualifier_replacement": null,
-      "pre_r1_substitution": null
+      "pre_r1_substitution": {
+        "out_player_key": "WTA|anastasia-potapova",
+        "locked_publication_player_key": "WTA|anastasia-potapova",
+        "out_name_en": "Anastasia POTAPOVA",
+        "out_name_zh": "波塔波娃",
+        "out_profile_id": "325601",
+        "replacement_player_key": "WTA|liang-en-shuo",
+        "replacement_name_en": "LIANG En-Shuo",
+        "replacement_name_zh": "梁恩硕",
+        "replacement_profile_id": "324830",
+        "draw_position": 24,
+        "reason": "pre_r1_withdrawal",
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/31039/2026/device/0/horizontal/true",
+        "contract_price_policy": "keep_original_contract_price",
+        "original_contract_price": 0
+      }
     },
     {
       "name_en": "Janice TJEN",
@@ -1126,9 +1141,9 @@
   "main_draw_first_match_at": "2026-08-24T01:40:00.000Z",
   "submission_cutoff_at": "2026-08-24T01:25:00.000Z",
   "submission_closes_at": "2026-08-24T01:25:00.000Z",
-  "round1_completed_at": null,
+  "round1_completed_at": "2026-08-25T22:29:00.000Z",
   "round2_first_match_at": "2026-08-25T22:30:00.000Z",
-  "transfer_window_opens_at": null,
+  "transfer_window_opens_at": "2026-08-25T22:29:00.000Z",
   "transfer_window_closes_at": "2026-08-25T22:30:00.000Z",
   "transfer_window_note": "换人窗口为 R1 全部结束后、R2 第一场开始前，由当前站赛程自动更新。"
 }
