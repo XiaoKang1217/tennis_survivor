@@ -92,7 +92,9 @@ function member(member) {
   const portrait = member.portraitAvailability?.state === 'available'
     ? member.portraitAvailability.value || {} : {};
   const portraitAssetKey = String(portrait.publicAssetKey || '');
-  const portraitUrl = mediaUrl(member.portraitAvailability, { size: '240' });
+  const portraitUrl = mediaUrl(member.portraitAvailability, { size: '96' });
+  const portraitDetailUrl = mediaUrl(member.portraitAvailability, { size: '240' });
+  const portraitShareUrl = mediaUrl(member.portraitAvailability, { size: '720' });
   return Object.freeze({
     playerId: availableField(member.playerId) === null
       ? '' : String(availableField(member.playerId)),
@@ -107,7 +109,9 @@ function member(member) {
     rankingLabel: ranking === null ? '暂无排名' : `世界排名 ${ranking}`,
     portraitAvailable: member.portraitAvailability?.state === 'available',
     portraitAssetKey,
-    portraitUrl
+    portraitUrl,
+    portraitDetailUrl,
+    portraitShareUrl
   });
 }
 
@@ -485,6 +489,9 @@ function matchView(match, options = {}) {
     // displayText carries business semantics such as "随上场结束". The
     // lower-level clock label intentionally stays generic when no clock exists.
     scheduleText: match.schedule.displayText || match.schedule.displayTimeLabel,
+    officialScheduleDate: /^\d{4}-\d{2}-\d{2}$/u.test(String(
+      match.schedule.officialScheduleDate || match.schedule.scheduleGroupDate || ''
+    )) ? String(match.schedule.officialScheduleDate || match.schedule.scheduleGroupDate) : '',
     scheduleGroupDate: match.schedule.scheduleGroupDate,
     venueLocalDateTime: field(match.schedule.venueLocalDateTime),
     tournamentName,

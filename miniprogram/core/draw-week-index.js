@@ -67,7 +67,9 @@ function displayLevel(summary = {}) {
   const code = normalizeLevelCode(field(summary.levelCode) || field(summary.tierCode) || rawTier);
   const localized = levelLabel(code);
   if (localized) return localized;
-  return rawTier && !isMachineLabel(rawTier) ? rawTier : field(summary.levelCode);
+  const levelCode = field(summary.levelCode);
+  return rawTier && !isMachineLabel(rawTier) ? rawTier
+    : levelCode && !isMachineLabel(levelCode) ? levelCode : '';
 }
 
 function displaySurface(value) {

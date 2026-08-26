@@ -21,7 +21,15 @@ function limited(value, max = 16) {
 
 function firstPortrait(side) {
   const members = Array.isArray(side?.members) ? side.members : [];
-  return cleanText(members.find(member => member.portraitUrl)?.portraitUrl);
+  const member = members.find(item =>
+    cleanText(item?.portraitShareUrl)
+    || cleanText(item?.heroImageUrl)
+    || cleanText(item?.portraitDetailUrl)
+    || cleanText(item?.portraitUrl));
+  return cleanText(member?.portraitShareUrl)
+    || cleanText(member?.heroImageUrl)
+    || cleanText(member?.portraitDetailUrl)
+    || cleanText(member?.portraitUrl);
 }
 
 function getImageInfo(src) {
@@ -358,7 +366,7 @@ function seasonTitles(data) {
 
 function nextOrRecent(data) {
   const recent = Array.isArray(data?.recentEvents) ? data.recentEvents[0] : null;
-  return cleanText(recent?.dateText) || cleanText(recent?.tournamentName) || cleanText(data?.dataAsOf);
+  return cleanText(recent?.dateText) || cleanText(recent?.tournamentName);
 }
 
 function drawPlayerCard(ctx, data, image, width, height) {
@@ -406,13 +414,17 @@ function fieldValue(fields, label) {
 }
 
 function tournamentFacts(detail, fallback = {}) {
+  const lifecycleValue = cleanText(detail?.lifecycle?.value)
+    || cleanText(detail?.status)
+    || cleanText(fallback?.status);
   return {
     name: cleanText(detail?.name?.value || detail?.name, cleanText(fallback.title, '赛事详情')),
     level: fieldValue(detail?.classification, '赛事级别'),
     surface: fieldValue(detail?.location, '场地'),
     city: fieldValue(detail?.location, '城市'),
     start: fieldValue(detail?.dates, '开始日期'),
-    end: fieldValue(detail?.dates, '结束日期')
+    end: fieldValue(detail?.dates, '结束日期'),
+    lifecycle: lifecycleValue
   };
 }
 
@@ -432,19 +444,19 @@ function drawTournamentPoster(ctx, detail, bg, width, height, square = false) {
   ctx.fillRect(0, 0, width, height);
   logo(ctx, square ? 22 : 24, 22);
   const facts = tournamentFacts(detail);
-  const nameLines = square ? [limited(facts.name, 9), '要开始了'] : [limited(facts.name, 9), ''];
+  const nameLines = square ? [limited(facts.name, 9), facts.lifecycle || shortDateRange(facts)] : [limited(facts.name, 9), ''];
   if (square) {
     fillText(ctx, `${nameLines[0]}，`, 42, 138, 43, '#FFFFFF');
-    fillText(ctx, nameLines[1], 42, 192, 43, '#FFFFFF');
+    fillText(ctx, limited(nameLines[1] || '赛事详情', 8), 42, 192, 43, '#FFFFFF');
     fillText(ctx, facts.name, 44, 282, 25, '#FFFFFF');
     if (facts.level) pill(ctx, 44, 328, 82, 32, facts.level, BRAND_BLUE);
     if (facts.surface) pill(ctx, 138, 328, 66, 32, facts.surface, YELLOW, INK);
-    fillText(ctx, shortDateRange(facts), 44, 404, 27, '#FFFFFF');
+    fillText(ctx, facts.lifecycle || shortDateRange(facts), 44, 404, 27, '#FFFFFF');
   } else {
     fitText(ctx, facts.name, 46, 92, 205, 36, 27, '#FFFFFF');
     if (facts.level) pill(ctx, 48, 202, 88, 30, facts.level, BRAND_BLUE);
     fillText(ctx, [facts.surface, facts.city].filter(Boolean).join(' · '), 48, 252, 21, '#FFFFFF');
-    fillText(ctx, shortDateRange(facts), 48, 320, 22, YELLOW);
+    fillText(ctx, facts.lifecycle || shortDateRange(facts), 48, 320, 22, YELLOW);
     fillText(ctx, '赛程 · 签表 · 实时比分', 48, 356, 16, '#FFFFFF', { weight: 650 });
     bottomLine(ctx, width, height);
   }
@@ -471,54 +483,52 @@ function drawParticipants(ctx, names, x, y, width, height, activeIndex = -1, dar
   });
 }
 
-function drawBracketLines(ctx, x, y, width, square = false, color = BRAND_BLUE) {
-  ctx.setStrokeStyle(color);
-  ctx.setLineWidth(square ? 3 : 2);
-  const itemWidth = Math.floor((width - 44) / 2);
-  const rowStep = square ? 40 : 36;
-  const leftX = x + itemWidth;
-  const midX = x + width / 2;
-  const rightX = x + width - itemWidth;
-  [0, rowStep, rowStep * 2, rowStep * 3].forEach(offset => {
-    ctx.beginPath();
-    ctx.moveTo(leftX, y + offset + 15);
-    ctx.lineTo(leftX + 52, y + offset + 15);
-    ctx.moveTo(rightX, y + offset + 15);
-    ctx.lineTo(rightX - 52, y + offset + 15);
-    ctx.stroke();
-  });
-  [[15, rowStep + 15], [rowStep * 2 + 15, rowStep * 3 + 15]].forEach(pair => {
-    ctx.beginPath();
-    ctx.moveTo(leftX + 52, y + pair[0]);
-    ctx.lineTo(leftX + 52, y + pair[1]);
-    ctx.moveTo(rightX - 52, y + pair[0]);
-    ctx.lineTo(rightX - 52, y + pair[1]);
-    ctx.stroke();
-  });
-  ctx.beginPath();
-  ctx.moveTo(leftX + 52, y + rowStep - 3);
-  ctx.lineTo(midX - 18, y + rowStep - 3);
-  ctx.lineTo(midX - 18, y + rowStep * 3 - 3);
-  ctx.lineTo(leftX + 52, y + rowStep * 3 - 3);
-  ctx.moveTo(rightX - 52, y + rowStep - 3);
-  ctx.lineTo(midX + 18, y + rowStep - 3);
-  ctx.lineTo(midX + 18, y + rowStep * 3 - 3);
-  ctx.lineTo(rightX - 52, y + rowStep * 3 - 3);
-  ctx.moveTo(midX - 18, y + rowStep * 2 - 3);
-  ctx.lineTo(midX + 18, y + rowStep * 2 - 3);
-  ctx.stroke();
+function matchSideName(side) {
+  const members = Array.isArray(side?.members) ? side.members : [];
+  return members.map(member => cleanText(member?.name)).filter(Boolean).join(' / ')
+    || cleanText(side?.name)
+    || '待定';
 }
 
-function drawNamesFromColumns(data) {
-  const firstColumn = (Array.isArray(data?.columns) ? data.columns : [])
-    .find(column => Array.isArray(column.matches) && column.matches.length);
-  const names = [];
-  for (const match of firstColumn?.matches || []) {
-    names.push(cleanText(match.first));
-    names.push(cleanText(match.second));
-    if (names.length >= 8) break;
-  }
-  return names.filter(Boolean);
+function drawRoundSummary(data) {
+  const rounds = Array.isArray(data?.rounds) ? data.rounds : [];
+  const selected = rounds.find(round => round.id === data?.selectedRoundId)
+    || rounds.find(round => Array.isArray(round.matches) && round.matches.length)
+    || null;
+  const matches = Array.isArray(selected?.matches) ? selected.matches : [];
+  return Object.freeze({
+    roundTitle: cleanText(selected?.title, cleanText(data?.selectedRoundTitle, '当前轮次')),
+    total: Number(data?.selectedRoundMatchCount || matches.length) || matches.length,
+    matches: Object.freeze(matches.slice(0, 5).map(match => Object.freeze({
+      id: cleanText(match.id, cleanText(match.matchId)),
+      number: cleanText(match.matchNumber),
+      first: matchSideName(match.sides?.[0]),
+      second: matchSideName(match.sides?.[1]),
+      status: cleanText(match.status) || cleanText(match.scoreText) || '待赛'
+    })))
+  });
+}
+
+function drawFactRows(ctx, rows, x, y, width, rowHeight, dark = true) {
+  rows.forEach((row, index) => {
+    const itemY = y + index * (rowHeight + 8);
+    fillRoundRect(ctx, x, itemY, width, rowHeight, 10,
+      dark ? 'rgba(1,14,34,0.44)' : '#FFFFFF');
+    strokeRoundRect(ctx, x, itemY, width, rowHeight, 10,
+      dark ? 'rgba(216,236,255,0.22)' : '#C9D5E4');
+    fillText(ctx, row.number || String(index + 1), x + 16, itemY + 14, 13,
+      dark ? YELLOW : BRAND_BLUE, { weight: 850 });
+    fitText(ctx, row.first, x + 48, itemY + 12, width - 118, 16, 11,
+      dark ? '#FFFFFF' : INK, { weight: 760 });
+    fitText(ctx, row.second, x + 48, itemY + 36, width - 118, 16, 11,
+      dark ? '#DCEBFF' : MUTED, { weight: 700 });
+    fillText(ctx, limited(row.status, 4), x + width - 16, itemY + rowHeight / 2,
+      13, dark ? '#DCEBFF' : MUTED, {
+        align: 'right',
+        baseline: 'middle',
+        weight: 760
+      });
+  });
 }
 
 function drawDrawPoster(ctx, data, width, height, square = false) {
@@ -540,22 +550,20 @@ function drawDrawPoster(ctx, data, width, height, square = false) {
   const draw = (Array.isArray(data?.draws) ? data.draws : [])
     .find(item => item.drawId === data?.selectedDrawId);
   const label = cleanText(draw?.label, '签表');
-  const names = drawNamesFromColumns(data);
+  const summary = drawRoundSummary(data);
+  const rows = summary.matches;
   if (square) {
     fillText(ctx, '签表', width - 42, 88, 70, 'rgba(234,242,5,0.88)', { align: 'right', weight: 900 });
     fitText(ctx, title, 42, 130, 310, 41, 28, '#FFFFFF');
     pill(ctx, 42, 196, 124, 34, limited(label, 8), YELLOW, INK);
-    fillRoundRect(ctx, 32, 254, 436, 174, 16, 'rgba(1,14,34,0.42)');
-    drawParticipants(ctx, names, 48, 276, 404, 31, 0, true);
-    drawBracketLines(ctx, 48, 276, 404, true, 'rgba(234,242,5,0.92)');
+    fillText(ctx, `${summary.roundTitle} · ${summary.total}场`, 42, 238, 18, '#DCEBFF', { weight: 760 });
+    drawFactRows(ctx, rows, 32, 270, 436, 66, true);
   } else {
     fillText(ctx, '签表', width - 36, 66, 58, 'rgba(234,242,5,0.88)', { align: 'right', weight: 900 });
     fitText(ctx, title, 40, 92, 310, 34, 25, '#FFFFFF');
     pill(ctx, 40, 142, 126, 32, limited(label, 8), YELLOW, INK);
-    fillText(ctx, names.length ? '参赛签位 · 晋级路径' : '签表信息', 40, 188, 18, '#DCEBFF', { weight: 700 });
-    fillRoundRect(ctx, 28, 224, 444, 120, 16, 'rgba(1,14,34,0.42)');
-    drawParticipants(ctx, names, 44, 246, 412, 28, 0, true);
-    drawBracketLines(ctx, 44, 246, 412, false, 'rgba(234,242,5,0.92)');
+    fillText(ctx, `${summary.roundTitle} · ${summary.total}场 · 权威签表摘要`, 40, 190, 18, '#DCEBFF', { weight: 700 });
+    drawFactRows(ctx, rows.slice(0, 3), 28, 224, 444, 58, true);
     bottomLine(ctx, width, height);
   }
 }
@@ -652,7 +660,8 @@ function posterKey(kind, data) {
     data?.selectedTournamentId,
     data?.selectedDrawId,
     data?.selectedTitle,
-    drawNamesFromColumns(data).join('|')
+    drawRoundSummary(data).matches.map(match =>
+      [match.id, match.number, match.first, match.second, match.status].join(':')).join('|')
   ].join('|');
 }
 

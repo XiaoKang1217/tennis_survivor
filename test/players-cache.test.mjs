@@ -126,7 +126,7 @@ test('players ranking keeps trusted list visible when refresh fails', async () =
   const wx = wxRuntime({
     [cacheStorageKey('player_list:ATP:official:50:0:')]: {
       resourceKey: 'player_list:ATP:official:50:0:',
-      schemaVersion: 'player-list-projection/1',
+      schemaVersion: 'player-list-projection/2',
       projectionVersion: projection.projectionVersion,
       cachedAt: Date.now(),
       dataAsOf: projection.dataAsOf,

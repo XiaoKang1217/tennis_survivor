@@ -3,27 +3,8 @@
   background: var(--canvas);
 }
 
-.root-head {
-  min-height: 126rpx;
-  padding-right: 28rpx;
-  padding-left: 28rpx;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  background: var(--surface);
-  box-sizing: content-box;
-}
-
-.eyebrow {
-  color: var(--ink-subtle);
-  font-size: 23rpx;
-}
-
-.title {
-  margin-top: 2rpx;
-  color: var(--ink);
-  font-size: 40rpx;
-  font-weight: 750;
+.account-content {
+  box-sizing: border-box;
 }
 
 .account-card {

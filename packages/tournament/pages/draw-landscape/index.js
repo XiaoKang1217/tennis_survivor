@@ -6,12 +6,13 @@ const { loadProjectionResource, readTrustedProjection } = require('../../../../c
 const { drawColumns } = require('../../../../core/draw-view');
 
 const DRAW_BODY_SCHEMA = 'draw-body-projection/1';
-const NODE_WIDTH = 320;
-const COLUMN_GAP = 54;
-const BOARD_PADDING_X = 30;
-const BOARD_PADDING_BOTTOM = 70;
+const NODE_WIDTH = 456;
+const COLUMN_GAP = 72;
+const BOARD_PADDING_X = 36;
+const BOARD_PADDING_BOTTOM = 96;
 
 function drawBodyCacheKey(drawId) { return 'draw_body:' + drawId; }
+function landscapeStateKey(drawId) { return 'draw_landscape_state:' + drawId; }
 
 function optionValue(value, fallback = '') {
   const text = String(value || '');
@@ -28,22 +29,57 @@ function safeNumber(value, fallback = 0) {
   return Number.isFinite(number) ? number : fallback;
 }
 
+function memberMatchesQuery(member, query) {
+  if (!query) return false;
+  return String(member?.name || '').toLocaleLowerCase('zh-CN').includes(query);
+}
+
+function matchMemberIds(match, query) {
+  const ids = [];
+  for (const member of [...(match.firstMembers || []), ...(match.secondMembers || [])]) {
+    if (memberMatchesQuery(member, query)) ids.push(member.id || member.name);
+  }
+  return ids;
+}
+
+function matchIncludesFocusedMember(match, focusedIds) {
+  if (!focusedIds.size) return false;
+  return [...(match.firstMembers || []), ...(match.secondMembers || [])]
+    .some(member => focusedIds.has(member.id || member.name));
+}
+
+function matchNames(match) {
+  return [
+    match.first,
+    match.second,
+    ...(match.firstMembers || []).map(member => member.name),
+    ...(match.secondMembers || []).map(member => member.name)
+  ].join(' ').toLocaleLowerCase('zh-CN');
+}
+
 function columnsView(presentation, selectedRoundId = '', playerQuery = '') {
   const query = String(playerQuery || '').trim().toLocaleLowerCase('zh-CN');
-  const columns = drawColumns(presentation).map((column, index) => Object.freeze({
+  const sourceColumns = drawColumns(presentation);
+  const focusedIds = new Set();
+  for (const column of sourceColumns) {
+    for (const match of column.matches) {
+      for (const id of matchMemberIds(match, query)) focusedIds.add(id);
+    }
+  }
+  let highlightedMatchId = '';
+  const columns = sourceColumns.map((column, index) => Object.freeze({
     ...column,
     viewId: `round-${index}`,
     selected: column.id === selectedRoundId,
-    matches: Object.freeze(column.matches.map(match => {
-      const names = [
-        match.first,
-        match.second,
-        ...(match.firstMembers || []).map(member => member.name),
-        ...(match.secondMembers || []).map(member => member.name)
-      ].join(' ').toLocaleLowerCase('zh-CN');
+    matches: Object.freeze(column.matches.map((match, matchIndex) => {
+      const viewId = `match-${index}-${matchIndex}`;
+      const highlighted = Boolean(query)
+        && (matchIncludesFocusedMember(match, focusedIds) || matchNames(match).includes(query));
+      if (highlighted && !highlightedMatchId) highlightedMatchId = viewId;
       return Object.freeze({
         ...match,
-        highlighted: Boolean(query) && names.includes(query)
+        viewId,
+        highlighted
       });
     }))
   }));
@@ -54,7 +90,7 @@ function columnsView(presentation, selectedRoundId = '', playerQuery = '') {
     + BOARD_PADDING_BOTTOM;
   return Object.freeze({
     columns: Object.freeze(columns),
-    scrollIntoView: `round-${target < 0 ? 0 : target}`,
+    scrollIntoView: highlightedMatchId || `round-${target < 0 ? 0 : target}`,
     boardWidth,
     boardHeight
   });
@@ -64,25 +100,40 @@ function toolbarMetrics(wxRuntime) {
   const info = wxRuntime.getWindowInfo ? wxRuntime.getWindowInfo() : wxRuntime.getSystemInfoSync();
   const menu = wxRuntime.getMenuButtonBoundingClientRect?.();
   const topInset = Math.max(0, safeNumber(info.statusBarHeight));
+  const windowWidth = Math.max(1, safeNumber(info.windowWidth, 375));
+  const windowHeight = Math.max(1, safeNumber(info.windowHeight, 667));
+  const rpxPerPx = 750 / windowWidth;
   const rightInset = menu && info.windowWidth
     ? Math.max(14, safeNumber(info.windowWidth) - safeNumber(menu.left) + 10)
     : 14;
   return Object.freeze({
     topInset,
-    toolbarStyle: `padding-top:${topInset}px;padding-right:${rightInset}px;`
+    toolbarStyle: `padding-top:${topInset}px;padding-right:${rightInset}px;`,
+    viewportWidth: 750,
+    viewportHeight: Math.max(300, Math.round((windowHeight - topInset - 78) * rpxPerPx))
   });
 }
 
 function minimapViewportStyle(scrollLeft, scrollTop, data) {
   const boardWidth = Math.max(1, safeNumber(data.boardWidth) * safeNumber(data.scale, 1));
   const boardHeight = Math.max(1, safeNumber(data.boardHeight) * safeNumber(data.scale, 1));
-  const viewportWidth = 620;
-  const viewportHeight = 320;
+  const viewportWidth = Math.max(1, safeNumber(data.viewportWidth, 750));
+  const viewportHeight = Math.max(1, safeNumber(data.viewportHeight, 360));
   const width = Math.max(18, Math.min(86, viewportWidth / boardWidth * 100));
   const height = Math.max(20, Math.min(86, viewportHeight / boardHeight * 100));
   const left = Math.max(0, Math.min(100 - width, safeNumber(scrollLeft) / boardWidth * 100));
   const top = Math.max(0, Math.min(100 - height, safeNumber(scrollTop) / boardHeight * 100));
   return `left:${left.toFixed(1)}%;top:${top.toFixed(1)}%;width:${width.toFixed(1)}%;height:${height.toFixed(1)}%;`;
+}
+
+function readStoredState(wxRuntime, drawId) {
+  if (!drawId) return null;
+  try {
+    const value = wxRuntime.getStorageSync(landscapeStateKey(drawId));
+    return value && typeof value === 'object' ? value : null;
+  } catch {
+    return null;
+  }
 }
 
 Page({
@@ -99,12 +150,16 @@ Page({
     selectedRoundId: '',
     columns: [],
     scrollIntoView: '',
+    scrollLeft: 0,
+    scrollTop: 0,
     scale: 1,
     boardScaleStyle: 'transform:scale(1);transform-origin:0 0;',
     overview: false,
     playerQuery: '',
     boardWidth: 0,
     boardHeight: 0,
+    viewportWidth: 750,
+    viewportHeight: 360,
     minimapViewportStyle: 'left:0;top:0;width:40%;height:40%;'
   },
 
@@ -113,19 +168,34 @@ Page({
     this.http = getApp().services.http;
     this.cache = createSWRCache(wx);
     this.currentPresentation = null;
-    this.lastScroll = { scrollLeft: 0, scrollTop: 0 };
+    const drawId = optionValue(options.drawId);
+    const restored = readStoredState(wx, drawId) || {};
+    this.lastScroll = {
+      scrollLeft: safeNumber(restored.scrollLeft),
+      scrollTop: safeNumber(restored.scrollTop)
+    };
+    const scale = Math.max(.46, Math.min(1.12, safeNumber(restored.scale, 1)));
     this.setData({
       topInset: metrics.topInset,
       toolbarStyle: metrics.toolbarStyle,
-      drawId: optionValue(options.drawId),
+      viewportWidth: metrics.viewportWidth,
+      viewportHeight: metrics.viewportHeight,
+      drawId,
       tournamentEditionId: optionValue(options.tournamentEditionId),
       title: optionValue(options.title, '赛事签表'),
       drawLabel: optionValue(options.drawLabel),
-      selectedRoundId: optionValue(options.roundId)
+      selectedRoundId: optionValue(restored.selectedRoundId, optionValue(options.roundId)),
+      playerQuery: optionValue(restored.playerQuery),
+      scale,
+      overview: Boolean(restored.overview),
+      scrollLeft: this.lastScroll.scrollLeft,
+      scrollTop: this.lastScroll.scrollTop,
+      boardScaleStyle: `transform:scale(${scale});transform-origin:0 0;`
     }, () => void this.loadDraw());
   },
 
   onShow() { syncPageTheme(this); },
+  onUnload() { this.saveState(); },
 
   async loadDraw() {
     if (!this.data.drawId) {
@@ -181,12 +251,19 @@ Page({
 
   exitLandscape() { wx.navigateBack(); },
   jumpCurrentRound() {
-    if (this.data.scrollIntoView) this.setData({ scrollIntoView: this.data.scrollIntoView });
+    const board = columnsView(this.currentPresentation, this.data.selectedRoundId, '');
+    this.setData({ scrollIntoView: '' }, () => {
+      this.setData({ scrollIntoView: board.scrollIntoView, overview: false });
+    });
   },
-  showOverview() { this.setScale(.52, true); },
+  showOverview() {
+    const fitWidth = this.data.viewportWidth / Math.max(1, this.data.boardWidth);
+    const fitHeight = this.data.viewportHeight / Math.max(1, this.data.boardHeight);
+    this.setScale(Math.max(.34, Math.min(.64, fitWidth, fitHeight)), true);
+  },
   readableSize() { this.setScale(1, false); },
   zoomIn() { this.setScale(Math.min(1.12, this.data.scale + .08), false); },
-  zoomOut() { this.setScale(Math.max(.52, this.data.scale - .08), this.data.scale - .08 <= .52); },
+  zoomOut() { this.setScale(Math.max(.46, this.data.scale - .08), this.data.scale - .08 <= .52); },
   setScale(scale, overview) {
     const rounded = Math.round(scale * 100) / 100;
     const nextData = { ...this.data, scale: rounded };
@@ -209,12 +286,17 @@ Page({
       return;
     }
     const board = columnsView(this.currentPresentation, this.data.selectedRoundId, playerQuery);
-    const highlightedColumn = board.columns.find(column =>
-      column.matches.some(match => match.highlighted));
     this.setData({
       playerQuery,
       columns: board.columns,
-      scrollIntoView: highlightedColumn?.viewId || this.data.scrollIntoView
+      scrollIntoView: board.scrollIntoView || this.data.scrollIntoView,
+      boardWidth: board.boardWidth,
+      boardHeight: board.boardHeight,
+      minimapViewportStyle: minimapViewportStyle(
+        this.lastScroll.scrollLeft,
+        this.lastScroll.scrollTop,
+        { ...this.data, ...board }
+      )
     });
   },
 
@@ -230,6 +312,20 @@ Page({
         this.data
       )
     });
+  },
+
+  saveState() {
+    if (!this.data.drawId) return;
+    try {
+      wx.setStorageSync(landscapeStateKey(this.data.drawId), {
+        selectedRoundId: this.data.selectedRoundId,
+        playerQuery: this.data.playerQuery,
+        scale: this.data.scale,
+        overview: this.data.overview,
+        scrollLeft: this.lastScroll.scrollLeft,
+        scrollTop: this.lastScroll.scrollTop
+      });
+    } catch {}
   },
 
   openMatch(event) {

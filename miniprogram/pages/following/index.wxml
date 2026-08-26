@@ -1,5 +1,5 @@
 <view class="safe-page following-page theme-{{uiTheme}}">
-    <view class="root-head" style="padding-top:{{topInset}}px"><text class="eyebrow">我的比赛</text><text class="title">我的关注</text></view>
+    <view class="root-head" style="padding-top:{{topInset}}px"><text class="title">我的关注</text></view>
     <view class="follow-tabs">
       <view wx:for="{{tabs}}" wx:key="id" data-kind="{{item.id}}" bindtap="selectKind" class="follow-tab {{selectedKind === item.id ? 'active' : ''}}" role="button"><text>{{item.label}}</text><text>{{item.count}}</text></view>
     </view>

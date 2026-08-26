@@ -119,6 +119,10 @@ test('match detail consumes odds and progression through independent module rout
   assert.match(source, /\/api\/v1\/bff\/matches\/\$\{encodeURIComponent\(match\.id\)\}\/odds/u);
   assert.match(source, /async loadProgression\(match/u);
   assert.match(source, /contracts\.progressionProjection/u);
+  assert.match(source, /scoreText:\s*String\(node\.scoreText/u);
+  const markup = readFileSync(new URL('../pages/match-detail/index.wxml', import.meta.url), 'utf8');
+  assert.match(markup, /\{\{entry\.opponent\}\}<\/text><text>\{\{entry\.round\}\}/u);
+  assert.match(markup, /entry\.scoreText \|\| entry\.status/u);
   assert.match(source, /\/api\/v1\/bff\/matches\/\$\{encodeURIComponent\(match\.id\)\}\/progression-path/u);
   assert.match(source, /void this\.loadOdds\(match\)/u);
   assert.match(source, /void this\.loadProgression\(match, \{ background: true \}\)/u);

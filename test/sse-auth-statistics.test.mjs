@@ -229,6 +229,18 @@ test('statistics store applies allowed contiguous patches and preserves trusted 
   }), /patch path invalid/);
 });
 
+test('rate statistics show percent signs and every metric exposes comparison bars', () => {
+  const view = statisticsView(statisticsProjection(1));
+  const firstServe = view.rows.find(row => row.metricId === 'firstServesIn');
+  const breakPoints = view.rows.find(row => row.metricId === 'breakPointsConverted');
+  assert.equal(firstServe.first, '60%');
+  assert.equal(breakPoints.first, '43%');
+  assert.equal(breakPoints.label, '破发点兑现率');
+  assert.equal(firstServe.firstBar, 60);
+  assert.ok(view.rows.every(row => Number.isInteger(row.firstBar)
+    && Number.isInteger(row.secondBar)));
+});
+
 test('completion statistics store uses the permanent compact stream and preserves trusted facts on gaps', () => {
   const store = new CompletionStatisticsStore(matchId);
   store.snapshot(completionProjection(5));

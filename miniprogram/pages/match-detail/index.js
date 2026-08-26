@@ -350,6 +350,7 @@ function progressionView(presentation, match) {
         sequence: round?.sequence || 999,
         round: round?.displayNameZh || '比赛轮次',
         opponent: participantName(pair[ownIndex === 0 ? 1 : 0]),
+        scoreText: String(node.scoreText || '').trim(),
         status: node.statusLabel || '赛况暂缺',
         current: available(node.matchId) === match.id,
         advanced: available(node.advancingSideId) === side.sideId
@@ -376,6 +377,7 @@ function readyProgression(value, match) {
         id: String(entry.id || ''),
         round: String(entry.round || '比赛轮次'),
         opponent: String(entry.opponent || '对手待确定'),
+        scoreText: String(entry.scoreText || entry.result || '').trim(),
         status: String(entry.status || '赛况暂缺'),
         current: Boolean(entry.current),
         advanced: Boolean(entry.advanced)

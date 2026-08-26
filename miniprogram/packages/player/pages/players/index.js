@@ -3,7 +3,7 @@
 const { buildThemeData, syncPageTheme } = require('../../../../core/theme');
 const { createSWRCache } = require('../../../../core/swr-cache');
 const { loadProjectionResource, readTrustedProjection } = require('../../../../core/projection-resource');
-const { mediaUrl } = require('../../../../core/media');
+const { directMediaUrl, mediaUrl } = require('../../../../core/media');
 
 const IOC_TO_ISO = Object.freeze({
   ARG: 'AR', AUS: 'AU', AUT: 'AT', BEL: 'BE', BLR: 'BY', BRA: 'BR',
@@ -19,8 +19,9 @@ const FOLLOW_TABS = Object.freeze([
   { id: 'ATP', label: 'ATP' },
   { id: 'WTA', label: 'WTA' }
 ]);
-const PLAYER_LIST_CACHE_SCHEMA = 'player-list-projection/1';
-const PLAYER_SEARCH_CACHE_SCHEMA = 'player-basic-profiles-bff/1';
+const PLAYER_LIST_CACHE_SCHEMA = 'player-list-projection/2';
+const PLAYER_SEARCH_CONTRACT = 'player-basic-profiles-bff/1';
+const PLAYER_SEARCH_CACHE_SCHEMA = 'player-basic-profiles-bff-cache/2';
 const PLAYER_H2H_CACHE_SCHEMA = 'player-h2h-bff/1';
 
 function playerListCacheKey(options) {
@@ -55,9 +56,13 @@ function flag(code) {
     127397 + letter.charCodeAt(0)));
 }
 
-function portrait(candidate, size = '96', fallback = '') {
+function portrait(candidate, size = '96', fallback = '', authority = '') {
   const value = fact(candidate);
-  return mediaUrl(value ?? candidate, { size, fallback });
+  const source = value ?? candidate;
+  if (String(authority || '').trim().toUpperCase() === 'ATP') {
+    return directMediaUrl(source, { fallback, authority });
+  }
+  return mediaUrl(source, { size, fallback, authority });
 }
 
 function playerDisplayName(entry, fallback = '球员姓名暂缺') {
@@ -74,7 +79,7 @@ function playerOriginalName(entry, displayName = '') {
 
 function h2hSearchOptions(value) {
   const entries = value?.payload?.entries;
-  if (value?.bffContractVersion !== 'player-basic-profiles-bff/1'
+  if (value?.bffContractVersion !== PLAYER_SEARCH_CONTRACT
     || !Array.isArray(entries)) return [];
   return entries.map(entry => {
     const countryCode = fact(entry.countryCode) || '';
@@ -150,7 +155,7 @@ function rankingText(value) {
 
 function profileEntries(value, authority, rankingKind = 'official') {
   const entries = value?.payload?.entries;
-  if (value?.bffContractVersion !== 'player-basic-profiles-bff/1'
+  if (value?.bffContractVersion !== PLAYER_SEARCH_CONTRACT
     || !Array.isArray(entries)) return [];
   return entries.map(entry => {
     const countryCode = fact(entry.countryCode) || '';
@@ -171,8 +176,8 @@ function profileEntries(value, authority, rankingKind = 'official') {
       points,
       movementText: movement.text,
       movementTone: movement.tone,
-      portraitUrl: portrait(entry.portrait, '96'),
-      heroImageUrl: portrait(entry.heroImage, '720') || portrait(entry.portrait, '720'),
+      portraitUrl: portrait(entry.portrait, '96', '', authority),
+      heroImageUrl: portrait(entry.heroImage, '720', '', authority) || portrait(entry.portrait, '720', '', authority),
       followTargetId: entry.viewerFollowState?.player?.targetId || `${authority}:${entry.playerId}`,
       followed: entry.viewerFollowState?.player?.followed === true,
       followCount: followCountValue(entry.followCount),
@@ -204,7 +209,7 @@ function officialEntries(value, authority) {
       points: entry.points,
       movementText: movement.text,
       movementTone: movement.tone,
-      portraitUrl: portrait(entry.portraitUrl || entry.portrait, '96'),
+      portraitUrl: portrait(entry.portraitUrl || entry.portrait, '96', '', authority),
       followTargetId: entry.viewerFollowState?.player?.targetId || `${authority}:${entry.playerId}`,
       followed: entry.viewerFollowState?.player?.followed === true,
       followCount: followCountValue(entry.followCount),
@@ -240,7 +245,7 @@ function raceEntries(value, authority) {
       points: entry.points,
       movementText: movement.text,
       movementTone: movement.tone,
-      portraitUrl: portrait(member?.portraitUrl || member?.portrait, '96'),
+      portraitUrl: portrait(member?.portraitUrl || member?.portrait, '96', '', authority),
       followTargetId: entry.viewerFollowState?.player?.targetId
         || (member?.playerId ? `${authority}:${member.playerId}` : ''),
       followed: entry.viewerFollowState?.player?.followed === true,
@@ -262,7 +267,8 @@ function leaderboardEntries(value) {
     const displayName = playerDisplayName(entry);
     const age = fact(entry.personal?.age);
     const position = fact(entry.officialRanking?.position) ?? fact(entry.position);
-    const cardImageUrl = portrait(entry.heroImage, '720') || portrait(entry.portrait, '720');
+    const authority = entry.authority || '';
+    const cardImageUrl = portrait(entry.heroImage, '720', '', authority) || portrait(entry.portrait, '720', '', authority);
     return Object.freeze({
       id: entry.playerId,
       leaderboardPosition: entry.leaderboardPosition,
@@ -275,8 +281,8 @@ function leaderboardEntries(value) {
       rankingLabel: rankingText(position),
       followCount: followCountValue(entry.followCount),
       followCountLabel: followCountText(entry.followCount),
-      portraitUrl: portrait(entry.portrait, '96'),
-      heroImageUrl: portrait(entry.heroImage, '720') || portrait(entry.portrait, '720'),
+      portraitUrl: portrait(entry.portrait, '96', '', authority),
+      heroImageUrl: portrait(entry.heroImage, '720', '', authority) || portrait(entry.portrait, '720', '', authority),
       cardImageUrl,
       followTargetId: entry.viewerFollowState?.player?.targetId
         || entry.targetId
@@ -554,7 +560,7 @@ Page({
     const offset = append ? this.data.offset : 0;
     const searchQuery = String(this.data.query || '').trim();
     const useProfileSearch = Boolean(searchQuery);
-    const contract = useProfileSearch ? 'player-basic-profiles-bff/1'
+    const contract = useProfileSearch ? PLAYER_SEARCH_CONTRACT
       : isRace ? 'race-ranking-bff/2' : 'official-ranking-bff/2';
     const year = new Date().getFullYear();
     const sequence = (this.loadSequence || 0) + 1;
@@ -787,11 +793,11 @@ Page({
           + `?q=${encodeURIComponent(query)}&limit=8`,
         requestOptions: {
           authMode: 'none',
-          header: { 'x-luwang-client-contract-version': PLAYER_SEARCH_CACHE_SCHEMA }
+          header: { 'x-luwang-client-contract-version': PLAYER_SEARCH_CONTRACT }
         },
         metadata: { dataAsOf: value => value?.dataAsOf || value?.delivery?.dataAsOf || '' },
         validate(value) {
-          if (value?.bffContractVersion !== PLAYER_SEARCH_CACHE_SCHEMA) {
+          if (value?.bffContractVersion !== PLAYER_SEARCH_CONTRACT) {
             throw new Error('player_search_projection_invalid');
           }
           return value;
@@ -866,11 +872,11 @@ Page({
         + `?q=${encodeURIComponent(query)}&limit=8`,
       requestOptions: {
         authMode: 'none',
-        header: { 'x-luwang-client-contract-version': PLAYER_SEARCH_CACHE_SCHEMA }
+        header: { 'x-luwang-client-contract-version': PLAYER_SEARCH_CONTRACT }
       },
       metadata: { dataAsOf: value => value?.dataAsOf || value?.delivery?.dataAsOf || '' },
       validate(value) {
-        if (value?.bffContractVersion !== PLAYER_SEARCH_CACHE_SCHEMA) {
+        if (value?.bffContractVersion !== PLAYER_SEARCH_CONTRACT) {
           throw new Error('player_search_projection_invalid');
         }
         return value;

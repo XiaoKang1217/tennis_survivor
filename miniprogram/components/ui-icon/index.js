@@ -10,10 +10,10 @@ const PATHS = Object.freeze({
   draw: '<rect x="3" y="3.5" width="6" height="4" rx="1.2"/><rect x="3" y="16.5" width="6" height="4" rx="1.2"/><rect x="15" y="10" width="6" height="4" rx="1.2"/><path d="M9 5.5h3v6.5h3M9 18.5h3V12"/>',
   entry: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.3"/><path d="M3 20c.7-4 2.7-6 6-6s5.3 2 6 6M14 15c3.6-.8 5.8.9 6.5 4.5"/>',
   matches: '<path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"/>',
-  player: '<circle cx="12" cy="8" r="3.5"/><path d="M5 21c.7-4.3 3-6.5 7-6.5s6.3 2.2 7 6.5"/>',
+  player: '<circle cx="12" cy="12" r="9"/><circle cx="10.5" cy="9" r="2.6"/><path d="M5.8 18c.7-3.2 2.3-4.8 4.7-4.8s4 1.6 4.7 4.8"/><circle cx="17.2" cy="7" r="2.2"/><path d="M15.8 5.4c1 1 1.8 1.8 2.8 2.8M18.7 5.5l-3 3"/>',
   follow: '<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z"/>',
   heart: '<path d="M12 20.2 4.5 13c-3.7-3.6 1.7-9.3 5.5-5.4L12 9.7l2-2.1c3.8-3.9 9.2 1.8 5.5 5.4L12 20.2Z"/>',
-  profile: '<circle cx="12" cy="8" r="3.5"/><path d="M5 21c.7-4.3 3-6.5 7-6.5s6.3 2.2 7 6.5"/>',
+  profile: '<rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="12" cy="9" r="3"/><path d="M6.8 18c.7-3.2 2.4-4.8 5.2-4.8s4.5 1.6 5.2 4.8"/>',
   user: '<circle cx="12" cy="8" r="3.5"/><path d="M5 21c.7-4.3 3-6.5 7-6.5s6.3 2.2 7 6.5"/>',
   users: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.3"/><path d="M3 20c.7-4 2.7-6 6-6s5.3 2 6 6M14 15c3.6-.8 5.8.9 6.5 4.5"/>',
   share: '<circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="m8.2 10.9 7.5-4.5M8.2 13.1l7.5 4.5"/>',
@@ -37,7 +37,7 @@ const PATHS = Object.freeze({
   statistics: '<path d="M5 20V10M12 20V4M19 20v-7"/>',
   history: '<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/>',
   path: '<circle cx="5" cy="18" r="2"/><circle cx="19" cy="6" r="2"/><path d="M7 18c7 0 3-12 10-12"/>',
-  score: '<path d="M4 13.5c2-5.8 5.8-8.7 11.4-8.7M5.5 18.7c4.8-1.2 8.6-4.5 11.4-9.8M15.2 4.4 19.6 8.8M4.2 14l5.7 5.7"/>'
+  score: '<path d="M2 8h4M2 12h3"/><circle cx="14" cy="12" r="7.5"/><path d="M9.3 6.2c2.3 1.6 3.3 3.5 3.1 5.8s.8 4.2 3.1 5.8M18.7 6.2c-2.3 1.6-3.3 3.5-3.1 5.8s-.8 4.2-3.1 5.8"/>'
 });
 
 function source(name, color) {

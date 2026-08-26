@@ -97,7 +97,7 @@ test('player detail keeps trusted profile visible when refresh fails', async () 
   const wx = wxRuntime({
     [cacheStorageKey('player_profile:WTA:1001')]: {
       resourceKey: 'player_profile:WTA:1001',
-      schemaVersion: 'player-profile-bff/2',
+      schemaVersion: 'player-profile-bff-cache/3',
       projectionVersion: 3,
       cachedAt: Date.now(),
       dataAsOf: cachedProfile.dataAsOf,

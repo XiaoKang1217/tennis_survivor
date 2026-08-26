@@ -13,6 +13,10 @@ const {
   localizedOutcomeText,
   tournamentDrawFacts
 } = require('../core/draw-view');
+const {
+  playerOccurrences,
+  playerSearchResults
+} = require('../core/draw-player-search');
 const miniRoot = resolve(import.meta.dirname, '..');
 
 const available = value => ({
@@ -66,8 +70,8 @@ test('draw view keeps Q/WC, winner, every-set score and tiebreak mini points', (
   };
   const [column] = drawColumns(presentation);
   assert.equal(column.title, '决赛');
-  assert.equal(column.matches[0].firstEntry, '资格赛晋级 · Q');
-  assert.equal(column.matches[0].secondEntry, '外卡 · WC');
+  assert.equal(column.matches[0].firstEntry, 'Q');
+  assert.equal(column.matches[0].secondEntry, 'WC');
   assert.equal(column.matches[0].hasFirstScores, true);
   assert.equal(column.matches[0].hasSecondScores, true);
   assert.equal(column.matches[0].firstWon, true);
@@ -115,8 +119,22 @@ test('draw metadata presents current-draw awards and separates withdrawals from 
   assert.equal(result.withdrawals[0].reason, '伤病');
   assert.equal(result.drawChanges[0].kind, '替补');
   assert.equal(result.drawChanges[0].replacementName, 'Player Two');
+  assert.equal(result.drawChanges[0].primaryName, 'Player Two');
+  assert.equal(result.drawChanges[0].detail, '替补入签，替换Player One');
   assert.equal(result.incidents.length, 2);
   assert.doesNotMatch(JSON.stringify(result.incidents), /Match Result|RET/u);
+});
+
+test('withdrawals localize common injury reasons and duplicate draw-change facts collapse', () => {
+  const result = officialMetadataView({
+    withdrawals: [{ id: 'w1', displayNameZh: '安吉丽娜·加里宁娜', reasonZh: 'Thoracic Spine Injury' }],
+    drawChanges: [{ id: 'c1', kind: 'draw_change', displayNameZh: '梁恩硕', reasonZh: 'Lucky Loser/Alternate' }],
+    replacements: [{ id: 'r1', kind: 'replacement', displayNameZh: '梁恩硕', replacementDisplayNameZh: '梁恩硕', reasonZh: 'Lucky Loser/Alternate' }]
+  });
+  assert.equal(result.withdrawals[0].reason, '胸椎受伤');
+  assert.equal(result.drawChanges.length, 1);
+  assert.equal(result.drawChanges[0].primaryName, '梁恩硕');
+  assert.equal(result.drawChanges[0].detail, '幸运落败者/替补入签');
 });
 
 test('draw metadata is isolated by selected draw and ignores match outcomes', () => {
@@ -328,7 +346,7 @@ test('draw selection and vertical round view bind everything to the selected dra
   assert.equal(view.roundMatches[0].sides[0].members[1].country, 'USA');
 });
 
-test('draw page exposes final vertical structure and independent landscape route', () => {
+test('draw page exposes final vertical structure without a visible landscape entry', () => {
   const wxml = readFileSync(
     resolve(miniRoot, 'pages/draws/index.wxml'),
     'utf8'
@@ -340,11 +358,28 @@ test('draw page exposes final vertical structure and independent landscape route
   assert.match(wxml, /本签表暂无退赛记录/);
   assert.match(wxml, /本签表暂无变动/);
   assert.match(wxml, /查找球员/);
-  assert.match(wxml, /横屏看全签表/);
+  assert.doesNotMatch(wxml, /横屏看全签表|openLandscapeDraw/);
   assert.match(wxml, /roundMatches/);
   assert.match(wxml, /match-card-head/);
   assert.match(wxml, /side\.members/);
   assert.match(wxml, /side\.scores/);
+  assert.match(wxml, /class="round-count">\{\{selectedRoundMatchCount\}\} 场/u);
+  assert.doesNotMatch(wxml, /<text>\{\{selectedRoundTitle\}\}<\/text>/u);
+  assert.match(wxml, /summary-main-row[\s\S]*summary-title[\s\S]*summary-tags[\s\S]*selectedTournamentSummary\.level[\s\S]*selectedTournamentSummary\.surface/u);
+  assert.match(wxml, /selectedTournamentSummary\.dateRange/);
+  assert.doesNotMatch(wxml, /selectedTournamentSummary\.(meta|status)/u);
+  assert.doesNotMatch(wxml, /wx:elif="\{\{weekRange\}\}" class="summary-date"/u);
+  const pageSource = readFileSync(resolve(miniRoot, 'pages/draws/index.js'), 'utf8');
+  assert.match(pageSource, /dateRange: tournamentDateRange\(item\?\.startDate, item\?\.endDate\)/u);
+  assert.match(pageSource, /withdrawals: value\.presentation\.withdrawals/u);
+  assert.match(pageSource, /drawChanges: value\.presentation\.drawChanges/u);
+  assert.match(pageSource, /replacements: value\.presentation\.replacements/u);
+  assert.match(pageSource, /incidents: Array\.isArray\(value\.presentation\.withdrawals\)[\s\S]*\? \[\]/u);
+  const alignmentStyles = readFileSync(resolve(miniRoot, 'pages/draws/index.wxss'), 'utf8');
+  assert.match(alignmentStyles, /\.summary-actions \.detail-link\{[\s\S]*width:154rpx;[\s\S]*border:1rpx solid var\(--brand\)/u);
+  assert.match(alignmentStyles, /\.summary-main-row\{[\s\S]*justify-content:flex-start;[\s\S]*gap:10rpx;/u);
+  assert.match(alignmentStyles, /\.summary-title\{[\s\S]*flex:0 1 auto;/u);
+  assert.match(alignmentStyles, /\.choice-row button,[\s\S]*display:inline-flex;[\s\S]*align-items:center;[\s\S]*justify-content:center;/u);
   assert.doesNotMatch(wxml, /签表顶点|签表变动与退赛|搜索本周赛事或球员|全屏/);
   const app = readFileSync(resolve(miniRoot, 'app.json'), 'utf8');
   assert.match(app, /"root":\s*"packages\/tournament"/u);
@@ -357,6 +392,8 @@ test('draw page exposes final vertical structure and independent landscape route
   assert.match(landscape, /查找球员/);
   assert.match(landscape, /当前轮次/);
   assert.match(landscape, /总览/);
+  assert.match(landscape, /scroll-left="\{\{scrollLeft\}\}"/);
+  assert.match(landscape, /id="\{\{match\.viewId\}\}"/);
   assert.match(landscape, /bindscroll="onBoardScroll"/);
   assert.match(landscape, /mini-map/);
   const landscapeStyle = readFileSync(
@@ -364,7 +401,7 @@ test('draw page exposes final vertical structure and independent landscape route
     'utf8'
   );
   assert.doesNotMatch(landscapeStyle, /430rpx/u);
-  assert.match(landscapeStyle, /width:320rpx/u);
+  assert.match(landscapeStyle, /width:456rpx/u);
   assert.match(landscapeStyle, /word-break:keep-all/u);
   const landscapeConfig = readFileSync(
     resolve(miniRoot, 'packages/tournament/pages/draw-landscape/index.json'),
@@ -378,4 +415,45 @@ test('draw page exposes final vertical structure and independent landscape route
   assert.match(wxss, /\.round-match-card/u);
   assert.match(wxss, /\.member-list/u);
   assert.match(wxss, /\.score-grid/u);
+});
+
+test('player search uses stable ids, aliases and deterministic occurrence priority', () => {
+  const rounds = [
+    {
+      id: 'r1', title: '第一轮', matches: [{
+        id: 'node-1', viewId: 'draw-node-one', matchId: 'm1', matchNumber: 1,
+        sides: [{ members: [{
+          id: 'player-42', name: '尤利娅·斯塔罗杜布采娃',
+          aliases: ['Yuliia Starodubtseva', '尤利亚 斯塔罗杜布采娃']
+        }] }]
+      }]
+    },
+    {
+      id: 'r2', title: '第二轮', matches: [{
+        id: 'node-2', viewId: 'draw-node-two', matchId: 'm2', matchNumber: 2,
+        sides: [{ members: [{
+          id: 'player-42', name: '尤利娅·斯塔罗杜布采娃',
+          aliases: ['Yuliia Starodubtseva']
+        }] }]
+      }]
+    },
+    {
+      id: 'r3', title: '决赛', matches: [{
+        id: 'node-3', viewId: 'draw-node-three', matchId: 'm3', matchNumber: 1,
+        sides: [{ members: [{
+          id: 'player-42', name: '尤利娅·斯塔罗杜布采娃',
+          aliases: ['Yuliia Starodubtseva']
+        }] }]
+      }]
+    }
+  ];
+  const result = playerSearchResults(rounds, 'starodub', 'r1');
+  assert.equal(result.length, 1);
+  assert.equal(result[0].id, 'player-42');
+  assert.equal(result[0].occurrenceCount, 3);
+  assert.equal(result[0].roundId, 'r1');
+  assert.deepEqual(
+    playerOccurrences(rounds, 'player-42', 'r1').map(item => item.roundId),
+    ['r1', 'r2', 'r3']
+  );
 });

@@ -4,7 +4,6 @@
       <text class="meta-part schedule">{{match.scheduleText}}</text>
       <text wx:if="{{match.roundLabel}}" class="meta-part">{{match.roundLabel}}</text>
       <text wx:if="{{match.disciplineLabel}}" class="meta-part">{{match.disciplineLabel}}</text>
-      <text wx:if="{{match.qualifyingLabel}}" class="meta-part">{{match.qualifyingLabel}}</text>
     </view>
     <view class="status status-{{match.statusTone}}"><view wx:if="{{match.showLivePulse}}" class="live-dot"/><text>{{match.statusLabel}}</text></view>
   </view>

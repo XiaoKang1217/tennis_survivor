@@ -5,9 +5,10 @@ const { createSWRCache } = require('../../../../core/swr-cache');
 const { loadProjectionResource, readTrustedProjection } = require('../../../../core/projection-resource');
 const { enablePageShare, playerShare } = require('../../../../core/share');
 const { updatePageShareImages } = require('../../../../core/share-poster');
-const { mediaUrl } = require('../../../../core/media');
+const { directMediaUrl, mediaUrl } = require('../../../../core/media');
 
-const PLAYER_PROFILE_CACHE_SCHEMA = 'player-profile-bff/2';
+const PLAYER_PROFILE_CONTRACT = 'player-profile-bff/2';
+const PLAYER_PROFILE_CACHE_SCHEMA = 'player-profile-bff-cache/3';
 function playerProfileCacheKey(tour, playerId) {
   return `player_profile:${String(tour || '').toUpperCase()}:${playerId}`;
 }
@@ -38,6 +39,12 @@ function optionValue(value, fallback = '') {
   } catch {
     return text;
   }
+}
+
+function profileMediaUrl(candidate, options = {}) {
+  const authority = String(options.authority || '').trim().toUpperCase();
+  if (authority === 'ATP') return directMediaUrl(candidate, options);
+  return mediaUrl(candidate, options);
 }
 
 function titleBadgeView(item) {
@@ -278,10 +285,10 @@ Page({
         path: `/api/v2/bff/players/${tour}/${id}`,
         requestOptions: {
           authMode: 'none',
-          header: { 'x-luwang-client-contract-version': 'player-profile-bff/2' }
+          header: { 'x-luwang-client-contract-version': PLAYER_PROFILE_CONTRACT }
         },
         validate(value) {
-          if (value?.bffContractVersion !== 'player-profile-bff/2') {
+          if (value?.bffContractVersion !== PLAYER_PROFILE_CONTRACT) {
             throw new Error('player_profile_projection_invalid');
           }
           return value;
@@ -300,14 +307,17 @@ Page({
   },
 
   applyProfile(profile, options = {}) {
-    const profileAvailable = profile?.bffContractVersion === 'player-profile-bff/2';
+    const profileAvailable = profile?.bffContractVersion === PLAYER_PROFILE_CONTRACT;
     if (profileAvailable) {
       const value = profile.display || {};
-      const portraitUrl = mediaUrl(value.portrait, {
+      const mediaOptions = { authority: this.data.tour };
+      const portraitUrl = profileMediaUrl(value.portrait, {
+        ...mediaOptions,
         size: '240',
         fallback: this.data.portraitUrl
       });
-      const heroImageUrl = mediaUrl(value.heroImage, {
+      const heroImageUrl = profileMediaUrl(value.heroImage, {
+        ...mediaOptions,
         size: '240',
         fallback: this.data.heroImageUrl
       }) || portraitUrl;

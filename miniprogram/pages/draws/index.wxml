@@ -11,11 +11,14 @@
 
   <view class="draw-summary">
     <view class="summary-copy">
-      <text wx:if="{{selectedTournamentSummary.level}}" class="draw-level">{{selectedTournamentSummary.level}}</text>
-      <text class="summary-title">{{selectedTournamentSummary.title}}</text>
-      <text wx:if="{{selectedTournamentSummary.meta}}" class="summary-meta">{{selectedTournamentSummary.meta}}</text>
-      <text wx:elif="{{weekRange}}" class="summary-meta">本周签表 · {{weekRange}}</text>
-      <text wx:if="{{selectedTournamentSummary.status}}" class="summary-meta">{{selectedTournamentSummary.status}}</text>
+      <view class="summary-main-row">
+        <text class="summary-title">{{selectedTournamentSummary.title}}</text>
+        <view class="summary-tags">
+          <text wx:if="{{selectedTournamentSummary.level}}">{{selectedTournamentSummary.level}}</text>
+          <text wx:if="{{selectedTournamentSummary.surface}}">{{selectedTournamentSummary.surface}}</text>
+        </view>
+      </view>
+      <text wx:if="{{selectedTournamentSummary.dateRange}}" class="summary-date">{{selectedTournamentSummary.dateRange}}</text>
     </view>
     <view class="summary-actions">
       <button class="detail-link" bindtap="openTournamentDetail" disabled="{{!selectedTournamentId}}">赛事详情</button>
@@ -67,17 +70,23 @@
           <ui-icon name="search" size="16" color="{{themeIconMuted}}"/>
           <input value="{{playerQuery}}" bindinput="updatePlayerQuery" placeholder="查找球员" confirm-type="search"/>
         </view>
-        <button bindtap="openLandscapeDraw"><ui-icon name="landscape" size="16" color="{{themeAccentStrong}}"/><text>横屏看全签表</text></button>
       </view>
       <view wx:if="{{playerResults.length}}" class="player-results">
         <view wx:for="{{playerResults}}" wx:key="id" data-id="{{item.id}}" data-name="{{item.name}}" data-round-id="{{item.roundId}}" bindtap="focusPlayer">
           <text>{{item.name}}</text>
-          <text>{{item.roundTitle}}</text>
+          <text>{{item.summary}}</text>
         </view>
       </view>
-      <view wx:if="{{focusedPlayerName}}" class="focus-chip">
-        <text>{{focusedPlayerName}}</text>
-        <button bindtap="clearPlayerFocus">清除定位</button>
+      <view wx:if="{{focusedPlayerName}}" class="focus-chip" style="top:{{topInset}}px">
+        <view>
+          <text>{{focusedPlayerName}} · 已定位</text>
+          <text>{{focusedOccurrenceSummary}} · {{focusedOccurrenceIndex + 1}}/{{focusedOccurrenceCount}}</text>
+        </view>
+        <view class="focus-actions">
+          <button bindtap="previousPlayerOccurrence" disabled="{{focusedOccurrenceCount < 2}}">上一处</button>
+          <button bindtap="nextPlayerOccurrence" disabled="{{focusedOccurrenceCount < 2}}">下一处</button>
+          <button bindtap="clearPlayerFocus">清除</button>
+        </view>
       </view>
       <scroll-view scroll-x enhanced show-scrollbar="{{false}}" class="round-scroll">
         <view class="round-tabs">
@@ -85,38 +94,32 @@
         </view>
       </scroll-view>
       <view class="round-heading">
-        <view>
-          <text>{{selectedRoundTitle}}</text>
-          <text>共 {{selectedRoundMatchCount}} 场</text>
-        </view>
-        <text>当前轮次</text>
+        <text class="round-count">{{selectedRoundMatchCount}} 场</text>
       </view>
       <view class="round-match-list">
-        <button wx:for="{{roundMatches}}" wx:key="id" data-match-id="{{item.matchId}}" bindtap="openMatch" class="round-match-card {{item.canOpen ? 'can-open' : 'static'}} {{item.focused ? 'focused' : ''}}">
+        <button wx:for="{{roundMatches}}" wx:key="id" id="{{item.viewId}}" data-match-id="{{item.matchId}}" bindtap="openMatch" class="round-match-card {{item.canOpen ? 'can-open' : 'static'}} {{item.focused ? 'focused' : ''}}">
           <view class="match-card-head">
             <text>第 {{item.matchNumber}} 场</text>
-            <text wx:if="{{item.status}}" class="status-pill">{{item.status}}</text>
+            <view class="match-card-state">
+              <text wx:if="{{item.focused}}" class="located-pill">已定位</text>
+              <text wx:if="{{item.status}}" class="status-pill">{{item.status}}</text>
+            </view>
           </view>
           <view wx:for="{{item.sides}}" wx:for-item="side" wx:key="id" class="match-side {{side.isWinner ? 'winner' : ''}} {{side.focused ? 'focused-side' : ''}}">
             <view class="side-copy">
-              <view class="side-badges">
-                <text wx:if="{{side.seed}}" class="seed">{{side.seed}}</text>
-                <text wx:if="{{side.entry}}" class="entry">{{side.entry}}</text>
-              </view>
               <view class="member-list">
-                <view wx:for="{{side.members}}" wx:for-item="member" wx:key="id">
-                  <text wx:if="{{member.country}}" class="country">{{member.country}}</text>
+                <view wx:for="{{side.members}}" wx:for-item="member" wx:for-index="memberIndex" wx:key="id">
+                  <text wx:if="{{member.flag || member.country}}" class="country">{{member.flag || member.country}}</text>
                   <text class="member-name">{{member.name}}</text>
+                  <text wx:if="{{memberIndex === 0 && side.seed}}" class="identity-tag">[{{side.seed}}]</text>
+                  <text wx:if="{{memberIndex === 0 && side.entry}}" class="identity-tag">[{{side.entry}}]</text>
+                  <text wx:if="{{memberIndex === 0 && side.isWinner}}" class="winner-label">胜</text>
                 </view>
               </view>
             </view>
             <view wx:if="{{side.hasScores}}" class="score-grid">
               <text wx:for="{{side.scores}}" wx:for-item="score" wx:key="index">{{score.games}}<text wx:if="{{score.tiebreak}}" class="tiebreak">{{score.tiebreak}}</text></text>
             </view>
-          </view>
-          <view wx:if="{{item.scoreText || item.status}}" class="match-foot">
-            <text wx:if="{{item.scoreText}}">{{item.scoreText}}</text>
-            <text wx:if="{{item.status && !item.scoreText}}" class="status">{{item.status}}</text>
           </view>
         </button>
       </view>
@@ -145,9 +148,9 @@
       </view>
       <view wx:if="{{withdrawals.length}}" class="record-list">
         <view wx:for="{{withdrawals}}" wx:key="id" class="record-row">
-          <text>{{item.name}}</text>
-          <text wx:if="{{item.time}}">{{item.time}}</text>
+          <text>{{item.primaryName || item.name}}</text>
           <text wx:if="{{item.reason}}">{{item.reason}}</text>
+          <text wx:if="{{item.time}}">{{item.time}}</text>
         </view>
       </view>
       <client-state wx:else state="empty" label="本签表暂无退赛记录" message=""/>
@@ -160,8 +163,8 @@
       </view>
       <view wx:if="{{drawChanges.length}}" class="record-list">
         <view wx:for="{{drawChanges}}" wx:key="id" class="record-row">
-          <text>{{item.kind}}</text>
-          <text>{{item.originalName || item.name}}<text wx:if="{{item.replacementName}}"> → {{item.replacementName}}</text></text>
+          <text>{{item.primaryName || item.replacementName || item.name}}</text>
+          <text wx:if="{{item.detail}}">{{item.detail}}</text>
           <text wx:if="{{item.round || item.position}}">{{item.round}} {{item.position}}</text>
           <text wx:if="{{item.time}}">{{item.time}}</text>
         </view>

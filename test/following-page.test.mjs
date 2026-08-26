@@ -103,6 +103,8 @@ function pageContext(definition, wx, services) {
 
 test('following page exposes category tabs, badge cards and real pagination', () => {
   const markup = read('pages/following/index.wxml');
+  assert.match(markup, />我的关注</u);
+  assert.doesNotMatch(markup, /我的比赛/u);
   const script = read('pages/following/index.js');
   for (const label of ['全部关注', '球员', '比赛', '赛事']) {
     assert.match(markup, new RegExp(label));
@@ -127,7 +129,10 @@ test('following matches render by date feed instead of tournament court grouping
 test('following player badge prefers half-body media and keeps controls off the photo', () => {
   const markup = read('pages/following/index.wxml');
   const script = read('pages/following/index.js');
-  assert.match(script, /portrait\(item\.heroImage,\s*'96'\) \|\| portrait\(item\.portrait,\s*'96'\)/);
+  assert.match(
+    script,
+    /portrait\(item\.heroImage,\s*'96',\s*authority\)[\s\S]*\|\| portrait\(item\.portrait,\s*'96',\s*authority\)/u
+  );
   const photoBlocks = markup.match(/<view class="player-photo">[\s\S]*?<\/view>/g) || [];
   assert.equal(photoBlocks.length, 1);
   for (const block of photoBlocks) assert.doesNotMatch(block, /player-heart/);
@@ -152,6 +157,8 @@ test('following player badge shows titles, recent form and follower count', () =
 
 test('player follows leaderboard is wired to large cards and real pagination', () => {
   const markup = read('packages/player/pages/players/index.wxml');
+  assert.match(markup, />资料与排名</u);
+  assert.doesNotMatch(markup, /module-head-mark|球员资料与排名/u);
   const script = read('packages/player/pages/players/index.js');
   assert.match(script, /followTabs/);
   assert.match(script, /loadFollowLeaderboard/);
@@ -186,7 +193,7 @@ test('following page keeps account-scoped trusted cache visible when refresh fai
   const wx = wxRuntime({
     [cacheStorageKey(`following:${scope}:all:20:0`)]: {
       resourceKey: `following:${scope}:all:20:0`,
-      schemaVersion: 'follow-context-bff/1',
+      schemaVersion: 'follow-context-bff-cache/2',
       projectionVersion: projection.projectionVersion,
       cachedAt: Date.now(),
       dataAsOf: projection.dataAsOf,
@@ -226,7 +233,7 @@ test('following page does not show cached user data without a current account sc
   const wx = wxRuntime({
     [cacheStorageKey('following:oldscope:all:20:0')]: {
       resourceKey: 'following:oldscope:all:20:0',
-      schemaVersion: 'follow-context-bff/1',
+      schemaVersion: 'follow-context-bff-cache/2',
       projectionVersion: projection.projectionVersion,
       cachedAt: Date.now(),
       dataAsOf: projection.dataAsOf,

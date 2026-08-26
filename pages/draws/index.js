@@ -5,6 +5,8 @@ const { createSWRCache } = require('../../core/swr-cache');
 const { loadProjectionResource, readTrustedProjection } = require('../../core/projection-resource');
 const { drawShare, enablePageShare } = require('../../core/share');
 const { updatePageShareImages } = require('../../core/share-poster');
+const { levelLabel, normalizeLevelCode } = require('../../core/localization');
+const { playerOccurrences, playerSearchResults } = require('../../core/draw-player-search');
 const {
   CALENDAR_CACHE_SCHEMA,
   calendarCacheKey,
@@ -48,7 +50,7 @@ const CONTENT_TABS = Object.freeze([
   Object.freeze({ id: 'draw', label: '签表' }),
   Object.freeze({ id: 'awards', label: '奖金积分' }),
   Object.freeze({ id: 'withdrawals', label: '退赛' }),
-  Object.freeze({ id: 'changes', label: '签表变动' })
+  Object.freeze({ id: 'changes', label: '变动' })
 ]);
 
 function filteredTournaments(tournaments, tourFilter, query) {
@@ -92,6 +94,9 @@ function emptyDrawData() {
     playerResults: [],
     focusedPlayerId: '',
     focusedPlayerName: '',
+    focusedOccurrenceIndex: 0,
+    focusedOccurrenceCount: 0,
+    focusedOccurrenceSummary: '',
     shareCardImageUrl: '',
     shareTimelineImageUrl: ''
   };
@@ -104,42 +109,36 @@ function activeTabs(active) {
   }));
 }
 
+function tournamentDateRange(startValue, endValue) {
+  const parse = value => {
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/u.exec(String(value || '').trim());
+    return match ? { year: Number(match[1]), month: Number(match[2]), day: Number(match[3]) } : null;
+  };
+  const start = parse(startValue);
+  const end = parse(endValue) || start;
+  if (!start || !end) return '';
+  if (start.year === end.year && start.month === end.month) {
+    return `${start.year}.${String(start.month).padStart(2, '0')}.${String(start.day).padStart(2, '0')}—${String(end.month).padStart(2, '0')}.${String(end.day).padStart(2, '0')}`;
+  }
+  if (start.year === end.year) {
+    return `${start.year}.${String(start.month).padStart(2, '0')}.${String(start.day).padStart(2, '0')}—${String(end.month).padStart(2, '0')}.${String(end.day).padStart(2, '0')}`;
+  }
+  return `${start.year}.${String(start.month).padStart(2, '0')}.${String(start.day).padStart(2, '0')}—${end.year}.${String(end.month).padStart(2, '0')}.${String(end.day).padStart(2, '0')}`;
+}
+
 function tournamentSummary(tournaments, id, title) {
   const item = tournaments.find(value => value.id === id);
+  const rawLevel = item?.levelDisplay || '';
+  const normalizedLevel = levelLabel(normalizeLevelCode(rawLevel)) || rawLevel;
   return Object.freeze({
     title: item?.title || title || '选择赛事',
-    level: item?.levelDisplay || '',
+    level: /^[a-z]{2,}[a-z0-9_]*$/u.test(String(normalizedLevel)) ? '' : normalizedLevel,
     meta: item?.summaryMeta || item?.meta || '',
     location: item?.location || '',
     surface: item?.surface || '',
-    status: item?.status || ''
+    status: item?.status || '',
+    dateRange: tournamentDateRange(item?.startDate, item?.endDate)
   });
-}
-
-function playerSearchResults(rounds, query) {
-  const search = String(query || '').trim().toLocaleLowerCase('zh-CN');
-  if (!search) return [];
-  const values = new Map();
-  for (const round of rounds || []) {
-    for (const match of round.matches || []) {
-      for (const side of match.sides || []) {
-        for (const member of side.members || []) {
-          if (!member.name || !member.name.toLocaleLowerCase('zh-CN').includes(search)) continue;
-          const id = member.id || member.name;
-          if (!values.has(id)) {
-            values.set(id, Object.freeze({
-              id,
-              name: member.name,
-              roundId: round.id,
-              roundTitle: round.title,
-              matchId: match.matchId
-            }));
-          }
-        }
-      }
-    }
-  }
-  return [...values.values()].slice(0, 8);
 }
 
 Page({
@@ -186,6 +185,9 @@ Page({
     playerResults: [],
     focusedPlayerId: '',
     focusedPlayerName: '',
+    focusedOccurrenceIndex: 0,
+    focusedOccurrenceCount: 0,
+    focusedOccurrenceSummary: '',
     deliveryState: '',
     deliveryMessage: '',
     dataAsOf: '',
@@ -464,6 +466,9 @@ Page({
         playerResults: [],
         focusedPlayerId: '',
         focusedPlayerName: '',
+        focusedOccurrenceIndex: 0,
+        focusedOccurrenceCount: 0,
+        focusedOccurrenceSummary: '',
         shareCardImageUrl: '',
         shareTimelineImageUrl: ''
       } : {})
@@ -500,7 +505,22 @@ Page({
       throw new Error('draw_projection_invalid');
     }
     this.currentPresentation = value.presentation;
-    const metadata = officialMetadataView(value.presentation.officialMetadata, { ...value, drawId });
+    const metadata = officialMetadataView({
+      ...value.presentation.officialMetadata,
+      withdrawals: value.presentation.withdrawals
+        ?? value.presentation.officialMetadata?.withdrawals,
+      drawChanges: value.presentation.drawChanges
+        ?? value.presentation.officialMetadata?.drawChanges,
+      changes: value.presentation.drawChanges
+        ?? value.presentation.officialMetadata?.changes,
+      replacements: value.presentation.replacements
+        ?? value.presentation.officialMetadata?.replacements,
+      incidents: Array.isArray(value.presentation.withdrawals)
+        || Array.isArray(value.presentation.drawChanges)
+        || Array.isArray(value.presentation.replacements)
+        ? []
+        : value.presentation.officialMetadata?.incidents
+    }, { ...value, drawId });
     const selection = drawSelectionView(this.data.draws.length ? this.data.draws : [value], drawId);
     const roundView = drawRoundView(
       value.presentation,
@@ -537,7 +557,7 @@ Page({
     this.refreshRoundView(event.currentTarget.dataset.id || '');
   },
 
-  refreshRoundView(roundId = this.data.selectedRoundId) {
+  refreshRoundView(roundId = this.data.selectedRoundId, callback) {
     if (!this.currentPresentation) return;
     const roundView = drawRoundView(
       this.currentPresentation,
@@ -551,50 +571,91 @@ Page({
       selectedRoundTitle: roundView.selectedRoundTitle,
       selectedRoundMatchCount: roundView.selectedRoundMatchCount,
       roundMatches: roundView.roundMatches
-    });
+    }, callback);
   },
 
   updatePlayerQuery(event) {
     const playerQuery = event.detail.value || '';
     this.setData({
       playerQuery,
-      playerResults: playerSearchResults(this.data.rounds, playerQuery)
+      playerResults: playerSearchResults(
+        this.data.rounds,
+        playerQuery,
+        this.data.selectedRoundId
+      )
     });
   },
 
   focusPlayer(event) {
     const focusedPlayerId = event.currentTarget.dataset.id || '';
     const focusedPlayerName = event.currentTarget.dataset.name || '';
-    const roundId = event.currentTarget.dataset.roundId || this.data.selectedRoundId;
-    this.setData({ focusedPlayerId, focusedPlayerName, playerResults: [] }, () => {
-      this.refreshRoundView(roundId);
-    });
+    const occurrences = playerOccurrences(
+      this.data.rounds,
+      focusedPlayerId,
+      this.data.selectedRoundId
+    );
+    this.focusedOccurrences = occurrences;
+    this.locatePlayerOccurrence(0, focusedPlayerName);
+  },
+
+  locatePlayerOccurrence(index, playerName = this.data.focusedPlayerName) {
+    const occurrences = this.focusedOccurrences || [];
+    if (!occurrences.length) return;
+    const nextIndex = (index + occurrences.length) % occurrences.length;
+    const target = occurrences[nextIndex];
+    this.setData({
+      focusedPlayerId: target.playerId,
+      focusedPlayerName: playerName || target.name,
+      focusedOccurrenceIndex: nextIndex,
+      focusedOccurrenceCount: occurrences.length,
+      focusedOccurrenceSummary: `${target.roundTitle} · 第 ${target.matchNumber} 场`,
+      playerResults: []
+    }, () => this.refreshRoundView(target.roundId, () => this.scrollToDrawNode(target)));
+  },
+
+  previousPlayerOccurrence() {
+    this.locatePlayerOccurrence(this.data.focusedOccurrenceIndex - 1);
+  },
+
+  nextPlayerOccurrence() {
+    this.locatePlayerOccurrence(this.data.focusedOccurrenceIndex + 1);
+  },
+
+  scrollToDrawNode(target) {
+    const viewId = String(target?.viewId || '');
+    if (!viewId) return;
+    const run = () => {
+      const query = wx.createSelectorQuery().in(this);
+      query.select(`#${viewId}`).boundingClientRect();
+      query.selectViewport().scrollOffset();
+      query.exec(result => {
+        const rect = result?.[0];
+        const viewport = result?.[1];
+        if (!rect) return;
+        const focusOffset = Math.max(144, Number(this.data.topInset || 0) + 92);
+        wx.pageScrollTo({
+          scrollTop: Math.max(0, Number(viewport?.scrollTop || 0) + rect.top - focusOffset),
+          duration: 280
+        });
+      });
+    };
+    if (typeof wx.nextTick === 'function') wx.nextTick(run);
+    else setTimeout(run, 0);
   },
 
   clearPlayerFocus() {
     this.setData({
       focusedPlayerId: '',
       focusedPlayerName: '',
+      focusedOccurrenceIndex: 0,
+      focusedOccurrenceCount: 0,
+      focusedOccurrenceSummary: '',
       playerQuery: '',
       playerResults: []
-    }, () => this.refreshRoundView(this.data.selectedRoundId));
-  },
-
-  openLandscapeDraw() {
-    if (!this.data.selectedDrawId) return;
-    const params = [
-      ['drawId', this.data.selectedDrawId],
-      ['tournamentEditionId', this.data.selectedTournamentId],
-      ['title', this.data.selectedTournamentSummary.title],
-      ['drawLabel', this.data.selectedDrawLabel],
-      ['tour', this.data.selectedTour],
-      ['roundId', this.data.selectedRoundId],
-      ['date', this.matchDate || '']
-    ]
-      .filter(([, value]) => value)
-      .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
-      .join('&');
-    wx.navigateTo({ url: `/packages/tournament/pages/draw-landscape/index?${params}` });
+    }, () => {
+      this.focusedOccurrences = [];
+      this.refreshRoundView(this.data.selectedRoundId);
+    });
   },
 
   openMatch(event) {

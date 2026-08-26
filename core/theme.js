@@ -69,6 +69,7 @@ function writeTheme(value) {
   } catch (_error) {
     // The current page is still updated even if persistent storage is unavailable.
   }
+  syncOpenPagesTheme(theme);
   return theme;
 }
 
@@ -101,6 +102,17 @@ function syncPageTheme(page, value) {
   return next;
 }
 
+function syncOpenPagesTheme(value) {
+  if (typeof getCurrentPages !== 'function') return;
+  let pages = [];
+  try {
+    pages = getCurrentPages() || [];
+  } catch (_error) {
+    return;
+  }
+  pages.forEach(page => syncPageTheme(page, value));
+}
+
 module.exports = {
   DEFAULT_THEME,
   STORAGE_KEY,
@@ -108,6 +120,7 @@ module.exports = {
   buildThemeData,
   normalizeTheme,
   readTheme,
+  syncOpenPagesTheme,
   syncPageTheme,
   writeTheme
 };

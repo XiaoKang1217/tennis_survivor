@@ -27,12 +27,12 @@
   <view wx:elif="{{failed && !columns.length}}" class="landscape-state">
     <client-state state="failed" label="签表暂不可用" message="请退出后重试"/>
   </view>
-  <scroll-view wx:else scroll-x scroll-y enhanced scroll-into-view="{{scrollIntoView}}" bindscroll="onBoardScroll" class="landscape-board">
+  <scroll-view wx:else scroll-x scroll-y enhanced scroll-left="{{scrollLeft}}" scroll-top="{{scrollTop}}" scroll-into-view="{{scrollIntoView}}" bindscroll="onBoardScroll" class="landscape-board">
     <view class="bracket-board {{overview ? 'overview' : ''}}" style="{{boardScaleStyle}}">
       <view wx:for="{{columns}}" wx:key="id" id="{{item.viewId}}" class="bracket-column {{item.selected ? 'selected-round' : ''}}">
         <text class="round-title">{{item.title}}</text>
         <view class="round-body" style="height:{{item.height}}rpx">
-          <button wx:for="{{item.matches}}" wx:for-item="match" wx:key="id" style="{{match.nodeStyle}}" data-match-id="{{match.matchId}}" bindtap="openMatch" class="bracket-node {{match.champion ? 'champion-node' : ''}} {{match.highlighted ? 'path-node' : ''}}">
+          <button wx:for="{{item.matches}}" wx:for-item="match" wx:key="id" id="{{match.viewId}}" style="{{match.nodeStyle}}" data-match-id="{{match.matchId}}" bindtap="openMatch" class="bracket-node {{match.champion ? 'champion-node' : ''}} {{match.highlighted ? 'path-node' : ''}}">
             <view wx:if="{{match.hasIncoming}}" class="connector-in" style="{{match.incomingStyle}}"></view>
             <block wx:if="{{match.champion}}">
               <view class="champion-line">

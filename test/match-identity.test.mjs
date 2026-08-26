@@ -45,6 +45,27 @@ test('match view keeps the production matchId as the only display identity', () 
 
   assert.equal(card.id, stableMatchId);
   assert.equal(card.followTargetId, stableMatchId);
+  assert.equal(card.officialScheduleDate, '2026-08-06');
+});
+
+test('schedule match cards preserve projection round codes as Chinese labels', () => {
+  const qualifying = matchView(presentation({
+    competitionContext: { stage: 'qualifying', round: 'Q1', isQualifying: true }
+  }));
+  const mainDraw = matchView(presentation({
+    competitionContext: { stage: 'main_draw', round: 'ROUND_3', isQualifying: false }
+  }));
+
+  assert.equal(qualifying.roundLabel, '资格赛第一轮');
+  assert.equal(mainDraw.roundLabel, '第三轮');
+});
+
+test('match detail date accepts the deployed projection official-day field', () => {
+  const deployed = presentation();
+  delete deployed.schedule.officialScheduleDate;
+  deployed.schedule.scheduleGroupDate = '2026-08-07';
+
+  assert.equal(matchView(deployed).officialScheduleDate, '2026-08-07');
 });
 
 test('client display layer does not contain alias collapse or Mega reconcile code', () => {

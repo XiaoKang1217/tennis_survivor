@@ -18,7 +18,6 @@ const scanEntries = Object.freeze([
 function j(...parts) { return parts.join(''); }
 
 const forbiddenCopy = Object.freeze([
-  j('炉的', '网球'),
   j('界面', '皮肤'),
   j('本地', '可信'),
   j('后台', '更新'),

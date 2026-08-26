@@ -6,8 +6,8 @@ const METRICS = Object.freeze([
   { metricId: 'firstServesIn', label: '一发成功率' },
   { metricId: 'firstServePointsWon', label: '一发得分率' },
   { metricId: 'secondServePointsWon', label: '二发得分率' },
-  { metricId: 'breakPointsConverted', label: '破发点兑现' },
-  { metricId: 'breakPointsSaved', label: '破发点挽救' },
+  { metricId: 'breakPointsConverted', label: '破发点兑现率' },
+  { metricId: 'breakPointsSaved', label: '破发点挽救率' },
   { metricId: 'serviceGames', label: '发球局' },
   { metricId: 'returnGames', label: '接发局' },
   { metricId: 'returnPointsWon', label: '接发得分' },
@@ -20,9 +20,48 @@ const METRICS = Object.freeze([
   { metricId: 'averageSecondServe', label: '平均二发速度' }
 ]);
 
+const PERCENTAGE_METRICS = new Set([
+  'firstServesIn',
+  'firstServePointsWon',
+  'secondServePointsWon',
+  'breakPointsConverted',
+  'breakPointsSaved'
+]);
+
 function displayFact(value) {
   if (!value || value.state !== 'known') return '';
   return value.displayText;
+}
+
+function numericFact(value) {
+  if (!value || value.state !== 'known') return 0;
+  const facts = value.value && typeof value.value === 'object' ? value.value : {};
+  if (Number.isFinite(Number(facts.percentageBasisPoints))) {
+    return Number(facts.percentageBasisPoints) / 100;
+  }
+  if (Number.isFinite(Number(facts.value))) return Number(facts.value);
+  const parsed = Number.parseFloat(String(value.displayText || '').replace(/,/gu, ''));
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function percentageFact(value) {
+  const number = numericFact(value);
+  return displayFact(value) === '' ? '' : `${Math.round(number)}%`;
+}
+
+function visualRow(metricId, label, firstValue, secondValue, firstFact, secondFact) {
+  const percentage = PERCENTAGE_METRICS.has(metricId);
+  const firstNumber = percentage ? numericFact(firstFact) : Number.parseFloat(firstValue) || 0;
+  const secondNumber = percentage ? numericFact(secondFact) : Number.parseFloat(secondValue) || 0;
+  const scale = percentage ? 100 : Math.max(firstNumber, secondNumber, 1);
+  return Object.freeze({
+    metricId,
+    label,
+    first: percentage ? percentageFact(firstFact) : firstValue,
+    second: percentage ? percentageFact(secondFact) : secondValue,
+    firstBar: Math.max(0, Math.min(100, Math.round(firstNumber / scale * 100))),
+    secondBar: Math.max(0, Math.min(100, Math.round(secondNumber / scale * 100)))
+  });
 }
 
 function statisticsView(projection, participantNames = []) {
@@ -31,30 +70,29 @@ function statisticsView(projection, participantNames = []) {
     const statistics = projection.liveStatistics;
     if (statistics === null) return null;
     const values = Object.freeze([
-      Object.freeze({
-        metricId: 'aces',
-        label: 'Ace',
-        first: String(statistics.sides[0].aces),
-        second: String(statistics.sides[1].aces)
-      }),
-      Object.freeze({
-        metricId: 'doubleFaults',
-        label: '双误',
-        first: String(statistics.sides[0].doubleFaults),
-        second: String(statistics.sides[1].doubleFaults)
-      }),
-      Object.freeze({
-        metricId: 'firstServePointsWonPercentage',
-        label: '一发得分率',
-        first: `${statistics.sides[0].firstServePointsWonPercentage}%`,
-        second: `${statistics.sides[1].firstServePointsWonPercentage}%`
-      }),
-      Object.freeze({
-        metricId: 'breakPointConversionPercentage',
-        label: '破发点兑现率',
-        first: `${statistics.sides[0].breakPointConversionPercentage}%`,
-        second: `${statistics.sides[1].breakPointConversionPercentage}%`
-      })
+      visualRow(
+        'aces',
+        'Ace', String(statistics.sides[0].aces), String(statistics.sides[1].aces)
+      ),
+      visualRow(
+        'doubleFaults',
+        '双误', String(statistics.sides[0].doubleFaults),
+        String(statistics.sides[1].doubleFaults)
+      ),
+      visualRow(
+        'firstServePointsWon', '一发得分率', '', '',
+        { state: 'known', displayText: String(statistics.sides[0].firstServePointsWonPercentage),
+          value: { value: statistics.sides[0].firstServePointsWonPercentage } },
+        { state: 'known', displayText: String(statistics.sides[1].firstServePointsWonPercentage),
+          value: { value: statistics.sides[1].firstServePointsWonPercentage } }
+      ),
+      visualRow(
+        'breakPointsConverted', '破发点兑现率', '', '',
+        { state: 'known', displayText: String(statistics.sides[0].breakPointConversionPercentage),
+          value: { value: statistics.sides[0].breakPointConversionPercentage } },
+        { state: 'known', displayText: String(statistics.sides[1].breakPointConversionPercentage),
+          value: { value: statistics.sides[1].breakPointConversionPercentage } }
+      )
     ]);
     return Object.freeze({
       version: projection.projectionVersion,
@@ -80,12 +118,14 @@ function statisticsView(projection, participantNames = []) {
       participantNames[0] || '', participantNames[1] || ''
     ]),
     duration: displayFact(projection.display.duration),
-    rows: Object.freeze(METRICS.map(({ metricId, label }) => Object.freeze({
+    rows: Object.freeze(METRICS.map(({ metricId, label }) => visualRow(
       metricId,
       label,
-      first: displayFact(sides[0][metricId]),
-      second: displayFact(sides[1][metricId])
-    })))
+      displayFact(sides[0][metricId]),
+      displayFact(sides[1][metricId]),
+      sides[0][metricId],
+      sides[1][metricId]
+    )))
   });
 }
 
@@ -130,5 +170,7 @@ module.exports = Object.freeze({
   METRICS,
   statisticsView,
   statisticsModuleState,
-  displayFact
+  displayFact,
+  numericFact,
+  percentageFact
 });

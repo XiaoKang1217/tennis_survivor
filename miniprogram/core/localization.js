@@ -103,6 +103,16 @@ function dictionaryLabel(dictionary, code) {
     : '';
 }
 
+function roundLabel(code) {
+  const source = String(code || '').trim();
+  if (!source) return '';
+  const normalized = source.replace(/[\s-]+/gu, '_').toLocaleUpperCase('en-US');
+  if (Object.prototype.hasOwnProperty.call(ROUND_LABELS, normalized)) {
+    return ROUND_LABELS[normalized];
+  }
+  return normalized === 'UNKNOWN' ? ROUND_LABELS.unknown : '';
+}
+
 module.exports = Object.freeze({
   LEVEL_LABELS,
   DISCIPLINE_LABELS,
@@ -112,5 +122,5 @@ module.exports = Object.freeze({
   levelLabel: code => dictionaryLabel(LEVEL_LABELS, code),
   disciplineLabel: code => dictionaryLabel(DISCIPLINE_LABELS, code),
   stageLabel: code => dictionaryLabel(STAGE_LABELS, code),
-  roundLabel: code => dictionaryLabel(ROUND_LABELS, code)
+  roundLabel
 });

@@ -2,11 +2,8 @@
   <product-tabbar active="players" theme="{{uiTheme}}" />
   <view class="module-head" style="padding-top:{{topInset}}px">
     <view class="module-title-copy">
-      <text class="eyebrow">球员</text>
-      <text class="title">球员</text>
-      <text class="title-caption">球员资料与排名</text>
+      <text class="title">资料与排名</text>
     </view>
-    <view class="module-head-mark"><text>ATP</text><text>WTA</text></view>
   </view>
 
   <view class="player-module-nav">

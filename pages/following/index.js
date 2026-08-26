@@ -6,10 +6,11 @@ const { loadProjectionResource, readTrustedProjection } = require('../../core/pr
 const { matchView } = require('../../core/view-model');
 const { beijingDate } = require('../../core/schedule-date');
 const { followingPath } = require('../../services/follow-service');
-const { mediaUrl } = require('../../core/media');
+const { directMediaUrl, mediaUrl } = require('../../core/media');
 
 const PAGE_SIZE = 20;
-const FOLLOWING_CACHE_SCHEMA = 'follow-context-bff/1';
+const FOLLOWING_CONTRACT = 'follow-context-bff/1';
+const FOLLOWING_CACHE_SCHEMA = 'follow-context-bff-cache/2';
 const FOLLOW_TABS = Object.freeze([
   { id: 'all', label: '全部关注', countKey: 'total' },
   { id: 'player', label: '球员', countKey: 'players' },
@@ -59,9 +60,13 @@ function fieldText(candidate, fallback = '') {
     ? fallback : String(value);
 }
 
-function portrait(candidate, size = '96') {
+function portrait(candidate, size = '96', authority = '') {
   const value = fact(candidate);
-  return mediaUrl(value ?? candidate, { size });
+  const source = value ?? candidate;
+  if (String(authority || '').trim().toUpperCase() === 'ATP') {
+    return directMediaUrl(source, { authority });
+  }
+  return mediaUrl(source, { size, authority });
 }
 
 function countryFlag(value) {
@@ -213,7 +218,8 @@ function playerView(item) {
     countryMark: countryFlag(countryCode),
     authority,
     authorityClass: authority.toLowerCase(),
-    portraitUrl: portrait(item.heroImage, '96') || portrait(item.portrait, '96'),
+    portraitUrl: portrait(item.heroImage, '96', authority)
+      || portrait(item.portrait, '96', authority),
     rankBadge: rankText(officialPosition),
     rankingLabel: rankText(officialPosition),
     raceLabel: rankText(racePosition),
@@ -430,7 +436,7 @@ Page({
         path: followingPath({ kind: selectedKind, limit, offset }),
         requestOptions: {
           authRequired: true,
-          header: { 'x-luwang-client-contract-version': FOLLOWING_CACHE_SCHEMA }
+          header: { 'x-luwang-client-contract-version': FOLLOWING_CONTRACT }
         },
         metadata: { dataAsOf: value => value?.dataAsOf || value?.delivery?.dataAsOf || '' },
         validate(value) {
@@ -439,7 +445,7 @@ Page({
             throw new Error('following_projection_invalid');
           }
           if (value.bffContractVersion
-            && value.bffContractVersion !== FOLLOWING_CACHE_SCHEMA) {
+            && value.bffContractVersion !== FOLLOWING_CONTRACT) {
             throw new Error('following_projection_contract_invalid');
           }
           return value;

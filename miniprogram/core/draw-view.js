@@ -45,8 +45,21 @@ function participantMembers(slot) {
   const participant = slot?.participant || slot?.entry || slot?.side || {};
   const sourceMembers = Array.isArray(participant.members)
     ? participant.members : Array.isArray(slot?.members) ? slot.members : [];
+  const localizedSideNames = firstText(
+    participant.displayNameZh,
+    slot?.displayNameZh
+  ).split(/\s*\/\s*/u).map(value => value.trim()).filter(Boolean);
   const members = sourceMembers
-    .map((member, index) => memberView(member, index))
+    .map((member, index) => {
+      const view = memberView(member, index);
+      const localizedName = localizedSideNames[index];
+      if (!localizedName || localizedSideNames.length !== sourceMembers.length) return view;
+      return Object.freeze({
+        ...view,
+        name: localizedName,
+        aliases: Object.freeze([...new Set([localizedName, ...view.aliases])])
+      });
+    })
     .filter(member => member.name);
   if (members.length > 0) return Object.freeze(members);
   const name = firstText(
@@ -71,17 +84,29 @@ function participantMembers(slot) {
 }
 
 function memberView(member, index) {
+  const names = [
+    text(member.displayNameZh),
+    text(member.displayNameOriginal),
+    text(member.nameZh),
+    text(member.name),
+    text(member.displayName),
+    ...(Array.isArray(member.aliases) ? member.aliases.map(text) : [])
+  ].filter(Boolean);
+  const country = firstText(member.countryMark, member.countryCode, member.country?.code);
   return Object.freeze({
-    id: firstText(member.playerId, member.id) || `member-${index}`,
-    name: firstText(
-      member.displayNameZh,
-      member.displayNameOriginal,
-      member.nameZh,
-      member.name,
-      member.displayName
-    ) || (index === 0 ? '待定' : ''),
-    country: firstText(member.countryMark, member.countryCode, member.country?.code)
+    id: firstText(member.playerId, member.officialPlayerId, member.sourcePlayerId, member.id)
+      || `member-${index}`,
+    name: names[0] || (index === 0 ? '待定' : ''),
+    aliases: Object.freeze([...new Set(names)]),
+    country,
+    flag: countryFlag(country)
   });
+}
+
+function countryFlag(countryCode) {
+  const code = String(countryCode || '').trim().toUpperCase();
+  if (!/^[A-Z]{2}$/u.test(code)) return '';
+  return [...code].map(letter => String.fromCodePoint(127397 + letter.charCodeAt(0))).join('');
 }
 
 function sideIdentity(slot) {
@@ -91,7 +116,7 @@ function sideIdentity(slot) {
 
 function sideScores(score, side) {
   if (!score || !Array.isArray(score.sets)) return [];
-  return score.sets.map(set => {
+  return score.sets.slice(0, 5).map(set => {
     const first = side === 1;
     const games = first ? set.firstSideGames : set.secondSideGames;
     const tiebreak = first
@@ -149,15 +174,18 @@ function ordinalRound(number) {
 }
 
 function roundOfTitle(value, index) {
-  const labels = Object.freeze({
-    128: '第一轮',
-    96: '第二轮',
-    64: '第二轮',
-    48: '第三轮',
-    32: '三十二强',
-    16: '十六强'
-  });
-  return labels[value] || ordinalRound(index + 1);
+  void value;
+  return ordinalRound(index + 1);
+}
+
+function nodeViewId(nodeId) {
+  const source = String(nodeId || 'node');
+  let hash = 2166136261;
+  for (let index = 0; index < source.length; index += 1) {
+    hash ^= source.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return `draw-node-${(hash >>> 0).toString(36)}`;
 }
 
 function localizedRound(label, index = 0) {
@@ -168,8 +196,8 @@ function drawColumns(presentation) {
   const slots = new Map((presentation?.slots || []).map(slot => [slot.slotId, slot]));
   const rounds = presentation?.rounds || [];
   const sourceMatches = presentation?.matches || [];
-  const cardHeight = 146;
-  const stride = 172;
+  const cardHeight = 168;
+  const stride = 204;
   const columnDrafts = rounds.map((round, roundIndex) => {
     const matches = sourceMatches
       .filter(match => match.roundId === round.roundId)
@@ -316,6 +344,7 @@ function roundMatchView(match, slots, index, focusedPlayerId = '') {
   const focused = firstSide.focused || secondSide.focused;
   return Object.freeze({
     id: match.nodeId || match.matchId?.value || `match-${index}`,
+    viewId: nodeViewId(match.nodeId || match.matchId?.value || `match-${index}`),
     matchNumber: index + 1,
     matchId: field(match.matchId),
     canOpen: Boolean(match.canOpenMatch && field(match.matchId)),
@@ -343,15 +372,22 @@ function sideView(slot, score, side, winnerId, focusedPlayerId = '') {
 function entryLabel(value) {
   const raw = String(value || '').trim();
   const normalized = raw.toUpperCase();
-  const labels = Object.freeze({
-    WC: '外卡',
-    Q: '资格赛晋级',
-    LL: '幸运落败者',
-    ALT: '替补',
-    PR: '保护排名',
-    SR: '保护排名'
+  const aliases = Object.freeze({
+    WC: 'WC',
+    '外卡': 'WC',
+    Q: 'Q',
+    '资格赛晋级': 'Q',
+    '资格赛选手': 'Q',
+    LL: 'LL',
+    '幸运落败者': 'LL',
+    ALT: 'ALT',
+    '替补': 'ALT',
+    PR: 'PR',
+    '保护排名': 'PR',
+    SR: 'PR'
   });
-  return labels[normalized] ? `${labels[normalized]} · ${normalized}` : raw;
+  const trailingCode = normalized.split('·').map(item => item.trim()).pop();
+  return aliases[normalized] || aliases[trailingCode] || raw;
 }
 
 function drawDisciplineLabel(item) {
@@ -456,20 +492,36 @@ function officialMetadataView(metadata, scope = {}) {
         sequence: awardSequence(value)
       })).sort((first, second) => first.sequence - second.sequence)
     : [];
-  const withdrawals = [
+  const withdrawals = uniqueRecords([
     ...recordsFrom(metadata?.withdrawals, 'withdrawal', scope),
     ...incidentRecords(metadata?.incidents, ['withdrawal'], scope)
-  ];
-  const drawChanges = [
+  ]);
+  const drawChanges = uniqueRecords([
     ...recordsFrom(metadata?.drawChanges, 'draw_change', scope),
+    ...recordsFrom(metadata?.changes, 'draw_change', scope),
+    ...recordsFrom(metadata?.replacements, 'replacement', scope),
     ...incidentRecords(metadata?.incidents, ['replacement', 'draw_change', 'alternate'], scope)
-  ];
+  ]);
   return Object.freeze({
     roundAwards: Object.freeze(roundAwards),
     withdrawals: Object.freeze(withdrawals),
     drawChanges: Object.freeze(drawChanges),
     incidents: Object.freeze([...withdrawals, ...drawChanges])
   });
+}
+
+function uniqueRecords(records) {
+  const values = new Map();
+  for (const item of records) {
+    const subject = item.replacementName || item.name || item.originalName;
+    const key = [subject, item.reason, item.round, item.position]
+      .join('|');
+    const existing = values.get(key);
+    if (!existing || (item.kind === '替补' && existing.kind !== '替补')) {
+      values.set(key, item);
+    }
+  }
+  return [...values.values()];
 }
 
 function moneyLabel(value) {
@@ -540,18 +592,48 @@ function isMatchOutcomeRecord(value) {
 function recordView(value, fallbackKind, index) {
   if (!value || typeof value !== 'object') return null;
   const kind = recordKindLabel(value.kind || fallbackKind);
+  const name = firstText(value.displayNameZh, value.nameZh, value.displayName, value.name, value.playerName, '—');
+  const originalName = firstText(value.originalDisplayNameZh, value.originalName, value.oldName);
+  const replacementName = firstText(value.replacementDisplayNameZh, value.replacementName, value.newName);
+  const reason = localizedIncidentReason(firstText(
+    value.reasonZh,
+    value.descriptionZh,
+    value.reason,
+    value.rawReason,
+    value.note
+  ));
+  const primaryName = replacementName || name || originalName;
+  const detail = kind === '替补' && replacementName && originalName && replacementName !== originalName
+    ? `替补入签，替换${originalName}`
+    : reason;
   return Object.freeze({
     id: firstText(value.id, value.changeId, value.withdrawalId)
       || `${fallbackKind}:${firstText(value.displayNameZh, value.displayName, value.name, index)}`,
     kind,
-    name: firstText(value.displayNameZh, value.nameZh, value.displayName, value.name, value.playerName, '—'),
-    originalName: firstText(value.originalDisplayNameZh, value.originalName, value.oldName),
-    replacementName: firstText(value.replacementDisplayNameZh, value.replacementName, value.newName),
+    name,
+    originalName,
+    replacementName,
+    primaryName,
     round: localizedRound(firstText(value.roundLabel, value.roundKey, value.roundId)),
     position: firstText(value.positionLabel, value.position),
     time: compactDate(firstText(value.effectiveAt, value.occurredAt, value.updatedAt, value.dateLabel)),
-    reason: firstText(value.descriptionZh, value.reasonZh, value.reason, value.rawReason, value.note)
+    reason,
+    detail
   });
+}
+
+function localizedIncidentReason(value) {
+  const source = firstText(value);
+  if (!source) return '';
+  const translations = Object.freeze({
+    'Back Injury': '背部受伤',
+    'Thoracic Spine Injury': '胸椎受伤',
+    'Lucky Loser/Alternate': '幸运落败者/替补入签',
+    Illness: '身体不适',
+    Fatigue: '疲劳',
+    'Personal Reasons': '个人原因'
+  });
+  return translations[source] || source;
 }
 
 function recordKindLabel(value) {
@@ -617,6 +699,7 @@ module.exports = Object.freeze({
   localizedOutcomeText,
   localizedRound,
   officialMetadataView,
+  nodeViewId,
   participantMembers,
   participantName,
   sideScores,
