@@ -209,6 +209,17 @@ class ScoreStore {
       const previousById = new Map(this.projection.payload.matches.map(match => [
         match.matchId, match
       ]));
+      for (const match of next.payload.matches) {
+        const acceptedVersion = this.matchVersions.get(match.matchId) || 0;
+        const incomingVersion = Number(match.matchVersion || 0);
+        if (previousById.has(match.matchId) && acceptedVersion > 0 && incomingVersion <= 0) {
+          return Object.freeze({
+            action: 'resync_required',
+            reason: 'snapshot_match_version_missing',
+            targetVersion: next.projectionVersion
+          });
+        }
+      }
       next = Object.freeze({
         ...next,
         payload: Object.freeze({
@@ -312,6 +323,7 @@ class ScoreStore {
     }
     const existing = this.projection.payload.matches;
     const byId = new Map(existing.map(match => [match.matchId, match]));
+    const nextMatchVersions = new Map(this.matchVersions);
     for (const item of frame.changes) {
       const previous = byId.get(item.matchId);
       if (previous === undefined) {
@@ -321,7 +333,7 @@ class ScoreStore {
           targetVersion: frame.version
         });
       }
-      const acceptedMatchVersion = this.matchVersions.get(item.matchId) || 0;
+      const acceptedMatchVersion = nextMatchVersions.get(item.matchId) || 0;
       if (item.matchVersion <= acceptedMatchVersion) continue;
       if (acceptedMatchVersion > 0 && item.matchVersion > acceptedMatchVersion + 1) {
         return Object.freeze({
@@ -335,7 +347,7 @@ class ScoreStore {
         ...item.changes,
         matchVersion: item.matchVersion
       }));
-      this.matchVersions.set(item.matchId, item.matchVersion);
+      nextMatchVersions.set(item.matchId, item.matchVersion);
     }
     const matches = existing.map(match => byId.get(match.matchId));
     this.projection = Object.freeze({
@@ -346,6 +358,7 @@ class ScoreStore {
       delivery: frame.delivery ?? this.projection.delivery,
       payload: Object.freeze({ ...this.projection.payload, matches: Object.freeze(matches) })
     });
+    this.matchVersions = nextMatchVersions;
     this.frameFingerprints.set(frame.version, fingerprint);
     for (const version of [...this.frameFingerprints.keys()]) {
       if (version < frame.version - 64) this.frameFingerprints.delete(version);
@@ -390,9 +403,10 @@ class ScoreStore {
     }
     const existing = this.projection.payload.matches;
     const byId = new Map(existing.map(match => [match.matchId, match]));
+    const nextMatchVersions = new Map(this.matchVersions);
     for (const matchId of frame.removedMatchIds) byId.delete(matchId);
     for (const match of frame.upserts) {
-      const acceptedMatchVersion = this.matchVersions.get(match.matchId) || 0;
+      const acceptedMatchVersion = nextMatchVersions.get(match.matchId) || 0;
       const incomingMatchVersion = Number(match.matchVersion || 0);
       if (incomingMatchVersion > 0 && incomingMatchVersion <= acceptedMatchVersion) continue;
       if (acceptedMatchVersion > 0 && incomingMatchVersion > acceptedMatchVersion + 1) {
@@ -404,7 +418,7 @@ class ScoreStore {
       }
       byId.set(match.matchId, match);
       if (incomingMatchVersion > 0) {
-        this.matchVersions.set(match.matchId, incomingMatchVersion);
+        nextMatchVersions.set(match.matchId, incomingMatchVersion);
       }
     }
     const order = existing.map(match => match.matchId);
@@ -421,6 +435,7 @@ class ScoreStore {
       delivery: frame.delivery,
       payload: Object.freeze({ ...this.projection.payload, matches: Object.freeze(matches) })
     });
+    this.matchVersions = nextMatchVersions;
     this.frameFingerprints.set(frame.version, fingerprint);
     for (const version of [...this.frameFingerprints.keys()]) {
       if (version < frame.version - 64) this.frameFingerprints.delete(version);

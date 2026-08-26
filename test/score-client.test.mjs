@@ -44,6 +44,22 @@ const auth = {
   async ensure() { return 'a'.repeat(64); }
 };
 
+function projectionWithMatches(version, matches) {
+  const projection = todayProjection(version, matches[0]);
+  return {
+    ...projection,
+    payload: { ...projection.payload, matches }
+  };
+}
+
+function secondPresentation(overrides = {}) {
+  return presentation({
+    matchId: '019c13ac-7b00-7005-8000-000000000601',
+    stableMatchId: '019c13ac-7b00-7005-8000-000000000601',
+    ...overrides
+  });
+}
+
 test('manual score refresh falls back to a normal snapshot when forced refresh fails', async () => {
   const store = new ScoreStore();
   store.snapshot(todayProjection(1));
@@ -275,6 +291,150 @@ test('older calibration snapshot cannot overwrite a newer per-match SSE version'
 
   assert.equal(store.projection.payload.matches[0].matchVersion, 2);
   assert.equal(store.projection.payload.matches[0].delivery.state, 'recovering');
+});
+
+test('compact multi-match frame is atomic when a later match has a version gap', () => {
+  const store = new ScoreStore();
+  const first = presentation();
+  const second = secondPresentation();
+  store.snapshot(projectionWithMatches(1, [first, second]));
+  let notifications = 0;
+  store.subscribe(() => { notifications += 1; });
+
+  const rejected = store.frame({
+    contractVersion: 'score-realtime/3', kind: 'score_delta',
+    baseVersion: 1, version: 2, snapshotVersion: 2,
+    projectionGeneratedAt: '2026-08-06T23:31:00.000Z',
+    dataAsOf: '2026-08-06T23:31:00.000Z',
+    changes: [
+      { matchId: first.matchId, matchVersion: 2,
+        changes: { delivery: { ...first.delivery, dataNotice: '第一场已更新' } } },
+      { matchId: second.matchId, matchVersion: 3,
+        changes: { delivery: { ...second.delivery, dataNotice: '第二场越级更新' } } }
+    ]
+  });
+
+  assert.equal(rejected.action, 'resync_required');
+  assert.equal(rejected.reason, 'match_version_gap');
+  assert.equal(store.currentVersion(), 1);
+  assert.equal(store.projection.payload.matches[0].delivery.dataNotice, '比分实时更新中');
+  assert.equal(store.matchVersions.get(first.matchId), 1);
+  assert.equal(notifications, 1);
+  assert.equal(store.latestRealtimeMetric(), null);
+
+  const replay = store.frame({
+    contractVersion: 'score-realtime/3', kind: 'score_delta',
+    baseVersion: 1, version: 2, snapshotVersion: 2,
+    projectionGeneratedAt: '2026-08-06T23:31:00.000Z',
+    dataAsOf: '2026-08-06T23:31:00.000Z',
+    changes: [{ matchId: first.matchId, matchVersion: 2,
+      changes: { delivery: { ...first.delivery, dataNotice: '第一场已更新' } } }]
+  });
+  assert.equal(replay.action, 'compact_delta_applied');
+  assert.equal(store.matchVersions.get(first.matchId), 2);
+  assert.equal(store.projection.payload.matches[0].delivery.dataNotice, '第一场已更新');
+});
+
+test('full multi-match frame is atomic when a later match has a version gap', () => {
+  const store = new ScoreStore();
+  const first = presentation();
+  const second = secondPresentation();
+  store.snapshot(projectionWithMatches(1, [first, second]));
+
+  const rejected = store.frame({
+    contractVersion: 'score-realtime/3', kind: 'delta',
+    baseVersion: 1, version: 2,
+    projectionGeneratedAt: '2026-08-06T23:31:00.000Z',
+    dataAsOf: '2026-08-06T23:31:00.000Z',
+    removedMatchIds: [],
+    upserts: [
+      { ...first, matchVersion: 2,
+        delivery: { ...first.delivery, dataNotice: '第一场完整更新' } },
+      { ...second, matchVersion: 3,
+        delivery: { ...second.delivery, dataNotice: '第二场越级更新' } }
+    ]
+  });
+
+  assert.equal(rejected.action, 'resync_required');
+  assert.equal(rejected.reason, 'match_version_gap');
+  assert.equal(store.currentVersion(), 1);
+  assert.equal(store.projection.payload.matches[0].delivery.dataNotice, '比分实时更新中');
+  assert.equal(store.matchVersions.get(first.matchId), 1);
+});
+
+test('snapshot without matchVersion cannot overwrite a match accepted from newer SSE', () => {
+  const store = new ScoreStore();
+  const first = presentation();
+  store.snapshot(todayProjection(1, first));
+  store.frame({
+    contractVersion: 'score-realtime/3', kind: 'score_delta',
+    baseVersion: 1, version: 2, snapshotVersion: 2,
+    projectionGeneratedAt: '2026-08-06T23:31:00.000Z',
+    dataAsOf: '2026-08-06T23:31:00.000Z',
+    changes: [{ matchId: first.matchId, matchVersion: 2,
+      changes: { delivery: { ...first.delivery, dataNotice: '新 SSE' } } }]
+  });
+  const missingVersion = { ...presentation(), delivery: {
+    ...first.delivery, dataNotice: '无版本旧快照'
+  } };
+  delete missingVersion.matchVersion;
+
+  const result = store.snapshot(todayProjection(3, missingVersion));
+
+  assert.equal(result.action, 'resync_required');
+  assert.equal(result.reason, 'snapshot_match_version_missing');
+  assert.equal(store.currentVersion(), 2);
+  assert.equal(store.projection.payload.matches[0].delivery.dataNotice, '新 SSE');
+  assert.equal(store.matchVersions.get(first.matchId), 2);
+});
+
+test('captured production match versions 133 to 135 are applied without skipping', () => {
+  const matchId = 'sc_441dc0bd36a83bc34effb68c289ae367';
+  const match = presentation({ matchId, stableMatchId: matchId, matchVersion: 132 });
+  const store = new ScoreStore();
+  store.snapshot(todayProjection(1787768906157, match));
+
+  const frames = [
+    {
+      baseVersion: 1787768906157, version: 1787768906160, matchVersion: 133,
+      dataAsOf: '2026-08-26T18:28:26.495Z', notice: '生产连续版本 133'
+    },
+    {
+      baseVersion: 1787768936760, version: 1787768936762, matchVersion: 134,
+      dataAsOf: '2026-08-26T18:28:57.244Z', notice: '生产连续版本 134'
+    },
+    {
+      baseVersion: 1787768956570, version: 1787768956572, matchVersion: 135,
+      dataAsOf: '2026-08-26T18:29:17.094Z', notice: '生产连续版本 135'
+    }
+  ];
+
+  const acceptedMatchVersions = [];
+  const applied = frames.map(item => {
+    const result = store.frame({
+      contractVersion: 'score-realtime/3', kind: 'score_delta',
+      baseVersion: item.baseVersion, version: item.version,
+      snapshotVersion: item.version,
+      projectionGeneratedAt: item.dataAsOf,
+      dataAsOf: item.dataAsOf,
+      changes: [{
+        matchId,
+        matchVersion: item.matchVersion,
+        changes: { delivery: { ...match.delivery, dataNotice: item.notice } }
+      }]
+    });
+    acceptedMatchVersions.push(store.matchVersions.get(matchId));
+    return result;
+  });
+
+  assert.deepEqual(applied.map(result => result.action), [
+    'compact_delta_applied',
+    'compact_delta_applied',
+    'compact_delta_applied'
+  ]);
+  assert.deepEqual(acceptedMatchVersions, [133, 134, 135]);
+  assert.equal(store.matchVersions.get(matchId), 135);
+  assert.equal(store.projection.payload.matches[0].delivery.dataNotice, '生产连续版本 135');
 });
 
 test('per-match version gap forces a trusted snapshot resync', () => {
