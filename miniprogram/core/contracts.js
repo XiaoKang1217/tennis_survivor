@@ -14,7 +14,8 @@ const SCORE_DISPLAY_MODES = Object.freeze([
   'not_played', 'special_result', 'abandoned'
 ]);
 const DELIVERY_STATES = Object.freeze([
-  'live', 'checking', 'delayed', 'stale', 'unavailable'
+  'live', 'current', 'recovering', 'calibrating', 'source_interrupted',
+  'checking', 'delayed', 'stale', 'unavailable'
 ]);
 const BUSINESS_GROUPS = Object.freeze([
   'upcoming', 'in_progress', 'ended', 'unknown'
@@ -106,6 +107,12 @@ function presentation(value, options = {}) {
     throw new Error('presentation contract invalid');
   }
   text(match.matchId, 'presentation matchId');
+  if (match.stableMatchId !== undefined) {
+    text(match.stableMatchId, 'presentation stableMatchId');
+  }
+  if (match.matchVersion !== undefined) {
+    version(match.matchVersion, 'presentation matchVersion');
+  }
   const status = object(match.status, 'presentation status');
   oneOf(status.code, MATCH_STATUSES, 'presentation status code');
   text(status.label, 'presentation status label');
@@ -519,6 +526,7 @@ function realtimeFrame(value) {
     frame.changes.forEach((item, index) => {
       const change = object(item, `realtime compact change ${index}`);
       text(change.matchId, `realtime compact change ${index} matchId`);
+      version(change.matchVersion, `realtime compact change ${index} matchVersion`);
       const fields = object(change.changes, `realtime compact change ${index} fields`);
       const keys = Object.keys(fields);
       if (keys.length < 1) throw new Error('realtime compact changes empty');

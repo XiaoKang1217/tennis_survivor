@@ -165,6 +165,7 @@ class ScoreStore {
     this.projection = null;
     this.listeners = new Set();
     this.frameFingerprints = new Map();
+    this.matchVersions = new Map();
     this.lastRealtimeMetric = null;
   }
 
@@ -189,13 +190,14 @@ class ScoreStore {
   reset() {
     this.projection = null;
     this.frameFingerprints.clear();
+    this.matchVersions.clear();
     this.lastRealtimeMetric = null;
     this.notify();
   }
 
   snapshot(value) {
     const validated = contracts.todayProjection(value);
-    const next = mergeSnapshotRealtimeState(validated, this.projection);
+    let next = mergeSnapshotRealtimeState(validated, this.projection);
     const sameScheduleDate = this.projection?.payload?.scheduleGroupDate
       === next.payload.scheduleGroupDate;
     if (this.projection !== null
@@ -203,12 +205,39 @@ class ScoreStore {
       && next.projectionVersion < this.projection.projectionVersion) {
       return Object.freeze({ action: 'old_snapshot_ignored' });
     }
+    if (sameScheduleDate && this.projection !== null) {
+      const previousById = new Map(this.projection.payload.matches.map(match => [
+        match.matchId, match
+      ]));
+      next = Object.freeze({
+        ...next,
+        payload: Object.freeze({
+          ...next.payload,
+          matches: Object.freeze(next.payload.matches.map(match => {
+            const incomingVersion = Number(match.matchVersion || 0);
+            const acceptedVersion = this.matchVersions.get(match.matchId) || 0;
+            return incomingVersion > 0 && incomingVersion < acceptedVersion
+              ? previousById.get(match.matchId) || match
+              : match;
+          }))
+        })
+      });
+    }
     // A realtime delta is a deliberately compact frame and does not carry the
     // HTTP projection hash or its transient last-point highlight. Therefore a
     // same-version calibration snapshot is authoritative confirmation, not a
     // conflicting second document. Keep a proven highlight only while the
     // displayed score is identical; a changed score must never inherit it.
     this.projection = next;
+    for (const match of next.payload.matches) {
+      const incomingVersion = Number(match.matchVersion || 0);
+      if (incomingVersion > 0) {
+        this.matchVersions.set(match.matchId, Math.max(
+          incomingVersion,
+          this.matchVersions.get(match.matchId) || 0
+        ));
+      }
+    }
     this.notify();
     return Object.freeze({ action: 'snapshot_applied', version: next.projectionVersion });
   }
@@ -292,10 +321,21 @@ class ScoreStore {
           targetVersion: frame.version
         });
       }
+      const acceptedMatchVersion = this.matchVersions.get(item.matchId) || 0;
+      if (item.matchVersion <= acceptedMatchVersion) continue;
+      if (acceptedMatchVersion > 0 && item.matchVersion > acceptedMatchVersion + 1) {
+        return Object.freeze({
+          action: 'resync_required',
+          reason: 'match_version_gap',
+          targetVersion: frame.version
+        });
+      }
       byId.set(item.matchId, Object.freeze({
         ...previous,
-        ...item.changes
+        ...item.changes,
+        matchVersion: item.matchVersion
       }));
+      this.matchVersions.set(item.matchId, item.matchVersion);
     }
     const matches = existing.map(match => byId.get(match.matchId));
     this.projection = Object.freeze({
@@ -351,7 +391,22 @@ class ScoreStore {
     const existing = this.projection.payload.matches;
     const byId = new Map(existing.map(match => [match.matchId, match]));
     for (const matchId of frame.removedMatchIds) byId.delete(matchId);
-    for (const match of frame.upserts) byId.set(match.matchId, match);
+    for (const match of frame.upserts) {
+      const acceptedMatchVersion = this.matchVersions.get(match.matchId) || 0;
+      const incomingMatchVersion = Number(match.matchVersion || 0);
+      if (incomingMatchVersion > 0 && incomingMatchVersion <= acceptedMatchVersion) continue;
+      if (acceptedMatchVersion > 0 && incomingMatchVersion > acceptedMatchVersion + 1) {
+        return Object.freeze({
+          action: 'resync_required',
+          reason: 'match_version_gap',
+          targetVersion: frame.version
+        });
+      }
+      byId.set(match.matchId, match);
+      if (incomingMatchVersion > 0) {
+        this.matchVersions.set(match.matchId, incomingMatchVersion);
+      }
+    }
     const order = existing.map(match => match.matchId);
     for (const match of frame.upserts) {
       if (!order.includes(match.matchId)) order.push(match.matchId);

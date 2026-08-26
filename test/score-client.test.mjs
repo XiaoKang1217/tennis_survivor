@@ -221,6 +221,7 @@ test('score store applies compact realtime delta to exactly one match card', () 
     },
     changes: [{
       matchId: firstMatchId,
+      matchVersion: 2,
       changes: {
         score: {
           displayMode: 'live',
@@ -249,6 +250,54 @@ test('score store applies compact realtime delta to exactly one match card', () 
   assert.equal(typeof metric.sourceToClientRenderedMs, 'number');
 });
 
+test('older calibration snapshot cannot overwrite a newer per-match SSE version', () => {
+  const store = new ScoreStore();
+  store.snapshot(todayProjection(1));
+  const firstMatchId = store.projection.payload.matches[0].matchId;
+  store.frame({
+    contractVersion: 'score-realtime/3', kind: 'score_delta',
+    baseVersion: 1, version: 2, snapshotVersion: 2,
+    projectionGeneratedAt: '2026-08-06T23:31:00.000Z',
+    dataAsOf: '2026-08-06T23:31:00.000Z',
+    changes: [{
+      matchId: firstMatchId, matchVersion: 2,
+      changes: { delivery: { state: 'recovering', dataNotice: '实时链路恢复中',
+        dataAsOf: '2026-08-06T23:31:00.000Z', showLivePulse: false } }
+    }]
+  });
+  const olderMatch = presentation({
+    matchVersion: 1,
+    delivery: { state: 'live', dataNotice: '旧快照',
+      dataAsOf: '2026-08-06T23:30:01.000Z', showLivePulse: true }
+  });
+
+  store.snapshot(todayProjection(3, olderMatch));
+
+  assert.equal(store.projection.payload.matches[0].matchVersion, 2);
+  assert.equal(store.projection.payload.matches[0].delivery.state, 'recovering');
+});
+
+test('per-match version gap forces a trusted snapshot resync', () => {
+  const store = new ScoreStore();
+  store.snapshot(todayProjection(1));
+  const firstMatchId = store.projection.payload.matches[0].matchId;
+  const result = store.frame({
+    contractVersion: 'score-realtime/3', kind: 'score_delta',
+    baseVersion: 1, version: 2, snapshotVersion: 2,
+    projectionGeneratedAt: '2026-08-06T23:31:00.000Z',
+    dataAsOf: '2026-08-06T23:31:00.000Z',
+    changes: [{
+      matchId: firstMatchId, matchVersion: 3,
+      changes: { delivery: { state: 'source_interrupted', dataNotice: '实时源中断',
+        dataAsOf: '2026-08-06T23:31:00.000Z', showLivePulse: false } }
+    }]
+  });
+
+  assert.equal(result.action, 'resync_required');
+  assert.equal(result.reason, 'match_version_gap');
+  assert.equal(store.projection.payload.matches[0].matchVersion, 1);
+});
+
 test('score store accepts compact replay delta derived before current snapshot', () => {
   const store = new ScoreStore();
   store.snapshot(todayProjection(5));
@@ -263,6 +312,7 @@ test('score store accepts compact replay delta derived before current snapshot',
     dataAsOf: '2026-08-06T23:32:00.000Z',
     changes: [{
       matchId: firstMatchId,
+      matchVersion: 2,
       changes: {
         delivery: {
           state: 'live',
@@ -296,6 +346,7 @@ test('score store accepts bounded compact replay gap from current snapshot', () 
     dataAsOf: '2026-08-06T23:33:00.000Z',
     changes: [{
       matchId: firstMatchId,
+      matchVersion: 2,
       changes: {
         status: {
           group: { code: 'in_progress', label: '进行中' },
@@ -324,6 +375,7 @@ test('score store rejects large compact replay gap', () => {
     dataAsOf: '2026-08-06T23:34:00.000Z',
     changes: [{
       matchId: firstMatchId,
+      matchVersion: 2,
       changes: {
         delivery: {
           state: 'live',

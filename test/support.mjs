@@ -28,6 +28,8 @@ export function presentation(overrides = {}) {
     presentationContractVersion: 'match-presentation/1',
     dictionaryVersion: '1.1.0',
     matchId,
+    stableMatchId: matchId,
+    matchVersion: 1,
     visible: true,
     discipline: 'singles',
     competitionContext: { stage: 'main_draw', round: 'R32', isQualifying: false },
