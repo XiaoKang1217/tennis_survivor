@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-08-25T03:09:29.943Z",
-  "source_updated_at": "2026-08-25 11:09:28",
-  "settled_through": "2026-08-24",
+  "updated_at": "2026-08-26T03:09:31.085Z",
+  "source_updated_at": "2026-08-26 11:09:29",
+  "settled_through": "2026-08-25",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
@@ -37,9 +37,9 @@
     {
       "tour": "ATP",
       "display_name": "xxx又坑人了",
-      "score": 1323,
-      "hit_count": 47,
-      "scored_days": 36
+      "score": 1330,
+      "hit_count": 48,
+      "scored_days": 37
     },
     {
       "tour": "ATP",
@@ -79,9 +79,9 @@
     {
       "tour": "ATP",
       "display_name": "白云静水",
-      "score": 650,
-      "hit_count": 30,
-      "scored_days": 26
+      "score": 657,
+      "hit_count": 31,
+      "scored_days": 27
     },
     {
       "tour": "ATP",
@@ -303,44 +303,51 @@
     {
       "tour": "WTA",
       "display_name": "第七路单车",
-      "score": 2481,
-      "hit_count": 69,
-      "scored_days": 50
+      "score": 2595,
+      "hit_count": 72,
+      "scored_days": 52
     },
     {
       "tour": "WTA",
       "display_name": "阿vvvvv",
-      "score": 2007,
-      "hit_count": 73,
-      "scored_days": 50
+      "score": 2119,
+      "hit_count": 76,
+      "scored_days": 52
     },
     {
       "tour": "WTA",
       "display_name": "Mith",
-      "score": 1925,
-      "hit_count": 59,
-      "scored_days": 44
+      "score": 2022,
+      "hit_count": 61,
+      "scored_days": 45
     },
     {
       "tour": "WTA",
       "display_name": "AKA90",
-      "score": 1824,
-      "hit_count": 61,
-      "scored_days": 46
+      "score": 1951,
+      "hit_count": 65,
+      "scored_days": 48
     },
     {
       "tour": "WTA",
       "display_name": "xxx又坑人了",
-      "score": 1578,
-      "hit_count": 57,
-      "scored_days": 40
+      "score": 1690,
+      "hit_count": 60,
+      "scored_days": 41
     },
     {
       "tour": "WTA",
       "display_name": "莫斯特",
-      "score": 1255,
-      "hit_count": 41,
-      "scored_days": 30
+      "score": 1298,
+      "hit_count": 44,
+      "scored_days": 32
+    },
+    {
+      "tour": "WTA",
+      "display_name": "就是玩",
+      "score": 1259,
+      "hit_count": 42,
+      "scored_days": 27
     },
     {
       "tour": "WTA",
@@ -351,10 +358,10 @@
     },
     {
       "tour": "WTA",
-      "display_name": "就是玩",
-      "score": 1160,
-      "hit_count": 40,
-      "scored_days": 26
+      "display_name": "网球人",
+      "score": 937,
+      "hit_count": 30,
+      "scored_days": 21
     },
     {
       "tour": "WTA",
@@ -365,17 +372,10 @@
     },
     {
       "tour": "WTA",
-      "display_name": "网球人",
-      "score": 840,
-      "hit_count": 28,
-      "scored_days": 20
-    },
-    {
-      "tour": "WTA",
       "display_name": "白云静水",
-      "score": 789,
-      "hit_count": 27,
-      "scored_days": 20
+      "score": 832,
+      "hit_count": 30,
+      "scored_days": 22
     },
     {
       "tour": "WTA",
@@ -414,17 +414,17 @@
     },
     {
       "tour": "WTA",
+      "display_name": "五陵@神光",
+      "score": 337,
+      "hit_count": 9,
+      "scored_days": 6
+    },
+    {
+      "tour": "WTA",
       "display_name": "樱沫雪99",
       "score": 284,
       "hit_count": 11,
       "scored_days": 8
-    },
-    {
-      "tour": "WTA",
-      "display_name": "五陵@神光",
-      "score": 223,
-      "hit_count": 6,
-      "scored_days": 4
     },
     {
       "tour": "WTA",
