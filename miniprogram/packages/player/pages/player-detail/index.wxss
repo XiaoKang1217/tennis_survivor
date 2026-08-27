@@ -85,3 +85,4 @@
 .theme-dark .profile-tabs>view.active,
 .theme-dark .technical-cell{background:var(--surface)}
 .theme-dark .profile-share-button{background:var(--surface);border-color:var(--line-strong);color:var(--brand-strong)}
+.player-name-line{align-items:baseline;gap:3rpx}.player-name-line .player-name{flex:none}.flower-total{padding:0;border:0;background:transparent}

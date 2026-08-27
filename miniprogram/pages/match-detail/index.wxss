@@ -254,3 +254,4 @@
 .theme-dark .point-set-tabs button.active{background:var(--surface);color:var(--brand-strong)}
 .theme-dark .detail-actions{background:var(--canvas-subtle)}
 .theme-dark .share-button{background:var(--surface)!important;color:var(--brand-strong)!important}
+.hero-name-wrap{align-items:baseline;gap:2rpx}.hero-flower-total{padding:0;border:0;background:transparent}

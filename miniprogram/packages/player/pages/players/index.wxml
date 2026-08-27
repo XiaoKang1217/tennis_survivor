@@ -170,7 +170,7 @@
         <text class="leaderboard-rank">{{item.leaderboardPosition}}</text>
         <view class="flower-card-photo"><image wx:if="{{item.cardImageUrl}}" src="{{item.cardImageUrl}}" mode="aspectFill"/><ui-icon wx:else name="player" size="24" color="#7d8b99"/></view>
         <view class="flower-card-copy"><text>{{item.name}}</text><text wx:if="{{item.originalName}}">{{item.originalName}}</text><text wx:if="{{item.flowerMeta}}">{{item.flowerMeta}}</text></view>
-        <text class="flower-card-total">花{{item.flowerTotal}}</text>
+        <text class="flower-card-total">🌸{{item.flowerTotal}}</text>
       </view>
     </block>
   </view>

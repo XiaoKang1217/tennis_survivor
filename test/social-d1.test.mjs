@@ -12,3 +12,15 @@ for (const [name, source] of [['root', root], ['mirror', mirror]]) {
     assert.doesNotMatch(source, /DateTimeFormat/u);
   });
 }
+
+test('SOCIAL-D1 flower totals use the flower emoji and sit inline with player names', () => {
+  const matchView = readFileSync(new URL('../pages/match-detail/index.wxml', import.meta.url), 'utf8');
+  const matchStyle = readFileSync(new URL('../pages/match-detail/index.wxss', import.meta.url), 'utf8');
+  const playerView = readFileSync(new URL('../packages/player/pages/player-detail/index.wxml', import.meta.url), 'utf8');
+  const leaderboardView = readFileSync(new URL('../packages/player/pages/players/index.wxml', import.meta.url), 'utf8');
+  assert.match(matchView, /hero-name[^\n]*🌸\{\{item\.members\[0\]\.flowerTotal\}\}/u);
+  assert.match(matchStyle, /hero-name-wrap\{align-items:baseline;gap:2rpx\}/u);
+  assert.match(playerView, /🌸\{\{lifetimeFlowerTotal\}\}/u);
+  assert.match(leaderboardView, /🌸\{\{item\.flowerTotal\}\}/u);
+  assert.doesNotMatch(`${matchView}\n${playerView}\n${leaderboardView}`, />花\{\{/u);
+});
