@@ -191,12 +191,58 @@ function drawLinear(ctx, x, y, width, height, from, to, vertical = false) {
   ctx.fillRect(x, y, width, height);
 }
 
-function logo(ctx, x, y, light = true) {
-  fillText(ctx, '炉网｜网球，此刻发生', x, y, 15, light ? '#FFFFFF' : BRAND_BLUE, { weight: 650 });
+function logo(ctx, x, y, light = true, compact = false) {
+  fillText(ctx, '炉的网球', x, y, compact ? 17 : 20, light ? '#FFFFFF' : INK, { weight: 850 });
   ctx.setFillStyle(YELLOW);
   ctx.beginPath();
-  ctx.arc(x + 162, y + 9, 6, 0, Math.PI * 2);
+  ctx.arc(x + (compact ? 78 : 92), y + (compact ? 9 : 11), compact ? 4 : 5, 0, Math.PI * 2);
   ctx.fill();
+}
+
+function sectionLabel(ctx, value, x, y, light = true) {
+  fillText(ctx, value, x, y, 13, light ? '#A9CFFF' : BRAND_BLUE, {
+    weight: 800
+  });
+}
+
+function drawCirclePhoto(ctx, image, x, y, diameter, label, border = '#FFFFFF') {
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(x + diameter / 2, y + diameter / 2, diameter / 2, 0, Math.PI * 2);
+  ctx.clip();
+  const drawn = drawCover(ctx, image, x, y, diameter, diameter, 0);
+  if (!drawn) {
+    ctx.setFillStyle('#DCEAFF');
+    ctx.fillRect(x, y, diameter, diameter);
+    fillText(ctx, limited(label, 2), x + diameter / 2, y + diameter / 2, Math.round(diameter * 0.25), BRAND_BLUE, {
+      align: 'center', baseline: 'middle', weight: 850
+    });
+  }
+  ctx.restore();
+  ctx.save();
+  ctx.setStrokeStyle(border);
+  ctx.setLineWidth(4);
+  ctx.beginPath();
+  ctx.arc(x + diameter / 2, y + diameter / 2, diameter / 2 - 2, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function tournamentArtwork(name, level = '', tour = '') {
+  const value = cleanText(name).toLowerCase();
+  if (/(us open|美网|美国网球公开赛)/u.test(value)) return '/assets/grand-slam-us-open.png';
+  if (/(wimbledon|温网|温布尔登)/u.test(value)) return '/assets/grand-slam-wimbledon.png';
+  if (/(roland|garros|法网|罗兰·加洛斯)/u.test(value)) return '/assets/grand-slam-roland-garros.png';
+  if (/(australian open|澳网|澳大利亚网球公开赛)/u.test(value)) return '/assets/grand-slam-australian-open.png';
+  const levelValue = cleanText(level).toLowerCase();
+  const tourValue = cleanText(tour).toLowerCase();
+  const authority = tourValue.includes('wta') ? 'wta' : 'atp';
+  if (/1000/u.test(levelValue)) return `/assets/${authority}-1000.png`;
+  if (/500/u.test(levelValue)) return `/assets/${authority}-500.png`;
+  if (/250/u.test(levelValue)) return `/assets/${authority}-250.png`;
+  if (/125/u.test(levelValue)) return '/assets/wta-125.png';
+  if (/challenger|挑战赛/u.test(levelValue)) return '/assets/atp-challenger.png';
+  return '';
 }
 
 function pill(ctx, x, y, width, height, text, color, textColor = '#FFFFFF') {
@@ -256,6 +302,18 @@ function matchScore(match) {
   };
 }
 
+function matchSetLine(match) {
+  const left = Array.isArray(match?.leftScoreCells) ? match.leftScoreCells : [];
+  const right = Array.isArray(match?.rightScoreCells) ? match.rightScoreCells : [];
+  const parts = left.map((cell, index) => {
+    const pair = right[index];
+    const first = cleanText(cell?.value);
+    const second = cleanText(pair?.value);
+    return first && second ? `${first}-${second}` : '';
+  }).filter(Boolean);
+  return parts.join('  ');
+}
+
 function currentSetLabel(match) {
   const sets = Array.isArray(match?.sets) ? match.sets : [];
   const current = sets.find(set => set.current) || sets[sets.length - 1];
@@ -307,49 +365,48 @@ function drawEmptyPhoto(ctx, x, y, width, height, label) {
 }
 
 function drawMatchCard(ctx, match, images, width, height) {
-  drawMatchBackground(ctx, width, height);
-  if (!drawCover(ctx, images.first, 0, 78, 188, 228, 0)) drawEmptyPhoto(ctx, 18, 95, 148, 178, matchNames(match)[0]);
-  if (!drawCover(ctx, images.second, 312, 78, 188, 228, 0)) drawEmptyPhoto(ctx, 334, 95, 148, 178, matchNames(match)[1]);
-  ctx.setFillStyle('rgba(2,17,43,0.28)');
-  ctx.fillRect(0, 0, width, height);
-  logo(ctx, 24, 22);
-  fillText(ctx, limited(matchScope(match), 22), width / 2, 62, 16, '#FFFFFF', { align: 'center' });
-  pill(ctx, width / 2 - 42, 94, 84, 30, cleanText(match?.statusLabel, '比赛'), normalStatusColor(match));
+  drawLinear(ctx, 0, 0, width, height, '#061A37', '#0B4B93');
   const names = matchNames(match);
   const score = matchScore(match);
-  fitText(ctx, names[0], 112, 177, 100, 19, 14, '#FFFFFF', { align: 'center' });
-  fillText(ctx, scorePart(score.score, 0), 229, 160, 58, YELLOW, { align: 'center' });
-  fillText(ctx, ':', 268, 168, 42, '#FFFFFF', { align: 'center' });
-  fillText(ctx, scorePart(score.score, 1), 312, 160, 52, '#FFFFFF', { align: 'center' });
-  fitText(ctx, names[1], 388, 177, 112, 19, 14, '#FFFFFF', { align: 'center' });
-  fillText(ctx, scheduleOrCurrent(match, score), width / 2, 238, 19, '#FFFFFF', { align: 'center' });
-  ctx.setFillStyle('rgba(1,14,34,0.74)');
-  ctx.fillRect(0, 320, width, 60);
-  ['实时比分', '逐分', '技术统计'].forEach((item, index) => {
-    const x = [116, 250, 382][index];
-    ctx.setFillStyle('#58A9FF');
-    fillRoundRect(ctx, x - 38, 344, 16, 16, 3, '#58A9FF');
-    fillText(ctx, item, x - 10, 340, 15, '#FFFFFF', { weight: 650 });
-  });
-  bottomLine(ctx, width, height);
+  logo(ctx, 24, 20, true, true);
+  pill(ctx, 392, 18, 84, 28, cleanText(match?.statusLabel, '比赛'), normalStatusColor(match));
+  fillText(ctx, limited(matchScope(match), 30), 24, 58, 15, '#BBD8FF', { weight: 650 });
+  fillRoundRect(ctx, 20, 92, 460, 236, 20, '#FFFFFF');
+  drawCirclePhoto(ctx, images.first, 46, 119, 94, names[0]);
+  drawCirclePhoto(ctx, images.second, 360, 119, 94, names[1]);
+  fitText(ctx, names[0], 93, 224, 135, 19, 13, INK, { align: 'center' });
+  fitText(ctx, names[1], 407, 224, 135, 19, 13, INK, { align: 'center' });
+  fillText(ctx, match?.preMatch ? 'VS' : displayScore(score.score), 250, 135,
+    match?.preMatch ? 34 : 48, BRAND_BLUE, { align: 'center', weight: 900 });
+  const setLine = matchSetLine(match);
+  fillText(ctx, setLine || scheduleOrCurrent(match, score), 250, 199, setLine ? 17 : 20,
+    setLine ? MUTED : INK, { align: 'center', weight: 750 });
+  fillText(ctx, match?.preMatch ? cleanText(match?.scheduleText, '赛程待定')
+    : scheduleOrCurrent(match, score), 250, 272, 16, MUTED, { align: 'center', weight: 650 });
+  fillText(ctx, '打开查看实时比分、逐分与技术统计', 24, 354, 15, '#DCEBFF', { weight: 650 });
+  fillText(ctx, '微信内查看  ›', 476, 354, 15, YELLOW, { align: 'right', weight: 800 });
 }
 
 function drawMatchSquare(ctx, match, images, width, height) {
-  drawMatchBackground(ctx, width, height);
-  drawCover(ctx, images.first, 0, 0, width / 2, 252, 0);
-  drawCover(ctx, images.second, width / 2, 0, width / 2, 252, 0);
-  ctx.setFillStyle('rgba(0,13,32,0.44)');
-  ctx.fillRect(0, 0, width, height);
-  logo(ctx, 22, 22);
+  drawLinear(ctx, 0, 0, width, height, '#04152F', '#0A3974', true);
   const names = matchNames(match);
   const score = matchScore(match);
-  fillText(ctx, limited(`${names[0]} vs`, 12), 40, 270, 40, '#FFFFFF');
-  fillText(ctx, limited(names[1], 12), 40, 322, 40, '#FFFFFF');
-  fillText(ctx, `${names[0]}  `, 42, 398, 18, '#FFFFFF');
-  fillText(ctx, displayScore(score.score), 128, 391, 29, BRAND_BLUE);
-  fillText(ctx, `  ${names[1]}`, 198, 398, 18, '#FFFFFF');
-  pill(ctx, 42, 432, 80, 30, cleanText(match?.statusLabel, '比赛'), normalStatusColor(match));
-  fillText(ctx, limited(matchScope(match), 18), width - 42, 438, 16, '#FFFFFF', { align: 'right', weight: 650 });
+  drawCirclePhoto(ctx, images.first, 38, 112, 142, names[0], '#7AB7FF');
+  drawCirclePhoto(ctx, images.second, 320, 112, 142, names[1], '#7AB7FF');
+  logo(ctx, 28, 24);
+  pill(ctx, 388, 24, 84, 30, cleanText(match?.statusLabel, '比赛'), normalStatusColor(match));
+  sectionLabel(ctx, limited(matchScope(match), 30), 28, 70);
+  fitText(ctx, names[0], 109, 267, 180, 24, 15, '#FFFFFF', { align: 'center' });
+  fitText(ctx, names[1], 391, 267, 180, 24, 15, '#FFFFFF', { align: 'center' });
+  fillRoundRect(ctx, 188, 142, 124, 78, 18, 'rgba(255,255,255,0.10)');
+  fillText(ctx, match?.preMatch ? 'VS' : displayScore(score.score), 250, 158,
+    match?.preMatch ? 35 : 45, YELLOW, { align: 'center', weight: 900 });
+  fillText(ctx, matchSetLine(match) || scheduleOrCurrent(match, score), 250, 324, 21,
+    '#FFFFFF', { align: 'center', weight: 800 });
+  ctx.setStrokeStyle('rgba(187,216,255,0.34)');
+  ctx.beginPath(); ctx.moveTo(28, 376); ctx.lineTo(472, 376); ctx.stroke();
+  fillText(ctx, '实时比分 · 逐分 · 技术统计', 28, 404, 18, '#BBD8FF', { weight: 700 });
+  fillText(ctx, '微信搜索「炉的网球」', 28, 449, 16, '#FFFFFF', { weight: 650 });
 }
 
 function playerImage(data) {
@@ -370,41 +427,51 @@ function nextOrRecent(data) {
 }
 
 function drawPlayerCard(ctx, data, image, width, height) {
-  drawLinear(ctx, 0, 0, width, height, '#FFFFFF', '#EEF6FF');
-  logo(ctx, 24, 22, false);
-  fitText(ctx, cleanText(data?.name, '球员资料'), 44, 94, 210, 42, 25, INK);
-  fillText(ctx, cleanText(data?.countryCode, ''), 88, 168, 18, INK);
-  fillRoundRect(ctx, 46, 168, 34, 18, 2, '#E52828');
-  fillText(ctx, `${cleanText(data?.tour, 'ATP')} 世界第`, 48, 222, 22, INK);
-  fillText(ctx, playerRank(data) || '—', 196, 216, 34, BRAND_BLUE);
-  ctx.setStrokeStyle('#D7DEE8');
-  ctx.beginPath();
-  ctx.moveTo(48, 270);
-  ctx.lineTo(224, 270);
-  ctx.stroke();
-  fillText(ctx, '本赛季', 48, 312, 20, INK);
-  fillText(ctx, seasonTitles(data), 132, 304, 34, BRAND_BLUE);
-  fillText(ctx, '冠', 176, 312, 20, INK);
+  drawLinear(ctx, 0, 0, width, height, '#F7FAFF', '#DDEBFF');
+  fillRoundRect(ctx, 18, 18, 464, 364, 22, '#FFFFFF');
+  logo(ctx, 38, 34, false, true);
+  sectionLabel(ctx, '球员资料', 38, 70, false);
+  fitText(ctx, cleanText(data?.name, '球员资料'), 38, 100, 242, 38, 23, INK);
+  const originalName = cleanText(data?.originalName);
+  if (originalName && originalName !== cleanText(data?.name)) {
+    fitText(ctx, originalName, 38, 146, 238, 17, 12, MUTED, { weight: 600 });
+  }
+  const rank = playerRank(data) || '—';
+  fillText(ctx, `${cleanText(data?.tour, 'ATP')} 世界排名`, 38, 205, 16, MUTED, { weight: 650 });
+  fillText(ctx, `#${rank}`, 38, 228, 48, BRAND_BLUE, { weight: 900 });
+  const country = cleanText(data?.countryCode);
+  if (country) pill(ctx, 38, 292, 70, 28, country, '#E9F2FF', BRAND_BLUE);
+  const titles = seasonTitles(data);
+  fillText(ctx, `本赛季 ${titles} 冠`, 122, 297, 16, INK, { weight: 750 });
   const next = nextOrRecent(data);
-  if (next) fillText(ctx, `近期 · ${limited(next, 12)}`, 48, 356, 18, INK);
-  ctx.setFillStyle('#C7D5E8');
-  fillText(ctx, playerRank(data) || '', 372, 68, 148, 'rgba(8,21,47,0.18)', { align: 'center' });
-  drawLinear(ctx, 302, 0, 198, height, 'rgba(255,255,255,0)', '#061A37');
-  if (!drawCover(ctx, image, 288, 28, 212, 372, 0)) drawEmptyPhoto(ctx, 318, 74, 150, 260, cleanText(data?.name, '球员'));
-  bottomLine(ctx, width, height);
+  if (next) fillText(ctx, `近期赛事 · ${limited(next, 15)}`, 38, 340, 15, MUTED, { weight: 650 });
+  if (!drawCover(ctx, image, 292, 38, 190, 344, 18)) {
+    drawEmptyPhoto(ctx, 312, 82, 150, 240, cleanText(data?.name, '球员'));
+  }
 }
 
 function drawPlayerSquare(ctx, data, image, width, height) {
-  drawLinear(ctx, 0, 0, width, height, '#03142E', '#071F47');
-  logo(ctx, 22, 22);
-  fillText(ctx, limited(cleanText(data?.name, '球员资料'), 8), 42, 116, 45, '#FFFFFF');
-  fillText(ctx, '球员资料', 42, 170, 34, '#FFFFFF');
-  fillText(ctx, playerRank(data) || '', 214, 226, 170, 'rgba(18,107,255,0.35)', { align: 'center' });
-  fillText(ctx, `${cleanText(data?.tour, 'ATP')} 世界第 ${playerRank(data) || '—'}`, 52, 330, 22, '#FFFFFF');
+  drawLinear(ctx, 0, 0, width, height, '#03142E', '#0B4B93', true);
+  logo(ctx, 28, 24);
+  sectionLabel(ctx, '球员资料', 28, 67);
+  const name = cleanText(data?.name, '球员资料');
+  fitText(ctx, name, 28, 102, 286, 44, 26, '#FFFFFF');
+  const originalName = cleanText(data?.originalName);
+  if (originalName && originalName !== name) {
+    fitText(ctx, originalName, 28, 156, 270, 18, 13, '#BBD8FF', { weight: 600 });
+  }
+  fillText(ctx, `${cleanText(data?.tour, 'ATP')} 世界排名`, 30, 223, 17, '#BBD8FF', { weight: 650 });
+  fillText(ctx, `#${playerRank(data) || '—'}`, 28, 247, 66, YELLOW, { weight: 900 });
   const recent = nextOrRecent(data);
-  if (recent) pill(ctx, 52, 382, 132, 36, limited(recent, 10), BRAND_BLUE);
-  if (cleanText(data?.countryCode)) fillText(ctx, cleanText(data.countryCode), 106, 450, 17, '#FFFFFF');
-  if (!drawCover(ctx, image, 296, 58, 204, 442, 0)) drawEmptyPhoto(ctx, 320, 160, 150, 260, cleanText(data?.name, '球员'));
+  if (recent) {
+    sectionLabel(ctx, '近期赛事', 30, 349);
+    fitText(ctx, recent, 30, 375, 255, 21, 14, '#FFFFFF', { weight: 750 });
+  }
+  fillText(ctx, [cleanText(data?.countryCode), `本赛季 ${seasonTitles(data)} 冠`]
+    .filter(Boolean).join('  ·  '), 30, 447, 16, '#DCEBFF', { weight: 650 });
+  if (!drawCover(ctx, image, 300, 56, 200, 444, 0)) {
+    drawEmptyPhoto(ctx, 324, 150, 150, 260, name);
+  }
 }
 
 function fieldValue(fields, label) {
@@ -419,6 +486,7 @@ function tournamentFacts(detail, fallback = {}) {
     || cleanText(fallback?.status);
   return {
     name: cleanText(detail?.name?.value || detail?.name, cleanText(fallback.title, '赛事详情')),
+    tour: fieldValue(detail?.classification, '赛事体系'),
     level: fieldValue(detail?.classification, '赛事级别'),
     surface: fieldValue(detail?.location, '场地'),
     city: fieldValue(detail?.location, '城市'),
@@ -438,27 +506,44 @@ function shortDateRange(facts) {
   return start && end ? `${start}-${end}` : start || end || '';
 }
 
-function drawTournamentPoster(ctx, detail, bg, width, height, square = false) {
-  if (!drawCover(ctx, bg, 0, 0, width, height, 0)) drawLinear(ctx, 0, 0, width, height, '#02152F', '#06316D', true);
-  ctx.setFillStyle('rgba(0,13,32,0.38)');
-  ctx.fillRect(0, 0, width, height);
-  logo(ctx, square ? 22 : 24, 22);
+function drawTournamentPoster(ctx, detail, artwork, width, height, square = false) {
   const facts = tournamentFacts(detail);
-  const nameLines = square ? [limited(facts.name, 9), facts.lifecycle || shortDateRange(facts)] : [limited(facts.name, 9), ''];
+  drawLinear(ctx, 0, 0, width, height, '#04152F', '#0B4B93', true);
+  logo(ctx, square ? 28 : 24, square ? 24 : 20, true, !square);
   if (square) {
-    fillText(ctx, `${nameLines[0]}，`, 42, 138, 43, '#FFFFFF');
-    fillText(ctx, limited(nameLines[1] || '赛事详情', 8), 42, 192, 43, '#FFFFFF');
-    fillText(ctx, facts.name, 44, 282, 25, '#FFFFFF');
-    if (facts.level) pill(ctx, 44, 328, 82, 32, facts.level, BRAND_BLUE);
-    if (facts.surface) pill(ctx, 138, 328, 66, 32, facts.surface, YELLOW, INK);
-    fillText(ctx, facts.lifecycle || shortDateRange(facts), 44, 404, 27, '#FFFFFF');
+    sectionLabel(ctx, '赛事详情', 28, 70);
+    if (artwork) {
+      fillRoundRect(ctx, 348, 24, 124, 124, 20, '#FFFFFF');
+      drawCover(ctx, artwork, 360, 36, 100, 100, 12);
+    }
+    fitText(ctx, facts.name, 28, 112, artwork ? 300 : 430, 43, 26, '#FFFFFF');
+    if (facts.level) pill(ctx, 28, 190, 110, 34, limited(facts.level, 9), BRAND_BLUE);
+    if (facts.surface) pill(ctx, 148, 190, 76, 34, facts.surface, YELLOW, INK);
+    fillText(ctx, shortDateRange(facts) || '赛期待定', 28, 262, 36, '#FFFFFF', { weight: 850 });
+    fillText(ctx, [facts.city, facts.lifecycle].filter(Boolean).join('  ·  '), 30, 311, 18, '#BBD8FF', { weight: 650 });
+    fillRoundRect(ctx, 28, 365, 444, 78, 16, 'rgba(255,255,255,0.10)');
+    fillText(ctx, '赛程  ·  签表  ·  奖金积分  ·  实时比分', 250, 391, 18, '#FFFFFF', {
+      align: 'center', weight: 750
+    });
+    fillText(ctx, '微信搜索「炉的网球」', 28, 466, 15, '#DCEBFF', { weight: 650 });
   } else {
-    fitText(ctx, facts.name, 46, 92, 205, 36, 27, '#FFFFFF');
-    if (facts.level) pill(ctx, 48, 202, 88, 30, facts.level, BRAND_BLUE);
-    fillText(ctx, [facts.surface, facts.city].filter(Boolean).join(' · '), 48, 252, 21, '#FFFFFF');
-    fillText(ctx, facts.lifecycle || shortDateRange(facts), 48, 320, 22, YELLOW);
-    fillText(ctx, '赛程 · 签表 · 实时比分', 48, 356, 16, '#FFFFFF', { weight: 650 });
-    bottomLine(ctx, width, height);
+    sectionLabel(ctx, '赛事详情', 24, 55);
+    fillRoundRect(ctx, 20, 88, 460, 250, 22, '#FFFFFF');
+    fitText(ctx, facts.name, 42, 112, artwork ? 278 : 410, 37, 24, INK);
+    let tagX = 42;
+    if (facts.level) {
+      pill(ctx, tagX, 166, 106, 30, limited(facts.level, 9), '#E8F1FF', BRAND_BLUE);
+      tagX += 116;
+    }
+    if (facts.surface) pill(ctx, tagX, 166, 76, 30, facts.surface, '#FFF5C2', INK);
+    fillText(ctx, shortDateRange(facts) || '赛期待定', 42, 225, 27, BRAND_BLUE, { weight: 850 });
+    fillText(ctx, [facts.city, facts.lifecycle].filter(Boolean).join('  ·  '), 42, 272, 17, MUTED, { weight: 650 });
+    if (artwork) {
+      fillRoundRect(ctx, 340, 112, 112, 112, 18, '#F5F8FD');
+      drawCover(ctx, artwork, 352, 124, 88, 88, 12);
+    }
+    fillText(ctx, '打开查看赛程、签表和奖金积分', 24, 358, 15, '#DCEBFF', { weight: 650 });
+    fillText(ctx, '微信内查看  ›', 476, 358, 15, YELLOW, { align: 'right', weight: 800 });
   }
 }
 
@@ -531,7 +616,7 @@ function drawFactRows(ctx, rows, x, y, width, rowHeight, dark = true) {
   });
 }
 
-function drawDrawPoster(ctx, data, width, height, square = false) {
+function drawDrawPoster(ctx, data, artwork, width, height, square = false) {
   drawLinear(ctx, 0, 0, width, height, '#051C3C', '#0B5EB8', true);
   ctx.setFillStyle('rgba(1,14,34,0.24)');
   ctx.fillRect(0, 0, width, height);
@@ -545,7 +630,7 @@ function drawDrawPoster(ctx, data, width, height, square = false) {
   ctx.moveTo(width / 2, square ? 206 : 178);
   ctx.lineTo(width / 2, square ? 382 : 330);
   ctx.stroke();
-  logo(ctx, square ? 22 : 24, 22);
+  logo(ctx, square ? 28 : 24, square ? 24 : 20, true, !square);
   const title = cleanText(data?.selectedTitle, '赛事签表');
   const draw = (Array.isArray(data?.draws) ? data.draws : [])
     .find(item => item.drawId === data?.selectedDrawId);
@@ -553,18 +638,28 @@ function drawDrawPoster(ctx, data, width, height, square = false) {
   const summary = drawRoundSummary(data);
   const rows = summary.matches;
   if (square) {
-    fillText(ctx, '签表', width - 42, 88, 70, 'rgba(234,242,5,0.88)', { align: 'right', weight: 900 });
-    fitText(ctx, title, 42, 130, 310, 41, 28, '#FFFFFF');
-    pill(ctx, 42, 196, 124, 34, limited(label, 8), YELLOW, INK);
-    fillText(ctx, `${summary.roundTitle} · ${summary.total}场`, 42, 238, 18, '#DCEBFF', { weight: 760 });
-    drawFactRows(ctx, rows, 32, 270, 436, 66, true);
+    sectionLabel(ctx, '赛事签表', 28, 70);
+    if (artwork) {
+      fillRoundRect(ctx, 376, 24, 96, 96, 18, '#FFFFFF');
+      drawCover(ctx, artwork, 386, 34, 76, 76, 12);
+    }
+    fitText(ctx, title, 28, 112, artwork ? 330 : 430, 38, 25, '#FFFFFF');
+    pill(ctx, 28, 165, 136, 34, limited(label, 10), YELLOW, INK);
+    fillText(ctx, `${summary.roundTitle} · ${summary.total}场`, 180, 171, 18, '#DCEBFF', { weight: 760 });
+    drawFactRows(ctx, rows.slice(0, 3), 28, 222, 444, 58, true);
+    fillText(ctx, '完整签表与实时赛果，微信内查看', 28, 466, 15, '#DCEBFF', { weight: 650 });
   } else {
-    fillText(ctx, '签表', width - 36, 66, 58, 'rgba(234,242,5,0.88)', { align: 'right', weight: 900 });
-    fitText(ctx, title, 40, 92, 310, 34, 25, '#FFFFFF');
-    pill(ctx, 40, 142, 126, 32, limited(label, 8), YELLOW, INK);
-    fillText(ctx, `${summary.roundTitle} · ${summary.total}场 · 权威签表摘要`, 40, 190, 18, '#DCEBFF', { weight: 700 });
-    drawFactRows(ctx, rows.slice(0, 3), 28, 224, 444, 58, true);
-    bottomLine(ctx, width, height);
+    sectionLabel(ctx, '赛事签表', 24, 55);
+    if (artwork) {
+      fillRoundRect(ctx, 400, 18, 76, 76, 14, '#FFFFFF');
+      drawCover(ctx, artwork, 408, 26, 60, 60, 10);
+    }
+    fitText(ctx, title, 24, 90, artwork ? 360 : 440, 32, 23, '#FFFFFF');
+    pill(ctx, 24, 136, 132, 30, limited(label, 10), YELLOW, INK);
+    fillText(ctx, `${summary.roundTitle} · ${summary.total}场`, 170, 142, 17, '#DCEBFF', { weight: 750 });
+    drawFactRows(ctx, rows.slice(0, 3), 24, 190, 452, 55, true);
+    fillText(ctx, '完整签表与实时赛果', 24, 365, 14, '#DCEBFF', { weight: 650 });
+    fillText(ctx, '微信内查看  ›', 476, 365, 14, YELLOW, { align: 'right', weight: 800 });
   }
 }
 
@@ -633,12 +728,20 @@ async function createPoster(page, kind, data, variant) {
     });
   }
   if (kind === 'tournament') {
+    const facts = tournamentFacts(data);
+    const artwork = await getImageInfo(tournamentArtwork(facts.name, facts.level, facts.tour));
     return drawWithCanvas(page, width, height, ctx => {
-      drawTournamentPoster(ctx, data, null, width, height, variant === 'timeline');
+      drawTournamentPoster(ctx, data, artwork, width, height, variant === 'timeline');
     });
   }
+  const summary = data?.selectedTournamentSummary || {};
+  const artwork = await getImageInfo(tournamentArtwork(
+    data?.selectedTitle,
+    summary.level,
+    data?.selectedTour
+  ));
   return drawWithCanvas(page, width, height, ctx => {
-    drawDrawPoster(ctx, data, width, height, variant === 'timeline');
+    drawDrawPoster(ctx, data, artwork, width, height, variant === 'timeline');
   });
 }
 

@@ -60,7 +60,12 @@ test('share poster canvas covers match player draw and tournament pages', () => 
   assert.match(poster, /function drawPlayerCard/u);
   assert.match(poster, /function drawDrawPoster/u);
   assert.match(poster, /function drawTournamentPoster/u);
-  assert.match(poster, /炉网｜网球，此刻发生/u);
+  assert.match(poster, /炉的网球/u);
+  assert.match(poster, /function drawCirclePhoto/u);
+  assert.match(poster, /function tournamentArtwork/u);
+  assert.match(poster, /微信内查看/u);
+  assert.match(poster, /微信搜索「炉的网球」/u);
+  assert.match(poster, /variant === 'timeline'/u);
   assert.doesNotMatch(poster, /冠军，还要赢三场|冠军之路|下一站|LUWANG/u);
   assert.doesNotMatch(poster, /player-share-portrait-sample/u);
   for (const page of [
