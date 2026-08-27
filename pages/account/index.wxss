@@ -417,3 +417,5 @@
   font-weight: 800;
   text-align: center;
 }
+
+.flower-emoji{display:inline-block;line-height:1}.flower-emoji-balance{margin-right:4rpx;font-size:25rpx}.flower-emoji-small{font-size:20rpx}

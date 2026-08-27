@@ -24,3 +24,14 @@ test('SOCIAL-D1 flower totals use the flower emoji and sit inline with player na
   assert.match(leaderboardView, /🌸\{\{item\.flowerTotal\}\}/u);
   assert.doesNotMatch(`${matchView}\n${playerView}\n${leaderboardView}`, />花\{\{/u);
 });
+
+test('SOCIAL-D1 account and check-in keep clear flower copy but use the emoji artwork', () => {
+  const account = readFileSync(new URL('../pages/account/index.wxml', import.meta.url), 'utf8');
+  const center = readFileSync(new URL('../pages/social-center/index.wxml', import.meta.url), 'utf8');
+  assert.match(account, /我的花朵/u);
+  assert.match(account, /签到、花朵与勋章/u);
+  assert.match(center, /可用花朵/u);
+  assert.match(center, /花朵明细/u);
+  assert.match(`${account}\n${center}`, /🌸/u);
+  assert.doesNotMatch(`${account}\n${center}`, /ui-icon[^>]*name="flower"/u);
+});
