@@ -165,12 +165,14 @@
     <view wx:if="{{loading}}" class="page-state"><client-state state="loading" label="正在读取送花榜" message=""/></view>
     <view wx:elif="{{failed}}" class="page-state"><client-state state="failed" label="送花榜暂不可用" message="请稍后重试" retryable bind:retry="load"/></view>
     <view wx:elif="{{!visiblePlayers.length}}" class="page-state"><client-state state="empty" label="还没有送花记录" message="第一份支持会出现在这里"/></view>
-    <view wx:else wx:for="{{visiblePlayers}}" wx:key="id" class="flower-card" data-id="{{item.id}}" data-index="{{index}}" bindtap="openFlowerEntry" role="button">
-      <text class="leaderboard-rank">{{item.leaderboardPosition}}</text>
-      <view class="flower-card-photo"><image wx:if="{{item.cardImageUrl}}" src="{{item.cardImageUrl}}" mode="aspectFill"/><ui-icon wx:else name="player" size="24" color="#7d8b99"/></view>
-      <view class="flower-card-copy"><text>{{item.name}}</text><text wx:if="{{item.originalName}}">{{item.originalName}}</text><text wx:if="{{item.flowerMeta}}">{{item.flowerMeta}}</text></view>
-      <text class="flower-card-total">花{{item.flowerTotal}}</text>
-    </view>
+    <block wx:else>
+      <view wx:for="{{visiblePlayers}}" wx:key="id" class="flower-card" data-id="{{item.id}}" data-index="{{index}}" bindtap="openFlowerEntry" role="button">
+        <text class="leaderboard-rank">{{item.leaderboardPosition}}</text>
+        <view class="flower-card-photo"><image wx:if="{{item.cardImageUrl}}" src="{{item.cardImageUrl}}" mode="aspectFill"/><ui-icon wx:else name="player" size="24" color="#7d8b99"/></view>
+        <view class="flower-card-copy"><text>{{item.name}}</text><text wx:if="{{item.originalName}}">{{item.originalName}}</text><text wx:if="{{item.flowerMeta}}">{{item.flowerMeta}}</text></view>
+        <text class="flower-card-total">花{{item.flowerTotal}}</text>
+      </view>
+    </block>
   </view>
   <view wx:elif="{{section === 'follows'}}" class="follow-leaderboard-list">
     <view wx:if="{{loading && !visiblePlayers.length}}" class="page-state">
