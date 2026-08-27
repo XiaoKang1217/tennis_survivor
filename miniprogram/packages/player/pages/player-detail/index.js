@@ -207,6 +207,13 @@ Page({
     heroImageUrl: '',
     followTargetId: '',
     followed: false,
+    lifetimeFlowerTotal: 0,
+    topFans: [],
+    viewerFanRankText: '',
+    giftOpen: false,
+    giftAmount: '1',
+    giftSubmitting: false,
+    giftResult: null,
     shareCardImageUrl: '',
     shareTimelineImageUrl: ''
   },
@@ -214,6 +221,7 @@ Page({
   onLoad(options) {
     const info = wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync();
     this.http = getApp().services.http;
+    this.social = getApp().services.social;
     this.cache = createSWRCache(wx);
     this.setData({
       topInset: info.statusBarHeight || 44,
@@ -228,6 +236,7 @@ Page({
       heroImageUrl: optionValue(options.heroImageUrl)
     });
     void this.load();
+    void this.loadSocial();
   },
   onShow() {
     syncPageTheme(this);
@@ -235,15 +244,35 @@ Page({
   },
 
   onShareAppMessage() {
+    if (this.data.giftResult?.gift) {
+      const gift = this.data.giftResult.gift;
+      const badge = this.data.giftResult.awardedBadge;
+      return {
+        title: badge
+          ? `我获得了「${badge.label}」`
+          : `我在炉网送给${gift.playerName} ${gift.amount} 朵花`,
+        path: `/packages/player/pages/player-detail/index?playerId=${encodeURIComponent(this.data.playerId)}&tour=${encodeURIComponent(this.data.tour)}&name=${encodeURIComponent(this.data.name)}`,
+        imageUrl: this.data.shareCardImageUrl || this.data.heroImageUrl || this.data.portraitUrl || ''
+      };
+    }
     return playerShare(this.data).appMessage;
   },
 
   onShareTimeline() {
+    if (this.data.giftResult?.gift) {
+      const gift = this.data.giftResult.gift;
+      return {
+        title: `我在炉网支持${gift.playerName}·花${gift.amount}`,
+        query: `playerId=${encodeURIComponent(this.data.playerId)}&tour=${encodeURIComponent(this.data.tour)}`,
+        imageUrl: this.data.shareTimelineImageUrl || this.data.heroImageUrl || this.data.portraitUrl || ''
+      };
+    }
     return playerShare(this.data).timeline;
   },
 
   onPullDownRefresh() { void this.load().finally(() => wx.stopPullDownRefresh()); },
   back() { wx.navigateBack(); },
+  noop() {},
   async togglePlayerFollow() {
     const targetId = this.data.followTargetId || `${this.data.tour}:${this.data.playerId}`;
     const next = !this.data.followed;
@@ -261,6 +290,67 @@ Page({
     const tab = event.currentTarget.dataset.tab;
     if (['basic', 'career', 'recent'].includes(tab)) {
       this.setData({ activeTab: tab });
+    }
+  },
+
+  socialPlayerId() {
+    return `${this.data.tour}:${this.data.playerId}`;
+  },
+
+  async loadSocial() {
+    if (!this.data.playerId || !this.social) return;
+    const playerId = this.socialPlayerId();
+    const [summary, fans, viewer] = await Promise.allSettled([
+      this.social.playerSummary(playerId),
+      this.social.topFans(playerId),
+      this.social.viewerFanRank(playerId)
+    ]);
+    const summaryPayload = summary.status === 'fulfilled' ? summary.value?.payload : null;
+    const fansPayload = fans.status === 'fulfilled' ? fans.value?.payload : null;
+    const viewerValue = viewer.status === 'fulfilled' ? viewer.value?.viewer : null;
+    this.setData({
+      lifetimeFlowerTotal: Number(summaryPayload?.lifetimeFlowerTotal || 0),
+      topFans: Array.isArray(fansPayload?.entries) ? fansPayload.entries : [],
+      viewerFanRankText: viewerValue?.rank
+        ? `你已送 ${Number(viewerValue.flowerTotal || 0)} 朵·第 ${viewerValue.rank} 名`
+        : ''
+    });
+  },
+
+  openGift() {
+    this.setData({ giftOpen: true, giftAmount: '1', giftResult: null });
+  },
+
+  closeGift() {
+    if (!this.data.giftSubmitting) this.setData({ giftOpen: false });
+  },
+
+  onGiftAmount(event) {
+    this.setData({ giftAmount: String(event.detail.value || '').replace(/\D/gu, '').slice(0, 6) });
+  },
+
+  async submitGift() {
+    const amount = Number(this.data.giftAmount);
+    if (!Number.isSafeInteger(amount) || amount <= 0) {
+      wx.showToast({ title: '请输入正整数', icon: 'none' });
+      return;
+    }
+    this.setData({ giftSubmitting: true });
+    try {
+      const result = await this.social.gift(this.socialPlayerId(), amount, 'player_profile');
+      this.setData({
+        lifetimeFlowerTotal: Number(result.playerFlowerTotal || this.data.lifetimeFlowerTotal),
+        giftResult: result,
+        giftSubmitting: false
+      });
+      void this.loadSocial();
+    } catch (error) {
+      this.setData({ giftSubmitting: false });
+      const message = String(error?.message || '').includes('insufficient')
+        ? '花朵余额不足' : '送花暂未成功';
+      if (!String(error?.message || '').includes('cancelled')) {
+        wx.showToast({ title: message, icon: 'none' });
+      }
     }
   },
 
@@ -304,6 +394,7 @@ Page({
       return;
     }
     this.applyProfile(result.value, { fromCache: false });
+    void this.loadSocial();
   },
 
   applyProfile(profile, options = {}) {

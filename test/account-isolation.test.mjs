@@ -39,6 +39,7 @@ function completeProfile(scope, nickname) {
     accountScope: scope,
     nickname,
     avatarUrl: `https://cdn.tennisapi.online/avatar/${nickname}.jpg`,
+    socialPublicConsentAt: '2026-08-25T10:00:00.000Z',
     updatedAt: '2026-08-25T10:00:00.000Z'
   };
 }

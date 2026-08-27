@@ -374,6 +374,10 @@ Page({
       { id: 'WTA', label: 'WTA' }
     ],
     followTabs: FOLLOW_TABS,
+    flowerKinds: [
+      { id: 'players', label: '球员收花榜' },
+      { id: 'fans', label: '粉丝送花榜' }
+    ],
     rankingKinds: [
       { id: 'official', label: '官方排名' },
       { id: 'race', label: '冠军积分' }
@@ -382,6 +386,7 @@ Page({
     rankingKind: 'official',
     authority: 'ATP',
     followTour: 'all',
+    flowerKind: 'players',
     query: '',
     loading: true,
     failed: false,
@@ -418,6 +423,7 @@ Page({
     this.http = getApp().services.http;
     this.cache = createSWRCache(wx);
     this.followService = getApp().services.follow;
+    this.socialService = getApp().services.social;
     this.h2hSearchTimers = {};
     this.h2hSearchSeq = {};
     this.setData({ topInset: info.statusBarHeight || 44 });
@@ -481,6 +487,11 @@ Page({
     }, () => void this.load());
   },
 
+  selectFlowerKind(event) {
+    const flowerKind = event.currentTarget.dataset.kind === 'fans' ? 'fans' : 'players';
+    this.setData({ flowerKind }, () => void this.load());
+  },
+
   selectRankingKind(event) {
     const rankingKind = event.currentTarget.dataset.kind === 'race' ? 'race' : 'official';
     this.setData({ rankingKind, offset: 0, hasMore: false }, () => void this.load());
@@ -535,6 +546,10 @@ Page({
     const append = Boolean(options.append);
     if (this.data.section === 'follows') {
       await this.loadFollowLeaderboard(options);
+      return;
+    }
+    if (this.data.section === 'flowers') {
+      await this.loadFlowerLeaderboard();
       return;
     }
     if (this.data.section !== 'ranking') {
@@ -698,6 +713,58 @@ Page({
     }, () => {
       if (!useProfileSearch) this.filter();
     });
+  },
+
+  async loadFlowerLeaderboard() {
+    this.setData({ loading: true, failed: false });
+    try {
+      const value = await this.socialService.flowerLeaderboard(
+        this.data.flowerKind,
+        this.data.followTour
+      );
+      const entries = Array.isArray(value?.payload?.entries) ? value.payload.entries : [];
+      const players = entries.map(item => this.data.flowerKind === 'players' ? {
+        id: String(item.playerId || ''),
+        name: String(item.name || '球员'),
+        originalName: String(item.originalName || ''),
+        countryCode: String(item.countryCode || ''),
+        cardImageUrl: String(item.avatarUrl || ''),
+        tour: String(item.authority || '').toUpperCase(),
+        leaderboardPosition: Number(item.rank || 0),
+        flowerTotal: Number(item.flowerTotal || 0),
+        flowerMeta: `${Number(item.fanCount || 0)}位送花粉丝`,
+        isFan: false
+      } : {
+        id: `fan-${item.rank}`,
+        name: String(item.nickname || '一位炉网友'),
+        originalName: String(item.equippedBadge?.label || ''),
+        cardImageUrl: String(item.avatarUrl || ''),
+        leaderboardPosition: Number(item.rank || 0),
+        flowerTotal: Number(item.flowerTotal || 0),
+        flowerMeta: item.topGiftedPlayer
+          ? `最支持 ${item.topGiftedPlayer.name}·花${item.topGiftedPlayer.flowerTotal}` : '',
+        isFan: true
+      });
+      this.setData({
+        loading: false,
+        failed: false,
+        players,
+        visiblePlayers: players,
+        hasMore: false,
+        deliveryState: entries.length ? (value.delivery?.state === 'current' ? 'live' : 'delayed') : '',
+        deliveryMessage: entries.length ? '送花榜已更新' : '',
+        dataAsOf: value?.dataAsOf || ''
+      });
+    } catch {
+      this.setData({ loading: false, failed: true, players: [], visiblePlayers: [] });
+    }
+  },
+
+  openFlowerEntry(event) {
+    const index = Number(event.currentTarget.dataset.index);
+    const item = Number.isSafeInteger(index) ? this.data.visiblePlayers[index] : null;
+    if (!item || item.isFan) return;
+    this.openPlayer(event);
   },
 
   async loadFollowLeaderboard(options = {}) {

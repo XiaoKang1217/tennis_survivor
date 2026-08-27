@@ -3,7 +3,10 @@
     <view class="follow-tabs">
       <view wx:for="{{tabs}}" wx:key="id" data-kind="{{item.id}}" bindtap="selectKind" class="follow-tab {{selectedKind === item.id ? 'active' : ''}}" role="button"><text>{{item.label}}</text><text>{{item.count}}</text></view>
     </view>
-    <view class="follow-summary"><text>共 {{count}} 项关注</text><text>{{playerCount}} 球员 · {{matchCount}} 比赛 · {{tournamentCount}} 赛事</text></view>
+    <view wx:if="{{selectedKind === 'match'}}" class="match-status-tabs"><view wx:for="{{matchStatusTabs}}" wx:key="id" data-status="{{item.id}}" bindtap="selectMatchStatus" class="{{selectedMatchStatus === item.id ? 'active' : ''}}">{{item.label}}</view></view>
+    <view class="follow-summary"><text>{{selectedKind === 'match' ? count + ' 场比赛' : count + ' 位球员'}}</text><text>{{matchCount}} 比赛 · {{playerCount}} 球员</text></view>
+    <view wx:if="{{authPrompt}}" class="follow-state"><client-state state="empty" label="登录后查看我的关注" message="选择头像和昵称，即可在不同设备同步关注"/><button class="follow-login-button" bindtap="promptForProfile">登录并查看</button></view>
+    <block wx:else>
     <view wx:if="{{deliveryMessage}}" class="follow-notice"><data-notice state="{{deliveryState}}" message="{{deliveryMessage}}" dataAsOf="{{dataAsOf}}" compact="{{true}}"/></view>
     <view wx:if="{{loading && !items.length}}" class="follow-state"><client-state state="loading" label="关注内容加载中" message=""/></view>
     <view wx:elif="{{failed}}" class="follow-state"><client-state state="failed" label="关注内容加载失败" message="请下拉刷新或稍后重试" retryable bind:retry="load"/></view>
@@ -30,10 +33,6 @@
               <text class="player-activity">{{entry.player.followCountLabel}}</text>
             </view>
           </view>
-          <view wx:elif="{{entry.type === 'tournament'}}" class="follow-event-card" data-id="{{entry.tournament.id}}" bindtap="openTournament" role="button">
-            <view class="event-main"><text class="event-kind">赛事</text><text class="event-title">{{entry.tournament.title}}</text><text class="event-meta">{{entry.tournament.subtitle}}</text><text wx:if="{{entry.tournament.dates}}" class="event-date">{{entry.tournament.dates}}</text></view>
-            <view class="event-side"><text wx:if="{{entry.tournament.lifecycle}}">{{entry.tournament.lifecycle}}</text><view data-id="{{entry.tournament.followTargetId}}" catchtap="toggleTournamentFollow" role="button"><ui-icon name="heart" size="17" color="#1677d2"/></view></view>
-          </view>
           <match-card wx:else match="{{entry.match}}" theme="{{uiTheme}}" bind:open="openMatch" bind:follow="toggleFollow"/>
         </block>
       </view>
@@ -41,6 +40,7 @@
       <view wx:elif="{{hasMore}}" class="follow-load-more" bindtap="loadMore" role="button">加载更多</view>
       <view wx:else class="follow-load-more">已加载全部关注</view>
     </view>
+    </block>
   <product-tabbar active="following" theme="{{uiTheme}}"/>
   <profile-gate id="profileGate" theme="{{uiTheme}}"/>
 </view>

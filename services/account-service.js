@@ -28,13 +28,16 @@ function normalizeProfile(value) {
   const phoneNumber = cleanText(source.phoneNumber, 32);
   const phoneMask = cleanText(source.phoneMask, 32) || maskedPhone(phoneNumber);
   const countryCode = cleanText(source.countryCode, 8);
-  const completed = Boolean(nickname && avatarUrl);
+  const socialPublicConsentAt = cleanText(source.socialPublicConsentAt, 40);
+  const completed = Boolean(nickname && avatarUrl && socialPublicConsentAt);
   return {
     nickname,
     avatarUrl,
     phoneNumber,
     phoneMask,
     countryCode,
+    socialPublicConsentAt,
+    socialPublicDisclosure: cleanText(source.socialPublicDisclosure, 240),
     completed,
     accountScope,
     updatedAt: cleanText(source.updatedAt, 40)
@@ -202,7 +205,7 @@ class AccountService {
 
   isComplete(profile) {
     const value = normalizeProfile(profile === undefined ? this.loadCurrentScope() : profile);
-    return Boolean(value.nickname && value.avatarUrl);
+    return Boolean(value.nickname && value.avatarUrl && value.socialPublicConsentAt);
   }
 
   async refresh() {
@@ -253,7 +256,7 @@ class AccountService {
     }
     const response = await this.http.request('/api/v1/me/profile', {
       method: 'POST',
-      data: { nickname, avatarUrl, legalConsent },
+      data: { nickname, avatarUrl, legalConsent, socialPublicConsent: true },
       header: { 'content-type': 'application/json' },
       authRequired: true
     });

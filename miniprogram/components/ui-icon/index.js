@@ -13,6 +13,7 @@ const PATHS = Object.freeze({
   player: '<circle cx="12" cy="12" r="9"/><circle cx="10.5" cy="9" r="2.6"/><path d="M5.8 18c.7-3.2 2.3-4.8 4.7-4.8s4 1.6 4.7 4.8"/><circle cx="17.2" cy="7" r="2.2"/><path d="M15.8 5.4c1 1 1.8 1.8 2.8 2.8M18.7 5.5l-3 3"/>',
   follow: '<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z"/>',
   heart: '<path d="M12 20.2 4.5 13c-3.7-3.6 1.7-9.3 5.5-5.4L12 9.7l2-2.1c3.8-3.9 9.2 1.8 5.5 5.4L12 20.2Z"/>',
+  flower: '<circle cx="12" cy="12" r="2.3"/><circle cx="12" cy="6.5" r="3"/><circle cx="17.2" cy="10.2" r="3"/><circle cx="15.2" cy="16.3" r="3"/><circle cx="8.8" cy="16.3" r="3"/><circle cx="6.8" cy="10.2" r="3"/><path d="M12 18.5V22"/>',
   profile: '<rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="12" cy="9" r="3"/><path d="M6.8 18c.7-3.2 2.4-4.8 5.2-4.8s4.5 1.6 5.2 4.8"/>',
   user: '<circle cx="12" cy="8" r="3.5"/><path d="M5 21c.7-4.3 3-6.5 7-6.5s6.3 2.2 7 6.5"/>',
   users: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.3"/><path d="M3 20c.7-4 2.7-6 6-6s5.3 2 6 6M14 15c3.6-.8 5.8.9 6.5 4.5"/>',

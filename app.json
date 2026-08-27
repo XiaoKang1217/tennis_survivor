@@ -7,6 +7,7 @@
     "pages/participation/index",
     "pages/following/index",
     "pages/account/index",
+    "pages/social-center/index",
     "pages/legal/index"
   ],
   "subpackages": [

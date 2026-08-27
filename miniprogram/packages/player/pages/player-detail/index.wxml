@@ -14,7 +14,7 @@
     </view>
     <view class="identity">
       <text class="hero-eyebrow">{{tour || 'ATP · WTA'}} 球员</text>
-      <text class="player-name">{{name}}</text>
+      <view class="player-name-line"><text class="player-name">{{name}}</text><view class="flower-total" bindtap="openGift" role="button">花{{lifetimeFlowerTotal}}</view></view>
       <text wx:if="{{originalName}}" class="player-original-name">{{originalName}}</text>
       <text class="player-meta">{{countryCode || '国家/地区暂缺'}}<text wx:if="{{tour}}"> · {{tour}}</text></text>
       <view class="rank-line">
@@ -73,6 +73,20 @@
           <text>{{item.value}}</text>
         </view>
       </view>
+    </view>
+
+    <view wx:if="{{activeTab === 'basic'}}" class="section fan-section">
+      <view class="fan-section-head"><text class="section-title">送花粉丝榜</text><text wx:if="{{viewerFanRankText}}">{{viewerFanRankText}}</text></view>
+      <view wx:if="{{topFans.length}}" class="fan-list">
+        <view wx:for="{{topFans}}" wx:key="rank" class="fan-row">
+          <text class="fan-rank">{{item.rank}}</text>
+          <image wx:if="{{item.avatarUrl}}" src="{{item.avatarUrl}}" mode="aspectFill"/>
+          <view wx:else class="fan-avatar"><ui-icon name="player" size="17" color="#6b7b8d"/></view>
+          <view class="fan-copy"><text>{{item.nickname}}</text><text wx:if="{{item.equippedBadge}}">{{item.equippedBadge.label}}</text></view>
+          <text class="fan-flowers">花{{item.flowerTotal}}</text>
+        </view>
+      </view>
+      <view wx:else class="empty-note">还没有人送花，来做第一位支持者</view>
     </view>
 
     <block wx:elif="{{activeTab === 'career'}}">
@@ -162,6 +176,22 @@
       <view wx:else class="empty-note">暂无近期赛事</view>
     </view>
   </block>
+  <view wx:if="{{giftOpen}}" class="gift-mask" catchtap="closeGift">
+    <view class="gift-dialog" catchtap="noop">
+      <text class="gift-title">{{giftResult ? '送花成功' : '送给' + name}}</text>
+      <block wx:if="{{giftResult}}">
+        <text class="gift-success">已送出 花{{giftResult.gift.amount}}</text>
+        <text>你累计送给他 {{giftResult.viewerFlowerTotalForPlayer}} 朵</text>
+        <text wx:if="{{giftResult.awardedBadge}}" class="badge-award">获得称号「{{giftResult.awardedBadge.label}}」</text>
+        <view class="gift-actions"><button bindtap="closeGift">完成</button><button open-type="share">分享支持</button></view>
+      </block>
+      <block wx:else>
+        <text class="gift-hint">输入要送的花朵数量</text>
+        <input type="number" value="{{giftAmount}}" bindinput="onGiftAmount" maxlength="6"/>
+        <view class="gift-actions"><button bindtap="closeGift">取消</button><button loading="{{giftSubmitting}}" bindtap="submitGift">确认送花</button></view>
+      </block>
+    </view>
+  </view>
   <canvas class="share-card-canvas" canvas-id="share-card-canvas"></canvas>
   <profile-gate id="profileGate" theme="{{uiTheme}}"/>
 </view>

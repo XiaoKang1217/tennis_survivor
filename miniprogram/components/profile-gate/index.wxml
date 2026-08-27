@@ -12,7 +12,7 @@
 
     <view class="profile-gate-disclosure">
       <view class="profile-gate-disclosure-title">授权前说明</view>
-      <text>我们将收集你选择的头像、填写的昵称和登录标识，用于关注同步、提醒和个人中心展示。头像和昵称会先经过内容安全审核；拒绝授权不影响浏览比分、赛程、签表和球员信息。</text>
+      <text>我们将收集你选择的头像、填写的昵称和登录标识，用于关注同步、签到、送花和个人中心展示。你的昵称、头像和已佩戴的粉丝勋章会展示在关注榜、送花榜和球员粉丝榜；头像和昵称会先经过内容安全审核。拒绝授权不影响浏览比分、赛程、签表和球员信息。</text>
     </view>
 
     <view class="profile-agreement">

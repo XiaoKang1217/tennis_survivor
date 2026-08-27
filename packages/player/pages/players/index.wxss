@@ -913,6 +913,7 @@
   font-weight: 760;
   line-height: 32rpx;
 }
+.flower-leaderboard-list{padding:16rpx 20rpx 120rpx;display:flex;flex-direction:column;gap:12rpx}.flower-card{min-height:126rpx;padding:16rpx;display:flex;align-items:center;gap:14rpx;border:1rpx solid var(--line);border-radius:20rpx;background:var(--surface);box-sizing:border-box}.flower-card-photo{width:82rpx;height:82rpx;flex:none;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:50%;background:var(--surface-subtle)}.flower-card-photo image{width:100%;height:100%}.flower-card-copy{min-width:0;flex:1;display:flex;flex-direction:column}.flower-card-copy text:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink-strong);font-size:24rpx;font-weight:780}.flower-card-copy text:nth-child(2),.flower-card-copy text:nth-child(3){margin-top:4rpx;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink-subtle);font-size:17rpx}.flower-card-total{flex:none;color:var(--brand-ink);font-size:25rpx;font-weight:850}
 
 .daylight-follow-leaderboard-list {
   background: #f5f1e6;

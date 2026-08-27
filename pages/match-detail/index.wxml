@@ -36,7 +36,7 @@
               </view>
               <view wx:if="{{sideIndex === 1 && item.primaryFollowTargetId}}" class="hero-player-follow {{item.primaryFollowed ? 'followed' : ''}}" data-id="{{item.primaryFollowTargetId}}" data-followed="{{!item.primaryFollowed}}" catchtap="togglePlayerFollow" role="button"><ui-icon name="heart" size="13" color="{{item.primaryFollowed ? '#fff' : '#1677d2'}}"/><text>{{item.primaryFollowed ? '已关注' : '关注'}}</text></view>
             </view>
-            <view class="hero-name-wrap"><text class="hero-name">{{item.names}}</text><text wx:if="{{item.isWinner}}" class="winner">胜</text></view>
+            <view class="hero-name-wrap"><text class="hero-name">{{item.names}}</text><view wx:if="{{!item.isDoubles && item.members[0].playerId}}" class="hero-flower-total" data-player-id="{{item.members[0].playerId}}" data-name="{{item.members[0].name}}" catchtap="openGift" role="button">花{{item.members[0].flowerTotal}}</view><text wx:if="{{item.isWinner}}" class="winner">胜</text></view>
             <view class="hero-player-meta">
               <text wx:if="{{item.seedLabel}}">{{item.seedLabel}}</text>
               <text wx:if="{{item.rankLabel}}">{{item.rankLabel}}</text>
@@ -166,6 +166,22 @@
       </view>
     </view>
   </block>
+  <view wx:if="{{giftOpen}}" class="gift-mask" catchtap="closeGift">
+    <view class="gift-dialog" catchtap="noop">
+      <text class="gift-title">{{giftResult ? '送花成功' : '送给' + giftPlayer.name}}</text>
+      <block wx:if="{{giftResult}}">
+        <text class="gift-success">已送出 花{{giftResult.gift.amount}}</text>
+        <text>你累计送给他 {{giftResult.viewerFlowerTotalForPlayer}} 朵</text>
+        <text wx:if="{{giftResult.awardedBadge}}" class="badge-award">获得称号「{{giftResult.awardedBadge.label}}」</text>
+        <view class="gift-actions"><button bindtap="closeGift">完成</button><button open-type="share">分享支持</button></view>
+      </block>
+      <block wx:else>
+        <text class="gift-hint">输入要送的花朵数量</text>
+        <input type="number" value="{{giftAmount}}" bindinput="onGiftAmount" maxlength="6"/>
+        <view class="gift-actions"><button bindtap="closeGift">取消</button><button loading="{{giftSubmitting}}" bindtap="submitGift">确认送花</button></view>
+      </block>
+    </view>
+  </view>
   <canvas class="share-card-canvas" canvas-id="share-card-canvas"></canvas>
   <profile-gate id="profileGate" theme="{{uiTheme}}"/>
 </view>

@@ -437,6 +437,11 @@ Page({
     progression: null,
     progressionLoadState: 'idle',
     followablePlayers: [],
+    giftOpen: false,
+    giftAmount: '1',
+    giftSubmitting: false,
+    giftPlayer: null,
+    giftResult: null,
     shareCardImageUrl: '',
     shareTimelineImageUrl: ''
   },
@@ -485,6 +490,15 @@ Page({
   },
 
   onShareAppMessage() {
+    if (this.data.giftResult?.gift) {
+      const gift = this.data.giftResult.gift;
+      const badge = this.data.giftResult.awardedBadge;
+      return {
+        title: badge ? `我获得了「${badge.label}」` : `我在炉网送给${gift.playerName} ${gift.amount} 朵花`,
+        path: `/packages/player/pages/player-detail/index?playerId=${encodeURIComponent(this.data.giftPlayer.sourcePlayerId)}&tour=${encodeURIComponent(this.data.match.tournamentTourOrg)}&name=${encodeURIComponent(gift.playerName)}`,
+        imageUrl: this.data.shareCardImageUrl || ''
+      };
+    }
     return matchShare(this.data.match, {
       matchId: this.matchId,
       date: this.requestedDate,
@@ -494,6 +508,14 @@ Page({
   },
 
   onShareTimeline() {
+    if (this.data.giftResult?.gift) {
+      const gift = this.data.giftResult.gift;
+      return {
+        title: `我在炉网支持${gift.playerName}·花${gift.amount}`,
+        query: `matchId=${encodeURIComponent(this.matchId)}&date=${encodeURIComponent(this.requestedDate || '')}`,
+        imageUrl: this.data.shareTimelineImageUrl || ''
+      };
+    }
     return matchShare(this.data.match, {
       matchId: this.matchId,
       date: this.requestedDate,
@@ -597,7 +619,7 @@ Page({
 
   applyMatch(presentation) {
     if (staleComparedToCurrent(presentation, this.data.match)) return;
-    const match = matchWithPlayerFollowState(matchView(presentation));
+    const match = this.decorateMatchFlowers(matchWithPlayerFollowState(matchView(presentation)));
     const matchChanged = this.currentMatchId !== match.id;
     if (matchChanged) {
       this.currentMatchId = match.id;
@@ -644,6 +666,7 @@ Page({
       if (progressionNeedsFullDraw(this.data.progression) && !this.progressionRequested) {
         void this.loadProgression(match, { background: true });
       }
+      void this.loadPlayerFlowers(match);
     });
     this.ensureScoreStream(match);
     if (!this.statisticsClient) this.startStatistics(match);
@@ -1071,6 +1094,100 @@ Page({
       this.setData({ match: previousMatch, followablePlayers: previous });
       if (String(err?.message || '') !== 'follow_login_cancelled') {
         wx.showToast({ title: '关注状态暂未保存', icon: 'none' });
+      }
+    }
+  },
+
+  decorateMatchFlowers(match) {
+    const totals = this.playerFlowerTotals || {};
+    return {
+      ...match,
+      sides: match.sides.map(side => ({
+        ...side,
+        members: side.members.map(member => ({
+          ...member,
+          flowerTotal: Number(totals[`${match.tournamentTourOrg}:${member.playerId}`] || 0)
+        }))
+      }))
+    };
+  },
+
+  async loadPlayerFlowers(match) {
+    if (!match || !['ATP', 'WTA'].includes(match.tournamentTourOrg)) return;
+    const targets = match.sides.flatMap(side => side.members)
+      .filter(member => member.playerId)
+      .map(member => `${match.tournamentTourOrg}:${member.playerId}`);
+    if (!targets.length) return;
+    const signature = targets.slice().sort().join('|');
+    if (this.playerFlowerSignature === signature) return;
+    this.playerFlowerSignature = signature;
+    let response;
+    try {
+      response = await this.services.social.matchPlayerSummaries(match.id);
+    } catch {
+      this.playerFlowerSignature = '';
+      return;
+    }
+    const totals = { ...(this.playerFlowerTotals || {}) };
+    (Array.isArray(response?.players) ? response.players : []).forEach(player => {
+      const playerId = String(player?.playerId || '').trim();
+      if (playerId) totals[playerId] = Number(player?.lifetimeFlowerTotal || 0);
+    });
+    this.playerFlowerTotals = totals;
+    if (this.data.match?.id === match.id) {
+      this.setData({ match: this.decorateMatchFlowers(this.data.match) });
+    }
+  },
+
+  openGift(event) {
+    const playerId = String(event.currentTarget.dataset.playerId || '').trim();
+    const name = String(event.currentTarget.dataset.name || '球员').trim();
+    const tour = String(this.data.match?.tournamentTourOrg || '').toUpperCase();
+    if (!playerId || !['ATP', 'WTA'].includes(tour)) return;
+    this.setData({
+      giftOpen: true,
+      giftAmount: '1',
+      giftPlayer: { playerId: `${tour}:${playerId}`, sourcePlayerId: playerId, name },
+      giftResult: null
+    });
+  },
+
+  closeGift() {
+    if (!this.data.giftSubmitting) this.setData({ giftOpen: false });
+  },
+
+  noop() {},
+
+  onGiftAmount(event) {
+    this.setData({ giftAmount: String(event.detail.value || '').replace(/\D/gu, '').slice(0, 6) });
+  },
+
+  async submitGift() {
+    const amount = Number(this.data.giftAmount);
+    const target = this.data.giftPlayer;
+    if (!target || !Number.isSafeInteger(amount) || amount <= 0) {
+      wx.showToast({ title: '请输入正整数', icon: 'none' });
+      return;
+    }
+    this.setData({ giftSubmitting: true });
+    try {
+      const result = await this.services.social.gift(target.playerId, amount, 'match_detail');
+      this.playerFlowerTotals = {
+        ...(this.playerFlowerTotals || {}),
+        [target.playerId]: Number(result.playerFlowerTotal || 0)
+      };
+      this.setData({
+        giftSubmitting: false,
+        giftResult: result,
+        match: this.decorateMatchFlowers(this.data.match)
+      });
+    } catch (error) {
+      this.setData({ giftSubmitting: false });
+      if (!String(error?.message || '').includes('cancelled')) {
+        wx.showToast({
+          title: String(error?.message || '').includes('insufficient') ? '花朵余额不足' : '送花暂未成功',
+          icon: 'none'
+        });
       }
     }
   },

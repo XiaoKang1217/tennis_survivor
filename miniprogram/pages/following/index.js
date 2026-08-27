@@ -12,11 +12,15 @@ const PAGE_SIZE = 20;
 const FOLLOWING_CONTRACT = 'follow-context-bff/1';
 const FOLLOWING_CACHE_SCHEMA = 'follow-context-bff-cache/2';
 const FOLLOW_TABS = Object.freeze([
-  { id: 'all', label: '全部关注', countKey: 'total' },
-  { id: 'player', label: '球员', countKey: 'players' },
   { id: 'match', label: '比赛', countKey: 'matches' },
-  { id: 'tournament', label: '赛事', countKey: 'tournaments' }
+  { id: 'player', label: '球员', countKey: 'players' }
 ]);
+const MATCH_STATUS_TABS = Object.freeze([
+  { id: 'upcoming', label: '未开始' },
+  { id: 'live', label: '进行中' },
+  { id: 'ended', label: '已完赛' }
+]);
+const MATCH_STATUS_STORAGE_KEY = 'luwang_following_match_status_v1';
 
 function tokenScope(token) {
   const source = String(token || '');
@@ -353,13 +357,30 @@ function selectedCount(counts, selectedKind) {
   return Number(counts.total || 0);
 }
 
+function matchStatus(item) {
+  const code = String(item?.match?.statusCode || '');
+  const group = String(item?.match?.group || '');
+  if (['finished','retired','walkover','defaulted','disqualified','no_show','cancelled','abandoned'].includes(code)
+    || group === 'ended') return 'ended';
+  if (['live','interrupted','suspended'].includes(code) || group === 'in_progress') return 'live';
+  return 'upcoming';
+}
+
+function filteredItems(items, selectedKind, selectedMatchStatus) {
+  if (selectedKind !== 'match') return items.filter(item => item.type === 'player');
+  return items.filter(item => item.type === 'match' && matchStatus(item) === selectedMatchStatus);
+}
+
 Page({
   data: {
     ...buildThemeData(),
     topInset: 44,
     tabs: countsView(),
-    selectedKind: 'all',
-    loading: true,
+    selectedKind: 'match',
+    matchStatusTabs: MATCH_STATUS_TABS,
+    selectedMatchStatus: 'upcoming',
+    authPrompt: false,
+    loading: false,
     loadingMore: false,
     failed: false,
     items: [],
@@ -380,11 +401,17 @@ Page({
     this.cache = createSWRCache(wx);
     this.matchDates = new Map();
     this.setData({ topInset: info.statusBarHeight || 44 });
+    if (!this.services.account.isComplete()) {
+      this.setData({ authPrompt: true, loading: false });
+      if (typeof wx.nextTick === 'function') wx.nextTick(() => void this.promptForProfile());
+      else void this.promptForProfile();
+      return;
+    }
     void this.load();
   },
   onShow() {
     syncPageTheme(this);
-    if (this.services) void this.load();
+    if (this.services && !this.data.authPrompt && this.services.account.isComplete()) void this.load();
   },
   onPullDownRefresh() {
     void this.load().finally(() => wx.stopPullDownRefresh());
@@ -394,7 +421,7 @@ Page({
     void this.load({ append: true });
   },
   selectKind(event) {
-    const selectedKind = String(event.currentTarget.dataset.kind || 'all');
+    const selectedKind = String(event.currentTarget.dataset.kind || 'match');
     if (selectedKind === this.data.selectedKind) return;
     this.setData({
       selectedKind,
@@ -404,7 +431,26 @@ Page({
       hasMore: false
     }, () => void this.load());
   },
+  selectMatchStatus(event) {
+    const selectedMatchStatus = String(event.currentTarget.dataset.status || 'upcoming');
+    try { wx.setStorageSync(MATCH_STATUS_STORAGE_KEY, selectedMatchStatus); } catch { /* session hint only */ }
+    const visible = filteredItems(this.data.items, 'match', selectedMatchStatus);
+    this.setData({ selectedMatchStatus, dateGroups: dateGroups(visible), count: visible.length });
+  },
+  async promptForProfile() {
+    try {
+      await this.services.auth.ensure();
+      const gate = this.selectComponent('#profileGate');
+      const completed = await gate?.collect?.({ sourceEntry: 'following_page', mode: 'login' });
+      if (!completed) return;
+      this.setData({ authPrompt: false }, () => void this.load());
+    } catch { /* first frame stays a bounded login prompt; no retry loop */ }
+  },
   async load(options = {}) {
+    if (!this.services.account.isComplete()) {
+      this.setData({ authPrompt: true, loading: false, failed: false, items: [], dateGroups: [] });
+      return;
+    }
     const append = Boolean(options.append);
     const selectedKind = this.data.selectedKind;
     const limit = PAGE_SIZE;
@@ -488,7 +534,16 @@ Page({
     const incoming = orderedItems(value);
     const items = append ? mergeItems(this.data.items, incoming) : incoming;
     const counts = value?.payload?.counts || {};
-    const groups = dateGroups(items);
+    let selectedMatchStatus = this.data.selectedMatchStatus;
+    if (selectedKind === 'match' && !options.fromCache && !append) {
+      let remembered = '';
+      try { remembered = String(wx.getStorageSync(MATCH_STATUS_STORAGE_KEY) || ''); } catch { /* bounded */ }
+      const hasLive = items.some(item => item.type === 'match' && matchStatus(item) === 'live');
+      selectedMatchStatus = MATCH_STATUS_TABS.some(tab => tab.id === remembered)
+        ? remembered : hasLive ? 'live' : 'upcoming';
+    }
+    const visibleItems = filteredItems(items, selectedKind, selectedMatchStatus);
+    const groups = dateGroups(visibleItems);
     const dataAsOf = value?.dataAsOf || value?.delivery?.dataAsOf || '';
     this.matchDates = new Map(items
       .filter(item => item.type === 'match')
@@ -500,7 +555,8 @@ Page({
       tabs: countsView(counts),
       items,
       dateGroups: groups,
-      count: selectedCount(counts, selectedKind),
+      count: selectedKind === 'match' ? visibleItems.length : selectedCount(counts, selectedKind),
+      selectedMatchStatus,
       matchCount: Number(counts.matches || 0),
       tournamentCount: Number(counts.tournaments || 0),
       playerCount: Number(counts.players || 0),

@@ -191,8 +191,8 @@ test('following page keeps account-scoped trusted cache visible when refresh fai
   const scope = tokenScope(token);
   const projection = followingProjection();
   const wx = wxRuntime({
-    [cacheStorageKey(`following:${scope}:all:20:0`)]: {
-      resourceKey: `following:${scope}:all:20:0`,
+    [cacheStorageKey(`following:${scope}:player:20:0`)]: {
+      resourceKey: `following:${scope}:player:20:0`,
       schemaVersion: 'follow-context-bff-cache/2',
       projectionVersion: projection.projectionVersion,
       cachedAt: Date.now(),
@@ -208,6 +208,7 @@ test('following page keeps account-scoped trusted cache visible when refresh fai
       currentAccessToken() { return token; },
       async ensure() { ensureCalls += 1; return token; }
     },
+    account: { isComplete() { return true; } },
     http: {
       async request(path, options) {
         requests.push({ path, options });
@@ -215,6 +216,7 @@ test('following page keeps account-scoped trusted cache visible when refresh fai
       }
     }
   });
+  context.data.selectedKind = 'player';
 
   await definition.load.call(context);
 
@@ -246,6 +248,7 @@ test('following page does not show cached user data without a current account sc
       currentAccessToken() { return ''; },
       async ensure() { throw new Error('login_required'); }
     },
+    account: { isComplete() { return false; } },
     http: {
       async request() { throw new Error('must_not_request_without_auth'); }
     }
@@ -253,7 +256,8 @@ test('following page does not show cached user data without a current account sc
 
   await definition.load.call(context);
 
-  assert.equal(context.data.failed, true);
+  assert.equal(context.data.failed, false);
+  assert.equal(context.data.authPrompt, true);
   assert.equal(context.data.items.length, 0);
   assert.equal(context.data.count, 0);
 });

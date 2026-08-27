@@ -41,7 +41,7 @@ Component({
     errorMessage: '',
     sourceEntry: '',
     dialogTitle: '登录',
-    dialogSubtitle: '选择头像和昵称后即可同步关注',
+    dialogSubtitle: '选择头像和昵称后即可使用关注、签到、送花和粉丝榜',
     submitLabel: '保存资料并登录'
   },
 
@@ -75,7 +75,7 @@ Component({
         dialogTitle: editing ? '编辑资料' : '登录',
         dialogSubtitle: editing
           ? '修改头像和昵称，保存前会进行内容安全审核'
-          : '选择头像和昵称后即可同步关注',
+          : '选择头像和昵称后即可使用关注、签到、送花和粉丝榜',
         submitLabel: editing ? '保存资料' : '保存资料并登录'
       });
       this.refreshPrivacySetting();
@@ -187,7 +187,8 @@ Component({
             privacyVersion: '2026-08-19',
             privacyContractName: this.data.privacyContractName
           },
-          sourceEntry: this.data.sourceEntry
+          sourceEntry: this.data.sourceEntry,
+          socialPublicConsent: true
         });
         this.setData({ open: false, submitting: false });
         if (this.pendingResolve) this.pendingResolve(true);

@@ -6,6 +6,7 @@ const { ScoreStore } = require('./core/score-store');
 const { ScoreClient } = require('./services/score-client');
 const { FollowService } = require('./services/follow-service');
 const { AccountService } = require('./services/account-service');
+const { SocialService } = require('./services/social-service');
 
 App({
   onLaunch() {
@@ -16,7 +17,8 @@ App({
     const scoreStore = new ScoreStore();
     const scoreClient = new ScoreClient(wx, auth, http, scoreStore);
     const follow = new FollowService(wx, auth, http, account);
-    this.services = Object.freeze({ auth, http, account, scoreStore, scoreClient, follow });
+    const social = new SocialService(wx, auth, http, account);
+    this.services = Object.freeze({ auth, http, account, scoreStore, scoreClient, follow, social });
   },
 
   onShow() {
