@@ -551,7 +551,7 @@ test('score store rejects large compact replay gap', () => {
   assert.equal(result.reason, 'version_gap');
 });
 
-test('fallback snapshot recovery is jittered between 60 and 120 seconds', () => {
+test('fallback snapshot recovery uses the configured calibration window', () => {
   const timers = {
     scheduled: [],
     setTimeout(callback, delay) {
@@ -571,6 +571,46 @@ test('fallback snapshot recovery is jittered between 60 and 120 seconds', () => 
   assert.equal(timers.scheduled.length, 1);
   assert.ok(timers.scheduled[0].delay >= config.fallbackCalibrationMinMilliseconds);
   assert.ok(timers.scheduled[0].delay <= config.fallbackCalibrationMaxMilliseconds);
+});
+
+test('connected realtime still schedules a forced REST calibration', async () => {
+  const store = new ScoreStore();
+  store.snapshot(todayProjection(1));
+  const timers = {
+    scheduled: [],
+    setTimeout(callback, delay) {
+      this.scheduled.push({ callback, delay });
+      return { callback, delay };
+    },
+    clearTimeout() {},
+    setInterval(callback, delay) { return { callback, delay }; },
+    clearInterval() {}
+  };
+  const requests = [];
+  const client = new ScoreClient(wxRuntime(), auth, {
+    async request(path, options) {
+      requests.push({ path, options });
+      return todayProjection(2);
+    }
+  }, store, timers);
+  client.active = true;
+  client.date = '2026-08-06';
+
+  client.scheduleCalibration();
+  assert.equal(timers.scheduled.length, 1);
+  assert.ok(timers.scheduled[0].delay >= config.fallbackCalibrationMinMilliseconds);
+  assert.ok(timers.scheduled[0].delay <= config.fallbackCalibrationMaxMilliseconds);
+
+  timers.scheduled[0].callback();
+  await new Promise(resolve => setImmediate(resolve));
+
+  assert.equal(requests.length, 1);
+  assert.match(requests[0].path, /_refresh=/u);
+  assert.equal(requests[0].options.noCache, true);
+  assert.equal(store.currentVersion(), 2);
+  assert.ok(timers.scheduled.length >= 3);
+  assert.ok(timers.scheduled.at(-1).delay >= config.fallbackCalibrationMinMilliseconds);
+  assert.ok(timers.scheduled.at(-1).delay <= config.fallbackCalibrationMaxMilliseconds);
 });
 
 test('version gap resync is single-flight and reopens SSE only after snapshot catches up', async () => {

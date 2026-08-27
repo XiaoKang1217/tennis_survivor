@@ -127,9 +127,23 @@ class ScoreClient {
   }
 
   scheduleCalibration() {
-    // M3 removes the normal 5s full-snapshot loop. Full snapshots are only
-    // scheduled by scheduleSnapshotRecovery on cache miss, version gap,
-    // foreground restore, or an SSE error.
+    if (!this.active || this.hidden || this.calibrationTimer !== null) return;
+    const wait = randomBetween(
+      config.fallbackCalibrationMinMilliseconds,
+      config.fallbackCalibrationMaxMilliseconds
+    );
+    this.calibrationTimer = this.timers.setTimeout(() => {
+      this.calibrationTimer = null;
+      void this.fetchSnapshot('rest_calibration', { force: true })
+        .then(() => {
+          this.reconnectAttempt = 0;
+          if (this.resyncPending === null && this.resyncRetryTimer === null) {
+            this.openRealtime();
+          }
+        })
+        .catch(() => this.markTransportFailure())
+        .finally(() => this.scheduleCalibration());
+    }, wait);
   }
 
   clearFallbackCalibration() {
@@ -310,7 +324,6 @@ class ScoreClient {
         }
         if (frame.kind !== 'heartbeat') {
           this.reconnectAttempt = 0;
-          this.clearFallbackCalibration();
           this.setTransportState('connected');
           safeEvents.emit('score_realtime_client_received');
         }
@@ -472,6 +485,7 @@ class ScoreClient {
         if (this.resyncPending === null && this.resyncRetryTimer === null) {
           this.openRealtime();
         }
+        this.scheduleCalibration();
       }).catch(() => {
         this.markTransportFailure();
         this.scheduleSnapshotRecovery(reason);

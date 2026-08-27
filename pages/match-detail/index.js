@@ -22,6 +22,7 @@ const {
 } = require('../../services/point-by-point-client');
 const { pointByPointView } = require('../../core/point-by-point-view-model');
 const { fallbackModule, modulesView, moduleView } = require('../../core/detail-modules');
+const config = require('../../config');
 
 function known(candidate) {
   return candidate?.state === 'known' ? candidate.value : null;
@@ -456,18 +457,24 @@ Page({
   },
 
   onShow() {
+    this.matchDetailVisible = true;
     syncPageTheme(this);
     enablePageShare();
     this.ensureScoreStream(this.data.match);
+    this.scheduleMatchDetailCalibration();
     this.statisticsClient?.onShow();
     this.completionClient?.onShow();
   },
   onHide() {
+    this.matchDetailVisible = false;
+    this.clearMatchDetailCalibration();
     this.statisticsClient?.onHide();
     this.completionClient?.onHide();
   },
 
   onUnload() {
+    this.matchDetailVisible = false;
+    this.clearMatchDetailCalibration();
     this.unsubscribeScore?.();
     this.unsubscribeStatistics?.();
     this.unsubscribeStatisticsState?.();
@@ -516,6 +523,26 @@ Page({
     if (results.length && results.every(result => result.status === 'rejected')) {
       throw new Error('match_detail_refresh_failed');
     }
+  },
+
+  clearMatchDetailCalibration() {
+    if (this.matchDetailCalibrationTimer !== undefined
+      && this.matchDetailCalibrationTimer !== null) {
+      clearTimeout(this.matchDetailCalibrationTimer);
+    }
+    this.matchDetailCalibrationTimer = null;
+  },
+
+  scheduleMatchDetailCalibration() {
+    this.clearMatchDetailCalibration();
+    if (this.matchDetailVisible !== true) return;
+    const delay = Number(config.matchDetailCalibrationMilliseconds) || 20_000;
+    this.matchDetailCalibrationTimer = setTimeout(() => {
+      this.matchDetailCalibrationTimer = null;
+      if (this.matchDetailVisible !== true) return;
+      void this.loadMatch({ force: true, showLoading: false })
+        .finally(() => this.scheduleMatchDetailCalibration());
+    }, delay);
   },
 
   async refreshScoreStream() {

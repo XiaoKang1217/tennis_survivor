@@ -8,8 +8,9 @@ module.exports = Object.freeze({
   realtimeContractVersion: 'score-realtime/3',
   statisticsRealtimeContractVersion: 'match-statistics-realtime/2',
   displayTimezone: 'Asia/Shanghai',
-  fallbackCalibrationMinMilliseconds: 60_000,
-  fallbackCalibrationMaxMilliseconds: 120_000,
+  fallbackCalibrationMinMilliseconds: 25_000,
+  fallbackCalibrationMaxMilliseconds: 35_000,
+  matchDetailCalibrationMilliseconds: 20_000,
   statisticsCalibrationMilliseconds: 60_000,
   sessionRefreshSkewMilliseconds: 60_000
 });
