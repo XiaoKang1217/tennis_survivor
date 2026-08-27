@@ -23,7 +23,7 @@
       </view>
     </view>
   </view>
-  <view class="profile-actions"><view class="profile-follow-button" bindtap="togglePlayerFollow" role="button"><ui-icon name="heart" size="16" color="#ffffff"/><text>{{followed ? '已关注球员' : '关注球员'}}</text></view><button class="profile-share-button" open-type="share" hover-class="none"><ui-icon name="share" size="16" color="{{themeAccentStrong}}"/><text>分享</text></button></view>
+  <view class="profile-actions"><view class="profile-follow-button" bindtap="togglePlayerFollow" role="button"><ui-icon name="heart" size="16" color="#ffffff"/><text>{{followed ? '已关注' : '关注球员'}}</text></view><button class="profile-share-button" open-type="share" hover-class="none"><ui-icon name="share" size="16" color="{{themeAccentStrong}}"/><text>分享</text></button></view>
 
   <view wx:if="{{statsAvailable}}" class="summary-panel">
     <view class="summary-group">

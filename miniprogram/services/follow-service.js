@@ -136,6 +136,37 @@ class FollowService {
     });
   }
 
+  async followedTargets(targets = []) {
+    const requested = new Map();
+    for (const target of targets) {
+      const kind = String(target?.kind || target?.targetKind || '').trim().toLowerCase();
+      const targetId = String(target?.targetId || target?.id || '').trim();
+      if (!['match', 'player', 'tournament'].includes(kind) || !targetId) continue;
+      if (!requested.has(kind)) requested.set(kind, new Set());
+      requested.get(kind).add(targetId);
+    }
+    const followed = new Set();
+    await Promise.all([...requested.entries()].map(async ([kind, pendingTargets]) => {
+      let offset = 0;
+      while (pendingTargets.size) {
+        const projection = await this.following({ kind, limit: 50, offset });
+        const pageEntries = Array.isArray(projection?.payload?.pageEntries)
+          ? projection.payload.pageEntries : [];
+        for (const entry of pageEntries) {
+          const targetId = String(entry?.targetId || '').trim();
+          if (pendingTargets.has(targetId)) {
+            followed.add(`${kind}:${targetId}`);
+            pendingTargets.delete(targetId);
+          }
+        }
+        const nextOffset = projection?.payload?.page?.nextOffset;
+        if (!Number.isSafeInteger(Number(nextOffset)) || Number(nextOffset) <= offset) break;
+        offset = Number(nextOffset);
+      }
+    }));
+    return followed;
+  }
+
   async leaderboard(options = {}) {
     return await this.http.request(leaderboardPath(options), {
       header: { 'x-luwang-client-contract-version': 'follow-leaderboard-bff/1' }

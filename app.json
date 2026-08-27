@@ -8,6 +8,7 @@
     "pages/following/index",
     "pages/account/index",
     "pages/social-center/index",
+    "pages/flower-ledger/index",
     "pages/legal/index"
   ],
   "subpackages": [

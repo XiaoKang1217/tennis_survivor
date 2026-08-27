@@ -13,7 +13,7 @@
     <view wx:elif="{{!count}}" class="follow-state"><client-state state="empty" label="还没有关注内容" message="去关注你想看的比赛、球员或赛事"/></view>
     <view wx:else class="follow-feed">
       <view wx:for="{{dateGroups}}" wx:key="id" class="follow-date-group">
-        <view class="follow-date-head"><text>{{item.label}}</text><text>{{item.countLabel}}</text></view>
+        <view wx:if="{{selectedKind === 'match'}}" class="follow-date-head"><text>{{item.label}}</text><text>{{item.countLabel}}</text></view>
         <block wx:for="{{item.items}}" wx:for-item="entry" wx:key="key">
           <view wx:if="{{entry.type === 'player'}}" class="player-badge" data-id="{{entry.player.id}}" bindtap="openPlayer" role="button">
             <view class="player-photo">

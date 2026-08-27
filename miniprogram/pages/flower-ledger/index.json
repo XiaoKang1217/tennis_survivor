@@ -1,0 +1,8 @@
+{
+  "navigationStyle": "custom",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "ui-icon": "/components/ui-icon/index",
+    "client-state": "/components/client-state/index"
+  }
+}

@@ -274,6 +274,17 @@ function matchWithUpdatedPlayerFollow(match, targetId, followed) {
   return { ...match, sides };
 }
 
+function matchWithResolvedFollowStates(match, states) {
+  if (!match || !(states instanceof Map)) return match;
+  const matchKey = `match:${match.id}`;
+  let next = states.has(matchKey) ? { ...match, followed: states.get(matchKey) === true } : match;
+  for (const player of followablePlayers(next)) {
+    const key = `player:${player.targetId}`;
+    if (states.has(key)) next = matchWithUpdatedPlayerFollow(next, player.targetId, states.get(key) === true);
+  }
+  return next;
+}
+
 function oddsLabel(value, sideIndex) {
   if (!value || value.state !== 'available') return '';
   const number = Number(sideIndex === 0
@@ -453,6 +464,7 @@ Page({
       ? options.date : '';
     this.setData({ topInset: info.statusBarHeight || 44 });
     this.services = getApp().services;
+    this.viewerFollowStates = new Map();
     this.cache = createSWRCache(wx);
     this.unsubscribeScore = this.services.scoreStore.subscribe(projection => {
       const value = projection?.payload.matches.find(item => item.matchId === this.matchId);
@@ -469,6 +481,7 @@ Page({
     this.scheduleMatchDetailCalibration();
     this.statisticsClient?.onShow();
     this.completionClient?.onShow();
+    if (this.data.match) void this.refreshViewerFollowStates(this.data.match);
   },
   onHide() {
     this.matchDetailVisible = false;
@@ -619,7 +632,10 @@ Page({
 
   applyMatch(presentation) {
     if (staleComparedToCurrent(presentation, this.data.match)) return;
-    const match = this.decorateMatchFlowers(matchWithPlayerFollowState(matchView(presentation)));
+    const match = this.decorateMatchFlowers(matchWithResolvedFollowStates(
+      matchWithPlayerFollowState(matchView(presentation)),
+      this.viewerFollowStates
+    ));
     const matchChanged = this.currentMatchId !== match.id;
     if (matchChanged) {
       this.currentMatchId = match.id;
@@ -667,6 +683,7 @@ Page({
         void this.loadProgression(match, { background: true });
       }
       void this.loadPlayerFlowers(match);
+      if (matchChanged) void this.refreshViewerFollowStates(match);
     });
     this.ensureScoreStream(match);
     if (!this.statisticsClient) this.startStatistics(match);
@@ -1048,6 +1065,7 @@ Page({
     const match = this.data.match;
     if (!match?.id) return;
     const next = !match.followed;
+    this.viewerFollowStates?.set(`match:${match.id}`, next);
     const nextCount = Math.max(0, followCountValue(match.followCount) + (next ? 1 : -1));
     this.setData({
       match: {
@@ -1069,6 +1087,7 @@ Page({
         });
       }
     } catch (err) {
+      this.viewerFollowStates?.set(`match:${match.id}`, match.followed === true);
       this.setData({ match });
       if (String(err?.message || '') !== 'follow_login_cancelled') {
         wx.showToast({ title: '关注状态暂未保存', icon: 'none' });
@@ -1081,6 +1100,7 @@ Page({
     const next = event.currentTarget.dataset.followed === true
       || event.currentTarget.dataset.followed === 'true';
     if (!targetId) return;
+    this.viewerFollowStates?.set(`player:${targetId}`, next);
     const previousMatch = this.data.match;
     const previous = this.data.followablePlayers;
     this.setData({
@@ -1091,11 +1111,34 @@ Page({
     try {
       await this.services.follow.setFollow('player', targetId, next, 'match_detail_player');
     } catch (err) {
+      this.viewerFollowStates?.set(`player:${targetId}`, previous.some(item => item.targetId === targetId && item.followed));
       this.setData({ match: previousMatch, followablePlayers: previous });
       if (String(err?.message || '') !== 'follow_login_cancelled') {
         wx.showToast({ title: '关注状态暂未保存', icon: 'none' });
       }
     }
+  },
+
+  async refreshViewerFollowStates(match) {
+    const follow = this.services?.follow;
+    if (!match?.id || typeof follow?.followedTargets !== 'function') return;
+    const players = followablePlayers(match);
+    const targets = [
+      { kind: 'match', targetId: match.id },
+      ...players.map(player => ({ kind: 'player', targetId: player.targetId }))
+    ];
+    const requestId = Number(this.followStateRequestId || 0) + 1;
+    this.followStateRequestId = requestId;
+    try {
+      const followed = await follow.followedTargets(targets);
+      if (this.followStateRequestId !== requestId || this.data.match?.id !== match.id) return;
+      for (const target of targets) {
+        const key = `${target.kind}:${target.targetId}`;
+        this.viewerFollowStates.set(key, followed.has(key));
+      }
+      const resolved = matchWithResolvedFollowStates(this.data.match, this.viewerFollowStates);
+      this.setData({ match: resolved, followablePlayers: followablePlayers(resolved) });
+    } catch { /* keep the last trusted local state while account status is unavailable */ }
   },
 
   decorateMatchFlowers(match) {

@@ -90,9 +90,10 @@ function datePart(value) {
 function dateLabel(value) {
   const date = datePart(value);
   if (!date) return '日期暂缺';
-  if (date === beijingDate()) return '今天';
-  const [, month, day] = /^(\d{4})-(\d{2})-(\d{2})$/u.exec(date) || [];
-  return month && day ? `${Number(month)}月${Number(day)}日` : date;
+  const [, year, month, day] = /^(\d{4})-(\d{2})-(\d{2})$/u.exec(date) || [];
+  return year && month && day
+    ? `${year}年${Number(month)}月${Number(day)}日`
+    : date;
 }
 
 function countsView(counts = {}) {
@@ -329,13 +330,21 @@ function mergeItems(existing, incoming) {
   }));
 }
 
-function dateGroups(items) {
+function dateGroups(items, withDateHeaders = true) {
   const ordered = [...items].sort((first, second) => {
     const firstDate = datePart(first.groupDate);
     const secondDate = datePart(second.groupDate);
     if (firstDate !== secondDate) return secondDate.localeCompare(firstDate);
     return String(second.followedAt || '').localeCompare(String(first.followedAt || ''));
   });
+  if (!withDateHeaders) {
+    return ordered.length ? [Object.freeze({
+      id: 'all',
+      label: '',
+      countLabel: '',
+      items: Object.freeze(ordered)
+    })] : [];
+  }
   const byDate = new Map();
   for (const item of ordered) {
     const key = datePart(item.groupDate) || 'unknown';
@@ -435,7 +444,7 @@ Page({
     const selectedMatchStatus = String(event.currentTarget.dataset.status || 'upcoming');
     try { wx.setStorageSync(MATCH_STATUS_STORAGE_KEY, selectedMatchStatus); } catch { /* session hint only */ }
     const visible = filteredItems(this.data.items, 'match', selectedMatchStatus);
-    this.setData({ selectedMatchStatus, dateGroups: dateGroups(visible), count: visible.length });
+    this.setData({ selectedMatchStatus, dateGroups: dateGroups(visible, true), count: visible.length });
   },
   async promptForProfile() {
     try {
@@ -543,7 +552,7 @@ Page({
         ? remembered : hasLive ? 'live' : 'upcoming';
     }
     const visibleItems = filteredItems(items, selectedKind, selectedMatchStatus);
-    const groups = dateGroups(visibleItems);
+    const groups = dateGroups(visibleItems, selectedKind === 'match');
     const dataAsOf = value?.dataAsOf || value?.delivery?.dataAsOf || '';
     this.matchDates = new Map(items
       .filter(item => item.type === 'match')

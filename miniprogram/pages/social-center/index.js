@@ -54,7 +54,7 @@ Page({
       const [bootstrap, calendar, ledger, badgeResult] = await Promise.all([
         getApp().services.social.bootstrap(),
         getApp().services.social.checkinCalendar(this.data.month),
-        getApp().services.social.ledger(),
+        getApp().services.social.ledger({ limit: 5, offset: 0 }),
         getApp().services.social.badges()
       ]);
       this.setData({
@@ -90,5 +90,8 @@ Page({
         : getApp().services.social.equipBadge(playerId));
       await this.load();
     } catch { wx.showToast({ title: '勋章状态暂未保存', icon: 'none' }); }
+  },
+  openLedger() {
+    wx.navigateTo({ url: '/pages/flower-ledger/index' });
   }
 });

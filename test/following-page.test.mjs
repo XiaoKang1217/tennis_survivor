@@ -7,6 +7,7 @@ import test from 'node:test';
 const miniRoot = resolve(import.meta.dirname, '..');
 const require = createRequire(import.meta.url);
 const { createSWRCache } = require('../core/swr-cache');
+const { FollowService } = require('../services/follow-service');
 const read = relative => readFileSync(resolve(miniRoot, relative), 'utf8');
 
 function cacheStorageKey(resourceKey) {
@@ -118,9 +119,41 @@ test('following page exposes category tabs, badge cards and real pagination', ()
   assert.match(script, /currentCacheScope/);
 });
 
+test('detail pages resolve current account follow state across paginated following results', async () => {
+  const requests = [];
+  const service = new FollowService({}, {}, {
+    async request(path) {
+      requests.push(path);
+      const offset = Number(new URL(`https://local${path}`).searchParams.get('offset'));
+      return {
+        payload: {
+          pageEntries: offset === 0
+            ? [{ targetKind: 'player', targetId: 'ATP:other' }]
+            : [{ targetKind: 'player', targetId: 'ATP:1001' }],
+          page: { nextOffset: offset === 0 ? 50 : null }
+        }
+      };
+    }
+  });
+  const followed = await service.followedTargets([
+    { kind: 'player', targetId: 'ATP:1001' },
+    { kind: 'player', targetId: 'ATP:missing' }
+  ]);
+  assert.equal(followed.has('player:ATP:1001'), true);
+  assert.equal(followed.has('player:ATP:missing'), false);
+  assert.equal(requests.length, 2);
+  assert.match(read('packages/player/pages/player-detail/index.wxml'), /followed \? '已关注' : '关注球员'/u);
+  assert.match(read('pages/match-detail/index.js'), /refreshViewerFollowStates/u);
+});
+
 test('following matches render by date feed instead of tournament court grouping', () => {
   const markup = read('pages/following/index.wxml');
+  const script = read('pages/following/index.js');
   assert.match(markup, /dateGroups/);
+  assert.match(markup, /wx:if="\{\{selectedKind === 'match'\}\}" class="follow-date-head"/u);
+  assert.match(script, /`\$\{year\}年\$\{Number\(month\)\}月\$\{Number\(day\)\}日`/u);
+  assert.match(script, /dateGroups\(visibleItems, selectedKind === 'match'\)/u);
+  assert.match(script, /id: 'all',[\s\S]*label: '',[\s\S]*countLabel: ''/u);
   assert.doesNotMatch(markup, /court\.matches/);
   assert.doesNotMatch(markup, /court\.name/);
   assert.doesNotMatch(markup, /wx:for-item="court"/);

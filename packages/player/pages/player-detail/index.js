@@ -241,6 +241,7 @@ Page({
   onShow() {
     syncPageTheme(this);
     enablePageShare();
+    if (this.data.playerId) void this.refreshPlayerFollowState();
   },
 
   onShareAppMessage() {
@@ -276,15 +277,29 @@ Page({
   async togglePlayerFollow() {
     const targetId = this.data.followTargetId || `${this.data.tour}:${this.data.playerId}`;
     const next = !this.data.followed;
+    this.followStateRequestId = Number(this.followStateRequestId || 0) + 1;
     this.setData({ followed: next, followTargetId: targetId });
     try {
       await getApp().services.follow.setFollow('player', targetId, next, 'player_profile');
+      void this.refreshPlayerFollowState();
     } catch (err) {
       this.setData({ followed: !next });
       if (String(err?.message || '') !== 'follow_login_cancelled') {
         wx.showToast({ title: '关注状态暂未保存', icon: 'none' });
       }
     }
+  },
+  async refreshPlayerFollowState() {
+    const targetId = this.data.followTargetId || `${this.data.tour}:${this.data.playerId}`;
+    const follow = typeof getApp === 'function' ? getApp()?.services?.follow : null;
+    if (!targetId || typeof follow?.followedTargets !== 'function') return;
+    const requestId = Number(this.followStateRequestId || 0) + 1;
+    this.followStateRequestId = requestId;
+    try {
+      const states = await follow.followedTargets([{ kind: 'player', targetId }]);
+      if (this.followStateRequestId !== requestId || this.data.followTargetId !== targetId) return;
+      this.setData({ followed: states.has(`player:${targetId}`) });
+    } catch { /* keep the last trusted local state while account status is unavailable */ }
   },
   selectTab(event) {
     const tab = event.currentTarget.dataset.tab;
@@ -495,6 +510,7 @@ Page({
       dataAsOf: profile?.dataAsOf || ''
     }, () => {
       void updatePageShareImages(this, 'player', this.data);
+      void this.refreshPlayerFollowState();
     });
   }
 });

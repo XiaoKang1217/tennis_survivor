@@ -56,7 +56,20 @@ class SocialService {
     await this.auth.ensure();
     const limit = Math.max(1, Math.min(100, Number(options.limit) || 30));
     const offset = Math.max(0, Number(options.offset) || 0);
-    return await this.http.request(`/api/v1/me/flowers/ledger?limit=${limit}&offset=${offset}`, {
+    const direction = ['income', 'expense'].includes(options.direction)
+      ? options.direction : 'all';
+    const from = /^\d{4}-\d{2}-\d{2}$/u.test(String(options.from || ''))
+      ? String(options.from) : '';
+    const to = /^\d{4}-\d{2}-\d{2}$/u.test(String(options.to || ''))
+      ? String(options.to) : '';
+    const query = [
+      `limit=${limit}`,
+      `offset=${offset}`,
+      `direction=${encodeURIComponent(direction)}`,
+      from ? `from=${encodeURIComponent(from)}` : '',
+      to ? `to=${encodeURIComponent(to)}` : ''
+    ].filter(Boolean).join('&');
+    return await this.http.request(`/api/v1/me/flowers/ledger?${query}`, {
       authRequired: true
     });
   }
