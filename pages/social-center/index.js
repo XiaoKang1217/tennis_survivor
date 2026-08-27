@@ -3,9 +3,11 @@
 const { buildThemeData, syncPageTheme } = require('../../core/theme');
 
 function monthNow() {
-  return new Intl.DateTimeFormat('en-CA', {
-    timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit'
-  }).format(new Date()).slice(0, 7);
+  // Mini-program Intl output is runtime-dependent (some versions return
+  // "08/2026" even for en-CA). Build the Shanghai month numerically so the
+  // API always receives the required YYYY-MM contract.
+  const shanghai = new Date(Date.now() + 8 * 60 * 60 * 1000);
+  return `${shanghai.getUTCFullYear()}-${String(shanghai.getUTCMonth() + 1).padStart(2, '0')}`;
 }
 
 function monthShift(month, delta) {
