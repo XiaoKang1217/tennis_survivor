@@ -124,6 +124,15 @@ function stableJson(value) { return JSON.stringify(value); }
 function scoreCacheKey(date) { return 'scores_today:' + date; }
 function defaultDateCacheKey(preferredDate) { return 'scores_default_date:' + preferredDate; }
 
+function scoreMatchTargets(projection) {
+  const matches = Array.isArray(projection?.payload?.matches)
+    ? projection.payload.matches : [];
+  return matches.map(match => ({
+    kind: 'match',
+    targetId: String(match?.viewerFollowState?.match?.targetId || match?.matchId || '').trim()
+  })).filter(target => target.targetId);
+}
+
 function cachedProjection(wxRuntime, date) {
   const entry = createSWRCache(wxRuntime).read(scoreCacheKey(date), SCORE_CACHE_SCHEMA);
   const projection = entry?.payload;
@@ -269,6 +278,8 @@ Page({
     const defaultSelection = explicitDate ? null : cachedDefaultSelection(wx, preferredDate);
     const selectedDate = defaultSelection?.selectedDate || preferredDate;
     this.followedIds = new Set();
+    this.followStateSignature = '';
+    this.followStateRequestId = 0;
     this.followOverrides = new Map();
     this.followCountOverrides = new Map();
     this.tournamentFollowOverrides = new Map();
@@ -389,6 +400,9 @@ Page({
   onShow() {
     syncPageTheme(this);
     if (!this.services || !this.data.selectedDate) return;
+    if (this.services.scoreStore.projection) {
+      void this.refreshViewerFollowStates(this.services.scoreStore.projection, { force: true });
+    }
     if (this.initialStartPromise) return;
     void this.services.scoreClient.ensure(this.data.selectedDate).catch(() => {
       this.services.scoreClient.scheduleSnapshotRecovery?.('page_show_retry');
@@ -486,6 +500,36 @@ Page({
       dataDeliveryMessage: projection.delivery.message,
       showDataNotice: projection.delivery.state === 'unavailable'
     });
+    void this.refreshViewerFollowStates(projection);
+  },
+
+  async refreshViewerFollowStates(projection, options = {}) {
+    if (!projection || projection.payload?.scheduleGroupDate !== this.data.selectedDate) return;
+    if (!this.services?.account?.isComplete?.()
+      || !this.services?.auth?.currentAccessToken?.()) {
+      if (this.followedIds.size) {
+        this.followedIds = new Set();
+        this.rerender();
+      }
+      return;
+    }
+    const targets = scoreMatchTargets(projection);
+    const signature = `${this.data.selectedDate}:${targets.map(target => target.targetId).sort().join('|')}`;
+    if (!options.force && signature === this.followStateSignature) return;
+    this.followStateSignature = signature;
+    const requestId = ++this.followStateRequestId;
+    try {
+      const followedTargets = await this.services.follow.followedTargets(targets);
+      if (requestId !== this.followStateRequestId
+        || projection !== this.services.scoreStore.projection
+        || projection.payload?.scheduleGroupDate !== this.data.selectedDate) return;
+      this.followedIds = new Set([...followedTargets]
+        .filter(key => key.startsWith('match:'))
+        .map(key => key.slice('match:'.length)));
+      this.rerender();
+    } catch {
+      if (requestId === this.followStateRequestId) this.followStateSignature = '';
+    }
   },
 
   rerender() {
@@ -526,7 +570,13 @@ Page({
 
   selectFilter(event) {
     this.resetVisibleWindow();
-    this.setData({ selectedFilter: event.currentTarget.dataset.id }, () => this.rerender());
+    const selectedFilter = event.currentTarget.dataset.id;
+    this.setData({ selectedFilter }, () => {
+      this.rerender();
+      if (selectedFilter === 'followed' && this.services.scoreStore.projection) {
+        void this.refreshViewerFollowStates(this.services.scoreStore.projection, { force: true });
+      }
+    });
   },
 
   selectTour(event) {
@@ -584,6 +634,9 @@ Page({
     this.fullMatchCount = 0;
     this.visibleMatchLimit = INITIAL_VISIBLE_MATCH_LIMIT;
     this.followCountOverrides?.clear?.();
+    this.followedIds = new Set();
+    this.followStateSignature = '';
+    this.followStateRequestId += 1;
     this.setData({
       selectedDate,
       dateLabel: dateLabel(selectedDate),
@@ -639,6 +692,8 @@ Page({
     this.rerender();
     try {
       const result = await this.services.follow.setFollow('match', matchId, next, 'scores_list');
+      if (next) this.followedIds.add(matchId);
+      else this.followedIds.delete(matchId);
       if (Number.isFinite(Number(result?.followCount))) {
         this.followCountOverrides.set(matchId, Number(result.followCount));
         this.rerender();

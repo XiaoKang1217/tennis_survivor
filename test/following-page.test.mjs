@@ -153,6 +153,15 @@ test('detail pages resolve current account follow state across paginated followi
   assert.match(read('pages/match-detail/index.js'), /refreshViewerFollowStates/u);
 });
 
+test('scores followed filter merges the current account follow list', () => {
+  const script = read('pages/scores/index.js');
+  assert.match(script, /refreshViewerFollowStates/u);
+  assert.match(script, /this\.services\.follow\.followedTargets\(targets\)/u);
+  assert.match(script, /this\.followedIds = new Set/u);
+  assert.match(script, /selectedFilter === 'followed'/u);
+  assert.match(script, /force: true/u);
+});
+
 test('following matches render by date feed instead of tournament court grouping', () => {
   const markup = read('pages/following/index.wxml');
   const script = read('pages/following/index.js');
