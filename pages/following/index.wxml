@@ -4,6 +4,10 @@
       <view wx:for="{{tabs}}" wx:key="id" data-kind="{{item.id}}" bindtap="selectKind" class="follow-tab {{selectedKind === item.id ? 'active' : ''}}" role="button"><text>{{item.label}}</text><text>{{item.count}}</text></view>
     </view>
     <view wx:if="{{selectedKind === 'match'}}" class="match-status-tabs"><view wx:for="{{matchStatusTabs}}" wx:key="id" data-status="{{item.id}}" bindtap="selectMatchStatus" class="{{selectedMatchStatus === item.id ? 'active' : ''}}">{{item.label}}</view></view>
+    <view wx:if="{{selectedKind === 'match'}}" class="match-date-filter">
+      <picker mode="date" value="{{selectedDate}}" bindchange="selectMatchDate"><view class="match-date-picker">{{selectedDateLabel}}</view></picker>
+      <view wx:if="{{selectedDate}}" class="match-date-clear" bindtap="clearMatchDate" role="button">清除日期</view>
+    </view>
     <view class="follow-summary"><text>{{selectedKind === 'match' ? count + ' 场比赛' : count + ' 位球员'}}</text><text>{{matchCount}} 比赛 · {{playerCount}} 球员</text></view>
     <view wx:if="{{authPrompt}}" class="follow-state"><client-state state="empty" label="登录后查看我的关注" message="选择头像和昵称，即可在不同设备同步关注"/><button class="follow-login-button" bindtap="promptForProfile">登录并查看</button></view>
     <block wx:else>
@@ -36,9 +40,12 @@
           <match-card wx:else match="{{entry.match}}" theme="{{uiTheme}}" bind:open="openMatch" bind:follow="toggleFollow"/>
         </block>
       </view>
-      <view wx:if="{{loadingMore}}" class="follow-load-more">加载中</view>
-      <view wx:elif="{{hasMore}}" class="follow-load-more" bindtap="loadMore" role="button">加载更多</view>
-      <view wx:else class="follow-load-more">已加载全部关注</view>
+      <view wx:if="{{selectedKind === 'match' && count}}" class="follow-pagination">
+        <view class="{{canPrev ? '' : 'disabled'}}" bindtap="previousPage" role="button">上一页</view>
+        <text>第 {{pageNumber}} / {{pageCount}} 页 · 每页 10 条</text>
+        <view class="{{canNext ? '' : 'disabled'}}" bindtap="nextPage" role="button">下一页</view>
+      </view>
+      <view wx:elif="{{selectedKind === 'player'}}" class="follow-load-more">已加载全部关注</view>
     </view>
     </block>
   <product-tabbar active="following" theme="{{uiTheme}}"/>

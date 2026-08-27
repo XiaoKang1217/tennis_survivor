@@ -8,7 +8,8 @@ const { beijingDate } = require('../../core/schedule-date');
 const { followingPath } = require('../../services/follow-service');
 const { directMediaUrl, mediaUrl } = require('../../core/media');
 
-const PAGE_SIZE = 20;
+const API_PAGE_SIZE = 50;
+const DISPLAY_PAGE_SIZE = 10;
 const FOLLOWING_CONTRACT = 'follow-context-bff/1';
 const FOLLOWING_CACHE_SCHEMA = 'follow-context-bff-cache/2';
 const FOLLOW_TABS = Object.freeze([
@@ -380,6 +381,41 @@ function filteredItems(items, selectedKind, selectedMatchStatus) {
   return items.filter(item => item.type === 'match' && matchStatus(item) === selectedMatchStatus);
 }
 
+function matchDateFilteredItems(items, selectedDate) {
+  const date = datePart(selectedDate);
+  if (!date) return items;
+  return items.filter(item => datePart(item.groupDate || item.match?.scheduleGroupDate) === date);
+}
+
+function paginatedFeed(items, selectedKind, selectedMatchStatus, selectedDate, requestedPage = 1) {
+  const statusItems = filteredItems(items, selectedKind, selectedMatchStatus);
+  const visibleItems = selectedKind === 'match'
+    ? matchDateFilteredItems(statusItems, selectedDate)
+    : statusItems;
+  if (selectedKind !== 'match') {
+    return Object.freeze({
+      visibleItems,
+      pageItems: visibleItems,
+      pageNumber: 1,
+      pageCount: 1,
+      canPrev: false,
+      canNext: false
+    });
+  }
+  const pageCount = Math.max(1, Math.ceil(visibleItems.length / DISPLAY_PAGE_SIZE));
+  const pageNumber = Math.min(Math.max(1, Number(requestedPage) || 1), pageCount);
+  const start = (pageNumber - 1) * DISPLAY_PAGE_SIZE;
+  const pageItems = visibleItems.slice(start, start + DISPLAY_PAGE_SIZE);
+  return Object.freeze({
+    visibleItems,
+    pageItems,
+    pageNumber,
+    pageCount,
+    canPrev: pageNumber > 1,
+    canNext: pageNumber < pageCount
+  });
+}
+
 Page({
   data: {
     ...buildThemeData(),
@@ -388,6 +424,8 @@ Page({
     selectedKind: 'match',
     matchStatusTabs: MATCH_STATUS_TABS,
     selectedMatchStatus: 'upcoming',
+    selectedDate: '',
+    selectedDateLabel: '选择年月日',
     authPrompt: false,
     loading: false,
     loadingMore: false,
@@ -400,6 +438,10 @@ Page({
     playerCount: 0,
     offset: 0,
     hasMore: false,
+    pageNumber: 1,
+    pageCount: 1,
+    canPrev: false,
+    canNext: false,
     deliveryState: '',
     deliveryMessage: '',
     dataAsOf: ''
@@ -425,10 +467,6 @@ Page({
   onPullDownRefresh() {
     void this.load().finally(() => wx.stopPullDownRefresh());
   },
-  onReachBottom() {
-    if (this.data.loading || this.data.loadingMore || !this.data.hasMore) return;
-    void this.load({ append: true });
-  },
   selectKind(event) {
     const selectedKind = String(event.currentTarget.dataset.kind || 'match');
     if (selectedKind === this.data.selectedKind) return;
@@ -437,14 +475,52 @@ Page({
       items: [],
       dateGroups: [],
       offset: 0,
-      hasMore: false
+      hasMore: false,
+      pageNumber: 1
     }, () => void this.load());
   },
   selectMatchStatus(event) {
     const selectedMatchStatus = String(event.currentTarget.dataset.status || 'upcoming');
     try { wx.setStorageSync(MATCH_STATUS_STORAGE_KEY, selectedMatchStatus); } catch { /* session hint only */ }
-    const visible = filteredItems(this.data.items, 'match', selectedMatchStatus);
-    this.setData({ selectedMatchStatus, dateGroups: dateGroups(visible, true), count: visible.length });
+    this.setData({ selectedMatchStatus, pageNumber: 1 }, () => this.refreshVisibleFeed());
+  },
+  selectMatchDate(event) {
+    const selectedDate = datePart(event.detail.value);
+    this.setData({
+      selectedDate,
+      selectedDateLabel: selectedDate ? dateLabel(selectedDate) : '选择年月日',
+      pageNumber: 1
+    }, () => this.refreshVisibleFeed());
+  },
+  clearMatchDate() {
+    if (!this.data.selectedDate) return;
+    this.setData({ selectedDate: '', selectedDateLabel: '选择年月日', pageNumber: 1 },
+      () => this.refreshVisibleFeed());
+  },
+  previousPage() {
+    if (!this.data.canPrev) return;
+    this.setData({ pageNumber: this.data.pageNumber - 1 }, () => this.refreshVisibleFeed());
+  },
+  nextPage() {
+    if (!this.data.canNext) return;
+    this.setData({ pageNumber: this.data.pageNumber + 1 }, () => this.refreshVisibleFeed());
+  },
+  refreshVisibleFeed() {
+    const feed = paginatedFeed(
+      this.data.items,
+      this.data.selectedKind,
+      this.data.selectedMatchStatus,
+      this.data.selectedDate,
+      this.data.pageNumber
+    );
+    this.setData({
+      dateGroups: dateGroups(feed.pageItems, this.data.selectedKind === 'match'),
+      count: feed.visibleItems.length,
+      pageNumber: feed.pageNumber,
+      pageCount: feed.pageCount,
+      canPrev: feed.canPrev,
+      canNext: feed.canNext
+    });
   },
   async promptForProfile() {
     try {
@@ -462,7 +538,7 @@ Page({
     }
     const append = Boolean(options.append);
     const selectedKind = this.data.selectedKind;
-    const limit = PAGE_SIZE;
+    const limit = API_PAGE_SIZE;
     const offset = append ? this.data.offset : 0;
     let scope = append ? '' : currentCacheScope(this.services);
     let cacheKey = scope ? followingCacheKey(scope, selectedKind, limit, offset) : '';
@@ -512,6 +588,29 @@ Page({
         selectedKind,
         fromCache: false
       });
+      let nextOffset = Number(result.value?.payload?.page?.nextOffset);
+      let hasMore = result.value?.payload?.page?.hasMore === true;
+      let pageGuard = 0;
+      while (hasMore && Number.isSafeInteger(nextOffset) && pageGuard < 20) {
+        const nextValue = await this.services.follow.following({
+          kind: selectedKind,
+          limit,
+          offset: nextOffset
+        });
+        if (this.data.selectedKind !== selectedKind) return;
+        this.applyFollowingValue(nextValue, {
+          append: true,
+          selectedKind,
+          fromCache: false
+        });
+        const candidateOffset = Number(nextValue?.payload?.page?.nextOffset);
+        hasMore = nextValue?.payload?.page?.hasMore === true
+          && Number.isSafeInteger(candidateOffset)
+          && candidateOffset > nextOffset;
+        nextOffset = candidateOffset;
+        pageGuard += 1;
+      }
+      this.setData({ hasMore: false, loadingMore: false });
     } catch {
       if (this.data.selectedKind !== selectedKind) return;
       if (cached?.payload) {
@@ -551,8 +650,14 @@ Page({
       selectedMatchStatus = MATCH_STATUS_TABS.some(tab => tab.id === remembered)
         ? remembered : hasLive ? 'live' : 'upcoming';
     }
-    const visibleItems = filteredItems(items, selectedKind, selectedMatchStatus);
-    const groups = dateGroups(visibleItems, selectedKind === 'match');
+    const feed = paginatedFeed(
+      items,
+      selectedKind,
+      selectedMatchStatus,
+      this.data.selectedDate,
+      append ? this.data.pageNumber : 1
+    );
+    const groups = dateGroups(feed.pageItems, selectedKind === 'match');
     const dataAsOf = value?.dataAsOf || value?.delivery?.dataAsOf || '';
     this.matchDates = new Map(items
       .filter(item => item.type === 'match')
@@ -564,13 +669,17 @@ Page({
       tabs: countsView(counts),
       items,
       dateGroups: groups,
-      count: selectedKind === 'match' ? visibleItems.length : selectedCount(counts, selectedKind),
+      count: selectedKind === 'match' ? feed.visibleItems.length : selectedCount(counts, selectedKind),
       selectedMatchStatus,
       matchCount: Number(counts.matches || 0),
       tournamentCount: Number(counts.tournaments || 0),
       playerCount: Number(counts.players || 0),
       offset: Number(value?.payload?.page?.nextOffset ?? items.length),
       hasMore: value?.payload?.page?.hasMore === true,
+      pageNumber: feed.pageNumber,
+      pageCount: feed.pageCount,
+      canPrev: feed.canPrev,
+      canNext: feed.canNext,
       deliveryState: options.fromCache ? 'stale'
         : value?.delivery?.state === 'current' ? 'live' : value?.delivery?.state || '',
       deliveryMessage: options.fromCache
@@ -578,10 +687,6 @@ Page({
         : '',
       dataAsOf
     });
-  },
-  loadMore() {
-    if (this.data.loading || this.data.loadingMore || !this.data.hasMore) return;
-    void this.load({ append: true });
   },
   openMatch(event) {
     const matchId = event.detail.matchId;
