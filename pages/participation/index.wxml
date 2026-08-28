@@ -10,25 +10,31 @@
   </view>
   <view class="entry-toolbar">
     <view class="segmented"><view class="segment {{activeView === 'tournaments' ? 'active' : ''}}" data-view="tournaments" bindtap="selectView">按赛事</view><view class="segment {{activeView === 'players' ? 'active' : ''}}" data-view="players" bindtap="selectView">按球员</view></view>
+    <view class="tour-tabs"><view class="tour-tab {{activeTour === 'ATP' ? 'active atp' : ''}}" data-tour="ATP" bindtap="selectTour">ATP</view><view class="tour-tab {{activeTour === 'WTA' ? 'active wta' : ''}}" data-tour="WTA" bindtap="selectTour">WTA</view></view>
+    <view class="entry-search"><ui-icon name="search" size="18" color="#7890a6"/><input value="{{searchQuery}}" bindinput="onSearchInput" placeholder="搜索中文名、英文名或国家/地区"/><text wx:if="{{searchQuery}}" bindtap="clearSearch">清除</text></view>
+    <scroll-view wx:if="{{activeView === 'tournaments' && weekTabs.length}}" class="week-tabs" scroll-x enhanced show-scrollbar="{{false}}"><view class="week-tabs-inner"><view wx:for="{{weekTabs}}" wx:key="id" class="week-tab {{activeWeek === item.id ? 'active' : ''}}" data-week="{{item.id}}" bindtap="selectWeek"><text>{{item.label}}</text><text>{{item.id}}</text></view></view></scroll-view>
     <view class="source-meta" wx:if="{{dataAsOf || qualityLabel}}"><text>{{stale ? '使用上次可信数据 · ' : ''}}{{dataAsOf}}</text><text>{{qualityLabel}}</text></view>
   </view>
   <view class="page-state" wx:if="{{loading || failed}}"><client-state state="{{loading ? 'loading' : 'error'}}" label="{{loading ? '正在读取参赛名单' : '参赛动态暂不可用'}}" message="{{loading ? '请稍候' : '下拉页面可重新尝试'}}"/></view>
-  <view class="entry-list" wx:elif="{{activeView === 'tournaments' && tournaments.length}}">
-    <view wx:for="{{tournaments}}" wx:key="tournamentId" class="entry-card" data-id="{{item.tournamentId}}" bindtap="openTournament">
-      <view class="card-main"><view class="tour-pill">{{item.tour}}</view><view class="card-copy"><text class="card-title">{{item.tournamentName}}</text><text class="card-subtitle">{{item.competitionLevel}} · {{item.surfaceLabel}}</text><text class="date-line">{{item.dateRange}}</text></view><text class="count">{{item.entryCount}}人</text></view>
-      <view class="preview-list" wx:if="{{item.previewEntries.length}}">
-        <view wx:for="{{item.previewEntries}}" wx:for-item="entry" wx:key="playerId" class="preview-row" data-id="{{entry.playerId}}" catchtap="openPlayer">
-          <image wx:if="{{entry.portraitUrl}}" class="preview-avatar" src="{{entry.portraitUrl}}" mode="aspectFill"/><view wx:else class="preview-avatar fallback">球</view>
-          <text class="preview-name">{{entry.playerName}}</text><text class="status status-{{entry.statusTone}}">{{entry.statusLabel}}</text>
+  <view class="entry-list" wx:elif="{{activeView === 'tournaments' && tournamentGroups.length}}">
+    <view wx:for="{{tournamentGroups}}" wx:key="id" wx:for-item="group" class="level-group">
+      <view class="level-head"><text>{{group.label}}</text><text>{{group.items.length}} 站</text></view>
+      <view wx:for="{{group.items}}" wx:key="tournamentId" wx:for-item="event" class="entry-card {{expandedTournamentId === event.tournamentId ? 'expanded' : ''}}">
+        <view class="card-main" data-id="{{event.tournamentId}}" bindtap="toggleTournament"><view class="tour-pill">{{event.tour}}</view><view class="card-copy"><text class="card-title">{{event.tournamentName}}</text><text wx:if="{{event.originalTournamentName && event.originalTournamentName !== event.tournamentName}}" class="original-name">{{event.originalTournamentName}}</text><text class="card-subtitle">{{event.competitionLevel}} · {{event.surfaceLabel}}</text><text class="date-line">{{event.dateRange}}</text></view><view class="card-side"><text class="count">{{event.entryCount}}人</text><text class="expand-icon">{{expandedTournamentId === event.tournamentId ? '⌃' : '⌄'}}</text></view></view>
+        <view class="roster" wx:if="{{expandedTournamentId === event.tournamentId}}">
+          <view wx:for="{{event.entries.length ? event.entries : event.previewEntries}}" wx:for-item="entry" wx:key="playerId" class="roster-row" data-id="{{entry.playerId}}" catchtap="openPlayer">
+            <image wx:if="{{entry.portraitUrl}}" class="preview-avatar" src="{{entry.portraitUrl}}" mode="aspectFill"/><view wx:else class="preview-avatar fallback"><ui-icon name="player" size="17"/></view>
+            <view class="roster-copy"><text class="preview-name">{{entry.playerName}}</text><text class="roster-original">{{entry.originalPlayerName}}</text></view><text class="roster-country">{{entry.countryCode}}</text><text class="roster-rank">{{entry.worldRanking ? '第' + entry.worldRanking : '未排名'}}</text><text class="status status-{{entry.statusTone}}">{{entry.statusLabel}}</text>
+          </view>
+          <view class="card-foot" data-id="{{event.tournamentId}}" catchtap="openTournament"><text>进入赛事详情</text><text>›</text></view>
         </view>
       </view>
-      <view class="card-foot"><text>查看赛事与参赛名单</text><text>›</text></view>
     </view>
   </view>
-  <view class="entry-list" wx:elif="{{activeView === 'players' && players.length}}">
-    <view wx:for="{{players}}" wx:key="playerId" class="entry-card player-card" data-id="{{item.playerId}}" bindtap="openPlayer">
+  <view class="entry-list" wx:elif="{{activeView === 'players' && visiblePlayers.length}}">
+    <view wx:for="{{visiblePlayers}}" wx:key="playerId" class="entry-card player-card" data-id="{{item.playerId}}" bindtap="openPlayer">
       <image wx:if="{{item.portraitUrl}}" class="player-avatar" src="{{item.portraitUrl}}" mode="aspectFill"/><view wx:else class="player-avatar fallback">球</view>
-      <view class="card-copy"><text class="card-title">{{item.playerName}}</text><text class="card-subtitle">{{item.countryCode}} · {{item.tour}} · {{item.entryCount}}项</text><text class="next-line" wx:if="{{item.nextAppearance}}">最近参赛 {{item.nextAppearance.tournamentName}}</text><text class="date-line" wx:if="{{item.nextAppearance}}">{{item.nextAppearance.dateRange}} · {{item.nextAppearance.surfaceLabel}} · {{item.nextAppearance.statusLabel}}</text><text class="next-line muted" wx:else>暂无后续参赛计划</text></view><text class="chevron">›</text>
+      <view class="card-copy"><view class="player-title-line"><text class="card-title">{{item.playerName}}</text><text class="world-rank">{{item.worldRanking ? '世界第 ' + item.worldRanking : '暂无排名'}}</text></view><text wx:if="{{item.originalPlayerName}}" class="original-name">{{item.originalPlayerName}}</text><text class="card-subtitle">{{item.countryCode}} · {{item.tour}} · {{item.entryCount}}项</text><text class="next-line" wx:if="{{item.nextAppearance}}">下一站 {{item.nextAppearance.tournamentName}}</text><text class="date-line" wx:if="{{item.nextAppearance}}">{{item.nextAppearance.dateRange}} · {{item.nextAppearance.surfaceLabel}} · {{item.nextAppearance.statusLabel}}</text><text class="next-line muted" wx:else>近期暂无明确安排</text></view><text class="chevron">›</text>
       <view class="player-events" wx:if="{{item.previewEntries.length}}">
         <view wx:for="{{item.previewEntries}}" wx:for-item="entry" wx:key="tournamentId" class="player-event" data-id="{{entry.tournamentId}}" catchtap="openTournament"><text class="event-name">{{entry.tournamentName}}</text><text class="event-meta">{{entry.dateRange}} · {{entry.statusLabel}}</text><text>›</text></view>
       </view>

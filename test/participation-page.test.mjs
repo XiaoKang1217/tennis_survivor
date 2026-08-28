@@ -72,3 +72,17 @@ test('participation page renders trusted tournaments and players with stable lin
     if (priorGetApp === undefined) delete globalThis.getApp; else globalThis.getApp = priorGetApp;
   }
 });
+
+test('participation page separates tours, source weeks and ranked searchable rosters', () => {
+  const script = readFileSync(resolve(uploadRoot, 'pages/participation/index.js'), 'utf8');
+  const markup = readFileSync(resolve(uploadRoot, 'pages/participation/index.wxml'), 'utf8');
+  for (const expected of ['activeTour', 'weekTabs', 'tournamentGroups', 'visiblePlayers', 'worldRanking']) {
+    assert.match(script + markup, new RegExp(expected));
+  }
+  assert.match(script, /levelRank/u);
+  assert.match(script, /rankValue\(a\.worldRanking\) - rankValue\(b\.worldRanking\)/u);
+  assert.match(script, /normalizedSearch/u);
+  assert.match(markup, /bindtap="toggleTournament"/u);
+  assert.match(markup, /originalPlayerName/u);
+  assert.match(markup, /countryCode/u);
+});

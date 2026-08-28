@@ -141,6 +141,15 @@ class SocialService {
     });
   }
 
+  async nextAppearances(playerIds = []) {
+    const ids = [...new Set(playerIds.map(value => String(value || '').trim()).filter(Boolean))]
+      .slice(0, 40);
+    if (!ids.length) return { payload: { players: [] } };
+    return await this.http.request(`/api/v1/bff/social/players/next-appearances?ids=${encodeURIComponent(ids.join(','))}`, {
+      authMode: 'none'
+    });
+  }
+
   async topFans(playerId) {
     return await this.http.request(`/api/v1/bff/social/players/${encodeURIComponent(playerId)}/top-fans`, {
       authMode: 'none'

@@ -194,6 +194,19 @@ test('following player badge shows titles, recent form and follower count', () =
   assert.doesNotMatch(markup, /被关注记录/);
 });
 
+test('following player badge visibly hydrates four-level next appearance copy in one batch', () => {
+  const markup = read('pages/following/index.wxml');
+  const script = read('pages/following/index.js');
+  const service = read('services/social-service.js');
+  assert.match(markup, /nextPlanLabel/u);
+  assert.match(markup, /nextPlanMeta/u);
+  assert.match(script, /下一场 ·/u);
+  assert.match(script, /下一站 ·/u);
+  assert.match(script, /近期暂无明确安排/u);
+  assert.match(script, /hydratePlayerNextAppearances/u);
+  assert.match(service, /\/api\/v1\/bff\/social\/players\/next-appearances\?ids=/u);
+});
+
 test('player follows leaderboard is wired to large cards and real pagination', () => {
   const markup = read('packages/player/pages/players/index.wxml');
   assert.match(markup, />资料与排名</u);

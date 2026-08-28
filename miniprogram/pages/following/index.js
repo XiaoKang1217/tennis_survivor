@@ -229,9 +229,41 @@ function playerView(item) {
     recentRecordLabel: recentRecordLabel(item),
     followCount,
     followCountLabel: countText(followCount, '人关注'),
+    nextPlanLabel: '下一站读取中…',
+    nextPlanMeta: '',
+    nextPlanTone: 'loading',
     groupDate,
     followedAt: item.followedAt || ''
   });
+}
+
+function appearanceMap(value) {
+  const payload = value?.payload || value || {};
+  const rows = Array.isArray(value?.appearances) ? value.appearances
+    : Array.isArray(payload.appearances) ? payload.appearances
+      : Array.isArray(payload.players) ? payload.players
+        : Array.isArray(payload.items) ? payload.items : [];
+  return new Map(rows.map(row => [String(row.playerId || row.targetId || row.id || ''), row]));
+}
+
+function nextPlanView(value = {}) {
+  const appearance = value.appearance || value.nextAppearance || value;
+  const tournament = String(appearance.tournamentName || appearance.eventName || appearance.title || '').trim();
+  const opponent = String(appearance.opponentName || appearance.opponent?.displayName
+    || appearance.opponent?.name || '').trim();
+  const startsAt = String(appearance.startsAt || appearance.startTime || appearance.scheduledAt || '').trim();
+  const time = startsAt ? startsAt.slice(0, 16).replace('T', ' ') : '';
+  const round = String(appearance.roundName || appearance.round || '').trim();
+  if (tournament && opponent && time) {
+    return { nextPlanLabel: `下一场 · ${time}`, nextPlanMeta: `${tournament} · 对 ${opponent}${round ? ` · ${round}` : ''}`, nextPlanTone: 'match' };
+  }
+  if (tournament && opponent) {
+    return { nextPlanLabel: `下一场 · ${tournament}`, nextPlanMeta: `对 ${opponent}${round ? ` · ${round}` : ''}`, nextPlanTone: 'match' };
+  }
+  if (tournament) {
+    return { nextPlanLabel: `下一站 · ${tournament}`, nextPlanMeta: String(appearance.dateRange || appearance.startsOn || ''), nextPlanTone: 'entry' };
+  }
+  return { nextPlanLabel: '近期暂无明确安排', nextPlanMeta: '', nextPlanTone: 'none' };
 }
 
 function matchItems(payload) {
@@ -573,6 +605,7 @@ Page({
         selectedKind,
         fromCache: false
       });
+      if (selectedKind === 'player') void this.hydratePlayerNextAppearances(requestId, signature);
     } catch {
       if (!this.isCurrentFollowingRequest(requestId, signature)) return;
       if (cached?.payload) {
@@ -637,6 +670,29 @@ Page({
         : '',
       dataAsOf
     });
+  },
+  async hydratePlayerNextAppearances(requestId, signature) {
+    const playerIds = this.data.items.filter(item => item.type === 'player')
+      .map(item => item.player.followTargetId || item.player.id);
+    if (!playerIds.length) return;
+    try {
+      const value = await this.services.social.nextAppearances(playerIds);
+      if (!this.isCurrentFollowingRequest(requestId, signature)) return;
+      const byId = appearanceMap(value);
+      const items = this.data.items.map(item => {
+        if (item.type !== 'player') return item;
+        const fullId = String(item.player.followTargetId || item.player.id || '');
+        const sourceId = String(item.player.sourcePlayerId || '');
+        const row = byId.get(fullId) || byId.get(sourceId) || {};
+        return { ...item, player: { ...item.player, ...nextPlanView(row) } };
+      });
+      this.setData({ items, dateGroups: dateGroups(items, false) });
+    } catch {
+      if (!this.isCurrentFollowingRequest(requestId, signature)) return;
+      const items = this.data.items.map(item => item.type === 'player'
+        ? { ...item, player: { ...item.player, ...nextPlanView({}) } } : item);
+      this.setData({ items, dateGroups: dateGroups(items, false) });
+    }
   },
   openMatch(event) {
     const matchId = event.detail.matchId;

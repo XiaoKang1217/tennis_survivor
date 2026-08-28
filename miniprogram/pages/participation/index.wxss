@@ -105,3 +105,33 @@
 .daylight-page-state{
   padding:62rpx 24rpx 0;
 }
+
+.tour-tabs{margin-top:14rpx;display:grid;grid-template-columns:1fr 1fr;gap:10rpx}
+.tour-tab{height:58rpx;border:1rpx solid var(--line);border-radius:14rpx;display:flex;align-items:center;justify-content:center;background:var(--surface);color:var(--ink-subtle);font-size:24rpx;font-weight:700}
+.tour-tab.active{border-color:transparent;background:var(--brand-strong);color:#fff}
+.tour-tab.active.wta{background:#cf2e7c}
+.entry-search{margin-top:14rpx;height:68rpx;padding:0 18rpx;border:1rpx solid var(--line);border-radius:16rpx;display:flex;align-items:center;gap:12rpx;background:var(--surface)}
+.entry-search input{min-width:0;flex:1;color:var(--ink);font-size:24rpx}
+.entry-search>text{color:var(--brand-strong);font-size:21rpx}
+.week-tabs{margin-top:14rpx;width:100%;white-space:nowrap}
+.week-tabs-inner{display:inline-flex;gap:10rpx}
+.week-tab{min-width:128rpx;padding:10rpx 16rpx;border:1rpx solid var(--line);border-radius:14rpx;display:inline-flex;flex-direction:column;align-items:center;background:var(--surface);box-sizing:border-box}
+.week-tab text:first-child{color:var(--ink);font-size:22rpx;font-weight:650}
+.week-tab text:last-child{color:var(--ink-subtle);font-size:18rpx}
+.week-tab.active{border-color:var(--brand);background:var(--brand-soft)}
+.level-group{display:flex;flex-direction:column;gap:12rpx}
+.level-head{padding:8rpx 4rpx 0;display:flex;align-items:center;justify-content:space-between}
+.level-head text:first-child{color:var(--ink);font-size:28rpx;font-weight:760}
+.level-head text:last-child{color:var(--ink-subtle);font-size:20rpx}
+.card-side{flex:none;display:flex;align-items:center;gap:10rpx}
+.expand-icon{color:var(--ink-subtle);font-size:24rpx}
+.original-name{overflow:hidden;color:var(--ink-muted);font-size:20rpx;white-space:nowrap;text-overflow:ellipsis}
+.roster{margin-top:18rpx;padding-top:8rpx;border-top:1rpx solid var(--line)}
+.roster-row{min-width:0;padding:10rpx 0;display:grid;grid-template-columns:40rpx minmax(0,1fr) auto auto auto;align-items:center;gap:9rpx}
+.roster-copy{min-width:0;display:flex;flex-direction:column}
+.roster-original{overflow:hidden;color:var(--ink-muted);font-size:17rpx;white-space:nowrap;text-overflow:ellipsis}
+.roster-country,.roster-rank{color:var(--ink-subtle);font-size:18rpx;white-space:nowrap}
+.entry-card.expanded{border-color:rgba(22,119,210,.32);box-shadow:0 12rpx 30rpx rgba(22,119,210,.09)}
+.player-title-line{min-width:0;display:flex;align-items:center;gap:10rpx}
+.player-title-line .card-title{min-width:0;flex:1}
+.world-rank{flex:none;padding:3rpx 8rpx;border-radius:9rpx;background:var(--brand-soft);color:var(--brand-strong);font-size:18rpx;font-weight:650}
