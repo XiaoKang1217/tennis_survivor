@@ -5,6 +5,7 @@ const { createSWRCache } = require('../../core/swr-cache');
 const { loadProjectionResource, readTrustedProjection } = require('../../core/projection-resource');
 const { normalizeLevelCode, levelLabel } = require('../../core/localization');
 const { enablePageShare, pageShare } = require('../../core/share');
+const { openModule } = require('../../core/module-navigation');
 
 const CALENDAR_CACHE_SCHEMA = 'calendar-projection-bff/1';
 
@@ -397,9 +398,9 @@ Page({
   nextYear() {
     this.setData({ year: this.data.year + 1, activeMonth: 1 }, () => void this.load());
   },
-  openScores() { wx.redirectTo({ url: '/pages/scores/index' }); },
-  openDraws() { wx.redirectTo({ url: '/pages/draws/index' }); },
-  openParticipation() { wx.redirectTo({ url: '/pages/participation/index' }); },
+  openScores() { openModule('/pages/scores/index'); },
+  openDraws() { openModule('/pages/draws/index'); },
+  openParticipation() { openModule('/pages/participation/index'); },
   openTournament(event) {
     const id = event.currentTarget.dataset.id;
     if (!id) return;

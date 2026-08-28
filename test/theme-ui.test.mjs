@@ -104,7 +104,11 @@ test('every page applies the persisted theme before first-frame page setup', () 
 
 test('module navigation preserves the painted window instead of relaunching to white', () => {
   const tabbar = read('components/product-tabbar/index.js');
-  assert.match(tabbar, /wx\.redirectTo\(\{ url: ROUTES\[target\] \}\)/u);
+  const navigation = read('core/module-navigation.js');
+  assert.match(tabbar, /openModule\(ROUTES\[target\]\)/u);
+  assert.match(navigation, /wx\.navigateTo\(\{ url \}\)/u);
+  assert.match(navigation, /wx\.navigateBack\(\{ delta \}\)/u);
+  assert.doesNotMatch(navigation, /wx\.redirectTo|wx\.reLaunch/u);
   assert.doesNotMatch(tabbar, /wx\.reLaunch/u);
 });
 

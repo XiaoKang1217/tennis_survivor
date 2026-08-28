@@ -2,6 +2,7 @@
 
 const { buildThemeData, syncPageTheme } = require('../../core/theme');
 const { enablePageShare, pageShare } = require('../../core/share');
+const { openModule } = require('../../core/module-navigation');
 
 function payloadOf(value) { return value?.payload && typeof value.payload === 'object' ? value.payload : {}; }
 function qualityLabel(quality = {}) {
@@ -79,6 +80,36 @@ function weekLabel(value) {
   return match ? `${Number(match[2])}月${Number(match[3])}日周` : String(value || '');
 }
 
+function displayState(state) {
+  const tour = state.activeTour;
+  const query = normalizedSearch(state.searchQuery);
+  const tourTournaments = state.tournaments.filter(item => item.tour === tour);
+  const publishedWeeks = Array.isArray(state.sourceWeeks?.[tour])
+    ? state.sourceWeeks[tour] : [];
+  const weekTabs = [...new Set((publishedWeeks.length ? publishedWeeks
+    : tourTournaments.map(item => item.weekStart)).filter(Boolean))]
+    .sort().map(id => ({ id, label: weekLabel(id) }));
+  const activeWeek = weekTabs.some(item => item.id === state.activeWeek)
+    ? state.activeWeek : (weekTabs[0]?.id || '');
+  const visibleTournaments = tourTournaments.filter(item => (!activeWeek || item.weekStart === activeWeek)
+    && (!query || searchable(item).includes(query)));
+  const byLevel = new Map();
+  for (const item of visibleTournaments) {
+    const key = String(item.competitionLevel || 'other');
+    if (!byLevel.has(key)) byLevel.set(key, []);
+    byLevel.get(key).push(item);
+  }
+  const tournamentGroups = [...byLevel.entries()].map(([id, items]) => ({
+    id, label: levelLabel(id), rank: levelRank(id), items: items.sort((a, b) =>
+      String(a.startsOn || '').localeCompare(String(b.startsOn || '')) || a.tournamentName.localeCompare(b.tournamentName))
+  })).sort((a, b) => b.rank - a.rank || a.label.localeCompare(b.label));
+  const visiblePlayers = state.players.filter(item => item.tour === tour
+    && (!query || searchable(item).includes(query)))
+    .sort((a, b) => rankValue(a.worldRanking) - rankValue(b.worldRanking)
+      || a.playerName.localeCompare(b.playerName));
+  return { weekTabs, activeWeek, tournamentGroups, visiblePlayers };
+}
+
 Page({
   data: {
     ...buildThemeData(), topInset: 44, activeView: 'tournaments', activeTour: 'ATP',
@@ -117,13 +148,14 @@ Page({
       const payload = payloadOf(value);
       const tournaments = Array.isArray(payload.tournaments) ? payload.tournaments.map(tournamentView) : [];
       const players = Array.isArray(payload.players) ? payload.players.map(playerView) : [];
-      this.setData({
+      const next = {
         loading: false, stale: value?.delivery?.state === 'stale',
         tournaments, players, sourceWeeks: payload.sourceWeeks && typeof payload.sourceWeeks === 'object'
           ? payload.sourceWeeks : {},
         qualityLabel: qualityLabel(payload.quality),
         dataAsOf: String(payload.dataAsOf || value?.dataAsOf || '').slice(0, 16).replace('T', ' ')
-      }, () => this.rebuildDisplay());
+      };
+      this.setData({ ...next, ...displayState({ ...this.data, ...next }) });
     } catch {
       this.setData({ loading: false, failed: true });
     } finally {
@@ -131,40 +163,15 @@ Page({
     }
   },
   onPullDownRefresh() { this.load(); },
-  rebuildDisplay() {
-    const tour = this.data.activeTour;
-    const query = normalizedSearch(this.data.searchQuery);
-    const tourTournaments = this.data.tournaments.filter(item => item.tour === tour);
-    const publishedWeeks = Array.isArray(this.data.sourceWeeks?.[tour])
-      ? this.data.sourceWeeks[tour] : [];
-    const weekTabs = [...new Set((publishedWeeks.length ? publishedWeeks
-      : tourTournaments.map(item => item.weekStart)).filter(Boolean))]
-      .sort().map(id => ({ id, label: weekLabel(id) }));
-    const activeWeek = weekTabs.some(item => item.id === this.data.activeWeek)
-      ? this.data.activeWeek : (weekTabs[0]?.id || '');
-    const visibleTournaments = tourTournaments.filter(item => (!activeWeek || item.weekStart === activeWeek)
-      && (!query || searchable(item).includes(query)));
-    const byLevel = new Map();
-    for (const item of visibleTournaments) {
-      const key = String(item.competitionLevel || 'other');
-      if (!byLevel.has(key)) byLevel.set(key, []);
-      byLevel.get(key).push(item);
-    }
-    const tournamentGroups = [...byLevel.entries()].map(([id, items]) => ({
-      id, label: levelLabel(id), rank: levelRank(id), items: items.sort((a, b) =>
-        String(a.startsOn || '').localeCompare(String(b.startsOn || '')) || a.tournamentName.localeCompare(b.tournamentName))
-    })).sort((a, b) => b.rank - a.rank || a.label.localeCompare(b.label));
-    const visiblePlayers = this.data.players.filter(item => item.tour === tour
-      && (!query || searchable(item).includes(query)))
-      .sort((a, b) => rankValue(a.worldRanking) - rankValue(b.worldRanking)
-        || a.playerName.localeCompare(b.playerName));
-    this.setData({ weekTabs, activeWeek, tournamentGroups, visiblePlayers });
+  rebuildDisplay(update = {}) {
+    const next = { ...this.data, ...update };
+    this.setData({ ...update, ...displayState(next) });
   },
   selectView(event) { this.setData({ activeView: event.currentTarget.dataset.view === 'players' ? 'players' : 'tournaments' }); },
-  selectTour(event) { this.setData({ activeTour: event.currentTarget.dataset.tour === 'WTA' ? 'WTA' : 'ATP', activeWeek: '', expandedTournamentId: '' }, () => this.rebuildDisplay()); },
-  selectWeek(event) { this.setData({ activeWeek: String(event.currentTarget.dataset.week || ''), expandedTournamentId: '' }, () => this.rebuildDisplay()); },
-  onSearchInput(event) { this.setData({ searchQuery: String(event.detail.value || '') }, () => this.rebuildDisplay()); },
-  clearSearch() { this.setData({ searchQuery: '' }, () => this.rebuildDisplay()); },
+  selectTour(event) { this.rebuildDisplay({ activeTour: event.currentTarget.dataset.tour === 'WTA' ? 'WTA' : 'ATP', activeWeek: '', expandedTournamentId: '' }); },
+  selectWeek(event) { this.rebuildDisplay({ activeWeek: String(event.currentTarget.dataset.week || ''), expandedTournamentId: '' }); },
+  onSearchInput(event) { this.rebuildDisplay({ searchQuery: String(event.detail.value || '') }); },
+  clearSearch() { this.rebuildDisplay({ searchQuery: '' }); },
   async toggleTournament(event) {
     const id = String(event.currentTarget.dataset.id || '');
     if (!id) return;
@@ -177,7 +184,7 @@ Page({
       const item = tournamentView(payloadOf(value));
       const tournaments = this.data.tournaments.map(existing => existing.tournamentId === id
         ? { ...existing, ...item } : existing);
-      this.setData({ tournaments }, () => this.rebuildDisplay());
+      this.rebuildDisplay({ tournaments });
     } catch { /* keep the trusted preview and allow a later retry */ }
   },
   openTournament(event) {
@@ -188,7 +195,7 @@ Page({
     const id = String(event.currentTarget.dataset.id || '');
     if (id) wx.navigateTo({ url: `/packages/player/pages/player-detail/index?playerId=${encodeURIComponent(id)}` });
   },
-  openScores() { wx.redirectTo({ url: '/pages/scores/index' }); },
-  openDraws() { wx.redirectTo({ url: '/pages/draws/index' }); },
-  openCalendar() { wx.redirectTo({ url: '/pages/calendar/index' }); }
+  openScores() { openModule('/pages/scores/index'); },
+  openDraws() { openModule('/pages/draws/index'); },
+  openCalendar() { openModule('/pages/calendar/index'); }
 });

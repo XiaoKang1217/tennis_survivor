@@ -3,6 +3,7 @@
 const { buildThemeData, syncPageTheme } = require('../../core/theme');
 const { createSWRCache } = require('../../core/swr-cache');
 const { enablePageShare, pageShare } = require('../../core/share');
+const { openModule } = require('../../core/module-navigation');
 
 const { FILTERS, groupedMatches } = require('../../core/view-model');
 const {
@@ -790,10 +791,10 @@ Page({
     });
   },
 
-  openDraws() { wx.redirectTo({ url: '/pages/draws/index' }); },
-  openCalendar() { wx.redirectTo({ url: '/pages/calendar/index' }); },
-  openPlayers() { wx.navigateTo({ url: '/packages/player/pages/players/index' }); },
-  openParticipation() { wx.redirectTo({ url: '/pages/participation/index' }); },
+  openDraws() { openModule('/pages/draws/index'); },
+  openCalendar() { openModule('/pages/calendar/index'); },
+  openPlayers() { openModule('/packages/player/pages/players/index'); },
+  openParticipation() { openModule('/pages/participation/index'); },
 
   retryAuth() {
     void this.services.auth.refresh(false)

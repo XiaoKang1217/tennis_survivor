@@ -1,5 +1,7 @@
 'use strict';
 
+const { openModule } = require('../../core/module-navigation');
+
 const ROUTES = Object.freeze({
   matches: '/pages/scores/index',
   players: '/packages/player/pages/players/index',
@@ -40,7 +42,7 @@ Component({
     select(event) {
       const target = event.currentTarget.dataset.target;
       if (!ROUTES[target] || target === this.data.active) return;
-      wx.redirectTo({ url: ROUTES[target] });
+      openModule(ROUTES[target]);
     }
   }
 });

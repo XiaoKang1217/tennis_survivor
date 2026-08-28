@@ -4,6 +4,7 @@ const { buildThemeData, syncPageTheme } = require('../../core/theme');
 const { createSWRCache } = require('../../core/swr-cache');
 const { loadProjectionResource, readTrustedProjection } = require('../../core/projection-resource');
 const { drawShare, enablePageShare } = require('../../core/share');
+const { openModule } = require('../../core/module-navigation');
 const { levelLabel, normalizeLevelCode } = require('../../core/localization');
 const { playerOccurrences, playerSearchResults } = require('../../core/draw-player-search');
 const {
@@ -227,10 +228,10 @@ Page({
   },
 
   onPullDownRefresh() { void this.loadIndex().finally(() => wx.stopPullDownRefresh()); },
-  openScores() { wx.redirectTo({ url: '/pages/scores/index' }); },
-  openCalendar() { wx.redirectTo({ url: '/pages/calendar/index' }); },
-  openPastDraws() { wx.redirectTo({ url: '/pages/calendar/index?mode=draws' }); },
-  openParticipation() { wx.redirectTo({ url: '/pages/participation/index' }); },
+  openScores() { openModule('/pages/scores/index'); },
+  openCalendar() { openModule('/pages/calendar/index'); },
+  openPastDraws() { openModule('/pages/calendar/index?mode=draws'); },
+  openParticipation() { openModule('/pages/participation/index'); },
   openTournamentDetail() {
     if (!this.data.selectedTournamentId) return;
     wx.navigateTo({
