@@ -132,9 +132,9 @@ test('daily selection groups the full official event day across China midnight',
 });
 
 test('daily predictions can use a prediction-only source station while rewarding the active station', async () => {
-  assert.equal(activeEvents.daily_prediction.starts_on, '2026-08-24');
+  assert.equal(activeEvents.daily_prediction.starts_on, '2026-08-30');
   assert.equal(activeEvents.daily_prediction.station_key, activeEvents.station_key);
-  assert.equal(activeEvents.daily_prediction.source_station_key, '2026-w34-winston-salem-monterrey-predictions');
+  assert.equal(activeEvents.daily_prediction.source_station_key, activeEvents.station_key);
   assert.match(dailyPredictionUpdater, /predictionSourceStationKey/);
   assert.match(dailyPredictionUpdater, /sourceStationKey: predictionSourceStationKey/);
   assert.match(refreshCurrentStation, /loadDailyPredictionEvents/);

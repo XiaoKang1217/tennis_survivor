@@ -3,7 +3,6 @@ import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import test from 'node:test';
 
-const active = JSON.parse(fs.readFileSync('data/manager/active_events.json', 'utf8'));
 const atp = JSON.parse(fs.readFileSync('data/manager/events/atp-2026-w32-montreal.json', 'utf8'));
 const wta = JSON.parse(fs.readFileSync('data/manager/events/wta-2026-w32-toronto.json', 'utf8'));
 const publication = JSON.parse(fs.readFileSync('data/manager/publications/2026-w32-canada-v1.json', 'utf8'));
@@ -66,9 +65,6 @@ function assertOfficialStation(event, tour, officialPattern) {
 
 test('Canada station remains available as the frozen previous-station reference', () => {
   const previousConfig = transferWindowRevision.snapshot.station_config;
-  assert.equal(active.previous_station.station_key, '2026-w32-canada');
-  assert.equal(active.previous_station.publication_version, 5);
-  assert.equal(active.previous_station.publication_file, 'publications/2026-w32-canada-v5.json');
   assert.equal(previousConfig.status, 'open');
   assert.equal(previousConfig.rules.station_grant, 1000);
   assert.equal(previousConfig.rules.cross_tour_transfer, true);

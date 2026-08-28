@@ -748,6 +748,13 @@ function sourceOverrideFor(key, overrides = {}) {
   return overrides[key] || overrides[slugify(key)] || null;
 }
 
+function scoreOverrideValue(override, key) {
+  const value = override?.scores?.[key] ?? override?.score_overrides?.[key];
+  if (value === undefined || value === null || value === '') return null;
+  const numeric = toNum(value);
+  return Number.isFinite(numeric) ? round2(numeric) : null;
+}
+
 function rankingOverrideRow(player, key, tour, override, snapshotDate) {
   const ranking = override?.ranking;
   if (!ranking || ranking.rank == null) return null;
@@ -1187,6 +1194,7 @@ function updateEventPrices(event, rankings, elos, warnings, snapshotDate, aliase
   let updatedPlayers = event.players.map((player) => {
     const key = canonicalPlayerKey(tour, player);
     const fact = factsByKey.get(key) || {};
+    const override = sourceOverrideFor(key, sourceOverrides);
     const actual = actualSimulation.result.get(key) || {};
     const baseScore = round2((overallEloPercentiles.get(key) ?? 50) * 0.65 + (officialRankPercentiles.get(key) ?? 50) * 0.35);
     const surfaceScore = round2((surfaceEloPercentiles.get(key) ?? baseScore ?? 50) * 0.70 + (surfaceBonusPercentiles.get(key) ?? 50) * 0.30);
@@ -1196,11 +1204,11 @@ function updateEventPrices(event, rankings, elos, warnings, snapshotDate, aliase
     const formScore = round2(closeScore * 0.70 + freshScore * 0.30);
     const manualScore = toNum(player.scores?.manual) || 0;
     let scores = {
-      base: baseScore,
-      surface: surfaceScore,
-      draw: drawScore,
-      form: formScore,
-      manual: manualScore
+      base: scoreOverrideValue(override, 'base') ?? baseScore,
+      surface: scoreOverrideValue(override, 'surface') ?? surfaceScore,
+      draw: scoreOverrideValue(override, 'draw') ?? drawScore,
+      form: scoreOverrideValue(override, 'form') ?? formScore,
+      manual: scoreOverrideValue(override, 'manual') ?? manualScore
     };
     let totalScore = scoreTotal(scores);
     let price = marketPrice(totalScore, actual.expected_points || 0, event);
@@ -1233,7 +1241,8 @@ function updateEventPrices(event, rankings, elos, warnings, snapshotDate, aliase
         draw: 'Same-bucket draw bonus percentile: actual expected points minus average after swapping into legal comparable draw slots.',
         form: '70% current TA overall Elo closeness to personal Peak Elo + 30% Peak Month recency, linearly fading to 0 over 48 months.',
         manual: 'Manual correction defaults to 0.'
-      }
+      },
+      score_overrides: override?.scores || override?.score_overrides || null
     };
     let pricingDetail = computedPricingDetail;
     const preR1Substitution = player.pre_r1_substitution || null;

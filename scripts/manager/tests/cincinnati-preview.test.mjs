@@ -5,7 +5,6 @@ import test from 'node:test';
 const active = JSON.parse(fs.readFileSync('data/manager/active_events.json', 'utf8'));
 const atp = JSON.parse(fs.readFileSync('data/manager/events/atp-2026-w33-cincinnati.json', 'utf8'));
 const wta = JSON.parse(fs.readFileSync('data/manager/events/wta-2026-w33-cincinnati.json', 'utf8'));
-const market = JSON.parse(fs.readFileSync('data/manager/market_snapshot.json', 'utf8'));
 const transferPublication = JSON.parse(fs.readFileSync('data/manager/publications/2026-w33-cincinnati-v2.json', 'utf8'));
 const dataManifest = JSON.parse(fs.readFileSync('data/manifest.json', 'utf8'));
 const html = fs.readFileSync('index.html', 'utf8');
@@ -63,18 +62,21 @@ function assertCincinnatiEvent(event, tour, eventId, expected) {
   assert.ok(event.players.every((player) => !/\bor\b/i.test(player.name_en)));
 }
 
-test('Cincinnati station is open with 1000 grant and Montreal-compatible Combo rules', () => {
-  assert.equal(active.station_key, '2026-w33-cincinnati');
+test('Cincinnati station is frozen as the previous station for US Open', () => {
+  const previousConfig = transferPublication.snapshot.station_config;
+  assert.equal(active.station_key, '2026-w35-us-open');
+  assert.equal(active.previous_station.station_key, '2026-w33-cincinnati');
+  assert.equal(active.previous_station.publication_version, 2);
+  assert.equal(active.previous_station.publication_file, 'publications/2026-w33-cincinnati-v2.json');
   assert.equal(active.status, 'open');
-  assert.equal(active.station_name, 'ATP 辛辛那提 + WTA 辛辛那提');
-  assert.equal(active.rules.station_grant, 1000);
-  assert.equal(active.rules.cross_tour_transfer, true);
-  assert.equal(active.rules.transfer_fee_rate, 0.15);
-  assert.equal(active.rules.combo_version, 'canada_2026_v1');
-  assert.equal(active.rules.combo_design_status, 'confirmed');
-  assert.equal(active.rules.combo.total_cap, 700);
-  assert.deepEqual(active.rules.combo.dual_tour, { R16: 50, QF: 100, SF: 250, F: 450, W: 700 });
-  assert.deepEqual(active.rules.combo.village_hope, {
+  assert.equal(previousConfig.rules.station_grant, 1000);
+  assert.equal(previousConfig.rules.cross_tour_transfer, true);
+  assert.equal(previousConfig.rules.transfer_fee_rate, 0.15);
+  assert.equal(previousConfig.rules.combo_version, 'canada_2026_v1');
+  assert.equal(previousConfig.rules.combo_design_status, 'confirmed');
+  assert.equal(previousConfig.rules.combo.total_cap, 700);
+  assert.deepEqual(previousConfig.rules.combo.dual_tour, { R16: 50, QF: 100, SF: 250, F: 450, W: 700 });
+  assert.deepEqual(previousConfig.rules.combo.village_hope, {
     selection: 'user_selected_at_submission',
     R16: 50,
     QF: 100,
@@ -82,7 +84,7 @@ test('Cincinnati station is open with 1000 grant and Montreal-compatible Combo r
     F: 400,
     W: 700,
   });
-  assert.deepEqual(active.rules.combo.welfare, {
+  assert.deepEqual(previousConfig.rules.combo.welfare, {
     principal_max: 500,
     min_players: 3,
     discount_rate: 0.2,
@@ -90,27 +92,20 @@ test('Cincinnati station is open with 1000 grant and Montreal-compatible Combo r
     max_uses_per_season: 3,
     excluded_from_combo_cap: true,
   });
-  assert.equal(active.pricing.market_prices_locked, true);
-  assert.equal(active.pricing.publication_version, 1);
-  assert.equal(active.pricing.locked_at, '2026-08-12T01:00:00.000Z');
-  assert.equal(active.previous_station.station_key, '2026-w32-canada');
-  assert.ok(active.notes.some((note) => note.includes('2026-08-15 10:00 - 22:45')));
-  assert.ok(active.notes.some((note) => note.includes('换人不支持自定义全村的希望')));
+  assert.ok(transferPublication.snapshot.events.every((event) => (
+    Number(event.market_price_lock.publication_version) === 1
+    && event.market_price_lock.locked_at === '2026-08-12T01:00:00.000Z'
+  )));
+  assert.ok(previousConfig.notes.some((note) => note.includes('2026-08-15 10:00 - 22:45')));
+  assert.ok(previousConfig.notes.some((note) => note.includes('换人不支持自定义全村的希望')));
 });
 
 test('Cincinnati ATP and WTA draws are priced from latest ranking and Elo snapshots', () => {
   assertCincinnatiEvent(atp, 'ATP', '422', { luckyLosers: 2, rankedDirect: 82 });
   assertCincinnatiEvent(wta, 'WTA', '1017', { luckyLosers: 1, rankedDirect: 83 });
-  assert.equal(market.station_key, '2026-w33-cincinnati');
-  assert.deepEqual(market.events.map((event) => event.players.length), [96, 96]);
-  assert.equal(market.source_status.ATP.ranking_rows, 1200);
-  assert.equal(market.source_status.WTA.ranking_rows, 1200);
-  assert.ok(market.source_status.ATP.elo_rows >= 500);
-  assert.ok(market.source_status.WTA.elo_rows >= 500);
-  assert.deepEqual(market.warnings, [
-    'Thanasi KOKKINAKIS: TA current Elo unavailable; used ranking proxy score.',
-    'Venus WILLIAMS: TA current Elo unavailable; used ranking proxy score.',
-  ]);
+  assert.equal(transferPublication.station_key, '2026-w33-cincinnati');
+  assert.deepEqual(transferPublication.snapshot.market.map((event) => event.players.length), [96, 96]);
+  assert.equal(transferPublication.snapshot.pricing.player_count, 192);
 });
 
 test('Cincinnati custom village hope is wired through UI, calculator, and RPC', () => {

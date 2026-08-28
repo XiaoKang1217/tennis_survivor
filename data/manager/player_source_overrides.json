@@ -16,5 +16,11 @@
       "source_url": "owner_override:2026-06-26:wimbledon_wildcard_rank_129",
       "note": "温网定价运营口径：Serena Williams 官方排名按 129 处理。"
     }
+  },
+  "ATP|carlos-alcaraz": {
+    "scores": {
+      "form": 50,
+      "note": "美网定价运营口径：Carlos Alcaraz 状态分人工校正为 50。"
+    }
   }
 }

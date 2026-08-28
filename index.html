@@ -2851,6 +2851,7 @@ function managerCanadaRoundReward(round,table){
   if(managerRoundAtLeast(round,'SF'))return Number(table.SF)||0;
   if(managerRoundAtLeast(round,'QF'))return Number(table.QF)||0;
   if(managerRoundAtLeast(round,'R16'))return Number(table.R16)||0;
+  if(managerRoundAtLeast(round,'R32'))return Number(table.R32)||0;
   return 0;
 }
 function managerVillageHopePlayer(rounds){
@@ -2931,6 +2932,39 @@ function managerWimbledonComboScenario(gross,rounds){
     {label:'冠军经纪',amount:champBonus,desc:'任意冠军 +50；冠军价格 <=450 时 +150'}
   ]};
 }
+function managerUsOpenComboScenario(gross,rounds){
+  var rules=MANAGER_ACTIVE_EVENTS&&MANAGER_ACTIVE_EVENTS.rules||{},combo=rules.combo||{},steadyRules=combo.steady||{},multiRules=steadyRules.multi||{},dualRules=combo.dual_tour||{},valueRules=combo.value_pick||{},hopeRules=combo.village_hope||{};
+  var count=rounds.length,at=function(th){return rounds.filter(function(x){return managerRoundAtLeast(x.round,th);}).length;};
+  var minPlayers=Number(steadyRules.min_players)||3,multi=0;
+  if(count>=minPlayers){
+    if(at('SF')>=3)multi=Number(multiRules.SF)||800;
+    else if(at('QF')>=3)multi=Number(multiRules.QF)||600;
+    else if(at('R16')>=3)multi=Number(multiRules.R16)||400;
+    else if(at('R32')>=3)multi=Number(multiRules.R32)||200;
+  }
+  var configuredAllR16=Number(steadyRules.all_r16);
+  var allR16=count>=minPlayers&&Number.isFinite(configuredAllR16)&&configuredAllR16>0&&rounds.every(function(x){return managerRoundAtLeast(x.round,'R16');})?configuredAllR16:0;
+  var stable=multi+allR16;
+  var byTour={ATP:rounds.filter(function(x){return x.player.tour==='ATP';}),WTA:rounds.filter(function(x){return x.player.tour==='WTA';})};
+  function eachTour(th){return byTour.ATP.length&&byTour.WTA.length&&byTour.ATP.some(function(x){return managerRoundAtLeast(x.round,th);})&&byTour.WTA.some(function(x){return managerRoundAtLeast(x.round,th);});}
+  var dual=0;
+  if(eachTour('W'))dual=Number(dualRules.W)||1200;
+  else if(eachTour('F'))dual=Number(dualRules.F)||1000;
+  else if(eachTour('SF'))dual=Number(dualRules.SF)||800;
+  else if(eachTour('QF'))dual=Number(dualRules.QF)||600;
+  else if(eachTour('R16'))dual=Number(dualRules.R16)||400;
+  else if(eachTour('R32'))dual=Number(dualRules.R32)||200;
+  var maxPrice=Number(valueRules.max_price)||300,jewel=0;
+  rounds.forEach(function(x){if((Number(x.player.price)||0)<=maxPrice)jewel=Math.max(jewel,managerCanadaRoundReward(x.round,valueRules));});
+  var hope=managerVillageHopePlayer(rounds),hopeBonus=hope?managerCanadaRoundReward(hope.round,hopeRules):0;
+  var raw=stable+dual+jewel+hopeBonus,cap=Number(combo.total_cap)||1200,bonus=Math.min(raw,cap),hopeMode=managerVillageHopeUserSelected()?'自定义选择':'自动认定';
+  return {gross:gross,stable:stable,finalBonus:dual,champBonus:0,jewelBonus:jewel,smallBusinessBonus:0,dualBonus:dual,villageHopeBonus:hopeBonus,villageHopePlayer:hope&&hope.player||null,bonus:bonus,comboVersion:rules.combo_version||'us_open_2026_v1',comboCap:cap,comboRaw:raw,bloomBonus:multi,allR16Bonus:allR16,comboItems:[
+    {label:'稳健经营',amount:stable,desc:'阵容里≥3 人进 R32/R16/QF/SF，最高档 +200/+400/+600/+800'},
+    {label:'双线经营',amount:dual,desc:'ATP/WTA 各至少 1 人进 R32/R16/QF/SF/F/W，最高档 +200/+400/+600/+800/+1000/+1200'},
+    {label:'慧眼识珠',amount:jewel,desc:'价格 <=300 的球员进 R32/R16/QF/SF/F/W，最高档 +200/+400/+600/+800/+1000/+1200'},
+    {label:'全村的希望',amount:hopeBonus,desc:(hope?hopeMode+' '+managerPlayerDisplayName(hope.player,true)+'（原价 '+hope.player.price+'）':'提交时从阵容中自定义选择')+'，进 R32/R16/QF/SF/F/W 最高档 +200/+400/+600/+800/+1000/+1200'}
+  ]};
+}
 function managerScoreScenario(players,roundFor){
   var gross=0,rounds=[];
   players.forEach(function(p){
@@ -2940,6 +2974,7 @@ function managerScoreScenario(players,roundFor){
   });
   var policy=managerComboPolicyForPlayers(players);
   if(policy==='pending')return managerPendingComboScenario(gross);
+  if(policy==='us_open_2026_v1')return managerUsOpenComboScenario(gross,rounds);
   if(policy==='canada_2026_v1'||policy==='cincinnati_2026_v1')return managerCanadaComboScenario(gross,rounds);
   if(policy==='wimbledon_2026')return managerWimbledonComboScenario(gross,rounds);
   if(policy==='washington_2026_v1'||policy==='washington_2026_v2')return managerWashingtonComboScenario(gross,rounds);
@@ -3261,7 +3296,7 @@ function managerComboFallbackEvidence(item,meta,contracts,lineup){
   }else if(key==='jewel'){
     var version=String(meta&&meta.combo_version||'');
     var candidates=active.filter(function(c){
-      if(version.indexOf('wimbledon')>=0)return Number(c.price)<=300;
+      if(version.indexOf('wimbledon')>=0||version.indexOf('us_open_2026')>=0)return Number(c.price)<=300;
       if(version.indexOf('washington_2026_')>=0)return Number(c.price)<=100;
       return c.tier==='C'||c.tier==='D';
     });
@@ -4134,6 +4169,7 @@ function managerRenderMarket(){
 }
 function managerComboBrief(c){
   if(c.comboVersion==='pending')return '规则待定，本地预览暂不计算 Combo 奖励';
+  if(c.comboVersion==='us_open_2026_v1')return '稳健经营 '+(c.stable||0)+' / 双线经营 '+(c.dualBonus||0)+' / 慧眼识珠 '+(c.jewelBonus||0)+' / 全村的希望 '+(c.villageHopeBonus||0)+' / 合计 '+c.bonus+(c.comboRaw>c.bonus?'（四项合计封顶 '+c.comboCap+'）':'');
   if(c.comboVersion==='canada_2026_v1'||c.comboVersion==='cincinnati_2026_v1')return '稳健经营 '+(c.stable||0)+' / 双线经营 '+(c.dualBonus||0)+' / 慧眼识珠 '+(c.jewelBonus||0)+' / 全村的希望 '+(c.villageHopeBonus||0)+' / 合计 '+c.bonus+(c.comboRaw>c.bonus?'（四项合计封顶 '+c.comboCap+'）':'');
   if(c.comboVersion==='wimbledon_2026')return '多点开花 '+(c.bloomBonus||0)+' / 全员进阶 '+(c.allR16Bonus||0)+' / 双线经营 '+(c.dualBonus||0)+' / 慧眼识珠 '+(c.jewelBonus||0)+' / 冠军经纪 '+(c.champBonus||0)+' / 合计 '+c.bonus+(c.comboRaw>c.bonus?'（封顶 '+c.comboCap+'）':'');
   if(c.comboVersion==='normal_2026_v2'||c.comboVersion==='washington_2026_v1'||c.comboVersion==='washington_2026_v2')return '稳健经营 '+(c.stable||0)+' / 双线经营 '+(c.dualBonus||0)+' / 慧眼识珠 '+(c.jewelBonus||0)+' / 小本经营 '+(c.smallBusinessBonus||0)+' / 合计 '+c.bonus+(c.comboRaw>c.bonus?'（封顶 '+c.comboCap+'）':'');
@@ -4155,6 +4191,20 @@ function managerWimbledonComboRulesHtml(){
 }
 function managerWimbledonComboRuleCard(title){
   return '<div class="manager-rule-card manager-combo-rule-card"><b>'+esc(title||'温网 Combo')+'</b>'+managerWimbledonComboRulesHtml()+'</div>';
+}
+function managerUsOpenComboRulesHtml(rules){
+  rules=rules||MANAGER_ACTIVE_EVENTS&&MANAGER_ACTIVE_EVENTS.rules||{};
+  var combo=rules.combo||{},steady=combo.steady||{},multi=steady.multi||{},dual=combo.dual_tour||{},value=combo.value_pick||{},hope=combo.village_hope||{},welfare=combo.welfare||{},cap=Number(combo.total_cap)||1200;
+  return managerComboRuleSection('稳健经营',['阵容至少 '+(Number(steady.min_players)||3)+' 人才触发。','阵容里≥3 人进入 R32/R16/QF/SF：+'+(Number(multi.R32)||200)+'/+'+(Number(multi.R16)||400)+'/+'+(Number(multi.QF)||600)+'/+'+(Number(multi.SF)||800)+'。','只按达到的最高档结算。'])+
+    managerComboRuleSection('双线经营',['阵容里 ATP/WTA 都有人。','ATP/WTA 各至少 1 人进入 R32/R16/QF/SF/F/W：+'+(Number(dual.R32)||200)+'/+'+(Number(dual.R16)||400)+'/+'+(Number(dual.QF)||600)+'/+'+(Number(dual.SF)||800)+'/+'+(Number(dual.F)||1000)+'/+'+(Number(dual.W)||1200)+'。','只取最高档。'])+
+    managerComboRuleSection('慧眼识珠',['按购买价判断：价格 ≤ '+(Number(value.max_price)||300)+'。','低价球员进入 R32/R16/QF/SF/F/W：+'+(Number(value.R32)||200)+'/+'+(Number(value.R16)||400)+'/+'+(Number(value.QF)||600)+'/+'+(Number(value.SF)||800)+'/+'+(Number(value.F)||1000)+'/+'+(Number(value.W)||1200)+'。','每个阵容最多触发 '+(Number(value.max_triggers)||1)+' 次，只取最高档。'])+
+    managerComboRuleSection('全村的希望',['提交阵容时，弹窗里从阵容球员中自定义选择“全村的希望”。','TA 达到 R32/R16/QF/SF/F/W：+'+(Number(hope.R32)||200)+'/+'+(Number(hope.R16)||400)+'/+'+(Number(hope.QF)||600)+'/+'+(Number(hope.SF)||800)+'/+'+(Number(hope.F)||1000)+'/+'+(Number(hope.W)||1200)+'。','认定后固定，不随预测轮次或价格变化。'])+
+    managerComboRuleSection('四项赛果 Combo 合计封顶 '+cap,['稳健经营、双线经营、慧眼识珠、全村的希望共同参与 '+cap+' 封顶。'])+
+    managerComboRuleSection('低保办（独立于 '+cap+' 封顶）',['以提交阵容时的经纪人本金为准，本金 ≤'+(Number(welfare.principal_max)||500)+' 且阵容至少 '+(Number(welfare.min_players)||3)+' 人可触发。','签约总原价即时减免 '+Math.round((Number(welfare.discount_rate)||.2)*100)+'%，最高减免 '+(Number(welfare.cap)||300)+'。','每位用户 2026 赛季最多触发 '+(Number(welfare.max_uses_per_season)||3)+' 次。','低保减免不占用四项赛果 Combo 的 '+cap+' 上限。']);
+}
+function managerUsOpenComboRuleCard(source,title){
+  source=source||MANAGER_ACTIVE_EVENTS&&MANAGER_ACTIVE_EVENTS.rules||{};
+  return '<div class="manager-rule-card manager-combo-rule-card"><b>'+esc(title||'本站 Combo')+'</b>'+managerUsOpenComboRulesHtml(source)+'</div>';
 }
 function managerNormalV2ComboRulesHtml(source,label){
   var current=managerRules(),rules=source||(MANAGER_ACTIVE_EVENTS&&MANAGER_ACTIVE_EVENTS.rules)||current,combo=rules.combo||{},steady=combo.steady||{},dual=combo.dual_tour||{},value=combo.value_pick||{},small=combo.small_budget||{};
@@ -4199,6 +4249,7 @@ function managerPreviousComboConfig(){
 }
 function managerPreviousComboRuleCard(){
   var config=managerPreviousComboConfig(),title='上一站 Combo · '+config.stationName;
+  if(config.comboVersion==='us_open_2026_v1')return managerUsOpenComboRuleCard(config.rules,title);
   if(config.comboVersion==='canada_2026_v1'||config.comboVersion==='cincinnati_2026_v1')return managerCanadaComboRuleCard(config.rules,title);
   if(config.comboVersion==='normal_2026_v2'||config.comboVersion==='washington_2026_v1'||config.comboVersion==='washington_2026_v2')return managerNormalV2ComboRuleCard(config.rules,title,'上一站');
   if(config.comboVersion==='wimbledon_2026')return managerWimbledonComboRuleCard(title);
@@ -4207,6 +4258,7 @@ function managerPreviousComboRuleCard(){
 function managerCurrentComboRuleCard(){
   var policy=managerComboPolicyForPlayers(managerLineupPlayers());
   if(policy==='pending')return managerRuleCard('本站 Combo 待定',['Combo 规则尚未确认，本地预览不计算、不展示任何本站 Combo 奖励。','可以先审核官方签表、排名、Elo、价格和签约金；确认 Combo 后再生成正式开售版本。']);
+  if(policy==='us_open_2026_v1')return managerUsOpenComboRuleCard(MANAGER_ACTIVE_EVENTS&&MANAGER_ACTIVE_EVENTS.rules,'本站 Combo');
   if(policy==='canada_2026_v1'||policy==='cincinnati_2026_v1')return managerCanadaComboRuleCard(MANAGER_ACTIVE_EVENTS&&MANAGER_ACTIVE_EVENTS.rules,'本站 Combo');
   if(policy==='normal_2026_v2'||policy==='washington_2026_v1'||policy==='washington_2026_v2')return managerNormalV2ComboRuleCard();
   if(policy==='wimbledon_2026')return managerWimbledonComboRuleCard();
@@ -4214,6 +4266,7 @@ function managerCurrentComboRuleCard(){
 }
 function managerCalculatorComboRulesHtml(c){
   if(c.comboVersion==='pending')return '<div style="margin-top:12px">'+managerCurrentComboRuleCard()+'</div>';
+  if(c.comboVersion==='us_open_2026_v1')return '<div style="margin-top:12px">'+managerUsOpenComboRuleCard(MANAGER_ACTIVE_EVENTS&&MANAGER_ACTIVE_EVENTS.rules,'本站 Combo')+'</div>';
   if(c.comboVersion==='canada_2026_v1'||c.comboVersion==='cincinnati_2026_v1')return '<div style="margin-top:12px">'+managerCanadaComboRuleCard(MANAGER_ACTIVE_EVENTS&&MANAGER_ACTIVE_EVENTS.rules,'本站 Combo')+'</div>';
   if(c.comboVersion==='normal_2026_v2'||c.comboVersion==='washington_2026_v1'||c.comboVersion==='washington_2026_v2')return '<div style="margin-top:12px">'+managerNormalV2ComboRuleCard()+'</div>';
   if(c.comboVersion==='wimbledon_2026')return '<div style="margin-top:12px">'+managerWimbledonComboRuleCard()+'</div>';

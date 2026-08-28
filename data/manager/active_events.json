@@ -1,67 +1,73 @@
 {
   "season": 2026,
-  "station_key": "2026-w33-cincinnati",
-  "station_name": "ATP 辛辛那提 + WTA 辛辛那提",
+  "station_key": "2026-w35-us-open",
+  "station_name": "ATP 美网 + WTA 美网",
   "survivor_aligned": true,
   "status": "open",
-  "announcement": "由于站长阳了，本周暂停一周。美网将于8.28正赛签表出了之后准时上线，欢迎参与！",
+  "announcement": "美网新站开售：签约金 2000，Combo 封顶 1200，提交时间0828 09:15~0831 22:45",
   "daily_prediction": {
-    "starts_on": "2026-08-24",
-    "station_key": "2026-w33-cincinnati",
-    "source_station_key": "2026-w34-winston-salem-monterrey-predictions",
-    "station_name": "ATP 温斯顿塞勒姆 + WTA 蒙特雷",
+    "starts_on": "2026-08-30",
+    "station_key": "2026-w35-us-open",
+    "source_station_key": "2026-w35-us-open",
+    "station_name": "ATP 美网 + WTA 美网",
     "events": [
       {
         "tour": "ATP",
-        "event_key": "atp-2026-w34-winston-salem-winston-salem-open",
-        "data_file": "events/atp-2026-w34-winston-salem.json",
+        "event_key": "atp-2026-w35-us-open",
+        "data_file": "events/atp-2026-w35-us-open.json",
         "active": true
       },
       {
         "tour": "WTA",
-        "event_key": "wta-2026-w34-monterrey-monterrey-open",
-        "data_file": "events/wta-2026-w34-monterrey.json",
+        "event_key": "wta-2026-w35-us-open",
+        "data_file": "events/wta-2026-w35-us-open.json",
         "active": true
       }
     ]
   },
   "rules": {
-    "station_grant": 1000,
+    "station_grant": 2000,
     "cross_tour_transfer": true,
     "transfer_fee_rate": 0.15,
-    "combo_version": "canada_2026_v1",
+    "combo_version": "us_open_2026_v1",
     "combo_design_status": "confirmed",
     "combo": {
-      "total_cap": 700,
+      "total_cap": 1200,
       "steady": {
         "min_players": 3,
-        "qf_ratio": 0.5,
-        "gross_rate": 0.1,
-        "cap": 300
+        "multi": {
+          "R32": 200,
+          "R16": 400,
+          "QF": 600,
+          "SF": 800
+        }
       },
       "dual_tour": {
-        "R16": 50,
-        "QF": 100,
-        "SF": 250,
-        "F": 450,
-        "W": 700
+        "R32": 200,
+        "R16": 400,
+        "QF": 600,
+        "SF": 800,
+        "F": 1000,
+        "W": 1200
       },
       "value_pick": {
-        "max_price": 150,
+        "max_price": 300,
         "max_triggers": 1,
-        "R16": 150,
-        "QF": 250,
-        "SF": 350,
-        "F": 550,
-        "W": 700
+        "R32": 200,
+        "R16": 400,
+        "QF": 600,
+        "SF": 800,
+        "F": 1000,
+        "W": 1200
       },
       "village_hope": {
         "selection": "user_selected_at_submission",
-        "R16": 50,
-        "QF": 100,
-        "SF": 250,
-        "F": 400,
-        "W": 700
+        "R32": 200,
+        "R16": 400,
+        "QF": 600,
+        "SF": 800,
+        "F": 1000,
+        "W": 1200
       },
       "welfare": {
         "principal_max": 500,
@@ -69,43 +75,46 @@
         "discount_rate": 0.2,
         "cap": 300,
         "max_uses_per_season": 3,
+        "season_start": "2026-01-01",
+        "season_end": "2026-12-31",
         "excluded_from_combo_cap": true
       }
     }
   },
   "pricing": {
-    "market_prices_locked": true,
+    "market_prices_locked": false,
     "publication_version": 1,
-    "locked_at": "2026-08-12T01:00:00.000Z",
-    "reason": "Cincinnati opening prices are locked for publication v1."
+    "reason": "US Open opening prices are generated from the published 128-player draw, current ranking, and Tennis Abstract Elo."
   },
-  "updated_at": "2026-08-15T02:00:00.000Z",
+  "updated_at": "2026-08-28T00:40:49.282Z",
   "notes": [
-    "本站正式开售；开售价格按 publication v1 锁定，后续排名、Elo 或日常数据刷新不得改写本站签约价。",
-    "本站签约金 1000；开售时间为北京时间 2026-08-12 09:00 至 2026-08-13 23:45。",
-    "本站复用蒙特利尔 Combo 结算引擎：四项赛果 Combo 合计封顶 700；低保办为提交时即时签约折扣，独立于 Combo 收益封顶。",
-    "本站“全村的希望”由用户在提交阵容弹窗中从阵容里自定义选择；提交后冻结，不随预测轮次或价格变化。",
-    "弹窗和自动收益上下文仍保留 R1 门槛：下一站 R1 正式开赛前继续展示上一站收益；榜单页提供本站/上站净收益两个 tab，默认本站。",
-    "ATP/WTA 主签的签位、对阵、种子、赛事级别、城市和场地以 ATP/WTA 官方 PDF 为真源；第三方页面只补中文名与公开 profile ID。",
-    "本站换人窗口为北京时间 2026-08-15 10:00 - 22:45；ATP/WTA 同一窗口开放，男女可互换，手续费 15%。",
-    "换人不支持自定义全村的希望：若换下提交时冻结的全村希望，换入球员自动继承全村希望；否则全村希望保持不变。"
+    "本站签约金 2000；Combo 项目为双线经营、稳健经营、慧眼识珠、全村的希望，四项合计封顶 1200。",
+    "提交时间从北京时间 2026-08-28 09:15 开始，截止北京时间 2026-08-31 22:45。",
+    "稳健经营：阵容里≥3 人进入 R32/R16/QF/SF 分别 +200/+400/+600/+800，只取最高档。",
+    "双线经营：ATP/WTA 各至少 1 人进入 R32/R16/QF/SF/F/W 分别 +200/+400/+600/+800/+1000/+1200，只取最高档。",
+    "慧眼识珠：按购买价 ≤300 判断，低价球员进入 R32/R16/QF/SF/F/W 分别 +200/+400/+600/+800/+1000/+1200；单阵容最多触发 1 次，只取最高档。",
+    "全村的希望由用户提交阵容时自定义选择：R32/R16/QF/SF/F/W 分别 +200/+400/+600/+800/+1000/+1200。",
+    "低保办沿用提交时本金 ≤500、阵容至少 3 人、原价 20% 减免且最高 300 的规则；2026 赛季最多触发 3 次，已满 3 次不再享受。",
+    "Carlos Alcaraz 的状态分按运营口径人工校正为 50，并以该状态分重新定价。",
+    "弹窗和自动榜单上下文仍保留 R1 门槛：美网 R1 正式开赛前继续展示辛辛那提收益；R1 开赛后切换本站。",
+    "live-tennis 当前未发布正赛具体 OOP；R1 开赛闸门先按美网官方赛程 2026-08-30 11:00 New York / 2026-08-30 23:00 Beijing。"
   ],
   "previous_station": {
-    "station_key": "2026-w32-canada",
-    "station_name": "ATP 蒙特利尔 + WTA 多伦多",
-    "publication_version": 5,
-    "publication_file": "publications/2026-w32-canada-v5.json",
+    "station_key": "2026-w33-cincinnati",
+    "station_name": "ATP 辛辛那提 + WTA 辛辛那提",
+    "publication_version": 2,
+    "publication_file": "publications/2026-w33-cincinnati-v2.json",
     "events": [
       {
         "tour": "ATP",
-        "event_key": "atp-2026-w32-montreal-national-bank-open",
-        "data_file": "events/atp-2026-w32-montreal.json",
+        "event_key": "atp-2026-w33-cincinnati-cincinnati-open",
+        "data_file": "events/atp-2026-w33-cincinnati.json",
         "active": false
       },
       {
         "tour": "WTA",
-        "event_key": "wta-2026-w32-toronto-national-bank-open",
-        "data_file": "events/wta-2026-w32-toronto.json",
+        "event_key": "wta-2026-w33-cincinnati-cincinnati-open",
+        "data_file": "events/wta-2026-w33-cincinnati.json",
         "active": false
       }
     ]
@@ -113,14 +122,14 @@
   "events": [
     {
       "tour": "ATP",
-      "event_key": "atp-2026-w33-cincinnati-cincinnati-open",
-      "data_file": "events/atp-2026-w33-cincinnati.json",
+      "event_key": "atp-2026-w35-us-open",
+      "data_file": "events/atp-2026-w35-us-open.json",
       "active": true
     },
     {
       "tour": "WTA",
-      "event_key": "wta-2026-w33-cincinnati-cincinnati-open",
-      "data_file": "events/wta-2026-w33-cincinnati.json",
+      "event_key": "wta-2026-w35-us-open",
+      "data_file": "events/wta-2026-w35-us-open.json",
       "active": true
     }
   ]
