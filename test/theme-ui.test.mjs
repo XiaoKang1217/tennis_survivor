@@ -102,13 +102,12 @@ test('every page applies the persisted theme before first-frame page setup', () 
   }
 });
 
-test('module navigation preserves the painted window instead of relaunching to white', () => {
+test('module navigation replaces peer pages without relaunch or native slide', () => {
   const tabbar = read('components/product-tabbar/index.js');
   const navigation = read('core/module-navigation.js');
   assert.match(tabbar, /openModule\(ROUTES\[target\]\)/u);
-  assert.match(navigation, /wx\.navigateTo\(\{ url \}\)/u);
-  assert.match(navigation, /wx\.navigateBack\(\{ delta \}\)/u);
-  assert.doesNotMatch(navigation, /wx\.redirectTo|wx\.reLaunch/u);
+  assert.match(navigation, /wx\.redirectTo\(\{ url \}\)/u);
+  assert.doesNotMatch(navigation, /wx\.navigateTo|wx\.navigateBack|wx\.reLaunch/u);
   assert.doesNotMatch(tabbar, /wx\.reLaunch/u);
 });
 
