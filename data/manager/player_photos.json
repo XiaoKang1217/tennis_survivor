@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-07-19T01:29:44.080Z",
+  "updated_at": "2026-08-28T02:21:21.883Z",
   "fallbacks": {
     "ATP": "assets/manager/players/fallback-atp.svg",
     "WTA": "assets/manager/players/fallback-wta.svg"
@@ -1174,6 +1174,14 @@
       "status": "missing",
       "storage_path": null,
       "updated_at": "2026-07-19T01:29:44.080Z"
+    },
+    "ATP|carlos-alcaraz": {
+      "photo_url": "assets/manager/players/atp/atp-carlos-alcaraz.webp",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/A0E2",
+      "source": "Live Tennis ATP profile photo cached locally for reliable GitHub Pages delivery",
+      "status": "ready",
+      "storage_path": "assets/manager/players/atp/atp-carlos-alcaraz.webp",
+      "updated_at": "2026-08-28T02:21:21.883Z"
     }
   }
 }

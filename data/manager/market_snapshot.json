@@ -9692,7 +9692,7 @@
           "name_en": "Carlos ALCARAZ",
           "name_zh": "阿尔卡拉斯",
           "profile_id": "A0E2",
-          "photo_url": "https://static.live-tennis.cn/pic/ts/A0E2",
+          "photo_url": "assets/manager/players/atp/atp-carlos-alcaraz.webp",
           "full_body_url": null,
           "rank": 3,
           "points": 7160,
@@ -9764,7 +9764,8 @@
           },
           "is_qualifier_placeholder": false,
           "pre_r1_substitution": null,
-          "qualifier_replacement": null
+          "qualifier_replacement": null,
+          "photo_source": "https://static.live-tennis.cn/pic/ts/A0E2"
         }
       ]
     },

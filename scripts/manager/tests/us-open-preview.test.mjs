@@ -126,6 +126,8 @@ test('US Open ATP and WTA draws are priced from latest ranking and TA Elo snapsh
 
 test('Carlos Alcaraz form score is manually corrected to 50 before pricing', () => {
   const alcaraz = atp.players.find((player) => player.player_key === 'ATP|carlos-alcaraz');
+  const marketAlcaraz = market.events.flatMap((event) => event.players).find((player) => player.player_key === 'ATP|carlos-alcaraz');
+  const photoPath = 'assets/manager/players/atp/atp-carlos-alcaraz.webp';
   assert.ok(alcaraz);
   assert.equal(sourceOverrides['ATP|carlos-alcaraz'].scores.form, 50);
   assert.match(buildPrices, /scoreOverrideValue\(override, 'form'\) \?\? formScore/);
@@ -133,6 +135,11 @@ test('Carlos Alcaraz form score is manually corrected to 50 before pricing', () 
   assert.equal(alcaraz.pricing_detail.score_overrides.form, 50);
   assert.equal(alcaraz.price, 865);
   assert.equal(alcaraz.expected_round, 'QF');
+  assert.equal(alcaraz.photo_url, photoPath);
+  assert.equal(marketAlcaraz?.photo_url, photoPath);
+  assert.equal(JSON.parse(fs.readFileSync('data/manager/player_photos.json', 'utf8')).players['ATP|carlos-alcaraz'].photo_url, photoPath);
+  assert.match(html, /'ATP\|阿尔卡拉斯':'assets\/manager\/players\/atp\/atp-carlos-alcaraz\.webp'/);
+  assert.ok(fs.existsSync(photoPath), 'Carlos Alcaraz local photo asset is missing');
 });
 
 test('US Open Combo and welfare limit are wired through frontend and backend', () => {
