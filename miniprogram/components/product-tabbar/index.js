@@ -40,7 +40,7 @@ Component({
     select(event) {
       const target = event.currentTarget.dataset.target;
       if (!ROUTES[target] || target === this.data.active) return;
-      wx.reLaunch({ url: ROUTES[target] });
+      wx.redirectTo({ url: ROUTES[target] });
     }
   }
 });

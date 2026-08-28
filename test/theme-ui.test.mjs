@@ -102,6 +102,12 @@ test('every page applies the persisted theme before first-frame page setup', () 
   }
 });
 
+test('module navigation preserves the painted window instead of relaunching to white', () => {
+  const tabbar = read('components/product-tabbar/index.js');
+  assert.match(tabbar, /wx\.redirectTo\(\{ url: ROUTES\[target\] \}\)/u);
+  assert.doesNotMatch(tabbar, /wx\.reLaunch/u);
+});
+
 test('visual truth tokens and svg paths are migrated without the sample portrait', () => {
   const globalCss = read('app.wxss');
   const themeScript = read('core/theme.js');
