@@ -67,6 +67,7 @@ Page({
     tournamentEditionId: '',
     requestTour: '',
     titleHint: '',
+    requestedDrawStage: '',
     loading: true,
     failed: false,
     failureMessage: '',
@@ -91,6 +92,7 @@ Page({
       topInset: info.statusBarHeight || 44,
       tournamentEditionId: options.tournamentEditionId || '',
       requestTour: normalizeDrawTour(options.tour),
+      requestedDrawStage: String(options.stage || ''),
       titleHint: options.title || ''
     });
     void this.load();
@@ -268,6 +270,7 @@ Page({
       url: '/pages/draws/index?tournamentEditionId='
         + encodeURIComponent(this.data.tournamentEditionId)
         + `&title=${encodeURIComponent(title || '')}`
+        + (this.data.requestedDrawStage ? `&stage=${encodeURIComponent(this.data.requestedDrawStage)}` : '')
         + (this.data.requestTour ? `&tour=${encodeURIComponent(this.data.requestTour)}` : '')
     });
   }

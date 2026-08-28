@@ -35,7 +35,7 @@
                 <view><text>年龄</text><text>{{entry.player.ageLabel}}</text></view>
               </view>
               <view class="player-tags"><text class="primary">{{entry.player.seasonTitlesLabel}}</text><text>{{entry.player.recentRecordLabel}}</text></view>
-              <view class="player-next player-next-{{entry.player.nextPlanTone}}"><text>{{entry.player.nextPlanLabel}}</text><text wx:if="{{entry.player.nextPlanMeta}}">{{entry.player.nextPlanMeta}}</text></view>
+              <view class="player-next player-next-{{entry.player.nextPlanTone}}" data-tournament-id="{{entry.player.nextPlanTournamentId}}" data-stage="{{entry.player.nextPlanDrawStage}}" data-title="{{entry.player.nextPlanTournamentTitle}}" catchtap="openNextPlan" role="button"><text>{{entry.player.nextPlanLabel}}</text><text wx:if="{{entry.player.nextPlanMeta}}">{{entry.player.nextPlanMeta}}</text></view>
               <text class="player-activity">{{entry.player.followCountLabel}}</text>
             </view>
           </view>

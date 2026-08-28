@@ -198,6 +198,7 @@ Page({
     this.cache = createSWRCache(wx);
     this.matchDate = options.date || '';
     this.initialDrawId = optionValue(options.drawId);
+    this.initialStage = optionValue(options.stage);
     this.initialTour = normalizeDrawTour(optionValue(options.tour));
     this.currentPresentation = null;
     this.setData({
@@ -408,8 +409,12 @@ Page({
     const requestedDrawId = this.initialDrawId
       && draws.some(item => item.drawId === this.initialDrawId)
       ? this.initialDrawId : '';
+    const requestedStageDrawId = !requestedDrawId && this.initialStage
+      ? draws.find(item => String(item.stage || item.stageKey || '') === this.initialStage)?.drawId || ''
+      : '';
     this.initialDrawId = '';
-    const nextDrawId = requestedDrawId || value.defaultDrawId || draws[0]?.drawId;
+    this.initialStage = '';
+    const nextDrawId = requestedDrawId || requestedStageDrawId || value.defaultDrawId || draws[0]?.drawId;
     if (!nextDrawId) return;
     if (value.defaultDraw?.bffContractVersion === 'draw-player-entry-bff/1'
       && value.defaultDraw.drawId === nextDrawId) {

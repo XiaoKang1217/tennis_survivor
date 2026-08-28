@@ -3,6 +3,7 @@
 const { buildThemeData, syncPageTheme } = require('../../core/theme');
 const { enablePageShare, pageShare } = require('../../core/share');
 const { openModule } = require('../../core/module-navigation');
+const { playerPortraitUrl } = require('../../core/media');
 
 function payloadOf(value) { return value?.payload && typeof value.payload === 'object' ? value.payload : {}; }
 function qualityLabel(quality = {}) {
@@ -29,7 +30,14 @@ function dateRange(item = {}) {
 }
 function entryView(entry = {}) {
   const cautious = entry.status === ['with', 'drawn'].join('') || entry.status === 'alternate' || entry.status === 'unknown';
-  return { ...entry, statusLabel: statusLabel(entry.status), statusTone: cautious ? 'caution' : 'normal', dateRange: dateRange(entry), surfaceLabel: surfaceLabel(entry.surface) };
+  return {
+    ...entry,
+    portraitUrl: playerPortraitUrl(entry, { authority: entry.tour, size: '96' }),
+    statusLabel: statusLabel(entry.status),
+    statusTone: cautious ? 'caution' : 'normal',
+    dateRange: dateRange(entry),
+    surfaceLabel: surfaceLabel(entry.surface)
+  };
 }
 function rankedEntries(entries = []) {
   return entries.map(entryView).sort((first, second) =>
@@ -46,7 +54,12 @@ function tournamentView(item = {}) {
   };
 }
 function playerView(item = {}) {
-  return { ...item, nextAppearance: item.nextAppearance ? entryView(item.nextAppearance) : null, previewEntries: (item.previewEntries || []).map(entryView) };
+  return {
+    ...item,
+    portraitUrl: playerPortraitUrl(item, { authority: item.tour, size: '240' }),
+    nextAppearance: item.nextAppearance ? entryView(item.nextAppearance) : null,
+    previewEntries: (item.previewEntries || []).map(entryView)
+  };
 }
 function normalizedSearch(value) {
   return String(value || '').normalize('NFKD').replace(/\p{Mark}+/gu, '').toLowerCase().replace(/\s+/gu, ' ').trim();

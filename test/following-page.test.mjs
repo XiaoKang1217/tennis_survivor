@@ -202,9 +202,13 @@ test('following player badge visibly hydrates four-level next appearance copy in
   assert.match(markup, /nextPlanMeta/u);
   assert.match(script, /下一场 ·/u);
   assert.match(script, /appearance\.startAt/u);
-  assert.match(script, /8 \* 60 \* 60 \* 1000/u);
+  assert.match(script, /timeZone: 'Asia\/Shanghai'/u);
+  assert.doesNotMatch(script, /8 \* 60 \* 60 \* 1000/u);
+  assert.match(script, /roundLabelZh/u);
+  assert.match(script, /roundLabel\(appearance\.roundCode/u);
+  assert.match(markup, /catchtap="openNextPlan"/u);
   assert.match(script, /下一站 ·/u);
-  assert.match(script, /近期暂无明确安排/u);
+  assert.match(script, /近期暂无明确参赛安排/u);
   assert.match(script, /hydratePlayerNextAppearances/u);
   assert.match(service, /\/api\/v1\/bff\/social\/players\/next-appearances\?ids=/u);
 });

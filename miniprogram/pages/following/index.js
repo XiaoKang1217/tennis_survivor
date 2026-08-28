@@ -7,6 +7,7 @@ const { matchView } = require('../../core/view-model');
 const { beijingDate } = require('../../core/schedule-date');
 const { followingPath } = require('../../services/follow-service');
 const { directMediaUrl, mediaUrl } = require('../../core/media');
+const { roundLabel } = require('../../core/localization');
 const { enablePageShare, pageShare } = require('../../core/share');
 
 const API_PAGE_SIZE = 10;
@@ -248,31 +249,49 @@ function appearanceMap(value) {
 }
 
 function beijingDateTime(value) {
-  const timestamp = Date.parse(String(value || '').trim());
+  const source = String(value || '').trim();
+  const trusted = /^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})/u.exec(source);
+  if (trusted) return `${trusted[1]}年${Number(trusted[2])}月${Number(trusted[3])}日 ${trusted[4]}:${trusted[5]}`;
+  const timestamp = Date.parse(source);
   if (!Number.isFinite(timestamp)) return '';
-  const date = new Date(timestamp + 8 * 60 * 60 * 1000);
-  const pad = number => String(number).padStart(2, '0');
-  return `${date.getUTCFullYear()}年${date.getUTCMonth() + 1}月${date.getUTCDate()}日 ${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())}`;
+  try {
+    return new Intl.DateTimeFormat('zh-CN', {
+      timeZone: 'Asia/Shanghai', year: 'numeric', month: 'numeric', day: 'numeric',
+      hour: '2-digit', minute: '2-digit', hourCycle: 'h23'
+    }).format(new Date(timestamp)).replace(/\//gu, '年').replace(/,/u, '日');
+  } catch { return ''; }
 }
 
 function nextPlanView(value = {}) {
   const appearance = value.appearance || value.nextAppearance || value;
-  const tournament = String(appearance.tournamentName || appearance.eventName || appearance.title || '').trim();
+  const tournament = String(appearance.tournamentDisplayNameZh || appearance.tournamentNameZh
+    || appearance.tournamentName || appearance.eventName || appearance.title || '').trim();
   const opponent = String(appearance.opponentName || appearance.opponent?.displayName
     || appearance.opponent?.name || '').trim();
-  const startsAt = appearance.startAt || appearance.startsAt || appearance.startTime || appearance.scheduledAt;
+  const startsAt = appearance.displayStartAt || appearance.startAt || appearance.startsAt
+    || appearance.startTime || appearance.scheduledAt;
   const time = beijingDateTime(startsAt);
-  const round = String(appearance.roundName || appearance.round || '').trim();
+  const rawRound = String(appearance.roundLabelZh || '').trim();
+  const round = /[\u3400-\u9fff]/u.test(rawRound) ? rawRound
+    : roundLabel(appearance.roundCode || appearance.roundName || appearance.round);
+  const navigation = {
+    nextPlanTournamentId: String(appearance.canonicalTournamentId || appearance.tournamentId || ''),
+    nextPlanDrawStage: String(appearance.drawStage || appearance.entryListScope || ''),
+    nextPlanDrawNodeId: String(appearance.drawNodeId || ''),
+    nextPlanMatchId: String(appearance.matchId || ''),
+    nextPlanPriority: String(appearance.priority || value.priority || ''),
+    nextPlanTournamentTitle: tournament
+  };
   if (tournament && opponent && time) {
-    return { nextPlanLabel: `下一场 · ${time}`, nextPlanMeta: `${tournament} · 对 ${opponent}${round ? ` · ${round}` : ''}`, nextPlanTone: 'match' };
+    return { nextPlanLabel: `下一场 · 北京时间 ${time}`, nextPlanMeta: `${tournament} · 对 ${opponent}${round ? ` · ${round}` : ''}`, nextPlanTone: 'match', ...navigation };
   }
   if (tournament && opponent) {
-    return { nextPlanLabel: `下一场 · ${tournament}`, nextPlanMeta: `对 ${opponent}${round ? ` · ${round}` : ''}`, nextPlanTone: 'match' };
+    return { nextPlanLabel: `下一场 · ${tournament}`, nextPlanMeta: `对 ${opponent}${round ? ` · ${round}` : ''}`, nextPlanTone: 'match', ...navigation };
   }
   if (tournament) {
-    return { nextPlanLabel: `下一站 · ${tournament}`, nextPlanMeta: String(appearance.dateRange || appearance.startsOn || ''), nextPlanTone: 'entry' };
+    return { nextPlanLabel: `下一站 · ${tournament}`, nextPlanMeta: '', nextPlanTone: 'entry', ...navigation };
   }
-  return { nextPlanLabel: '近期暂无明确安排', nextPlanMeta: '', nextPlanTone: 'none' };
+  return { nextPlanLabel: '近期暂无明确参赛安排', nextPlanMeta: '', nextPlanTone: 'none', ...navigation };
 }
 
 function matchItems(payload) {
@@ -740,6 +759,23 @@ Page({
     wx.navigateTo({
       url: `/packages/player/pages/player-detail/index?playerId=${encodeURIComponent(playerId)}`
         + `&tour=${encodeURIComponent(tour)}`
+    });
+  },
+  openNextPlan(event) {
+    const tournamentEditionId = String(event.currentTarget.dataset.tournamentId || '');
+    if (!tournamentEditionId) return;
+    const stage = String(event.currentTarget.dataset.stage || '');
+    const title = String(event.currentTarget.dataset.title || '');
+    if (stage === 'qualifying') {
+      wx.navigateTo({
+        url: `/pages/draws/index?tournamentEditionId=${encodeURIComponent(tournamentEditionId)}`
+          + `&stage=qualifying&title=${encodeURIComponent(title)}`
+      });
+      return;
+    }
+    wx.navigateTo({
+      url: `/packages/tournament/pages/tournament-detail/index?tournamentEditionId=${encodeURIComponent(tournamentEditionId)}`
+        + `&stage=${encodeURIComponent(stage)}&title=${encodeURIComponent(title)}`
     });
   },
   tournamentSnapshot(targetId) {
