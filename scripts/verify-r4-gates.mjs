@@ -89,7 +89,10 @@ assert.deepEqual(shareFiles.filter(name => /\.jpe?g$/iu.test(name)), [],
 
 const participation = readFileSync(join(root, 'pages/participation/index.js'), 'utf8')
   + readFileSync(join(root, 'pages/participation/index.wxml'), 'utf8');
-assert.match(participation, /M7-PARTICIPATION-DEFERRED-BY-OWNER/);
+assert.doesNotMatch(participation, /M7-PARTICIPATION-DEFERRED-BY-OWNER/);
+assert.match(participation, /services\.entries\.index\(\)/);
+assert.match(participation, /按赛事/);
+assert.match(participation, /按球员/);
 assert.doesNotMatch(participation, /\/api\/v1\/bff\/participation/);
 assert.doesNotMatch(participation, /normalizeKind|withdraw|retire|退赛.*正则/u);
 assert.match(participation, /暂无参赛动态/);

@@ -78,6 +78,23 @@
 .page-state{
   padding:62rpx 24rpx 0;
 }
+.entry-toolbar{padding:20rpx 24rpx 8rpx}
+.segmented{height:68rpx;padding:5rpx;display:flex;border:1rpx solid var(--line);border-radius:16rpx;background:var(--surface-muted);box-sizing:border-box}
+.segment{flex:1;display:flex;align-items:center;justify-content:center;border-radius:12rpx;color:var(--ink-subtle);font-size:25rpx}
+.segment.active{background:var(--surface);color:var(--brand-strong);font-weight:650;box-shadow:0 3rpx 12rpx rgba(34,76,124,.08)}
+.source-meta{padding:12rpx 4rpx 0;display:flex;justify-content:space-between;gap:14rpx;color:var(--ink-subtle);font-size:20rpx}
+.entry-list{padding:12rpx 24rpx 30rpx;display:flex;flex-direction:column;gap:14rpx}
+.entry-card{padding:22rpx;border:1rpx solid var(--line);border-radius:20rpx;background:var(--surface);box-shadow:0 8rpx 24rpx rgba(35,69,112,.05)}
+.card-main,.player-card{display:flex;align-items:center;gap:16rpx}
+.tour-pill{min-width:66rpx;padding:7rpx 10rpx;border-radius:10rpx;background:var(--brand-soft);color:var(--brand-strong);font-size:20rpx;font-weight:700;text-align:center}
+.card-copy{min-width:0;flex:1;display:flex;flex-direction:column;gap:5rpx}
+.card-title{overflow:hidden;color:var(--ink);font-size:28rpx;font-weight:650;white-space:nowrap;text-overflow:ellipsis}
+.card-subtitle{color:var(--ink-subtle);font-size:22rpx}.count{color:var(--brand-strong);font-size:23rpx;font-weight:650}
+.card-foot{margin-top:18rpx;padding-top:15rpx;display:flex;justify-content:space-between;border-top:1rpx solid var(--line);color:var(--ink-subtle);font-size:22rpx}
+.player-avatar{width:84rpx;height:84rpx;flex:none;border-radius:50%;background:var(--brand-soft)}
+.player-avatar.fallback{display:flex;align-items:center;justify-content:center;color:var(--brand-strong);font-size:30rpx;font-weight:700}
+.next-line{overflow:hidden;color:var(--brand-strong);font-size:21rpx;white-space:nowrap;text-overflow:ellipsis}.next-line.muted{color:var(--ink-subtle)}
+.chevron{color:var(--ink-subtle);font-size:34rpx}
 .participation-page.theme-daylight{
   padding-bottom:calc(126rpx + env(safe-area-inset-bottom));
   background:#f5f1e6;
