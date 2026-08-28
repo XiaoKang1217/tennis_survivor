@@ -294,6 +294,13 @@ Page({
       dateLabel: dateLabel(selectedDate)
     });
     const services = getApp().services;
+    if (!services?.auth || !services?.scoreClient || !services?.scoreStore) {
+      this.setData({
+        projectionLoadState: 'failed',
+        projectionLoadMessage: '小程序初始化失败，请重新打开'
+      });
+      return;
+    }
     this.services = services;
     this.unsubscribers = [
       services.auth.subscribe(authState => this.setData({ authState })),

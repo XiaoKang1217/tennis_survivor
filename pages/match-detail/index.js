@@ -8,6 +8,7 @@ const contracts = require('../../core/contracts');
 const { enablePageShare, matchShare } = require('../../core/share');
 const { updatePageShareImages } = require('../../core/share-poster');
 const { matchView } = require('../../core/view-model');
+const { beijingClock, beijingDateTime } = require('../../core/schedule-date');
 const { StatisticsStore } = require('../../core/statistics-store');
 const { StatisticsClient } = require('../../services/statistics-client');
 const {
@@ -26,18 +27,6 @@ const config = require('../../config');
 
 function known(candidate) {
   return candidate?.state === 'known' ? candidate.value : null;
-}
-
-function beijingClock(value) {
-  const parsed = Date.parse(String(value || ''));
-  if (!Number.isFinite(parsed)) return '';
-  return new Intl.DateTimeFormat('zh-CN', {
-    timeZone: 'Asia/Shanghai',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hourCycle: 'h23'
-  }).format(new Date(parsed));
 }
 
 const TERMINAL_STATUS_CODES = Object.freeze(new Set([
@@ -107,14 +96,7 @@ function displayDateTime(value) {
   const parsed = Date.parse(source);
   if (!Number.isFinite(parsed)) return source;
   const hasClock = /T|\d{1,2}:\d{2}/u.test(source);
-  const formatted = new Intl.DateTimeFormat('zh-CN', {
-    timeZone: 'Asia/Shanghai',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    ...(hasClock ? { hour: '2-digit', minute: '2-digit', hour12: false } : {})
-  }).format(new Date(parsed)).replace(/\//gu, '-');
-  return formatted;
+  return hasClock ? beijingDateTime(parsed) : beijingDateTime(parsed).slice(0, 10);
 }
 
 function h2hView(value, match) {

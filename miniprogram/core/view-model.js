@@ -2,6 +2,7 @@
 
 const localization = require('./localization');
 const { mediaUrl } = require('./media');
+const { beijingClock } = require('./schedule-date');
 
 const FILTERS = Object.freeze([
   { id: 'all', label: '全部' },
@@ -34,14 +35,6 @@ const LEVEL_PRIORITY = Object.freeze({
 });
 
 const TOUR_PRIORITY = Object.freeze({ 'ATP/WTA': 4, ATP: 3, WTA: 2, ITF: 1 });
-const BEIJING_TIME_FORMATTER = new Intl.DateTimeFormat('zh-CN', {
-  timeZone: 'Asia/Shanghai',
-  hour: '2-digit',
-  minute: '2-digit',
-  second: '2-digit',
-  hourCycle: 'h23'
-});
-
 const IOC_TO_ISO = Object.freeze({
   ARG: 'AR', AUS: 'AU', AUT: 'AT', BEL: 'BE', BLR: 'BY', BRA: 'BR',
   BUL: 'BG', CAN: 'CA', CHI: 'CL', CHN: 'CN', COL: 'CO', CRO: 'HR',
@@ -392,12 +385,6 @@ function oddsLine(value) {
         updatedAt: value.updatedAt || ''
       })
     : null;
-}
-
-function beijingClock(value) {
-  const parsed = Date.parse(String(value || ''));
-  if (!Number.isFinite(parsed)) return '';
-  return BEIJING_TIME_FORMATTER.format(new Date(parsed));
 }
 
 function contextualStatusText(match, preMatch) {
