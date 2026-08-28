@@ -82,7 +82,9 @@ test('participation page separates tours, source weeks and ranked searchable ros
   assert.match(script, /levelRank/u);
   assert.match(script, /rankValue\(a\.worldRanking\) - rankValue\(b\.worldRanking\)/u);
   assert.match(script, /normalizedSearch/u);
+  assert.match(script, /sourceWeeks/u);
   assert.match(markup, /bindtap="toggleTournament"/u);
+  assert.match(markup, /本周暂无可公开赛事/u);
   assert.match(markup, /originalPlayerName/u);
   assert.match(markup, /countryCode/u);
 });
