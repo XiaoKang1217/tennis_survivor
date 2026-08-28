@@ -17,6 +17,10 @@
   "event_id": "UO",
   "draw_status": "published",
   "market_status": "open",
+  "market_price_lock": {
+    "publication_version": 1,
+    "locked_at": "2026-08-28T01:15:00.000Z"
+  },
   "submission_status": "open",
   "submission_opens_at": "2026-08-28T09:15:00+08:00",
   "manual_schedule_windows": true,
@@ -650,7 +654,7 @@
       "expected_points": 112.9,
       "expected_round": "R64",
       "breakeven_round": "QF",
-      "price": 305,
+      "price": 300,
       "tier": "D",
       "pricing_detail": {
         "formula_version": "build-prices-v1",
@@ -2536,7 +2540,7 @@
       "expected_points": 31.94,
       "expected_round": "R128",
       "breakeven_round": "R32",
-      "price": 110,
+      "price": 105,
       "tier": "D",
       "pricing_detail": {
         "formula_version": "build-prices-v1",
@@ -5652,7 +5656,7 @@
       "expected_points": 119.03,
       "expected_round": "R64",
       "breakeven_round": "QF",
-      "price": 315,
+      "price": 310,
       "tier": "D",
       "pricing_detail": {
         "formula_version": "build-prices-v1",

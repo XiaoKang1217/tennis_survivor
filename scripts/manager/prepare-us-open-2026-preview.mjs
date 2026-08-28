@@ -87,6 +87,10 @@ function eventShell({ tour, eventKey, displayName, players }) {
     event_id: 'UO',
     draw_status: 'published',
     market_status: 'open',
+    market_price_lock: {
+      publication_version: 1,
+      locked_at: '2026-08-28T01:15:00.000Z'
+    },
     submission_status: 'open',
     submission_opens_at: SUBMISSION_OPENS_AT,
     manual_schedule_windows: true,
@@ -214,9 +218,10 @@ async function main() {
       combo
     },
     pricing: {
-      market_prices_locked: false,
+      market_prices_locked: true,
       publication_version: 1,
-      reason: 'US Open opening prices are generated from the published 128-player draw, current ranking, and Tennis Abstract Elo.'
+      locked_at: '2026-08-28T01:15:00.000Z',
+      reason: 'US Open opening prices are locked from publication v1; qualifier placements inherit the published Q-slot prices.'
     },
     updated_at: nowIso(),
     notes: [

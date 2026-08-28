@@ -17,6 +17,10 @@
   "event_id": "UO",
   "draw_status": "published",
   "market_status": "open",
+  "market_price_lock": {
+    "publication_version": 1,
+    "locked_at": "2026-08-28T01:15:00.000Z"
+  },
   "submission_status": "open",
   "submission_opens_at": "2026-08-28T09:15:00+08:00",
   "manual_schedule_windows": true,
@@ -10468,7 +10472,7 @@
       "draw_position": 128,
       "first_round": "萨菲乌林",
       "path_note": "首轮对阵 萨菲乌林。",
-      "photo_url": "https://static.live-tennis.cn/pic/ts/A0E2",
+      "photo_url": "assets/manager/players/atp/atp-carlos-alcaraz.webp",
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/UO/2026/device/0/horizontal/true",
       "player_key": "ATP|carlos-alcaraz",

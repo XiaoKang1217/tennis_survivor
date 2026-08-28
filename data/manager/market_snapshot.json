@@ -9692,7 +9692,7 @@
           "name_en": "Carlos ALCARAZ",
           "name_zh": "阿尔卡拉斯",
           "profile_id": "A0E2",
-          "photo_url": "https://static.live-tennis.cn/pic/ts/A0E2",
+          "photo_url": "assets/manager/players/atp/atp-carlos-alcaraz.webp",
           "full_body_url": null,
           "rank": 3,
           "points": 7160,
@@ -9764,7 +9764,8 @@
           },
           "is_qualifier_placeholder": false,
           "pre_r1_substitution": null,
-          "qualifier_replacement": null
+          "qualifier_replacement": null,
+          "photo_source": "https://static.live-tennis.cn/pic/ts/A0E2"
         }
       ]
     },
@@ -10336,7 +10337,7 @@
           "expected_points": 112.9,
           "expected_round": "R64",
           "breakeven_round": "QF",
-          "price": 305,
+          "price": 300,
           "tier": "D",
           "pricing_detail": {
             "formula_version": "build-prices-v1",
@@ -12084,7 +12085,7 @@
           "expected_points": 31.94,
           "expected_round": "R128",
           "breakeven_round": "R32",
-          "price": 110,
+          "price": 105,
           "tier": "D",
           "pricing_detail": {
             "formula_version": "build-prices-v1",
@@ -14972,7 +14973,7 @@
           "expected_points": 119.03,
           "expected_round": "R64",
           "breakeven_round": "QF",
-          "price": 315,
+          "price": 310,
           "tier": "D",
           "pricing_detail": {
             "formula_version": "build-prices-v1",

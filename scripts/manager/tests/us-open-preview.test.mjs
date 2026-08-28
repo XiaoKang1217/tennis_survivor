@@ -31,6 +31,10 @@ function assertUsOpenEvent(event, tour, qualifierCount) {
   assert.equal(event.timezone, 'America/New_York');
   assert.equal(event.draw_status, 'published');
   assert.equal(event.market_status, 'open');
+  assert.deepEqual(event.market_price_lock, {
+    publication_version: 1,
+    locked_at: '2026-08-28T01:15:00.000Z'
+  });
   assert.equal(event.submission_status, 'open');
   assert.equal(event.submission_opens_at, '2026-08-28T09:15:00+08:00');
   assert.equal(event.main_draw_first_match_at, '2026-08-30T15:00:00.000Z');
@@ -97,6 +101,12 @@ test('US Open station is current with 2000 grant, 1200 Combo cap, and Cincinnati
     season_start: '2026-01-01',
     season_end: '2026-12-31',
     excluded_from_combo_cap: true
+  });
+  assert.deepEqual(active.pricing, {
+    market_prices_locked: true,
+    publication_version: 1,
+    locked_at: '2026-08-28T01:15:00.000Z',
+    reason: 'US Open opening prices are locked from publication v1; qualifier placements inherit the published Q-slot prices.'
   });
   assert.equal(active.previous_station.station_key, '2026-w33-cincinnati');
   assert.equal(active.previous_station.publication_version, 2);
