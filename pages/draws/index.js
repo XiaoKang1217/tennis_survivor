@@ -196,6 +196,7 @@ Page({
   },
 
   onLoad(options) {
+    syncPageTheme(this);
     const info = wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync();
     this.http = getApp().services.http;
     this.cache = createSWRCache(wx);

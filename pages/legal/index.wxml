@@ -1,4 +1,5 @@
-<view class="safe-page legal-page">
+<page-meta page-style="{{themePageStyle}}" background-color="{{themeCanvas}}" background-text-style="{{themeBackgroundTextStyle}}"/>
+<view class="safe-page legal-page theme-{{uiTheme}}">
   <view class="legal-head" style="padding-top:{{topInset}}px">
     <view class="legal-back" bindtap="goBack" role="button" aria-label="返回">
       <ui-icon name="back" size="18" color="#1f2a37"/>

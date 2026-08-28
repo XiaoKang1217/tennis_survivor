@@ -1,3 +1,4 @@
+<page-meta page-style="{{themePageStyle}}" background-color="{{themeCanvas}}" background-text-style="{{themeBackgroundTextStyle}}"/>
 <view class="safe-page scores-page theme-{{uiTheme}}">
   <view class="page-head">
     <view class="title-row" style="padding-top:{{topInset}}px">

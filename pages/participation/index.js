@@ -29,8 +29,19 @@ function entryView(entry = {}) {
   const cautious = entry.status === ['with', 'drawn'].join('') || entry.status === 'alternate' || entry.status === 'unknown';
   return { ...entry, statusLabel: statusLabel(entry.status), statusTone: cautious ? 'caution' : 'normal', dateRange: dateRange(entry), surfaceLabel: surfaceLabel(entry.surface) };
 }
+function rankedEntries(entries = []) {
+  return entries.map(entryView).sort((first, second) =>
+    rankValue(first.worldRanking) - rankValue(second.worldRanking)
+      || String(first.playerName || '').localeCompare(String(second.playerName || '')));
+}
 function tournamentView(item = {}) {
-  return { ...item, dateRange: dateRange(item), surfaceLabel: surfaceLabel(item.surface), entries: (item.entries || []).map(entryView), previewEntries: (item.previewEntries || []).map(entryView) };
+  return {
+    ...item,
+    dateRange: dateRange(item),
+    surfaceLabel: surfaceLabel(item.surface),
+    entries: rankedEntries(item.entries || []),
+    previewEntries: rankedEntries(item.previewEntries || [])
+  };
 }
 function playerView(item = {}) {
   return { ...item, nextAppearance: item.nextAppearance ? entryView(item.nextAppearance) : null, previewEntries: (item.previewEntries || []).map(entryView) };
@@ -75,6 +86,7 @@ Page({
     expandedTournamentId: '', qualityLabel: '', dataAsOf: ''
   },
   onLoad() {
+    syncPageTheme(this);
     const info = wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync();
     this.setData({ topInset: info.statusBarHeight || 44 });
     this.load();

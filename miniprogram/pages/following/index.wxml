@@ -1,3 +1,4 @@
+<page-meta page-style="{{themePageStyle}}" background-color="{{themeCanvas}}" background-text-style="{{themeBackgroundTextStyle}}"/>
 <view class="safe-page following-page theme-{{uiTheme}}">
     <view class="root-head" style="padding-top:{{topInset}}px"><text class="title">我的关注</text></view>
     <view class="follow-tabs">

@@ -1,3 +1,4 @@
+<page-meta page-style="{{themePageStyle}}" background-color="{{themeCanvas}}" background-text-style="{{themeBackgroundTextStyle}}"/>
 <view class="safe-page tournament-detail-page theme-{{uiTheme}}">
   <view class="detail-head" style="padding-top:{{topInset}}px">
     <button bindtap="back" aria-label="返回"><ui-icon name="back" size="22" color="#fff"/></button>

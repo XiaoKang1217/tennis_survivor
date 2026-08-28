@@ -1,3 +1,4 @@
+<page-meta page-style="{{themePageStyle}}" background-color="{{themeCanvas}}" background-text-style="{{themeBackgroundTextStyle}}"/>
 <view class="safe-page participation-page theme-{{uiTheme}}">
   <view class="page-head">
     <view class="title-row" style="padding-top:{{topInset}}px"><view class="title-copy"><text class="eyebrow">参赛动态</text><text class="title">比赛</text><text class="title-caption">ATP / WTA 赛历身份 · 每日更新</text></view></view>
@@ -40,6 +41,7 @@
       </view>
     </view>
   </view>
+  <view class="page-state" wx:elif="{{activeView === 'tournaments' && weekTabs.length}}"><client-state state="empty" label="{{searchQuery ? '没有匹配赛事' : '本周暂无可公开赛事'}}" message="{{searchQuery ? '换个关键词试试' : '该周来源已发布，暂无通过公开质量门的赛事'}}"/></view>
   <view class="page-state" wx:else><client-state state="empty" label="暂无参赛动态" message="退赛、替补和名单变化会显示在这里"/></view>
   <product-tabbar active="matches" theme="{{uiTheme}}"/>
   <profile-gate id="profileGate" theme="{{uiTheme}}"/>

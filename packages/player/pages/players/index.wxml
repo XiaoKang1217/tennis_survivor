@@ -1,3 +1,4 @@
+<page-meta page-style="{{themePageStyle}}" background-color="{{themeCanvas}}" background-text-style="{{themeBackgroundTextStyle}}"/>
 <view class="safe-page players-page theme-{{uiTheme}}">
   <product-tabbar active="players" theme="{{uiTheme}}" />
   <view class="module-head" style="padding-top:{{topInset}}px">

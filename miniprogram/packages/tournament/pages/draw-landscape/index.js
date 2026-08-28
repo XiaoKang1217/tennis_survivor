@@ -164,6 +164,7 @@ Page({
   },
 
   onLoad(options = {}) {
+    syncPageTheme(this);
     const metrics = toolbarMetrics(wx);
     this.http = getApp().services.http;
     this.cache = createSWRCache(wx);

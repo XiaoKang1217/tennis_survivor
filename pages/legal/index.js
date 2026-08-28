@@ -1,5 +1,7 @@
 'use strict';
 
+const { buildThemeData, syncPageTheme } = require('../../core/theme');
+
 const UPDATED_AT = '2026年8月19日';
 const APP_NAME = '炉网';
 const SUPPORT_PATH = '微信小程序右上角“...”中的反馈与投诉，或通过炉网社群联系运营者';
@@ -103,12 +105,14 @@ function currentDocument(type) {
 
 Page({
   data: {
+    ...buildThemeData(),
     topInset: 44,
     type: 'privacy',
     updatedAt: UPDATED_AT,
     doc: currentDocument('privacy')
   },
   onLoad(options = {}) {
+    syncPageTheme(this);
     const info = wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync();
     const type = options.type === 'terms' ? 'terms' : 'privacy';
     const doc = currentDocument(type);
@@ -118,6 +122,9 @@ Page({
       doc
     });
     wx.setNavigationBarTitle?.({ title: doc.title });
+  },
+  onShow() {
+    syncPageTheme(this);
   },
   goBack() {
     const pages = getCurrentPages();

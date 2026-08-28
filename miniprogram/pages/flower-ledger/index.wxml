@@ -1,4 +1,4 @@
-<page-meta page-style="{{themePageStyle}}" background-color="{{themeCanvas}}"/>
+<page-meta page-style="{{themePageStyle}}" background-color="{{themeCanvas}}" background-text-style="{{themeBackgroundTextStyle}}"/>
 <view class="safe-page ledger-page theme-{{uiTheme}}">
   <view class="ledger-head" style="padding-top:{{topInset}}px"><view bindtap="back" role="button"><ui-icon name="back" size="19" color="{{themeAccentStrong}}"/></view><text>花朵明细</text><view/></view>
   <view class="filter-card">

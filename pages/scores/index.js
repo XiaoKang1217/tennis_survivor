@@ -266,6 +266,7 @@ Page({
   },
 
   onLoad(options) {
+    syncPageTheme(this);
     const info = wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync();
     const menu = wx.getMenuButtonBoundingClientRect
       ? wx.getMenuButtonBoundingClientRect() : null;

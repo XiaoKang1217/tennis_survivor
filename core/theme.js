@@ -69,6 +69,7 @@ function writeTheme(value) {
   } catch (_error) {
     // The current page is still updated even if persistent storage is unavailable.
   }
+  syncNativeTheme(theme);
   syncOpenPagesTheme(theme);
   return theme;
 }
@@ -95,8 +96,27 @@ function buildThemeData(value = readTheme()) {
   };
 }
 
-function syncPageTheme(page, value) {
+function syncNativeTheme(value = readTheme()) {
   const next = buildThemeData(value);
+  try {
+    wx.setBackgroundColor?.({
+      backgroundColor: next.themeCanvas,
+      backgroundColorTop: next.themeCanvas,
+      backgroundColorBottom: next.themeCanvas
+    });
+    wx.setNavigationBarColor?.({
+      frontColor: next.isDark ? '#ffffff' : '#000000',
+      backgroundColor: next.themeCanvas,
+      animation: { duration: 0, timingFunc: 'linear' }
+    });
+  } catch (_error) {
+    // page-meta still paints the complete page when the native API is unavailable.
+  }
+  return next;
+}
+
+function syncPageTheme(page, value) {
+  const next = syncNativeTheme(value);
   if (!page || typeof page.setData !== 'function') return next;
   if (page.data?.uiTheme !== next.uiTheme) page.setData(next);
   return next;
@@ -121,6 +141,7 @@ module.exports = {
   normalizeTheme,
   readTheme,
   syncOpenPagesTheme,
+  syncNativeTheme,
   syncPageTheme,
   writeTheme
 };

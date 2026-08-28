@@ -1,3 +1,4 @@
+<page-meta page-style="{{themePageStyle}}" background-color="{{themeCanvas}}" background-text-style="{{themeBackgroundTextStyle}}"/>
 <view class="safe-page account-page theme-{{uiTheme}}">
   <view class="account-content" style="padding-top:{{topInset}}px">
     <view class="account-card" bindtap="openProfileGate" role="button"><view class="account-avatar"><image wx:if="{{profile.avatarUrl}}" src="{{profile.avatarUrl}}" mode="aspectFill" lazy-load="{{true}}"/><ui-icon wx:else name="profile" size="28" color="#1677d2"/></view><view class="account-copy"><text class="account-title">{{profile.nickname}}</text></view><view class="account-action"><text>{{profile.actionLabel}}</text><ui-icon name="chevron" size="14" color="#1677d2"/></view></view>

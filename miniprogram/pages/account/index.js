@@ -35,6 +35,7 @@ Page({
     themeOptions: THEMES
   },
   onLoad() {
+    syncPageTheme(this);
     const info = wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync();
     this.setData({ topInset: info.statusBarHeight || 44 });
     const account = getApp().services.account;

@@ -449,6 +449,7 @@ Page({
   },
 
   onLoad(options) {
+    syncPageTheme(this);
     const info = wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync();
     this.matchId = options.matchId || '';
     this.requestedDate = /^\d{4}-\d{2}-\d{2}$/.test(options.date || '')

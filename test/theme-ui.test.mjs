@@ -10,9 +10,13 @@ const read = relative => readFileSync(resolve(miniRoot, relative), 'utf8');
 test('the three skins are persistent and keep clean blue as the safe default', () => {
   let stored = '';
   const pageUpdates = [[], []];
+  const nativeBackgrounds = [];
+  const nativeNavigation = [];
   globalThis.wx = {
     getStorageSync: () => stored,
-    setStorageSync: (_key, value) => { stored = value; }
+    setStorageSync: (_key, value) => { stored = value; },
+    setBackgroundColor: value => nativeBackgrounds.push(value),
+    setNavigationBarColor: value => nativeNavigation.push(value)
   };
   globalThis.getCurrentPages = () => pageUpdates.map(updates => ({
     data: { uiTheme: 'clean-blue' },
@@ -22,9 +26,13 @@ test('the three skins are persistent and keep clean blue as the safe default', (
   const theme = require(resolve(miniRoot, 'core/theme.js'));
   assert.equal(theme.readTheme(), 'clean-blue');
   assert.equal(theme.writeTheme('daylight'), 'daylight');
+  assert.equal(nativeBackgrounds.at(-1).backgroundColor, '#f5f0e7');
+  assert.equal(nativeNavigation.at(-1).frontColor, '#000000');
   assert.deepEqual(pageUpdates.map(updates => updates.at(-1)?.uiTheme), ['daylight', 'daylight']);
   assert.equal(theme.readTheme(), 'daylight');
   assert.equal(theme.writeTheme('dark'), 'dark');
+  assert.equal(nativeBackgrounds.at(-1).backgroundColor, '#0d1522');
+  assert.equal(nativeNavigation.at(-1).frontColor, '#ffffff');
   assert.equal(theme.readTheme(), 'dark');
   assert.equal(theme.writeTheme('unknown'), 'clean-blue');
   assert.deepEqual(theme.THEMES.map(item => item.label), ['简洁蓝白', '黑夜模式', '日光赛场']);
@@ -67,6 +75,31 @@ test('daylight and dark reuse the standard product structure at runtime', () => 
   assert.doesNotMatch(detailMarkup, /class="tour-badge"/);
   assert.match(cardCss, /\.match-card\.theme-daylight/);
   assert.match(cardCss, /\.match-card\.theme-dark/);
+});
+
+test('every page applies the persisted theme before first-frame page setup', () => {
+  for (const pagePath of [
+    'pages/account/index',
+    'pages/scores/index',
+    'pages/match-detail/index',
+    'pages/draws/index',
+    'pages/calendar/index',
+    'pages/participation/index',
+    'pages/following/index',
+    'pages/social-center/index',
+    'pages/flower-ledger/index',
+    'pages/legal/index',
+    'packages/player/pages/players/index',
+    'packages/player/pages/player-detail/index',
+    'packages/tournament/pages/tournament-detail/index',
+    'packages/tournament/pages/draw-landscape/index'
+  ]) {
+    const markup = read(`${pagePath}.wxml`);
+    const script = read(`${pagePath}.js`);
+    assert.match(markup, /^<page-meta page-style="\{\{themePageStyle\}\}" background-color="\{\{themeCanvas\}\}"/u, pagePath);
+    assert.match(markup, /theme-\{\{uiTheme\}\}/u, pagePath);
+    assert.match(script, /onLoad\([^)]*\)\s*\{\s*syncPageTheme\(this\);/u, pagePath);
+  }
 });
 
 test('visual truth tokens and svg paths are migrated without the sample portrait', () => {

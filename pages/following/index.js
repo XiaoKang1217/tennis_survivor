@@ -432,6 +432,7 @@ Page({
     dataAsOf: ''
   },
   onLoad() {
+    syncPageTheme(this);
     const info = wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync();
     this.services = getApp().services;
     this.cache = createSWRCache(wx);

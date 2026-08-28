@@ -49,7 +49,11 @@ test('participation page renders trusted tournaments and players with stable lin
   globalThis.getApp = () => ({ services: { entries: { async index() {
     return { delivery: { state: 'current' }, payload: {
       dataAsOf: '2026-08-28T02:00:00Z', quality: { identityCoverage: 0.987 },
-      tournaments: [{ tournamentId: 'ATP:USO:2026', tournamentName: '美网', surface: 'Hard', startsOn: '2026-08-24', endsOn: '2026-09-06', previewEntries: [{ playerId: 'ATP:S0AG', playerName: '扬尼克·辛纳', status: 'main_draw' }] }],
+      tournaments: [{ tournamentId: 'ATP:USO:2026', tournamentName: '美网', surface: 'Hard', startsOn: '2026-08-24', endsOn: '2026-09-06', previewEntries: [
+        { playerId: 'ATP:A0E2', playerName: '卡洛斯·阿尔卡拉斯', worldRanking: 3, status: 'main_draw' },
+        { playerId: 'ATP:UNRANKED', playerName: '未排名球员', status: 'qualifying' },
+        { playerId: 'ATP:S0AG', playerName: '扬尼克·辛纳', worldRanking: 1, status: 'main_draw' }
+      ] }],
       players: [{ playerId: 'ATP:S0AG', playerName: '扬尼克·辛纳', nextAppearance: { tournamentId: 'ATP:USO:2026', tournamentName: '美网', startsOn: '2026-08-24', endsOn: '2026-09-06', surface: 'Hard', status: 'main_draw' }, previewEntries: [] }]
     } };
   } } } });
@@ -61,6 +65,10 @@ test('participation page renders trusted tournaments and players with stable lin
     assert.equal(page.data.players[0].playerId, 'ATP:S0AG');
     assert.equal(page.data.qualityLabel, '身份匹配 98.7%');
     assert.equal(page.data.tournaments[0].surfaceLabel, '硬地');
+    assert.deepEqual(
+      page.data.tournaments[0].previewEntries.map(entry => entry.playerId),
+      ['ATP:S0AG', 'ATP:A0E2', 'ATP:UNRANKED']
+    );
     assert.equal(page.data.tournaments[0].previewEntries[0].statusLabel, '正赛');
     assert.equal(page.data.players[0].nextAppearance.dateRange, '2026-08-24 至 2026-09-06');
     definition.openPlayer.call(page, { currentTarget: { dataset: { id: 'ATP:S0AG' } } });
@@ -81,6 +89,7 @@ test('participation page separates tours, source weeks and ranked searchable ros
   }
   assert.match(script, /levelRank/u);
   assert.match(script, /rankValue\(a\.worldRanking\) - rankValue\(b\.worldRanking\)/u);
+  assert.match(script, /rankValue\(first\.worldRanking\) - rankValue\(second\.worldRanking\)/u);
   assert.match(script, /normalizedSearch/u);
   assert.match(script, /sourceWeeks/u);
   assert.match(markup, /bindtap="toggleTournament"/u);

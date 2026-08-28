@@ -29,8 +29,19 @@ function entryView(entry = {}) {
   const cautious = entry.status === ['with', 'drawn'].join('') || entry.status === 'alternate' || entry.status === 'unknown';
   return { ...entry, statusLabel: statusLabel(entry.status), statusTone: cautious ? 'caution' : 'normal', dateRange: dateRange(entry), surfaceLabel: surfaceLabel(entry.surface) };
 }
+function rankedEntries(entries = []) {
+  return entries.map(entryView).sort((first, second) =>
+    rankValue(first.worldRanking) - rankValue(second.worldRanking)
+      || String(first.playerName || '').localeCompare(String(second.playerName || '')));
+}
 function tournamentView(item = {}) {
-  return { ...item, dateRange: dateRange(item), surfaceLabel: surfaceLabel(item.surface), entries: (item.entries || []).map(entryView), previewEntries: (item.previewEntries || []).map(entryView) };
+  return {
+    ...item,
+    dateRange: dateRange(item),
+    surfaceLabel: surfaceLabel(item.surface),
+    entries: rankedEntries(item.entries || []),
+    previewEntries: rankedEntries(item.previewEntries || [])
+  };
 }
 function playerView(item = {}) {
   return { ...item, nextAppearance: item.nextAppearance ? entryView(item.nextAppearance) : null, previewEntries: (item.previewEntries || []).map(entryView) };
@@ -71,10 +82,11 @@ Page({
   data: {
     ...buildThemeData(), topInset: 44, activeView: 'tournaments', activeTour: 'ATP',
     activeWeek: '', searchQuery: '', loading: true, failed: false, stale: false,
-    tournaments: [], players: [], tournamentGroups: [], visiblePlayers: [], weekTabs: [],
+    tournaments: [], players: [], sourceWeeks: {}, tournamentGroups: [], visiblePlayers: [], weekTabs: [],
     expandedTournamentId: '', qualityLabel: '', dataAsOf: ''
   },
   onLoad() {
+    syncPageTheme(this);
     const info = wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync();
     this.setData({ topInset: info.statusBarHeight || 44 });
     this.load();
@@ -89,7 +101,8 @@ Page({
       const players = Array.isArray(payload.players) ? payload.players.map(playerView) : [];
       this.setData({
         loading: false, stale: value?.delivery?.state === 'stale',
-        tournaments, players,
+        tournaments, players, sourceWeeks: payload.sourceWeeks && typeof payload.sourceWeeks === 'object'
+          ? payload.sourceWeeks : {},
         qualityLabel: qualityLabel(payload.quality),
         dataAsOf: String(payload.dataAsOf || value?.dataAsOf || '').slice(0, 16).replace('T', ' ')
       }, () => this.rebuildDisplay());
@@ -104,7 +117,10 @@ Page({
     const tour = this.data.activeTour;
     const query = normalizedSearch(this.data.searchQuery);
     const tourTournaments = this.data.tournaments.filter(item => item.tour === tour);
-    const weekTabs = [...new Set(tourTournaments.map(item => item.weekStart).filter(Boolean))]
+    const publishedWeeks = Array.isArray(this.data.sourceWeeks?.[tour])
+      ? this.data.sourceWeeks[tour] : [];
+    const weekTabs = [...new Set((publishedWeeks.length ? publishedWeeks
+      : tourTournaments.map(item => item.weekStart)).filter(Boolean))]
       .sort().map(id => ({ id, label: weekLabel(id) }));
     const activeWeek = weekTabs.some(item => item.id === this.data.activeWeek)
       ? this.data.activeWeek : (weekTabs[0]?.id || '');

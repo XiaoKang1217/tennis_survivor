@@ -246,13 +246,21 @@ function appearanceMap(value) {
   return new Map(rows.map(row => [String(row.playerId || row.targetId || row.id || ''), row]));
 }
 
+function beijingDateTime(value) {
+  const timestamp = Date.parse(String(value || '').trim());
+  if (!Number.isFinite(timestamp)) return '';
+  const date = new Date(timestamp + 8 * 60 * 60 * 1000);
+  const pad = number => String(number).padStart(2, '0');
+  return `${date.getUTCFullYear()}年${date.getUTCMonth() + 1}月${date.getUTCDate()}日 ${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())}`;
+}
+
 function nextPlanView(value = {}) {
   const appearance = value.appearance || value.nextAppearance || value;
   const tournament = String(appearance.tournamentName || appearance.eventName || appearance.title || '').trim();
   const opponent = String(appearance.opponentName || appearance.opponent?.displayName
     || appearance.opponent?.name || '').trim();
-  const startsAt = String(appearance.startsAt || appearance.startTime || appearance.scheduledAt || '').trim();
-  const time = startsAt ? startsAt.slice(0, 16).replace('T', ' ') : '';
+  const startsAt = appearance.startAt || appearance.startsAt || appearance.startTime || appearance.scheduledAt;
+  const time = beijingDateTime(startsAt);
   const round = String(appearance.roundName || appearance.round || '').trim();
   if (tournament && opponent && time) {
     return { nextPlanLabel: `下一场 · ${time}`, nextPlanMeta: `${tournament} · 对 ${opponent}${round ? ` · ${round}` : ''}`, nextPlanTone: 'match' };
@@ -424,6 +432,7 @@ Page({
     dataAsOf: ''
   },
   onLoad() {
+    syncPageTheme(this);
     const info = wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync();
     this.services = getApp().services;
     this.cache = createSWRCache(wx);
