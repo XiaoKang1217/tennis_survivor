@@ -1,6 +1,6 @@
 <view class="product-tabbar theme-{{theme}}">
-  <button data-target="matches" bindtap="select" class="tabbar-button {{active === 'matches' ? 'active' : ''}}"><ui-icon name="matches" size="19" color="{{active === 'matches' ? activeColor : inactiveColor}}"/><text>比赛</text></button>
-  <button data-target="players" bindtap="select" class="tabbar-button {{active === 'players' ? 'active' : ''}}"><ui-icon name="player" size="19" color="{{active === 'players' ? activeColor : inactiveColor}}"/><text>球员</text></button>
-  <button data-target="following" bindtap="select" class="tabbar-button {{active === 'following' ? 'active' : ''}}"><ui-icon name="heart" size="19" color="{{active === 'following' ? activeColor : inactiveColor}}"/><text>关注</text></button>
-  <button data-target="account" bindtap="select" class="tabbar-button {{active === 'account' ? 'active' : ''}}"><ui-icon name="profile" size="19" color="{{active === 'account' ? activeColor : inactiveColor}}"/><text>我的</text></button>
+  <button data-target="matches" bindtap="select" class="tabbar-button {{active === 'matches' ? 'active' : ''}}"><nav-icon name="matches" size="44" theme="{{theme}}" active="{{active === 'matches'}}"/><text>比赛</text></button>
+  <button data-target="players" bindtap="select" class="tabbar-button {{active === 'players' ? 'active' : ''}}"><nav-icon name="players" size="44" theme="{{theme}}" active="{{active === 'players'}}"/><text>球员</text></button>
+  <button data-target="following" bindtap="select" class="tabbar-button {{active === 'following' ? 'active' : ''}}"><nav-icon name="following" size="44" theme="{{theme}}" active="{{active === 'following'}}"/><text>关注</text></button>
+  <button data-target="account" bindtap="select" class="tabbar-button {{active === 'account' ? 'active' : ''}}"><nav-icon name="profile" size="44" theme="{{theme}}" active="{{active === 'account'}}"/><text>我的</text></button>
 </view>

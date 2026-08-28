@@ -1,6 +1,7 @@
 {
   "usingComponents": {
     "ui-icon": "/components/ui-icon/index",
+    "nav-icon": "/components/nav-icon/index",
     "client-state": "/components/client-state/index",
     "data-notice": "/components/data-notice/index",
     "product-tabbar": "/components/product-tabbar/index"

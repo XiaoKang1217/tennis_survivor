@@ -2,10 +2,10 @@
 <view class="safe-page draw-page theme-{{uiTheme}}">
   <view class="page-head" style="padding-top:{{topInset}}px">
     <view class="module-nav">
-      <view class="module" bindtap="openScores"><ui-icon name="score" size="20"/><text>实时比分</text></view>
-      <view class="module active"><ui-icon name="draw" size="20" color="{{themeAccentStrong}}"/><text>赛事签表</text></view>
-      <view class="module" bindtap="openCalendar"><ui-icon name="calendar" size="20"/><text>巡回赛历</text></view>
-      <view class="module" bindtap="openParticipation"><ui-icon name="entry" size="20"/><text>参赛动态</text></view>
+      <view class="module" bindtap="openScores"><nav-icon name="live-score" size="42" location="top" theme="{{uiTheme}}"/><text>实时比分</text></view>
+      <view class="module active"><nav-icon name="draw" size="42" location="top" theme="{{uiTheme}}" active/><text>赛事签表</text></view>
+      <view class="module" bindtap="openCalendar"><nav-icon name="tour-calendar" size="42" location="top" theme="{{uiTheme}}"/><text>巡回赛历</text></view>
+      <view class="module" bindtap="openParticipation"><nav-icon name="entry-activity" size="42" location="top" theme="{{uiTheme}}"/><text>参赛动态</text></view>
     </view>
   </view>
 

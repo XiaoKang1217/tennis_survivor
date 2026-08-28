@@ -185,20 +185,13 @@ Page({
   selectWeek(event) { this.rebuildDisplay({ activeWeek: String(event.currentTarget.dataset.week || ''), expandedTournamentId: '' }); },
   onSearchInput(event) { this.rebuildDisplay({ searchQuery: String(event.detail.value || '') }); },
   clearSearch() { this.rebuildDisplay({ searchQuery: '' }); },
-  async toggleTournament(event) {
+  toggleTournament(event) {
     const id = String(event.currentTarget.dataset.id || '');
     if (!id) return;
     if (this.data.expandedTournamentId === id) { this.setData({ expandedTournamentId: '' }); return; }
-    this.setData({ expandedTournamentId: id });
     const index = this.data.tournaments.findIndex(item => item.tournamentId === id);
-    if (index < 0 || this.data.tournaments[index].entries.length) return;
-    try {
-      const value = await getApp().services.entries.tournament(id);
-      const item = tournamentView(payloadOf(value));
-      const tournaments = this.data.tournaments.map(existing => existing.tournamentId === id
-        ? { ...existing, ...item } : existing);
-      this.rebuildDisplay({ tournaments });
-    } catch { /* keep the trusted preview and allow a later retry */ }
+    if (index < 0) return;
+    this.setData({ expandedTournamentId: id });
   },
   openTournament(event) {
     const id = String(event.currentTarget.dataset.id || '');

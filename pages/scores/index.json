@@ -1,6 +1,7 @@
 {
   "usingComponents": {
     "ui-icon": "/components/ui-icon/index",
+    "nav-icon": "/components/nav-icon/index",
     "match-card": "/components/match-card/index",
     "data-notice": "/components/data-notice/index",
     "module-state": "/components/module-state/index",

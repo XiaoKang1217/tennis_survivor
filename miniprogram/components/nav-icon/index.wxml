@@ -1,0 +1,3 @@
+<view class="nav-icon-shell theme-{{theme}} location-{{location}} {{active ? 'active' : ''}}" style="width:{{size + 12}}rpx;height:{{size + 8}}rpx">
+  <image class="nav-icon-image" src="{{src}}" style="width:{{size}}rpx;height:{{size}}rpx" mode="aspectFit" />
+</view>

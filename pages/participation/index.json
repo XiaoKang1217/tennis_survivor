@@ -1,5 +1,6 @@
 {
   "usingComponents": {
+    "nav-icon": "/components/nav-icon/index",
     "client-state": "/components/client-state/index",
     "product-tabbar": "/components/product-tabbar/index"
   }

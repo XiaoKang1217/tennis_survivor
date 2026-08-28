@@ -8,10 +8,10 @@
     </view>
 
     <view class="module-nav">
-      <view class="module active" role="button"><ui-icon name="score" size="20" color="#1677d2"/><text>实时比分</text></view>
-      <view class="module" bindtap="openDraws" role="button"><ui-icon name="draw" size="20"/><text>赛事签表</text></view>
-      <view class="module" bindtap="openCalendar" role="button"><ui-icon name="calendar" size="20"/><text>巡回赛历</text></view>
-      <view class="module" bindtap="openParticipation" role="button"><ui-icon name="entry" size="20"/><text>参赛动态</text></view>
+      <view class="module active" role="button"><nav-icon name="live-score" size="42" location="top" theme="{{uiTheme}}" active/><text>实时比分</text></view>
+      <view class="module" bindtap="openDraws" role="button"><nav-icon name="draw" size="42" location="top" theme="{{uiTheme}}"/><text>赛事签表</text></view>
+      <view class="module" bindtap="openCalendar" role="button"><nav-icon name="tour-calendar" size="42" location="top" theme="{{uiTheme}}"/><text>巡回赛历</text></view>
+      <view class="module" bindtap="openParticipation" role="button"><nav-icon name="entry-activity" size="42" location="top" theme="{{uiTheme}}"/><text>参赛动态</text></view>
     </view>
   </view>
 
