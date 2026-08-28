@@ -5,6 +5,7 @@ const { wxRequest, HttpClient } = require('./services/http-client');
 const { ScoreStore } = require('./core/score-store');
 const { ScoreClient } = require('./services/score-client');
 const { FollowService } = require('./services/follow-service');
+const { FollowStore } = require('./services/follow-store');
 const { AccountService } = require('./services/account-service');
 const { SocialService } = require('./services/social-service');
 
@@ -16,9 +17,10 @@ App({
     const account = new AccountService(wx, auth, http);
     const scoreStore = new ScoreStore();
     const scoreClient = new ScoreClient(wx, auth, http, scoreStore);
-    const follow = new FollowService(wx, auth, http, account);
+    const followStore = new FollowStore(wx, auth);
+    const follow = new FollowService(wx, auth, http, account, followStore);
     const social = new SocialService(wx, auth, http, account);
-    this.services = Object.freeze({ auth, http, account, scoreStore, scoreClient, follow, social });
+    this.services = Object.freeze({ auth, http, account, scoreStore, scoreClient, followStore, follow, social });
     this.accountReady = account.refresh().catch(() => account.currentProfile());
   },
 

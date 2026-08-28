@@ -366,6 +366,15 @@ function h2hResult(value, selected = {}) {
   });
 }
 
+function rankingBusinessDate(value, isRace) {
+  const source = isRace ? value?.payload?.ranking : value?.payload?.snapshot;
+  const raw = String(source?.rankingDate || source?.snapshotDate || '').trim();
+  const match = /^(\d{4})-(\d{2})-(\d{2})/u.exec(raw);
+  if (!match) return '排名日期暂缺';
+  const date = `${match[1]}年${Number(match[2])}月${Number(match[3])}日`;
+  return isRace ? `Race榜数据日期：${date}` : `官方排名日期：${date}`;
+}
+
 Page({
   data: {
     ...buildThemeData(),
@@ -406,6 +415,7 @@ Page({
     deliveryState: '',
     deliveryMessage: '',
     dataAsOf: '',
+    rankingDateLabel: '排名日期暂缺',
     h2hPlayer1: '',
     h2hPlayer2: '',
     h2hPlayer1Id: '',
@@ -460,6 +470,7 @@ Page({
     if (this.searchTimer) clearTimeout(this.searchTimer);
     this.setData({
       authority,
+      rankingDateLabel: '排名日期暂缺',
       offset: 0,
       hasMore: false,
       h2hPlayer1: '',
@@ -501,7 +512,9 @@ Page({
 
   selectRankingKind(event) {
     const rankingKind = event.currentTarget.dataset.kind === 'race' ? 'race' : 'official';
-    this.setData({ rankingKind, offset: 0, hasMore: false }, () => void this.load());
+    this.setData({
+      rankingKind, offset: 0, hasMore: false, rankingDateLabel: '排名日期暂缺'
+    }, () => void this.load());
   },
 
   onSearch(event) {
@@ -716,6 +729,8 @@ Page({
           : (useProfileSearch ? '球员资料已更新' : isRace ? '冠军积分已更新' : '官方排名已更新')
         : '',
       dataAsOf,
+      rankingDateLabel: useProfileSearch
+        ? this.data.rankingDateLabel : rankingBusinessDate(value, isRace),
       visiblePlayers: useProfileSearch ? mergedPlayers : this.data.visiblePlayers
     }, () => {
       if (!useProfileSearch) this.filter();

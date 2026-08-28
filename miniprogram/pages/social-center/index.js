@@ -43,6 +43,17 @@ Page({
     void this.load();
   },
   onShow() { syncPageTheme(this); },
+  onShareAppMessage(event) {
+    const playerId = String(event?.target?.dataset?.playerId || '').trim();
+    const label = String(event?.target?.dataset?.label || '粉丝称号').trim();
+    const match = /^(ATP|WTA):(.+)$/u.exec(playerId);
+    return {
+      title: `我获得了「${label}」`,
+      path: match
+        ? `/packages/player/pages/player-detail/index?tour=${encodeURIComponent(match[1])}&playerId=${encodeURIComponent(match[2])}`
+        : '/pages/account/index'
+    };
+  },
   onPullDownRefresh() { void this.load().finally(() => wx.stopPullDownRefresh()); },
   back() { wx.navigateBack(); },
   previousMonth() { this.setData({ month: monthShift(this.data.month, -1) }, () => void this.loadCalendar()); },
@@ -51,21 +62,19 @@ Page({
   async load() {
     this.setData({ loading: true, failed: false });
     try {
-      const [bootstrap, calendar, ledger, badgeResult] = await Promise.all([
+      const [bootstrap, calendar] = await Promise.all([
         getApp().services.social.bootstrap(),
-        getApp().services.social.checkinCalendar(this.data.month),
-        getApp().services.social.ledger({ limit: 5, offset: 0 }),
-        getApp().services.social.badges()
+        getApp().services.social.checkinCalendar(this.data.month)
       ]);
       this.setData({
         loading: false,
         wallet: bootstrap.wallet || {},
         checkins: bootstrap.checkins || {},
         calendarCells: calendarCells(this.data.month, calendar.calendar?.checkedDates),
-        ledger: (ledger.ledger?.entries || []).map(item => ({
-          ...item, dateLabel: String(item.occurredAt || '').slice(0, 10)
+        ledger: (bootstrap.recentLedger?.entries || []).map(item => ({
+          ...item, dateLabel: item.occurredDate || ''
         })),
-        badges: badgeResult.badges || []
+        badges: bootstrap.badges || []
       });
     } catch { this.setData({ loading: false, failed: true }); }
   },
@@ -79,7 +88,22 @@ Page({
     try {
       const value = await getApp().services.social.checkin();
       wx.showToast({ title: value.alreadyCheckedIn ? '今天已经签过啦' : '签到成功，花朵 +1', icon: 'none' });
-      await this.load();
+      if (value.alreadyCheckedIn) return;
+      const ledgerEntry = value.ledgerEntry
+        ? { ...value.ledgerEntry, dateLabel: value.ledgerEntry.occurredDate || '' }
+        : null;
+      this.setData({
+        wallet: {
+          ...this.data.wallet,
+          balance: value.balance,
+          lifetimeEarned: Number(this.data.wallet.lifetimeEarned || 0) + 1
+        },
+        checkins: value.summary || this.data.checkins,
+        ledger: ledgerEntry
+          ? [ledgerEntry, ...this.data.ledger].slice(0, 5) : this.data.ledger,
+        calendarCells: this.data.calendarCells.map(cell =>
+          cell.key === ledgerEntry?.dateLabel ? { ...cell, checked: true } : cell)
+      });
     } catch { /* profile gate owns cancellation */ }
   },
   async toggleBadge(event) {

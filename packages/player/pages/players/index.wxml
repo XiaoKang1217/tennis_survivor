@@ -58,6 +58,8 @@
     </view>
   </view>
 
+  <view wx:if="{{section === 'ranking'}}" class="ranking-business-date">{{rankingDateLabel}}</view>
+
   <data-notice
     wx:if="{{deliveryState}}"
     state="{{deliveryState}}"

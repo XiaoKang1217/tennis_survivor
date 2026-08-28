@@ -31,6 +31,10 @@ function followingCacheKey(scope, kind, status, date, limit, offset) {
   return `following:${scope}:${kind}:${status || 'all'}:${date || 'all'}:${limit}:${offset}`;
 }
 
+function followingRequestSignature({ scope, kind, status, date, limit, offset }) {
+  return [scope, kind, status || 'all', date || 'all', limit, offset].join('|');
+}
+
 const IOC_TO_ISO = Object.freeze({
   ARG: 'AR', AUS: 'AU', AUT: 'AT', BEL: 'BE', BLR: 'BY', BRA: 'BR',
   BUL: 'BG', CAN: 'CA', CHI: 'CL', CHN: 'CN', COL: 'CO', CRO: 'HR',
@@ -392,13 +396,44 @@ Page({
     this.services = getApp().services;
     this.cache = createSWRCache(wx);
     this.matchDates = new Map();
+    this.followingRequestId = 0;
+    this.activeFollowingSignature = '';
+    this.activeAccountScope = '';
     this.setData({ topInset: info.statusBarHeight || 44 });
     void this.restoreAccountAndLoad();
   },
   onShow() {
     syncPageTheme(this);
-    if (this.services && !this.data.accountRestoring
-      && !this.data.authPrompt && this.services.account.isComplete()) void this.load();
+    if (!this.services || this.data.accountRestoring) return;
+    const scope = currentCacheScope(this.services);
+    if (scope !== this.activeAccountScope) this.resetForAccountScope(scope);
+    if (!this.data.authPrompt && this.services.account.isComplete()) void this.load();
+  },
+  onUnload() { this.invalidateFollowingRequests(); },
+  invalidateFollowingRequests() {
+    this.followingRequestId = Number(this.followingRequestId || 0) + 1;
+    this.activeFollowingSignature = '';
+  },
+  resetForAccountScope(scope) {
+    this.invalidateFollowingRequests();
+    this.activeAccountScope = String(scope || '');
+    this.matchDates = new Map();
+    this.setData({
+      items: [], dateGroups: [], count: 0, matchCount: 0, tournamentCount: 0,
+      playerCount: 0, offset: 0, hasMore: false, pageNumber: 1, pageCount: 1,
+      canPrev: false, canNext: false, deliveryState: '', deliveryMessage: '', dataAsOf: ''
+    });
+  },
+  beginFollowingRequest(signature) {
+    const requestId = Number(this.followingRequestId || 0) + 1;
+    this.followingRequestId = requestId;
+    this.activeFollowingSignature = signature;
+    return requestId;
+  },
+  isCurrentFollowingRequest(requestId, signature) {
+    return this.followingRequestId === requestId
+      && this.activeFollowingSignature === signature
+      && currentCacheScope(this.services) === this.activeAccountScope;
   },
   async restoreAccountAndLoad() {
     try { await getApp().accountReady; } catch { /* the profile gate handles a real failure */ }
@@ -462,6 +497,7 @@ Page({
   },
   async load(options = {}) {
     if (!this.services.account.isComplete()) {
+      this.resetForAccountScope('');
       this.setData({ authPrompt: true, loading: false, failed: false, items: [], dateGroups: [] });
       return;
     }
@@ -473,6 +509,20 @@ Page({
     const pageNumber = Math.max(1, Number(this.data.pageNumber) || 1);
     const offset = (pageNumber - 1) * limit;
     let scope = currentCacheScope(this.services);
+    if (!scope) {
+      try { await this.services.auth.ensure(); } catch { /* handled by the bounded empty state below */ }
+      scope = currentCacheScope(this.services);
+    }
+    if (!scope || !this.services.account.isComplete()) {
+      this.resetForAccountScope('');
+      this.setData({ authPrompt: true, loading: false, failed: false });
+      return;
+    }
+    if (scope !== this.activeAccountScope) this.resetForAccountScope(scope);
+    const signature = followingRequestSignature({
+      scope, kind: selectedKind, status: selectedStatus, date: selectedDate, limit, offset
+    });
+    const requestId = this.beginFollowingRequest(signature);
     let cacheKey = scope
       ? followingCacheKey(scope, selectedKind, selectedStatus, selectedDate, limit, offset) : '';
     const cached = cacheKey
@@ -480,7 +530,7 @@ Page({
     this.setData(append
       ? { loadingMore: true, failed: false }
       : { loading: true, loadingMore: false, failed: false });
-    if (cached?.payload) {
+    if (cached?.payload && this.isCurrentFollowingRequest(requestId, signature)) {
       this.applyFollowingValue(cached.payload, {
         append: false,
         selectedKind,
@@ -488,7 +538,6 @@ Page({
       });
     }
     try {
-      if (!append && !scope) await this.services.auth.ensure();
       const result = await loadProjectionResource({
         http: this.services.http,
         cache: this.cache,
@@ -518,14 +567,14 @@ Page({
           return value;
         }
       });
-      if (this.data.selectedKind !== selectedKind) return;
+      if (!this.isCurrentFollowingRequest(requestId, signature)) return;
       this.applyFollowingValue(result.value, {
         append,
         selectedKind,
         fromCache: false
       });
     } catch {
-      if (this.data.selectedKind !== selectedKind) return;
+      if (!this.isCurrentFollowingRequest(requestId, signature)) return;
       if (cached?.payload) {
         this.setData({
           loading: false,

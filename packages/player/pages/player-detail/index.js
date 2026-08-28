@@ -224,6 +224,9 @@ Page({
     this.http = getApp().services.http;
     this.social = getApp().services.social;
     this.cache = createSWRCache(wx);
+    this.socialLoadPromise = null;
+    this.socialLoadKey = '';
+    this.socialLoadedKey = '';
     const requestedPlayerId = optionValue(options.playerId);
     const idAuthority = /^(ATP|WTA):/iu.exec(requestedPlayerId)?.[1]?.toUpperCase();
     const requestedTour = optionValue(options.tour).toUpperCase();
@@ -263,7 +266,11 @@ Page({
     enablePageShare();
     if (this.data.playerId) void this.refreshPlayerFollowState();
   },
-  onUnload() { this.unsubscribeFollow?.(); },
+  onUnload() {
+    this.socialLoadKey = '';
+    this.socialLoadedKey = '';
+    this.unsubscribeFollow?.();
+  },
 
   onShareAppMessage() {
     if (this.data.giftResult?.gift) {
@@ -335,24 +342,33 @@ Page({
     return `${this.data.tour}:${this.data.playerId}`;
   },
 
-  async loadSocial() {
+  async loadSocial(options = {}) {
     if (!this.data.playerId || !this.social) return;
     const playerId = this.socialPlayerId();
-    const [summary, fans, viewer] = await Promise.allSettled([
-      this.social.playerSummary(playerId),
-      this.social.topFans(playerId),
+    const force = options.force === true;
+    if (!force && this.socialLoadedKey === playerId) return;
+    if (this.socialLoadPromise && this.socialLoadKey === playerId) return this.socialLoadPromise;
+    this.socialLoadKey = playerId;
+    const request = Promise.allSettled([
+      this.social.playerOverview(playerId),
       this.social.viewerFanRank(playerId)
-    ]);
-    const summaryPayload = summary.status === 'fulfilled' ? summary.value?.payload : null;
-    const fansPayload = fans.status === 'fulfilled' ? fans.value?.payload : null;
-    const viewerValue = viewer.status === 'fulfilled' ? viewer.value?.viewer : null;
-    this.setData({
-      lifetimeFlowerTotal: Number(summaryPayload?.lifetimeFlowerTotal || 0),
-      topFans: Array.isArray(fansPayload?.entries) ? fansPayload.entries : [],
-      viewerFanRankText: viewerValue?.rank
-        ? `你已送 ${Number(viewerValue.flowerTotal || 0)} 朵·第 ${viewerValue.rank} 名`
-        : ''
+    ]).then(([overview, viewer]) => {
+      if (this.socialLoadKey !== playerId || this.socialPlayerId() !== playerId) return;
+      const overviewPayload = overview.status === 'fulfilled' ? overview.value?.payload : null;
+      const viewerValue = viewer.status === 'fulfilled' ? viewer.value?.viewer : null;
+      this.socialLoadedKey = playerId;
+      this.setData({
+        lifetimeFlowerTotal: Number(overviewPayload?.lifetimeFlowerTotal || 0),
+        topFans: Array.isArray(overviewPayload?.topFans) ? overviewPayload.topFans : [],
+        viewerFanRankText: viewerValue?.rank
+          ? `你已送 ${Number(viewerValue.flowerTotal || 0)} 朵·第 ${viewerValue.rank} 名`
+          : ''
+      });
+    }).finally(() => {
+      if (this.socialLoadPromise === request) this.socialLoadPromise = null;
     });
+    this.socialLoadPromise = request;
+    return request;
   },
 
   openGift() {
@@ -381,7 +397,7 @@ Page({
         giftResult: result,
         giftSubmitting: false
       });
-      void this.loadSocial();
+      void this.loadSocial({ force: true });
     } catch (error) {
       this.setData({ giftSubmitting: false });
       const message = String(error?.message || '').includes('insufficient')
@@ -432,7 +448,6 @@ Page({
       return;
     }
     this.applyProfile(result.value, { fromCache: false });
-    void this.loadSocial();
   },
 
   applyProfile(profile, options = {}) {

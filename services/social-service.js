@@ -129,6 +129,12 @@ class SocialService {
     });
   }
 
+  async playerOverview(playerId) {
+    return await this.http.request(`/api/v1/bff/social/players/${encodeURIComponent(playerId)}/overview`, {
+      authMode: 'none'
+    });
+  }
+
   async matchPlayerSummaries(matchId) {
     return await this.http.request(`/api/v1/bff/social/matches/${encodeURIComponent(matchId)}/player-summaries`, {
       authMode: 'none'

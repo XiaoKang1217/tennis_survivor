@@ -120,6 +120,19 @@
   font-size: 24rpx;
 }
 
+.ranking-business-date {
+  min-height: 54rpx;
+  padding: 0 22rpx;
+  display: flex;
+  align-items: center;
+  border-bottom: 1rpx solid var(--line);
+  background: var(--surface);
+  color: var(--ink-muted);
+  font-size: 20rpx;
+  font-variant-numeric: tabular-nums;
+  box-sizing: border-box;
+}
+
 .page-state {
   padding: 56rpx 24rpx;
 }

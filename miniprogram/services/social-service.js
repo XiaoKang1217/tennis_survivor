@@ -18,7 +18,6 @@ class SocialService {
 
   async requireProfile(sourceEntry) {
     await this.auth.ensure();
-    try { await this.account.refresh(); } catch { /* the requested write will surface auth/network */ }
     if (this.account.isComplete()) return true;
     const gate = this.activeProfileGate();
     if (!gate?.collect) throw new Error('profile_required');
@@ -32,9 +31,21 @@ class SocialService {
     return await this.http.request('/api/v1/me/bootstrap', { authRequired: true });
   }
 
+  async profileWrite(sourceEntry, factory) {
+    await this.requireProfile(sourceEntry);
+    try {
+      return await factory();
+    } catch (error) {
+      if (!/profile_required/u.test(String(error?.message || ''))) throw error;
+      const gate = this.activeProfileGate();
+      const completed = await gate?.collect?.({ sourceEntry, mode: 'login' });
+      if (!completed) throw error;
+      return await factory();
+    }
+  }
+
   async checkin() {
-    await this.requireProfile('daily_checkin');
-    return await this.http.request('/api/v1/me/checkins', {
+    return await this.profileWrite('daily_checkin', () => this.http.request('/api/v1/me/checkins', {
       method: 'POST',
       data: {},
       header: {
@@ -42,7 +53,7 @@ class SocialService {
         'x-idempotency-key': createIdempotencyKey('daily-checkin')
       },
       authRequired: true
-    });
+    }));
   }
 
   async checkinCalendar(month) {
@@ -75,8 +86,8 @@ class SocialService {
   }
 
   async gift(playerId, amount, sourceEntry = '') {
-    await this.requireProfile(sourceEntry || 'player_gift');
-    return await this.http.request(`/api/v1/players/${encodeURIComponent(playerId)}/flowers`, {
+    const entry = sourceEntry || 'player_gift';
+    return await this.profileWrite(entry, () => this.http.request(`/api/v1/players/${encodeURIComponent(playerId)}/flowers`, {
       method: 'POST',
       data: { amount, sourceEntry },
       header: {
@@ -84,7 +95,7 @@ class SocialService {
         'x-idempotency-key': createIdempotencyKey(`flower-gift:${playerId}:${amount}`)
       },
       authRequired: true
-    });
+    }));
   }
 
   async badges() {
@@ -93,8 +104,7 @@ class SocialService {
   }
 
   async equipBadge(playerId) {
-    await this.requireProfile('badge_equip');
-    return await this.http.request('/api/v1/me/badges/equipped', {
+    return await this.profileWrite('badge_equip', () => this.http.request('/api/v1/me/badges/equipped', {
       method: 'PUT',
       data: { playerId },
       header: {
@@ -102,20 +112,25 @@ class SocialService {
         'x-idempotency-key': createIdempotencyKey(`badge-equip:${playerId}`)
       },
       authRequired: true
-    });
+    }));
   }
 
   async unequipBadge() {
-    await this.requireProfile('badge_unequip');
-    return await this.http.request('/api/v1/me/badges/equipped', {
+    return await this.profileWrite('badge_unequip', () => this.http.request('/api/v1/me/badges/equipped', {
       method: 'DELETE',
       header: { 'x-idempotency-key': createIdempotencyKey('badge-unequip') },
       authRequired: true
-    });
+    }));
   }
 
   async playerSummary(playerId) {
     return await this.http.request(`/api/v1/bff/social/players/${encodeURIComponent(playerId)}`, {
+      authMode: 'none'
+    });
+  }
+
+  async playerOverview(playerId) {
+    return await this.http.request(`/api/v1/bff/social/players/${encodeURIComponent(playerId)}/overview`, {
       authMode: 'none'
     });
   }
