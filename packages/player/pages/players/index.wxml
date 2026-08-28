@@ -187,7 +187,7 @@
     <block wx:else>
       <view wx:for="{{visiblePlayers}}" wx:key="id" class="leaderboard-card" data-id="{{item.id}}" data-index="{{index}}" bindtap="openPlayer" role="button">
         <text class="leaderboard-rank">{{item.leaderboardPosition || '—'}}</text>
-        <view class="leaderboard-photo"><image wx:if="{{item.cardImageUrl}}" src="{{item.cardImageUrl}}" mode="aspectFill" lazy-load="{{true}}"/><ui-icon wx:else name="player" size="25" color="#7d8b99"/></view>
+        <view class="leaderboard-photo"><image wx:if="{{item.cardImageUrl}}" class="{{item.tour === 'ATP' ? 'leaderboard-photo-atp' : ''}}" src="{{item.cardImageUrl}}" mode="{{item.tour === 'ATP' ? 'aspectFit' : 'aspectFill'}}" lazy-load="{{true}}"/><ui-icon wx:else name="player" size="25" color="#7d8b99"/></view>
         <view class="leaderboard-copy">
           <view class="leaderboard-name-row"><view><text class="leaderboard-name">{{item.name}}</text><text wx:if="{{item.originalName}}" class="leaderboard-original">{{item.originalName}}</text></view><view class="player-follow-action {{item.followed ? 'followed' : ''}}" data-id="{{item.followTargetId}}" data-followed="{{!item.followed}}" catchtap="togglePlayerFollow" role="button"><ui-icon name="heart" size="14" color="{{item.followed ? '#fff' : '#1677d2'}}"/><text>{{item.followed ? '已关注' : '关注'}}</text></view></view>
           <view class="leaderboard-meta"><text wx:if="{{item.countryMark}}">{{item.countryMark}} </text><text>{{item.countryCode || '国家/地区暂缺'}}</text><text>{{item.ageLabel}}</text><text>{{item.rankingLabel}}</text></view>

@@ -124,6 +124,8 @@ test('following page exposes category tabs, badge cards, match date filter and 1
   assert.match(script, /hasMore/);
   assert.match(script, /FOLLOWING_CACHE_SCHEMA/);
   assert.match(script, /currentCacheScope/);
+  assert.match(script, /restoreAccountAndLoad/u);
+  assert.match(script, /await getApp\(\)\.accountReady/u);
 });
 
 test('detail pages resolve current account follow state across paginated following results', async () => {
@@ -215,6 +217,16 @@ test('player follows leaderboard is wired to large cards and real pagination', (
   assert.match(markup, /leaderboard-card/);
   assert.match(markup, /followCountLabel/);
   assert.doesNotMatch(markup, /关注榜稍后接入/);
+});
+
+test('player follows leaderboard accepts primitive ranks and only fits ATP photos', () => {
+  const markup = read('packages/player/pages/players/index.wxml');
+  const script = read('packages/player/pages/players/index.js');
+  assert.match(script, /function numericFact\(candidate\)/);
+  assert.match(script, /numericFact\(entry\.officialRanking\?\.position\)/);
+  assert.match(script, /numericFact\(entry\.position\)/);
+  assert.match(markup, /item\.tour === 'ATP' \? 'aspectFit' : 'aspectFill'/);
+  assert.match(markup, /item\.tour === 'ATP' \? 'leaderboard-photo-atp' : ''/);
 });
 
 test('player ranking search queries full basic profile inventory', () => {

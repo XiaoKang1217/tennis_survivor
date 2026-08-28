@@ -216,6 +216,13 @@ class AccountService {
       authRequired: true
     });
     const responseProfile = response?.profile || {};
+    this.auth.adoptAccountScope?.(
+      responseProfile.accountScope
+        || responseProfile.accountId
+        || responseProfile.userId
+        || responseProfile.viewerId
+    );
+    this.loadCurrentScope();
     return this.writeStored({
       ...this.profile,
       ...responseProfile

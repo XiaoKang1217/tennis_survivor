@@ -3,16 +3,16 @@
   <view class="ledger-head" style="padding-top:{{topInset}}px"><view bindtap="back" role="button"><ui-icon name="back" size="19" color="{{themeAccentStrong}}"/></view><text>花朵明细</text><view/></view>
   <view class="filter-card">
     <view class="direction-tabs"><view wx:for="{{directions}}" wx:key="id" class="{{selectedDirection === item.id ? 'active' : ''}}" data-direction="{{item.id}}" bindtap="selectDirection" role="button">{{item.label}}</view></view>
+    <view class="date-filter-head"><text>日期范围</text><view class="clear-date {{fromDate || toDate ? '' : 'disabled'}}" bindtap="clearDates" role="button">清除</view></view>
     <view class="date-filters">
-      <picker mode="date" value="{{fromDate}}" end="{{today}}" bindchange="chooseFromDate"><view><text>开始日期</text><text>{{fromDate || '不限'}}</text></view></picker>
-      <text>至</text>
-      <picker mode="date" value="{{toDate}}" start="{{fromDate}}" end="{{today}}" bindchange="chooseToDate"><view><text>结束日期</text><text>{{toDate || '不限'}}</text></view></picker>
-      <view class="clear-date {{fromDate || toDate ? '' : 'disabled'}}" bindtap="clearDates" role="button">清除</view>
+      <picker mode="date" value="{{fromDate}}" end="{{today}}" bindchange="chooseFromDate"><view class="date-field"><text>开始日期</text><text>{{fromDate || '不限'}}</text></view></picker>
+      <text class="date-separator">至</text>
+      <picker mode="date" value="{{toDate}}" start="{{fromDate}}" end="{{today}}" bindchange="chooseToDate"><view class="date-field"><text>结束日期</text><text>{{toDate || '不限'}}</text></view></picker>
     </view>
   </view>
   <view wx:if="{{loading}}" class="ledger-state"><client-state state="loading" label="正在读取花朵明细"/></view>
   <view wx:elif="{{failed}}" class="ledger-state"><client-state state="failed" label="花朵明细暂不可用" retryable bind:retry="loadPage"/></view>
   <view wx:elif="{{!entries.length}}" class="ledger-state"><client-state state="empty" label="没有符合条件的明细" message="换个日期或收支条件试试"/></view>
-  <view wx:else class="ledger-card"><view wx:for="{{entries}}" wx:key="ledgerId" class="ledger-row"><view><text>{{item.reasonText}}</text><text>{{item.occurredLabel}}</text></view><view><text class="{{item.delta > 0 ? 'income' : 'expense'}}">{{item.delta > 0 ? '+' : ''}}{{item.delta}}</text><text>余额 {{item.balanceAfter}}</text></view></view></view>
-  <view wx:if="{{!loading && !failed && entries.length}}" class="pagination"><button disabled="{{!hasPrevious}}" bindtap="previousPage">上一页</button><text>第 {{pageNumber}} 页</text><button disabled="{{!hasNext}}" bindtap="nextPage">下一页</button></view>
+  <view wx:else class="ledger-card"><view wx:for="{{entries}}" wx:key="ledgerId" class="ledger-row"><view class="ledger-row-primary"><text>{{item.reasonText}}</text><text class="{{item.delta > 0 ? 'income' : 'expense'}}">{{item.delta > 0 ? '+' : ''}}{{item.delta}}</text></view><view class="ledger-row-secondary"><text>{{item.occurredLabel}}</text><text>余额 {{item.balanceAfter}}</text></view></view></view>
+  <view wx:if="{{!loading && !failed && entries.length}}" class="pagination"><button class="page-button" disabled="{{!hasPrevious}}" bindtap="previousPage">上一页</button><text>第 {{pageNumber}} 页</text><button class="page-button" disabled="{{!hasNext}}" bindtap="nextPage">下一页</button></view>
 </view>

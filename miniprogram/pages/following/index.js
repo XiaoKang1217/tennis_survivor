@@ -427,6 +427,7 @@ Page({
     selectedDate: '',
     selectedDateLabel: '选择年月日',
     authPrompt: false,
+    accountRestoring: true,
     loading: false,
     loadingMore: false,
     failed: false,
@@ -452,17 +453,22 @@ Page({
     this.cache = createSWRCache(wx);
     this.matchDates = new Map();
     this.setData({ topInset: info.statusBarHeight || 44 });
-    if (!this.services.account.isComplete()) {
-      this.setData({ authPrompt: true, loading: false });
-      if (typeof wx.nextTick === 'function') wx.nextTick(() => void this.promptForProfile());
-      else void this.promptForProfile();
-      return;
-    }
-    void this.load();
+    void this.restoreAccountAndLoad();
   },
   onShow() {
     syncPageTheme(this);
-    if (this.services && !this.data.authPrompt && this.services.account.isComplete()) void this.load();
+    if (this.services && !this.data.accountRestoring
+      && !this.data.authPrompt && this.services.account.isComplete()) void this.load();
+  },
+  async restoreAccountAndLoad() {
+    try { await getApp().accountReady; } catch { /* the profile gate handles a real failure */ }
+    if (this.services.account.isComplete()) {
+      this.setData({ authPrompt: false, accountRestoring: false }, () => void this.load());
+      return;
+    }
+    this.setData({ authPrompt: true, accountRestoring: false, loading: false });
+    if (typeof wx.nextTick === 'function') wx.nextTick(() => void this.promptForProfile());
+    else void this.promptForProfile();
   },
   onPullDownRefresh() {
     void this.load().finally(() => wx.stopPullDownRefresh());

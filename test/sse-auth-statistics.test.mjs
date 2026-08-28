@@ -121,6 +121,23 @@ test('session token renewal preserves the stable account scope when the backend 
   assert.equal(runtime.storage.get('luwang_v2_user_session_v1').accountScope, scope);
 });
 
+test('an existing session adopts the stable account scope returned by profile recovery', () => {
+  const runtime = wxRuntime();
+  runtime.storage.set('luwang_v2_user_session_v1', {
+    accessToken: 'a'.repeat(64),
+    expiresAt: new Date(Date.now() + 3_600_000).toISOString()
+  });
+  const auth = new AuthSession(runtime, async () => {
+    throw new Error('the usable session must not log in again');
+  });
+
+  const scope = auth.adoptAccountScope('user_candice');
+
+  assert.equal(scope, stableAccountScope('user_candice'));
+  assert.equal(auth.currentAccountScope(), scope);
+  assert.equal(runtime.storage.get('luwang_v2_user_session_v1').accountScope, scope);
+});
+
 test('public HTTP reads default to authMode none and do not attach bearer', async () => {
   const runtime = wxRuntime();
   const authorizations = [];

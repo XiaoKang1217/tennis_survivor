@@ -223,13 +223,17 @@ Page({
     this.http = getApp().services.http;
     this.social = getApp().services.social;
     this.cache = createSWRCache(wx);
+    const requestedPlayerId = optionValue(options.playerId);
+    const idAuthority = /^(ATP|WTA):/iu.exec(requestedPlayerId)?.[1]?.toUpperCase();
+    const requestedTour = optionValue(options.tour).toUpperCase();
+    const tour = requestedTour === 'WTA' || idAuthority === 'WTA' ? 'WTA' : 'ATP';
     this.setData({
       topInset: info.statusBarHeight || 44,
-      playerId: optionValue(options.playerId),
+      playerId: requestedPlayerId.replace(/^(?:(?:ATP|WTA):)+/iu, ''),
       name: optionValue(options.name, '球员资料'),
       originalName: optionValue(options.originalName),
       countryCode: optionValue(options.countryCode),
-      tour: optionValue(options.tour) === 'WTA' ? 'WTA' : 'ATP',
+      tour,
       position: optionValue(options.position),
       points: optionValue(options.points),
       portraitUrl: optionValue(options.portraitUrl),

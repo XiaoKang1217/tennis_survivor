@@ -849,6 +849,10 @@
   height: 100%;
 }
 
+.leaderboard-photo image.leaderboard-photo-atp {
+  background: var(--surface-subtle);
+}
+
 .leaderboard-copy {
   min-width: 0;
   flex: 1;

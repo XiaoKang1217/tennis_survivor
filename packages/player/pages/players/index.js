@@ -48,6 +48,12 @@ function fact(candidate) {
     ? candidate.value : null;
 }
 
+function numericFact(candidate) {
+  const value = fact(candidate);
+  const number = Number(value ?? candidate);
+  return Number.isFinite(number) ? number : null;
+}
+
 function flag(code) {
   const value = String(code || '').toUpperCase();
   const normalized = value.length === 2 ? value : IOC_TO_ISO[value];
@@ -266,7 +272,8 @@ function leaderboardEntries(value) {
     const countryCode = fact(entry.countryCode) || '';
     const displayName = playerDisplayName(entry);
     const age = fact(entry.personal?.age);
-    const position = fact(entry.officialRanking?.position) ?? fact(entry.position);
+    const position = numericFact(entry.officialRanking?.position)
+      ?? numericFact(entry.position);
     const authority = entry.authority || '';
     const cardImageUrl = portrait(entry.heroImage, '720', '', authority) || portrait(entry.portrait, '720', '', authority);
     return Object.freeze({
@@ -724,11 +731,12 @@ Page({
       );
       const entries = Array.isArray(value?.payload?.entries) ? value.payload.entries : [];
       const players = entries.map(item => this.data.flowerKind === 'players' ? {
-        id: String(item.playerId || ''),
+        id: String(item.playerId || '').replace(/^(?:(?:ATP|WTA):)+/iu, ''),
         name: String(item.name || '球员'),
         originalName: String(item.originalName || ''),
         countryCode: String(item.countryCode || ''),
-        cardImageUrl: String(item.avatarUrl || ''),
+        cardImageUrl: String(item.portraitUrl || item.avatarUrl || ''),
+        portraitUrl: String(item.portraitUrl || item.avatarUrl || ''),
         tour: String(item.authority || '').toUpperCase(),
         leaderboardPosition: Number(item.rank || 0),
         flowerTotal: Number(item.flowerTotal || 0),

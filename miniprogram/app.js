@@ -19,6 +19,7 @@ App({
     const follow = new FollowService(wx, auth, http, account);
     const social = new SocialService(wx, auth, http, account);
     this.services = Object.freeze({ auth, http, account, scoreStore, scoreClient, follow, social });
+    this.accountReady = account.refresh().catch(() => account.currentProfile());
   },
 
   onShow() {
@@ -29,5 +30,6 @@ App({
     this.services?.scoreClient.onHide();
   },
 
-  services: null
+  services: null,
+  accountReady: null
 });

@@ -104,6 +104,20 @@ class AuthSession {
     return this.isUsable(this.session) ? normalizeAccountScope(this.session.accountScope) : '';
   }
 
+  adoptAccountScope(value) {
+    const accountScope = normalizeAccountScope(value) || stableAccountScope(value);
+    if (!accountScope || !this.session) return '';
+    this.session = { ...this.session, accountScope };
+    try {
+      this.wx.setStorageSync(STORAGE_KEY, {
+        accessToken: this.session.accessToken,
+        expiresAt: this.session.expiresAt,
+        accountScope
+      });
+    } catch { /* the in-memory session remains valid */ }
+    return accountScope;
+  }
+
   subscribe(listener) {
     this.listeners.add(listener);
     listener(this.state);

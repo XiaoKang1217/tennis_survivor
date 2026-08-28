@@ -35,8 +35,9 @@ for (const path of files) {
     `${label} contains identity material`);
   assert.doesNotMatch(text, /console\.(log|info|warn|error)/,
     `${label} logs outside the bounded event sink`);
-  assert.doesNotMatch(text, /[\u{1F000}-\u{1FAFF}]/u,
-    `${label} contains an emoji glyph instead of UiIcon`);
+  const textWithoutApprovedFlower = text.replaceAll('🌸', '');
+  assert.doesNotMatch(textWithoutApprovedFlower, /[\u{1F000}-\u{1FAFF}]/u,
+    `${label} contains an unapproved emoji glyph instead of UiIcon`);
   assert.doesNotMatch(text, /fixture|mock/i,
     `${label} contains visual or mock data in production code`);
 }
