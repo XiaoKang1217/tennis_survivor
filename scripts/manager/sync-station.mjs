@@ -7,10 +7,23 @@ const args = parseArgs();
 const dryRun = Boolean(args['dry-run']) || !process.env.SUPABASE_SERVICE_ROLE_KEY;
 const activeFile = args.active || 'data/manager/active_events.json';
 const photoFile = args.photos || 'data/manager/player_photos.json';
-const priceVersion = args['price-version'] || 1;
-const priceStatus = args['price-status'] || 'draft';
+const onlyIfMarketLocked = Boolean(args['only-if-market-locked']);
 
 const { active, events } = await loadActiveStation(activeFile);
+const marketLocked = isMarketLocked(active, events);
+if (onlyIfMarketLocked && !marketLocked) {
+  console.log(`Skipped station sync for ${active.station_key}: market is not locked.`);
+  process.exit(0);
+}
+
+const priceVersion = args['price-version']
+  || active.pricing?.price_version
+  || active.pricing?.publication_price_version
+  || active.pricing?.publication_version
+  || 1;
+const priceStatus = args['price-status']
+  || active.pricing?.price_status
+  || (marketLocked ? 'published' : 'draft');
 const photos = await readJson(photoFile).catch(() => ({ players: {} }));
 const payload = buildStationPayload({
   active,
@@ -57,3 +70,10 @@ await client.upsert(
 
 console.log(`Synced station ${active.station_key}`);
 console.log(`events=${payload.eventRows.length} players=${payload.playerRows.length} draw_entries=${payload.drawRows.length} market_players=${payload.eventPlayerRows.length} price_rows=${payload.priceRows.length}`);
+
+function isMarketLocked(active, events) {
+  if (active.pricing?.market_prices_locked === true) return true;
+  return events.length > 0 && events.every(({ event }) => Boolean(
+    event.market_price_lock?.publication_version || event.market_price_lock?.locked_at
+  ));
+}

@@ -220,6 +220,7 @@ async function main() {
     pricing: {
       market_prices_locked: true,
       publication_version: 1,
+      price_version: 26082801,
       locked_at: '2026-08-28T01:15:00.000Z',
       reason: 'US Open opening prices are locked from publication v1; qualifier placements inherit the published Q-slot prices.'
     },

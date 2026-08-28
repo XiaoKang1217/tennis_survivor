@@ -34,6 +34,8 @@ jobs:
 
       - run: node scripts/manager/maybe-build-prices.mjs
 
+      - run: node scripts/manager/sync-station.mjs --only-if-market-locked
+
       - run: node scripts/manager/publish-station-snapshot.mjs --write-file --strict-open
 
       - run: node scripts/manager/apply-qualifier-placements.mjs

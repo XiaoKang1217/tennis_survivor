@@ -12,6 +12,8 @@ const sourceOverrides = JSON.parse(fs.readFileSync('data/manager/player_source_o
 const html = fs.readFileSync('index.html', 'utf8');
 const prepareScript = fs.readFileSync('scripts/manager/prepare-us-open-2026-preview.mjs', 'utf8');
 const buildPrices = fs.readFileSync('scripts/manager/build-prices.mjs', 'utf8');
+const syncStation = fs.readFileSync('scripts/manager/sync-station.mjs', 'utf8');
+const updateManagerWorkflow = fs.readFileSync('.github/workflows/update_manager.yml', 'utf8');
 const migration = fs.readFileSync('supabase/migrations/202608280001_manager_us_open_combo_and_welfare_limit.sql', 'utf8');
 
 function contentVersion(file) {
@@ -105,6 +107,7 @@ test('US Open station is current with 2000 grant, 1200 Combo cap, and Cincinnati
   assert.deepEqual(active.pricing, {
     market_prices_locked: true,
     publication_version: 1,
+    price_version: 26082801,
     locked_at: '2026-08-28T01:15:00.000Z',
     reason: 'US Open opening prices are locked from publication v1; qualifier placements inherit the published Q-slot prices.'
   });
@@ -173,6 +176,13 @@ test('US Open Combo and welfare limit are wired through frontend and backend', (
   assert.match(html, /价格 <=300 的球员进 R32\/R16\/QF\/SF\/F\/W，最高档 \+200\/\+400\/\+600\/\+800\/\+1000\/\+1200/);
   assert.doesNotMatch(html, /按温网放缩/);
   assert.doesNotMatch(JSON.stringify(active.rules.combo), /scale_ratio|scale_from/);
+});
+
+test('US Open locked market is synced without rebuilding prices', () => {
+  assert.match(syncStation, /only-if-market-locked/);
+  assert.match(syncStation, /active\.pricing\?\.price_version/);
+  assert.match(syncStation, /marketLocked \? 'published' : 'draft'/);
+  assert.match(updateManagerWorkflow, /maybe-build-prices\.mjs[\s\S]*sync-station\.mjs --only-if-market-locked[\s\S]*publish-station-snapshot\.mjs/);
 });
 
 test('US Open source files are generated and cache-busted in the data manifest', () => {
