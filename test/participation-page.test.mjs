@@ -49,8 +49,8 @@ test('participation page renders trusted tournaments and players with stable lin
   globalThis.getApp = () => ({ services: { entries: { async index() {
     return { delivery: { state: 'current' }, payload: {
       dataAsOf: '2026-08-28T02:00:00Z', quality: { identityCoverage: 0.987 },
-      tournaments: [{ tournamentId: 'ATP:USO:2026', tournamentName: '美网' }],
-      players: [{ playerId: 'ATP:S0AG', playerName: '扬尼克·辛纳' }]
+      tournaments: [{ tournamentId: 'ATP:USO:2026', tournamentName: '美网', surface: 'Hard', startsOn: '2026-08-24', endsOn: '2026-09-06', previewEntries: [{ playerId: 'ATP:S0AG', playerName: '扬尼克·辛纳', status: 'main_draw' }] }],
+      players: [{ playerId: 'ATP:S0AG', playerName: '扬尼克·辛纳', nextAppearance: { tournamentId: 'ATP:USO:2026', tournamentName: '美网', startsOn: '2026-08-24', endsOn: '2026-09-06', surface: 'Hard', status: 'main_draw' }, previewEntries: [] }]
     } };
   } } } });
   try {
@@ -60,6 +60,9 @@ test('participation page renders trusted tournaments and players with stable lin
     assert.equal(page.data.tournaments[0].tournamentId, 'ATP:USO:2026');
     assert.equal(page.data.players[0].playerId, 'ATP:S0AG');
     assert.equal(page.data.qualityLabel, '身份匹配 98.7%');
+    assert.equal(page.data.tournaments[0].surfaceLabel, '硬地');
+    assert.equal(page.data.tournaments[0].previewEntries[0].statusLabel, '正赛');
+    assert.equal(page.data.players[0].nextAppearance.dateRange, '2026-08-24 至 2026-09-06');
     definition.openPlayer.call(page, { currentTarget: { dataset: { id: 'ATP:S0AG' } } });
     assert.equal(navigated, '/packages/player/pages/player-detail/index?playerId=ATP%3AS0AG');
     definition.openTournament.call(page, { currentTarget: { dataset: { id: 'ATP:USO:2026' } } });
