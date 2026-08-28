@@ -140,6 +140,5 @@
       <text>进入本届赛事的单打、双打与资格赛签表</text>
     </view>
   </block>
-  <canvas class="share-card-canvas" canvas-id="share-card-canvas"></canvas>
   <profile-gate id="profileGate" theme="{{uiTheme}}"/>
 </view>

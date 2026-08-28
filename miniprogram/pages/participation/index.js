@@ -1,6 +1,7 @@
 'use strict';
 
 const { buildThemeData, syncPageTheme } = require('../../core/theme');
+const { enablePageShare, pageShare } = require('../../core/share');
 
 function payloadOf(value) { return value?.payload && typeof value.payload === 'object' ? value.payload : {}; }
 function qualityLabel(quality = {}) {
@@ -91,7 +92,24 @@ Page({
     this.setData({ topInset: info.statusBarHeight || 44 });
     this.load();
   },
-  onShow() { syncPageTheme(this); },
+  onShow() {
+    syncPageTheme(this);
+    enablePageShare();
+  },
+  onShareAppMessage() {
+    return pageShare({
+      title: '炉的网球｜参赛动态',
+      path: '/pages/participation/index',
+      shared: 'participation'
+    }).appMessage;
+  },
+  onShareTimeline() {
+    return pageShare({
+      title: '炉的网球｜参赛动态',
+      path: '/pages/participation/index',
+      shared: 'participation'
+    }).timeline;
+  },
   async load() {
     this.setData({ loading: true, failed: false });
     try {

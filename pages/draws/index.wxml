@@ -201,5 +201,4 @@
   </view>
 
   <product-tabbar active="matches" theme="{{uiTheme}}" />
-  <canvas class="share-card-canvas" canvas-id="share-card-canvas"></canvas>
 </view>

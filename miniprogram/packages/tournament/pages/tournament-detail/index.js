@@ -5,7 +5,6 @@ const { createSWRCache } = require('../../../../core/swr-cache');
 const { loadProjectionResource, readTrustedProjection } = require('../../../../core/projection-resource');
 
 const { enablePageShare, tournamentShare } = require('../../../../core/share');
-const { updatePageShareImages } = require('../../../../core/share-poster');
 const {
   noticeState,
   tournamentDetailView
@@ -81,8 +80,6 @@ Page({
     deliveryState: '',
     deliveryMessage: '',
     dataAsOf: '',
-    shareCardImageUrl: '',
-    shareTimelineImageUrl: ''
   },
 
   onLoad(options) {
@@ -107,9 +104,7 @@ Page({
     return tournamentShare(this.data.detail, {
       tournamentEditionId: this.data.tournamentEditionId,
       title: this.data.titleHint,
-      tour: this.data.requestTour,
-      cardImageUrl: this.data.shareCardImageUrl,
-      timelineImageUrl: this.data.shareTimelineImageUrl
+      tour: this.data.requestTour
     }).appMessage;
   },
 
@@ -117,9 +112,7 @@ Page({
     return tournamentShare(this.data.detail, {
       tournamentEditionId: this.data.tournamentEditionId,
       title: this.data.titleHint,
-      tour: this.data.requestTour,
-      cardImageUrl: this.data.shareCardImageUrl,
-      timelineImageUrl: this.data.shareTimelineImageUrl
+      tour: this.data.requestTour
     }).timeline;
   },
 
@@ -210,7 +203,6 @@ Page({
       dataAsOf: result.value.delivery.dataAsOf
         || result.value.dataAsOf || result.view.dataStatus.dataAsOf
     }, () => {
-      void updatePageShareImages(this, 'tournament', this.data.detail);
     });
   },
 

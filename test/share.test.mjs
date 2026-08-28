@@ -24,8 +24,8 @@ test('match sharing builds a full page path and timeline query', () => {
   assert.match(share.appMessage.title, /^炉网赛果｜辛纳 vs 阿尔卡拉斯/u);
   assert.match(share.appMessage.path, /^\/pages\/match-detail\/index\?/u);
   assert.match(share.appMessage.path, /matchId=sc_1234567890abcdef1234567890abcdef/u);
-  assert.equal(share.appMessage.imageUrl, '');
-  assert.equal(share.timeline.imageUrl, '');
+  assert.equal(Object.hasOwn(share.appMessage, 'imageUrl'), false);
+  assert.equal(Object.hasOwn(share.timeline, 'imageUrl'), false);
   assert.doesNotMatch(share.timeline.query, /^\/pages\//u);
 });
 

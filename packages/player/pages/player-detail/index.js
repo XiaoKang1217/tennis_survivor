@@ -4,7 +4,6 @@ const { buildThemeData, syncPageTheme } = require('../../../../core/theme');
 const { createSWRCache } = require('../../../../core/swr-cache');
 const { loadProjectionResource, readTrustedProjection } = require('../../../../core/projection-resource');
 const { enablePageShare, playerShare } = require('../../../../core/share');
-const { updatePageShareImages } = require('../../../../core/share-poster');
 const { directMediaUrl, mediaUrl } = require('../../../../core/media');
 
 const PLAYER_PROFILE_CONTRACT = 'player-profile-bff/2';
@@ -215,8 +214,6 @@ Page({
     giftAmount: '1',
     giftSubmitting: false,
     giftResult: null,
-    shareCardImageUrl: '',
-    shareTimelineImageUrl: ''
   },
 
   onLoad(options) {
@@ -282,7 +279,6 @@ Page({
           ? `我获得了「${badge.label}」`
           : `我在炉网送给${gift.playerName} ${gift.amount} 朵花`,
         path: `/packages/player/pages/player-detail/index?playerId=${encodeURIComponent(this.data.playerId)}&tour=${encodeURIComponent(this.data.tour)}&name=${encodeURIComponent(this.data.name)}`,
-        imageUrl: this.data.shareCardImageUrl || this.data.heroImageUrl || this.data.portraitUrl || ''
       };
     }
     return playerShare(this.data).appMessage;
@@ -294,7 +290,6 @@ Page({
       return {
         title: `我在炉网支持${gift.playerName}·花${gift.amount}`,
         query: `playerId=${encodeURIComponent(this.data.playerId)}&tour=${encodeURIComponent(this.data.tour)}`,
-        imageUrl: this.data.shareTimelineImageUrl || this.data.heroImageUrl || this.data.portraitUrl || ''
       };
     }
     return playerShare(this.data).timeline;
@@ -544,7 +539,6 @@ Page({
         : profileAvailable ? '球员资料已更新' : '',
       dataAsOf: profile?.dataAsOf || ''
     }, () => {
-      void updatePageShareImages(this, 'player', this.data);
       void this.refreshPlayerFollowState();
     });
   }

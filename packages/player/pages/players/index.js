@@ -4,6 +4,7 @@ const { buildThemeData, syncPageTheme } = require('../../../../core/theme');
 const { createSWRCache } = require('../../../../core/swr-cache');
 const { loadProjectionResource, readTrustedProjection } = require('../../../../core/projection-resource');
 const { directMediaUrl, mediaUrl } = require('../../../../core/media');
+const { enablePageShare, pageShare } = require('../../../../core/share');
 
 const IOC_TO_ISO = Object.freeze({
   ARG: 'AR', AUS: 'AU', AUT: 'AT', BEL: 'BE', BLR: 'BY', BRA: 'BR',
@@ -447,7 +448,26 @@ Page({
     this.setData({ topInset: info.statusBarHeight || 44 });
     void this.load();
   },
-  onShow() { syncPageTheme(this); },
+  onShow() {
+    syncPageTheme(this);
+    enablePageShare();
+  },
+
+  onShareAppMessage() {
+    return pageShare({
+      title: '炉的网球｜球员资料与排名',
+      path: '/packages/player/pages/players/index',
+      shared: 'players'
+    }).appMessage;
+  },
+
+  onShareTimeline() {
+    return pageShare({
+      title: '炉的网球｜球员资料与排名',
+      path: '/packages/player/pages/players/index',
+      shared: 'players'
+    }).timeline;
+  },
 
   onPullDownRefresh() {
     void this.load().finally(() => wx.stopPullDownRefresh());

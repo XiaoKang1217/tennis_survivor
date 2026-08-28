@@ -6,7 +6,6 @@ const { loadProjectionResource, readTrustedProjection } = require('../../core/pr
 
 const contracts = require('../../core/contracts');
 const { enablePageShare, matchShare } = require('../../core/share');
-const { updatePageShareImages } = require('../../core/share-poster');
 const { matchView } = require('../../core/view-model');
 const { beijingClock, beijingDateTime } = require('../../core/schedule-date');
 const { StatisticsStore } = require('../../core/statistics-store');
@@ -444,8 +443,6 @@ Page({
     giftSubmitting: false,
     giftPlayer: null,
     giftResult: null,
-    shareCardImageUrl: '',
-    shareTimelineImageUrl: ''
   },
 
   onLoad(options) {
@@ -517,14 +514,11 @@ Page({
       return {
         title: badge ? `我获得了「${badge.label}」` : `我在炉网送给${gift.playerName} ${gift.amount} 朵花`,
         path: `/packages/player/pages/player-detail/index?playerId=${encodeURIComponent(this.data.giftPlayer.sourcePlayerId)}&tour=${encodeURIComponent(this.data.match.tournamentTourOrg)}&name=${encodeURIComponent(gift.playerName)}`,
-        imageUrl: this.data.shareCardImageUrl || ''
       };
     }
     return matchShare(this.data.match, {
       matchId: this.matchId,
       date: this.requestedDate,
-      cardImageUrl: this.data.shareCardImageUrl,
-      timelineImageUrl: this.data.shareTimelineImageUrl
     }).appMessage;
   },
 
@@ -534,14 +528,11 @@ Page({
       return {
         title: `我在炉网支持${gift.playerName}·花${gift.amount}`,
         query: `matchId=${encodeURIComponent(this.matchId)}&date=${encodeURIComponent(this.requestedDate || '')}`,
-        imageUrl: this.data.shareTimelineImageUrl || ''
       };
     }
     return matchShare(this.data.match, {
       matchId: this.matchId,
       date: this.requestedDate,
-      cardImageUrl: this.data.shareCardImageUrl,
-      timelineImageUrl: this.data.shareTimelineImageUrl
     }).timeline;
   },
 
@@ -692,7 +683,6 @@ Page({
       ...h2hReset
     }, () => {
       this.updateModuleState();
-      void updatePageShareImages(this, 'match', this.data.match);
       void this.loadOdds(match);
       if (match.discipline === 'singles' && h2hNeedsFetch(this.data.h2h) && !this.h2hRequested) {
         void this.loadH2h(match, { background: true });

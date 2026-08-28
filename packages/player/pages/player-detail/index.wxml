@@ -192,6 +192,5 @@
       </block>
     </view>
   </view>
-  <canvas class="share-card-canvas" canvas-id="share-card-canvas"></canvas>
   <profile-gate id="profileGate" theme="{{uiTheme}}"/>
 </view>

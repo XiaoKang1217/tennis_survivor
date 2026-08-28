@@ -7,6 +7,7 @@ const { matchView } = require('../../core/view-model');
 const { beijingDate } = require('../../core/schedule-date');
 const { followingPath } = require('../../services/follow-service');
 const { directMediaUrl, mediaUrl } = require('../../core/media');
+const { enablePageShare, pageShare } = require('../../core/share');
 
 const API_PAGE_SIZE = 10;
 const FOLLOWING_CONTRACT = 'follow-context-bff/1';
@@ -445,10 +446,25 @@ Page({
   },
   onShow() {
     syncPageTheme(this);
+    enablePageShare();
     if (!this.services || this.data.accountRestoring) return;
     const scope = currentCacheScope(this.services);
     if (scope !== this.activeAccountScope) this.resetForAccountScope(scope);
     if (!this.data.authPrompt && this.services.account.isComplete()) void this.load();
+  },
+  onShareAppMessage() {
+    return pageShare({
+      title: '炉的网球｜我的关注',
+      path: '/pages/following/index',
+      shared: 'following'
+    }).appMessage;
+  },
+  onShareTimeline() {
+    return pageShare({
+      title: '炉的网球｜我的关注',
+      path: '/pages/following/index',
+      shared: 'following'
+    }).timeline;
   },
   onUnload() { this.invalidateFollowingRequests(); },
   invalidateFollowingRequests() {

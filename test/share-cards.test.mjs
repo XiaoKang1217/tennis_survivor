@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
 import test from 'node:test';
@@ -10,17 +10,18 @@ const read = relative => readFileSync(resolve(miniRoot, relative), 'utf8');
 const {
   drawShare,
   matchShare,
+  pageShare,
   playerShare,
   tournamentShare
 } = require('../core/share');
 
-test('four share types prefer generated cards and keep production fallbacks', () => {
+test('every share type omits imageUrl so WeChat uses the current page screenshot', () => {
   const match = matchShare(
     { id: 'm1', sides: [{ names: 'A' }, { names: 'B' }] },
     { date: '2026-08-25', cardImageUrl: '/tmp/match-card.jpg', timelineImageUrl: '/tmp/match-square.jpg' }
   );
-  assert.equal(match.appMessage.imageUrl, '/tmp/match-card.jpg');
-  assert.equal(match.timeline.imageUrl, '/tmp/match-square.jpg');
+  assert.equal(Object.hasOwn(match.appMessage, 'imageUrl'), false);
+  assert.equal(Object.hasOwn(match.timeline, 'imageUrl'), false);
   assert.match(match.appMessage.path, /shared=match/u);
 
   const player = playerShare({
@@ -29,8 +30,8 @@ test('four share types prefer generated cards and keep production fallbacks', ()
     shareCardImageUrl: '/tmp/player-card.jpg',
     shareTimelineImageUrl: '/tmp/player-square.jpg'
   });
-  assert.equal(player.appMessage.imageUrl, '/tmp/player-card.jpg');
-  assert.equal(player.timeline.imageUrl, '/tmp/player-square.jpg');
+  assert.equal(Object.hasOwn(player.appMessage, 'imageUrl'), false);
+  assert.equal(Object.hasOwn(player.timeline, 'imageUrl'), false);
   assert.match(player.timeline.query, /shared=player/u);
 
   const draw = drawShare({
@@ -41,48 +42,47 @@ test('four share types prefer generated cards and keep production fallbacks', ()
     shareCardImageUrl: '/tmp/draw-card.jpg',
     shareTimelineImageUrl: '/tmp/draw-square.jpg'
   });
-  assert.equal(draw.appMessage.imageUrl, '/tmp/draw-card.jpg');
-  assert.equal(draw.timeline.imageUrl, '/tmp/draw-square.jpg');
+  assert.equal(Object.hasOwn(draw.appMessage, 'imageUrl'), false);
+  assert.equal(Object.hasOwn(draw.timeline, 'imageUrl'), false);
   assert.match(draw.appMessage.path, /shared=draw/u);
 
   const tournament = tournamentShare(
     { tournamentEditionId: 't1', name: { value: '美国网球公开赛' } },
     { cardImageUrl: '/tmp/tournament-card.jpg', timelineImageUrl: '/tmp/tournament-square.jpg' }
   );
-  assert.equal(tournament.appMessage.imageUrl, '/tmp/tournament-card.jpg');
-  assert.equal(tournament.timeline.imageUrl, '/tmp/tournament-square.jpg');
+  assert.equal(Object.hasOwn(tournament.appMessage, 'imageUrl'), false);
+  assert.equal(Object.hasOwn(tournament.timeline, 'imageUrl'), false);
   assert.match(tournament.timeline.query, /shared=tournament/u);
+
+  const modulePage = pageShare({
+    title: '炉的网球｜实时比分',
+    path: '/pages/scores/index',
+    query: { date: '2026-08-28' },
+    shared: 'scores'
+  });
+  assert.equal(Object.hasOwn(modulePage.appMessage, 'imageUrl'), false);
+  assert.equal(Object.hasOwn(modulePage.timeline, 'imageUrl'), false);
+  assert.match(modulePage.appMessage.path, /date=2026-08-28/u);
 });
 
-test('share poster canvas covers match player draw and tournament pages', () => {
-  const poster = read('core/share-poster.js');
-  assert.match(poster, /function drawMatchCard/u);
-  assert.match(poster, /function drawPlayerCard/u);
-  assert.match(poster, /function drawDrawPoster/u);
-  assert.match(poster, /function drawTournamentPoster/u);
-  assert.match(poster, /炉的网球/u);
-  assert.match(poster, /function drawCirclePhoto/u);
-  assert.match(poster, /function tournamentArtwork/u);
-  assert.match(poster, /微信内查看/u);
-  assert.match(poster, /微信搜索「炉的网球」/u);
-  assert.match(poster, /variant === 'timeline'/u);
-  assert.doesNotMatch(poster, /冠军，还要赢三场|冠军之路|下一站|LUWANG/u);
-  assert.doesNotMatch(poster, /player-share-portrait-sample/u);
+test('all requested modules enable sharing and generated poster canvases stay detached', () => {
   for (const page of [
+    'pages/scores',
+    'pages/calendar',
+    'pages/participation',
+    'pages/following',
+    'packages/player/pages/players',
     'pages/match-detail',
     'packages/player/pages/player-detail',
     'pages/draws',
     'packages/tournament/pages/tournament-detail'
   ]) {
-    assert.match(read(`${page}/index.js`), /updatePageShareImages/u, page);
-    assert.match(read(`${page}/index.wxml`), /share-card-canvas/u, page);
+    const script = read(`${page}/index.js`);
+    const markup = read(`${page}/index.wxml`);
+    assert.match(script, /enablePageShare/u, page);
+    assert.match(script, /onShareAppMessage/u, page);
+    assert.match(script, /onShareTimeline/u, page);
+    assert.doesNotMatch(script, /updatePageShareImages|shareCardImageUrl|shareTimelineImageUrl/u, page);
+    assert.doesNotMatch(markup, /share-card-canvas/u, page);
   }
-  assert.equal(
-    existsSync(resolve(miniRoot, 'assets/player-share-portrait-sample.png')),
-    false
-  );
-  assert.deepEqual(
-    readdirSync(resolve(miniRoot, 'assets/share')).filter(name => /\.jpe?g$/iu.test(name)),
-    []
-  );
 });

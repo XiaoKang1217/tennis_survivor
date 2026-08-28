@@ -4,6 +4,7 @@ const { buildThemeData, syncPageTheme } = require('../../core/theme');
 const { createSWRCache } = require('../../core/swr-cache');
 const { loadProjectionResource, readTrustedProjection } = require('../../core/projection-resource');
 const { normalizeLevelCode, levelLabel } = require('../../core/localization');
+const { enablePageShare, pageShare } = require('../../core/share');
 
 const CALENDAR_CACHE_SCHEMA = 'calendar-projection-bff/1';
 
@@ -253,7 +254,26 @@ Page({
     });
     void this.load();
   },
-  onShow() { syncPageTheme(this); },
+  onShow() {
+    syncPageTheme(this);
+    enablePageShare();
+  },
+
+  onShareAppMessage() {
+    return pageShare({
+      title: `炉的网球｜${this.data.year}巡回赛历`,
+      path: '/pages/calendar/index',
+      shared: 'calendar'
+    }).appMessage;
+  },
+
+  onShareTimeline() {
+    return pageShare({
+      title: `炉的网球｜${this.data.year}巡回赛历`,
+      path: '/pages/calendar/index',
+      shared: 'calendar'
+    }).timeline;
+  },
 
   onPullDownRefresh() {
     void this.load({ force: true }).finally(() => wx.stopPullDownRefresh());

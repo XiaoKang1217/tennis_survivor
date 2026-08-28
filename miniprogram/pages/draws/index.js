@@ -4,7 +4,6 @@ const { buildThemeData, syncPageTheme } = require('../../core/theme');
 const { createSWRCache } = require('../../core/swr-cache');
 const { loadProjectionResource, readTrustedProjection } = require('../../core/projection-resource');
 const { drawShare, enablePageShare } = require('../../core/share');
-const { updatePageShareImages } = require('../../core/share-poster');
 const { levelLabel, normalizeLevelCode } = require('../../core/localization');
 const { playerOccurrences, playerSearchResults } = require('../../core/draw-player-search');
 const {
@@ -97,8 +96,6 @@ function emptyDrawData() {
     focusedOccurrenceIndex: 0,
     focusedOccurrenceCount: 0,
     focusedOccurrenceSummary: '',
-    shareCardImageUrl: '',
-    shareTimelineImageUrl: ''
   };
 }
 
@@ -191,8 +188,6 @@ Page({
     deliveryState: '',
     deliveryMessage: '',
     dataAsOf: '',
-    shareCardImageUrl: '',
-    shareTimelineImageUrl: ''
   },
 
   onLoad(options) {
@@ -470,8 +465,6 @@ Page({
         focusedOccurrenceIndex: 0,
         focusedOccurrenceCount: 0,
         focusedOccurrenceSummary: '',
-        shareCardImageUrl: '',
-        shareTimelineImageUrl: ''
       } : {})
     });
     if (cached?.payload) this.applyDrawProjection(cached.payload, drawId, { fromCache: true });
@@ -550,7 +543,6 @@ Page({
       deliveryMessage: options.fromCache ? '已显示上次签表' : '签表已更新',
       dataAsOf: value.dataAsOf || value.delivery?.dataAsOf || ''
     }, () => {
-      void updatePageShareImages(this, 'draw', this.data);
     });
   },
 

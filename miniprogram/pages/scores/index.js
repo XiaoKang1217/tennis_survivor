@@ -2,6 +2,7 @@
 
 const { buildThemeData, syncPageTheme } = require('../../core/theme');
 const { createSWRCache } = require('../../core/swr-cache');
+const { enablePageShare, pageShare } = require('../../core/share');
 
 const { FILTERS, groupedMatches } = require('../../core/view-model');
 const {
@@ -415,6 +416,7 @@ Page({
 
   onShow() {
     syncPageTheme(this);
+    enablePageShare();
     if (!this.services || !this.data.selectedDate) return;
     if (this.services.scoreStore.projection) {
       void this.refreshViewerFollowStates(this.services.scoreStore.projection, { force: true });
@@ -423,6 +425,24 @@ Page({
     void this.services.scoreClient.ensure(this.data.selectedDate).catch(() => {
       this.services.scoreClient.scheduleSnapshotRecovery?.('page_show_retry');
     });
+  },
+
+  onShareAppMessage() {
+    return pageShare({
+      title: `炉的网球｜${this.data.selectedDate || '实时比分'}`,
+      path: '/pages/scores/index',
+      query: { date: this.data.selectedDate },
+      shared: 'scores'
+    }).appMessage;
+  },
+
+  onShareTimeline() {
+    return pageShare({
+      title: `炉的网球｜${this.data.selectedDate || '实时比分'}`,
+      path: '/pages/scores/index',
+      query: { date: this.data.selectedDate },
+      shared: 'scores'
+    }).timeline;
   },
 
   onPullDownRefresh() {

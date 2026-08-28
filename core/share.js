@@ -1,24 +1,5 @@
 'use strict';
 
-const SHARE_IMAGES = Object.freeze({
-  match: Object.freeze({
-    card: '',
-    timeline: ''
-  }),
-  tournament: Object.freeze({
-    card: '',
-    timeline: ''
-  }),
-  player: Object.freeze({
-    card: '',
-    timeline: ''
-  }),
-  draw: Object.freeze({
-    card: '',
-    timeline: ''
-  })
-});
-
 function cleanText(value, fallback = '') {
   const text = String(value || '').replace(/\s+/gu, ' ').trim();
   return text || fallback;
@@ -40,10 +21,6 @@ function queryString(values) {
 function withQuery(path, values) {
   const query = queryString(values);
   return query ? `${path}?${query}` : path;
-}
-
-function shareImage(candidate, fallback) {
-  return cleanText(candidate) || fallback;
 }
 
 function enablePageShare() {
@@ -125,13 +102,11 @@ function matchShare(match, fallback = {}) {
   return Object.freeze({
     appMessage: Object.freeze({
       title,
-      path: matchId ? withQuery('/pages/match-detail/index', params) : '/pages/scores/index',
-      imageUrl: shareImage(fallback.cardImageUrl, SHARE_IMAGES.match.card)
+      path: matchId ? withQuery('/pages/match-detail/index', params) : '/pages/scores/index'
     }),
     timeline: Object.freeze({
       title,
-      query: queryString(params),
-      imageUrl: shareImage(fallback.timelineImageUrl, SHARE_IMAGES.match.timeline)
+      query: queryString(params)
     })
   });
 }
@@ -155,13 +130,11 @@ function tournamentShare(detail, fallback = {}) {
       title,
       path: tournamentEditionId
         ? withQuery('/packages/tournament/pages/tournament-detail/index', params)
-        : '/pages/calendar/index',
-      imageUrl: shareImage(fallback.cardImageUrl, SHARE_IMAGES.tournament.card)
+        : '/pages/calendar/index'
     }),
     timeline: Object.freeze({
       title,
-      query: queryString(params),
-      imageUrl: shareImage(fallback.timelineImageUrl, SHARE_IMAGES.tournament.timeline)
+      query: queryString(params)
     })
   });
 }
@@ -189,13 +162,11 @@ function playerShare(data = {}) {
       title,
       path: playerId
         ? withQuery('/packages/player/pages/player-detail/index', params)
-        : '/packages/player/pages/players/index',
-      imageUrl: shareImage(data.shareCardImageUrl, SHARE_IMAGES.player.card)
+        : '/packages/player/pages/players/index'
     }),
     timeline: Object.freeze({
       title,
-      query: queryString(params),
-      imageUrl: shareImage(data.shareTimelineImageUrl, SHARE_IMAGES.player.timeline)
+      query: queryString(params)
     })
   });
 }
@@ -223,13 +194,26 @@ function drawShare(data = {}, fallback = {}) {
   return Object.freeze({
     appMessage: Object.freeze({
       title,
-      path: tournamentEditionId ? withQuery('/pages/draws/index', params) : '/pages/draws/index',
-      imageUrl: shareImage(data.shareCardImageUrl, SHARE_IMAGES.draw.card)
+      path: tournamentEditionId ? withQuery('/pages/draws/index', params) : '/pages/draws/index'
     }),
     timeline: Object.freeze({
       title,
-      query: queryString(params),
-      imageUrl: shareImage(data.shareTimelineImageUrl, SHARE_IMAGES.draw.timeline)
+      query: queryString(params)
+    })
+  });
+}
+
+function pageShare({ title, path, query = {}, shared = '' } = {}) {
+  const cleanPath = cleanText(path, '/pages/scores/index');
+  const params = { ...query, shared: cleanText(shared) };
+  return Object.freeze({
+    appMessage: Object.freeze({
+      title: truncate(cleanText(title, '炉的网球')),
+      path: withQuery(cleanPath, params)
+    }),
+    timeline: Object.freeze({
+      title: truncate(cleanText(title, '炉的网球')),
+      query: queryString(params)
     })
   });
 }
@@ -239,6 +223,7 @@ module.exports = Object.freeze({
   drawShare,
   enablePageShare,
   matchShare,
+  pageShare,
   playerShare,
   queryString,
   tournamentShare,
