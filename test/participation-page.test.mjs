@@ -20,7 +20,10 @@ function loadPageDefinition() {
 }
 
 function context(definition) {
-  return { ...definition, data: structuredClone(definition.data), setData(update) { Object.assign(this.data, update); } };
+  return { ...definition, data: structuredClone(definition.data), setData(update, callback) {
+    Object.assign(this.data, update);
+    if (typeof callback === 'function') callback();
+  } };
 }
 
 test('participation page reads the trusted ENTRY-D1 projection', () => {
@@ -46,14 +49,22 @@ test('participation page renders trusted tournaments and players with stable lin
     redirectTo() {},
     getStorageSync() { return ''; }, setStorageSync() {}
   };
-  globalThis.getApp = () => ({ services: { entries: { async index() {
-    return { delivery: { state: 'current' }, payload: {
-      dataAsOf: '2026-08-28T02:00:00Z', quality: { identityCoverage: 0.987 },
-      tournaments: [{ tour: 'ATP', weekStart: '2026-08-24', competitionLevel: 'grand_slam', tournamentId: 'ATP:USO:2026', tournamentName: '美网', surface: 'Hard', startsOn: '2026-08-24', endsOn: '2026-09-06', entries: [
+  globalThis.getApp = () => ({ services: { entries: {
+    cachedIndex() { return null; },
+    cachedTournament() { return null; },
+    async tournament() { return { payload: {
+      tournamentId: 'ATP:USO:2026', tournamentName: '美网', tour: 'ATP',
+      weekStart: '2026-08-24', competitionLevel: 'grand_slam', entryCount: 3,
+      entries: [
         { playerId: 'ATP:A0E2', playerName: '卡洛斯·阿尔卡拉斯', worldRanking: 3, status: 'main_draw' },
         { playerId: 'ATP:UNRANKED', playerName: '未排名球员', status: 'qualifying' },
         { playerId: 'ATP:S0AG', playerName: '扬尼克·辛纳', worldRanking: 1, status: 'main_draw' }
-      ] }],
+      ]
+    } }; },
+    async index() {
+    return { delivery: { state: 'current' }, payload: {
+      dataAsOf: '2026-08-28T02:00:00Z', quality: { identityCoverage: 0.987 },
+      tournaments: [{ tour: 'ATP', weekStart: '2026-08-24', competitionLevel: 'grand_slam', tournamentId: 'ATP:USO:2026', tournamentName: '美网', surface: 'Hard', startsOn: '2026-08-24', endsOn: '2026-09-06', entryCount: 3 }],
       players: [{ playerId: 'ATP:S0AG', playerName: '扬尼克·辛纳', nextAppearance: { tournamentId: 'ATP:USO:2026', tournamentName: '美网', startsOn: '2026-08-24', endsOn: '2026-09-06', surface: 'Hard', status: 'main_draw' }, previewEntries: [] }]
     } };
   } } } });
@@ -61,6 +72,7 @@ test('participation page renders trusted tournaments and players with stable lin
     const definition = loadPageDefinition();
     const page = context(definition);
     await definition.load.call(page);
+    await definition.prefetchVisibleTournaments.call(page);
     assert.equal(page.data.tournaments[0].tournamentId, 'ATP:USO:2026');
     assert.equal(page.data.players[0].playerId, 'ATP:S0AG');
     assert.equal(page.data.qualityLabel, '身份匹配 98.7%');
@@ -103,16 +115,16 @@ test('participation page separates tours, source weeks and ranked searchable ros
   assert.match(markup, /countryCode/u);
 });
 
-test('participation tournament expands the complete ranked projection without a detail request', () => {
+test('participation tournament expands an already prefetched complete ranked slice instantly', async () => {
   const definition = loadPageDefinition();
   const page = context(definition);
   page.data.tournaments = [{
-    tournamentId: 'ATP:USO:2026', entries: [
+    tournamentId: 'ATP:USO:2026', entryCount: 2, entries: [
       { playerId: 'ATP:S0AG', playerName: '扬尼克·辛纳', worldRanking: 1 },
       { playerId: 'ATP:A0E2', playerName: '卡洛斯·阿尔卡拉斯', worldRanking: 3 }
     ]
   }];
-  definition.toggleTournament.call(page, {
+  await definition.toggleTournament.call(page, {
     currentTarget: { dataset: { id: 'ATP:USO:2026' } }
   });
   assert.equal(page.data.expandedTournamentId, 'ATP:USO:2026');

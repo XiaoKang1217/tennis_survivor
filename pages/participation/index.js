@@ -53,6 +53,11 @@ function tournamentView(item = {}) {
     previewEntries: rankedEntries(item.previewEntries || [])
   };
 }
+function completeRoster(item = {}) {
+  const count = Number(item.entryCount);
+  return Number.isSafeInteger(count) && count >= 0
+    && Array.isArray(item.entries) && item.entries.length === count;
+}
 function playerView(item = {}) {
   return {
     ...item,
@@ -128,7 +133,7 @@ Page({
     ...buildThemeData(), topInset: 44, activeView: 'tournaments', activeTour: 'ATP',
     activeWeek: '', searchQuery: '', loading: true, failed: false, stale: false,
     tournaments: [], players: [], sourceWeeks: {}, tournamentGroups: [], visiblePlayers: [], weekTabs: [],
-    expandedTournamentId: '', qualityLabel: '', dataAsOf: ''
+    expandedTournamentId: '', loadingTournamentId: '', qualityLabel: '', dataAsOf: ''
   },
   onLoad() {
     syncPageTheme(this);
@@ -155,43 +160,98 @@ Page({
     }).timeline;
   },
   async load() {
-    this.setData({ loading: true, failed: false });
+    const entryService = getApp().services.entries;
+    const cached = typeof entryService.cachedIndex === 'function' ? entryService.cachedIndex() : null;
+    if (cached) this.applyIndex(cached, true);
+    else this.setData({ loading: true, failed: false });
     try {
       const value = await getApp().services.entries.index();
-      const payload = payloadOf(value);
-      const tournaments = Array.isArray(payload.tournaments) ? payload.tournaments.map(tournamentView) : [];
-      const players = Array.isArray(payload.players) ? payload.players.map(playerView) : [];
-      const next = {
-        loading: false, stale: value?.delivery?.state === 'stale',
-        tournaments, players, sourceWeeks: payload.sourceWeeks && typeof payload.sourceWeeks === 'object'
-          ? payload.sourceWeeks : {},
-        qualityLabel: qualityLabel(payload.quality),
-        dataAsOf: String(payload.dataAsOf || value?.dataAsOf || '').slice(0, 16).replace('T', ' ')
-      };
-      this.setData({ ...next, ...displayState({ ...this.data, ...next }) });
+      this.applyIndex(value, value?.delivery?.state === 'stale');
     } catch {
-      this.setData({ loading: false, failed: true });
+      if (!cached) this.setData({ loading: false, failed: true });
     } finally {
       wx.stopPullDownRefresh?.();
     }
   },
+  applyIndex(value, stale = false) {
+    const payload = payloadOf(value);
+    const previous = new Map(this.data.tournaments
+      .filter(completeRoster).map(item => [item.tournamentId, item]));
+    const tournaments = Array.isArray(payload.tournaments) ? payload.tournaments.map(item => {
+      const service = getApp().services.entries;
+      const cached = typeof service.cachedTournament === 'function'
+        ? service.cachedTournament(item.tournamentId) : null;
+      const detailed = cached ? tournamentView(payloadOf(cached)) : previous.get(item.tournamentId);
+      return completeRoster(detailed) ? { ...tournamentView(item), entries: detailed.entries } : tournamentView(item);
+    }) : [];
+    const players = Array.isArray(payload.players) ? payload.players.map(playerView) : [];
+    const next = {
+      loading: false, failed: false, stale,
+      tournaments, players, sourceWeeks: payload.sourceWeeks && typeof payload.sourceWeeks === 'object'
+        ? payload.sourceWeeks : {},
+      qualityLabel: qualityLabel(payload.quality),
+      dataAsOf: String(payload.dataAsOf || value?.dataAsOf || '').slice(0, 16).replace('T', ' ')
+    };
+    this.setData({ ...next, ...displayState({ ...this.data, ...next }) }, () => this.prefetchVisibleTournaments());
+  },
+  visibleTournamentIds() {
+    return this.data.tournamentGroups.flatMap(group => group.items || [])
+      .map(item => item.tournamentId).filter(Boolean);
+  },
+  async prefetchVisibleTournaments() {
+    const ids = this.visibleTournamentIds().filter(id => {
+      const item = this.data.tournaments.find(entry => entry.tournamentId === id);
+      return item && !completeRoster(item);
+    });
+    if (!ids.length) return;
+    const details = await Promise.all(ids.map(async id => {
+      try {
+        const value = await getApp().services.entries.tournament(id);
+        const summary = this.data.tournaments.find(item => item.tournamentId === id) || {};
+        const item = tournamentView({ ...summary, ...payloadOf(value) });
+        return completeRoster(item) ? [id, item] : null;
+      } catch { return null; }
+    }));
+    const loaded = new Map(details.filter(Boolean));
+    if (!loaded.size) return;
+    const tournaments = this.data.tournaments.map(item => loaded.has(item.tournamentId)
+      ? { ...item, ...loaded.get(item.tournamentId) } : item);
+    this.setData({ tournaments, ...displayState({ ...this.data, tournaments }) });
+  },
   onPullDownRefresh() { this.load(); },
-  rebuildDisplay(update = {}) {
+  rebuildDisplay(update = {}, callback) {
     const next = { ...this.data, ...update };
-    this.setData({ ...update, ...displayState(next) });
+    this.setData({ ...update, ...displayState(next) }, callback);
   },
   selectView(event) { this.setData({ activeView: event.currentTarget.dataset.view === 'players' ? 'players' : 'tournaments' }); },
-  selectTour(event) { this.rebuildDisplay({ activeTour: event.currentTarget.dataset.tour === 'WTA' ? 'WTA' : 'ATP', activeWeek: '', expandedTournamentId: '' }); },
-  selectWeek(event) { this.rebuildDisplay({ activeWeek: String(event.currentTarget.dataset.week || ''), expandedTournamentId: '' }); },
+  selectTour(event) { this.rebuildDisplay({ activeTour: event.currentTarget.dataset.tour === 'WTA' ? 'WTA' : 'ATP', activeWeek: '', expandedTournamentId: '' }, () => this.prefetchVisibleTournaments()); },
+  selectWeek(event) { this.rebuildDisplay({ activeWeek: String(event.currentTarget.dataset.week || ''), expandedTournamentId: '' }, () => this.prefetchVisibleTournaments()); },
   onSearchInput(event) { this.rebuildDisplay({ searchQuery: String(event.detail.value || '') }); },
   clearSearch() { this.rebuildDisplay({ searchQuery: '' }); },
-  toggleTournament(event) {
+  async toggleTournament(event) {
     const id = String(event.currentTarget.dataset.id || '');
     if (!id) return;
     if (this.data.expandedTournamentId === id) { this.setData({ expandedTournamentId: '' }); return; }
     const index = this.data.tournaments.findIndex(item => item.tournamentId === id);
     if (index < 0) return;
-    this.setData({ expandedTournamentId: id });
+    const item = this.data.tournaments[index];
+    if (completeRoster(item)) {
+      this.setData({ expandedTournamentId: id });
+      return;
+    }
+    this.setData({ loadingTournamentId: id });
+    try {
+      const value = await getApp().services.entries.tournament(id);
+      const detail = tournamentView({ ...item, ...payloadOf(value) });
+      if (!completeRoster(detail)) throw new Error('entry_tournament_incomplete');
+      const tournaments = this.data.tournaments.map(current => current.tournamentId === id
+        ? { ...current, ...detail } : current);
+      this.setData({ tournaments, loadingTournamentId: '', expandedTournamentId: id,
+        ...displayState({ ...this.data, tournaments }) });
+    } catch {
+      this.setData({ loadingTournamentId: '' });
+      wx.showToast({ title: '名单加载失败，请重试', icon: 'none' });
+    }
   },
   openTournament(event) {
     const id = String(event.currentTarget.dataset.id || '');

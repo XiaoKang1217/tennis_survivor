@@ -21,7 +21,7 @@ App({
     const followStore = new FollowStore(wx, auth);
     const follow = new FollowService(wx, auth, http, account, followStore);
     const social = new SocialService(wx, auth, http, account);
-    const entries = new EntryService(http);
+    const entries = new EntryService(wx, http);
     this.services = Object.freeze({ auth, http, account, scoreStore, scoreClient, followStore, follow, social, entries });
     this.accountReady = account.refresh().catch(() => account.currentProfile());
   },
