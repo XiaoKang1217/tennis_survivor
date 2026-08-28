@@ -121,5 +121,6 @@ test('player detail keeps trusted profile visible when refresh fails', async () 
   assert.equal(context.data.profileAvailable, true);
   assert.equal(context.data.deliveryState, 'stale');
   assert.equal(context.data.name, '伊加·斯瓦泰克');
-  assert.equal(context.data.followed, true);
+  assert.equal(context.data.followed, false);
+  assert.equal(context.data.followState, 'unknown');
 });

@@ -302,8 +302,16 @@ Page({
       return;
     }
     this.services = services;
+    const followSubscription = services.follow?.subscribe?.(change => {
+        if (change?.key?.startsWith('match:')) this.rerender();
+        if (change?.reset) {
+          this.followedIds = new Set();
+          this.rerender();
+        }
+      }) || (() => undefined);
     this.unsubscribers = [
       services.auth.subscribe(authState => this.setData({ authState })),
+      followSubscription,
       services.scoreClient.subscribeTransport(clientTransportState => {
         const messages = {
           connecting: '',
@@ -473,6 +481,14 @@ Page({
     if (projection.payload.scheduleGroupDate !== this.data.selectedDate) return;
     this.clearInitialLoadingGuard();
     writeCachedProjection(wx, projection);
+    const cachedFollowStates = this.services.follow?.cachedStates?.(
+      scoreMatchTargets(projection)
+    ) || new Map();
+    for (const [key, state] of cachedFollowStates) {
+      const matchId = key.slice('match:'.length);
+      if (state === 'followed') this.followedIds.add(matchId);
+      if (state === 'not_followed') this.followedIds.delete(matchId);
+    }
     const groups = this.applyTournamentFollowOverrides(tournamentPresentation(groupedMatches(
       projection, this.data.selectedFilter, this.followedIds, this.data.query, {
         tourOrg: this.data.selectedTour,

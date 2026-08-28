@@ -14,16 +14,6 @@ function cacheStorageKey(resourceKey) {
   return 'luwang_swr_entry_v1:' + encodeURIComponent(resourceKey);
 }
 
-function tokenScope(token) {
-  const source = String(token || '');
-  let hash = 2166136261;
-  for (let index = 0; index < source.length; index += 1) {
-    hash ^= source.charCodeAt(index);
-    hash = Math.imul(hash, 16777619) >>> 0;
-  }
-  return hash.toString(16).padStart(8, '0');
-}
-
 function available(value) {
   return { state: 'available', value, reasonCode: null, message: null };
 }
@@ -102,24 +92,25 @@ function pageContext(definition, wx, services) {
   };
 }
 
-test('following page exposes category tabs, badge cards, match date filter and 10-item pagination', () => {
+test('following page exposes two tabs and server-filtered 10-item pagination', () => {
   const markup = read('pages/following/index.wxml');
   assert.match(markup, />我的关注</u);
   assert.doesNotMatch(markup, /我的比赛/u);
   const script = read('pages/following/index.js');
-  for (const label of ['全部关注', '球员', '比赛', '赛事']) {
+  for (const label of ['球员', '比赛']) {
     assert.match(markup, new RegExp(label));
   }
+  assert.doesNotMatch(markup, />全部关注<|>赛事关注</u);
   assert.match(markup, /player-badge/);
   assert.match(markup, /mode="date"/);
   assert.match(markup, /bindchange="selectMatchDate"/);
   assert.match(markup, /bindtap="previousPage"/);
   assert.match(markup, /bindtap="nextPage"/);
   assert.match(markup, /每页 10 条/);
-  assert.match(script, /DISPLAY_PAGE_SIZE = 10/);
-  assert.match(script, /API_PAGE_SIZE = 50/);
-  assert.match(script, /matchDateFilteredItems/);
-  assert.match(script, /paginatedFeed/);
+  assert.match(script, /API_PAGE_SIZE = 10/);
+  assert.match(script, /status: selectedStatus/u);
+  assert.match(script, /date: selectedDate/u);
+  assert.doesNotMatch(script, /matchDateFilteredItems|paginatedFeed|pageGuard/u);
   assert.match(script, /offset/);
   assert.match(script, /hasMore/);
   assert.match(script, /FOLLOWING_CACHE_SCHEMA/);
@@ -128,20 +119,15 @@ test('following page exposes category tabs, badge cards, match date filter and 1
   assert.match(script, /await getApp\(\)\.accountReady/u);
 });
 
-test('detail pages resolve current account follow state across paginated following results', async () => {
+test('detail pages resolve current account follow state in one bounded batch request', async () => {
   const requests = [];
-  const service = new FollowService({}, {}, {
-    async request(path) {
-      requests.push(path);
-      const offset = Number(new URL(`https://local${path}`).searchParams.get('offset'));
-      return {
-        payload: {
-          pageEntries: offset === 0
-            ? [{ targetKind: 'player', targetId: 'ATP:other' }]
-            : [{ targetKind: 'player', targetId: 'ATP:1001' }],
-          page: { nextOffset: offset === 0 ? 50 : null }
-        }
-      };
+  const service = new FollowService({}, { async ensure() {} }, {
+    async request(path, options) {
+      requests.push({ path, options });
+      return { states: [
+        { kind: 'player', targetId: 'ATP:1001', followed: true },
+        { kind: 'player', targetId: 'ATP:missing', followed: false }
+      ] };
     }
   });
   const followed = await service.followedTargets([
@@ -150,8 +136,10 @@ test('detail pages resolve current account follow state across paginated followi
   ]);
   assert.equal(followed.has('player:ATP:1001'), true);
   assert.equal(followed.has('player:ATP:missing'), false);
-  assert.equal(requests.length, 2);
-  assert.match(read('packages/player/pages/player-detail/index.wxml'), /followed \? '已关注' : '关注球员'/u);
+  assert.equal(requests.length, 1);
+  assert.equal(requests[0].path, '/api/v1/me/follows/status');
+  assert.equal(requests[0].options.data.targets.length, 2);
+  assert.match(read('packages/player/pages/player-detail/index.wxml'), /followState === 'unknown' \? '关注状态…'/u);
   assert.match(read('pages/match-detail/index.js'), /refreshViewerFollowStates/u);
 });
 
@@ -170,7 +158,7 @@ test('following matches render by date feed instead of tournament court grouping
   assert.match(markup, /dateGroups/);
   assert.match(markup, /wx:if="\{\{selectedKind === 'match'\}\}" class="follow-date-head"/u);
   assert.match(script, /`\$\{year\}年\$\{Number\(month\)\}月\$\{Number\(day\)\}日`/u);
-  assert.match(script, /dateGroups\(feed\.pageItems, selectedKind === 'match'\)/u);
+  assert.match(script, /dateGroups\(items, selectedKind === 'match'\)/u);
   assert.match(script, /id: 'all',[\s\S]*label: '',[\s\S]*countLabel: ''/u);
   assert.doesNotMatch(markup, /court\.matches/);
   assert.doesNotMatch(markup, /court\.name/);
@@ -249,11 +237,11 @@ test('match cards and match detail expose follower counts', () => {
 test('following page keeps account-scoped trusted cache visible when refresh fails', async () => {
   const definition = loadPageDefinition();
   const token = 'a'.repeat(64);
-  const scope = tokenScope(token);
+  const scope = 'acct-cache-a';
   const projection = followingProjection();
   const wx = wxRuntime({
-    [cacheStorageKey(`following:${scope}:player:50:0`)]: {
-      resourceKey: `following:${scope}:player:50:0`,
+    [cacheStorageKey(`following:${scope}:player:all:all:10:0`)]: {
+      resourceKey: `following:${scope}:player:all:all:10:0`,
       schemaVersion: 'follow-context-bff-cache/2',
       projectionVersion: projection.projectionVersion,
       cachedAt: Date.now(),
@@ -269,7 +257,10 @@ test('following page keeps account-scoped trusted cache visible when refresh fai
       currentAccessToken() { return token; },
       async ensure() { ensureCalls += 1; return token; }
     },
-    account: { isComplete() { return true; } },
+    account: {
+      isComplete() { return true; },
+      currentProfile() { return { accountScope: scope }; }
+    },
     http: {
       async request(path, options) {
         requests.push({ path, options });

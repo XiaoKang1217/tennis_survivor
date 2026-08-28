@@ -8,8 +8,7 @@ const { beijingDate } = require('../../core/schedule-date');
 const { followingPath } = require('../../services/follow-service');
 const { directMediaUrl, mediaUrl } = require('../../core/media');
 
-const API_PAGE_SIZE = 50;
-const DISPLAY_PAGE_SIZE = 10;
+const API_PAGE_SIZE = 10;
 const FOLLOWING_CONTRACT = 'follow-context-bff/1';
 const FOLLOWING_CACHE_SCHEMA = 'follow-context-bff-cache/2';
 const FOLLOW_TABS = Object.freeze([
@@ -23,23 +22,13 @@ const MATCH_STATUS_TABS = Object.freeze([
 ]);
 const MATCH_STATUS_STORAGE_KEY = 'luwang_following_match_status_v1';
 
-function tokenScope(token) {
-  const source = String(token || '');
-  if (!/^[0-9a-f]{64}$/u.test(source)) return '';
-  let hash = 2166136261;
-  for (let index = 0; index < source.length; index += 1) {
-    hash ^= source.charCodeAt(index);
-    hash = Math.imul(hash, 16777619) >>> 0;
-  }
-  return hash.toString(16).padStart(8, '0');
-}
-
 function currentCacheScope(services) {
-  return tokenScope(services?.auth?.currentAccessToken?.());
+  return String(services?.account?.currentProfile?.()?.accountScope
+    || services?.auth?.currentAccountScope?.() || '').trim();
 }
 
-function followingCacheKey(scope, kind, limit, offset) {
-  return `following:${scope}:${kind}:${limit}:${offset}`;
+function followingCacheKey(scope, kind, status, date, limit, offset) {
+  return `following:${scope}:${kind}:${status || 'all'}:${date || 'all'}:${limit}:${offset}`;
 }
 
 const IOC_TO_ISO = Object.freeze({
@@ -367,55 +356,6 @@ function selectedCount(counts, selectedKind) {
   return Number(counts.total || 0);
 }
 
-function matchStatus(item) {
-  const code = String(item?.match?.statusCode || '');
-  const group = String(item?.match?.group || '');
-  if (['finished','retired','walkover','defaulted','disqualified','no_show','cancelled','abandoned'].includes(code)
-    || group === 'ended') return 'ended';
-  if (['live','interrupted','suspended'].includes(code) || group === 'in_progress') return 'live';
-  return 'upcoming';
-}
-
-function filteredItems(items, selectedKind, selectedMatchStatus) {
-  if (selectedKind !== 'match') return items.filter(item => item.type === 'player');
-  return items.filter(item => item.type === 'match' && matchStatus(item) === selectedMatchStatus);
-}
-
-function matchDateFilteredItems(items, selectedDate) {
-  const date = datePart(selectedDate);
-  if (!date) return items;
-  return items.filter(item => datePart(item.groupDate || item.match?.scheduleGroupDate) === date);
-}
-
-function paginatedFeed(items, selectedKind, selectedMatchStatus, selectedDate, requestedPage = 1) {
-  const statusItems = filteredItems(items, selectedKind, selectedMatchStatus);
-  const visibleItems = selectedKind === 'match'
-    ? matchDateFilteredItems(statusItems, selectedDate)
-    : statusItems;
-  if (selectedKind !== 'match') {
-    return Object.freeze({
-      visibleItems,
-      pageItems: visibleItems,
-      pageNumber: 1,
-      pageCount: 1,
-      canPrev: false,
-      canNext: false
-    });
-  }
-  const pageCount = Math.max(1, Math.ceil(visibleItems.length / DISPLAY_PAGE_SIZE));
-  const pageNumber = Math.min(Math.max(1, Number(requestedPage) || 1), pageCount);
-  const start = (pageNumber - 1) * DISPLAY_PAGE_SIZE;
-  const pageItems = visibleItems.slice(start, start + DISPLAY_PAGE_SIZE);
-  return Object.freeze({
-    visibleItems,
-    pageItems,
-    pageNumber,
-    pageCount,
-    canPrev: pageNumber > 1,
-    canNext: pageNumber < pageCount
-  });
-}
-
 Page({
   data: {
     ...buildThemeData(),
@@ -488,7 +428,7 @@ Page({
   selectMatchStatus(event) {
     const selectedMatchStatus = String(event.currentTarget.dataset.status || 'upcoming');
     try { wx.setStorageSync(MATCH_STATUS_STORAGE_KEY, selectedMatchStatus); } catch { /* session hint only */ }
-    this.setData({ selectedMatchStatus, pageNumber: 1 }, () => this.refreshVisibleFeed());
+    this.setData({ selectedMatchStatus, pageNumber: 1, offset: 0 }, () => void this.load());
   },
   selectMatchDate(event) {
     const selectedDate = datePart(event.detail.value);
@@ -496,37 +436,20 @@ Page({
       selectedDate,
       selectedDateLabel: selectedDate ? dateLabel(selectedDate) : '选择年月日',
       pageNumber: 1
-    }, () => this.refreshVisibleFeed());
+    }, () => void this.load());
   },
   clearMatchDate() {
     if (!this.data.selectedDate) return;
     this.setData({ selectedDate: '', selectedDateLabel: '选择年月日', pageNumber: 1 },
-      () => this.refreshVisibleFeed());
+      () => void this.load());
   },
   previousPage() {
     if (!this.data.canPrev) return;
-    this.setData({ pageNumber: this.data.pageNumber - 1 }, () => this.refreshVisibleFeed());
+    this.setData({ pageNumber: this.data.pageNumber - 1 }, () => void this.load());
   },
   nextPage() {
     if (!this.data.canNext) return;
-    this.setData({ pageNumber: this.data.pageNumber + 1 }, () => this.refreshVisibleFeed());
-  },
-  refreshVisibleFeed() {
-    const feed = paginatedFeed(
-      this.data.items,
-      this.data.selectedKind,
-      this.data.selectedMatchStatus,
-      this.data.selectedDate,
-      this.data.pageNumber
-    );
-    this.setData({
-      dateGroups: dateGroups(feed.pageItems, this.data.selectedKind === 'match'),
-      count: feed.visibleItems.length,
-      pageNumber: feed.pageNumber,
-      pageCount: feed.pageCount,
-      canPrev: feed.canPrev,
-      canNext: feed.canNext
-    });
+    this.setData({ pageNumber: this.data.pageNumber + 1 }, () => void this.load());
   },
   async promptForProfile() {
     try {
@@ -542,12 +465,16 @@ Page({
       this.setData({ authPrompt: true, loading: false, failed: false, items: [], dateGroups: [] });
       return;
     }
-    const append = Boolean(options.append);
+    const append = false;
     const selectedKind = this.data.selectedKind;
     const limit = API_PAGE_SIZE;
-    const offset = append ? this.data.offset : 0;
-    let scope = append ? '' : currentCacheScope(this.services);
-    let cacheKey = scope ? followingCacheKey(scope, selectedKind, limit, offset) : '';
+    const selectedStatus = selectedKind === 'match' ? this.data.selectedMatchStatus : '';
+    const selectedDate = selectedKind === 'match' ? this.data.selectedDate : '';
+    const pageNumber = Math.max(1, Number(this.data.pageNumber) || 1);
+    const offset = (pageNumber - 1) * limit;
+    let scope = currentCacheScope(this.services);
+    let cacheKey = scope
+      ? followingCacheKey(scope, selectedKind, selectedStatus, selectedDate, limit, offset) : '';
     const cached = cacheKey
       ? readTrustedProjection(this.cache, cacheKey, FOLLOWING_CACHE_SCHEMA) : null;
     this.setData(append
@@ -561,16 +488,19 @@ Page({
       });
     }
     try {
-      if (!append && !scope) {
-        scope = tokenScope(await this.services.auth.ensure());
-        cacheKey = scope ? followingCacheKey(scope, selectedKind, limit, offset) : '';
-      }
+      if (!append && !scope) await this.services.auth.ensure();
       const result = await loadProjectionResource({
         http: this.services.http,
         cache: this.cache,
         resourceKey: append ? '' : cacheKey,
         schemaVersion: FOLLOWING_CACHE_SCHEMA,
-        path: followingPath({ kind: selectedKind, limit, offset }),
+        path: followingPath({
+          kind: selectedKind,
+          status: selectedStatus,
+          date: selectedDate,
+          limit,
+          offset
+        }),
         requestOptions: {
           authRequired: true,
           header: { 'x-luwang-client-contract-version': FOLLOWING_CONTRACT }
@@ -594,29 +524,6 @@ Page({
         selectedKind,
         fromCache: false
       });
-      let nextOffset = Number(result.value?.payload?.page?.nextOffset);
-      let hasMore = result.value?.payload?.page?.hasMore === true;
-      let pageGuard = 0;
-      while (hasMore && Number.isSafeInteger(nextOffset) && pageGuard < 20) {
-        const nextValue = await this.services.follow.following({
-          kind: selectedKind,
-          limit,
-          offset: nextOffset
-        });
-        if (this.data.selectedKind !== selectedKind) return;
-        this.applyFollowingValue(nextValue, {
-          append: true,
-          selectedKind,
-          fromCache: false
-        });
-        const candidateOffset = Number(nextValue?.payload?.page?.nextOffset);
-        hasMore = nextValue?.payload?.page?.hasMore === true
-          && Number.isSafeInteger(candidateOffset)
-          && candidateOffset > nextOffset;
-        nextOffset = candidateOffset;
-        pageGuard += 1;
-      }
-      this.setData({ hasMore: false, loadingMore: false });
     } catch {
       if (this.data.selectedKind !== selectedKind) return;
       if (cached?.payload) {
@@ -648,22 +555,10 @@ Page({
     const incoming = orderedItems(value);
     const items = append ? mergeItems(this.data.items, incoming) : incoming;
     const counts = value?.payload?.counts || {};
-    let selectedMatchStatus = this.data.selectedMatchStatus;
-    if (selectedKind === 'match' && !options.fromCache && !append) {
-      let remembered = '';
-      try { remembered = String(wx.getStorageSync(MATCH_STATUS_STORAGE_KEY) || ''); } catch { /* bounded */ }
-      const hasLive = items.some(item => item.type === 'match' && matchStatus(item) === 'live');
-      selectedMatchStatus = MATCH_STATUS_TABS.some(tab => tab.id === remembered)
-        ? remembered : hasLive ? 'live' : 'upcoming';
-    }
-    const feed = paginatedFeed(
-      items,
-      selectedKind,
-      selectedMatchStatus,
-      this.data.selectedDate,
-      append ? this.data.pageNumber : 1
-    );
-    const groups = dateGroups(feed.pageItems, selectedKind === 'match');
+    const page = value?.payload?.page || {};
+    const pageNumber = Math.floor(Number(page.offset || 0) / API_PAGE_SIZE) + 1;
+    const hasMore = page.hasMore === true;
+    const groups = dateGroups(items, selectedKind === 'match');
     const dataAsOf = value?.dataAsOf || value?.delivery?.dataAsOf || '';
     this.matchDates = new Map(items
       .filter(item => item.type === 'match')
@@ -675,17 +570,17 @@ Page({
       tabs: countsView(counts),
       items,
       dateGroups: groups,
-      count: selectedKind === 'match' ? feed.visibleItems.length : selectedCount(counts, selectedKind),
-      selectedMatchStatus,
+      count: Number(counts.filtered ?? selectedCount(counts, selectedKind)),
+      selectedMatchStatus: this.data.selectedMatchStatus,
       matchCount: Number(counts.matches || 0),
       tournamentCount: Number(counts.tournaments || 0),
       playerCount: Number(counts.players || 0),
-      offset: Number(value?.payload?.page?.nextOffset ?? items.length),
-      hasMore: value?.payload?.page?.hasMore === true,
-      pageNumber: feed.pageNumber,
-      pageCount: feed.pageCount,
-      canPrev: feed.canPrev,
-      canNext: feed.canNext,
+      offset: Number(value?.payload?.page?.nextOffset ?? page.offset ?? 0),
+      hasMore,
+      pageNumber,
+      pageCount: pageNumber + (hasMore ? 1 : 0),
+      canPrev: pageNumber > 1,
+      canNext: hasMore,
       deliveryState: options.fromCache ? 'stale'
         : value?.delivery?.state === 'current' ? 'live' : value?.delivery?.state || '',
       deliveryMessage: options.fromCache

@@ -54,7 +54,8 @@ test('SOCIAL-D1 flower ledger has a five-item preview and server-filtered 20-ite
   const ledger = readFileSync(new URL('../pages/flower-ledger/index.js', import.meta.url), 'utf8');
   const ledgerView = readFileSync(new URL('../pages/flower-ledger/index.wxml', import.meta.url), 'utf8');
   const app = readFileSync(new URL('../app.json', import.meta.url), 'utf8');
-  assert.match(center, /ledger\(\{ limit: 5, offset: 0 \}\)/u);
+  assert.match(center, /bootstrap\.recentLedger\?\.entries/u);
+  assert.doesNotMatch(center, /social\.ledger\(\{ limit: 5/u);
   assert.match(centerView, /查看全部/u);
   assert.match(centerView, /openLedger/u);
   assert.match(app, /pages\/flower-ledger\/index/u);

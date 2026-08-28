@@ -26,7 +26,7 @@
         <view class="hero-grid">
           <view wx:for="{{match.sides}}" wx:key="sideId" wx:for-index="sideIndex" class="hero-player side-{{sideIndex}}">
             <view class="hero-identity">
-              <view wx:if="{{sideIndex === 0 && item.primaryFollowTargetId}}" class="hero-player-follow {{item.primaryFollowed ? 'followed' : ''}}" data-id="{{item.primaryFollowTargetId}}" data-followed="{{!item.primaryFollowed}}" catchtap="togglePlayerFollow" role="button"><ui-icon name="heart" size="13" color="{{item.primaryFollowed ? '#fff' : '#1677d2'}}"/><text>{{item.primaryFollowed ? '已关注' : '关注'}}</text></view>
+              <view wx:if="{{sideIndex === 0 && item.primaryFollowTargetId}}" class="hero-player-follow {{item.primaryFollowed ? 'followed' : ''}} {{item.primaryFollowState === 'unknown' ? 'pending' : ''}}" data-id="{{item.primaryFollowTargetId}}" data-followed="{{!item.primaryFollowed}}" catchtap="togglePlayerFollow" role="button"><ui-icon name="heart" size="13" color="{{item.primaryFollowed ? '#fff' : '#1677d2'}}"/><text>{{item.primaryFollowState === 'unknown' ? '状态…' : (item.primaryFollowed ? '已关注' : '关注')}}</text></view>
               <view class="portrait-stack {{item.isDoubles ? 'doubles' : 'singles'}}">
                 <view wx:for="{{item.members}}" wx:key="playerId" wx:for-item="member" class="portrait" data-player-id="{{member.playerId}}" data-tour="{{match.tournamentTourOrg}}" data-name="{{member.name}}" data-original-name="{{member.originalName}}" data-country-code="{{member.countryCode}}" data-portrait-url="{{member.portraitUrl}}" catchtap="openPlayerFromPortrait">
                   <image wx:if="{{member.portraitUrl}}" src="{{member.portraitUrl}}" mode="aspectFill" lazy-load="{{true}}"/>
@@ -34,7 +34,7 @@
                 </view>
                 <view class="portrait-mark"><text wx:if="{{item.countryMark}}">{{item.countryMark}}</text><ui-icon wx:else name="info" size="12" color="#66788a"/></view>
               </view>
-              <view wx:if="{{sideIndex === 1 && item.primaryFollowTargetId}}" class="hero-player-follow {{item.primaryFollowed ? 'followed' : ''}}" data-id="{{item.primaryFollowTargetId}}" data-followed="{{!item.primaryFollowed}}" catchtap="togglePlayerFollow" role="button"><ui-icon name="heart" size="13" color="{{item.primaryFollowed ? '#fff' : '#1677d2'}}"/><text>{{item.primaryFollowed ? '已关注' : '关注'}}</text></view>
+              <view wx:if="{{sideIndex === 1 && item.primaryFollowTargetId}}" class="hero-player-follow {{item.primaryFollowed ? 'followed' : ''}} {{item.primaryFollowState === 'unknown' ? 'pending' : ''}}" data-id="{{item.primaryFollowTargetId}}" data-followed="{{!item.primaryFollowed}}" catchtap="togglePlayerFollow" role="button"><ui-icon name="heart" size="13" color="{{item.primaryFollowed ? '#fff' : '#1677d2'}}"/><text>{{item.primaryFollowState === 'unknown' ? '状态…' : (item.primaryFollowed ? '已关注' : '关注')}}</text></view>
             </view>
             <view class="hero-name-wrap"><text class="hero-name">{{item.names}}</text><text wx:if="{{!item.isDoubles && item.members[0].playerId}}" class="hero-flower-total" data-player-id="{{item.members[0].playerId}}" data-name="{{item.members[0].name}}" catchtap="openGift" role="button">🌸{{item.members[0].flowerTotal}}</text><text wx:if="{{item.isWinner}}" class="winner">胜</text></view>
             <view class="hero-player-meta">
@@ -89,7 +89,7 @@
       <data-notice wx:if="{{match.dataDeliveryState !== 'current'}}" state="{{match.dataDeliveryState}}" message="{{match.deliveryNotice}}" compact />
     </view>
 
-    <view class="detail-actions"><text class="detail-follow-count">{{match.followCountLabel}}</text><view class="follow-button" bindtap="toggleMatchFollow" role="button"><ui-icon name="heart" size="17" color="#ffffff"/><text>{{match.followed ? '已关注' : '关注比赛'}}</text></view><button class="share-button" open-type="share" hover-class="none" aria-label="分享比赛"><ui-icon name="share" size="17" color="{{themeAccentStrong}}"/><text>分享</text></button></view>
+    <view class="detail-actions"><text class="detail-follow-count">{{match.followCountLabel}}</text><view class="follow-button {{match.followState === 'unknown' ? 'pending' : ''}}" bindtap="toggleMatchFollow" role="button"><ui-icon name="heart" size="17" color="#ffffff"/><text>{{match.followState === 'unknown' ? '关注状态…' : (match.followed ? '已关注' : '关注比赛')}}</text></view><button class="share-button" open-type="share" hover-class="none" aria-label="分享比赛"><ui-icon name="share" size="17" color="{{themeAccentStrong}}"/><text>分享</text></button></view>
 
     <view class="match-modules">
       <view class="module-tabs">

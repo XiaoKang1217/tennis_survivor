@@ -26,8 +26,14 @@ function followingPath(options = {}) {
     ? Math.max(1, Math.min(50, Number(options.limit))) : 20;
   const offset = Number.isSafeInteger(Number(options.offset))
     ? Math.max(0, Number(options.offset)) : 0;
+  const status = ['upcoming', 'live', 'ended'].includes(String(options.status || '').trim())
+    ? String(options.status).trim() : '';
+  const date = /^\d{4}-\d{2}-\d{2}$/u.test(String(options.date || '').trim())
+    ? String(options.date).trim() : '';
   return '/api/v1/bff/following'
     + `?filter=${encodeURIComponent(kind)}`
+    + `&status=${encodeURIComponent(status)}`
+    + `&date=${encodeURIComponent(date)}`
     + `&limit=${encodeURIComponent(String(limit))}`
     + `&offset=${encodeURIComponent(String(offset))}`;
 }
@@ -47,11 +53,12 @@ function leaderboardPath(options = {}) {
 }
 
 class FollowService {
-  constructor(wxRuntime, auth, http, account) {
+  constructor(wxRuntime, auth, http, account, store = null) {
     this.wx = wxRuntime;
     this.auth = auth;
     this.http = http;
     this.account = account;
+    this.store = store;
   }
 
   activeProfileGate() {
@@ -63,12 +70,7 @@ class FollowService {
 
   async ensureProfileReady(sourceEntry = '') {
     await this.auth.ensure();
-    if (this.account?.isComplete?.()) {
-      try {
-        await this.account?.refresh?.();
-      } catch { /* current token path will surface on the follow request */ }
-      if (this.account?.isComplete?.()) return true;
-    }
+    if (this.account?.isComplete?.()) return true;
     const gate = this.activeProfileGate();
     if (!gate || typeof gate.collect !== 'function') {
       this.wx.showToast({ title: '请先登录', icon: 'none' });
@@ -95,20 +97,20 @@ class FollowService {
     throw lastError || new Error('network_request_failed');
   }
 
-  async setFollow(targetKind, targetId, followed, sourceEntry = '', snapshot = null) {
+  async setFollow(targetKind, targetId, followed, sourceEntry = '', snapshot = null, profileRetry = false) {
     const kind = String(targetKind || '').trim();
     const id = String(targetId || '').trim();
     if (!kind || !id) throw new Error('follow_target_missing');
-    if (followed) {
-      await this.ensureProfileReady(sourceEntry);
-    } else if (!this.auth.currentAccessToken()) {
-      await this.auth.ensure();
-    }
+    let rollback = () => undefined;
+    try {
+    if (followed) await this.ensureProfileReady(sourceEntry);
+    else if (!this.auth.currentAccessToken()) await this.auth.ensure();
+    rollback = this.store?.optimistic?.(kind, id, followed) || rollback;
     if (followed) {
       const data = { targetKind: kind, targetId: id, sourceEntry };
       if (snapshot && typeof snapshot === 'object') data.snapshot = snapshot;
       const idempotencyKey = createIdempotencyKey(`follow:${kind}:${id}`);
-      return await this.requestWithRetry(() => this.http.request('/api/v1/me/follows', {
+      const result = await this.requestWithRetry(() => this.http.request('/api/v1/me/follows', {
         method: 'POST',
         data,
         header: {
@@ -117,9 +119,11 @@ class FollowService {
         },
         authRequired: true
       }));
+      this.store?.set?.(kind, id, true);
+      return result;
     }
     const idempotencyKey = createIdempotencyKey(`unfollow:${kind}:${id}`);
-    return await this.requestWithRetry(() => this.http.request(
+    const result = await this.requestWithRetry(() => this.http.request(
       `/api/v1/me/follows/${encodeURIComponent(kind)}/${encodeURIComponent(id)}`,
       {
         method: 'DELETE',
@@ -127,6 +131,19 @@ class FollowService {
         authRequired: true
       }
     ));
+    this.store?.set?.(kind, id, false);
+    return result;
+    } catch (error) {
+      rollback();
+      if (followed && !profileRetry && /profile_required/u.test(String(error?.message || ''))) {
+        const gate = this.activeProfileGate();
+        const completed = await gate?.collect?.({ sourceEntry, mode: 'login' });
+        if (completed) return await this.setFollow(
+          targetKind, targetId, followed, sourceEntry, snapshot, true
+        );
+      }
+      throw error;
+    }
   }
 
   async following(options = {}) {
@@ -137,34 +154,41 @@ class FollowService {
   }
 
   async followedTargets(targets = []) {
-    const requested = new Map();
+    const requested = [];
+    const seen = new Set();
     for (const target of targets) {
       const kind = String(target?.kind || target?.targetKind || '').trim().toLowerCase();
       const targetId = String(target?.targetId || target?.id || '').trim();
       if (!['match', 'player', 'tournament'].includes(kind) || !targetId) continue;
-      if (!requested.has(kind)) requested.set(kind, new Set());
-      requested.get(kind).add(targetId);
+      const key = `${kind}:${targetId}`;
+      if (!seen.has(key)) requested.push({ kind, targetId });
+      seen.add(key);
     }
+    if (!requested.length) return new Set();
+    await this.auth.ensure();
+    const response = await this.http.request('/api/v1/me/follows/status', {
+      method: 'POST',
+      data: { targets: requested },
+      header: { 'content-type': 'application/json' },
+      authRequired: true
+    });
     const followed = new Set();
-    await Promise.all([...requested.entries()].map(async ([kind, pendingTargets]) => {
-      let offset = 0;
-      while (pendingTargets.size) {
-        const projection = await this.following({ kind, limit: 50, offset });
-        const pageEntries = Array.isArray(projection?.payload?.pageEntries)
-          ? projection.payload.pageEntries : [];
-        for (const entry of pageEntries) {
-          const targetId = String(entry?.targetId || '').trim();
-          if (pendingTargets.has(targetId)) {
-            followed.add(`${kind}:${targetId}`);
-            pendingTargets.delete(targetId);
-          }
-        }
-        const nextOffset = projection?.payload?.page?.nextOffset;
-        if (!Number.isSafeInteger(Number(nextOffset)) || Number(nextOffset) <= offset) break;
-        offset = Number(nextOffset);
-      }
-    }));
+    for (const state of Array.isArray(response?.states) ? response.states : []) {
+      const kind = String(state?.kind || '').trim();
+      const targetId = String(state?.targetId || '').trim();
+      if (!kind || !targetId) continue;
+      this.store?.set?.(kind, targetId, state.followed === true);
+      if (state.followed === true) followed.add(`${kind}:${targetId}`);
+    }
     return followed;
+  }
+
+  cachedStates(targets = []) {
+    return this.store?.snapshot?.(targets) || new Map();
+  }
+
+  subscribe(listener) {
+    return this.store?.subscribe?.(listener) || (() => undefined);
   }
 
   async leaderboard(options = {}) {

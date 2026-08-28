@@ -199,18 +199,16 @@ function matchFollowCountText(value) {
 }
 
 function followablePlayers(match) {
-  const states = new Map((match?.playerFollowStates || [])
-    .map(item => [String(item.sourcePlayerId || ''), item]));
   const tour = String(match?.tournamentTourOrg || '').toUpperCase();
   if (tour !== 'ATP' && tour !== 'WTA') return [];
   return (match?.sides || []).flatMap(side => (side.members || []).map(member => {
-    const state = states.get(member.playerId) || {};
-    const targetId = state.targetId || (member.playerId ? `${tour}:${member.playerId}` : '');
+    const targetId = member.followTargetId || (member.playerId ? `${tour}:${member.playerId}` : '');
     return {
       targetId,
       name: member.name || member.originalName || '球员',
       originalName: member.originalName || '',
-      followed: state.followed === true
+      followed: member.followed === true,
+      followState: member.followState || 'unknown'
     };
   })).filter(item => item.targetId);
 }
@@ -227,7 +225,8 @@ function matchWithPlayerFollowState(match) {
       return {
         ...member,
         followTargetId: targetId,
-        followed: state.followed === true
+        followed: false,
+        followState: 'unknown'
       };
     });
     const primary = members.length === 1 && members[0].followTargetId ? members[0] : null;
@@ -235,22 +234,26 @@ function matchWithPlayerFollowState(match) {
       ...side,
       members,
       primaryFollowTargetId: primary?.followTargetId || '',
-      primaryFollowed: primary?.followed === true
+      primaryFollowed: primary?.followed === true,
+      primaryFollowState: primary?.followState || 'unknown'
     };
   });
   return { ...match, sides };
 }
 
-function matchWithUpdatedPlayerFollow(match, targetId, followed) {
+function matchWithUpdatedPlayerFollow(match, targetId, followed, followState = '') {
   if (!match) return match;
   const sides = (match.sides || []).map(side => {
     const members = (side.members || []).map(member =>
-      member.followTargetId === targetId ? { ...member, followed } : member);
+      member.followTargetId === targetId
+        ? { ...member, followed, followState: followState || (followed ? 'followed' : 'not_followed') }
+        : member);
     const primary = members.length === 1 && members[0].followTargetId ? members[0] : null;
     return {
       ...side,
       members,
-      primaryFollowed: primary?.followed === true
+      primaryFollowed: primary?.followed === true,
+      primaryFollowState: primary?.followState || 'unknown'
     };
   });
   return { ...match, sides };
@@ -259,7 +262,13 @@ function matchWithUpdatedPlayerFollow(match, targetId, followed) {
 function matchWithResolvedFollowStates(match, states) {
   if (!match || !(states instanceof Map)) return match;
   const matchKey = `match:${match.id}`;
-  let next = states.has(matchKey) ? { ...match, followed: states.get(matchKey) === true } : match;
+  let next = states.has(matchKey)
+    ? {
+        ...match,
+        followed: states.get(matchKey) === true,
+        followState: states.get(matchKey) === true ? 'followed' : 'not_followed'
+      }
+    : { ...match, followState: match.followState || 'unknown' };
   for (const player of followablePlayers(next)) {
     const key = `player:${player.targetId}`;
     if (states.has(key)) next = matchWithUpdatedPlayerFollow(next, player.targetId, states.get(key) === true);
@@ -447,6 +456,21 @@ Page({
     this.setData({ topInset: info.statusBarHeight || 44 });
     this.services = getApp().services;
     this.viewerFollowStates = new Map();
+    this.unsubscribeFollow = this.services.follow.subscribe?.(change => {
+      if (!change?.key || !this.data.match) return;
+      const targets = new Set([
+        `match:${this.data.match.id}`,
+        ...followablePlayers(this.data.match).map(player => `player:${player.targetId}`)
+      ]);
+      if (!targets.has(change.key)) return;
+      if (change.value === 'followed' || change.value === 'not_followed') {
+        this.viewerFollowStates.set(change.key, change.value === 'followed');
+      } else {
+        this.viewerFollowStates.delete(change.key);
+      }
+      const resolved = matchWithResolvedFollowStates(this.data.match, this.viewerFollowStates);
+      this.setData({ match: resolved, followablePlayers: followablePlayers(resolved) });
+    });
     this.cache = createSWRCache(wx);
     this.unsubscribeScore = this.services.scoreStore.subscribe(projection => {
       const value = projection?.payload.matches.find(item => item.matchId === this.matchId);
@@ -481,6 +505,7 @@ Page({
     this.statisticsClient?.stop();
     this.unsubscribeCompletion?.();
     this.unsubscribeCompletionState?.();
+    this.unsubscribeFollow?.();
     this.completionClient?.stop();
   },
 
@@ -614,9 +639,19 @@ Page({
 
   applyMatch(presentation) {
     if (staleComparedToCurrent(presentation, this.data.match)) return;
+    const baseMatch = matchWithPlayerFollowState(matchView(presentation));
+    const targets = [
+      { kind: 'match', targetId: baseMatch.id },
+      ...followablePlayers(baseMatch).map(player => ({ kind: 'player', targetId: player.targetId }))
+    ];
+    const cachedStates = this.services.follow.cachedStates?.(targets) || new Map();
+    for (const [key, state] of cachedStates) {
+      if (state === 'followed' || state === 'not_followed') {
+        this.viewerFollowStates.set(key, state === 'followed');
+      }
+    }
     const match = this.decorateMatchFlowers(matchWithResolvedFollowStates(
-      matchWithPlayerFollowState(matchView(presentation)),
-      this.viewerFollowStates
+      baseMatch, this.viewerFollowStates
     ));
     const matchChanged = this.currentMatchId !== match.id;
     if (matchChanged) {
@@ -1045,7 +1080,7 @@ Page({
 
   async toggleMatchFollow() {
     const match = this.data.match;
-    if (!match?.id) return;
+    if (!match?.id || match.followState === 'unknown') return;
     const next = !match.followed;
     this.viewerFollowStates?.set(`match:${match.id}`, next);
     const nextCount = Math.max(0, followCountValue(match.followCount) + (next ? 1 : -1));
@@ -1053,6 +1088,7 @@ Page({
       match: {
         ...match,
         followed: next,
+        followState: next ? 'followed' : 'not_followed',
         followCount: nextCount,
         followCountLabel: matchFollowCountText(nextCount)
       }
@@ -1081,14 +1117,17 @@ Page({
     const targetId = String(event.currentTarget.dataset.id || '').trim();
     const next = event.currentTarget.dataset.followed === true
       || event.currentTarget.dataset.followed === 'true';
-    if (!targetId) return;
+    const current = this.data.followablePlayers.find(item => item.targetId === targetId);
+    if (!targetId || current?.followState === 'unknown') return;
     this.viewerFollowStates?.set(`player:${targetId}`, next);
     const previousMatch = this.data.match;
     const previous = this.data.followablePlayers;
     this.setData({
       match: matchWithUpdatedPlayerFollow(previousMatch, targetId, next),
       followablePlayers: previous.map(item =>
-        item.targetId === targetId ? { ...item, followed: next } : item)
+        item.targetId === targetId
+          ? { ...item, followed: next, followState: next ? 'followed' : 'not_followed' }
+          : item)
     });
     try {
       await this.services.follow.setFollow('player', targetId, next, 'match_detail_player');
