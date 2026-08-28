@@ -104,6 +104,49 @@ test('equally complete duplicate singles parts prefer the later refreshed markup
   assert.equal(players[0].entry_type, 'lucky_loser');
 });
 
+test('locked market refresh preserves reviewed photos for unchanged players', () => {
+  const localPhoto = 'assets/manager/players/atp/atp-carlos-alcaraz.webp';
+  const lockedEvent = {
+    tour: 'ATP',
+    market_price_lock: {
+      publication_version: 1,
+      locked_at: '2026-08-28T01:15:00.000Z'
+    },
+    players: [
+      {
+        profile_id: 'A0E2',
+        name_en: 'Carlos ALCARAZ',
+        name_zh: '阿尔卡拉斯',
+        player_key: 'ATP|carlos-alcaraz',
+        draw_position: 1,
+        is_qualifier_placeholder: false,
+        price: 865,
+        photo_url: localPhoto,
+        photo_source: 'manual-cache',
+        scores: { base: 98, surface: 95, draw: 89, form: 50, manual: 0 }
+      }
+    ]
+  };
+  const parsedPlayers = [
+    {
+      profile_id: 'A0E2',
+      name_en: 'Carlos ALCARAZ',
+      name_zh: '阿尔卡拉斯',
+      player_key: 'ATP|carlos-alcaraz',
+      draw_position: 1,
+      is_qualifier_placeholder: false,
+      price: 0,
+      photo_url: 'https://static.live-tennis.cn/pic/ts/A0E2'
+    }
+  ];
+
+  const merged = mergeDrawPlayers(lockedEvent, parsedPlayers, 'draw-source');
+
+  assert.equal(merged[0].photo_url, localPhoto);
+  assert.equal(merged[0].photo_source, 'manual-cache');
+  assert.equal(merged[0].price, 865);
+});
+
 test('locked qualifier placeholders keep their published key when live draw labels drift', () => {
   const lockedEvent = {
     tour: 'WTA',

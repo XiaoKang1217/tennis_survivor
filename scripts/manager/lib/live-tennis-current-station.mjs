@@ -470,6 +470,12 @@ export function mergeDrawPlayers(event, parsedPlayers, sourceUrl = '') {
       price: old.price ?? 0,
       tier: old.tier ?? null,
       pricing_detail: old.pricing_detail ?? null,
+      photo_url: (isQualifierPlacement || isPreR1Substitution)
+        ? (player.photo_url || old.photo_url || null)
+        : (old.photo_url || player.photo_url || null),
+      photo_source: (isQualifierPlacement || isPreR1Substitution)
+        ? (player.photo_source || old.photo_source || null)
+        : (old.photo_source || player.photo_source || null),
       qualifier_replacement: qualifierReplacement,
       pre_r1_substitution: preR1Substitution,
       source: sourceUrl || player.source || old.source || 'live-tennis.cn draw ajax'
