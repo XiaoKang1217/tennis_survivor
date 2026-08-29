@@ -139,8 +139,15 @@ function mergeRealtimeOnlyState(incoming, previous) {
   const merged = canKeepLastPoint
     ? { ...incoming, lastPoint: previous.lastPoint }
     : incoming;
-  return incoming.viewerFollowState === undefined && previous.viewerFollowState !== undefined
-    ? Object.freeze({ ...merged, viewerFollowState: previous.viewerFollowState })
+  const protectedSocial = {};
+  if (previous.viewerFollowState !== undefined) {
+    protectedSocial.viewerFollowState = previous.viewerFollowState;
+  }
+  if (previous.followCount !== undefined) {
+    protectedSocial.followCount = previous.followCount;
+  }
+  return Object.keys(protectedSocial).length
+    ? Object.freeze({ ...merged, ...protectedSocial })
     : merged;
 }
 
@@ -342,11 +349,11 @@ class ScoreStore {
           targetVersion: frame.version
         });
       }
-      byId.set(item.matchId, Object.freeze({
+      byId.set(item.matchId, mergeRealtimeOnlyState(Object.freeze({
         ...previous,
         ...item.changes,
         matchVersion: item.matchVersion
-      }));
+      }), previous));
       nextMatchVersions.set(item.matchId, item.matchVersion);
     }
     const matches = existing.map(match => byId.get(match.matchId));
@@ -416,7 +423,7 @@ class ScoreStore {
           targetVersion: frame.version
         });
       }
-      byId.set(match.matchId, match);
+      byId.set(match.matchId, mergeRealtimeOnlyState(match, byId.get(match.matchId)));
       if (incomingMatchVersion > 0) {
         nextMatchVersions.set(match.matchId, incomingMatchVersion);
       }

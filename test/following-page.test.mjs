@@ -189,6 +189,9 @@ test('following player badge shows titles, recent form and follower count', () =
   const recentRecordSource = /function recentRecordLabel\(item\) \{[\s\S]*?\n\}/u.exec(script)?.[0] || '';
   assert.match(recentRecordSource, /careerPerformance\.recentEvents/);
   assert.doesNotMatch(recentRecordSource, /recentActivities/);
+  const toneSource = /function eventResultTone\(event\) \{[\s\S]*?\n\}/u.exec(script)?.[0] || '';
+  assert.match(toneSource, /event\?\.resultTone/);
+  assert.doesNotMatch(toneSource, /resultLabel|summary|win\|won|胜|loss\|lost|负/u);
   assert.doesNotMatch(markup, /正手：/);
   assert.doesNotMatch(markup, /反手：/);
   assert.doesNotMatch(markup, /被关注记录/);

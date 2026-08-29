@@ -10,7 +10,7 @@ const {
   SCORE_CACHE_SCHEMA,
   scoreCacheKey
 } = require('../services/score-client');
-const { ScoreStore } = require('../core/score-store');
+const { ScoreStore, mergeRealtimeOnlyState } = require('../core/score-store');
 const config = require('../config');
 
 function cacheStorageKey(resourceKey) {
@@ -264,6 +264,21 @@ test('score store applies compact realtime delta to exactly one match card', () 
   assert.match(metric.clientRenderedAt, /^\d{4}-\d{2}-\d{2}T/u);
   assert.equal(typeof metric.sourceToClientReceivedMs, 'number');
   assert.equal(typeof metric.sourceToClientRenderedMs, 'number');
+});
+
+test('score SSE merges cannot overwrite Shanghai social fields', () => {
+  const initial = presentation({
+    followCount: 7,
+    viewerFollowState: { match: { targetId: 'match-1', followed: true } }
+  });
+  const merged = mergeRealtimeOnlyState({
+    ...initial,
+    followCount: 0,
+    viewerFollowState: { match: { targetId: 'match-1', followed: false } }
+  }, initial);
+
+  assert.equal(merged.followCount, 7);
+  assert.equal(merged.viewerFollowState.match.followed, true);
 });
 
 test('older calibration snapshot cannot overwrite a newer per-match SSE version', () => {

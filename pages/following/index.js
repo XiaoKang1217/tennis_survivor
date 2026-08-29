@@ -128,19 +128,8 @@ function numericFact(candidate) {
 }
 
 function eventResultTone(event) {
-  const source = [
-    event?.resultTone,
-    event?.resultLabelZh,
-    event?.summaryZh,
-    event?.summary,
-    event?.payload?.resultTone,
-    event?.payload?.resultLabelZh,
-    event?.payload?.summaryZh,
-    event?.payload?.summary
-  ].map(value => String(value || '').trim()).filter(Boolean).join(' ').toLowerCase();
-  if (/win|won|胜/u.test(source)) return 'win';
-  if (/loss|lost|负/u.test(source)) return 'loss';
-  return '';
+  const tone = String(event?.resultTone || '').trim().toLowerCase();
+  return tone === 'win' || tone === 'loss' ? tone : '';
 }
 
 function recentRecordLabel(item) {
