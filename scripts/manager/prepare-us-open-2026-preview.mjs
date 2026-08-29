@@ -18,7 +18,7 @@ const OFFICIAL_SCHEDULE_URL = 'https://www.usopen.org/en_US/about/eventschedule.
 
 const SUBMISSION_OPENS_AT = '2026-08-28T09:15:00+08:00';
 const MAIN_DRAW_FIRST_MATCH_AT = '2026-08-30T15:00:00.000Z';
-const SUBMISSION_CUTOFF_AT = '2026-08-31T14:45:00.000Z';
+const SUBMISSION_CUTOFF_AT = '2026-08-30T14:45:00.000Z';
 const ROUND2_FIRST_MATCH_AT = '2026-09-02T15:00:00.000Z';
 
 function expectedCount(tour) {
@@ -99,7 +99,7 @@ function eventShell({ tour, eventKey, displayName, players }) {
     submission_cutoff_at: SUBMISSION_CUTOFF_AT,
     submission_closes_at: SUBMISSION_CUTOFF_AT,
     round2_first_match_at: ROUND2_FIRST_MATCH_AT,
-    allow_submission_after_first_match: true,
+    allow_submission_after_first_match: false,
     cross_tour_transfer: true,
     transfer_window_days: 3,
     transfer_fee_rate: 0.15,
@@ -198,7 +198,7 @@ async function main() {
     station_name: 'ATP 美网 + WTA 美网',
     survivor_aligned: true,
     status: 'open',
-    announcement: '美网新站开售：签约金 2000，Combo 封顶 1200，提交时间0828 09:15~0831 22:45',
+    announcement: '美网新站开售：签约金 2000，Combo 封顶 1200，提交时间0828 09:15~0830 22:45',
     daily_prediction: {
       starts_on: '2026-08-30',
       station_key: STATION_KEY,
@@ -227,7 +227,7 @@ async function main() {
     updated_at: nowIso(),
     notes: [
       '本站签约金 2000；Combo 项目为双线经营、稳健经营、慧眼识珠、全村的希望，四项合计封顶 1200。',
-      '提交时间从北京时间 2026-08-28 09:15 开始，截止北京时间 2026-08-31 22:45。',
+      '提交时间从北京时间 2026-08-28 09:15 开始，截止北京时间 2026-08-30 22:45。',
       '稳健经营：阵容里≥3 人进入 R32/R16/QF/SF 分别 +200/+400/+600/+800，只取最高档。',
       '双线经营：ATP/WTA 各至少 1 人进入 R32/R16/QF/SF/F/W 分别 +200/+400/+600/+800/+1000/+1200，只取最高档。',
       '慧眼识珠：按购买价 ≤300 判断，低价球员进入 R32/R16/QF/SF/F/W 分别 +200/+400/+600/+800/+1000/+1200；单阵容最多触发 1 次，只取最高档。',

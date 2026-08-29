@@ -7,6 +7,8 @@ const active = JSON.parse(fs.readFileSync('data/manager/active_events.json', 'ut
 const atp = JSON.parse(fs.readFileSync('data/manager/events/atp-2026-w35-us-open.json', 'utf8'));
 const wta = JSON.parse(fs.readFileSync('data/manager/events/wta-2026-w35-us-open.json', 'utf8'));
 const market = JSON.parse(fs.readFileSync('data/manager/market_snapshot.json', 'utf8'));
+const openingPublication = JSON.parse(fs.readFileSync('data/manager/publications/2026-w35-us-open-v1.json', 'utf8'));
+const cutoffAmendment = JSON.parse(fs.readFileSync('data/manager/publications/2026-w35-us-open-v2.json', 'utf8'));
 const dataManifest = JSON.parse(fs.readFileSync('data/manifest.json', 'utf8'));
 const sourceOverrides = JSON.parse(fs.readFileSync('data/manager/player_source_overrides.json', 'utf8'));
 const html = fs.readFileSync('index.html', 'utf8');
@@ -15,12 +17,13 @@ const buildPrices = fs.readFileSync('scripts/manager/build-prices.mjs', 'utf8');
 const syncStation = fs.readFileSync('scripts/manager/sync-station.mjs', 'utf8');
 const updateManagerWorkflow = fs.readFileSync('.github/workflows/update_manager.yml', 'utf8');
 const migration = fs.readFileSync('supabase/migrations/202608280001_manager_us_open_combo_and_welfare_limit.sql', 'utf8');
+const cutoffMigration = fs.readFileSync('supabase/migrations/202608290001_manager_us_open_submission_cutoff_0830.sql', 'utf8');
 
 function contentVersion(file) {
   return createHash('sha256').update(fs.readFileSync(file)).digest('hex').slice(0, 16);
 }
 
-function assertUsOpenEvent(event, tour, qualifierCount) {
+function assertUsOpenEvent(event, tour, qualifierSlotCount) {
   assert.equal(event.tour, tour);
   assert.equal(event.event_key, `${tour.toLowerCase()}-2026-w35-us-open`);
   assert.equal(event.name, 'US Open');
@@ -40,20 +43,28 @@ function assertUsOpenEvent(event, tour, qualifierCount) {
   assert.equal(event.submission_status, 'open');
   assert.equal(event.submission_opens_at, '2026-08-28T09:15:00+08:00');
   assert.equal(event.main_draw_first_match_at, '2026-08-30T15:00:00.000Z');
-  assert.equal(event.submission_cutoff_at, '2026-08-31T14:45:00.000Z');
-  assert.equal(event.submission_closes_at, '2026-08-31T14:45:00.000Z');
-  assert.equal(event.allow_submission_after_first_match, true);
+  assert.equal(event.submission_cutoff_at, '2026-08-30T14:45:00.000Z');
+  assert.equal(event.submission_closes_at, '2026-08-30T14:45:00.000Z');
+  assert.equal(event.allow_submission_after_first_match, false);
   assert.equal(event.transfer_fee_rate, 0.15);
   assert.equal(event.cross_tour_transfer, true);
   assert.ok(event.source_urls.includes('https://www.live-tennis.cn/zh/draw/UO/2026'));
   assert.equal(event.players.length, 128);
-  assert.equal(event.players.filter((player) => player.is_qualifier_placeholder).length, qualifierCount);
+  const qualifierPlaceholders = event.players.filter((player) => player.is_qualifier_placeholder).length;
+  const qualifierReplacements = event.players.filter((player) => player.qualifier_replacement).length;
+  assert.equal(qualifierPlaceholders + qualifierReplacements, qualifierSlotCount);
   assert.equal(new Set(event.players.map((player) => player.draw_position)).size, 128);
   assert.ok(event.players.every((player) => Number.isFinite(player.price) && player.price > 0));
   const known = event.players.filter((player) => !player.is_qualifier_placeholder);
-  assert.ok(known.every((player) => Number.isFinite(player.rank) && player.rank > 0));
-  assert.ok(known.every((player) => Number.isFinite(player.overall_elo) && player.overall_elo > 0));
-  assert.ok(known.every((player) => Number.isFinite(player.surface_elo) && player.surface_elo > 0));
+  assert.ok(known.every((player) => (
+    player.qualifier_replacement || (Number.isFinite(player.rank) && player.rank > 0)
+  )));
+  assert.ok(known.every((player) => (
+    player.qualifier_replacement || (Number.isFinite(player.overall_elo) && player.overall_elo > 0)
+  )));
+  assert.ok(known.every((player) => (
+    player.qualifier_replacement || (Number.isFinite(player.surface_elo) && player.surface_elo > 0)
+  )));
 }
 
 test('US Open station is current with 2000 grant, 1200 Combo cap, and Cincinnati as previous station', () => {
@@ -61,7 +72,7 @@ test('US Open station is current with 2000 grant, 1200 Combo cap, and Cincinnati
   assert.equal(active.station_name, 'ATP 美网 + WTA 美网');
   assert.equal(active.status, 'open');
   assert.equal(active.rules.station_grant, 2000);
-  assert.equal(active.announcement, '美网新站开售：签约金 2000，Combo 封顶 1200，提交时间0828 09:15~0831 22:45');
+  assert.equal(active.announcement, '美网新站开售：签约金 2000，Combo 封顶 1200，提交时间0828 09:15~0830 22:45');
   assert.equal(active.rules.combo_version, 'us_open_2026_v1');
   assert.equal(active.rules.combo_design_status, 'confirmed');
   assert.equal(active.rules.combo.total_cap, 1200);
@@ -117,7 +128,7 @@ test('US Open station is current with 2000 grant, 1200 Combo cap, and Cincinnati
   assert.equal(active.daily_prediction.starts_on, '2026-08-30');
   assert.equal(active.daily_prediction.station_key, active.station_key);
   assert.equal(active.daily_prediction.source_station_key, active.station_key);
-  assert.ok(active.notes.some((note) => note.includes('2026-08-31 22:45')));
+  assert.ok(active.notes.some((note) => note.includes('2026-08-30 22:45')));
   assert.ok(active.notes.some((note) => note.includes('R1 正式开赛前继续展示辛辛那提收益')));
 });
 
@@ -135,6 +146,31 @@ test('US Open ATP and WTA draws are priced from latest ranking and TA Elo snapsh
     'Venus WILLIAMS: TA current Elo unavailable; used ranking proxy score.',
     'Thea FRODIN: TA current Elo unavailable; used ranking proxy score.'
   ]);
+});
+
+test('US Open cutoff amendment moves submission close to 2026-08-30 22:45 without rewriting opening v1', () => {
+  assert.equal(openingPublication.station_key, '2026-w35-us-open');
+  assert.equal(openingPublication.publication_version, 1);
+  assert.equal(openingPublication.publication_kind, 'initial_open');
+  assert.ok(openingPublication.snapshot.windows.every((window) => (
+    window.submission_cutoff_at === '2026-08-31T14:45:00.000Z'
+    && window.submission_closes_at === '2026-08-31T14:45:00.000Z'
+  )), 'the immutable opening snapshot must retain the originally published cutoff');
+
+  assert.equal(cutoffAmendment.station_key, '2026-w35-us-open');
+  assert.equal(cutoffAmendment.publication_version, 2);
+  assert.equal(cutoffAmendment.publication_kind, 'window_amendment');
+  assert.equal(cutoffAmendment.snapshot.windows.length, 2);
+  assert.ok(cutoffAmendment.snapshot.windows.every((window) => (
+    window.submission_cutoff_at === '2026-08-30T14:45:00.000Z'
+    && window.submission_closes_at === '2026-08-30T14:45:00.000Z'
+  )));
+  assert.ok(cutoffAmendment.snapshot.events.every((event) => (
+    event.allow_submission_after_first_match === false
+  )));
+  assert.match(cutoffMigration, /station_key = '2026-w35-us-open'/);
+  assert.match(cutoffMigration, /submission_cutoff_at = '2026-08-30T22:45:00\+08:00'/);
+  assert.match(cutoffMigration, /submission_closes_at = '2026-08-30T22:45:00\+08:00'/);
 });
 
 test('Carlos Alcaraz form score is manually corrected to 50 before pricing', () => {
@@ -192,6 +228,7 @@ test('US Open source files are generated and cache-busted in the data manifest',
     'data/manager/market_snapshot.json',
     'data/manager/events/atp-2026-w35-us-open.json',
     'data/manager/events/wta-2026-w35-us-open.json',
+    'data/manager/publications/2026-w35-us-open-v2.json',
     'data/manager/player_source_overrides.json'
   ]) {
     assert.equal(dataManifest.files[file]?.version, contentVersion(file), `${file} manifest version is stale`);
