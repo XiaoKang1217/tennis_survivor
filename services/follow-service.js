@@ -47,8 +47,10 @@ function leaderboardPath(options = {}) {
     ? Math.max(1, Math.min(100, Number(options.limit))) : 20;
   const offset = Number.isSafeInteger(Number(options.offset))
     ? Math.max(0, Number(options.offset)) : 0;
+  const query = String(options.query || '').trim().slice(0, 80);
   return '/api/v1/bff/following/leaderboard'
     + `?tour=${encodeURIComponent(tour)}`
+    + `&q=${encodeURIComponent(query)}`
     + `&limit=${encodeURIComponent(String(limit))}`
     + `&offset=${encodeURIComponent(String(offset))}`;
 }

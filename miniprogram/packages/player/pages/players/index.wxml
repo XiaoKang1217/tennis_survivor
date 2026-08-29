@@ -53,9 +53,9 @@
       >{{item.label}}</view>
     </view>
 
-    <view wx:if="{{section === 'ranking' || section === 'follows'}}" class="search-box">
+    <view wx:if="{{section === 'ranking' || section === 'follows' || section === 'flowers'}}" class="search-box">
       <ui-icon name="search" size="16" color="#7b8997"/>
-      <input value="{{query}}" bindinput="onSearch" placeholder="搜索球员、英文名或国家/地区"/>
+      <input value="{{query}}" bindinput="onSearch" placeholder="{{section === 'flowers' && flowerKind === 'fans' ? '搜索粉丝昵称、勋章或支持球员' : '搜索球员、英文名或国家/地区'}}"/>
     </view>
   </view>
 
@@ -175,6 +175,11 @@
         <view class="flower-card-copy"><text>{{item.name}}</text><text wx:if="{{item.originalName}}">{{item.originalName}}</text><text wx:if="{{item.flowerMeta}}">{{item.flowerMeta}}</text></view>
         <text class="flower-card-total">🌸{{item.flowerTotal}}</text>
       </view>
+      <view class="leaderboard-pagination">
+        <button disabled="{{loading || leaderboardPage <= 1}}" bindtap="previousLeaderboardPage">上一页</button>
+        <text>第 {{leaderboardPage}} 页</text>
+        <button disabled="{{loading || !hasMore}}" bindtap="nextLeaderboardPage">下一页</button>
+      </view>
     </block>
   </view>
   <view wx:elif="{{section === 'follows'}}" class="follow-leaderboard-list">
@@ -198,9 +203,11 @@
         </view>
         <ui-icon name="chevron" size="14" color="#9aa7b3"/>
       </view>
-      <view wx:if="{{loadingMore}}" class="list-tail">加载中</view>
-      <button wx:elif="{{hasMore}}" class="list-tail load-more" bindtap="loadMore">加载更多</button>
-      <view wx:else class="list-tail">已加载全部球员</view>
+      <view class="leaderboard-pagination">
+        <button disabled="{{loading || leaderboardPage <= 1}}" bindtap="previousLeaderboardPage">上一页</button>
+        <text>第 {{leaderboardPage}} 页</text>
+        <button disabled="{{loading || !hasMore}}" bindtap="nextLeaderboardPage">下一页</button>
+      </view>
     </block>
   </view>
   <view wx:elif="{{loading && !visiblePlayers.length}}" class="page-state">

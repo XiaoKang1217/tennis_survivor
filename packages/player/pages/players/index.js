@@ -437,6 +437,8 @@ Page({
     visiblePlayers: [],
     pageSize: 50,
     offset: 0,
+    leaderboardPage: 1,
+    leaderboardTotal: 0,
     hasMore: false,
     loadingMore: false,
     deliveryState: '',
@@ -511,6 +513,8 @@ Page({
       section,
       query: '',
       offset: 0,
+      leaderboardPage: 1,
+      leaderboardTotal: 0,
       hasMore: false,
       h2hFailed: false,
       h2hMessage: ''
@@ -553,13 +557,22 @@ Page({
     this.setData({
       followTour,
       offset: 0,
+      leaderboardPage: 1,
+      leaderboardTotal: 0,
       hasMore: false
     }, () => void this.load());
   },
 
   selectFlowerKind(event) {
     const flowerKind = event.currentTarget.dataset.kind === 'fans' ? 'fans' : 'players';
-    this.setData({ flowerKind }, () => void this.load());
+    this.setData({
+      flowerKind,
+      query: '',
+      offset: 0,
+      leaderboardPage: 1,
+      leaderboardTotal: 0,
+      hasMore: false
+    }, () => void this.load());
   },
 
   selectRankingKind(event) {
@@ -573,8 +586,13 @@ Page({
     const query = event.detail.value;
     if (this.searchTimer) clearTimeout(this.searchTimer);
     this.setData({ query }, () => {
-      if (this.data.section === 'ranking') {
-        this.setData({ offset: 0, hasMore: false });
+      if (['ranking', 'flowers', 'follows'].includes(this.data.section)) {
+        this.setData({
+          offset: 0,
+          leaderboardPage: 1,
+          leaderboardTotal: 0,
+          hasMore: false
+        });
         this.searchTimer = setTimeout(() => void this.load(), 220);
         return;
       }
@@ -583,6 +601,10 @@ Page({
   },
 
   filter() {
+    if (this.data.section === 'flowers' || this.data.section === 'follows') {
+      this.setData({ visiblePlayers: this.data.players });
+      return;
+    }
     const query = String(this.data.query || '').trim().toLocaleLowerCase('zh-CN');
     const visiblePlayers = query
       ? this.data.players.filter(player => [
@@ -598,9 +620,8 @@ Page({
     if (this.data.loading || this.data.loadingMore || !this.data.hasMore) return;
     const hasRankingSearch = this.data.section === 'ranking'
       && String(this.data.query || '').trim();
-    if (this.data.section !== 'follows'
-      && (this.data.section !== 'ranking'
-        || (this.data.rankingKind !== 'official' && !hasRankingSearch))) return;
+    if (this.data.section !== 'ranking'
+      || (this.data.rankingKind !== 'official' && !hasRankingSearch)) return;
     void this.load({ append: true });
   },
 
@@ -608,10 +629,19 @@ Page({
     if (this.data.loading || this.data.loadingMore || !this.data.hasMore) return;
     const hasRankingSearch = this.data.section === 'ranking'
       && String(this.data.query || '').trim();
-    if (this.data.section !== 'follows'
-      && (this.data.section !== 'ranking'
-        || (this.data.rankingKind !== 'official' && !hasRankingSearch))) return;
+    if (this.data.section !== 'ranking'
+      || (this.data.rankingKind !== 'official' && !hasRankingSearch)) return;
     void this.load({ append: true });
+  },
+
+  previousLeaderboardPage() {
+    if (this.data.loading || this.data.leaderboardPage <= 1) return;
+    this.setData({ leaderboardPage: this.data.leaderboardPage - 1 }, () => void this.load());
+  },
+
+  nextLeaderboardPage() {
+    if (this.data.loading || !this.data.hasMore) return;
+    this.setData({ leaderboardPage: this.data.leaderboardPage + 1 }, () => void this.load());
   },
 
   async load(options = {}) {
@@ -621,9 +651,10 @@ Page({
       return;
     }
     if (this.data.section === 'flowers') {
-      await this.loadFlowerLeaderboard();
+      await this.loadFlowerLeaderboard(options);
       return;
     }
+    this.leaderboardRequestId = (this.leaderboardRequestId || 0) + 1;
     if (this.data.section !== 'ranking') {
       this.setData({
         loading: false,
@@ -794,12 +825,20 @@ Page({
   },
 
   async loadFlowerLeaderboard() {
+    const requestId = (this.leaderboardRequestId || 0) + 1;
+    this.leaderboardRequestId = requestId;
     this.setData({ loading: true, failed: false });
+    const pageSize = this.data.pageSize;
+    const page = Math.max(1, Number(this.data.leaderboardPage) || 1);
+    const offset = (page - 1) * pageSize;
+    const query = String(this.data.query || '').trim();
     try {
       const value = await this.socialService.flowerLeaderboard(
         this.data.flowerKind,
-        this.data.followTour
+        this.data.followTour,
+        { query, limit: pageSize, offset }
       );
+      if (requestId !== this.leaderboardRequestId) return;
       const entries = Array.isArray(value?.payload?.entries) ? value.payload.entries : [];
       const players = entries.map(item => this.data.flowerKind === 'players' ? {
         id: String(item.playerId || '').replace(/^(?:(?:ATP|WTA):)+/iu, ''),
@@ -829,12 +868,16 @@ Page({
         failed: false,
         players,
         visiblePlayers: players,
-        hasMore: false,
+        offset,
+        leaderboardPage: page,
+        leaderboardTotal: Number(value?.payload?.total || entries.length),
+        hasMore: Boolean(value?.payload?.hasMore),
         deliveryState: entries.length ? (value.delivery?.state === 'current' ? 'live' : 'delayed') : '',
         deliveryMessage: entries.length ? '送花榜已更新' : '',
         dataAsOf: value?.dataAsOf || ''
       });
     } catch {
+      if (requestId !== this.leaderboardRequestId) return;
       this.setData({ loading: false, failed: true, players: [], visiblePlayers: [] });
     }
   },
@@ -847,29 +890,36 @@ Page({
   },
 
   async loadFollowLeaderboard(options = {}) {
-    const append = Boolean(options.append);
-    this.setData(append ? { loadingMore: true, failed: false } : { loading: true, failed: false });
+    const requestId = (this.leaderboardRequestId || 0) + 1;
+    this.leaderboardRequestId = requestId;
+    this.setData({ loading: true, failed: false });
     const pageSize = this.data.pageSize;
-    const offset = append ? this.data.offset : 0;
+    const page = Math.max(1, Number(this.data.leaderboardPage) || 1);
+    const offset = (page - 1) * pageSize;
+    const query = String(this.data.query || '').trim();
     try {
       const value = await this.followService.leaderboard({
         tour: this.data.followTour,
         limit: pageSize,
-        offset
+        offset,
+        query
       });
+      if (requestId !== this.leaderboardRequestId) return;
       const players = leaderboardEntries(value);
-      const incomingPlayers = append ? this.data.players.concat(players) : players;
-      const targets = playerFollowTargets(incomingPlayers);
+      const targets = playerFollowTargets(players);
       const cachedStates = this.followService?.cachedStates?.(targets) || new Map();
-      const mergedPlayers = playersWithFollowStates(incomingPlayers, cachedStates);
+      const mergedPlayers = playersWithFollowStates(players, cachedStates);
       const nextOffset = value?.payload?.nextOffset;
       this.setData({
         loading: false,
         loadingMore: false,
-        failed: mergedPlayers.length === 0,
+        failed: false,
         players: mergedPlayers,
+        visiblePlayers: mergedPlayers,
         offset: Number.isSafeInteger(Number(nextOffset)) ? Number(nextOffset)
           : offset + players.length,
+        leaderboardPage: page,
+        leaderboardTotal: Number(value?.payload?.total || 0),
         hasMore: Boolean(value?.payload?.hasMore),
         deliveryState: players.length ? (
           value.delivery?.state === 'current' ? 'live' : 'delayed'
@@ -881,12 +931,13 @@ Page({
         void this.resolvePlayerFollowStates();
       });
     } catch {
+      if (requestId !== this.leaderboardRequestId) return;
       this.setData({
         loading: false,
         loadingMore: false,
         failed: true,
-        players: append ? this.data.players : [],
-        visiblePlayers: append ? this.data.visiblePlayers : [],
+        players: [],
+        visiblePlayers: [],
         deliveryState: '',
         deliveryMessage: '',
         dataAsOf: ''

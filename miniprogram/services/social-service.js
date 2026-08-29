@@ -163,9 +163,19 @@ class SocialService {
     });
   }
 
-  async flowerLeaderboard(kind, scope = 'all') {
+  async flowerLeaderboard(kind, scope = 'all', options = {}) {
     const resource = kind === 'fans' ? 'fans' : 'players';
-    return await this.http.request(`/api/v1/bff/social/leaderboards/flowers/${resource}?scope=${encodeURIComponent(scope)}`, {
+    const query = String(options.query || '').trim().slice(0, 80);
+    const limit = Number.isSafeInteger(Number(options.limit))
+      ? Math.max(1, Math.min(50, Number(options.limit))) : 50;
+    const offset = Number.isSafeInteger(Number(options.offset))
+      ? Math.max(0, Number(options.offset)) : 0;
+    const path = `/api/v1/bff/social/leaderboards/flowers/${resource}`
+      + `?scope=${encodeURIComponent(scope)}`
+      + `&q=${encodeURIComponent(query)}`
+      + `&limit=${encodeURIComponent(String(limit))}`
+      + `&offset=${encodeURIComponent(String(offset))}`;
+    return await this.http.request(path, {
       authMode: 'none'
     });
   }
