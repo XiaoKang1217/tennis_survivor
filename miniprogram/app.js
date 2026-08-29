@@ -9,9 +9,14 @@ const { FollowStore } = require('./services/follow-store');
 const { AccountService } = require('./services/account-service');
 const { SocialService } = require('./services/social-service');
 const { EntryService } = require('./services/entry-service');
+const { readTheme, syncNativeTheme } = require('./core/theme');
 
 App({
   onLaunch() {
+    // Paint the native host window before the first page (including a
+    // subpackage page) is created. Page-level page-meta then inherits the
+    // exact same persisted canvas token on its first render.
+    syncNativeTheme(readTheme());
     const request = options => wxRequest(wx, options);
     const auth = new AuthSession(wx, request);
     const http = new HttpClient(wx, auth);
@@ -27,6 +32,9 @@ App({
   },
 
   onShow() {
+    // WeChat may recreate its host surface while the mini program is in the
+    // background, so restore the persisted native canvas before pages resume.
+    syncNativeTheme(readTheme());
     this.services?.scoreClient.onShow();
   },
 

@@ -35,6 +35,10 @@ test('the three skins are persistent and keep clean blue as the safe default', (
   assert.equal(nativeNavigation.at(-1).frontColor, '#ffffff');
   assert.equal(theme.readTheme(), 'dark');
   assert.equal(theme.writeTheme('unknown'), 'clean-blue');
+  assert.equal(nativeBackgrounds.at(-1).backgroundColor, '#f1f6fd');
+  assert.equal(nativeNavigation.at(-1).backgroundColor, '#f1f6fd');
+  assert.equal(theme.writeTheme('daylight'), 'daylight');
+  assert.equal(nativeBackgrounds.at(-1).backgroundColor, '#f5f0e7');
   assert.deepEqual(theme.THEMES.map(item => item.label), ['简洁蓝白', '黑夜模式', '日光赛场']);
   delete globalThis.getCurrentPages;
 });
@@ -105,10 +109,15 @@ test('every page applies the persisted theme before first-frame page setup', () 
 test('module navigation replaces peer pages without relaunch or native slide', () => {
   const tabbar = read('components/product-tabbar/index.js');
   const navigation = read('core/module-navigation.js');
+  const app = read('app.js');
   assert.match(tabbar, /openModule\(ROUTES\[target\]\)/u);
+  assert.match(navigation, /syncNativeTheme\(readTheme\(\)\);\s*wx\.redirectTo\(\{ url \}\)/u);
   assert.match(navigation, /wx\.redirectTo\(\{ url \}\)/u);
   assert.doesNotMatch(navigation, /wx\.navigateTo|wx\.navigateBack|wx\.reLaunch/u);
   assert.doesNotMatch(tabbar, /wx\.reLaunch/u);
+  assert.match(app, /onLaunch\(\)\s*\{\s*[\s\S]*?syncNativeTheme\(readTheme\(\)\)/u);
+  assert.match(app, /onShow\(\)\s*\{\s*[\s\S]*?syncNativeTheme\(readTheme\(\)\)/u);
+  assert.doesNotMatch(navigation + app, /setTimeout|showLoading|hideLoading|opacity/u);
 });
 
 test('visual truth tokens and svg paths are migrated without the sample portrait', () => {
