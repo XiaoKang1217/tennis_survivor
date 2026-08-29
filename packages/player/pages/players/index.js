@@ -334,6 +334,7 @@ function h2hDateKey(match) {
 
 function h2hResult(value, selected = {}) {
   if (value?.bffContractVersion !== 'player-h2h-bff/1') return null;
+  if (value?.delivery?.state === 'unavailable') return null;
   const payload = value.payload || {};
   const players = Array.isArray(payload.players) ? payload.players : [];
   const first = players[0] || {};
@@ -1101,7 +1102,9 @@ Page({
           h2hLoading: false,
           h2hEmpty: !cachedResult,
           h2hFailed: false,
-          h2hMessage: cachedResult ? '已显示上次交手记录，正在刷新' : '暂无交手记录',
+          h2hMessage: cachedResult ? '已显示上次交手记录，正在刷新'
+            : (cached.payload?.delivery?.state === 'unavailable'
+              ? '交手记录暂不可用' : '暂无交手记录'),
           h2hResult: cachedResult
         });
       }
@@ -1129,11 +1132,12 @@ Page({
         firstName: firstSelection.name,
         secondName: secondSelection.name
       });
+      const unavailable = response.value?.delivery?.state === 'unavailable';
       this.setData({
         h2hLoading: false,
         h2hEmpty: !result,
         h2hFailed: false,
-        h2hMessage: result ? '' : '暂无交手记录',
+        h2hMessage: result ? '' : (unavailable ? '交手记录暂不可用' : '暂无交手记录'),
         h2hResult: result
       });
     } catch (err) {

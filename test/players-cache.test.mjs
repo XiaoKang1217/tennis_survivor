@@ -68,6 +68,23 @@ function h2hProjection() {
   };
 }
 
+function unavailableH2hProjection() {
+  return {
+    bffContractVersion: 'player-h2h-bff/1',
+    projectionVersion: 0,
+    dataAsOf: '2026-08-29T10:10:57.122Z',
+    delivery: { state: 'unavailable', reasonCode: 'pair_not_available' },
+    payload: {
+      authority: 'WTA',
+      players: [{ sourcePlayerId: '62185' }, { sourcePlayerId: '80421' }],
+      aggregate: { player1Wins: 0, player2Wins: 0, matchCount: 0 },
+      summary: { hasMeetings: false },
+      displaySections: [],
+      history: []
+    }
+  };
+}
+
 function loadPageDefinition() {
   const pagePath = require.resolve('../packages/player/pages/players/index');
   delete require.cache[pagePath];
@@ -228,4 +245,26 @@ test('players h2h keeps trusted result visible when refresh fails', async () => 
   assert.equal(context.data.h2hFailed, false);
   assert.equal(context.data.h2hResult.totalMatches, 10);
   assert.equal(context.data.h2hMessage, '刷新暂未成功，已保留上次交手记录');
+});
+
+test('players h2h renders unavailable supplier data as unavailable, never 0-0', async () => {
+  const definition = loadPageDefinition();
+  const context = pageContext(definition, wxRuntime(), {
+    async request() { return unavailableH2hProjection(); }
+  });
+  Object.assign(context.data, {
+    section: 'h2h',
+    authority: 'WTA',
+    h2hPlayer1: 'Camilla Zanolini',
+    h2hPlayer2: 'Weronika Ewald',
+    h2hSelected1: { playerId: '62185', name: 'Camilla Zanolini' },
+    h2hSelected2: { playerId: '80421', name: 'Weronika Ewald' }
+  });
+
+  await definition.searchH2h.call(context);
+
+  assert.equal(context.data.h2hResult, null);
+  assert.equal(context.data.h2hEmpty, true);
+  assert.equal(context.data.h2hFailed, false);
+  assert.equal(context.data.h2hMessage, '交手记录暂不可用');
 });
