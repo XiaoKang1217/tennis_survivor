@@ -55,10 +55,14 @@ test('SOCIAL-D1-R2 social writes have no fixed profile refresh preflight', () =>
   assert.match(follow, /profile_required/u);
 });
 
-test('SOCIAL-D1-R2 detail first frame is neutral and resolves one batch', () => {
+test('SOCIAL-D1-R2 first frame is neutral without exposing internal list status copy', () => {
   const player = read('packages/player/pages/player-detail/index.wxml');
+  const playerList = read('packages/player/pages/players/index.wxml');
   const match = read('pages/match-detail/index.wxml');
   assert.match(player, /关注状态…/u);
+  assert.doesNotMatch(playerList, /状态…/u);
+  assert.match(playerList, /player-follow-placeholder/u);
+  assert.match(read('packages/player/pages/players/index.js'), /followedTargets\(targets\)/u);
   assert.match(match, /关注状态…|状态…/u);
   assert.match(read('pages/match-detail/index.js'), /followedTargets\(targets\)/u);
 });

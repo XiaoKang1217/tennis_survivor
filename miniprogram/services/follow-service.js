@@ -3,6 +3,7 @@
 const { createIdempotencyKey } = require('./http-client');
 
 const FOLLOW_RETRY_DELAYS_MS = Object.freeze([350, 900]);
+const FOLLOW_STATUS_BATCH_SIZE = 32;
 
 function sleep(milliseconds) {
   return new Promise(resolve => setTimeout(resolve, milliseconds));
@@ -166,19 +167,28 @@ class FollowService {
     }
     if (!requested.length) return new Set();
     await this.auth.ensure();
-    const response = await this.http.request('/api/v1/me/follows/status', {
-      method: 'POST',
-      data: { targets: requested },
-      header: { 'content-type': 'application/json' },
-      authRequired: true
-    });
+    const batches = [];
+    for (let offset = 0; offset < requested.length; offset += FOLLOW_STATUS_BATCH_SIZE) {
+      batches.push(requested.slice(offset, offset + FOLLOW_STATUS_BATCH_SIZE));
+    }
+    const responses = await Promise.all(batches.map(batch => this.http.request(
+      '/api/v1/me/follows/status',
+      {
+        method: 'POST',
+        data: { targets: batch },
+        header: { 'content-type': 'application/json' },
+        authRequired: true
+      }
+    )));
     const followed = new Set();
-    for (const state of Array.isArray(response?.states) ? response.states : []) {
-      const kind = String(state?.kind || '').trim();
-      const targetId = String(state?.targetId || '').trim();
-      if (!kind || !targetId) continue;
-      this.store?.set?.(kind, targetId, state.followed === true);
-      if (state.followed === true) followed.add(`${kind}:${targetId}`);
+    for (const response of responses) {
+      for (const state of Array.isArray(response?.states) ? response.states : []) {
+        const kind = String(state?.kind || '').trim();
+        const targetId = String(state?.targetId || '').trim();
+        if (!kind || !targetId) continue;
+        this.store?.set?.(kind, targetId, state.followed === true);
+        if (state.followed === true) followed.add(`${kind}:${targetId}`);
+      }
     }
     return followed;
   }
@@ -200,6 +210,7 @@ class FollowService {
 
 module.exports = Object.freeze({
   FollowService,
+  FOLLOW_STATUS_BATCH_SIZE,
   followingPath,
   leaderboardPath
 });

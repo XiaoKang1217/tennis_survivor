@@ -16,6 +16,8 @@ function profileView(profile = {}) {
 function checkinsView(value = {}) {
   return {
     ...value,
+    dailyCheckinReward: Number(value.dailyCheckinReward) > 0
+      ? Number(value.dailyCheckinReward) : 5,
     recentSevenDays: (value.recentSevenDays || []).map(item => ({
       ...item,
       dayLabel: String(item.date || '').slice(8)
@@ -30,7 +32,7 @@ Page({
     profile: profileView(),
     socialReady: false,
     wallet: { balance: 0, lifetimeEarned: 0, lifetimeSpent: 0 },
-    checkins: { checkedInToday: false, totalDays: 0, currentStreak: 0, recentSevenDays: [] },
+    checkins: { dailyCheckinReward: 5, checkedInToday: false, totalDays: 0, currentStreak: 0, recentSevenDays: [] },
     themeSheetOpen: false,
     themeOptions: THEMES
   },
@@ -83,7 +85,12 @@ Page({
         wallet: { ...this.data.wallet, balance: value.balance ?? this.data.wallet.balance },
         checkins: checkinsView(value.summary || this.data.checkins)
       });
-      wx.showToast({ title: value.alreadyCheckedIn ? '今天已经签过啦' : '签到成功，花朵 +1', icon: 'none' });
+      const reward = Number(value.reward) > 0
+        ? Number(value.reward) : this.data.checkins.dailyCheckinReward;
+      wx.showToast({
+        title: value.alreadyCheckedIn ? '今天已经签过啦' : `签到成功，花朵 +${reward}`,
+        icon: 'none'
+      });
     } catch (error) {
       if (!/profile_gate_cancelled/u.test(String(error?.message || ''))) {
         wx.showToast({ title: '签到暂未完成', icon: 'none' });

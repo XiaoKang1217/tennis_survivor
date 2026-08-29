@@ -153,6 +153,44 @@ test('players ranking keeps trusted list visible when refresh fails', async () =
   assert.equal(context.data.visiblePlayers[0].followCountLabel, '18人关注');
 });
 
+test('players ranking merges the signed-in account follow state in one batch', async () => {
+  const definition = loadPageDefinition();
+  const projection = rankingProjection();
+  const context = pageContext(definition, wxRuntime(), { async request() {} });
+  let states = new Map();
+  const batches = [];
+  context.followService = {
+    cachedStates(targets) {
+      return new Map(targets.map(target => {
+        const key = `${target.kind}:${target.targetId}`;
+        return [key, states.get(key) || 'unknown'];
+      }));
+    },
+    async followedTargets(targets) {
+      batches.push(targets);
+      states = new Map([['player:ATP:1001', 'followed']]);
+      return new Set(['player:ATP:1001']);
+    }
+  };
+
+  definition.applyRankingValue.call(context, projection, {
+    append: false,
+    offset: 0,
+    authority: 'ATP',
+    rankingKind: 'official',
+    useProfileSearch: false,
+    isRace: false,
+    fromCache: false
+  });
+
+  assert.equal(context.data.players[0].followState, 'unknown');
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(batches.length, 1);
+  assert.deepEqual(batches[0], [{ kind: 'player', targetId: 'ATP:1001' }]);
+  assert.equal(context.data.players[0].followed, true);
+  assert.equal(context.data.players[0].followState, 'followed');
+});
+
 test('players h2h keeps trusted result visible when refresh fails', async () => {
   const definition = loadPageDefinition();
   const projection = h2hProjection();

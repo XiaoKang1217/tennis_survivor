@@ -192,7 +192,7 @@
         <text class="leaderboard-rank">{{item.leaderboardPosition || '—'}}</text>
         <view class="leaderboard-photo"><image wx:if="{{item.cardImageUrl}}" class="{{item.tour === 'ATP' ? 'leaderboard-photo-atp' : ''}}" src="{{item.cardImageUrl}}" mode="{{item.tour === 'ATP' ? 'aspectFit' : 'aspectFill'}}" lazy-load="{{true}}"/><ui-icon wx:else name="player" size="25" color="#7d8b99"/></view>
         <view class="leaderboard-copy">
-          <view class="leaderboard-name-row"><view><text class="leaderboard-name">{{item.name}}</text><text wx:if="{{item.originalName}}" class="leaderboard-original">{{item.originalName}}</text></view><view class="player-follow-action {{item.followed ? 'followed' : ''}}" data-id="{{item.followTargetId}}" data-followed="{{!item.followed}}" catchtap="togglePlayerFollow" role="button"><ui-icon name="heart" size="14" color="{{item.followed ? '#fff' : '#1677d2'}}"/><text>{{item.followed ? '已关注' : '关注'}}</text></view></view>
+          <view class="leaderboard-name-row"><view><text class="leaderboard-name">{{item.name}}</text><text wx:if="{{item.originalName}}" class="leaderboard-original">{{item.originalName}}</text></view><view wx:if="{{item.followState !== 'unknown'}}" class="player-follow-action {{item.followed ? 'followed' : ''}}" data-id="{{item.followTargetId}}" data-followed="{{!item.followed}}" catchtap="togglePlayerFollow" role="button"><ui-icon name="heart" size="14" color="{{item.followed ? '#fff' : '#1677d2'}}"/><text>{{item.followed ? '已关注' : '关注'}}</text></view><view wx:else class="player-follow-placeholder"></view></view>
           <view class="leaderboard-meta"><text wx:if="{{item.countryMark}}">{{item.countryMark}} </text><text>{{item.countryCode || '国家/地区暂缺'}}</text><text>{{item.ageLabel}}</text><text>{{item.rankingLabel}}</text></view>
           <text class="leaderboard-follow-count">{{item.followCountLabel}}</text>
         </view>
@@ -229,7 +229,7 @@
         <ui-icon name="player" size="22" color="#7d8b99"/>
       </view>
       <view class="player-main">
-        <view class="player-name-row"><text class="player-name">{{item.name}}</text><view class="player-follow-action {{item.followed ? 'followed' : ''}}" data-id="{{item.followTargetId}}" data-followed="{{!item.followed}}" catchtap="togglePlayerFollow" role="button"><ui-icon name="heart" size="14" color="{{item.followed ? '#fff' : '#1677d2'}}"/><text>{{item.followed ? '已关注' : '关注'}}</text></view></view>
+        <view class="player-name-row"><text class="player-name">{{item.name}}</text><view wx:if="{{item.followState !== 'unknown'}}" class="player-follow-action {{item.followed ? 'followed' : ''}}" data-id="{{item.followTargetId}}" data-followed="{{!item.followed}}" catchtap="togglePlayerFollow" role="button"><ui-icon name="heart" size="14" color="{{item.followed ? '#fff' : '#1677d2'}}"/><text>{{item.followed ? '已关注' : '关注'}}</text></view><view wx:else class="player-follow-placeholder"></view></view>
         <text wx:if="{{item.originalName}}" class="player-original">{{item.originalName}}</text>
         <text class="player-meta">
           <text wx:if="{{item.countryMark}}">{{item.countryMark}} </text>{{item.countryCode || '国家/地区暂缺'}} · {{item.followCountLabel}}<text wx:if="{{item.extraMeta}}"> · {{item.extraMeta}}</text>

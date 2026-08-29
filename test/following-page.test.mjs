@@ -107,6 +107,8 @@ test('following page exposes two tabs and server-filtered 10-item pagination', (
   assert.match(markup, /bindtap="previousPage"/);
   assert.match(markup, /bindtap="nextPage"/);
   assert.match(markup, /每页 10 条/);
+  assert.match(markup, /wx:if="\{\{count\}\}" class="follow-pagination"/);
+  assert.doesNotMatch(markup, /已加载全部关注/);
   assert.match(script, /API_PAGE_SIZE = 10/);
   assert.match(script, /status: selectedStatus/u);
   assert.match(script, /date: selectedDate/u);
@@ -141,6 +143,24 @@ test('detail pages resolve current account follow state in one bounded batch req
   assert.equal(requests[0].options.data.targets.length, 2);
   assert.match(read('packages/player/pages/player-detail/index.wxml'), /followState === 'unknown' \? '关注状态…'/u);
   assert.match(read('pages/match-detail/index.js'), /refreshViewerFollowStates/u);
+});
+
+test('follow status requests respect the backend 32-target limit', async () => {
+  const requests = [];
+  const service = new FollowService({}, { async ensure() {} }, {
+    async request(path, options) {
+      requests.push({ path, options });
+      return {
+        states: options.data.targets.map(target => ({ ...target, followed: target.targetId === 'ATP:1' }))
+      };
+    }
+  });
+  const targets = Array.from({ length: 50 }, (_, index) => ({
+    kind: 'player', targetId: `ATP:${index + 1}`
+  }));
+  const followed = await service.followedTargets(targets);
+  assert.deepEqual(requests.map(request => request.options.data.targets.length), [32, 18]);
+  assert.equal(followed.has('player:ATP:1'), true);
 });
 
 test('scores followed filter merges the current account follow list', () => {

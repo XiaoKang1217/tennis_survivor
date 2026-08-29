@@ -42,12 +42,11 @@
           <match-card wx:else match="{{entry.match}}" theme="{{uiTheme}}" bind:open="openMatch" bind:follow="toggleFollow"/>
         </block>
       </view>
-      <view wx:if="{{selectedKind === 'match' && count}}" class="follow-pagination">
+      <view wx:if="{{count}}" class="follow-pagination">
         <view class="{{canPrev ? '' : 'disabled'}}" bindtap="previousPage" role="button">上一页</view>
         <text>第 {{pageNumber}} / {{pageCount}} 页 · 每页 10 条</text>
         <view class="{{canNext ? '' : 'disabled'}}" bindtap="nextPage" role="button">下一页</view>
       </view>
-      <view wx:elif="{{selectedKind === 'player'}}" class="follow-load-more">已加载全部关注</view>
     </view>
     </block>
   <product-tabbar active="following" theme="{{uiTheme}}"/>

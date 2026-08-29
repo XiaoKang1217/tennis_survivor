@@ -155,6 +155,29 @@ function followCountText(value) {
   return `${followCountValue(value)}人关注`;
 }
 
+function playerFollowTargets(players = []) {
+  const seen = new Set();
+  return players.reduce((targets, player) => {
+    const targetId = String(player?.followTargetId || '').trim();
+    if (!targetId || seen.has(targetId)) return targets;
+    seen.add(targetId);
+    targets.push({ kind: 'player', targetId });
+    return targets;
+  }, []);
+}
+
+function playersWithFollowStates(players = [], states = new Map()) {
+  return players.map(player => {
+    const targetId = String(player?.followTargetId || '').trim();
+    const state = states.get(`player:${targetId}`) || 'unknown';
+    return Object.freeze({
+      ...player,
+      followed: state === 'followed',
+      followState: state
+    });
+  });
+}
+
 function rankingText(value) {
   const number = Number(value);
   return Number.isFinite(number) && number > 0 ? `世界排名 ${number}` : '暂无排名';
@@ -185,8 +208,9 @@ function profileEntries(value, authority, rankingKind = 'official') {
       movementTone: movement.tone,
       portraitUrl: portrait(entry.portrait, '96', '', authority),
       heroImageUrl: portrait(entry.heroImage, '720', '', authority) || portrait(entry.portrait, '720', '', authority),
-      followTargetId: entry.viewerFollowState?.player?.targetId || `${authority}:${entry.playerId}`,
-      followed: entry.viewerFollowState?.player?.followed === true,
+      followTargetId: `${authority}:${entry.playerId}`,
+      followed: false,
+      followState: 'unknown',
       followCount: followCountValue(entry.followCount),
       followCountLabel: followCountText(entry.followCount),
       tour: authority,
@@ -217,8 +241,9 @@ function officialEntries(value, authority) {
       movementText: movement.text,
       movementTone: movement.tone,
       portraitUrl: portrait(entry.portraitUrl || entry.portrait, '96', '', authority),
-      followTargetId: entry.viewerFollowState?.player?.targetId || `${authority}:${entry.playerId}`,
-      followed: entry.viewerFollowState?.player?.followed === true,
+      followTargetId: `${authority}:${entry.playerId}`,
+      followed: false,
+      followState: 'unknown',
       followCount: followCountValue(entry.followCount),
       followCountLabel: followCountText(entry.followCount),
       tour: authority,
@@ -253,9 +278,9 @@ function raceEntries(value, authority) {
       movementText: movement.text,
       movementTone: movement.tone,
       portraitUrl: portrait(member?.portraitUrl || member?.portrait, '96', '', authority),
-      followTargetId: entry.viewerFollowState?.player?.targetId
-        || (member?.playerId ? `${authority}:${member.playerId}` : ''),
-      followed: entry.viewerFollowState?.player?.followed === true,
+      followTargetId: member?.playerId ? `${authority}:${member.playerId}` : '',
+      followed: false,
+      followState: 'unknown',
       followCount: followCountValue(entry.followCount ?? member?.followCount),
       followCountLabel: followCountText(entry.followCount ?? member?.followCount),
       tour: authority,
@@ -292,10 +317,10 @@ function leaderboardEntries(value) {
       portraitUrl: portrait(entry.portrait, '96', '', authority),
       heroImageUrl: portrait(entry.heroImage, '720', '', authority) || portrait(entry.portrait, '720', '', authority),
       cardImageUrl,
-      followTargetId: entry.viewerFollowState?.player?.targetId
-        || entry.targetId
+      followTargetId: entry.targetId
         || `${entry.authority}:${entry.playerId}`,
-      followed: entry.viewerFollowState?.player?.followed === true,
+      followed: false,
+      followState: 'unknown',
       tour: entry.authority || '',
       source: followCountText(entry.followCount),
       profileAvailable: true
@@ -445,12 +470,17 @@ Page({
     this.socialService = getApp().services.social;
     this.h2hSearchTimers = {};
     this.h2hSearchSeq = {};
+    this.playerFollowStateRequestId = 0;
+    this.playerFollowStateSignature = '';
     this.setData({ topInset: info.statusBarHeight || 44 });
     void this.load();
   },
   onShow() {
     syncPageTheme(this);
     enablePageShare();
+    if (this.followService && this.data.players.length) {
+      void this.resolvePlayerFollowStates({ force: true });
+    }
   },
 
   onShareAppMessage() {
@@ -732,7 +762,10 @@ Page({
     const nextOffset = useProfileSearch
       ? value?.payload?.nextOffset
       : isRace ? null : value?.payload?.snapshot?.nextOffset;
-    const mergedPlayers = append ? this.data.players.concat(players) : players;
+    const incomingPlayers = append ? this.data.players.concat(players) : players;
+    const targets = playerFollowTargets(incomingPlayers);
+    const cachedStates = this.followService?.cachedStates?.(targets) || new Map();
+    const mergedPlayers = playersWithFollowStates(incomingPlayers, cachedStates);
     const dataAsOf = value?.dataAsOf || value?.delivery?.dataAsOf || '';
     this.setData({
       loading: false,
@@ -755,6 +788,7 @@ Page({
       visiblePlayers: useProfileSearch ? mergedPlayers : this.data.visiblePlayers
     }, () => {
       if (!useProfileSearch) this.filter();
+      void this.resolvePlayerFollowStates();
     });
   },
 
@@ -823,7 +857,10 @@ Page({
         offset
       });
       const players = leaderboardEntries(value);
-      const mergedPlayers = append ? this.data.players.concat(players) : players;
+      const incomingPlayers = append ? this.data.players.concat(players) : players;
+      const targets = playerFollowTargets(incomingPlayers);
+      const cachedStates = this.followService?.cachedStates?.(targets) || new Map();
+      const mergedPlayers = playersWithFollowStates(incomingPlayers, cachedStates);
       const nextOffset = value?.payload?.nextOffset;
       this.setData({
         loading: false,
@@ -838,7 +875,10 @@ Page({
         ) : '',
         deliveryMessage: players.length ? '关注榜已更新' : '',
         dataAsOf: value?.dataAsOf || ''
-      }, () => this.filter());
+      }, () => {
+        this.filter();
+        void this.resolvePlayerFollowStates();
+      });
     } catch {
       this.setData({
         loading: false,
@@ -1142,11 +1182,38 @@ Page({
     });
   },
 
+  async resolvePlayerFollowStates(options = {}) {
+    if (!this.followService?.followedTargets) return;
+    const targets = playerFollowTargets(this.data.players);
+    if (!targets.length) return;
+    const signature = targets.map(target => target.targetId).sort().join('|');
+    if (!options.force && signature === this.playerFollowStateSignature) return;
+    this.playerFollowStateSignature = signature;
+    const requestId = Number(this.playerFollowStateRequestId || 0) + 1;
+    this.playerFollowStateRequestId = requestId;
+    const applyStates = states => {
+      const players = playersWithFollowStates(this.data.players, states);
+      const visiblePlayers = playersWithFollowStates(this.data.visiblePlayers, states);
+      this.setData({ players, visiblePlayers });
+    };
+    applyStates(this.followService.cachedStates?.(targets) || new Map());
+    try {
+      await this.followService.followedTargets(targets);
+      const currentSignature = playerFollowTargets(this.data.players)
+        .map(target => target.targetId).sort().join('|');
+      if (requestId !== this.playerFollowStateRequestId || signature !== currentSignature) return;
+      applyStates(this.followService.cachedStates?.(targets) || new Map());
+    } catch {
+      if (requestId === this.playerFollowStateRequestId) this.playerFollowStateSignature = '';
+    }
+  },
+
   async togglePlayerFollow(event) {
     const targetId = String(event.currentTarget.dataset.id || '').trim();
     const next = event.currentTarget.dataset.followed === true
       || event.currentTarget.dataset.followed === 'true';
-    if (!targetId) return;
+    const current = this.data.players.find(player => player.followTargetId === targetId);
+    if (!targetId || current?.followState === 'unknown') return;
     const update = (list, overrideCount = null) => list.map(player => {
       if (player.followTargetId !== targetId) return player;
       const nextCount = overrideCount === null
@@ -1155,6 +1222,7 @@ Page({
       return {
         ...player,
         followed: next,
+        followState: next ? 'followed' : 'not_followed',
         followCount: nextCount,
         followCountLabel: followCountText(nextCount),
         source: followCountText(nextCount)

@@ -35,7 +35,7 @@ Page({
   data: {
     ...buildThemeData(), topInset: 44, loading: true, failed: false,
     month: monthNow(), weekLabels: ['日','一','二','三','四','五','六'],
-    calendarCells: [], wallet: {}, checkins: {}, ledger: [], badges: []
+    calendarCells: [], wallet: {}, checkins: { dailyCheckinReward: 5 }, ledger: [], badges: []
   },
   onLoad() {
     syncPageTheme(this);
@@ -88,7 +88,12 @@ Page({
   async checkin() {
     try {
       const value = await getApp().services.social.checkin();
-      wx.showToast({ title: value.alreadyCheckedIn ? '今天已经签过啦' : '签到成功，花朵 +1', icon: 'none' });
+      const reward = Number(value.reward) > 0
+        ? Number(value.reward) : Number(this.data.checkins.dailyCheckinReward) || 5;
+      wx.showToast({
+        title: value.alreadyCheckedIn ? '今天已经签过啦' : `签到成功，花朵 +${reward}`,
+        icon: 'none'
+      });
       if (value.alreadyCheckedIn) return;
       const ledgerEntry = value.ledgerEntry
         ? { ...value.ledgerEntry, dateLabel: value.ledgerEntry.occurredDate || '' }
@@ -97,7 +102,7 @@ Page({
         wallet: {
           ...this.data.wallet,
           balance: value.balance,
-          lifetimeEarned: Number(this.data.wallet.lifetimeEarned || 0) + 1
+          lifetimeEarned: Number(this.data.wallet.lifetimeEarned || 0) + reward
         },
         checkins: value.summary || this.data.checkins,
         ledger: ledgerEntry

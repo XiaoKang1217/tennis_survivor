@@ -85,4 +85,10 @@
 .theme-dark .profile-tabs>view.active,
 .theme-dark .technical-cell{background:var(--surface)}
 .theme-dark .profile-share-button{background:var(--surface);border-color:var(--line-strong);color:var(--brand-strong)}
+
+/* Keep native buttons inside the gift sheet under large fonts and landscape viewports. */
+.gift-dialog{max-width:100%;overflow:hidden}
+.gift-dialog input{width:100%;min-width:0;box-sizing:border-box}
+.gift-actions{width:100%;min-width:0;grid-template-columns:repeat(2,minmax(0,1fr));box-sizing:border-box}
+.gift-actions button{width:100%;min-width:0;margin:0;padding:0 12rpx;overflow:hidden;line-height:1.2;box-sizing:border-box}
 .player-name-line{align-items:baseline;gap:3rpx}.player-name-line .player-name{flex:none}.flower-total{padding:0;border:0;background:transparent}
