@@ -93,7 +93,15 @@
 .card-foot{margin-top:18rpx;padding-top:15rpx;display:flex;justify-content:space-between;border-top:1rpx solid var(--line);color:var(--ink-subtle);font-size:22rpx}
 .preview-list{margin-top:18rpx;padding-top:10rpx;display:grid;grid-template-columns:1fr 1fr;gap:8rpx 14rpx;border-top:1rpx solid var(--line)}
 .preview-row{min-width:0;display:flex;align-items:center;gap:8rpx;padding:6rpx 0}.preview-avatar{width:40rpx;height:40rpx;flex:none;border-radius:50%;background:var(--brand-soft)}.preview-avatar.fallback{display:flex;align-items:center;justify-content:center;color:var(--brand-strong);font-size:17rpx}.preview-name{min-width:0;flex:1;overflow:hidden;color:var(--ink);font-size:20rpx;white-space:nowrap;text-overflow:ellipsis}.status{flex:none;padding:3rpx 7rpx;border-radius:8rpx;background:var(--brand-soft);color:var(--brand-strong);font-size:17rpx}.status-caution{background:var(--surface-muted);color:var(--ink-subtle)}
-.player-events{grid-column:1/-1;width:100%;margin-top:2rpx;padding-top:8rpx;border-top:1rpx solid var(--line)}.player-event{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:8rpx;padding:8rpx 0;color:var(--ink-subtle);font-size:20rpx}.event-name{overflow:hidden;color:var(--ink);white-space:nowrap;text-overflow:ellipsis}.event-meta{white-space:nowrap}
+.player-events{grid-column:1/-1;width:100%;margin-top:4rpx;padding-top:8rpx;border-top:1rpx solid var(--line)}
+.player-event{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12rpx;padding:10rpx 0;color:var(--ink-subtle)}
+.player-event+.player-event{border-top:1rpx solid var(--line)}
+.event-copy{min-width:0;display:flex;flex-direction:column;gap:4rpx}
+.event-name{overflow:hidden;color:var(--ink);font-size:21rpx;line-height:1.35;white-space:nowrap;text-overflow:ellipsis}
+.player-event.next .event-name{color:var(--brand-strong)}
+.event-meta{overflow:hidden;color:var(--ink-subtle);font-size:19rpx;line-height:1.4;white-space:nowrap;text-overflow:ellipsis}
+.event-chevron{color:var(--ink-subtle);font-size:24rpx}
+.player-no-events{grid-column:2/-1;color:var(--ink-subtle);font-size:20rpx}
 .player-avatar{width:84rpx;height:84rpx;flex:none;border-radius:50%;background:var(--brand-soft)}
 .player-avatar.fallback{display:flex;align-items:center;justify-content:center;color:var(--brand-strong);font-size:30rpx;font-weight:700}
 .next-line{overflow:hidden;color:var(--brand-strong);font-size:21rpx;white-space:nowrap;text-overflow:ellipsis}.next-line.muted{color:var(--ink-subtle)}

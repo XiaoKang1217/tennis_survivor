@@ -65,7 +65,11 @@ test('participation page renders trusted tournaments and players with stable lin
     return { delivery: { state: 'current' }, payload: {
       dataAsOf: '2026-08-28T02:00:00Z', quality: { identityCoverage: 0.987 },
       tournaments: [{ tour: 'ATP', weekStart: '2026-08-24', competitionLevel: 'grand_slam', tournamentId: 'ATP:USO:2026', tournamentName: '美网', surface: 'Hard', startsOn: '2026-08-24', endsOn: '2026-09-06', entryCount: 3 }],
-      players: [{ playerId: 'ATP:S0AG', playerName: '扬尼克·辛纳', nextAppearance: { tournamentId: 'ATP:USO:2026', tournamentName: '美网', startsOn: '2026-08-24', endsOn: '2026-09-06', surface: 'Hard', status: 'main_draw' }, previewEntries: [] }]
+      players: [{ playerId: 'ATP:S0AG', playerName: '扬尼克·辛纳', nextAppearance: { tournamentId: 'ATP:USO:2026', tournamentName: '美网', startsOn: '2026-08-24', endsOn: '2026-09-06', surface: 'Hard', status: 'main_draw', entryListScope: 'main_draw' }, appearances: [
+        { tournamentId: 'ATP:USO:2026', tournamentName: '美网', startsOn: '2026-08-24', endsOn: '2026-09-06', surface: 'Hard', status: 'main_draw', entryListScope: 'main_draw' },
+        { tournamentId: 'ATP:BEIJING:2026', tournamentName: '中国网球公开赛', startsOn: '2026-09-28', endsOn: '2026-10-04', surface: 'Hard', status: 'entered', entryListScope: 'main_draw' },
+        { tournamentId: 'ATP:SHANGHAI:2026', tournamentName: '上海大师赛', startsOn: '2026-10-05', endsOn: '2026-10-11', surface: 'Hard', status: 'qualifying', entryListScope: 'qualifying' }
+      ], previewEntries: [] }]
     } };
   } } } });
   try {
@@ -87,6 +91,14 @@ test('participation page renders trusted tournaments and players with stable lin
     );
     assert.equal(page.data.tournaments[0].entries[0].statusLabel, '正赛');
     assert.equal(page.data.players[0].nextAppearance.dateRange, '2026-08-24 至 2026-09-06');
+    assert.equal(page.data.players[0].displayAppearances.length, 3);
+    assert.equal(page.data.players[0].displayAppearances[0].appearanceTitle, '下一站：美网');
+    assert.equal(page.data.players[0].displayAppearances[0].appearanceMeta,
+      '2026-08-24 至 2026-09-06 · 硬地 · 正赛');
+    assert.equal(page.data.players[0].displayAppearances[1].appearanceMeta,
+      '2026-09-28 至 2026-10-04 · 硬地 · 正赛');
+    assert.equal(page.data.players[0].displayAppearances[2].appearanceMeta,
+      '2026-10-05 至 2026-10-11 · 硬地 · 资格赛');
     definition.openPlayer.call(page, { currentTarget: { dataset: { id: 'ATP:S0AG' } } });
     assert.equal(navigated, '/packages/player/pages/player-detail/index?playerId=ATP%3AS0AG');
     definition.openTournament.call(page, { currentTarget: { dataset: { id: 'ATP:USO:2026' } } });

@@ -39,6 +39,44 @@ function entryView(entry = {}) {
     surfaceLabel: surfaceLabel(entry.surface)
   };
 }
+function appearanceTypeLabel(entry = {}) {
+  const status = String(entry.status || entry.entryStatus || '').toLowerCase();
+  const scope = String(entry.entryListScope || entry.drawStage || '').toLowerCase();
+  if (status === ['with', 'drawn'].join('')) return '已退出';
+  if (status === 'alternate') return '替补';
+  if (scope === 'qualifying' || status === 'qualifying') return '资格赛';
+  if (scope === 'main_draw' || status === 'main_draw' || status === 'entered') return '正赛';
+  return statusLabel(status);
+}
+function appearanceKey(entry = {}) {
+  return [entry.tournamentId, entry.startsOn || entry.weekStart, entry.status,
+    entry.entryListScope || entry.drawStage].map(value => String(value || '')).join('|');
+}
+function playerAppearances(item = {}) {
+  const next = item.nextAppearance ? entryView(item.nextAppearance) : null;
+  const entries = Array.isArray(item.appearances) && item.appearances.length
+    ? item.appearances.map(entryView)
+    : (item.previewEntries || []).map(entryView);
+  const nextKey = appearanceKey(next || {});
+  const ordered = next
+    ? [next, ...entries.filter(entry => appearanceKey(entry) !== nextKey)]
+    : entries;
+  const seen = new Set();
+  return ordered.filter(entry => {
+    const key = appearanceKey(entry);
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }).map((entry, index) => ({
+    ...entry,
+    appearanceKey: appearanceKey(entry),
+    isNext: index === 0 && Boolean(next),
+    appearanceTitle: index === 0 && next
+      ? `下一站：${entry.tournamentName}` : String(entry.tournamentName || '赛事待确认'),
+    appearanceMeta: [entry.dateRange, entry.surfaceLabel, appearanceTypeLabel(entry)]
+      .filter(Boolean).join(' · ')
+  }));
+}
 function rankedEntries(entries = []) {
   return entries.map(entryView).sort((first, second) =>
     rankValue(first.worldRanking) - rankValue(second.worldRanking)
@@ -63,7 +101,8 @@ function playerView(item = {}) {
     ...item,
     portraitUrl: playerPortraitUrl(item, { authority: item.tour, size: '240' }),
     nextAppearance: item.nextAppearance ? entryView(item.nextAppearance) : null,
-    previewEntries: (item.previewEntries || []).map(entryView)
+    previewEntries: (item.previewEntries || []).map(entryView),
+    displayAppearances: playerAppearances(item)
   };
 }
 function normalizedSearch(value) {

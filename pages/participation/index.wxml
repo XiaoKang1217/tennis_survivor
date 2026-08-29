@@ -35,10 +35,11 @@
   <view class="entry-list" wx:elif="{{activeView === 'players' && visiblePlayers.length}}">
     <view wx:for="{{visiblePlayers}}" wx:key="playerId" class="entry-card player-card" data-id="{{item.playerId}}" bindtap="openPlayer">
       <image wx:if="{{item.portraitUrl}}" class="player-avatar" src="{{item.portraitUrl}}" mode="aspectFill"/><view wx:else class="player-avatar fallback">球</view>
-      <view class="card-copy"><view class="player-title-line"><text class="card-title">{{item.playerName}}</text><text class="world-rank">{{item.worldRanking ? '世界第 ' + item.worldRanking : '暂无排名'}}</text></view><text wx:if="{{item.originalPlayerName}}" class="original-name">{{item.originalPlayerName}}</text><text class="card-subtitle">{{item.countryCode}} · {{item.tour}} · {{item.entryCount}}项</text><text class="next-line" wx:if="{{item.nextAppearance}}">下一站 {{item.nextAppearance.tournamentName}}</text><text class="date-line" wx:if="{{item.nextAppearance}}">{{item.nextAppearance.dateRange}} · {{item.nextAppearance.surfaceLabel}} · {{item.nextAppearance.statusLabel}}</text><text class="next-line muted" wx:else>近期暂无明确安排</text></view><text class="chevron">›</text>
-      <view class="player-events" wx:if="{{item.previewEntries.length}}">
-        <view wx:for="{{item.previewEntries}}" wx:for-item="entry" wx:key="tournamentId" class="player-event" data-id="{{entry.tournamentId}}" catchtap="openTournament"><text class="event-name">{{entry.tournamentName}}</text><text class="event-meta">{{entry.dateRange}} · {{entry.statusLabel}}</text><text>›</text></view>
+      <view class="card-copy"><view class="player-title-line"><text class="card-title">{{item.playerName}}</text><text class="world-rank">{{item.worldRanking ? '世界第 ' + item.worldRanking : '暂无排名'}}</text></view><text wx:if="{{item.originalPlayerName}}" class="original-name">{{item.originalPlayerName}}</text><text class="card-subtitle">{{item.countryCode}} · {{item.tour}} · {{item.entryCount}}项</text></view><text class="chevron">›</text>
+      <view class="player-events" wx:if="{{item.displayAppearances.length}}">
+        <view wx:for="{{item.displayAppearances}}" wx:for-item="entry" wx:key="appearanceKey" class="player-event {{entry.isNext ? 'next' : ''}}" data-id="{{entry.tournamentId}}" catchtap="openTournament"><view class="event-copy"><text class="event-name">{{entry.appearanceTitle}}</text><text class="event-meta">{{entry.appearanceMeta}}</text></view><text class="event-chevron">›</text></view>
       </view>
+      <text class="player-no-events" wx:else>近期暂无明确安排</text>
     </view>
   </view>
   <view class="page-state" wx:elif="{{activeView === 'tournaments' && weekTabs.length}}"><client-state state="empty" label="{{searchQuery ? '没有匹配赛事' : '本周暂无可公开赛事'}}" message="{{searchQuery ? '换个关键词试试' : '该周来源已发布，暂无通过公开质量门的赛事'}}"/></view>
