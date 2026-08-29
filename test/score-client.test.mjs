@@ -386,6 +386,25 @@ test('viewer follow state remains isolated between independent account stores', 
   assert.equal(accountB.projection.payload.matches[0].viewerFollowState.match.followed, false);
 });
 
+test('schedule and match detail subscribers receive the same authoritative follow count', () => {
+  const store = new ScoreStore();
+  let scheduleCount = null;
+  let detailCount = null;
+  store.subscribe(value => {
+    scheduleCount = value?.payload.matches[0]?.followCount ?? null;
+  });
+  store.subscribe(value => {
+    detailCount = value?.payload.matches[0]?.followCount ?? null;
+  });
+  store.snapshot(todayProjection(1, presentation({ followCount: 1 })));
+  const matchId = store.projection.payload.matches[0].matchId;
+
+  store.updateSocial(matchId, { followCount: 2, followed: true });
+
+  assert.equal(scheduleCount, 2);
+  assert.equal(detailCount, 2);
+});
+
 test('older calibration snapshot cannot overwrite a newer per-match SSE version', () => {
   const store = new ScoreStore();
   store.snapshot(todayProjection(1));
