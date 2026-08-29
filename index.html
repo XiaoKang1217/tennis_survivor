@@ -181,6 +181,62 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 .pick-stat-more{margin-top:9px;border:2px solid #fde68a;background:#fffaf0;color:#9a7a40;border-radius:18px;padding:5px 14px;font-size:12px;font-weight:800;cursor:pointer}
 .pick-stat-more:hover{border-color:#f97316;color:#f97316}
 .sc:not(.pick-stats-expanded) .pick-stat-extra{display:none}
+.lw-mini-layout{display:grid;grid-template-columns:minmax(0,1fr) 154px;gap:12px;align-items:start;margin-bottom:14px}
+.lw-mini-layout>.sc{margin-bottom:0;min-width:0}
+.lw-mini-stage{position:relative;min-height:112px;padding-right:320px;margin-bottom:8px}
+.lw-mini-stage>.lw-mini-card{position:absolute;right:0;top:0}
+.lw-mini-main{min-width:0}
+.lw-mini-card{box-sizing:border-box;width:154px;min-width:154px;border:1px solid #fde68a;border-radius:10px;background:#fffdf8;box-shadow:0 2px 10px rgba(245,158,11,.1);padding:9px;color:#78450a}
+.lw-mini-card img{display:block;width:128px;height:128px;margin:0 auto 7px;border-radius:8px;border:1px solid #fef3c7;object-fit:cover;background:#fff}
+.lw-mini-card p{margin:0;font-size:11px;line-height:1.45;font-weight:650;color:#7a572b;text-align:left;overflow-wrap:anywhere}
+.lw-mini-card strong{display:block;margin-bottom:2px;color:#d97706;font-size:12px;font-weight:900}
+.lw-mini-card--side{width:304px;min-width:304px;display:grid;grid-template-columns:92px minmax(0,1fr);gap:9px;align-items:center;padding:8px;min-height:108px}
+.lw-mini-card--side img{width:92px;height:92px;margin:0}
+.lw-mini-card--side p{font-size:10px;line-height:1.32}
+.lw-mini-card--compact{width:300px;min-width:300px;grid-template-columns:84px minmax(0,1fr);min-height:100px}
+.lw-mini-card--compact img{width:84px;height:84px}
+.lw-mini-card--compact p{font-size:9.5px;line-height:1.28}
+.lw-mini-card--vertical-wide{width:304px;min-width:304px;display:block;padding:10px}
+.lw-mini-card--vertical-wide img{width:128px;height:128px;margin:0 auto 8px}
+.lw-mini-card--vertical-wide p{font-size:11px;line-height:1.42}
+.lw-mini-card--preference{width:390px;min-width:390px;height:100%;display:block;padding:9px}
+.lw-mini-card--preference img{width:104px;height:104px;margin:0 auto 7px}
+.lw-mini-card--preference p{font-size:11px;line-height:1.36}
+.lw-mini-card--jinx{width:258px;min-width:258px;display:block;padding:10px}
+.lw-mini-card--jinx img{width:142px;height:142px;margin:0 auto 8px}
+.lw-mini-card--jinx p{font-size:11px;line-height:1.42}
+.lw-mini-card--floating{position:absolute;right:20px;top:8px;z-index:2}
+.lw-mini-layout--live+.divider{margin-top:0}
+#p-fortune,#p-jinx{position:relative}
+.lw-mini-stage--preference{height:176px;min-height:176px;padding-right:430px}
+.bd-top-main .bd-stat-row{margin-bottom:8px}
+@media(min-width:1361px){
+  #p-jinx .jinx-wrap{max-width:min(900px,calc(100% - 612px))}
+}
+@media(max-width:1360px){
+  #p-jinx .lw-mini-card--floating{position:static;margin:12px auto 0}
+}
+@media(max-width:1180px){
+  .lw-mini-stage{padding-right:0}
+  .lw-mini-stage>.lw-mini-card,.lw-mini-card--floating{position:static;margin:10px 0 0 auto}
+  #p-fortune .lw-mini-card--floating,#p-jinx .lw-mini-card--floating{margin:12px auto 0}
+}
+@media(max-width:900px){
+  .lw-mini-layout{grid-template-columns:1fr}
+  .lw-mini-card--side,.lw-mini-card--compact,
+  .lw-mini-card{width:100%;min-width:0;display:grid;grid-template-columns:88px minmax(0,1fr);gap:9px;align-items:center}
+  .lw-mini-card--side img,.lw-mini-card--compact img,.lw-mini-card img{width:88px;height:88px;margin:0}
+  .lw-mini-card--side p,.lw-mini-card--compact p,.lw-mini-card p{font-size:11px;line-height:1.5}
+  .lw-mini-card--vertical-wide{display:block;max-width:304px;margin-left:auto;margin-right:auto}
+  .lw-mini-card--vertical-wide img{width:118px;height:118px;margin:0 auto 8px}
+  .lw-mini-card--vertical-wide p{font-size:11px;line-height:1.45}
+  .lw-mini-card--preference{display:block;width:100%;max-width:390px;height:auto;margin-left:auto;margin-right:auto}
+  .lw-mini-card--preference img{width:118px;height:118px;margin:0 auto 8px}
+  .lw-mini-card--preference p{font-size:11px;line-height:1.45}
+  .lw-mini-card--jinx{display:block;width:100%;max-width:258px;margin-left:auto;margin-right:auto}
+  .lw-mini-card--jinx img{width:128px;height:128px;margin:0 auto 8px}
+  .lw-mini-card--jinx p{font-size:11px;line-height:1.45}
+}
 .divider{border:none;border-top:2px dashed #fde68a;margin:14px 0}
 .tp{max-width:200px;font-size:12px;color:#78450a;line-height:1.5}
 .tw{font-weight:700;color:#44321c;max-width:150px}
@@ -985,8 +1041,8 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 <div id="p-ms-t" class="panel"><div class="sheet-tabs" aria-label="历史上的惨案 ATP/WTA 切换"><button class="sheet-tab on" onclick="switchTab('ms-t',this)">ATP 男单</button><button class="sheet-tab" onclick="switchTab('ws-t',this)">WTA 女单</button></div><div id="content-ms-t"></div></div>
 <div id="p-ws-t" class="panel"><div class="sheet-tabs" aria-label="历史上的惨案 ATP/WTA 切换"><button class="sheet-tab" onclick="switchTab('ms-t',this)">ATP 男单</button><button class="sheet-tab on" onclick="switchTab('ws-t',this)">WTA 女单</button></div><div id="content-ws-t"></div></div>
 <div id="p-flight" class="panel"><div class="flight-toolbar"><div style="font-size:15px;font-weight:800;color:#d97706">✈️ 每日航班</div><select class="select-mini" id="flight-year" onchange="initFlightSelect(true)"><option selected>2026</option><option>2025</option><option>2024</option></select><select class="select-mini" id="flight-select" onchange="renderFlights(true)"></select></div><div id="flight-box" class="flight-grid"></div></div>
-<div id="p-fortune" class="panel"><div class="fortune-wrap"><div class="fortune-title">🔮 今日运势抽签</div><div class="fortune-sub">每天选球员愁破头？让神明帮你做选择！</div><div class="fortune-tabs"><button class="ftab on" onclick="setFortune('atp',this)">⚡ ATP 男单</button><button class="ftab" onclick="setFortune('wta',this)">🌸 WTA 女单</button></div><div class="fortune-card" id="fortune-card"><div class="fortune-hint">✨ 今日可选球员已入签筒 ✨</div><div class="fortune-player" id="fortune-player">？？？</div><div class="fattr" id="fortune-attr">未摇签</div><div class="fortune-text" id="fortune-text">点击下方按钮，开始今日运势抽签</div><div class="fortune-yi" id="fortune-yi"></div></div><br><button class="fortune-btn" onclick="drawFortune()">🎋 摇签</button><br><br><div class="fortune-hint">签文仅供娱乐，后果自负 😄</div></div></div></div>
-<div id="p-jinx" class="panel"><div class="jinx-wrap"><div class="jinx-title">🥛 每日毒奶</div><div class="jinx-sub">今天你最希望谁出局？</div><div class="jinx-tabs"><button class="jtab on" id="jinx-tab-atp" onclick="setJinxTour('ATP',this)">⚡ ATP 男单</button><button class="jtab" id="jinx-tab-wta" onclick="setJinxTour('WTA',this)">🌸 WTA 女单</button><button class="jtab" id="jinx-tab-leader" onclick="setJinxLeaderboard(this)">🏆 毒奶榜</button></div><div class="jinx-board" id="jinx-board"><div class="loading">⏳ 等待今日赛程数据...</div></div></div></div>
+<div id="p-fortune" class="panel"><div class="fortune-wrap"><div class="fortune-title">🔮 今日运势抽签</div><div class="fortune-sub">每天选球员愁破头？让神明帮你做选择！</div><div class="fortune-tabs"><button class="ftab on" onclick="setFortune('atp',this)">⚡ ATP 男单</button><button class="ftab" onclick="setFortune('wta',this)">🌸 WTA 女单</button></div><div class="fortune-card" id="fortune-card"><div class="fortune-hint">✨ 今日可选球员已入签筒 ✨</div><div class="fortune-player" id="fortune-player">？？？</div><div class="fattr" id="fortune-attr">未摇签</div><div class="fortune-text" id="fortune-text">点击下方按钮，开始今日运势抽签</div><div class="fortune-yi" id="fortune-yi"></div></div><br><button class="fortune-btn" onclick="drawFortune()">🎋 摇签</button><br><br><div class="fortune-hint">签文仅供娱乐，后果自负 😄</div></div><aside class="lw-mini-card" data-mini-program-promo="lw-mini-card--vertical-wide lw-mini-card--floating"></aside></div>
+<div id="p-jinx" class="panel"><div class="jinx-wrap"><div class="jinx-title">🥛 每日毒奶</div><div class="jinx-sub">今天你最希望谁出局？</div><div class="jinx-tabs"><button class="jtab on" id="jinx-tab-atp" onclick="setJinxTour('ATP',this)">⚡ ATP 男单</button><button class="jtab" id="jinx-tab-wta" onclick="setJinxTour('WTA',this)">🌸 WTA 女单</button><button class="jtab" id="jinx-tab-leader" onclick="setJinxLeaderboard(this)">🏆 毒奶榜</button></div><div class="jinx-board" id="jinx-board"><div class="loading">⏳ 等待今日赛程数据...</div></div></div><aside class="lw-mini-card" data-mini-program-promo="lw-mini-card--jinx lw-mini-card--floating"></aside></div>
 <div id="p-faq" class="panel">
 <section class="seo-faq" aria-label="炉网常见问题">
   <h2>炉网常见问题</h2>
@@ -1058,6 +1114,8 @@ const SUPABASE_URL='https://avdnhcwmwdwhsecszlcd.supabase.co';
 const SUPABASE_ANON_KEY='sb_publishable_W7jtbI1juCvm80UvZ3qgJQ_MrGfhwKG';
 const SUPABASE_JS_URL='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
 const CHART_JS_URL='https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js';
+const MINI_PROGRAM_QR_SRC='assets/miniprogram/lu-de-wangqiu-qrcode.jpg';
+const MINI_PROGRAM_PROMO_COPY='「炉的网球」小程序现已上线！极速、稳定，专为中国网球迷打造的观赛社区。每十秒的实时比分、球员最新参赛动态以及官方赛程签表。登录即可获得10朵花，欢迎体验！';
 const MODULE_VIEWED={};
 const SEARCH_TRACK_TIMERS={};
 const TOP_TAB_BY_PANEL={
@@ -6719,7 +6777,8 @@ function renderScore(g, data){
     return `<tr class="pick-stat-row ${i>=10?'pick-stat-extra':''}" onclick="filterPick('${tab}',decodeURIComponent('${encodeURIComponent(name)}'))" title="点击筛选选择 ${esc(name)} 的用户"><td class="psr">#${i+1}</td><td class="psp">${esc(name)}</td><td class="psc">${count}人</td><td class="psp2">${pct.toFixed(1)}%</td><td class="psb"><div class="bbar" style="width:${pct.toFixed(1)}%;background:${ccArr[i%6]}"></div></td></tr>`;
   }).join('');
   const moreStats=extraStats?`<button class="pick-stat-more" type="button" onclick="togglePickStats(this)">展开</button>`:'';
-  const statsHtml=stats.length?`<div class="sc"><div class="sch"><span>📊 今日选人统计（仅存活）—${g=='ms'?'ATP男单':'WTA女单'}Day${data.today_day}</span><span class="scs">存活${alive}人·今日已填${filled}人</span></div><table class="st"><thead><tr><th></th><th>选手</th><th>人数</th><th>占比</th><th>分布</th></tr></thead><tbody>${statRows}</tbody></table>${moreStats}</div><hr class="divider">`:'' ;
+  const statsCard=stats.length?`<div class="sc"><div class="sch"><span>📊 今日选人统计（仅存活）—${g=='ms'?'ATP男单':'WTA女单'}Day${data.today_day}</span><span class="scs">存活${alive}人·今日已填${filled}人</span></div><table class="st"><thead><tr><th></th><th>选手</th><th>人数</th><th>占比</th><th>分布</th></tr></thead><tbody>${statRows}</tbody></table>${moreStats}</div>`:'' ;
+  const statsHtml=stats.length?`<div class="lw-mini-layout lw-mini-layout--live">${statsCard}${miniProgramPromoHtml()}</div><hr class="divider">`:'' ;
   
   // KPI
   const kpi=`<div class="kpi"><div class="kc"><div class="kn nt">${totalUsers}</div><div class="kl">总人数</div></div><div class="kc"><div class="kn nt">${siteTotal}</div><div class="kl">本站参赛</div></div><div class="kc"><div class="kn na">${alive}</div><div class="kl">🟢存活</div></div><div class="kc"><div class="kn nd">${siteTotal-alive}</div><div class="kl">❌出局</div></div><div class="kc"><div class="kn" style="color:#7c3aed">${filled}</div><div class="kl">今日已填</div></div><div class="kc"><div class="kn nd">${suicide}</div><div class="kl">自杀</div></div></div>`;
@@ -6867,7 +6926,8 @@ function renderPref(g, pdata){
   const champCnt=Object.values(dict).filter(p=>p&&(p.ec||0)>0).length;
   const fObj=typeof FS[tab]==='object'?FS[tab]:{mode:FS[tab]||'all'};
   const fMode=fObj.mode||'all';
-  cont.innerHTML=`<div class="yearbar"><span class="dev-note">统计范围</span><select class="select-mini" id="year-${tab}" onchange="renderPrefYear('${g}',this.value)"><option selected>2026</option><option>2025</option><option>2024</option><option>全部</option></select></div><div class="kpi"><div class="kc"><div class="kn nt">${order.length}</div><div class="kl">参与用户</div></div><div class="kc"><div class="kn na">${champCnt}</div><div class="kl">有夺冠经历</div></div></div><p style="font-size:12px;color:#9a7a40;margin-bottom:8px">💡 点击任意行展开该用户详细数据，再点一次收起</p><div class="toolbar"><input id="q-${tab}" placeholder="🔍 搜索..." oninput="doFilter('${tab}')"><button class="fbtn ${fMode==='all'?'on':''}" onclick="setF('${tab}','all',this)">全部</button><button class="fbtn ${fMode==='following'?'on':''}" onclick="setF('${tab}','following',this)">关注用户</button></div><div class="follow-empty" id="follow-empty-${tab}"></div><div class="tbl-wrap"><table id="tbl-${tab}">${hdrHtml}<tbody id="tb-${tab}">${rowsHtml}</tbody></table></div>`;
+  const prefTopHtml=`<div class="lw-mini-stage lw-mini-stage--preference"><div class="lw-mini-main"><div class="yearbar"><span class="dev-note">统计范围</span><select class="select-mini" id="year-${tab}" onchange="renderPrefYear('${g}',this.value)"><option selected>2026</option><option>2025</option><option>2024</option><option>全部</option></select></div><div class="kpi"><div class="kc"><div class="kn nt">${order.length}</div><div class="kl">参与用户</div></div><div class="kc"><div class="kn na">${champCnt}</div><div class="kl">有夺冠经历</div></div></div><p style="font-size:12px;color:#9a7a40;margin-bottom:8px">💡 点击任意行展开该用户详细数据，再点一次收起</p><div class="toolbar"><input id="q-${tab}" placeholder="🔍 搜索..." oninput="doFilter('${tab}')"><button class="fbtn ${fMode==='all'?'on':''}" onclick="setF('${tab}','all',this)">全部</button><button class="fbtn ${fMode==='following'?'on':''}" onclick="setF('${tab}','following',this)">关注用户</button></div><div class="follow-empty" id="follow-empty-${tab}"></div></div>${miniProgramPromoHtml('lw-mini-card--preference')}</div>`;
+  cont.innerHTML=prefTopHtml+`<div class="tbl-wrap"><table id="tbl-${tab}">${hdrHtml}<tbody id="tb-${tab}">${rowsHtml}</tbody></table></div>`;
   cont.style.display='block';
   doFilter(tab);
 }
@@ -6903,6 +6963,20 @@ function toggleExpDyn(row){
 
 // ===== 通用功能 =====
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function miniProgramPromoHtml(extraClass){
+  var cls=extraClass?' '+extraClass:'';
+  return '<aside class="lw-mini-card'+cls+'" aria-label="炉的网球小程序推广"><img src="'+MINI_PROGRAM_QR_SRC+'" alt="炉的网球小程序二维码" loading="lazy" decoding="async"><p>'+esc(MINI_PROGRAM_PROMO_COPY)+'</p></aside>';
+}
+function hydrateMiniProgramPromos(){
+  document.querySelectorAll('[data-mini-program-promo]').forEach(function(el){
+    el.outerHTML=miniProgramPromoHtml(el.getAttribute('data-mini-program-promo')||'');
+  });
+}
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',hydrateMiniProgramPromos);
+}else{
+  hydrateMiniProgramPromos();
+}
 function switchTab(t,btn){
   var prev=ACTIVE_TAB;
   var panel=document.getElementById('p-'+t);
@@ -8091,9 +8165,11 @@ function renderBreakdownPanel(g,data){
   var tab=g+'-bd';
   var fObj=typeof FS[tab]==='object'?FS[tab]:{mode:FS[tab]||'all'};
   var fMode=fObj.mode||'all';
-  cont.innerHTML=
+  var bdTopHtml=
+    '<div class="lw-mini-stage lw-mini-stage--breakdown"><div class="lw-mini-main bd-top-main">'+
     '<div class="bd-stat-row"><div class="bd-sbadge">参与用户 <b>'+data.length+'</b></div>'+badgesHtml+'</div>'+
-    '<div class="bd-toolbar"><input id="bdq-'+g+'" placeholder="🔍 搜索用户名..." oninput="bdSearch(\''+g+'\')"><button class="fbtn '+(fMode==='all'?'on':'')+'" onclick="setBdF(\''+g+'\',\'all\',this)">全部</button><button class="fbtn '+(fMode==='following'?'on':'')+'" onclick="setBdF(\''+g+'\',\'following\',this)">关注用户</button></div><div class="follow-empty" id="follow-empty-'+tab+'"></div>'+
+    '<div class="bd-toolbar"><input id="bdq-'+g+'" placeholder="🔍 搜索用户名..." oninput="bdSearch(\''+g+'\')"><button class="fbtn '+(fMode==='all'?'on':'')+'" onclick="setBdF(\''+g+'\',\'all\',this)">全部</button><button class="fbtn '+(fMode==='following'?'on':'')+'" onclick="setBdF(\''+g+'\',\'following\',this)">关注用户</button></div><div class="follow-empty" id="follow-empty-'+tab+'"></div></div>'+miniProgramPromoHtml('lw-mini-card--side lw-mini-card--compact')+'</div>';
+  cont.innerHTML=bdTopHtml+
     '<div class="bd-tbl-wrap"><table class="bd-tbl"><thead><tr>'+
     '<th>排名</th><th>用户名</th><th style="text-align:right">即时积分</th>'+
     '<th>类型分布</th>'+
