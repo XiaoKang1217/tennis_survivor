@@ -472,7 +472,7 @@ Page({
     this.cache = createSWRCache(wx);
     this.unsubscribeScore = this.services.scoreStore.subscribe(projection => {
       const value = projection?.payload.matches.find(item => item.matchId === this.matchId);
-      if (value) this.applyMatch(value);
+      if (value) this.applyMatch(value, { socialAuthority: false });
     });
     void this.loadMatch();
   },
@@ -599,7 +599,7 @@ Page({
       ? null : readTrustedProjection(this.cache, cacheKey, MATCH_DETAIL_CACHE_SCHEMA);
     if (cached?.payload) {
       try {
-        this.applyMatch(contracts.matchProjection(cached.payload).payload);
+        this.applyMatch(contracts.matchProjection(cached.payload).payload, { socialAuthority: true });
         this.setData({ loading: false, failed: false });
       } catch { /* corrupt trusted cache is ignored and replaced by network */ }
     } else if (options.showLoading !== false) {
@@ -621,7 +621,7 @@ Page({
         validate: value => contracts.matchProjection(value)
       });
       const envelope = result.value;
-      this.applyMatch(envelope.payload);
+      this.applyMatch(envelope.payload, { socialAuthority: true });
       this.setData({ loading: false, failed: false });
     } catch (error) {
       this.setData({ loading: false, failed: this.data.match === null });
@@ -629,9 +629,30 @@ Page({
     }
   },
 
-  applyMatch(presentation) {
-    if (staleComparedToCurrent(presentation, this.data.match)) return;
+  applyMatch(presentation, options = {}) {
+    if (staleComparedToCurrent(presentation, this.data.match)) {
+      if (options.socialAuthority === true) {
+        const incoming = matchView(presentation);
+        const followCount = followCountValue(incoming.followCount);
+        this.services.scoreStore.updateSocial(incoming.id, { followCount });
+        if (followCount !== followCountValue(this.data.match?.followCount)) {
+          this.setData({
+            match: {
+              ...this.data.match,
+              followCount,
+              followCountLabel: matchFollowCountText(followCount)
+            }
+          });
+        }
+      }
+      return;
+    }
     const baseMatch = matchWithPlayerFollowState(matchView(presentation));
+    if (options.socialAuthority === true) {
+      this.services.scoreStore.updateSocial(baseMatch.id, {
+        followCount: followCountValue(baseMatch.followCount)
+      });
+    }
     const targets = [
       { kind: 'match', targetId: baseMatch.id },
       ...followablePlayers(baseMatch).map(player => ({ kind: 'player', targetId: player.targetId }))
@@ -1087,11 +1108,16 @@ Page({
     try {
       const result = await this.services.follow.setFollow('match', match.id, next, 'match_detail');
       if (Number.isFinite(Number(result?.followCount))) {
+        const followCount = followCountValue(result.followCount);
+        this.services.scoreStore.updateSocial(match.id, {
+          followCount,
+          followed: next
+        });
         this.setData({
           match: {
             ...this.data.match,
-            followCount: followCountValue(result.followCount),
-            followCountLabel: matchFollowCountText(result.followCount)
+            followCount,
+            followCountLabel: matchFollowCountText(followCount)
           }
         });
       }

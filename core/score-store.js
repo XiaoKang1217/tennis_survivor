@@ -151,6 +151,37 @@ function mergeRealtimeOnlyState(incoming, previous) {
     : merged;
 }
 
+function socialStateFromSnapshot(incoming, previous) {
+  const social = {};
+  if (Number.isFinite(Number(incoming?.followCount))) {
+    social.followCount = Number(incoming.followCount);
+  } else if (previous?.followCount !== undefined) {
+    social.followCount = previous.followCount;
+  }
+  if (incoming?.viewerFollowState !== undefined) {
+    social.viewerFollowState = incoming.viewerFollowState;
+  } else if (previous?.viewerFollowState !== undefined) {
+    social.viewerFollowState = previous.viewerFollowState;
+  }
+  return social;
+}
+
+function mergeSnapshotState(incoming, previous) {
+  if (previous === undefined || incoming.matchId !== previous.matchId) return incoming;
+  const scoreState = shouldKeepPreviousMatch(incoming, previous)
+    ? previous
+    : (() => {
+      const canKeepLastPoint = incoming.lastPoint.availability !== 'available'
+        && previous.lastPoint.availability === 'available'
+        && sameDisplayedScore(incoming, previous);
+      return canKeepLastPoint ? { ...incoming, lastPoint: previous.lastPoint } : incoming;
+    })();
+  return Object.freeze({
+    ...scoreState,
+    ...socialStateFromSnapshot(incoming, previous)
+  });
+}
+
 function mergeSnapshotRealtimeState(incoming, previousProjection) {
   if (previousProjection === null) return incoming;
   const previousById = new Map(previousProjection.payload.matches.map(match => [
@@ -162,7 +193,25 @@ function mergeSnapshotRealtimeState(incoming, previousProjection) {
     payload: Object.freeze({
       ...incoming.payload,
       matches: Object.freeze(incoming.payload.matches.map(match =>
-        mergeRealtimeOnlyState(match, previousById.get(match.matchId))))
+        mergeSnapshotState(match, previousById.get(match.matchId))))
+    })
+  });
+}
+
+function mergeSnapshotSocialOnly(incoming, previousProjection) {
+  if (previousProjection === null) return previousProjection;
+  const incomingById = new Map(incoming.payload.matches.map(match => [match.matchId, match]));
+  return Object.freeze({
+    ...previousProjection,
+    payload: Object.freeze({
+      ...previousProjection.payload,
+      matches: Object.freeze(previousProjection.payload.matches.map(previous => {
+        const next = incomingById.get(previous.matchId);
+        return next ? Object.freeze({
+          ...previous,
+          ...socialStateFromSnapshot(next, previous)
+        }) : previous;
+      }))
     })
   });
 }
@@ -210,7 +259,15 @@ class ScoreStore {
     if (this.projection !== null
       && sameScheduleDate
       && next.projectionVersion < this.projection.projectionVersion) {
-      return Object.freeze({ action: 'old_snapshot_ignored' });
+      const socialMerged = mergeSnapshotSocialOnly(validated, this.projection);
+      const changed = stable(socialMerged.payload.matches) !== stable(this.projection.payload.matches);
+      if (changed) {
+        this.projection = socialMerged;
+        this.notify();
+      }
+      return Object.freeze({
+        action: changed ? 'old_snapshot_social_applied' : 'old_snapshot_ignored'
+      });
     }
     if (sameScheduleDate && this.projection !== null) {
       const previousById = new Map(this.projection.payload.matches.map(match => [
@@ -235,7 +292,7 @@ class ScoreStore {
             const incomingVersion = Number(match.matchVersion || 0);
             const acceptedVersion = this.matchVersions.get(match.matchId) || 0;
             return incomingVersion > 0 && incomingVersion < acceptedVersion
-              ? previousById.get(match.matchId) || match
+              ? mergeSnapshotState(match, previousById.get(match.matchId))
               : match;
           }))
         })
@@ -258,6 +315,49 @@ class ScoreStore {
     }
     this.notify();
     return Object.freeze({ action: 'snapshot_applied', version: next.projectionVersion });
+  }
+
+  updateSocial(matchId, patch = {}) {
+    const id = String(matchId || '').trim();
+    if (!id || this.projection === null) return false;
+    let changed = false;
+    const matches = this.projection.payload.matches.map(match => {
+      if (match.matchId !== id) return match;
+      const social = {};
+      if (Number.isFinite(Number(patch.followCount))) {
+        social.followCount = Number(patch.followCount);
+      }
+      if (patch.viewerFollowState !== undefined) {
+        social.viewerFollowState = patch.viewerFollowState;
+      } else if (typeof patch.followed === 'boolean') {
+        const current = match.viewerFollowState && typeof match.viewerFollowState === 'object'
+          ? match.viewerFollowState : {};
+        const currentMatch = current.match && typeof current.match === 'object'
+          ? current.match : {};
+        social.viewerFollowState = Object.freeze({
+          ...current,
+          match: Object.freeze({
+            ...currentMatch,
+            targetId: currentMatch.targetId || id,
+            followed: patch.followed,
+            ...(social.followCount !== undefined ? { followCount: social.followCount } : {})
+          })
+        });
+      }
+      if (!Object.keys(social).length) return match;
+      changed = true;
+      return Object.freeze({ ...match, ...social });
+    });
+    if (!changed) return false;
+    this.projection = Object.freeze({
+      ...this.projection,
+      payload: Object.freeze({
+        ...this.projection.payload,
+        matches: Object.freeze(matches)
+      })
+    });
+    this.notify();
+    return true;
   }
 
   frame(value) {
@@ -457,5 +557,6 @@ module.exports = Object.freeze({
   stable,
   mergeStableEnrichment,
   mergeRealtimeOnlyState,
+  mergeSnapshotState,
   shouldKeepPreviousMatch
 });

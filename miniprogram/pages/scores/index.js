@@ -740,7 +740,12 @@ Page({
       if (next) this.followedIds.add(matchId);
       else this.followedIds.delete(matchId);
       if (Number.isFinite(Number(result?.followCount))) {
-        this.followCountOverrides.set(matchId, Number(result.followCount));
+        const followCount = Number(result.followCount);
+        this.followCountOverrides.set(matchId, followCount);
+        this.services.scoreStore.updateSocial(matchId, {
+          followCount,
+          followed: next
+        });
         this.rerender();
       }
     } catch (err) {

@@ -281,6 +281,111 @@ test('score SSE merges cannot overwrite Shanghai social fields', () => {
   assert.equal(merged.viewerFollowState.match.followed, true);
 });
 
+test('Shanghai snapshots replace public follow counts while retaining absent private state', () => {
+  const store = new ScoreStore();
+  const initial = presentation({
+    followCount: 1,
+    viewerFollowState: { match: { targetId: 'match-1', followed: true } }
+  });
+  store.snapshot(todayProjection(1, initial));
+
+  const updated = presentation({ followCount: 2 });
+  store.snapshot(todayProjection(1, updated));
+
+  const match = store.projection.payload.matches[0];
+  assert.equal(match.followCount, 2);
+  assert.equal(match.viewerFollowState.match.followed, true);
+});
+
+test('an older Shanghai score snapshot updates social state without regressing realtime facts', () => {
+  const store = new ScoreStore();
+  const initial = presentation({
+    followCount: 1,
+    matchVersion: 2,
+    delivery: { state: 'live', dataNotice: '实时',
+      dataAsOf: '2026-08-06T23:31:00.000Z', showLivePulse: true }
+  });
+  store.snapshot(todayProjection(2, initial));
+  const older = presentation({
+    followCount: 2,
+    matchVersion: 1,
+    delivery: { state: 'recovering', dataNotice: '旧快照',
+      dataAsOf: '2026-08-06T23:30:00.000Z', showLivePulse: false }
+  });
+
+  const result = store.snapshot(todayProjection(1, older));
+
+  assert.equal(result.action, 'old_snapshot_social_applied');
+  assert.equal(store.projection.payload.matches[0].followCount, 2);
+  assert.equal(store.projection.payload.matches[0].delivery.dataNotice, '实时');
+  assert.equal(store.projection.payload.matches[0].matchVersion, 2);
+});
+
+test('confirmed follow writes survive the next SG score delta', () => {
+  const store = new ScoreStore();
+  const initial = presentation({
+    followCount: 1,
+    viewerFollowState: { match: { targetId: 'match-1', followed: false } }
+  });
+  store.snapshot(todayProjection(1, initial));
+  const matchId = store.projection.payload.matches[0].matchId;
+  assert.equal(store.updateSocial(matchId, { followCount: 2, followed: true }), true);
+
+  store.frame({
+    contractVersion: 'score-realtime/3', kind: 'score_delta',
+    baseVersion: 1, version: 2, snapshotVersion: 2,
+    projectionGeneratedAt: '2026-08-06T23:31:00.000Z',
+    dataAsOf: '2026-08-06T23:31:00.000Z',
+    changes: [{
+      matchId, matchVersion: 2,
+      changes: { delivery: { ...initial.delivery, dataNotice: '比分已更新' } }
+    }]
+  });
+
+  assert.equal(store.projection.payload.matches[0].followCount, 2);
+  assert.equal(store.projection.payload.matches[0].viewerFollowState.match.followed, true);
+});
+
+test('confirmed unfollow writes survive the next SG score delta', () => {
+  const store = new ScoreStore();
+  const initial = presentation({
+    followCount: 2,
+    viewerFollowState: { match: { targetId: 'match-1', followed: true } }
+  });
+  store.snapshot(todayProjection(1, initial));
+  const matchId = store.projection.payload.matches[0].matchId;
+  store.updateSocial(matchId, { followCount: 1, followed: false });
+
+  store.frame({
+    contractVersion: 'score-realtime/3', kind: 'score_delta',
+    baseVersion: 1, version: 2, snapshotVersion: 2,
+    projectionGeneratedAt: '2026-08-06T23:31:00.000Z',
+    dataAsOf: '2026-08-06T23:31:00.000Z',
+    changes: [{
+      matchId, matchVersion: 2,
+      changes: { delivery: { ...initial.delivery, dataNotice: '比分已更新' } }
+    }]
+  });
+
+  assert.equal(store.projection.payload.matches[0].followCount, 1);
+  assert.equal(store.projection.payload.matches[0].viewerFollowState.match.followed, false);
+});
+
+test('viewer follow state remains isolated between independent account stores', () => {
+  const accountA = new ScoreStore();
+  const accountB = new ScoreStore();
+  accountA.snapshot(todayProjection(1, presentation({ followCount: 2 })));
+  accountB.snapshot(todayProjection(1, presentation({ followCount: 2 })));
+  const matchId = accountA.projection.payload.matches[0].matchId;
+  accountA.updateSocial(matchId, { followCount: 2, followed: true });
+  accountB.updateSocial(matchId, { followCount: 2, followed: false });
+
+  assert.equal(accountA.projection.payload.matches[0].followCount, 2);
+  assert.equal(accountB.projection.payload.matches[0].followCount, 2);
+  assert.equal(accountA.projection.payload.matches[0].viewerFollowState.match.followed, true);
+  assert.equal(accountB.projection.payload.matches[0].viewerFollowState.match.followed, false);
+});
+
 test('older calibration snapshot cannot overwrite a newer per-match SSE version', () => {
   const store = new ScoreStore();
   store.snapshot(todayProjection(1));
