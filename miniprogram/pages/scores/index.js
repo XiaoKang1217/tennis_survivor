@@ -283,6 +283,7 @@ Page({
     this.followedIds = new Set();
     this.followStateSignature = '';
     this.followStateRequestId = 0;
+    this.pageActive = true;
     this.followOverrides = new Map();
     this.followCountOverrides = new Map();
     this.tournamentFollowOverrides = new Map();
@@ -306,6 +307,7 @@ Page({
     }
     this.services = services;
     const followSubscription = services.follow?.subscribe?.(change => {
+        if (change?.batch) return;
         if (change?.key?.startsWith('match:')) this.rerender();
         if (change?.reset) {
           this.followedIds = new Set();
@@ -409,6 +411,8 @@ Page({
   },
 
   onUnload() {
+    this.pageActive = false;
+    this.followStateRequestId = Number(this.followStateRequestId || 0) + 1;
     clearTimeout(this.searchTimer);
     this.clearInitialLoadingGuard();
     for (const unsubscribe of this.unsubscribers || []) unsubscribe();
@@ -416,6 +420,7 @@ Page({
   },
 
   onShow() {
+    this.pageActive = true;
     syncPageTheme(this);
     enablePageShare();
     if (!this.services || !this.data.selectedDate) return;
@@ -549,6 +554,7 @@ Page({
   },
 
   async refreshViewerFollowStates(projection, options = {}) {
+    if (this.pageActive !== true) return;
     if (!projection || projection.payload?.scheduleGroupDate !== this.data.selectedDate) return;
     if (!this.services?.account?.isComplete?.()
       || !this.services?.auth?.currentAccessToken?.()) {
@@ -565,7 +571,8 @@ Page({
     const requestId = ++this.followStateRequestId;
     try {
       const followedTargets = await this.services.follow.followedTargets(targets);
-      if (requestId !== this.followStateRequestId
+      if (this.pageActive !== true
+        || requestId !== this.followStateRequestId
         || projection !== this.services.scoreStore.projection
         || projection.payload?.scheduleGroupDate !== this.data.selectedDate) return;
       this.followedIds = new Set([...followedTargets]
@@ -578,7 +585,7 @@ Page({
   },
 
   rerender() {
-    if (this.services.scoreStore.projection) {
+    if (this.pageActive === true && this.services.scoreStore.projection) {
       this.applyProjection(this.services.scoreStore.projection);
     }
   },

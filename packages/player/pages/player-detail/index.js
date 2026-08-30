@@ -250,6 +250,7 @@ Page({
       followed: cachedFollowState === 'followed'
     });
     this.unsubscribeFollow = getApp().services.follow.subscribe?.(change => {
+      if (change?.batch) return;
       if (change?.key !== `player:${this.data.followTargetId}`) return;
       this.setData({
         followState: change.value || 'unknown',

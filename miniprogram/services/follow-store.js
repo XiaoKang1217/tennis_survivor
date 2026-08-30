@@ -48,6 +48,11 @@ class FollowStore {
   persist() {
     const scope = this.ensureScope();
     if (!scope) return;
+    this.persistScope(scope);
+  }
+
+  persistScope(scope) {
+    if (!scope || scope !== this.scope) return;
     try {
       this.wx.setStorageSync(`${STORAGE_PREFIX}${scope}`, {
         version: SCHEMA_VERSION,
@@ -85,6 +90,48 @@ class FollowStore {
     if (options.persist !== false) this.persist();
     for (const listener of [...this.listeners]) listener({ key, value, scope: this.scope });
     return value;
+  }
+
+  setMany(states = [], options = {}) {
+    const scope = this.ensureScope();
+    const expectedScope = options.expectedScope === undefined
+      ? scope : normalizeAccountScope(options.expectedScope);
+    if (expectedScope !== scope) {
+      return Object.freeze({ applied: false, changed: false, scope, changes: [] });
+    }
+    const normalized = new Map();
+    for (const state of states) {
+      const kind = state?.kind || state?.targetKind;
+      const targetId = state?.targetId || state?.id;
+      const key = targetKey(kind, targetId);
+      if (!key || typeof state?.followed !== 'boolean') continue;
+      normalized.set(key, state.followed ? FOLLOWED : NOT_FOLLOWED);
+    }
+    const changes = [];
+    for (const [key, value] of normalized) {
+      if (this.values.get(key) === value) continue;
+      this.values.set(key, value);
+      changes.push(Object.freeze({ key, value }));
+    }
+    if (!changes.length) {
+      return Object.freeze({ applied: true, changed: false, scope, changes: [] });
+    }
+    if (options.persist !== false) this.persistScope(scope);
+    if (options.notify !== false) {
+      const event = Object.freeze({
+        batch: true,
+        scope,
+        keys: Object.freeze(changes.map(change => change.key)),
+        changes: Object.freeze(changes)
+      });
+      for (const listener of [...this.listeners]) listener(event);
+    }
+    return Object.freeze({
+      applied: true,
+      changed: true,
+      scope,
+      changes: Object.freeze(changes)
+    });
   }
 
   optimistic(kind, targetId, followed) {

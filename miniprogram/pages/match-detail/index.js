@@ -455,6 +455,7 @@ Page({
     this.services = getApp().services;
     this.viewerFollowStates = new Map();
     this.unsubscribeFollow = this.services.follow.subscribe?.(change => {
+      if (change?.batch) return;
       if (!change?.key || !this.data.match) return;
       const targets = new Set([
         `match:${this.data.match.id}`,

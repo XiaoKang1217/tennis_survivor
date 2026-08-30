@@ -1,6 +1,7 @@
 'use strict';
 
 const { createIdempotencyKey } = require('./http-client');
+const { normalizeAccountScope } = require('./auth-session');
 
 const FOLLOW_RETRY_DELAYS_MS = Object.freeze([350, 900]);
 const FOLLOW_STATUS_BATCH_SIZE = 32;
@@ -169,6 +170,7 @@ class FollowService {
     }
     if (!requested.length) return new Set();
     await this.auth.ensure();
+    const requestScope = normalizeAccountScope(this.auth.currentAccountScope?.());
     const batches = [];
     for (let offset = 0; offset < requested.length; offset += FOLLOW_STATUS_BATCH_SIZE) {
       batches.push(requested.slice(offset, offset + FOLLOW_STATUS_BATCH_SIZE));
@@ -182,16 +184,28 @@ class FollowService {
         authRequired: true
       }
     )));
-    const followed = new Set();
+    const merged = new Map(requested.map(target => [
+      `${target.kind}:${target.targetId}`,
+      Object.freeze({ ...target, followed: false })
+    ]));
     for (const response of responses) {
       for (const state of Array.isArray(response?.states) ? response.states : []) {
-        const kind = String(state?.kind || '').trim();
+        const kind = String(state?.kind || '').trim().toLowerCase();
         const targetId = String(state?.targetId || '').trim();
-        if (!kind || !targetId) continue;
-        this.store?.set?.(kind, targetId, state.followed === true);
-        if (state.followed === true) followed.add(`${kind}:${targetId}`);
+        const key = `${kind}:${targetId}`;
+        if (!merged.has(key) || typeof state?.followed !== 'boolean') continue;
+        merged.set(key, Object.freeze({ kind, targetId, followed: state.followed }));
       }
     }
+    if (normalizeAccountScope(this.auth.currentAccountScope?.()) !== requestScope) {
+      throw new Error('follow_account_scope_changed');
+    }
+    const states = [...merged.values()];
+    const commit = this.store?.setMany?.(states, { expectedScope: requestScope });
+    if (commit && commit.applied === false) throw new Error('follow_account_scope_changed');
+    const followed = new Set(states
+      .filter(state => state.followed)
+      .map(state => `${state.kind}:${state.targetId}`));
     return followed;
   }
 
