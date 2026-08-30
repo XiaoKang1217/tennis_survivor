@@ -46,7 +46,7 @@ class EntryService {
         cache: this.cache,
         resourceKey: 'entries:summary',
         schemaVersion: ENTRY_SUMMARY_CACHE_SCHEMA,
-        path: '/api/v1/bff/entries',
+        path: '/api/v1/bff/entries?projection=summary-v1',
         force: options.force === true,
         validate: validateEntrySummary
       })).value;
