@@ -21,8 +21,8 @@ test('player and match gift sheets constrain native buttons to two shrinkable co
 
 test('badge actions and landscape draw toolbar remain bounded under large fonts', () => {
   const social = read('pages/social-center/index.wxss');
-  assert.match(social, /\.badge-actions\{[^}]*max-width:58%[^}]*grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/u);
-  assert.match(social, /\.badge-list \.badge-actions button\{[^}]*width:100%[^}]*min-width:0[^}]*white-space:normal[^}]*box-sizing:border-box/u);
+  assert.match(social, /\.badge-list>view>\.badge-actions\{[^}]*width:232rpx[^}]*max-width:44%[^}]*flex:0 0 auto[^}]*display:grid[^}]*grid-template-columns:96rpx minmax\(0,128rpx\)/u);
+  assert.match(social, /\.badge-list \.badge-actions button\{[^}]*width:100%[^}]*min-width:0[^}]*max-width:100%[^}]*white-space:normal[^}]*box-sizing:border-box/u);
 
   const landscape = read('packages/tournament/pages/draw-landscape/index.wxss');
   assert.match(landscape, /grid-template-columns:auto minmax\(120rpx,1fr\) minmax\(0,240rpx\)/u);
