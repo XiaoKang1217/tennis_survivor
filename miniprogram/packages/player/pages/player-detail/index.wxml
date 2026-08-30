@@ -183,12 +183,12 @@
         <text class="gift-success">已送出 🌸{{giftResult.gift.amount}}</text>
         <text>你累计送给他 {{giftResult.viewerFlowerTotalForPlayer}} 朵</text>
         <text wx:if="{{giftResult.awardedBadge}}" class="badge-award">获得称号「{{giftResult.awardedBadge.label}}」</text>
-        <view class="gift-actions"><button bindtap="closeGift">完成</button><button open-type="share">分享支持</button></view>
+        <view class="gift-actions"><button class="gift-action-button" bindtap="closeGift">完成</button><button class="gift-action-button" open-type="share">分享支持</button></view>
       </block>
       <block wx:else>
         <text class="gift-hint">输入要送的花朵数量</text>
         <input type="number" value="{{giftAmount}}" bindinput="onGiftAmount" maxlength="6"/>
-        <view class="gift-actions"><button bindtap="closeGift">取消</button><button loading="{{giftSubmitting}}" bindtap="submitGift">确认送花</button></view>
+        <view class="gift-actions"><button class="gift-action-button" bindtap="closeGift">取消</button><button class="gift-action-button" loading="{{giftSubmitting}}" bindtap="submitGift">确认送花</button></view>
       </block>
     </view>
   </view>

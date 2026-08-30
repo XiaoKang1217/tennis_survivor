@@ -41,6 +41,7 @@
       </view>
       <text class="player-no-events" wx:else>近期暂无明确安排</text>
     </view>
+    <view class="player-pager" wx:if="{{playerPageCount > 1}}"><button disabled="{{playerPage <= 1}}" bindtap="previousPlayerPage">上一页</button><text>第 {{playerPage}} / {{playerPageCount}} 页 · 共 {{playerTotal}} 人</text><button disabled="{{playerPage >= playerPageCount}}" bindtap="nextPlayerPage">下一页</button></view>
   </view>
   <view class="page-state" wx:elif="{{activeView === 'tournaments' && weekTabs.length}}"><client-state state="empty" label="{{searchQuery ? '没有匹配赛事' : '本周暂无可公开赛事'}}" message="{{searchQuery ? '换个关键词试试' : '该周来源已发布，暂无通过公开质量门的赛事'}}"/></view>
   <view class="page-state" wx:else><client-state state="empty" label="暂无参赛动态" message="退赛、替补和名单变化会显示在这里"/></view>

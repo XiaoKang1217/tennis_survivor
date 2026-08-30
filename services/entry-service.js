@@ -2,8 +2,8 @@
 
 const { createSWRCache } = require('../core/swr-cache');
 const { loadProjectionResource, readTrustedProjection } = require('../core/projection-resource');
+const { ENTRY_INDEX_CACHE_SCHEMA, compactEntryIndex } = require('../core/entry-index');
 
-const INDEX_SCHEMA = 'entry-index/2';
 const TOURNAMENT_SCHEMA = 'entry-tournament/2';
 
 class EntryService {
@@ -15,7 +15,7 @@ class EntryService {
   cached(resourceKey, schemaVersion) {
     return readTrustedProjection(this.cache, resourceKey, schemaVersion)?.payload || null;
   }
-  cachedIndex() { return this.cached('entries:index', INDEX_SCHEMA); }
+  cachedIndex() { return this.cached('entries:index', ENTRY_INDEX_CACHE_SCHEMA); }
   cachedTournament(tournamentId) {
     return this.cached(`entries:tournament:${tournamentId}`, TOURNAMENT_SCHEMA);
   }
@@ -31,7 +31,21 @@ class EntryService {
     }
   }
   async index(options = {}) {
-    return await this.resource('entries:index', INDEX_SCHEMA, '/api/v1/bff/entries', options.force === true);
+    try {
+      return (await loadProjectionResource({
+        http: this.http,
+        cache: this.cache,
+        resourceKey: 'entries:index',
+        schemaVersion: ENTRY_INDEX_CACHE_SCHEMA,
+        path: '/api/v1/bff/entries',
+        force: options.force === true,
+        validate: compactEntryIndex
+      })).value;
+    } catch (error) {
+      const cached = this.cachedIndex();
+      if (cached) return { ...cached, delivery: { ...(cached.delivery || {}), state: 'stale' } };
+      throw error;
+    }
   }
   async tournament(tournamentId) {
     const id = String(tournamentId || '').trim();

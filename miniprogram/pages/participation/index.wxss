@@ -143,3 +143,4 @@
 .player-title-line{min-width:0;display:flex;align-items:center;gap:10rpx}
 .player-title-line .card-title{min-width:0;flex:1}
 .world-rank{flex:none;padding:3rpx 8rpx;border-radius:9rpx;background:var(--brand-soft);color:var(--brand-strong);font-size:18rpx;font-weight:650}
+.player-pager{width:100%;padding:18rpx 0 8rpx;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:12rpx;box-sizing:border-box}.player-pager button{width:100%;min-width:0;min-height:76rpx;margin:0;padding:0 12rpx;display:flex;align-items:center;justify-content:center;border:1rpx solid var(--line-strong);border-radius:15rpx;background:var(--surface);color:var(--brand-strong);font-size:20rpx;line-height:1.2;box-sizing:border-box}.player-pager button[disabled]{opacity:.45}.player-pager text{color:var(--ink-muted);font-size:18rpx;white-space:nowrap}
