@@ -151,12 +151,28 @@ function dateRange(item) {
   return Object.freeze({ startDate, endDate });
 }
 
-function overlapsWeek(item, targetDate) {
-  const start = weekStart(targetDate || todayIso());
-  const end = addDays(start, 6);
+function visibilityWindow(item) {
   const range = dateRange(item);
-  if (!range.startDate) return true;
-  return range.startDate <= end && (range.endDate || range.startDate) >= start;
+  if (!range.startDate || !range.endDate) return null;
+  const levelCode = normalizeLevelCode(
+    field(item?.summary?.levelCode) || field(item?.summary?.tierCode)
+  );
+  const leadDays = levelCode === 'grand_slam' ? 7 : 3;
+  return Object.freeze({
+    startDate: range.startDate,
+    endDate: range.endDate,
+    levelCode,
+    visibleFrom: addDays(range.startDate, -leadDays),
+    visibleThrough: addDays(range.endDate, 1)
+  });
+}
+
+function visibleOnBusinessDate(item, targetDate) {
+  const businessDate = String(targetDate || todayIso());
+  const window = visibilityWindow(item);
+  return Boolean(window?.visibleFrom && window?.visibleThrough
+    && window.visibleFrom <= businessDate
+    && businessDate <= window.visibleThrough);
 }
 
 function drawAvailable(item) {
@@ -206,8 +222,9 @@ function tourInfo(item) {
 
 function tournamentOptionFromCalendarItem(item) {
   const id = field(item?.identity?.tournamentEditionId, field(item?.tournamentEditionId));
-  if (!id || !drawAvailable(item)) return null;
+  if (!id) return null;
   const range = dateRange(item);
+  const window = visibilityWindow(item);
   const levelCode = normalizeLevelCode(field(item?.summary?.levelCode) || field(item?.summary?.tierCode));
   const levelDisplay = displayLevel(item?.summary) || levelLabel(levelCode);
   const info = tourInfo(item);
@@ -230,8 +247,11 @@ function tournamentOptionFromCalendarItem(item) {
     meta,
     summaryMeta,
     status: field(item?.displayLifecycle?.label),
+    drawPublished: drawAvailable(item),
     startDate: range.startDate,
     endDate: range.endDate,
+    visibleFrom: window?.visibleFrom || '',
+    visibleThrough: window?.visibleThrough || '',
     searchText: [
       title,
       location,
@@ -260,6 +280,7 @@ function mergeTournamentOptions(values) {
     existing.location = existing.location || item.location;
     existing.surface = existing.surface || item.surface;
     existing.status = existing.status || item.status;
+    existing.drawPublished = existing.drawPublished || item.drawPublished;
     existing.meta = [existing.tourOrg, existing.levelDisplay, existing.location, existing.surface]
       .filter(Boolean).join(' · ');
     existing.summaryMeta = [existing.tourOrg, existing.location, existing.surface]
@@ -292,7 +313,7 @@ function mergeTourOrg(first, second) {
 function tournamentOptionsFromCalendarProjection(projection, targetDate = '') {
   return mergeTournamentOptions(
     calendarItems(projection)
-      .filter(item => overlapsWeek(item, targetDate || todayIso()))
+      .filter(item => visibleOnBusinessDate(item, targetDate || todayIso()))
       .map(tournamentOptionFromCalendarItem)
   ).sort((first, second) => {
     const firstLevel = LEVEL_PRIORITY[first.levelCode] || 0;
@@ -309,6 +330,8 @@ function tournamentOptionsFromCalendarProjection(projection, targetDate = '') {
 module.exports = Object.freeze({
   CALENDAR_CACHE_SCHEMA,
   calendarCacheKey,
+  visibilityWindow,
+  visibleOnBusinessDate,
   tournamentOptionsFromCalendarProjection,
   weekRangeLabel,
   yearOf

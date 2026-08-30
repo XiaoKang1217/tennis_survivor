@@ -161,6 +161,7 @@ Page({
     selectedTournamentId: '',
     selectedTitle: '',
     selectedTour: '',
+    selectedDrawPublished: false,
     selectedTournamentSummary: tournamentSummary([], '', ''),
     draws: [],
     activeContentTab: 'draw',
@@ -207,6 +208,7 @@ Page({
       selectedTournamentId: optionValue(options.tournamentEditionId),
       selectedTitle: optionValue(options.title),
       selectedTour: this.initialTour,
+      selectedDrawPublished: false,
       tourFilter: tourFilterFromQuery(this.initialTour),
       selectedTournamentSummary: tournamentSummary([], optionValue(options.tournamentEditionId), optionValue(options.title))
     });
@@ -289,6 +291,8 @@ Page({
         this.data.selectedTournamentId,
         this.data.selectedTitle
       ),
+      selectedDrawPublished: tournaments.find(item => item.id === this.data.selectedTournamentId)
+        ?.drawPublished === true,
       weekRange: weekRangeLabel(this.matchDate),
       loading: this.data.selectedTournamentId ? this.data.loading : false,
       failed: this.data.selectedTournamentId ? this.data.failed : false
@@ -317,6 +321,7 @@ Page({
       selectedTournamentId: '',
       selectedTitle: '',
       selectedTour: '',
+      selectedDrawPublished: false,
       selectedTournamentSummary: tournamentSummary([], '', ''),
       draws: [],
       ...emptyDrawData(),
@@ -334,12 +339,14 @@ Page({
   },
 
   selectTournamentById(id, title, tour = '') {
+    const selected = this.data.tournaments.find(item => item.id === id);
     this.initialDrawId = '';
     this.currentPresentation = null;
     this.setData({
       selectedTournamentId: id,
       selectedTitle: title,
       selectedTour: normalizeDrawTour(tour),
+      selectedDrawPublished: selected?.drawPublished === true,
       selectedTournamentSummary: tournamentSummary(this.data.tournaments, id, title),
       selectorOpen: false,
       draws: [],
@@ -348,7 +355,13 @@ Page({
       deliveryState: '',
       deliveryMessage: '',
       dataAsOf: ''
-    }, () => void this.loadIndex());
+    }, () => {
+      if (selected?.drawPublished === false) {
+        this.setData({ loading: false, failed: false });
+        return;
+      }
+      void this.loadIndex();
+    });
   },
 
   async loadIndex() {

@@ -60,7 +60,7 @@
     <client-state state="empty" label="选择赛事" message="从本周签表中选择赛事，或进入过往签表"/>
   </view>
   <view wx:elif="{{!draws.length && !loading}}" class="page-state">
-    <client-state state="empty" label="暂无签表" message="签表尚未公布"/>
+    <client-state state="empty" label="签表尚未发布" message="赛事已进入展示窗口，官方签表发布后将在此显示"/>
   </view>
 
   <view wx:if="{{selectedTournamentId && draws.length && !loading && !failed}}" class="draw-content">

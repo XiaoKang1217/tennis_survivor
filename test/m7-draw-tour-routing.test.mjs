@@ -221,13 +221,14 @@ test('draw week index comes from calendar projection and keeps joint events unfi
     })
   ]), '2026-08-25');
 
-  assert.deepEqual(options.map(item => item.id), ['UO', 'WTA125-CALI', 'CH-PORTO']);
+  assert.deepEqual(options.map(item => item.id), ['UO', 'NO-DRAW', 'WTA125-CALI', 'CH-PORTO']);
   const usOpen = options[0];
   assert.equal(usOpen.tourOrg, 'ATP/WTA');
   assert.equal(usOpen.requestTour, '');
   assert.deepEqual([...usOpen.tourFilters].sort(), ['ATP', 'WTA']);
   assert.equal(options.find(item => item.id === 'WTA125-CALI').requestTour, 'wta');
   assert.deepEqual(options.find(item => item.id === 'CH-PORTO').tourFilters, ['CHALLENGER']);
+  assert.equal(options.find(item => item.id === 'NO-DRAW').drawPublished, false);
 });
 
 test('draw week index treats production joint US Open as all-tour and localizes enum labels', () => {
