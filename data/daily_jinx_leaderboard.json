@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-08-29T03:09:16.564Z",
-  "source_updated_at": "2026-08-29 11:09:14",
-  "settled_through": "2026-08-28",
+  "updated_at": "2026-08-30T03:09:25.229Z",
+  "source_updated_at": "2026-08-30 11:09:22",
+  "settled_through": "2026-08-29",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
@@ -303,51 +303,51 @@
     {
       "tour": "WTA",
       "display_name": "第七路单车",
-      "score": 2599,
-      "hit_count": 73,
-      "scored_days": 53
+      "score": 2604,
+      "hit_count": 75,
+      "scored_days": 55
     },
     {
       "tour": "WTA",
       "display_name": "阿vvvvv",
-      "score": 2125,
-      "hit_count": 78,
-      "scored_days": 54
+      "score": 2129,
+      "hit_count": 79,
+      "scored_days": 55
     },
     {
       "tour": "WTA",
       "display_name": "Mith",
-      "score": 2026,
-      "hit_count": 62,
-      "scored_days": 46
+      "score": 2027,
+      "hit_count": 63,
+      "scored_days": 47
     },
     {
       "tour": "WTA",
       "display_name": "AKA90",
-      "score": 1957,
-      "hit_count": 67,
-      "scored_days": 50
+      "score": 1961,
+      "hit_count": 68,
+      "scored_days": 51
     },
     {
       "tour": "WTA",
       "display_name": "xxx又坑人了",
-      "score": 1694,
-      "hit_count": 61,
-      "scored_days": 42
+      "score": 1695,
+      "hit_count": 62,
+      "scored_days": 43
     },
     {
       "tour": "WTA",
       "display_name": "莫斯特",
-      "score": 1300,
-      "hit_count": 45,
+      "score": 1301,
+      "hit_count": 46,
       "scored_days": 33
     },
     {
       "tour": "WTA",
       "display_name": "就是玩",
-      "score": 1259,
-      "hit_count": 42,
-      "scored_days": 27
+      "score": 1264,
+      "hit_count": 44,
+      "scored_days": 29
     },
     {
       "tour": "WTA",
@@ -359,9 +359,9 @@
     {
       "tour": "WTA",
       "display_name": "网球人",
-      "score": 938,
-      "hit_count": 31,
-      "scored_days": 22
+      "score": 943,
+      "hit_count": 33,
+      "scored_days": 24
     },
     {
       "tour": "WTA",
@@ -415,9 +415,9 @@
     {
       "tour": "WTA",
       "display_name": "五陵@神光",
-      "score": 343,
-      "hit_count": 11,
-      "scored_days": 8
+      "score": 347,
+      "hit_count": 12,
+      "scored_days": 9
     },
     {
       "tour": "WTA",
@@ -1002,15 +1002,6 @@
       "rarity": "limited"
     },
     {
-      "display_name": "用户8356886010",
-      "badge_key": "wimbledon-2026",
-      "title": "温网限定",
-      "subtitle": "赛事限定",
-      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "F-orestcold",
       "badge_key": "wimbledon-2026",
       "title": "温网限定",
@@ -1110,15 +1101,6 @@
       "rarity": "limited"
     },
     {
-      "display_name": "本东奇",
-      "badge_key": "wimbledon-2026",
-      "title": "温网限定",
-      "subtitle": "赛事限定",
-      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "九墨",
       "badge_key": "wimbledon-2026",
       "title": "温网限定",
@@ -1179,6 +1161,15 @@
       "subtitle": "赛事限定",
       "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
       "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "五陵@神光",
+      "badge_key": "who-is-leather",
+      "title": "谁是皮革",
+      "subtitle": "炉友纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/who-leather-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/who-leather-badge-640.webp",
       "rarity": "limited"
     },
     {
@@ -1299,12 +1290,39 @@
       "rarity": "limited"
     },
     {
+      "display_name": "第七路单车",
+      "badge_key": "who-is-leather",
+      "title": "谁是皮革",
+      "subtitle": "炉友纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/who-leather-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/who-leather-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "本东奇",
+      "badge_key": "nadal-clay-soul",
+      "title": "纳达尔赤土之魂",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/nadal-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/nadal-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
       "display_name": "AKA90",
       "badge_key": "gauff-energy",
       "title": "高芙果切能量",
       "subtitle": "球员纪念",
       "image_url": "assets/manager/badges/ui-v18/optimized/gauff-badge-640.webp",
       "thumb_url": "assets/manager/badges/ui-v18/optimized/gauff-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "用户8356886010",
+      "badge_key": "zheng-queen",
+      "title": "郑钦文Queen",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v5/optimized/zheng-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/zheng-badge-640.webp",
       "rarity": "limited"
     },
     {
@@ -1344,21 +1362,21 @@
       "rarity": "limited"
     },
     {
-      "display_name": "嘎里ga气",
-      "badge_key": "swiatek-whirlwind",
-      "title": "斯瓦泰克旋风少女",
-      "subtitle": "球员纪念",
-      "image_url": "assets/manager/badges/ui-v18/optimized/swiatek-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v18/optimized/swiatek-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "leslie",
       "badge_key": "alcaraz-bee-duck",
       "title": "阿卡蜜蜂鸭",
       "subtitle": "球员纪念",
       "image_url": "assets/manager/badges/ui-v18/optimized/bee-duck-badge-640.webp",
       "thumb_url": "assets/manager/badges/ui-v18/optimized/bee-duck-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "嘎里ga气",
+      "badge_key": "swiatek-whirlwind",
+      "title": "斯瓦泰克旋风少女",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/swiatek-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/swiatek-badge-640.webp",
       "rarity": "limited"
     },
     {
