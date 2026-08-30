@@ -16,7 +16,7 @@
     <scroll-view wx:if="{{activeView === 'tournaments' && weekTabs.length}}" class="week-tabs" scroll-x enhanced show-scrollbar="{{false}}"><view class="week-tabs-inner"><view wx:for="{{weekTabs}}" wx:key="id" class="week-tab {{activeWeek === item.id ? 'active' : ''}}" data-week="{{item.id}}" bindtap="selectWeek"><text>{{item.label}}</text><text>{{item.id}}</text></view></view></scroll-view>
     <view class="source-meta" wx:if="{{dataAsOf || qualityLabel}}"><text>{{stale ? '使用上次可信数据 · ' : ''}}{{dataAsOf}}</text><text>{{qualityLabel}}</text></view>
   </view>
-  <view class="page-state" wx:if="{{loading || failed}}"><client-state state="{{loading ? 'loading' : 'error'}}" label="{{loading ? '正在读取参赛名单' : '参赛动态暂不可用'}}" message="{{loading ? '请稍候' : '下拉页面可重新尝试'}}"/></view>
+  <view class="page-state" wx:if="{{loading || failed}}"><client-state state="{{loading ? 'loading' : 'error'}}" label="{{loading ? '正在读取参赛名单' : '参赛动态暂不可用'}}" message="{{loading ? '请稍候' : '失败阶段：' + failureStage + '，下拉页面可重新尝试'}}"/></view>
   <view class="entry-list" wx:elif="{{activeView === 'tournaments' && tournamentGroups.length}}">
     <view wx:for="{{tournamentGroups}}" wx:key="id" wx:for-item="group" class="level-group">
       <view class="level-head"><text>{{group.label}}</text><text>{{group.items.length}} 站</text></view>
@@ -32,6 +32,7 @@
       </view>
     </view>
   </view>
+  <view class="page-state" wx:elif="{{activeView === 'players' && (playerLoading || playerFailed)}}"><client-state state="{{playerLoading ? 'loading' : 'error'}}" label="{{playerLoading ? '正在读取球员名单' : '球员名单暂不可用'}}" message="{{playerLoading ? '请稍候' : '失败阶段：' + failureStage + '，仍可切换ATP/WTA或返回按赛事'}}"/></view>
   <view class="entry-list" wx:elif="{{activeView === 'players' && visiblePlayers.length}}">
     <view wx:for="{{visiblePlayers}}" wx:key="playerId" class="entry-card player-card" data-id="{{item.playerId}}" bindtap="openPlayer">
       <image wx:if="{{item.portraitUrl}}" class="player-avatar" src="{{item.portraitUrl}}" mode="aspectFill"/><view wx:else class="player-avatar fallback">球</view>

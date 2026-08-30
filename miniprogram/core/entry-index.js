@@ -1,6 +1,8 @@
 'use strict';
 
 const ENTRY_INDEX_CACHE_SCHEMA = 'entry-index-lite/1';
+const ENTRY_SUMMARY_CACHE_SCHEMA = 'entry-index-summary/1';
+const ENTRY_PLAYER_PAGE_SCHEMA = 'entry-player-page/1';
 
 function pick(source, keys) {
   const result = {};
@@ -75,6 +77,23 @@ function compactEntryIndex(value) {
   };
 }
 
+function validateEntrySummary(value) {
+  if (!value || typeof value !== 'object' || value.schemaVersion !== ENTRY_SUMMARY_CACHE_SCHEMA
+    || !value.payload || !Array.isArray(value.payload.tournaments)) {
+    throw new Error('entry_summary_validate_failed');
+  }
+  return value;
+}
+
+function validateEntryPlayerPage(value) {
+  const payload = value?.payload;
+  if (!value || value.schemaVersion !== ENTRY_PLAYER_PAGE_SCHEMA || !payload
+    || !Array.isArray(payload.players) || !Number.isSafeInteger(Number(payload.total))) {
+    throw new Error('entry_player_page_validate_failed');
+  }
+  return value;
+}
+
 function jsonByteSize(value) {
   const text = JSON.stringify(value);
   return typeof TextEncoder === 'function'
@@ -84,7 +103,11 @@ function jsonByteSize(value) {
 
 module.exports = Object.freeze({
   ENTRY_INDEX_CACHE_SCHEMA,
+  ENTRY_SUMMARY_CACHE_SCHEMA,
+  ENTRY_PLAYER_PAGE_SCHEMA,
   appearanceIdentity,
   compactEntryIndex,
+  validateEntrySummary,
+  validateEntryPlayerPage,
   jsonByteSize
 });

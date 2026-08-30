@@ -101,26 +101,31 @@ test('participation page renders trusted tournaments and players with stable lin
         { playerId: 'ATP:S0AG', playerName: '扬尼克·辛纳', worldRanking: 1, status: 'main_draw' }
       ]
     } }; },
+    async playerPage() { return { schemaVersion: 'entry-player-page/1', payload: {
+      total: 1, players: [{ playerId: 'ATP:S0AG', playerName: '扬尼克·辛纳', tour: 'ATP',
+        nextAppearance: { tournamentId: 'ATP:USO:2026', tournamentName: '美网', startsOn: '2026-08-24', endsOn: '2026-09-06', surface: 'Hard', status: 'main_draw', entryListScope: 'main_draw' },
+        appearances: [
+          { tournamentId: 'ATP:USO:2026', tournamentName: '美网', startsOn: '2026-08-24', endsOn: '2026-09-06', surface: 'Hard', status: 'main_draw', entryListScope: 'main_draw' },
+          { tournamentId: 'ATP:BEIJING:2026', tournamentName: '中国网球公开赛', startsOn: '2026-09-28', endsOn: '2026-10-04', surface: 'Hard', status: 'entered', entryListScope: 'main_draw' },
+          { tournamentId: 'ATP:SHANGHAI:2026', tournamentName: '上海大师赛', startsOn: '2026-10-05', endsOn: '2026-10-11', surface: 'Hard', status: 'qualifying', entryListScope: 'qualifying' }
+        ] }]
+    } }; },
     async index() {
     return { delivery: { state: 'current' }, payload: {
       dataAsOf: '2026-08-28T02:00:00Z', quality: { identityCoverage: 0.987 },
       tournaments: [{ tour: 'ATP', weekStart: '2026-08-24', competitionLevel: 'grand_slam', tournamentId: 'ATP:USO:2026', tournamentName: '美网', surface: 'Hard', startsOn: '2026-08-24', endsOn: '2026-09-06', entryCount: 3 }],
-      players: [{ playerId: 'ATP:S0AG', playerName: '扬尼克·辛纳', tour: 'ATP', nextAppearance: { tournamentId: 'ATP:USO:2026', tournamentName: '美网', startsOn: '2026-08-24', endsOn: '2026-09-06', surface: 'Hard', status: 'main_draw', entryListScope: 'main_draw' }, appearances: [
-        { tournamentId: 'ATP:USO:2026', tournamentName: '美网', startsOn: '2026-08-24', endsOn: '2026-09-06', surface: 'Hard', status: 'main_draw', entryListScope: 'main_draw' },
-        { tournamentId: 'ATP:BEIJING:2026', tournamentName: '中国网球公开赛', startsOn: '2026-09-28', endsOn: '2026-10-04', surface: 'Hard', status: 'entered', entryListScope: 'main_draw' },
-        { tournamentId: 'ATP:SHANGHAI:2026', tournamentName: '上海大师赛', startsOn: '2026-10-05', endsOn: '2026-10-11', surface: 'Hard', status: 'qualifying', entryListScope: 'qualifying' }
-      ], previewEntries: [] }]
+      players: []
     } };
   } } } });
   try {
     const definition = loadPageDefinition();
     const page = context(definition);
     await definition.load.call(page);
-    await definition.prefetchVisibleTournaments.call(page);
     await definition.toggleTournament.call(page, {
       currentTarget: { dataset: { id: 'ATP:USO:2026' } }
     });
     definition.selectView.call(page, { currentTarget: { dataset: { view: 'players' } } });
+    await definition.loadPlayers.call(page, 1);
     assert.equal(page.entryIndex.tournaments[0].tournamentId, 'ATP:USO:2026');
     assert.equal(page.data.visiblePlayers[0].playerId, 'ATP:S0AG');
     assert.equal(page.data.qualityLabel, '身份匹配 98.7%');
@@ -159,7 +164,8 @@ test('participation page separates tours, source weeks and ranked searchable ros
     assert.match(script + markup, new RegExp(expected));
   }
   assert.match(script, /levelRank/u);
-  assert.match(script, /rankValue\(a\.worldRanking\) - rankValue\(b\.worldRanking\)/u);
+  assert.match(script, /playerPage/u);
+  assert.match(script, /loadPlayers/u);
   assert.match(script, /rankValue\(first\.worldRanking\) - rankValue\(second\.worldRanking\)/u);
   assert.match(script, /normalizedSearch/u);
   assert.match(script, /sourceWeeks/u);
@@ -192,14 +198,13 @@ test('participation tournament expands an already prefetched complete ranked sli
     ['ATP:S0AG', 'ATP:A0E2']);
 });
 
-test('a 1.4MB entry projection is compacted before trusted SWR caching', async () => {
+test('entry first request caches only a lightweight tournament summary', async () => {
   const raw = largeEntryProjection();
   assert.ok(jsonByteSize(raw) > 1_400_000);
-  const lite = compactEntryIndex(raw);
-  assert.ok(jsonByteSize(lite) < 900 * 1024);
-  assert.equal(lite.payload.players.length, 710);
-  assert.equal(lite.payload.tournaments.length, 27);
-  assert.equal(Object.hasOwn(lite.payload.players[0], 'debugBlob'), false);
+  const summary = { ...raw, schemaVersion: 'entry-index-summary/1',
+    payload: { ...raw.payload, players: undefined,
+      tournaments: raw.payload.tournaments.map(({ debugBlob, ...item }) => item) } };
+  assert.ok(jsonByteSize(summary) < 200 * 1024);
 
   const stored = new Map();
   const wxRuntime = {
@@ -212,22 +217,29 @@ test('a 1.4MB entry projection is compacted before trusted SWR caching', async (
   const service = new EntryService(wxRuntime, { async request() {
     requests += 1;
     return requests === 1
-      ? { statusCode: 200, data: raw, etag: 'entry-etag-100' }
+      ? { statusCode: 200, data: summary, etag: 'entry-etag-100' }
       : { statusCode: 304, notModified: true, data: null, etag: 'entry-etag-100' };
   } });
   const first = await service.index();
-  assert.equal(first.schemaVersion, 'entry-index-lite/1');
+  assert.equal(first.schemaVersion, 'entry-index-summary/1');
+  assert.equal(first.payload.players, undefined);
   assert.ok(service.cachedIndex());
   const second = await service.index();
   assert.equal(second.projectionVersion, first.projectionVersion);
   assert.equal(requests, 2);
 });
 
-test('participation keeps full data off setData and pages every player without identity loss', () => {
+test('participation keeps full data off setData and uses SH 50-player pages', async () => {
   const priorGetApp = globalThis.getApp;
   globalThis.getApp = () => ({ services: { entries: {
     cachedTournament() { return null; },
-    async tournament() { throw new Error('not_prefetched_in_test'); }
+    async tournament() { throw new Error('not_prefetched_in_test'); },
+    async playerPage({ tour, page }) {
+      const all = compactEntryIndex(largeEntryProjection()).payload.players.filter(item => item.tour === tour);
+      return { schemaVersion: 'entry-player-page/1', payload: {
+        total: all.length, players: all.slice((page - 1) * 50, page * 50)
+      } };
+    }
   } } });
   try {
     const definition = loadPageDefinition();
@@ -244,12 +256,14 @@ test('participation keeps full data off setData and pages every player without i
     assert.equal(Object.hasOwn(page.data, 'players'), false);
 
     definition.selectView.call(page, { currentTarget: { dataset: { view: 'players' } } });
+    await definition.loadPlayers.call(page, 1);
     assert.equal(page.data.visiblePlayers.length, 50);
     assert.equal(page.data.playerTotal, 439);
     assert.equal(page.data.visiblePlayers[0].playerId, 'ATP:P0');
-    definition.nextPlayerPage.call(page);
+    await definition.loadPlayers.call(page, 2);
     assert.equal(page.data.visiblePlayers[0].playerId, 'ATP:P50');
     definition.selectTour.call(page, { currentTarget: { dataset: { tour: 'WTA' } } });
+    await definition.loadPlayers.call(page, 1);
     assert.equal(page.data.playerTotal, 271);
     assert.equal(page.data.visiblePlayers[0].playerId, 'WTA:P439');
     assert.ok(Math.max(...updates.slice(1).map(item => item.bytes)) < 100 * 1024);

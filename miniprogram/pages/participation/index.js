@@ -179,23 +179,32 @@ function displayState(state) {
     id, label: levelLabel(id), rank: levelRank(id), items: items.sort((a, b) =>
       String(a.startsOn || '').localeCompare(String(b.startsOn || '')) || a.tournamentName.localeCompare(b.tournamentName))
   })).sort((a, b) => b.rank - a.rank || a.label.localeCompare(b.label));
-  const allVisiblePlayers = controls.activeView === 'players' ? model.players.filter(item => item.tour === tour
-    && (!query || searchable(item).includes(query)))
-    .sort((a, b) => rankValue(a.worldRanking) - rankValue(b.worldRanking)
-      || a.playerName.localeCompare(b.playerName)) : [];
+  const allVisiblePlayers = controls.activeView === 'players' ? model.players : [];
   const playerPageSize = Number(controls.playerPageSize) || 50;
-  const playerPageCount = Math.max(1, Math.ceil(allVisiblePlayers.length / playerPageSize));
+  const playerTotal = Math.max(0, Number(model.playerTotal) || allVisiblePlayers.length);
+  const playerPageCount = Math.max(1, Math.ceil(playerTotal / playerPageSize));
   const playerPage = Math.min(Math.max(1, Number(controls.playerPage) || 1), playerPageCount);
-  const offset = (playerPage - 1) * playerPageSize;
-  const visiblePlayers = allVisiblePlayers.slice(offset, offset + playerPageSize).map(playerView);
+  const visiblePlayers = allVisiblePlayers.map(playerView);
   return { weekTabs, activeWeek, tournamentGroups, visiblePlayers,
-    playerPage, playerPageCount, playerTotal: allVisiblePlayers.length };
+    playerPage, playerPageCount, playerTotal };
+}
+
+function failureStage(error) {
+  const message = String(error?.code || error?.message || error || '').toLowerCase();
+  if (message.includes('timeout')) return 'timeout';
+  if (message.includes('network') || message.includes('request_failed')) return 'network';
+  if (message.includes('json')) return 'json_parse';
+  if (message.includes('validate') || message.includes('projection_invalid')) return 'validate';
+  if (message.includes('cache') || message.includes('storage')) return 'cache';
+  if (message.includes('setdata')) return 'setData';
+  return 'network';
 }
 
 Page({
   data: {
     ...buildThemeData(), topInset: 44, activeView: 'tournaments', activeTour: 'ATP',
-    activeWeek: '', searchQuery: '', loading: true, failed: false, stale: false,
+    activeWeek: '', searchQuery: '', loading: true, playerLoading: false,
+    failed: false, playerFailed: false, failureStage: '', stale: false,
     tournamentGroups: [], visiblePlayers: [], weekTabs: [], playerPage: 1, playerPageSize: 50,
     playerPageCount: 1, playerTotal: 0,
     expandedTournamentId: '', loadingTournamentId: '', qualityLabel: '', dataAsOf: ''
@@ -232,8 +241,8 @@ Page({
     try {
       const value = await getApp().services.entries.index();
       this.applyIndex(value, value?.delivery?.state === 'stale');
-    } catch {
-      if (!cached) this.setData({ loading: false, failed: true });
+    } catch (error) {
+      if (!cached) this.setData({ loading: false, failed: true, failureStage: failureStage(error) });
     } finally {
       wx.stopPullDownRefresh?.();
     }
@@ -251,7 +260,7 @@ Page({
     }) : [];
     this.entryIndex = {
       tournaments,
-      players: Array.isArray(payload.players) ? payload.players : [],
+      players: [], playerTotal: 0,
       sourceWeeks: payload.sourceWeeks && typeof payload.sourceWeeks === 'object'
         ? payload.sourceWeeks : {}
     };
@@ -260,7 +269,11 @@ Page({
       qualityLabel: qualityLabel(payload.quality),
       dataAsOf: String(payload.dataAsOf || value?.dataAsOf || '').slice(0, 16).replace('T', ' ')
     };
-    this.setData({ ...next, ...this.currentDisplay(next) }, () => this.prefetchVisibleTournaments());
+    try {
+      this.setData({ ...next, ...this.currentDisplay(next) });
+    } catch (error) {
+      this.setData({ loading: false, failed: true, failureStage: 'setData' });
+    }
   },
   currentDisplay(update = {}) {
     const controls = { ...this.data, ...update };
@@ -278,32 +291,55 @@ Page({
     return this.data.tournamentGroups.flatMap(group => group.items || [])
       .map(item => item.tournamentId).filter(Boolean);
   },
-  async prefetchVisibleTournaments() {
-    const ids = this.visibleTournamentIds().filter(id => {
-      return !this.tournamentDetails?.has(id);
-    });
-    if (!ids.length) return;
-    const details = await Promise.all(ids.map(async id => {
-      try {
-        const value = await getApp().services.entries.tournament(id);
-        const summary = this.entryIndex?.tournaments.find(item => item.tournamentId === id) || {};
-        const item = tournamentView({ ...summary, ...payloadOf(value) });
-        return completeRoster(item) ? [id, item] : null;
-      } catch { return null; }
-    }));
-    for (const [id, item] of details.filter(Boolean)) this.tournamentDetails.set(id, item);
-  },
   onPullDownRefresh() { this.load(); },
   rebuildDisplay(update = {}, callback) {
     this.setData({ ...update, ...this.currentDisplay(update) }, callback);
   },
-  selectView(event) { this.rebuildDisplay({ activeView: event.currentTarget.dataset.view === 'players' ? 'players' : 'tournaments', playerPage: 1 }); },
-  selectTour(event) { this.rebuildDisplay({ activeTour: event.currentTarget.dataset.tour === 'WTA' ? 'WTA' : 'ATP', activeWeek: '', expandedTournamentId: '', playerPage: 1 }, () => this.prefetchVisibleTournaments()); },
-  selectWeek(event) { this.rebuildDisplay({ activeWeek: String(event.currentTarget.dataset.week || ''), expandedTournamentId: '' }, () => this.prefetchVisibleTournaments()); },
-  onSearchInput(event) { this.rebuildDisplay({ searchQuery: String(event.detail.value || ''), playerPage: 1 }); },
-  clearSearch() { this.rebuildDisplay({ searchQuery: '', playerPage: 1 }); },
-  previousPlayerPage() { if (this.data.playerPage > 1) this.rebuildDisplay({ playerPage: this.data.playerPage - 1 }); },
-  nextPlayerPage() { if (this.data.playerPage < this.data.playerPageCount) this.rebuildDisplay({ playerPage: this.data.playerPage + 1 }); },
+  selectView(event) {
+    const activeView = event.currentTarget.dataset.view === 'players' ? 'players' : 'tournaments';
+    this.rebuildDisplay({ activeView, playerPage: 1, failed: false });
+    if (activeView === 'players') this.loadPlayers(1);
+  },
+  selectTour(event) {
+    const activeTour = event.currentTarget.dataset.tour === 'WTA' ? 'WTA' : 'ATP';
+    this.rebuildDisplay({ activeTour, activeWeek: '', expandedTournamentId: '', playerPage: 1,
+      failed: false, playerFailed: false });
+    if (this.data.activeView === 'players') this.loadPlayers(1);
+  },
+  selectWeek(event) { this.rebuildDisplay({ activeWeek: String(event.currentTarget.dataset.week || ''), expandedTournamentId: '' }); },
+  onSearchInput(event) {
+    const searchQuery = String(event.detail.value || '');
+    this.rebuildDisplay({ searchQuery, playerPage: 1 });
+    if (this.data.activeView !== 'players') return;
+    clearTimeout(this.playerSearchTimer);
+    this.playerSearchTimer = setTimeout(() => this.loadPlayers(1), 250);
+  },
+  clearSearch() {
+    clearTimeout(this.playerSearchTimer);
+    this.rebuildDisplay({ searchQuery: '', playerPage: 1 });
+    if (this.data.activeView === 'players') this.loadPlayers(1);
+  },
+  previousPlayerPage() { if (this.data.playerPage > 1) this.loadPlayers(this.data.playerPage - 1); },
+  nextPlayerPage() { if (this.data.playerPage < this.data.playerPageCount) this.loadPlayers(this.data.playerPage + 1); },
+  async loadPlayers(page = 1) {
+    const requestId = (this.playerRequestId || 0) + 1;
+    this.playerRequestId = requestId;
+    this.setData({ playerLoading: true, playerFailed: false, failureStage: '' });
+    try {
+      const value = await getApp().services.entries.playerPage({
+        tour: this.data.activeTour, query: this.data.searchQuery, page
+      });
+      if (requestId !== this.playerRequestId) return;
+      const payload = payloadOf(value);
+      this.entryIndex = { ...(this.entryIndex || { tournaments: [], sourceWeeks: {} }),
+        players: Array.isArray(payload.players) ? payload.players : [],
+        playerTotal: Number(payload.total) || 0 };
+      this.rebuildDisplay({ playerLoading: false, playerFailed: false, playerPage: page });
+    } catch (error) {
+      if (requestId !== this.playerRequestId) return;
+      this.setData({ playerLoading: false, playerFailed: true, failureStage: failureStage(error) });
+    }
+  },
   async toggleTournament(event) {
     const id = String(event.currentTarget.dataset.id || '');
     if (!id) return;

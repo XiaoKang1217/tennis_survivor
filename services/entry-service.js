@@ -2,7 +2,13 @@
 
 const { createSWRCache } = require('../core/swr-cache');
 const { loadProjectionResource, readTrustedProjection } = require('../core/projection-resource');
-const { ENTRY_INDEX_CACHE_SCHEMA, compactEntryIndex } = require('../core/entry-index');
+const {
+  ENTRY_INDEX_CACHE_SCHEMA,
+  ENTRY_SUMMARY_CACHE_SCHEMA,
+  ENTRY_PLAYER_PAGE_SCHEMA,
+  validateEntrySummary,
+  validateEntryPlayerPage
+} = require('../core/entry-index');
 
 const TOURNAMENT_SCHEMA = 'entry-tournament/2';
 
@@ -15,7 +21,10 @@ class EntryService {
   cached(resourceKey, schemaVersion) {
     return readTrustedProjection(this.cache, resourceKey, schemaVersion)?.payload || null;
   }
-  cachedIndex() { return this.cached('entries:index', ENTRY_INDEX_CACHE_SCHEMA); }
+  cachedLegacyIndex() { return this.cached('entries:index', ENTRY_INDEX_CACHE_SCHEMA); }
+  cachedIndex() {
+    return this.cached('entries:summary', ENTRY_SUMMARY_CACHE_SCHEMA) || this.cachedLegacyIndex();
+  }
   cachedTournament(tournamentId) {
     return this.cached(`entries:tournament:${tournamentId}`, TOURNAMENT_SCHEMA);
   }
@@ -35,17 +44,29 @@ class EntryService {
       return (await loadProjectionResource({
         http: this.http,
         cache: this.cache,
-        resourceKey: 'entries:index',
-        schemaVersion: ENTRY_INDEX_CACHE_SCHEMA,
+        resourceKey: 'entries:summary',
+        schemaVersion: ENTRY_SUMMARY_CACHE_SCHEMA,
         path: '/api/v1/bff/entries',
         force: options.force === true,
-        validate: compactEntryIndex
+        validate: validateEntrySummary
       })).value;
     } catch (error) {
       const cached = this.cachedIndex();
       if (cached) return { ...cached, delivery: { ...(cached.delivery || {}), state: 'stale' } };
       throw error;
     }
+  }
+  playerPage(options = {}) {
+    const tour = options.tour === 'WTA' ? 'WTA' : 'ATP';
+    const limit = 50;
+    const page = Math.max(1, Number(options.page) || 1);
+    const offset = (page - 1) * limit;
+    const query = String(options.query || '').trim();
+    const key = `entries:players:${tour}:${query}:${page}`;
+    const path = `/api/v1/bff/entries/players?tour=${encodeURIComponent(tour)}`
+      + `&q=${encodeURIComponent(query)}&limit=${limit}&offset=${offset}`;
+    return this.resource(key, ENTRY_PLAYER_PAGE_SCHEMA, path, options.force === true)
+      .then(validateEntryPlayerPage);
   }
   async tournament(tournamentId) {
     const id = String(tournamentId || '').trim();
