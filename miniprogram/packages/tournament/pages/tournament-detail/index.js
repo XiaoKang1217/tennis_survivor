@@ -5,6 +5,7 @@ const { createSWRCache } = require('../../../../core/swr-cache');
 const { loadProjectionResource, readTrustedProjection } = require('../../../../core/projection-resource');
 
 const { enablePageShare, tournamentShare } = require('../../../../core/share');
+const { goBackOrHome } = require('../../../../core/back-navigation');
 const {
   noticeState,
   tournamentDetailView
@@ -122,7 +123,7 @@ Page({
     void this.load().finally(() => wx.stopPullDownRefresh());
   },
 
-  back() { wx.navigateBack(); },
+  back() { goBackOrHome(); },
 
   async toggleTournamentFollow() {
     const detail = this.data.detail;

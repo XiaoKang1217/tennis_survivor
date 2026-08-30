@@ -5,9 +5,11 @@ import test from 'node:test';
 
 const require = createRequire(import.meta.url);
 const modulePath = resolve(import.meta.dirname, '../core/module-navigation.js');
+const backModulePath = resolve(import.meta.dirname, '../core/back-navigation.js');
 
 function loadNavigation(pages) {
   delete require.cache[modulePath];
+  delete require.cache[backModulePath];
   const actions = [];
   let stored = 'dark';
   globalThis.getCurrentPages = () => pages;
@@ -16,9 +18,15 @@ function loadNavigation(pages) {
     setStorageSync(_key, value) { stored = value; },
     setBackgroundColor(options) { actions.push(['background', options.backgroundColor]); },
     setNavigationBarColor(options) { actions.push(['navigation', options.backgroundColor]); },
-    redirectTo(options) { actions.push(['replace', options.url]); }
+    redirectTo(options) { actions.push(['replace', options.url]); },
+    navigateBack() { actions.push(['back']); },
+    reLaunch(options) { actions.push(['relaunch', options.url]); }
   };
-  return { navigation: require(modulePath), actions };
+  return {
+    navigation: require(modulePath),
+    backNavigation: require(backModulePath),
+    actions
+  };
 }
 
 test('module navigation replaces peer modules without native slide animation', () => {
@@ -72,4 +80,25 @@ test('thirty peer switches keep replacement semantics without building a page st
   }
   assert.equal(actions.filter(action => action[0] === 'replace').length, 30);
   assert.equal(actions.filter(action => action[0] === 'background').length, 30);
+});
+
+test('detail pages return normally when an earlier page exists', () => {
+  const { backNavigation, actions } = loadNavigation([
+    { route: 'pages/scores/index' },
+    { route: 'pages/match-detail/index' }
+  ]);
+  backNavigation.goBackOrHome();
+  assert.deepEqual(actions, [['back']]);
+});
+
+test('share-card direct entry relaunches the app home when no earlier page exists', () => {
+  const { backNavigation, actions } = loadNavigation([
+    { route: 'packages/player/pages/player-detail/index' }
+  ]);
+  backNavigation.goBackOrHome();
+  assert.deepEqual(actions, [
+    ['background', '#0d1522'],
+    ['navigation', '#0d1522'],
+    ['relaunch', '/pages/scores/index']
+  ]);
 });

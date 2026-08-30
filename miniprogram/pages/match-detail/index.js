@@ -6,6 +6,7 @@ const { loadProjectionResource, readTrustedProjection } = require('../../core/pr
 
 const contracts = require('../../core/contracts');
 const { enablePageShare, matchShare } = require('../../core/share');
+const { goBackOrHome } = require('../../core/back-navigation');
 const { matchView } = require('../../core/view-model');
 const { beijingClock, beijingDateTime } = require('../../core/schedule-date');
 const { StatisticsStore } = require('../../core/statistics-store');
@@ -1297,5 +1298,5 @@ Page({
     });
   },
 
-  back() { wx.navigateBack(); }
+  back() { goBackOrHome(); }
 });

@@ -4,6 +4,7 @@ const { buildThemeData, syncPageTheme } = require('../../../../core/theme');
 const { createSWRCache } = require('../../../../core/swr-cache');
 const { loadProjectionResource, readTrustedProjection } = require('../../../../core/projection-resource');
 const { enablePageShare, playerShare } = require('../../../../core/share');
+const { goBackOrHome } = require('../../../../core/back-navigation');
 const { directMediaUrl, mediaUrl } = require('../../../../core/media');
 
 const PLAYER_PROFILE_CONTRACT = 'player-profile-bff/2';
@@ -297,7 +298,7 @@ Page({
   },
 
   onPullDownRefresh() { void this.load().finally(() => wx.stopPullDownRefresh()); },
-  back() { wx.navigateBack(); },
+  back() { goBackOrHome(); },
   noop() {},
   async togglePlayerFollow() {
     if (this.data.followState === 'unknown') return;
