@@ -258,31 +258,6 @@ test('rate statistics show percent signs and every metric exposes comparison bar
     && Number.isInteger(row.secondBar)));
 });
 
-test('Sofa statistics V2 renders six period tabs, Chinese groups and unavailable fields honestly', () => {
-  const periods = ['ALL', '1ST', '2ND', '3RD', '4TH', '5TH'].map((period, index) => ({
-    period, labelZh: index === 0 ? '总计' : `第${index}盘`, groups: [{
-      groupId: 'service', groupNameZh: '发球', fields: [{
-        stableFieldId: 'aces', labelZh: 'ACE球',
-        side1: { value: index, display: String(index) },
-        side2: { value: index + 1, display: String(index + 1) },
-        available: index === 0, sourceObservedAt: '2026-08-31T12:00:00.000Z'
-      }]
-    }]
-  }));
-  const projection = {
-    bffContractVersion: 'match-statistics-bff/3',
-    statisticsContractVersion: 'match-statistics-v2/1', projectionVersion: 2,
-    statisticsVersion: 2, dataAsOf: '2026-08-31T12:00:00.000Z',
-    payload: { statistics: { matchId } }, display: { periods },
-    delivery: { state: 'current', message: '', dataAsOf: '2026-08-31T12:00:00.000Z' }
-  };
-  const view = statisticsView(projection, ['甲', '乙'], '2ND');
-  assert.equal(view.periods.length, 6);
-  assert.equal(view.period, '2ND');
-  assert.equal(view.groups[0].groupNameZh, '发球');
-  assert.equal(view.groups[0].rows[0].available, false);
-});
-
 test('completion statistics store uses the permanent compact stream and preserves trusted facts on gaps', () => {
   const store = new CompletionStatisticsStore(matchId);
   store.snapshot(completionProjection(5));

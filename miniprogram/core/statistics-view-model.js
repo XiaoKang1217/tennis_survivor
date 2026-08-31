@@ -64,61 +64,8 @@ function visualRow(metricId, label, firstValue, secondValue, firstFact, secondFa
   });
 }
 
-function productValue(value) {
-  if (!value || value.display === null || value.display === undefined) return '';
-  return String(value.display);
-}
-
-function productNumber(value) {
-  if (!value) return 0;
-  if (Number.isFinite(Number(value.percentage))) return Number(value.percentage);
-  if (Number.isFinite(Number(value.value))) return Number(value.value);
-  return Number.parseFloat(String(value.display ?? '')) || 0;
-}
-
-function productStatisticsView(projection, participantNames, selectedPeriod) {
-  const periods = projection.display.periods;
-  const active = periods.find(period => period.period === selectedPeriod)
-    ?? periods.find(period => period.period === 'ALL') ?? periods[0];
-  const groups = active.groups.map(group => ({
-    groupId: group.groupId,
-    groupNameZh: group.groupNameZh,
-    rows: group.fields.map(field => {
-      const firstNumber = productNumber(field.side1);
-      const secondNumber = productNumber(field.side2);
-      const scale = Math.max(firstNumber, secondNumber, 1);
-      return Object.freeze({
-        metricId: field.stableFieldId,
-        label: field.labelZh,
-        first: productValue(field.side1),
-        second: productValue(field.side2),
-        firstBar: Math.round(firstNumber / scale * 100),
-        secondBar: Math.round(secondNumber / scale * 100),
-        available: field.available === true
-      });
-    })
-  }));
-  return Object.freeze({
-    version: projection.projectionVersion,
-    dataAsOf: projection.dataAsOf,
-    deliveryState: projection.delivery.state,
-    deliveryMessage: projection.delivery.message,
-    names: Object.freeze([participantNames[0] || '', participantNames[1] || '']),
-    duration: '',
-    period: active.period,
-    periods: Object.freeze(periods.map(period => Object.freeze({
-      period: period.period, label: period.labelZh, active: period.period === active.period
-    }))),
-    groups: Object.freeze(groups),
-    rows: Object.freeze(groups.flatMap(group => group.rows))
-  });
-}
-
-function statisticsView(projection, participantNames = [], selectedPeriod = 'ALL') {
+function statisticsView(projection, participantNames = []) {
   if (!projection) return null;
-  if (projection.bffContractVersion === 'match-statistics-bff/3') {
-    return productStatisticsView(projection, participantNames, selectedPeriod);
-  }
   if (projection.contractVersion === 'score-completion-bff/1') {
     const statistics = projection.liveStatistics;
     if (statistics === null) return null;
