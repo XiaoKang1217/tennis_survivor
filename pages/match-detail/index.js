@@ -427,6 +427,7 @@ Page({
     moduleState: null,
     moduleUpdatedTime: '',
     statistics: null,
+    activeStatisticsPeriod: 'ALL',
     statisticsTransportState: 'connecting',
     statisticsTransportMessage: '正在建立统计实时连接',
     pointByPoint: null,
@@ -957,7 +958,8 @@ Page({
     this.unsubscribeStatistics = store.subscribe(projection => {
       this.v2StatisticsAvailable = true;
       this.setData({
-        statistics: statisticsView(projection, match.sides.map(side => side.names))
+        statistics: statisticsView(projection, match.sides.map(side => side.names),
+          this.data.activeStatisticsPeriod)
       }, () => this.updateModuleState());
     });
     this.unsubscribeStatisticsState = client.subscribeTransport(state => {
@@ -1071,6 +1073,16 @@ Page({
     this.setData({
       activePointSetNumber: setNumber,
       pointByPoint: pointByPointWithActive(this.data.pointByPoint, setNumber)
+    });
+  },
+
+  selectStatisticsPeriod(event) {
+    const period = String(event.currentTarget.dataset.period || 'ALL');
+    if (!this.statisticsStore?.projection) return;
+    this.setData({
+      activeStatisticsPeriod: period,
+      statistics: statisticsView(this.statisticsStore.projection,
+        this.data.match.sides.map(side => side.names), period)
     });
   },
 

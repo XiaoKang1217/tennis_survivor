@@ -288,8 +288,10 @@ function matchProjection(value) {
 
 function statisticsProjection(value) {
   const envelope = object(value, 'statistics envelope');
-  if (envelope.bffContractVersion !== 'match-statistics-bff/2'
-    || envelope.statisticsContractVersion !== 'match-statistics/2') {
+  const productV2 = envelope.bffContractVersion === 'match-statistics-bff/3'
+    && envelope.statisticsContractVersion === 'match-statistics-v2/1';
+  if (!productV2 && (envelope.bffContractVersion !== 'match-statistics-bff/2'
+    || envelope.statisticsContractVersion !== 'match-statistics/2')) {
     throw new Error('statistics BFF contract invalid');
   }
   version(envelope.projectionVersion, 'statistics projectionVersion');
@@ -299,10 +301,23 @@ function statisticsProjection(value) {
   const statistics = object(payload.statistics, 'statistics facts');
   text(statistics.matchId, 'statistics matchId');
   const display = object(envelope.display, 'statistics display');
-  if (!Array.isArray(display.sides) || display.sides.length !== 2) {
+  if (productV2) {
+    if (!Array.isArray(display.periods) || display.periods.length !== 6) {
+      throw new Error('statistics periods invalid');
+    }
+    display.periods.forEach(period => {
+      oneOf(period.period, ['ALL', '1ST', '2ND', '3RD', '4TH', '5TH'], 'statistics period');
+      text(period.labelZh, 'statistics period label');
+      if (!Array.isArray(period.groups)) throw new Error('statistics groups invalid');
+      period.groups.forEach(group => {
+        text(group.groupId, 'statistics group id');
+        text(group.groupNameZh, 'statistics group label');
+        if (!Array.isArray(group.fields)) throw new Error('statistics group fields invalid');
+      });
+    });
+  } else if (!Array.isArray(display.sides) || display.sides.length !== 2) {
     throw new Error('statistics display sides invalid');
-  }
-  display.sides.forEach((side, index) => {
+  } else display.sides.forEach((side, index) => {
     text(object(side, `statistics side ${index}`).sideId,
       `statistics side ${index} id`);
   });
