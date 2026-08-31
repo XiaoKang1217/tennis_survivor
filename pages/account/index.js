@@ -14,10 +14,32 @@ function profileView(profile = {}) {
 }
 
 function checkinsView(value = {}) {
+  const currentStreak = Math.max(0, Number(value.currentStreak) || 0);
+  const currentCycleDay = currentStreak ? ((currentStreak - 1) % 7) + 1 : 0;
+  const cycleRewards = Array.isArray(value.cycleRewards) && value.cycleRewards.length === 7
+    ? value.cycleRewards : [5, 5, 5, 5, 10, 15, 20].map((reward, index) => ({
+      day: index + 1, reward,
+      claimed: currentCycleDay > 0 && index + 1 <= currentCycleDay,
+      current: Boolean(value.checkedInToday) && index + 1 === currentCycleDay,
+      state: currentCycleDay > 0 && index + 1 <= currentCycleDay ? 'claimed'
+        : (index + 1 === (currentCycleDay ? currentCycleDay % 7 + 1 : 1) ? 'next' : 'upcoming')
+    }));
   return {
     ...value,
+    currentCycleDay: Number(value.currentCycleDay) || currentCycleDay,
+    nextCycleDay: Number(value.nextCycleDay) || (currentCycleDay ? currentCycleDay % 7 + 1 : 1),
     dailyCheckinReward: Number(value.dailyCheckinReward) > 0
       ? Number(value.dailyCheckinReward) : 5,
+    cycleRewards: cycleRewards.map(item => ({
+      ...item, claimed: Boolean(item.claimed || item.state === 'claimed'),
+      dayLabel: `第${item.day}天`,
+      rewardLabel: `+${item.reward}`
+    })),
+    monthlyProgress: {
+      checkedDays: 0, daysInMonth: 0, bonus: 50,
+      eligibilityMessage: '整月全勤额外获得50朵花',
+      ...(value.monthlyProgress || {})
+    },
     recentSevenDays: (value.recentSevenDays || []).map(item => ({
       ...item,
       dayLabel: String(item.date || '').slice(8)
@@ -31,8 +53,10 @@ Page({
     topInset: 44,
     profile: profileView(),
     socialReady: false,
+    socialLoading: true,
+    socialFailed: false,
     wallet: { balance: 0, lifetimeEarned: 0, lifetimeSpent: 0 },
-    checkins: { dailyCheckinReward: 5, checkedInToday: false, totalDays: 0, currentStreak: 0, recentSevenDays: [] },
+    checkins: checkinsView(),
     themeSheetOpen: false,
     themeOptions: THEMES
   },
@@ -65,6 +89,7 @@ Page({
     await this.openProfileGate();
   },
   async loadSocial() {
+    this.setData({ socialLoading: true, socialFailed: false });
     try {
       const value = await getApp().services.social.bootstrap();
       if (value?.profile) getApp().services.account.writeStored(value.profile);
@@ -74,7 +99,9 @@ Page({
         checkins: checkinsView(value.checkins || this.data.checkins)
       });
     } catch {
-      this.setData({ socialReady: false });
+      this.setData({ socialReady: false, socialFailed: true });
+    } finally {
+      this.setData({ socialLoading: false });
     }
   },
   async checkin() {
@@ -87,8 +114,10 @@ Page({
       });
       const reward = Number(value.reward) > 0
         ? Number(value.reward) : this.data.checkins.dailyCheckinReward;
+      const monthlyBonus = Number(value.monthlyBonus || 0);
       wx.showToast({
-        title: value.alreadyCheckedIn ? '今天已经签过啦' : `签到成功，花朵 +${reward}`,
+        title: value.alreadyCheckedIn ? '今天已经签过啦'
+          : (monthlyBonus > 0 ? `签到 +${value.dailyReward}，全勤 +${monthlyBonus}` : `签到成功，花朵 +${reward}`),
         icon: 'none'
       });
     } catch (error) {

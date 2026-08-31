@@ -31,11 +31,39 @@ function calendarCells(month, checkedDates) {
     });
 }
 
+function checkinsView(value = {}) {
+  const currentStreak = Math.max(0, Number(value.currentStreak) || 0);
+  const currentCycleDay = currentStreak ? ((currentStreak - 1) % 7) + 1 : 0;
+  const cycleRewards = Array.isArray(value.cycleRewards) && value.cycleRewards.length === 7
+    ? value.cycleRewards : [5, 5, 5, 5, 10, 15, 20].map((reward, index) => ({
+      day: index + 1, reward,
+      claimed: currentCycleDay > 0 && index + 1 <= currentCycleDay,
+      current: Boolean(value.checkedInToday) && index + 1 === currentCycleDay,
+      state: currentCycleDay > 0 && index + 1 <= currentCycleDay ? 'claimed'
+        : (index + 1 === (currentCycleDay ? currentCycleDay % 7 + 1 : 1) ? 'next' : 'upcoming')
+    }));
+  return {
+    ...value,
+    currentCycleDay: Number(value.currentCycleDay) || currentCycleDay,
+    nextCycleDay: Number(value.nextCycleDay) || (currentCycleDay ? currentCycleDay % 7 + 1 : 1),
+    dailyCheckinReward: Number(value.dailyCheckinReward) || 5,
+    cycleRewards: cycleRewards.map(item => ({
+      ...item, claimed: Boolean(item.claimed || item.state === 'claimed'),
+      dayLabel: `第${item.day}天`, rewardLabel: `+${item.reward}`
+    })),
+    monthlyProgress: {
+      checkedDays: 0, daysInMonth: 0, bonus: 50,
+      eligibilityMessage: '整月全勤额外获得50朵花',
+      ...(value.monthlyProgress || {})
+    }
+  };
+}
+
 Page({
   data: {
     ...buildThemeData(), topInset: 44, loading: true, failed: false,
     month: monthNow(), weekLabels: ['日','一','二','三','四','五','六'],
-    calendarCells: [], wallet: {}, checkins: { dailyCheckinReward: 5 }, ledger: [], badges: []
+    calendarCells: [], wallet: {}, checkins: checkinsView(), ledger: [], badges: []
   },
   onLoad() {
     syncPageTheme(this);
@@ -70,7 +98,7 @@ Page({
       this.setData({
         loading: false,
         wallet: bootstrap.wallet || {},
-        checkins: bootstrap.checkins || {},
+        checkins: checkinsView(bootstrap.checkins || {}),
         calendarCells: calendarCells(this.data.month, calendar.calendar?.checkedDates),
         ledger: (bootstrap.recentLedger?.entries || []).map(item => ({
           ...item, dateLabel: item.occurredDate || ''
@@ -82,7 +110,18 @@ Page({
   async loadCalendar() {
     try {
       const value = await getApp().services.social.checkinCalendar(this.data.month);
-      this.setData({ calendarCells: calendarCells(this.data.month, value.calendar?.checkedDates) });
+      const calendar = value.calendar || {};
+      this.setData({
+        calendarCells: calendarCells(this.data.month, calendar.checkedDates),
+        'checkins.monthlyProgress': {
+          ...this.data.checkins.monthlyProgress,
+          checkedDays: calendar.checkedDays || 0,
+          daysInMonth: calendar.daysInMonth || 0,
+          eligible: calendar.eligible,
+          earned: calendar.earned,
+          bonus: calendar.monthlyBonus || 50
+        }
+      });
     } catch { wx.showToast({ title: '日历暂未更新', icon: 'none' }); }
   },
   async checkin() {
@@ -90,8 +129,10 @@ Page({
       const value = await getApp().services.social.checkin();
       const reward = Number(value.reward) > 0
         ? Number(value.reward) : Number(this.data.checkins.dailyCheckinReward) || 5;
+      const monthlyBonus = Number(value.monthlyBonus || 0);
       wx.showToast({
-        title: value.alreadyCheckedIn ? '今天已经签过啦' : `签到成功，花朵 +${reward}`,
+        title: value.alreadyCheckedIn ? '今天已经签过啦'
+          : (monthlyBonus > 0 ? `签到 +${value.dailyReward}，全勤 +${monthlyBonus}` : `签到成功，花朵 +${reward}`),
         icon: 'none'
       });
       if (value.alreadyCheckedIn) return;
@@ -104,9 +145,11 @@ Page({
           balance: value.balance,
           lifetimeEarned: Number(this.data.wallet.lifetimeEarned || 0) + reward
         },
-        checkins: value.summary || this.data.checkins,
-        ledger: ledgerEntry
-          ? [ledgerEntry, ...this.data.ledger].slice(0, 5) : this.data.ledger,
+        checkins: checkinsView(value.summary || this.data.checkins),
+        ledger: [value.monthlyBonusLedgerEntry, ledgerEntry]
+          .filter(Boolean)
+          .map(item => ({ ...item, dateLabel: item.occurredDate || '' }))
+          .concat(this.data.ledger).slice(0, 5),
         calendarCells: this.data.calendarCells.map(cell =>
           cell.key === ledgerEntry?.dateLabel ? { ...cell, checked: true } : cell)
       });
