@@ -106,12 +106,25 @@
 
         <block wx:if="{{activeTab === 'statistics' && statistics && (moduleState.state === 'content' || (moduleState.state === 'delayed' && moduleState.preservesLastTrustedContent))}}">
           <data-notice wx:if="{{moduleState.state === 'delayed'}}" state="delayed" message="{{moduleState.message}}" compact />
+          <scroll-view wx:if="{{statistics.periods}}" class="statistics-periods" scroll-x enhanced show-scrollbar="{{false}}">
+            <button wx:for="{{statistics.periods}}" wx:key="period" data-period="{{item.period}}" bindtap="selectStatisticsPeriod" class="{{item.active ? 'active' : ''}}">{{item.label}}</button>
+          </scroll-view>
           <view class="statistics-head"><text>{{statistics.names[0]}}</text><text>{{moduleState.label}}</text><text>{{statistics.names[1]}}</text></view>
-          <view wx:for="{{statistics.rows}}" wx:key="metricId" class="stat-row">
-            <view class="stat-side stat-side-first"><text>{{item.first}}</text><view class="stat-bar-track"><view class="stat-bar" style="width:{{item.firstBar}}%"></view></view></view>
-            <text class="stat-label">{{item.label}}</text>
-            <view class="stat-side stat-side-second"><text>{{item.second}}</text><view class="stat-bar-track"><view class="stat-bar" style="width:{{item.secondBar}}%"></view></view></view>
-          </view>
+          <block wx:if="{{statistics.groups}}" wx:for="{{statistics.groups}}" wx:key="groupId" wx:for-item="group">
+            <view class="statistics-group-title">{{group.groupNameZh}}</view>
+            <view wx:for="{{group.rows}}" wx:key="metricId" wx:for-item="item" class="stat-row {{item.available ? '' : 'unavailable'}}">
+              <view class="stat-side stat-side-first"><text>{{item.available ? item.first : '—'}}</text><view class="stat-bar-track"><view class="stat-bar" style="width:{{item.firstBar}}%"></view></view></view>
+              <text class="stat-label">{{item.label}}</text>
+              <view class="stat-side stat-side-second"><text>{{item.available ? item.second : '—'}}</text><view class="stat-bar-track"><view class="stat-bar" style="width:{{item.secondBar}}%"></view></view></view>
+            </view>
+          </block>
+          <block wx:else>
+            <view wx:for="{{statistics.rows}}" wx:key="metricId" class="stat-row">
+              <view class="stat-side stat-side-first"><text>{{item.first}}</text><view class="stat-bar-track"><view class="stat-bar" style="width:{{item.firstBar}}%"></view></view></view>
+              <text class="stat-label">{{item.label}}</text>
+              <view class="stat-side stat-side-second"><text>{{item.second}}</text><view class="stat-bar-track"><view class="stat-bar" style="width:{{item.secondBar}}%"></view></view></view>
+            </view>
+          </block>
           <view wx:if="{{statistics.duration}}" class="duration"><ui-icon name="clock" size="15"/><text>{{statistics.duration}}</text></view>
         </block>
         <block wx:elif="{{activeTab === 'point_by_point' && pointByPoint && (moduleState.state === 'content' || (moduleState.state === 'delayed' && moduleState.preservesLastTrustedContent))}}">
