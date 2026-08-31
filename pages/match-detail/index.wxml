@@ -109,13 +109,15 @@
             <button wx:for="{{statistics.periods}}" wx:key="period" data-period="{{item.period}}" bindtap="selectStatisticsPeriod" class="{{item.active ? 'active' : ''}}">{{item.label}}</button>
           </scroll-view>
           <view class="statistics-head"><text>{{statistics.names[0]}}</text><text>{{moduleState.label}}</text><text>{{statistics.names[1]}}</text></view>
-          <block wx:if="{{statistics.groups}}" wx:for="{{statistics.groups}}" wx:key="groupId" wx:for-item="group">
-            <view class="statistics-group-title">{{group.groupNameZh}}</view>
-            <view wx:for="{{group.rows}}" wx:key="metricId" wx:for-item="item" class="stat-row {{item.available ? '' : 'unavailable'}}">
-              <view class="stat-side stat-side-first"><text>{{item.available ? item.first : '—'}}</text><view class="stat-bar-track"><view class="stat-bar" style="width:{{item.firstBar}}%"></view></view></view>
-              <text class="stat-label">{{item.label}}</text>
-              <view class="stat-side stat-side-second"><text>{{item.available ? item.second : '—'}}</text><view class="stat-bar-track"><view class="stat-bar" style="width:{{item.secondBar}}%"></view></view></view>
-            </view>
+          <block wx:if="{{statistics.groups}}">
+            <block wx:for="{{statistics.groups}}" wx:key="groupId" wx:for-item="group">
+              <view class="statistics-group-title">{{group.groupNameZh}}</view>
+              <view wx:for="{{group.rows}}" wx:key="metricId" wx:for-item="item" class="stat-row {{item.available ? '' : 'unavailable'}}">
+                <view class="stat-side stat-side-first"><text>{{item.available ? item.first : '—'}}</text><view class="stat-bar-track"><view class="stat-bar" style="width:{{item.firstBar}}%"></view></view></view>
+                <text class="stat-label">{{item.label}}</text>
+                <view class="stat-side stat-side-second"><text>{{item.available ? item.second : '—'}}</text><view class="stat-bar-track"><view class="stat-bar" style="width:{{item.secondBar}}%"></view></view></view>
+              </view>
+            </block>
           </block>
           <block wx:else>
             <view wx:for="{{statistics.rows}}" wx:key="metricId" class="stat-row">
