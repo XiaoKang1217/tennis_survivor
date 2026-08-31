@@ -120,6 +120,38 @@ test('daily selection skips matches that start too soon for users to pick', asyn
   assert.ok(inserted.every((row) => row.match_key.endsWith(':later')));
 });
 
+test('daily refresh skips new questions while an older prediction is still open', async () => {
+  const eventQueries = [];
+  const client = {
+    async select(table, query) {
+      if (table === 'tour_manager_daily_prediction_games' && query.status === 'eq.open') {
+        return [{
+          id: 'open-old',
+          contest_date: '2026-08-31',
+          closes_at: '2026-09-01T01:00:00.000Z'
+        }];
+      }
+      if (table === 'tour_manager_events') eventQueries.push(query);
+      return [];
+    },
+    async insert() {
+      throw new Error('refresh should not insert while an older prediction is still open');
+    }
+  };
+  const result = await refreshDailyPredictionGamesByMedian({
+    client,
+    stationKey: '2026-w35-us-open',
+    sourceStationKey: '2026-w35-us-open',
+    season: 2026,
+    contestDate: '2026-09-01',
+    now: new Date('2026-08-31T16:30:00.000Z')
+  });
+  assert.equal(result.skipped_active, true);
+  assert.equal(result.created, 0);
+  assert.equal(result.active_contest_date, '2026-08-31');
+  assert.deepEqual(eventQueries, []);
+});
+
 test('daily selection groups the full official event day across China midnight', () => {
   assert.match(migration, /p_raw ->> 'date'/);
   assert.match(migration, /tour_manager_match_event_date[\s\S]+?= v_event_date/);
@@ -385,7 +417,8 @@ test('frontend exposes picks and separates personal prediction income without ch
   assert.match(html, /data-manager-view="prediction">每日竞猜/);
   assert.match(html, /tour_manager_submit_daily_predictions/);
   assert.match(html, /当前为本地测试，不会写入线上数据/);
-  assert.match(html, /今日竞猜 <span class="manager-prediction-reward">猜对一场 \+10 本金<\/span>/);
+  assert.match(html, /introTitle=MANAGER_DAILY_PREDICTIONS&&MANAGER_DAILY_PREDICTIONS\.carried_over\?'继续竞猜':'今日竞猜'/);
+  assert.match(html, /\+introTitle\+' <span class="manager-prediction-reward">猜对一场 \+10 本金<\/span>/);
   assert.match(html, /<p>比赛开始前可提交或修改。<\/p>/);
   assert.doesNotMatch(html, /每天各选一场 ATP、WTA 排名接近的比赛/);
   assert.doesNotMatch(html, /<br>排名差/);
@@ -429,12 +462,13 @@ test('local QA reads immutable Supabase questions and falls back from previous t
   assert.match(html, /function managerDailyPredictionStationKeys\(\)/);
   assert.match(html, /\[previous,managerStationKey\(\)\]/);
   assert.match(html, /function managerDailyPredictionDateKeys\(\)/);
-  assert.match(html, /managerChinaDateKey\(new Date\(\),-1\)/);
+  assert.match(html, /for\(var i=days;i>=0;i--\)dates\.push\(managerChinaDateKey\(new Date\(\),-i\)\)/);
   assert.match(html, /for\(var i=0;i<stationKeys\.length;i\+\+\)/);
-  assert.match(html, /managerDailyPredictionSetHasOpenGame\(previousData\)/);
-  assert.match(html, /previousData\.carried_over=true/);
-  assert.match(html, /p_contest_date:previousDate/);
-  assert.match(html, /p_contest_date:todayDate/);
+  assert.match(html, /for\(var j=0;j<contestDates\.length;j\+\+\)/);
+  assert.match(html, /managerDailyPredictionSetHasOpenGame\(data\)/);
+  assert.match(html, /data\.carried_over=true/);
+  assert.match(html, /p_contest_date:dateKey/);
+  assert.match(html, /继续竞猜/);
   assert.doesNotMatch(html, /function managerPredictionPreviewData\(\)/);
   assert.match(html, /if\(managerLocalQaMode\(\)\)\{/);
   assert.match(html, /当前为本地测试，不会写入线上数据/);

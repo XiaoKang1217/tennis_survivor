@@ -112,6 +112,34 @@ export async function refreshDailyPredictionGamesByMedian({
   if (!Number.isFinite(nowDate.getTime())) throw new Error(`Invalid refresh time: ${now}`);
   const minLeadMs = Math.max(0, Number(minLeadMinutes) || 0) * 60000;
   const candidateStartsAfter = new Date(nowDate.getTime() + minLeadMs);
+  const activeGames = await client.select('tour_manager_daily_prediction_games', {
+    station_key: `eq.${stationKey}`,
+    season: `eq.${season}`,
+    status: 'eq.open',
+    closes_at: `gt.${nowDate.toISOString()}`,
+    select: 'id,contest_date,closes_at',
+    order: 'closes_at.asc',
+    limit: 1
+  });
+  const activeCarryover = activeGames.find((game) => String(game.contest_date) !== String(contestDate));
+  if (activeCarryover) {
+    return {
+      station_key: stationKey,
+      source_station_key: sourceStationKey || stationKey,
+      season,
+      contest_date: contestDate,
+      selection_method: MEDIAN_SELECTION_METHOD,
+      replaced_total: 0,
+      replaced_unpicked: 0,
+      replaced_legacy: 0,
+      created: 0,
+      existing: 0,
+      missing_tours: [],
+      skipped_active: true,
+      active_contest_date: activeCarryover.contest_date,
+      active_closes_at: activeCarryover.closes_at
+    };
+  }
 
   let created = 0;
   let existing = 0;
