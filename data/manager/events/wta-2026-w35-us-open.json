@@ -33,7 +33,7 @@
   "cross_tour_transfer": true,
   "transfer_window_days": 3,
   "transfer_fee_rate": 0.15,
-  "transfer_window_note": "美网换人窗口待 R1 完赛时间确认；未确认前不开放换人。",
+  "transfer_window_note": "本站换人窗口为 09/02 13:00 - 09/02 22:45；ATP/WTA 同一窗口开放，男女可互换，手续费 15%。换人时不管本金多少不再享受低保折扣。若换下提交时冻结的全村希望，换入球员自动继承全村希望。",
   "source_urls": [
     "https://www.live-tennis.cn/zh/draw/UO/2026",
     "https://www.live-tennis.cn/zh/draw/ajax/UO/2026/device/0/horizontal/true",
@@ -10876,6 +10876,7 @@
     "preview_generated_at": "2026-08-28T05:42:57.543Z"
   },
   "round1_completed_at": "2026-09-02T01:00:00.000Z",
-  "transfer_window_opens_at": "2026-09-02T01:00:00.000Z",
-  "transfer_window_closes_at": "2026-09-02T15:00:00.000Z"
+  "transfer_window_opens_at": "2026-09-02T13:00:00+08:00",
+  "transfer_window_closes_at": "2026-09-02T22:45:00+08:00",
+  "transfer_welfare_discount": false
 }

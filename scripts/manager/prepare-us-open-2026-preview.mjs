@@ -20,6 +20,9 @@ const SUBMISSION_OPENS_AT = '2026-08-28T09:15:00+08:00';
 const MAIN_DRAW_FIRST_MATCH_AT = '2026-08-30T15:00:00.000Z';
 const SUBMISSION_CUTOFF_AT = '2026-08-30T14:45:00.000Z';
 const ROUND2_FIRST_MATCH_AT = '2026-09-02T15:00:00.000Z';
+const TRANSFER_WINDOW_OPENS_AT = '2026-09-02T13:00:00+08:00';
+const TRANSFER_WINDOW_CLOSES_AT = '2026-09-02T22:45:00+08:00';
+const TRANSFER_WINDOW_NOTE = '本站换人窗口为 09/02 13:00 - 09/02 22:45；ATP/WTA 同一窗口开放，男女可互换，手续费 15%。换人时不管本金多少不再享受低保折扣。若换下提交时冻结的全村希望，换入球员自动继承全村希望。';
 
 function expectedCount(tour) {
   return tour === 'ATP' ? 18 : 16;
@@ -103,7 +106,10 @@ function eventShell({ tour, eventKey, displayName, players }) {
     cross_tour_transfer: true,
     transfer_window_days: 3,
     transfer_fee_rate: 0.15,
-    transfer_window_note: '美网换人窗口待 R1 完赛时间确认；未确认前不开放换人。',
+    transfer_window_opens_at: TRANSFER_WINDOW_OPENS_AT,
+    transfer_window_closes_at: TRANSFER_WINDOW_CLOSES_AT,
+    transfer_welfare_discount: false,
+    transfer_window_note: TRANSFER_WINDOW_NOTE,
     source_urls: [
       DRAW_URL,
       DRAW_AJAX_URL,
@@ -213,6 +219,7 @@ async function main() {
       station_grant: 2000,
       cross_tour_transfer: true,
       transfer_fee_rate: 0.15,
+      transfer_welfare_discount: false,
       combo_version: 'us_open_2026_v1',
       combo_design_status: 'confirmed',
       combo
@@ -233,6 +240,7 @@ async function main() {
       '慧眼识珠：按购买价 ≤300 判断，低价球员进入 R32/R16/QF/SF/F/W 分别 +200/+400/+600/+800/+1000/+1200；单阵容最多触发 1 次，只取最高档。',
       '全村的希望由用户提交阵容时自定义选择：R32/R16/QF/SF/F/W 分别 +200/+400/+600/+800/+1000/+1200。',
       '低保办沿用提交时本金 ≤500、阵容至少 3 人、原价 20% 减免且最高 300 的规则；2026 赛季最多触发 3 次，已满 3 次不再享受。',
+      '换人窗口从北京时间 2026-09-02 13:00 开放，截止北京时间 2026-09-02 22:45；ATP/WTA 同一窗口开放，男女可互换，手续费 15%；换人时不管本金多少不再享受低保折扣。',
       'Carlos Alcaraz 的状态分按运营口径人工校正为 50，并以该状态分重新定价。',
       '弹窗和自动榜单上下文仍保留 R1 门槛：美网 R1 正式开赛前继续展示辛辛那提收益；R1 开赛后切换本站。',
       'live-tennis 当前未发布正赛具体 OOP；R1 开赛闸门先按美网官方赛程 2026-08-30 11:00 New York / 2026-08-30 23:00 Beijing。'

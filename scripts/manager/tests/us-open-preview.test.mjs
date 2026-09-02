@@ -9,6 +9,7 @@ const wta = JSON.parse(fs.readFileSync('data/manager/events/wta-2026-w35-us-open
 const market = JSON.parse(fs.readFileSync('data/manager/market_snapshot.json', 'utf8'));
 const openingPublication = JSON.parse(fs.readFileSync('data/manager/publications/2026-w35-us-open-v1.json', 'utf8'));
 const cutoffAmendment = JSON.parse(fs.readFileSync('data/manager/publications/2026-w35-us-open-v2.json', 'utf8'));
+const transferWindowPublication = JSON.parse(fs.readFileSync('data/manager/publications/2026-w35-us-open-v3.json', 'utf8'));
 const dataManifest = JSON.parse(fs.readFileSync('data/manifest.json', 'utf8'));
 const sourceOverrides = JSON.parse(fs.readFileSync('data/manager/player_source_overrides.json', 'utf8'));
 const html = fs.readFileSync('index.html', 'utf8');
@@ -18,6 +19,10 @@ const syncStation = fs.readFileSync('scripts/manager/sync-station.mjs', 'utf8');
 const updateManagerWorkflow = fs.readFileSync('.github/workflows/update_manager.yml', 'utf8');
 const migration = fs.readFileSync('supabase/migrations/202608280001_manager_us_open_combo_and_welfare_limit.sql', 'utf8');
 const cutoffMigration = fs.readFileSync('supabase/migrations/202608290001_manager_us_open_submission_cutoff_0830.sql', 'utf8');
+const transferWindowMigration = fs.readFileSync('supabase/migrations/202609020001_manager_us_open_transfer_window.sql', 'utf8');
+
+const transferOpensAt = '2026-09-02T13:00:00+08:00';
+const transferClosesAt = '2026-09-02T22:45:00+08:00';
 
 function contentVersion(file) {
   return createHash('sha256').update(fs.readFileSync(file)).digest('hex').slice(0, 16);
@@ -48,6 +53,11 @@ function assertUsOpenEvent(event, tour, qualifierSlotCount) {
   assert.equal(event.allow_submission_after_first_match, false);
   assert.equal(event.transfer_fee_rate, 0.15);
   assert.equal(event.cross_tour_transfer, true);
+  assert.equal(event.transfer_welfare_discount, false);
+  assert.equal(event.transfer_window_opens_at, transferOpensAt);
+  assert.equal(event.transfer_window_closes_at, transferClosesAt);
+  assert.match(event.transfer_window_note, /男女可互换/);
+  assert.match(event.transfer_window_note, /不再享受低保折扣/);
   assert.ok(event.source_urls.includes('https://www.live-tennis.cn/zh/draw/UO/2026'));
   assert.equal(event.players.length, 128);
   const qualifierPlaceholders = event.players.filter((player) => player.is_qualifier_placeholder).length;
@@ -73,6 +83,9 @@ test('US Open station is current with 2000 grant, 1200 Combo cap, and Cincinnati
   assert.equal(active.status, 'open');
   assert.equal(active.rules.station_grant, 2000);
   assert.equal(active.announcement, '美网新站开售：签约金 2000，Combo 封顶 1200，提交时间0828 09:15~0830 22:45');
+  assert.equal(active.rules.cross_tour_transfer, true);
+  assert.equal(active.rules.transfer_fee_rate, 0.15);
+  assert.equal(active.rules.transfer_welfare_discount, false);
   assert.equal(active.rules.combo_version, 'us_open_2026_v1');
   assert.equal(active.rules.combo_design_status, 'confirmed');
   assert.equal(active.rules.combo.total_cap, 1200);
@@ -129,6 +142,7 @@ test('US Open station is current with 2000 grant, 1200 Combo cap, and Cincinnati
   assert.equal(active.daily_prediction.station_key, active.station_key);
   assert.equal(active.daily_prediction.source_station_key, active.station_key);
   assert.ok(active.notes.some((note) => note.includes('2026-08-30 22:45')));
+  assert.ok(active.notes.some((note) => note.includes('2026-09-02 13:00') && note.includes('不再享受低保')));
   assert.ok(active.notes.some((note) => note.includes('R1 正式开赛前继续展示辛辛那提收益')));
 });
 
@@ -171,6 +185,35 @@ test('US Open cutoff amendment moves submission close to 2026-08-30 22:45 withou
   assert.match(cutoffMigration, /station_key = '2026-w35-us-open'/);
   assert.match(cutoffMigration, /submission_cutoff_at = '2026-08-30T22:45:00\+08:00'/);
   assert.match(cutoffMigration, /submission_closes_at = '2026-08-30T22:45:00\+08:00'/);
+});
+
+test('US Open transfer window is shared cross-tour and does not recalculate welfare', () => {
+  assert.equal(transferWindowPublication.station_key, '2026-w35-us-open');
+  assert.equal(transferWindowPublication.publication_version, 3);
+  assert.equal(transferWindowPublication.publication_kind, 'window_amendment');
+  assert.equal(transferWindowPublication.snapshot.station_config.rules.cross_tour_transfer, true);
+  assert.equal(transferWindowPublication.snapshot.station_config.rules.transfer_fee_rate, 0.15);
+  assert.equal(transferWindowPublication.snapshot.station_config.rules.transfer_welfare_discount, false);
+  assert.ok(transferWindowPublication.snapshot.station_config.notes.some((note) => (
+    note.includes('2026-09-02 13:00') && note.includes('不再享受低保')
+  )));
+  assert.ok(transferWindowPublication.snapshot.windows.every((window) => (
+    window.transfer_window_opens_at === transferOpensAt
+    && window.transfer_window_closes_at === transferClosesAt
+    && window.transfer_fee_rate === 0.15
+  )));
+  assert.ok(transferWindowPublication.snapshot.events.every((event) => (
+    event.cross_tour_transfer === true
+    && event.transfer_welfare_discount === false
+  )));
+  assert.match(transferWindowMigration, /station_key = '2026-w35-us-open'/);
+  assert.match(transferWindowMigration, /2026-09-02T13:00:00\+08:00/);
+  assert.match(transferWindowMigration, /2026-09-02T22:45:00\+08:00/);
+  assert.match(transferWindowMigration, /transfer_fee_rate = 0\.15/);
+  assert.match(transferWindowMigration, /'transfer_welfare_discount', false/);
+  assert.match(transferWindowMigration, /tour_manager_apply_us_open_transfer_village_hope/);
+  assert.match(html, /if\(submitted\)\{\s*var frozenActive=Number\.isFinite\(frozenDiscount\)&&frozenDiscount>0;/);
+  assert.match(html, /discount:frozenActive\?Math\.round\(frozenDiscount\):0/);
 });
 
 test('Carlos Alcaraz form score is manually corrected to 50 before pricing', () => {
@@ -229,6 +272,7 @@ test('US Open source files are generated and cache-busted in the data manifest',
     'data/manager/events/atp-2026-w35-us-open.json',
     'data/manager/events/wta-2026-w35-us-open.json',
     'data/manager/publications/2026-w35-us-open-v2.json',
+    'data/manager/publications/2026-w35-us-open-v3.json',
     'data/manager/player_source_overrides.json'
   ]) {
     assert.equal(dataManifest.files[file]?.version, contentVersion(file), `${file} manifest version is stale`);

@@ -3187,10 +3187,11 @@ function managerWelfareQuote(players,principal,submitted){
   var submittedPrincipal=submitted&&(submitted.welfarePrincipalAtSubmit!=null?submitted.welfarePrincipalAtSubmit:submitted.welfare_principal_at_submit);
   var frozenDiscount=Number(submittedDiscount!=null?submittedDiscount:meta.welfare_discount);
   var frozenPrincipal=Number(submittedPrincipal!=null?submittedPrincipal:meta.welfare_principal_at_submit);
-  if(submitted&&Number.isFinite(frozenDiscount)&&frozenDiscount>0){
-    return {active:true,eligible:true,discount:Math.round(frozenDiscount),originalCost:Number(submitted.originalCost??submitted.original_cost??submitted.original_lineup_cost??meta.original_cost)||original,principalAtSubmit:Number.isFinite(frozenPrincipal)?frozenPrincipal:Number(principal)||0,uses:managerWelfareUsesThisSeason(),maxUses:Number(config.max_uses_per_season)||3,rate:Number(config.discount_rate)||.2,cap:Number(config.cap)||300,minPlayers:Number(config.min_players)||3,principalMax:Number(config.principal_max)||500,frozen:true};
-  }
   var maxUses=Number(config.max_uses_per_season)||3,uses=managerWelfareUsesThisSeason(),minPlayers=Number(config.min_players)||3,principalMax=Number(config.principal_max)||500,rate=Number(config.discount_rate)||.2,cap=Number(config.cap)||300;
+  if(submitted){
+    var frozenActive=Number.isFinite(frozenDiscount)&&frozenDiscount>0;
+    return {active:frozenActive,eligible:frozenActive,discount:frozenActive?Math.round(frozenDiscount):0,originalCost:Number(submitted.originalCost??submitted.original_cost??submitted.original_lineup_cost??meta.original_cost)||original,principalAtSubmit:Number.isFinite(frozenPrincipal)?frozenPrincipal:Number(principal)||0,uses:uses,maxUses:maxUses,rate:rate,cap:cap,minPlayers:minPlayers,principalMax:principalMax,frozen:true};
+  }
   principal=Number(principal)||0;
   var eligible=(players||[]).length>=minPlayers&&principal<=principalMax&&uses<maxUses;
   return {active:eligible&&original>0,eligible:eligible,discount:eligible?Math.min(cap,Math.round(original*rate)):0,originalCost:original,principalAtSubmit:principal,uses:uses,maxUses:maxUses,rate:rate,cap:cap,minPlayers:minPlayers,principalMax:principalMax,frozen:false};
