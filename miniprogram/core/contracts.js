@@ -226,10 +226,10 @@ function presentation(value, options = {}) {
     'presentation last point availability');
   if (match.odds !== undefined) {
     const odds = presentationOdds(match.odds, 'presentation odds');
-    if (odds.preMatch !== undefined) {
+    if (odds.preMatch !== undefined && odds.preMatch !== null) {
       presentationOdds(odds.preMatch, 'presentation pre-match odds');
     }
-    if (odds.live !== undefined) {
+    if (odds.live !== undefined && odds.live !== null) {
       presentationOdds(odds.live, 'presentation live odds');
     }
   }
@@ -457,10 +457,10 @@ function oddsProjection(value) {
   const payload = object(envelope.payload, 'match odds payload');
   text(payload.matchId, 'match odds payload matchId');
   const odds = presentationOdds(object(payload.odds, 'match odds payload odds'), 'match odds');
-  if (odds.preMatch !== undefined) {
+  if (odds.preMatch !== undefined && odds.preMatch !== null) {
     presentationOdds(odds.preMatch, 'match odds preMatch');
   }
-  if (odds.live !== undefined) {
+  if (odds.live !== undefined && odds.live !== null) {
     presentationOdds(odds.live, 'match odds live');
   }
   oneOf(object(envelope.delivery, 'match odds delivery').state,

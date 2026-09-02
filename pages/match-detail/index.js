@@ -301,8 +301,9 @@ function matchWithOddsProjection(match, projection) {
   if (!match || projection?.matchId !== match.id) return match;
   const odds = projection.payload?.odds || projection.display?.odds;
   if (!odds) return match;
-  const preMatch = odds.preMatch || odds;
-  const live = odds.live || odds.preMatch || odds;
+  const hasExplicitPreMatch = Object.prototype.hasOwnProperty.call(odds, 'preMatch');
+  const preMatch = hasExplicitPreMatch ? odds.preMatch : odds;
+  const live = odds.live || preMatch || (hasExplicitPreMatch ? null : odds);
   return Object.freeze({
     ...match,
     odds: oddsLine(live),

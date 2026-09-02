@@ -208,6 +208,24 @@ test('match detail odds module reuses trusted cache on 304 without blocking shel
   assert.equal(context.data.match.odds.first, '1.55');
 });
 
+test('live-only Sofa odds never appear as a fabricated prematch line', async () => {
+  const definition = loadPageDefinition();
+  const envelope = oddsEnvelope();
+  envelope.payload.odds.preMatch = null;
+  const context = pageContext(definition, wxRuntime(), {
+    async request() { return { statusCode: 200, data: envelope, etag: 'etag-live-only' }; }
+  });
+  context.currentMatchId = matchId;
+  context.data.match = { id: matchId, sides: [{}, {}] };
+
+  await definition.loadOdds.call(context, { id: matchId }, { force: true });
+
+  assert.equal(context.data.match.preMatchOdds, null);
+  assert.equal(context.data.match.sides[0].preOddsLabel, '');
+  assert.equal(context.data.match.liveOdds.first, '1.55');
+  assert.equal(context.data.match.sides[0].liveOddsLabel, '1.55');
+});
+
 test('match detail contracts validate independent odds and progression envelopes', () => {
   const contracts = readFileSync(
     resolve(miniRoot, 'core/contracts.js'),
