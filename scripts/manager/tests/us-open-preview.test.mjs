@@ -82,7 +82,7 @@ test('US Open station is current with 2000 grant, 1200 Combo cap, and Cincinnati
   assert.equal(active.station_name, 'ATP 美网 + WTA 美网');
   assert.equal(active.status, 'open');
   assert.equal(active.rules.station_grant, 2000);
-  assert.equal(active.announcement, '美网新站开售：签约金 2000，Combo 封顶 1200，提交时间0828 09:15~0830 22:45');
+  assert.equal(active.announcement, '美网换人窗口已开启！0902 13:00-0902 22:45，手续费15%，男女可互换');
   assert.equal(active.rules.cross_tour_transfer, true);
   assert.equal(active.rules.transfer_fee_rate, 0.15);
   assert.equal(active.rules.transfer_welfare_discount, false);
