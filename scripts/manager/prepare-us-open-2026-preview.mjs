@@ -20,9 +20,9 @@ const SUBMISSION_OPENS_AT = '2026-08-28T09:15:00+08:00';
 const MAIN_DRAW_FIRST_MATCH_AT = '2026-08-30T15:00:00.000Z';
 const SUBMISSION_CUTOFF_AT = '2026-08-30T14:45:00.000Z';
 const ROUND2_FIRST_MATCH_AT = '2026-09-02T15:00:00.000Z';
-const TRANSFER_WINDOW_OPENS_AT = '2026-09-02T13:00:00+08:00';
+const TRANSFER_WINDOW_OPENS_AT = '2026-09-02T13:45:00+08:00';
 const TRANSFER_WINDOW_CLOSES_AT = '2026-09-02T22:45:00+08:00';
-const TRANSFER_WINDOW_NOTE = '本站换人窗口为 09/02 13:00 - 09/02 22:45；ATP/WTA 同一窗口开放，男女可互换，手续费 15%。换人时不管本金多少不再享受低保折扣。若换下提交时冻结的全村希望，换入球员自动继承全村希望。';
+const TRANSFER_WINDOW_NOTE = '本站换人窗口为 09/02 13:45 - 09/02 22:45；ATP/WTA 同一窗口开放，男女可互换，手续费 15%。换人时不管本金多少不再享受低保折扣。若换下提交时冻结的全村希望，换入球员自动继承全村希望。';
 
 function expectedCount(tour) {
   return tour === 'ATP' ? 18 : 16;
@@ -204,7 +204,7 @@ async function main() {
     station_name: 'ATP 美网 + WTA 美网',
     survivor_aligned: true,
     status: 'open',
-    announcement: '美网换人窗口已开启！0902 13:00-0902 22:45，手续费15%，男女可互换',
+    announcement: '美网换人窗口已开启！0902 13:45-0902 22:45，手续费15%，男女可互换',
     daily_prediction: {
       starts_on: '2026-08-30',
       station_key: STATION_KEY,

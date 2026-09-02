@@ -9,7 +9,7 @@ const wta = JSON.parse(fs.readFileSync('data/manager/events/wta-2026-w35-us-open
 const market = JSON.parse(fs.readFileSync('data/manager/market_snapshot.json', 'utf8'));
 const openingPublication = JSON.parse(fs.readFileSync('data/manager/publications/2026-w35-us-open-v1.json', 'utf8'));
 const cutoffAmendment = JSON.parse(fs.readFileSync('data/manager/publications/2026-w35-us-open-v2.json', 'utf8'));
-const transferWindowPublication = JSON.parse(fs.readFileSync('data/manager/publications/2026-w35-us-open-v3.json', 'utf8'));
+const transferWindowPublication = JSON.parse(fs.readFileSync('data/manager/publications/2026-w35-us-open-v4.json', 'utf8'));
 const dataManifest = JSON.parse(fs.readFileSync('data/manifest.json', 'utf8'));
 const sourceOverrides = JSON.parse(fs.readFileSync('data/manager/player_source_overrides.json', 'utf8'));
 const html = fs.readFileSync('index.html', 'utf8');
@@ -20,8 +20,9 @@ const updateManagerWorkflow = fs.readFileSync('.github/workflows/update_manager.
 const migration = fs.readFileSync('supabase/migrations/202608280001_manager_us_open_combo_and_welfare_limit.sql', 'utf8');
 const cutoffMigration = fs.readFileSync('supabase/migrations/202608290001_manager_us_open_submission_cutoff_0830.sql', 'utf8');
 const transferWindowMigration = fs.readFileSync('supabase/migrations/202609020001_manager_us_open_transfer_window.sql', 'utf8');
+const delayedTransferWindowMigration = fs.readFileSync('supabase/migrations/202609020002_manager_us_open_transfer_window_1345.sql', 'utf8');
 
-const transferOpensAt = '2026-09-02T13:00:00+08:00';
+const transferOpensAt = '2026-09-02T13:45:00+08:00';
 const transferClosesAt = '2026-09-02T22:45:00+08:00';
 
 function contentVersion(file) {
@@ -82,7 +83,7 @@ test('US Open station is current with 2000 grant, 1200 Combo cap, and Cincinnati
   assert.equal(active.station_name, 'ATP 美网 + WTA 美网');
   assert.equal(active.status, 'open');
   assert.equal(active.rules.station_grant, 2000);
-  assert.equal(active.announcement, '美网换人窗口已开启！0902 13:00-0902 22:45，手续费15%，男女可互换');
+  assert.equal(active.announcement, '美网换人窗口已开启！0902 13:45-0902 22:45，手续费15%，男女可互换');
   assert.equal(active.rules.cross_tour_transfer, true);
   assert.equal(active.rules.transfer_fee_rate, 0.15);
   assert.equal(active.rules.transfer_welfare_discount, false);
@@ -142,7 +143,7 @@ test('US Open station is current with 2000 grant, 1200 Combo cap, and Cincinnati
   assert.equal(active.daily_prediction.station_key, active.station_key);
   assert.equal(active.daily_prediction.source_station_key, active.station_key);
   assert.ok(active.notes.some((note) => note.includes('2026-08-30 22:45')));
-  assert.ok(active.notes.some((note) => note.includes('2026-09-02 13:00') && note.includes('不再享受低保')));
+  assert.ok(active.notes.some((note) => note.includes('2026-09-02 13:45') && note.includes('不再享受低保')));
   assert.ok(active.notes.some((note) => note.includes('R1 正式开赛前继续展示辛辛那提收益')));
 });
 
@@ -189,13 +190,13 @@ test('US Open cutoff amendment moves submission close to 2026-08-30 22:45 withou
 
 test('US Open transfer window is shared cross-tour and does not recalculate welfare', () => {
   assert.equal(transferWindowPublication.station_key, '2026-w35-us-open');
-  assert.equal(transferWindowPublication.publication_version, 3);
+  assert.equal(transferWindowPublication.publication_version, 4);
   assert.equal(transferWindowPublication.publication_kind, 'window_amendment');
   assert.equal(transferWindowPublication.snapshot.station_config.rules.cross_tour_transfer, true);
   assert.equal(transferWindowPublication.snapshot.station_config.rules.transfer_fee_rate, 0.15);
   assert.equal(transferWindowPublication.snapshot.station_config.rules.transfer_welfare_discount, false);
   assert.ok(transferWindowPublication.snapshot.station_config.notes.some((note) => (
-    note.includes('2026-09-02 13:00') && note.includes('不再享受低保')
+    note.includes('2026-09-02 13:45') && note.includes('不再享受低保')
   )));
   assert.ok(transferWindowPublication.snapshot.windows.every((window) => (
     window.transfer_window_opens_at === transferOpensAt
@@ -212,6 +213,10 @@ test('US Open transfer window is shared cross-tour and does not recalculate welf
   assert.match(transferWindowMigration, /transfer_fee_rate = 0\.15/);
   assert.match(transferWindowMigration, /'transfer_welfare_discount', false/);
   assert.match(transferWindowMigration, /tour_manager_apply_us_open_transfer_village_hope/);
+  assert.match(delayedTransferWindowMigration, /station_key = '2026-w35-us-open'/);
+  assert.match(delayedTransferWindowMigration, /2026-09-02T13:45:00\+08:00/);
+  assert.match(delayedTransferWindowMigration, /2026-09-02T22:45:00\+08:00/);
+  assert.match(delayedTransferWindowMigration, /transfer_fee_rate = 0\.15/);
   assert.match(html, /if\(submitted\)\{\s*var frozenActive=Number\.isFinite\(frozenDiscount\)&&frozenDiscount>0;/);
   assert.match(html, /discount:frozenActive\?Math\.round\(frozenDiscount\):0/);
 });
@@ -273,6 +278,7 @@ test('US Open source files are generated and cache-busted in the data manifest',
     'data/manager/events/wta-2026-w35-us-open.json',
     'data/manager/publications/2026-w35-us-open-v2.json',
     'data/manager/publications/2026-w35-us-open-v3.json',
+    'data/manager/publications/2026-w35-us-open-v4.json',
     'data/manager/player_source_overrides.json'
   ]) {
     assert.equal(dataManifest.files[file]?.version, contentVersion(file), `${file} manifest version is stale`);
