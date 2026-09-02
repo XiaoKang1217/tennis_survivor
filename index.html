@@ -1113,7 +1113,12 @@ const SS={};const FS={};
 const GA_MEASUREMENT_ID='G-E51GZG7C1F';
 const SUPABASE_URL='https://avdnhcwmwdwhsecszlcd.supabase.co';
 const SUPABASE_ANON_KEY='sb_publishable_W7jtbI1juCvm80UvZ3qgJQ_MrGfhwKG';
-const SUPABASE_JS_URL='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+const SUPABASE_JS_URL='assets/vendor/supabase-js-2.112.4.min.js';
+const SUPABASE_JS_FALLBACK_URLS=[
+  'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.min.js',
+  'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',
+  'https://unpkg.com/@supabase/supabase-js@2.112.4/dist/umd/supabase.js'
+];
 const CHART_JS_URL='https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js';
 const MINI_PROGRAM_QR_SRC='assets/miniprogram/lu-de-wangqiu-qrcode.jpg';
 const MINI_PROGRAM_PROMO_COPY='「炉的网球」小程序现已上线！极速、稳定，专为中国网球迷打造的观赛社区。每十秒的实时比分、球员最新参赛动态以及官方赛程签表。登录即可获得10朵花，欢迎体验！';
@@ -6178,16 +6183,41 @@ function setAuthBusy(busy){
   document.querySelectorAll('.auth-submit').forEach(b=>b.disabled=!!busy);
 }
 
+function loadScriptOnce(src){
+  return new Promise((resolve,reject)=>{
+    const s=document.createElement('script');
+    s.src=src;
+    s.async=true;
+    s.onload=()=>{
+      if(window.supabase)resolve();
+      else reject(new Error('Supabase SDK 未初始化'));
+    };
+    s.onerror=()=>{
+      s.remove();
+      reject(new Error('Supabase SDK 加载失败'));
+    };
+    document.head.appendChild(s);
+  });
+}
+
 function loadSupabaseScript(){
   if(window.supabase)return Promise.resolve();
   if(SUPABASE_LOADING)return SUPABASE_LOADING;
-  SUPABASE_LOADING=new Promise((resolve,reject)=>{
-    const s=document.createElement('script');
-    s.src=SUPABASE_JS_URL;
-    s.async=true;
-    s.onload=resolve;
-    s.onerror=()=>reject(new Error('Supabase SDK 加载失败'));
-    document.head.appendChild(s);
+  SUPABASE_LOADING=(async()=>{
+    const urls=[SUPABASE_JS_URL].concat(SUPABASE_JS_FALLBACK_URLS||[]);
+    const seen=new Set();
+    for(const url of urls){
+      if(!url||seen.has(url)||window.supabase)continue;
+      seen.add(url);
+      try{
+        await loadScriptOnce(url);
+        if(window.supabase)return;
+      }catch(e){}
+    }
+    throw new Error('Supabase SDK 加载失败，请刷新页面或切换网络后重试。');
+  })().catch(e=>{
+    SUPABASE_LOADING=null;
+    throw e;
   });
   return SUPABASE_LOADING;
 }
