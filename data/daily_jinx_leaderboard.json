@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-09-01T03:09:25.106Z",
-  "source_updated_at": "2026-09-01 11:09:23",
-  "settled_through": "2026-08-31",
+  "updated_at": "2026-09-02T03:09:19.648Z",
+  "source_updated_at": "2026-09-02 11:09:17",
+  "settled_through": "2026-09-01",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
@@ -30,16 +30,16 @@
     {
       "tour": "ATP",
       "display_name": "AKA90",
-      "score": 1579,
-      "hit_count": 63,
-      "scored_days": 47
+      "score": 1588,
+      "hit_count": 64,
+      "scored_days": 48
     },
     {
       "tour": "ATP",
       "display_name": "xxx又坑人了",
-      "score": 1414,
-      "hit_count": 53,
-      "scored_days": 41
+      "score": 1423,
+      "hit_count": 54,
+      "scored_days": 42
     },
     {
       "tour": "ATP",
@@ -338,23 +338,23 @@
     {
       "tour": "WTA",
       "display_name": "xxx又坑人了",
-      "score": 1709,
-      "hit_count": 63,
-      "scored_days": 44
+      "score": 1729,
+      "hit_count": 64,
+      "scored_days": 45
     },
     {
       "tour": "WTA",
       "display_name": "莫斯特",
-      "score": 1301,
-      "hit_count": 46,
-      "scored_days": 33
+      "score": 1321,
+      "hit_count": 47,
+      "scored_days": 34
     },
     {
       "tour": "WTA",
       "display_name": "就是玩",
-      "score": 1264,
-      "hit_count": 44,
-      "scored_days": 29
+      "score": 1284,
+      "hit_count": 45,
+      "scored_days": 30
     },
     {
       "tour": "WTA",
