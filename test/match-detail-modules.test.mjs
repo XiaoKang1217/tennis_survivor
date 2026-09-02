@@ -226,6 +226,24 @@ test('live-only Sofa odds never appear as a fabricated prematch line', async () 
   assert.equal(context.data.match.sides[0].liveOddsLabel, '1.55');
 });
 
+test('post-start no-market keeps frozen prematch but shows no current live odds', async () => {
+  const definition = loadPageDefinition();
+  const envelope = oddsEnvelope();
+  envelope.payload.odds.live = null;
+  const context = pageContext(definition, wxRuntime(), {
+    async request() { return { statusCode: 200, data: envelope, etag: 'etag-no-live' }; }
+  });
+  context.currentMatchId = matchId;
+  context.data.match = { id: matchId, sides: [{}, {}] };
+
+  await definition.loadOdds.call(context, { id: matchId }, { force: true });
+
+  assert.equal(context.data.match.preMatchOdds.first, '1.60');
+  assert.equal(context.data.match.sides[0].preOddsLabel, '1.60');
+  assert.equal(context.data.match.liveOdds, null);
+  assert.equal(context.data.match.sides[0].liveOddsLabel, '');
+});
+
 test('match detail contracts validate independent odds and progression envelopes', () => {
   const contracts = readFileSync(
     resolve(miniRoot, 'core/contracts.js'),
