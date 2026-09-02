@@ -78,3 +78,31 @@ test('client display layer does not contain alias collapse or Mega reconcile cod
   assert.doesNotMatch(viewModel, /canonical_players|exact_names/u);
   assert.doesNotMatch(viewModel, /mega\s*reconcile|Mega\s*reconcile|reconcileMatch/u);
 });
+
+test('scores hide missing courts and deterministically sort courts and match times', () => {
+  const unknown = { state: 'unknown', value: null, message: '待确认', reasonCode: 'not_observed' };
+  const field = value => ({ state: 'available', value, message: null, reasonCode: null });
+  const base = presentation();
+  const make = (id, court, time) => presentation({
+    matchId: id,
+    stableMatchId: id,
+    court: { id: field(`court:${court}`), displayNameZh: court ? field(court) : unknown,
+      sortOrder: unknown, availability: court ? 'available' : 'unknown' },
+    schedule: { ...base.schedule, venueLocalDateTime: field(time) },
+    grouping: { ...base.grouping, courtKey: court ? field(`court:${court}`) : unknown }
+  });
+  const projection = todayProjection(3, base);
+  projection.payload.matches = [
+    make('sc_00000000000000000000000000000010', '10号球场', '2026-09-03T05:00:00Z'),
+    make('sc_00000000000000000000000000000002', '2号球场', '2026-09-03T04:00:00Z'),
+    make('sc_00000000000000000000000000000003', '中心球场', '2026-09-03T06:00:00Z'),
+    make('sc_00000000000000000000000000000004', '中心球场', '2026-09-03T03:00:00Z'),
+    make('sc_00000000000000000000000000000005', '', '2026-09-03T02:00:00Z')
+  ];
+  const groups = groupedMatches(projection, 'all', new Set());
+  assert.deepEqual(groups[0].courts.map(court => court.name), ['中心球场', '2号球场', '10号球场']);
+  assert.deepEqual(groups[0].courts[0].matches.map(match => match.id), [
+    'sc_00000000000000000000000000000004',
+    'sc_00000000000000000000000000000003'
+  ]);
+});
