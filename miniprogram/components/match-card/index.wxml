@@ -11,8 +11,8 @@
   <view class="score-grid">
     <view wx:for="{{match.sides}}" wx:key="sideId" class="score-line">
       <view class="card-player">
-        <view class="player-primary {{match.hasSeed ? 'has-seed' : 'no-seed'}}">
-          <view wx:if="{{match.hasSeed}}" class="seed-slot"><text wx:if="{{item.seedLabel}}" class="seed">{{item.seedLabel}}</text></view>
+        <view class="player-primary {{match.hasIdentityBadge ? 'has-seed' : 'no-seed'}}">
+          <view wx:if="{{match.hasIdentityBadge}}" class="seed-slot"><text wx:if="{{item.seedLabel}}" class="seed">{{item.seedLabel}}</text><text wx:if="{{item.entryLabel}}" class="seed">{{item.entryLabel}}</text></view>
           <view wx:if="{{item.isDoubles}}" class="doubles-side">
             <view class="doubles-primary">
               <block wx:for="{{item.members}}" wx:for-item="member" wx:for-index="memberIndex" wx:key="index">

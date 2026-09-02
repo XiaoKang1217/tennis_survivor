@@ -39,6 +39,7 @@
             <view class="hero-name-wrap"><text class="hero-name">{{item.names}}</text><text wx:if="{{!item.isDoubles && item.members[0].playerId}}" class="hero-flower-total" data-player-id="{{item.members[0].playerId}}" data-name="{{item.members[0].name}}" catchtap="openGift" role="button">🌸{{item.members[0].flowerTotal}}</text><text wx:if="{{item.isWinner}}" class="winner">胜</text></view>
             <view class="hero-player-meta">
               <text wx:if="{{item.seedLabel}}">{{item.seedLabel}}</text>
+              <text wx:if="{{item.entryLabel}}">{{item.entryLabel}}</text>
               <text wx:if="{{item.rankLabel}}">{{item.rankLabel}}</text>
               <text wx:if="{{item.countryLabel}}">{{item.countryLabel}}</text>
             </view>

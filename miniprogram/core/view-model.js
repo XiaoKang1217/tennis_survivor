@@ -242,6 +242,7 @@ function side(value, match, index, scoreSets, currentGame) {
     rankLabel: rankLabels.join(' / '),
     seedLabel: numberField(value.seed, true) === null
       ? '' : `#${numberField(value.seed, true)}`,
+    entryLabel: field(value.entryDesignation).toUpperCase(),
     isWinner,
     isServer,
     serveLabel: isServer
@@ -481,6 +482,7 @@ function matchView(match, options = {}) {
     )) ? String(match.schedule.officialScheduleDate || match.schedule.scheduleGroupDate) : '',
     scheduleGroupDate: match.schedule.scheduleGroupDate,
     venueLocalDateTime: field(match.schedule.venueLocalDateTime),
+    scheduleStartAt: availableField(match.schedule.venueLocalDateTime) || '',
     tournamentName,
     tournamentId: String(match.tournament.id || ''),
     tournamentTourOrg,
@@ -502,6 +504,7 @@ function matchView(match, options = {}) {
     venue,
     sides,
     hasSeed: sides.some(value => Boolean(value.seedLabel)),
+    hasIdentityBadge: sides.some(value => Boolean(value.seedLabel || value.entryLabel)),
     scoreVisible,
     scoreMode: match.score.displayMode,
     scorePlaceholder: match.score.annotation || '',
@@ -694,7 +697,16 @@ function groupedMatches(projection, filter, followedIds, query = '', options = {
           if (first.sortOrder === null && second.sortOrder !== null) return 1;
           return first.originalIndex - second.originalIndex;
         }).map(court =>
-        Object.freeze({ ...court, matches: Object.freeze(court.matches) })))
+        Object.freeze({ ...court, matches: Object.freeze(court.matches.sort((first, second) => {
+          const firstTime = Date.parse(first.scheduleStartAt);
+          const secondTime = Date.parse(second.scheduleStartAt);
+          if (Number.isFinite(firstTime) && Number.isFinite(secondTime) && firstTime !== secondTime) {
+            return firstTime - secondTime;
+          }
+          if (Number.isFinite(firstTime) && !Number.isFinite(secondTime)) return -1;
+          if (!Number.isFinite(firstTime) && Number.isFinite(secondTime)) return 1;
+          return String(first.id).localeCompare(String(second.id));
+        })) })))
     })));
 }
 

@@ -163,7 +163,7 @@ test('product copy avoids decorative english eyebrows', () => {
 test('daylight match cards preserve the complete real score identity', () => {
   const markup = read('components/match-card/index.wxml');
   for (const field of [
-    'item.seedLabel', 'member.countryMark', 'match.disciplineLabel',
+    'item.seedLabel', 'item.entryLabel', 'member.countryMark', 'match.disciplineLabel',
     'item.isServer', 'item.isWinner',
     'item.oddsLabel', 'item.setScores', 'item.tiebreak'
   ]) assert.match(markup, new RegExp(field.replace('.', '\\.')));
