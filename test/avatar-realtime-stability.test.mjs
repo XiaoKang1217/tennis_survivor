@@ -5,8 +5,8 @@ import { createRequire } from 'node:module';
 import { presentation } from './support.mjs';
 
 const require = createRequire(import.meta.url);
-const { mergeRealtimeOnlyState, mergeSnapshotState } = require('../miniprogram/core/score-store');
-const { matchView } = require('../miniprogram/core/view-model');
+const { mergeRealtimeOnlyState, mergeSnapshotState } = require('../core/score-store');
+const { matchView } = require('../core/view-model');
 
 const available = value => ({ state: 'available', value, message: null, reasonCode: null });
 const unknown = () => ({ state: 'unknown', value: null, message: 'unknown', reasonCode: 'not_observed' });
@@ -60,7 +60,7 @@ test('sides and doubles members merge by stable IDs when presentation order chan
 test('match view produces a stable image-failure key and above-fold portraits are eager', () => {
   const view = matchView(withPortraits(presentation()));
   assert.match(view.sides[0].members[0].portraitKey, /\|https:\/\/media\.example\/a\.jpg$/u);
-  const markup = readFileSync(new URL('../miniprogram/pages/match-detail/index.wxml', import.meta.url), 'utf8');
+  const markup = readFileSync(new URL('../pages/match-detail/index.wxml', import.meta.url), 'utf8');
   assert.match(markup, /lazy-load="\{\{false\}\}"/u);
   assert.match(markup, /failedPortraits\[member\.portraitKey\]/u);
   assert.match(markup, /binderror="onPortraitError"/u);
