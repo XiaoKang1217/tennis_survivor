@@ -233,7 +233,8 @@ test('score store applies compact realtime delta to exactly one match card', () 
       sourceReceivedAt: '2026-08-06T23:30:59.000Z',
       sgAcceptedAt: '2026-08-06T23:30:59.050Z',
       sgSentAt: '2026-08-06T23:30:59.100Z',
-      shReceivedAt: '2026-08-06T23:30:59.200Z'
+      shReceivedAt: '2026-08-06T23:30:59.200Z',
+      shCommittedAt: '2026-08-06T23:30:59.250Z'
     },
     changes: [{
       matchId: firstMatchId,
@@ -262,6 +263,7 @@ test('score store applies compact realtime delta to exactly one match card', () 
   assert.equal(metric.version, 2);
   assert.deepEqual(metric.matchIds, [firstMatchId]);
   assert.equal(metric.sourceReceivedAt, '2026-08-06T23:30:59.000Z');
+  assert.equal(metric.shCommittedAt, '2026-08-06T23:30:59.250Z');
   assert.match(metric.clientReceivedAt, /^\d{4}-\d{2}-\d{2}T/u);
   assert.match(metric.clientRenderedAt, /^\d{4}-\d{2}-\d{2}T/u);
   assert.equal(typeof metric.sourceToClientReceivedMs, 'number');

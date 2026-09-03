@@ -88,9 +88,10 @@ function member(member) {
   const portraitUrl = mediaUrl(member.portraitAvailability, { size: '96' });
   const portraitDetailUrl = mediaUrl(member.portraitAvailability, { size: '240' });
   const portraitShareUrl = mediaUrl(member.portraitAvailability, { size: '720' });
+  const stablePlayerId = availableField(member.playerId) === null
+    ? '' : String(availableField(member.playerId));
   return Object.freeze({
-    playerId: availableField(member.playerId) === null
-      ? '' : String(availableField(member.playerId)),
+    playerId: stablePlayerId,
     name: String(chinese || original || unavailableName || ''),
     originalName: original === null ? '' : String(original),
     countryCode,
@@ -103,6 +104,7 @@ function member(member) {
     portraitAvailable: member.portraitAvailability?.state === 'available',
     portraitAssetKey,
     portraitUrl,
+    portraitKey: `${stablePlayerId || 'unknown'}|${portraitUrl}`,
     portraitDetailUrl,
     portraitShareUrl
   });

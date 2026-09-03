@@ -448,6 +448,13 @@ Page({
     giftSubmitting: false,
     giftPlayer: null,
     giftResult: null,
+    failedPortraits: {},
+  },
+
+  onPortraitError(event) {
+    const key = String(event?.currentTarget?.dataset?.portraitKey || '');
+    if (!key) return;
+    this.setData({ failedPortraits: { ...this.data.failedPortraits, [key]: true } });
   },
 
   onLoad(options) {

@@ -29,7 +29,7 @@
               <view wx:if="{{sideIndex === 0 && item.primaryFollowTargetId}}" class="hero-player-follow {{item.primaryFollowed ? 'followed' : ''}} {{item.primaryFollowState === 'unknown' ? 'pending' : ''}}" data-id="{{item.primaryFollowTargetId}}" data-followed="{{!item.primaryFollowed}}" catchtap="togglePlayerFollow" role="button"><ui-icon name="heart" size="13" color="{{item.primaryFollowed ? '#fff' : '#1677d2'}}"/><text>{{item.primaryFollowState === 'unknown' ? '状态…' : (item.primaryFollowed ? '已关注' : '关注')}}</text></view>
               <view class="portrait-stack {{item.isDoubles ? 'doubles' : 'singles'}}">
                 <view wx:for="{{item.members}}" wx:key="playerId" wx:for-item="member" class="portrait" data-player-id="{{member.playerId}}" data-tour="{{match.tournamentTourOrg}}" data-name="{{member.name}}" data-original-name="{{member.originalName}}" data-country-code="{{member.countryCode}}" data-portrait-url="{{member.portraitUrl}}" catchtap="openPlayerFromPortrait">
-                  <image wx:if="{{member.portraitUrl}}" src="{{member.portraitUrl}}" mode="aspectFill" lazy-load="{{true}}"/>
+                  <image wx:if="{{member.portraitUrl && !failedPortraits[member.portraitKey]}}" src="{{member.portraitUrl}}" mode="aspectFill" lazy-load="{{false}}" data-portrait-key="{{member.portraitKey}}" binderror="onPortraitError"/>
                   <ui-icon wx:else name="player" size="{{item.isDoubles ? 20 : 26}}" color="#66788a"/>
                 </view>
                 <view class="portrait-mark"><text wx:if="{{item.countryMark}}">{{item.countryMark}}</text><ui-icon wx:else name="info" size="12" color="#66788a"/></view>

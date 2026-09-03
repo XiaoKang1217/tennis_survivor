@@ -40,24 +40,48 @@ function mergeMember(incoming, previous) {
 }
 
 function mergeSide(incoming, previous) {
-  if (previous === undefined || incoming.sideId !== previous.sideId) return incoming;
+  if (previous === undefined) return incoming;
   const previousMembers = new Map(previous.members.map(member => [
     available(member.playerId) ? member.playerId.value : null,
     member
-  ]));
+  ]).filter(([playerId]) => playerId));
+  const incomingHasStableIds = incoming.members.every(member => available(member.playerId));
   return Object.freeze({
     ...incoming,
     seed: keepAvailable(incoming.seed, previous.seed),
-    members: Object.freeze(incoming.members.map(member => mergeMember(
-      member,
-      previousMembers.get(available(member.playerId) ? member.playerId.value : null)
-    )))
+    members: incomingHasStableIds
+      ? Object.freeze(incoming.members.map(member => mergeMember(
+        member,
+        previousMembers.get(member.playerId.value)
+      )))
+      : previous.members
   });
 }
 
+function sideIdentity(side) {
+  const sourceSideKey = String(side?.sourceSideKey || '').trim();
+  if (sourceSideKey) return `source:${sourceSideKey}`;
+  const playerIds = (Array.isArray(side?.members) ? side.members : [])
+    .map(member => available(member.playerId) ? String(member.playerId.value) : '')
+    .filter(Boolean)
+    .sort();
+  if (playerIds.length) return `players:${playerIds.join('|')}`;
+  return side?.sideId ? `side:${side.sideId}` : '';
+}
+
 function mergeStableEnrichment(incoming, previous) {
-  void previous;
-  return incoming;
+  if (previous === undefined || incoming?.matchId !== previous?.matchId) return incoming;
+  if (!Array.isArray(incoming.participants) || !Array.isArray(previous.participants)) {
+    return incoming;
+  }
+  const previousSides = new Map(previous.participants
+    .map(side => [sideIdentity(side), side])
+    .filter(([identity]) => identity));
+  return Object.freeze({
+    ...incoming,
+    participants: Object.freeze(incoming.participants.map(side =>
+      mergeSide(side, previousSides.get(sideIdentity(side)))))
+  });
 }
 
 function sameDisplayedScore(first, second) {
@@ -100,6 +124,7 @@ function compactDeltaRenderMetric(frame, clientReceivedAt, clientRenderedAt) {
     sgAcceptedAt: frame.timings?.sgAcceptedAt ?? null,
     sgSentAt: frame.timings?.sgSentAt ?? null,
     shReceivedAt: frame.timings?.shReceivedAt ?? null,
+    shCommittedAt: frame.timings?.shCommittedAt ?? null,
     sseBroadcastAt,
     clientReceivedAt,
     clientRenderedAt,
@@ -133,12 +158,13 @@ function shouldKeepPreviousMatch(incoming, previous) {
 function mergeRealtimeOnlyState(incoming, previous) {
   if (previous === undefined || incoming.matchId !== previous.matchId) return incoming;
   if (shouldKeepPreviousMatch(incoming, previous)) return previous;
+  const enriched = mergeStableEnrichment(incoming, previous);
   const canKeepLastPoint = incoming.lastPoint.availability !== 'available'
     && previous.lastPoint.availability === 'available'
     && sameDisplayedScore(incoming, previous);
   const merged = canKeepLastPoint
-    ? { ...incoming, lastPoint: previous.lastPoint }
-    : incoming;
+    ? { ...enriched, lastPoint: previous.lastPoint }
+    : enriched;
   const protectedSocial = {};
   if (previous.viewerFollowState !== undefined) {
     protectedSocial.viewerFollowState = previous.viewerFollowState;
@@ -177,7 +203,7 @@ function mergeSnapshotState(incoming, previous) {
       return canKeepLastPoint ? { ...incoming, lastPoint: previous.lastPoint } : incoming;
     })();
   return Object.freeze({
-    ...scoreState,
+    ...mergeStableEnrichment(scoreState, previous),
     ...socialStateFromSnapshot(incoming, previous)
   });
 }
