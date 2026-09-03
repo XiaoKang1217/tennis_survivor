@@ -296,7 +296,13 @@ test('Sofa statistics V2 orders collapsible groups and formats rates percent-fir
       stableFieldId: `${groupId}-metric`, labelZh: '指标', available: true,
       side1: { value: 22, total: 40, percentage: null, display: '22/40 (55%)' },
       side2: { value: 23, total: 46, percentage: null, display: '23/46 (50%)' }
-    }]
+    }, ...(['winners', 'unforced_errors', 'forced_errors'].includes(groupId) ? [{
+      stableFieldId: groupId,
+      labelZh: groupNameZh,
+      available: true,
+      side1: { value: 15, display: '15' },
+      side2: { value: 9, display: '9' }
+    }] : [])]
   }));
   const projection = {
     bffContractVersion: 'match-statistics-bff/3',
@@ -318,6 +324,10 @@ test('Sofa statistics V2 orders collapsible groups and formats rates percent-fir
   assert.equal(view.groups[0].rows[0].firstHigher, true);
   assert.equal(view.groups[0].rows[0].secondHigher, false);
   assert.equal(view.groups[0].rows[0].tied, false);
+  assert.equal(view.groups[2].rows[0].label, '非受迫性失误总数');
+  assert.equal(view.groups[3].rows[0].label, '总制胜分');
+  assert.equal(view.groups[4].rows[0].label, '受迫性失误总数');
+  assert.equal(view.groups[3].rows[0].isGroupTotal, true);
 });
 
 test('completion statistics store uses the permanent compact stream and preserves trusted facts on gaps', () => {

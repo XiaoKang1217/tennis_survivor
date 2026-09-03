@@ -39,6 +39,12 @@ const PRODUCT_GROUP_ORDER = Object.freeze([
   'other'
 ]);
 
+const PRODUCT_TOTAL_FIELDS = Object.freeze({
+  winners: Object.freeze({ labels: Object.freeze(['制胜分']), ids: /^(winners?|total[_-]?winners?)$/iu, label: '总制胜分' }),
+  unforced_errors: Object.freeze({ labels: Object.freeze(['非受迫性失误', '非受迫失误']), ids: /^(unforced[_-]?errors?|total[_-]?unforced[_-]?errors?)$/iu, label: '非受迫性失误总数' }),
+  forced_errors: Object.freeze({ labels: Object.freeze(['受迫性失误', '受迫失误']), ids: /^(forced[_-]?errors?|total[_-]?forced[_-]?errors?)$/iu, label: '受迫性失误总数' })
+});
+
 function displayFact(value) {
   if (!value || value.state !== 'known') return '';
   return value.displayText;
@@ -99,6 +105,14 @@ function productGroupRank(groupId) {
   return rank === -1 ? PRODUCT_GROUP_ORDER.length : rank;
 }
 
+function productTotalField(groupId, field) {
+  const rule = PRODUCT_TOTAL_FIELDS[groupId];
+  if (!rule) return null;
+  const label = String(field?.labelZh || '').trim();
+  const id = String(field?.stableFieldId || '').trim();
+  return rule.labels.includes(label) || rule.ids.test(id) ? rule : null;
+}
+
 function productStatisticsView(projection, participantNames, selectedPeriod, collapsedGroups) {
   const periods = projection.display.periods;
   const active = periods.find(period => period.period === selectedPeriod)
@@ -110,14 +124,17 @@ function productStatisticsView(projection, participantNames, selectedPeriod, col
     groupNameZh: group.groupNameZh,
     sourceIndex,
     collapsed: collapsed[group.groupId] === true,
-    rows: group.fields.map(field => {
+    rows: group.fields.map((field, fieldIndex) => {
       const firstNumber = productNumber(field.side1);
       const secondNumber = productNumber(field.side2);
       const scale = Math.max(firstNumber, secondNumber, 1);
       const comparable = field.available === true && firstNumber !== secondNumber;
+      const totalField = productTotalField(group.groupId, field);
       return Object.freeze({
         metricId: field.stableFieldId,
-        label: field.labelZh,
+        label: totalField?.label || field.labelZh,
+        fieldIndex,
+        isGroupTotal: Boolean(totalField),
         first: productValue(field.side1),
         second: productValue(field.side2),
         firstBar: Math.round(firstNumber / scale * 100),
@@ -127,7 +144,8 @@ function productStatisticsView(projection, participantNames, selectedPeriod, col
         tied: field.available === true && firstNumber === secondNumber,
         available: field.available === true
       });
-    })
+    }).sort((first, second) => Number(second.isGroupTotal) - Number(first.isGroupTotal)
+      || first.fieldIndex - second.fieldIndex)
   })).sort((first, second) => productGroupRank(first.groupId) - productGroupRank(second.groupId)
     || first.sourceIndex - second.sourceIndex);
   return Object.freeze({
