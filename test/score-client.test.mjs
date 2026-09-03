@@ -245,7 +245,7 @@ test('score store applies compact realtime delta to exactly one match card', () 
             { setNumber: 1, kind: 'standard', firstSideGames: 1, secondSideGames: 0,
               firstSideTiebreakPoints: null, secondSideTiebreakPoints: null, state: 'in_progress' }
           ],
-          currentGame: null,
+          currentGame: { kind: 'standard', firstSidePoints: 0, secondSidePoints: 40 },
           annotation: null
         }
       }
@@ -255,6 +255,8 @@ test('score store applies compact realtime delta to exactly one match card', () 
   assert.equal(result.action, 'compact_delta_applied');
   assert.equal(store.currentVersion(), 2);
   assert.equal(store.projection.payload.matches[0].score.sets[0].firstSideGames, 1);
+  assert.deepEqual(store.projection.payload.matches[0].score.currentGame,
+    { kind: 'standard', firstSidePoints: 0, secondSidePoints: 40 });
   const metric = store.latestRealtimeMetric();
   assert.equal(metric.contractVersion, 'score-realtime-client-render/1');
   assert.equal(metric.version, 2);
