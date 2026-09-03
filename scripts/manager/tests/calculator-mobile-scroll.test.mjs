@@ -14,6 +14,7 @@ test('manager calculator table keeps an iOS-friendly horizontal scroll wrapper',
 });
 
 test('manager boards page delegates mobile scrolling to the page instead of an inner table scroller', () => {
+  assert.match(html, /@media\(max-width:768px\)\{[\s\S]*?\.manager-grid\.view-boards,\s*\.manager-grid\.view-boards>\.manager-panel,\s*\.manager-grid\.view-boards \.manager-panel-b,\s*\.manager-boards-page,\s*\.manager-boards-page \.manager-rules\{overflow:visible\}/);
   assert.match(html, /@media\(max-width:768px\)\{[\s\S]*?\.manager-boards-page \.manager-rules details\{overflow:visible\}/);
   assert.match(html, /@media\(max-width:768px\)\{[\s\S]*?\.manager-boards-page \.manager-table-scroll\{[^}]*width:max-content/);
   assert.match(html, /@media\(max-width:768px\)\{[\s\S]*?\.manager-boards-page \.manager-table-scroll\{[^}]*overflow:visible/);
