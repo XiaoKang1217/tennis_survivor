@@ -107,17 +107,23 @@
         <block wx:if="{{activeTab === 'statistics' && statistics && (moduleState.state === 'content' || (moduleState.state === 'delayed' && moduleState.preservesLastTrustedContent))}}">
           <data-notice wx:if="{{moduleState.state === 'delayed'}}" state="delayed" message="{{moduleState.message}}" compact />
           <scroll-view wx:if="{{statistics.periods}}" class="statistics-periods" scroll-x enhanced show-scrollbar="{{false}}">
-            <button wx:for="{{statistics.periods}}" wx:key="period" data-period="{{item.period}}" bindtap="selectStatisticsPeriod" class="{{item.active ? 'active' : ''}}">{{item.label}}</button>
+            <view class="statistics-periods-inner">
+              <button wx:for="{{statistics.periods}}" wx:key="period" data-period="{{item.period}}" bindtap="selectStatisticsPeriod" class="{{item.active ? 'active' : ''}}">{{item.label}}</button>
+            </view>
           </scroll-view>
           <view class="statistics-head"><text>{{statistics.names[0]}}</text><text>{{moduleState.label}}</text><text>{{statistics.names[1]}}</text></view>
           <block wx:if="{{statistics.groups}}">
             <block wx:for="{{statistics.groups}}" wx:key="groupId" wx:for-item="group">
-              <view class="statistics-group-title">{{group.groupNameZh}}</view>
-              <view wx:for="{{group.rows}}" wx:key="metricId" wx:for-item="item" class="stat-row {{item.available ? '' : 'unavailable'}}">
-                <view class="stat-side stat-side-first"><text>{{item.available ? item.first : '—'}}</text><view class="stat-bar-track"><view class="stat-bar" style="width:{{item.firstBar}}%"></view></view></view>
-                <text class="stat-label">{{item.label}}</text>
-                <view class="stat-side stat-side-second"><text>{{item.available ? item.second : '—'}}</text><view class="stat-bar-track"><view class="stat-bar" style="width:{{item.secondBar}}%"></view></view></view>
+              <view class="statistics-group-title {{group.collapsed ? 'collapsed' : ''}}" data-group-id="{{group.groupId}}" bindtap="toggleStatisticsGroup" role="button" aria-label="{{group.collapsed ? '展开' : '收起'}}{{group.groupNameZh}}统计">
+                <view></view><text>{{group.groupNameZh}}</text><text class="statistics-group-toggle">{{group.collapsed ? '＋' : '－'}}</text><view></view>
               </view>
+              <block wx:if="{{!group.collapsed}}">
+                <view wx:for="{{group.rows}}" wx:key="metricId" wx:for-item="item" class="stat-row {{item.available ? '' : 'unavailable'}}">
+                  <view class="stat-side stat-side-first"><text>{{item.available ? item.first : '—'}}</text><view class="stat-bar-track"><view class="stat-bar" style="width:{{item.firstBar}}%"></view></view></view>
+                  <text class="stat-label">{{item.label}}</text>
+                  <view class="stat-side stat-side-second"><text>{{item.available ? item.second : '—'}}</text><view class="stat-bar-track"><view class="stat-bar" style="width:{{item.secondBar}}%"></view></view></view>
+                </view>
+              </block>
             </block>
           </block>
           <block wx:else>

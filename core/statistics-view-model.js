@@ -28,6 +28,17 @@ const PERCENTAGE_METRICS = new Set([
   'breakPointsSaved'
 ]);
 
+const PRODUCT_GROUP_ORDER = Object.freeze([
+  'service',
+  'return',
+  'unforced_errors',
+  'winners',
+  'forced_errors',
+  'points',
+  'games',
+  'other'
+]);
+
 function displayFact(value) {
   if (!value || value.state !== 'known') return '';
   return value.displayText;
@@ -66,23 +77,39 @@ function visualRow(metricId, label, firstValue, secondValue, firstFact, secondFa
 
 function productValue(value) {
   if (!value || value.display === null || value.display === undefined) return '';
-  return String(value.display);
+  const display = String(value.display);
+  const fractionRate = display.match(/^\s*([^\s()]+)\s*\(\s*([+-]?[\d.]+%)\s*\)\s*$/u);
+  if (fractionRate) return `${fractionRate[2]}（${fractionRate[1]}）`;
+  return display;
 }
 
 function productNumber(value) {
   if (!value) return 0;
-  if (Number.isFinite(Number(value.percentage))) return Number(value.percentage);
-  if (Number.isFinite(Number(value.value))) return Number(value.value);
+  if (value.percentage !== null && value.percentage !== undefined
+    && Number.isFinite(Number(value.percentage))) return Number(value.percentage);
+  const percentage = String(value.display ?? '').match(/([+-]?[\d.]+)%/u);
+  if (percentage && Number.isFinite(Number(percentage[1]))) return Number(percentage[1]);
+  if (value.value !== null && value.value !== undefined
+    && Number.isFinite(Number(value.value))) return Number(value.value);
   return Number.parseFloat(String(value.display ?? '')) || 0;
 }
 
-function productStatisticsView(projection, participantNames, selectedPeriod) {
+function productGroupRank(groupId) {
+  const rank = PRODUCT_GROUP_ORDER.indexOf(groupId);
+  return rank === -1 ? PRODUCT_GROUP_ORDER.length : rank;
+}
+
+function productStatisticsView(projection, participantNames, selectedPeriod, collapsedGroups) {
   const periods = projection.display.periods;
   const active = periods.find(period => period.period === selectedPeriod)
     ?? periods.find(period => period.period === 'ALL') ?? periods[0];
-  const groups = active.groups.map(group => ({
+  const collapsed = collapsedGroups && typeof collapsedGroups === 'object'
+    ? collapsedGroups : {};
+  const groups = active.groups.map((group, sourceIndex) => ({
     groupId: group.groupId,
     groupNameZh: group.groupNameZh,
+    sourceIndex,
+    collapsed: collapsed[group.groupId] === true,
     rows: group.fields.map(field => {
       const firstNumber = productNumber(field.side1);
       const secondNumber = productNumber(field.side2);
@@ -97,7 +124,8 @@ function productStatisticsView(projection, participantNames, selectedPeriod) {
         available: field.available === true
       });
     })
-  }));
+  })).sort((first, second) => productGroupRank(first.groupId) - productGroupRank(second.groupId)
+    || first.sourceIndex - second.sourceIndex);
   return Object.freeze({
     version: projection.projectionVersion,
     dataAsOf: projection.dataAsOf,
@@ -114,10 +142,15 @@ function productStatisticsView(projection, participantNames, selectedPeriod) {
   });
 }
 
-function statisticsView(projection, participantNames = [], selectedPeriod = 'ALL') {
+function statisticsView(
+  projection,
+  participantNames = [],
+  selectedPeriod = 'ALL',
+  collapsedGroups = {}
+) {
   if (!projection) return null;
   if (projection.bffContractVersion === 'match-statistics-bff/3') {
-    return productStatisticsView(projection, participantNames, selectedPeriod);
+    return productStatisticsView(projection, participantNames, selectedPeriod, collapsedGroups);
   }
   if (projection.contractVersion === 'score-completion-bff/1') {
     const statistics = projection.liveStatistics;

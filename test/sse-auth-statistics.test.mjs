@@ -283,6 +283,40 @@ test('Sofa statistics V2 renders six period tabs, Chinese groups and unavailable
   assert.equal(view.groups[0].rows[0].available, false);
 });
 
+test('Sofa statistics V2 orders collapsible groups and formats rates percent-first', () => {
+  const sourceGroups = [
+    ['other', '其他'], ['games', '局数'], ['points', '得分'],
+    ['forced_errors', '受迫性失误'], ['winners', '制胜分'],
+    ['unforced_errors', '非受迫性失误'], ['return', '接发'], ['service', '发球']
+  ];
+  const groups = sourceGroups.map(([groupId, groupNameZh]) => ({
+    groupId,
+    groupNameZh,
+    fields: [{
+      stableFieldId: `${groupId}-metric`, labelZh: '指标', available: true,
+      side1: { value: 22, total: 40, percentage: null, display: '22/40 (55%)' },
+      side2: { value: 23, total: 46, percentage: null, display: '23/46 (50%)' }
+    }]
+  }));
+  const projection = {
+    bffContractVersion: 'match-statistics-bff/3',
+    statisticsContractVersion: 'match-statistics-v2/1', projectionVersion: 3,
+    statisticsVersion: 3, dataAsOf: '2026-09-03T03:32:15.000Z',
+    payload: { statistics: { matchId } },
+    display: { periods: [{ period: 'ALL', labelZh: '总计', groups }] },
+    delivery: { state: 'current', message: '' }
+  };
+  const view = statisticsView(projection, ['甲', '乙'], 'ALL', { return: true });
+  assert.deepEqual(view.groups.map(group => group.groupNameZh), [
+    '发球', '接发', '非受迫性失误', '制胜分', '受迫性失误', '得分', '局数', '其他'
+  ]);
+  assert.equal(view.groups[1].collapsed, true);
+  assert.equal(view.groups[0].rows[0].first, '55%（22/40）');
+  assert.equal(view.groups[0].rows[0].second, '50%（23/46）');
+  assert.equal(view.groups[0].rows[0].firstBar, 100);
+  assert.equal(view.groups[0].rows[0].secondBar, 91);
+});
+
 test('completion statistics store uses the permanent compact stream and preserves trusted facts on gaps', () => {
   const store = new CompletionStatisticsStore(matchId);
   store.snapshot(completionProjection(5));

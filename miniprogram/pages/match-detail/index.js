@@ -430,6 +430,7 @@ Page({
     moduleUpdatedTime: '',
     statistics: null,
     activeStatisticsPeriod: 'ALL',
+    collapsedStatisticsGroups: {},
     statisticsTransportState: 'connecting',
     statisticsTransportMessage: '正在建立统计实时连接',
     pointByPoint: null,
@@ -961,7 +962,7 @@ Page({
       this.v2StatisticsAvailable = true;
       this.setData({
         statistics: statisticsView(projection, match.sides.map(side => side.names),
-          this.data.activeStatisticsPeriod)
+          this.data.activeStatisticsPeriod, this.data.collapsedStatisticsGroups)
       }, () => this.updateModuleState());
     });
     this.unsubscribeStatisticsState = client.subscribeTransport(state => {
@@ -1084,7 +1085,23 @@ Page({
     this.setData({
       activeStatisticsPeriod: period,
       statistics: statisticsView(this.statisticsStore.projection,
-        this.data.match.sides.map(side => side.names), period)
+        this.data.match.sides.map(side => side.names), period,
+        this.data.collapsedStatisticsGroups)
+    });
+  },
+
+  toggleStatisticsGroup(event) {
+    const groupId = String(event.currentTarget.dataset.groupId || '');
+    if (!groupId || !this.statisticsStore?.projection || !this.data.match) return;
+    const collapsedStatisticsGroups = {
+      ...this.data.collapsedStatisticsGroups,
+      [groupId]: this.data.collapsedStatisticsGroups[groupId] !== true
+    };
+    this.setData({
+      collapsedStatisticsGroups,
+      statistics: statisticsView(this.statisticsStore.projection,
+        this.data.match.sides.map(side => side.names),
+        this.data.activeStatisticsPeriod, collapsedStatisticsGroups)
     });
   },
 
