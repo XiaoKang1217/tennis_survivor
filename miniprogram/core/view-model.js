@@ -571,7 +571,12 @@ function filtered(matches, filter, followedIds, query, options = {}) {
 
 function groupedMatches(projection, filter, followedIds, query = '', options = {}) {
   const matches = filtered(
-    projection.payload.matches.map(match => {
+    projection.payload.matches.filter(match => {
+      const value = availableField(match?.court?.displayNameZh);
+      const name = value === null ? '' : String(value).trim();
+      return Boolean(name)
+        && !/^(?:其他场次|待定|未知|tba|tbd|unknown|null|-+)$/iu.test(name);
+    }).map(match => {
       const value = matchView(match, { includeModules: false });
       const override = options.followOverrides instanceof Map
         ? options.followOverrides.get(value.id) : undefined;
@@ -689,12 +694,25 @@ function groupedMatches(projection, filter, followedIds, query = '', options = {
       ...tournament,
       courts: Object.freeze([...tournament.courts.values()]
         .sort((first, second) => {
+          const semanticCourtOrder = value => {
+            const name = String(value?.name || '').trim();
+            const namedMain = /(?:阿瑟|阿姆斯特朗|大看台|中心|中央|中央球场|centre|center|central|stadium|arena|grandstand)/iu.test(name);
+            const number = Number((/(\d+)/u.exec(name) || [])[1]);
+            return namedMain ? [0, 0, name] : Number.isFinite(number)
+              ? [1, number, name] : [0, 1, name];
+          };
+          const firstSemantic = semanticCourtOrder(first);
+          const secondSemantic = semanticCourtOrder(second);
+          if (firstSemantic[0] !== secondSemantic[0]) return firstSemantic[0] - secondSemantic[0];
           if (first.sortOrder !== null && second.sortOrder !== null
             && first.sortOrder !== second.sortOrder) {
             return first.sortOrder - second.sortOrder;
           }
           if (first.sortOrder !== null && second.sortOrder === null) return -1;
           if (first.sortOrder === null && second.sortOrder !== null) return 1;
+          if (firstSemantic[1] !== secondSemantic[1]) return firstSemantic[1] - secondSemantic[1];
+          const byName = firstSemantic[2].localeCompare(secondSemantic[2], 'zh-CN', { numeric: true });
+          if (byName !== 0) return byName;
           return first.originalIndex - second.originalIndex;
         }).map(court =>
         Object.freeze({ ...court, matches: Object.freeze(court.matches.sort((first, second) => {
