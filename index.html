@@ -693,6 +693,7 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 
 @media(max-width:768px){
   body{font-size:13px}
+  body.manager-mode{overflow-x:hidden}
   #hdr{padding:10px 12px}
   #hdr h1{font-size:1.05em}
   .hdt{align-items:flex-start}
@@ -715,9 +716,8 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
   .auth-chip.badged .badge-identity__username{display:none}
   .manager-boards-page .manager-rules summary{font-size:15px;min-height:44px}
   .manager-boards-page .manager-rules summary:before,.manager-boards-page .manager-rules summary:after{width:24px}
-  .manager-grid.view-boards,.manager-grid.view-boards>.manager-panel,.manager-grid.view-boards .manager-panel-b,.manager-boards-page,.manager-boards-page .manager-rules{overflow:visible}
-  .manager-boards-page .manager-rules details{overflow:visible}
-  .manager-boards-page .manager-table-scroll{width:max-content;max-width:none;min-width:100%;overflow:visible;-webkit-overflow-scrolling:auto;overscroll-behavior-x:auto}
+  .manager-grid.view-boards,.manager-grid.view-boards>.manager-panel,.manager-grid.view-boards .manager-panel-b,.manager-boards-page,.manager-boards-page .manager-rules,.manager-boards-page .manager-rules details,.manager-boards-page .rule-body{min-width:0;max-width:100%}
+  .manager-boards-page .manager-table-scroll{display:block;width:100%;max-width:100%;min-width:0;max-height:65vh;max-height:68dvh;overflow:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;overscroll-behavior:contain}
   .manager-boards-page .manager-board-grid{grid-template-columns:1fr}
   .manager-boards-page .manager-rank-table .manager-user-name-plain{min-width:150px}
   .manager-badge-gallery-grid{grid-template-columns:1fr;gap:10px}
