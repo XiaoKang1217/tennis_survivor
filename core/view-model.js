@@ -297,15 +297,24 @@ function scoreSet(value) {
   const displayKindLabel = typeof value.displayKindLabel === 'string'
     ? value.displayKindLabel
     : '';
+  const firstGames = Number(value.firstSideGames);
+  const secondGames = Number(value.secondSideGames);
+  const isSetTiebreakScore = value.kind !== 'match_tiebreak'
+    && Number.isFinite(firstGames)
+    && Number.isFinite(secondGames)
+    && Math.abs(firstGames - secondGames) === 1
+    && Math.min(firstGames, secondGames) >= 6;
+  const visibleTiebreak = sideValue => isSetTiebreakScore
+    && Number.isFinite(Number(sideValue))
+    && Number(sideValue) > 0
+    ? String(Number(sideValue)) : '';
   return Object.freeze({
     setNumber: value.setNumber,
     kind: value.kind,
     first: String(value.firstSideGames),
     second: String(value.secondSideGames),
-    firstTiebreak: value.firstSideTiebreakPoints === null
-      ? '' : String(value.firstSideTiebreakPoints),
-    secondTiebreak: value.secondSideTiebreakPoints === null
-      ? '' : String(value.secondSideTiebreakPoints),
+    firstTiebreak: visibleTiebreak(value.firstSideTiebreakPoints),
+    secondTiebreak: visibleTiebreak(value.secondSideTiebreakPoints),
     current: value.state === 'in_progress',
     winnerSide: Number.isFinite(value.winnerSide) ? Number(value.winnerSide) : null,
     tiebreakTargetPoints: Number.isFinite(value.tiebreakTargetPoints)

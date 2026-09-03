@@ -68,6 +68,26 @@ test('match detail date accepts the deployed projection official-day field', () 
   assert.equal(matchView(deployed).officialScheduleDate, '2026-08-07');
 });
 
+test('score cards show only real tie-break mini scores and keep the current game separate', () => {
+  const match = presentation();
+  match.score.sets = [
+    { setNumber: 1, kind: 'standard', firstSideGames: 6, secondSideGames: 3,
+      firstSideTiebreakPoints: 0, secondSideTiebreakPoints: 0, state: 'complete' },
+    { setNumber: 2, kind: 'standard', firstSideGames: 7, secondSideGames: 6,
+      firstSideTiebreakPoints: 7, secondSideTiebreakPoints: 5, state: 'complete' },
+    { setNumber: 3, kind: 'standard', firstSideGames: 5, secondSideGames: 1,
+      firstSideTiebreakPoints: 0, secondSideTiebreakPoints: 0, state: 'in_progress' }
+  ];
+  match.score.currentGame = {
+    kind: 'standard', firstSidePoints: 'Ad', secondSidePoints: '40'
+  };
+  const card = matchView(match);
+  assert.deepEqual(card.sides[0].setScores.map(set => set.tiebreak), ['', '7', '']);
+  assert.deepEqual(card.sides[1].setScores.map(set => set.tiebreak), ['', '5', '']);
+  assert.equal(card.sides[0].currentPoint, 'Ad');
+  assert.equal(card.sides[1].currentPoint, '40');
+});
+
 test('client display layer does not contain alias collapse or Mega reconcile code', () => {
   const viewModel = readFileSync(
     new URL('../core/view-model.js', import.meta.url),
