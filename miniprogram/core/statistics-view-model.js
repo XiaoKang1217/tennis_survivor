@@ -114,6 +114,7 @@ function productStatisticsView(projection, participantNames, selectedPeriod, col
       const firstNumber = productNumber(field.side1);
       const secondNumber = productNumber(field.side2);
       const scale = Math.max(firstNumber, secondNumber, 1);
+      const comparable = field.available === true && firstNumber !== secondNumber;
       return Object.freeze({
         metricId: field.stableFieldId,
         label: field.labelZh,
@@ -121,6 +122,9 @@ function productStatisticsView(projection, participantNames, selectedPeriod, col
         second: productValue(field.side2),
         firstBar: Math.round(firstNumber / scale * 100),
         secondBar: Math.round(secondNumber / scale * 100),
+        firstHigher: comparable && firstNumber > secondNumber,
+        secondHigher: comparable && secondNumber > firstNumber,
+        tied: field.available === true && firstNumber === secondNumber,
         available: field.available === true
       });
     })

@@ -106,11 +106,11 @@
 
         <block wx:if="{{activeTab === 'statistics' && statistics && (moduleState.state === 'content' || (moduleState.state === 'delayed' && moduleState.preservesLastTrustedContent))}}">
           <data-notice wx:if="{{moduleState.state === 'delayed'}}" state="delayed" message="{{moduleState.message}}" compact />
-          <scroll-view wx:if="{{statistics.periods}}" class="statistics-periods" scroll-x enhanced show-scrollbar="{{false}}">
+          <view wx:if="{{statistics.periods}}" class="statistics-periods">
             <view class="statistics-periods-inner">
-              <button wx:for="{{statistics.periods}}" wx:key="period" data-period="{{item.period}}" bindtap="selectStatisticsPeriod" class="{{item.active ? 'active' : ''}}">{{item.label}}</button>
+              <view wx:for="{{statistics.periods}}" wx:key="period" role="button" aria-label="查看{{item.label}}统计" data-period="{{item.period}}" bindtap="selectStatisticsPeriod" class="statistics-period-button {{item.active ? 'active' : ''}}"><text>{{item.label}}</text></view>
             </view>
-          </scroll-view>
+          </view>
           <view class="statistics-head"><text>{{statistics.names[0]}}</text><text>{{moduleState.label}}</text><text>{{statistics.names[1]}}</text></view>
           <block wx:if="{{statistics.groups}}">
             <block wx:for="{{statistics.groups}}" wx:key="groupId" wx:for-item="group">
@@ -119,9 +119,9 @@
               </view>
               <block wx:if="{{!group.collapsed}}">
                 <view wx:for="{{group.rows}}" wx:key="metricId" wx:for-item="item" class="stat-row {{item.available ? '' : 'unavailable'}}">
-                  <view class="stat-side stat-side-first"><text>{{item.available ? item.first : '—'}}</text><view class="stat-bar-track"><view class="stat-bar" style="width:{{item.firstBar}}%"></view></view></view>
+                  <view class="stat-side stat-side-first {{item.firstHigher ? 'stat-higher' : (item.secondHigher ? 'stat-lower' : 'stat-tied')}}"><view class="stat-value"><text>{{item.available ? item.first : '—'}}</text><text wx:if="{{item.firstHigher}}" class="stat-higher-badge">高</text></view><view class="stat-bar-track"><view class="stat-bar" style="width:{{item.firstBar}}%"></view></view></view>
                   <text class="stat-label">{{item.label}}</text>
-                  <view class="stat-side stat-side-second"><text>{{item.available ? item.second : '—'}}</text><view class="stat-bar-track"><view class="stat-bar" style="width:{{item.secondBar}}%"></view></view></view>
+                  <view class="stat-side stat-side-second {{item.secondHigher ? 'stat-higher' : (item.firstHigher ? 'stat-lower' : 'stat-tied')}}"><view class="stat-value"><text>{{item.available ? item.second : '—'}}</text><text wx:if="{{item.secondHigher}}" class="stat-higher-badge">高</text></view><view class="stat-bar-track"><view class="stat-bar" style="width:{{item.secondBar}}%"></view></view></view>
                 </view>
               </block>
             </block>

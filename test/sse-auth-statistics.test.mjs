@@ -315,6 +315,9 @@ test('Sofa statistics V2 orders collapsible groups and formats rates percent-fir
   assert.equal(view.groups[0].rows[0].second, '50%（23/46）');
   assert.equal(view.groups[0].rows[0].firstBar, 100);
   assert.equal(view.groups[0].rows[0].secondBar, 91);
+  assert.equal(view.groups[0].rows[0].firstHigher, true);
+  assert.equal(view.groups[0].rows[0].secondHigher, false);
+  assert.equal(view.groups[0].rows[0].tied, false);
 });
 
 test('completion statistics store uses the permanent compact stream and preserves trusted facts on gaps', () => {
