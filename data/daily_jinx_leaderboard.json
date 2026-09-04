@@ -1,59 +1,59 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-09-03T03:09:34.444Z",
-  "source_updated_at": "2026-09-03 11:09:32",
-  "settled_through": "2026-09-02",
+  "updated_at": "2026-09-04T03:09:14.497Z",
+  "source_updated_at": "2026-09-04 11:09:13",
+  "settled_through": "2026-09-03",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
     {
       "tour": "ATP",
       "display_name": "第七路单车",
-      "score": 2171,
-      "hit_count": 72,
-      "scored_days": 49
+      "score": 2260,
+      "hit_count": 73,
+      "scored_days": 50
     },
     {
       "tour": "ATP",
       "display_name": "阿vvvvv",
-      "score": 1809,
-      "hit_count": 75,
-      "scored_days": 52
+      "score": 1898,
+      "hit_count": 76,
+      "scored_days": 53
     },
     {
       "tour": "ATP",
       "display_name": "Mith",
-      "score": 1725,
-      "hit_count": 57,
-      "scored_days": 43
+      "score": 1814,
+      "hit_count": 58,
+      "scored_days": 44
     },
     {
       "tour": "ATP",
       "display_name": "AKA90",
-      "score": 1588,
-      "hit_count": 64,
-      "scored_days": 48
+      "score": 1677,
+      "hit_count": 65,
+      "scored_days": 49
     },
     {
       "tour": "ATP",
       "display_name": "xxx又坑人了",
-      "score": 1423,
-      "hit_count": 54,
-      "scored_days": 42
+      "score": 1512,
+      "hit_count": 55,
+      "scored_days": 43
     },
     {
       "tour": "ATP",
       "display_name": "莫斯特",
-      "score": 1168,
-      "hit_count": 36,
-      "scored_days": 30
+      "score": 1257,
+      "hit_count": 37,
+      "scored_days": 31
     },
     {
       "tour": "ATP",
       "display_name": "就是玩",
-      "score": 1043,
-      "hit_count": 47,
-      "scored_days": 32
+      "score": 1132,
+      "hit_count": 48,
+      "scored_days": 33
     },
     {
       "tour": "ATP",
@@ -65,9 +65,16 @@
     {
       "tour": "ATP",
       "display_name": "网球人",
-      "score": 759,
-      "hit_count": 37,
-      "scored_days": 26
+      "score": 848,
+      "hit_count": 38,
+      "scored_days": 27
+    },
+    {
+      "tour": "ATP",
+      "display_name": "跟我一起摆烂",
+      "score": 771,
+      "hit_count": 29,
+      "scored_days": 22
     },
     {
       "tour": "ATP",
@@ -78,17 +85,10 @@
     },
     {
       "tour": "ATP",
-      "display_name": "跟我一起摆烂",
-      "score": 682,
-      "hit_count": 28,
-      "scored_days": 21
-    },
-    {
-      "tour": "ATP",
       "display_name": "白云静水",
-      "score": 657,
-      "hit_count": 31,
-      "scored_days": 27
+      "score": 660,
+      "hit_count": 32,
+      "scored_days": 28
     },
     {
       "tour": "ATP",
@@ -106,6 +106,13 @@
     },
     {
       "tour": "ATP",
+      "display_name": "五陵@神光",
+      "score": 356,
+      "hit_count": 17,
+      "scored_days": 11
+    },
+    {
+      "tour": "ATP",
       "display_name": "F-orestcold",
       "score": 331,
       "hit_count": 5,
@@ -116,13 +123,6 @@
       "display_name": "霍小耳",
       "score": 268,
       "hit_count": 12,
-      "scored_days": 10
-    },
-    {
-      "tour": "ATP",
-      "display_name": "五陵@神光",
-      "score": 267,
-      "hit_count": 16,
       "scored_days": 10
     },
     {
@@ -436,9 +436,9 @@
     {
       "tour": "WTA",
       "display_name": "h",
-      "score": 218,
-      "hit_count": 10,
-      "scored_days": 8
+      "score": 220,
+      "hit_count": 11,
+      "scored_days": 9
     },
     {
       "tour": "WTA",
@@ -1320,6 +1320,15 @@
       "rarity": "limited"
     },
     {
+      "display_name": "嘎里ga气",
+      "badge_key": "gauff-energy",
+      "title": "高芙果切能量",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/gauff-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/gauff-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
       "display_name": "AKA90",
       "badge_key": "gauff-energy",
       "title": "高芙果切能量",
@@ -1380,15 +1389,6 @@
       "subtitle": "球员纪念",
       "image_url": "assets/manager/badges/ui-v18/optimized/bee-duck-badge-640.webp",
       "thumb_url": "assets/manager/badges/ui-v18/optimized/bee-duck-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
-      "display_name": "嘎里ga气",
-      "badge_key": "swiatek-whirlwind",
-      "title": "斯瓦泰克旋风少女",
-      "subtitle": "球员纪念",
-      "image_url": "assets/manager/badges/ui-v18/optimized/swiatek-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v18/optimized/swiatek-badge-640.webp",
       "rarity": "limited"
     },
     {
