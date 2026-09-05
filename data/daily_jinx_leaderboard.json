@@ -1,45 +1,45 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-09-04T03:09:14.497Z",
-  "source_updated_at": "2026-09-04 11:09:13",
-  "settled_through": "2026-09-03",
+  "updated_at": "2026-09-05T03:09:09.624Z",
+  "source_updated_at": "2026-09-05 11:09:07",
+  "settled_through": "2026-09-04",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
     {
       "tour": "ATP",
       "display_name": "第七路单车",
-      "score": 2260,
-      "hit_count": 73,
-      "scored_days": 50
+      "score": 2283,
+      "hit_count": 74,
+      "scored_days": 51
     },
     {
       "tour": "ATP",
       "display_name": "阿vvvvv",
-      "score": 1898,
-      "hit_count": 76,
-      "scored_days": 53
+      "score": 1921,
+      "hit_count": 77,
+      "scored_days": 54
     },
     {
       "tour": "ATP",
       "display_name": "Mith",
-      "score": 1814,
-      "hit_count": 58,
-      "scored_days": 44
+      "score": 1837,
+      "hit_count": 59,
+      "scored_days": 45
     },
     {
       "tour": "ATP",
       "display_name": "AKA90",
-      "score": 1677,
-      "hit_count": 65,
-      "scored_days": 49
+      "score": 1700,
+      "hit_count": 66,
+      "scored_days": 50
     },
     {
       "tour": "ATP",
       "display_name": "xxx又坑人了",
-      "score": 1512,
-      "hit_count": 55,
-      "scored_days": 43
+      "score": 1535,
+      "hit_count": 56,
+      "scored_days": 44
     },
     {
       "tour": "ATP",
@@ -57,6 +57,13 @@
     },
     {
       "tour": "ATP",
+      "display_name": "网球人",
+      "score": 871,
+      "hit_count": 39,
+      "scored_days": 28
+    },
+    {
+      "tour": "ATP",
       "display_name": "12345",
       "score": 862,
       "hit_count": 25,
@@ -64,17 +71,10 @@
     },
     {
       "tour": "ATP",
-      "display_name": "网球人",
-      "score": 848,
-      "hit_count": 38,
-      "scored_days": 27
-    },
-    {
-      "tour": "ATP",
       "display_name": "跟我一起摆烂",
-      "score": 771,
-      "hit_count": 29,
-      "scored_days": 22
+      "score": 794,
+      "hit_count": 30,
+      "scored_days": 23
     },
     {
       "tour": "ATP",
@@ -86,9 +86,16 @@
     {
       "tour": "ATP",
       "display_name": "白云静水",
-      "score": 660,
-      "hit_count": 32,
-      "scored_days": 28
+      "score": 683,
+      "hit_count": 33,
+      "scored_days": 29
+    },
+    {
+      "tour": "ATP",
+      "display_name": "h",
+      "score": 405,
+      "hit_count": 10,
+      "scored_days": 7
     },
     {
       "tour": "ATP",
@@ -96,13 +103,6 @@
       "score": 401,
       "hit_count": 17,
       "scored_days": 15
-    },
-    {
-      "tour": "ATP",
-      "display_name": "h",
-      "score": 382,
-      "hit_count": 9,
-      "scored_days": 6
     },
     {
       "tour": "ATP",
@@ -310,37 +310,44 @@
     {
       "tour": "WTA",
       "display_name": "第七路单车",
-      "score": 2604,
-      "hit_count": 75,
-      "scored_days": 55
+      "score": 2731,
+      "hit_count": 77,
+      "scored_days": 56
     },
     {
       "tour": "WTA",
       "display_name": "阿vvvvv",
-      "score": 2129,
-      "hit_count": 79,
-      "scored_days": 55
+      "score": 2256,
+      "hit_count": 81,
+      "scored_days": 56
     },
     {
       "tour": "WTA",
       "display_name": "Mith",
-      "score": 2027,
-      "hit_count": 63,
-      "scored_days": 47
+      "score": 2073,
+      "hit_count": 64,
+      "scored_days": 48
     },
     {
       "tour": "WTA",
       "display_name": "AKA90",
-      "score": 1961,
-      "hit_count": 68,
-      "scored_days": 51
+      "score": 2007,
+      "hit_count": 69,
+      "scored_days": 52
     },
     {
       "tour": "WTA",
       "display_name": "xxx又坑人了",
-      "score": 1729,
-      "hit_count": 64,
-      "scored_days": 45
+      "score": 1775,
+      "hit_count": 65,
+      "scored_days": 46
+    },
+    {
+      "tour": "WTA",
+      "display_name": "就是玩",
+      "score": 1365,
+      "hit_count": 46,
+      "scored_days": 31
     },
     {
       "tour": "WTA",
@@ -348,13 +355,6 @@
       "score": 1321,
       "hit_count": 47,
       "scored_days": 34
-    },
-    {
-      "tour": "WTA",
-      "display_name": "就是玩",
-      "score": 1284,
-      "hit_count": 45,
-      "scored_days": 30
     },
     {
       "tour": "WTA",
@@ -366,23 +366,23 @@
     {
       "tour": "WTA",
       "display_name": "网球人",
-      "score": 943,
-      "hit_count": 33,
-      "scored_days": 24
-    },
-    {
-      "tour": "WTA",
-      "display_name": "白云静水",
-      "score": 854,
-      "hit_count": 31,
-      "scored_days": 23
+      "score": 1070,
+      "hit_count": 35,
+      "scored_days": 25
     },
     {
       "tour": "WTA",
       "display_name": "跟我一起摆烂",
-      "score": 848,
-      "hit_count": 31,
-      "scored_days": 25
+      "score": 929,
+      "hit_count": 32,
+      "scored_days": 26
+    },
+    {
+      "tour": "WTA",
+      "display_name": "白云静水",
+      "score": 900,
+      "hit_count": 32,
+      "scored_days": 24
     },
     {
       "tour": "WTA",
@@ -428,17 +428,17 @@
     },
     {
       "tour": "WTA",
+      "display_name": "h",
+      "score": 301,
+      "hit_count": 12,
+      "scored_days": 10
+    },
+    {
+      "tour": "WTA",
       "display_name": "樱沫雪99",
       "score": 284,
       "hit_count": 11,
       "scored_days": 8
-    },
-    {
-      "tour": "WTA",
-      "display_name": "h",
-      "score": 220,
-      "hit_count": 11,
-      "scored_days": 9
     },
     {
       "tour": "WTA",
@@ -681,24 +681,6 @@
   ],
   "badges": [
     {
-      "display_name": "是月牙呦",
-      "badge_key": "wimbledon-2026",
-      "title": "温网限定",
-      "subtitle": "赛事限定",
-      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
-      "display_name": "青花比目",
-      "badge_key": "wimbledon-2026",
-      "title": "温网限定",
-      "subtitle": "赛事限定",
-      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "斯瓦泰克",
       "badge_key": "wimbledon-2026",
       "title": "温网限定",
@@ -768,15 +750,6 @@
       "subtitle": "赛事限定",
       "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
       "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
-      "display_name": "唯爱白富美",
-      "badge_key": "wang-xinyu-mermaid",
-      "title": "王欣瑜美人鱼",
-      "subtitle": "球员纪念",
-      "image_url": "assets/manager/badges/ui-v5/optimized/mermaid-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/mermaid-badge-640.webp",
       "rarity": "limited"
     },
     {
@@ -987,15 +960,6 @@
       "rarity": "limited"
     },
     {
-      "display_name": "佩今伸",
-      "badge_key": "wimbledon-2026",
-      "title": "温网限定",
-      "subtitle": "赛事限定",
-      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "滑板儿",
       "badge_key": "wimbledon-2026",
       "title": "温网限定",
@@ -1086,15 +1050,6 @@
       "rarity": "limited"
     },
     {
-      "display_name": "martin",
-      "badge_key": "wimbledon-2026",
-      "title": "温网限定",
-      "subtitle": "赛事限定",
-      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "九墨",
       "badge_key": "wimbledon-2026",
       "title": "温网限定",
@@ -1122,15 +1077,6 @@
       "rarity": "limited"
     },
     {
-      "display_name": "白云静水",
-      "badge_key": "gauff-energy",
-      "title": "高芙果切能量",
-      "subtitle": "球员纪念",
-      "image_url": "assets/manager/badges/ui-v18/optimized/gauff-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v18/optimized/gauff-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "Mith",
       "badge_key": "rublev-cat",
       "title": "卢布喵",
@@ -1146,6 +1092,15 @@
       "subtitle": "赛事限定",
       "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
       "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "马斯克",
+      "badge_key": "alcaraz-duck",
+      "title": "阿卡鸭",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v5/optimized/alcaraz-badge-final-hq-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/alcaraz-badge-final-hq-640.webp",
       "rarity": "limited"
     },
     {
@@ -1167,15 +1122,6 @@
       "rarity": "limited"
     },
     {
-      "display_name": "沈女士",
-      "badge_key": "rublev-cat",
-      "title": "卢布喵",
-      "subtitle": "球员纪念",
-      "image_url": "assets/manager/badges/ui-v5/optimized/lubu-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/lubu-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "风尘才虚",
       "badge_key": "zheng-queen",
       "title": "郑钦文Queen",
@@ -1194,21 +1140,21 @@
       "rarity": "limited"
     },
     {
-      "display_name": "马斯克",
-      "badge_key": "alcaraz-duck",
-      "title": "阿卡鸭",
-      "subtitle": "球员纪念",
-      "image_url": "assets/manager/badges/ui-v5/optimized/alcaraz-badge-final-hq-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/alcaraz-badge-final-hq-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "阿vvvvv",
       "badge_key": "federer-eternal",
       "title": "费德勒优雅永恒",
       "subtitle": "球员纪念",
       "image_url": "assets/manager/badges/ui-v18/optimized/federer-badge-640.webp",
       "thumb_url": "assets/manager/badges/ui-v18/optimized/federer-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "佩今伸",
+      "badge_key": "luwang-friend",
+      "title": "炉网挚友",
+      "subtitle": "炉友纪念",
+      "image_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
       "rarity": "limited"
     },
     {
@@ -1230,21 +1176,12 @@
       "rarity": "limited"
     },
     {
-      "display_name": "xiaohe",
-      "badge_key": "alcaraz-bee-duck",
-      "title": "阿卡蜜蜂鸭",
-      "subtitle": "球员纪念",
-      "image_url": "assets/manager/badges/ui-v18/optimized/bee-duck-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v18/optimized/bee-duck-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
-      "display_name": "霍小耳",
-      "badge_key": "sinner-fox",
-      "title": "辛纳狐",
-      "subtitle": "球员纪念",
-      "image_url": "assets/manager/badges/ui-v5/optimized/sinner-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/sinner-badge-640.webp",
+      "display_name": "沈女士",
+      "badge_key": "luwang-friend",
+      "title": "炉网挚友",
+      "subtitle": "炉友纪念",
+      "image_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
       "rarity": "limited"
     },
     {
@@ -1254,15 +1191,6 @@
       "subtitle": "球员纪念",
       "image_url": "assets/manager/badges/ui-v18/optimized/federer-badge-640.webp",
       "thumb_url": "assets/manager/badges/ui-v18/optimized/federer-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
-      "display_name": "马戏团冠军",
-      "badge_key": "who-is-leather",
-      "title": "谁是皮革",
-      "subtitle": "炉友纪念",
-      "image_url": "assets/manager/badges/ui-v18/optimized/who-leather-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v18/optimized/who-leather-badge-640.webp",
       "rarity": "limited"
     },
     {
@@ -1347,6 +1275,15 @@
       "rarity": "limited"
     },
     {
+      "display_name": "martin",
+      "badge_key": "luwang-friend",
+      "title": "炉网挚友",
+      "subtitle": "炉友纪念",
+      "image_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
       "display_name": "小兮",
       "badge_key": "wimbledon-2026",
       "title": "温网限定",
@@ -1392,21 +1329,21 @@
       "rarity": "limited"
     },
     {
-      "display_name": "Oreache",
-      "badge_key": "rublev-cat",
-      "title": "卢布喵",
-      "subtitle": "球员纪念",
-      "image_url": "assets/manager/badges/ui-v5/optimized/lubu-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/lubu-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "莫斯特",
       "badge_key": "zheng-queen",
       "title": "郑钦文Queen",
       "subtitle": "球员纪念",
       "image_url": "assets/manager/badges/ui-v5/optimized/zheng-badge-640.webp",
       "thumb_url": "assets/manager/badges/ui-v5/optimized/zheng-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "青花比目",
+      "badge_key": "federer-eternal",
+      "title": "费德勒优雅永恒",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/federer-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/federer-badge-640.webp",
       "rarity": "limited"
     },
     {
@@ -1425,6 +1362,78 @@
       "subtitle": "赛事限定",
       "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
       "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "唯爱白富美",
+      "badge_key": "luwang-friend",
+      "title": "炉网挚友",
+      "subtitle": "炉友纪念",
+      "image_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "就是玩",
+      "badge_key": "luwang-friend",
+      "title": "炉网挚友",
+      "subtitle": "炉友纪念",
+      "image_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "xiaohe",
+      "badge_key": "luwang-friend",
+      "title": "炉网挚友",
+      "subtitle": "炉友纪念",
+      "image_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "Oreache",
+      "badge_key": "luwang-friend",
+      "title": "炉网挚友",
+      "subtitle": "炉友纪念",
+      "image_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "是月牙呦",
+      "badge_key": "luwang-friend",
+      "title": "炉网挚友",
+      "subtitle": "炉友纪念",
+      "image_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "白云静水",
+      "badge_key": "luwang-friend",
+      "title": "炉网挚友",
+      "subtitle": "炉友纪念",
+      "image_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "马戏团冠军",
+      "badge_key": "luwang-friend",
+      "title": "炉网挚友",
+      "subtitle": "炉友纪念",
+      "image_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "霍小耳",
+      "badge_key": "luwang-friend",
+      "title": "炉网挚友",
+      "subtitle": "炉友纪念",
+      "image_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
       "rarity": "limited"
     }
   ]
