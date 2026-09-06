@@ -1,17 +1,17 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-09-05T03:09:09.624Z",
-  "source_updated_at": "2026-09-05 11:09:07",
-  "settled_through": "2026-09-04",
+  "updated_at": "2026-09-06T03:08:35.327Z",
+  "source_updated_at": "2026-09-06 11:08:33",
+  "settled_through": "2026-09-05",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
     {
       "tour": "ATP",
       "display_name": "第七路单车",
-      "score": 2283,
-      "hit_count": 74,
-      "scored_days": 51
+      "score": 2304,
+      "hit_count": 75,
+      "scored_days": 52
     },
     {
       "tour": "ATP",
@@ -30,9 +30,9 @@
     {
       "tour": "ATP",
       "display_name": "AKA90",
-      "score": 1700,
-      "hit_count": 66,
-      "scored_days": 50
+      "score": 1721,
+      "hit_count": 67,
+      "scored_days": 51
     },
     {
       "tour": "ATP",
@@ -51,9 +51,9 @@
     {
       "tour": "ATP",
       "display_name": "就是玩",
-      "score": 1132,
-      "hit_count": 48,
-      "scored_days": 33
+      "score": 1153,
+      "hit_count": 49,
+      "scored_days": 34
     },
     {
       "tour": "ATP",
@@ -72,9 +72,9 @@
     {
       "tour": "ATP",
       "display_name": "跟我一起摆烂",
-      "score": 794,
-      "hit_count": 30,
-      "scored_days": 23
+      "score": 815,
+      "hit_count": 31,
+      "scored_days": 24
     },
     {
       "tour": "ATP",
@@ -86,9 +86,9 @@
     {
       "tour": "ATP",
       "display_name": "白云静水",
-      "score": 683,
-      "hit_count": 33,
-      "scored_days": 29
+      "score": 688,
+      "hit_count": 34,
+      "scored_days": 30
     },
     {
       "tour": "ATP",
@@ -107,9 +107,9 @@
     {
       "tour": "ATP",
       "display_name": "五陵@神光",
-      "score": 356,
-      "hit_count": 17,
-      "scored_days": 11
+      "score": 377,
+      "hit_count": 18,
+      "scored_days": 12
     },
     {
       "tour": "ATP",
@@ -169,6 +169,13 @@
     },
     {
       "tour": "ATP",
+      "display_name": "梁朝伟",
+      "score": 74,
+      "hit_count": 2,
+      "scored_days": 2
+    },
+    {
+      "tour": "ATP",
       "display_name": "风尘才虚",
       "score": 64,
       "hit_count": 2,
@@ -180,13 +187,6 @@
       "score": 55,
       "hit_count": 4,
       "scored_days": 4
-    },
-    {
-      "tour": "ATP",
-      "display_name": "梁朝伟",
-      "score": 53,
-      "hit_count": 1,
-      "scored_days": 1
     },
     {
       "tour": "ATP",
@@ -310,43 +310,43 @@
     {
       "tour": "WTA",
       "display_name": "第七路单车",
-      "score": 2731,
-      "hit_count": 77,
-      "scored_days": 56
+      "score": 2769,
+      "hit_count": 78,
+      "scored_days": 57
     },
     {
       "tour": "WTA",
       "display_name": "阿vvvvv",
-      "score": 2256,
-      "hit_count": 81,
+      "score": 2302,
+      "hit_count": 82,
       "scored_days": 56
     },
     {
       "tour": "WTA",
       "display_name": "Mith",
-      "score": 2073,
-      "hit_count": 64,
-      "scored_days": 48
+      "score": 2157,
+      "hit_count": 66,
+      "scored_days": 49
     },
     {
       "tour": "WTA",
       "display_name": "AKA90",
-      "score": 2007,
-      "hit_count": 69,
+      "score": 2053,
+      "hit_count": 70,
       "scored_days": 52
     },
     {
       "tour": "WTA",
       "display_name": "xxx又坑人了",
-      "score": 1775,
-      "hit_count": 65,
+      "score": 1821,
+      "hit_count": 66,
       "scored_days": 46
     },
     {
       "tour": "WTA",
       "display_name": "就是玩",
-      "score": 1365,
-      "hit_count": 46,
+      "score": 1411,
+      "hit_count": 47,
       "scored_days": 31
     },
     {
@@ -373,16 +373,16 @@
     {
       "tour": "WTA",
       "display_name": "跟我一起摆烂",
-      "score": 929,
-      "hit_count": 32,
-      "scored_days": 26
+      "score": 1013,
+      "hit_count": 34,
+      "scored_days": 27
     },
     {
       "tour": "WTA",
       "display_name": "白云静水",
-      "score": 900,
-      "hit_count": 32,
-      "scored_days": 24
+      "score": 938,
+      "hit_count": 33,
+      "scored_days": 25
     },
     {
       "tour": "WTA",
@@ -414,6 +414,13 @@
     },
     {
       "tour": "WTA",
+      "display_name": "h",
+      "score": 388,
+      "hit_count": 15,
+      "scored_days": 11
+    },
+    {
+      "tour": "WTA",
       "display_name": "霍小耳",
       "score": 348,
       "hit_count": 11,
@@ -425,13 +432,6 @@
       "score": 347,
       "hit_count": 12,
       "scored_days": 9
-    },
-    {
-      "tour": "WTA",
-      "display_name": "h",
-      "score": 301,
-      "hit_count": 12,
-      "scored_days": 10
     },
     {
       "tour": "WTA",
@@ -680,6 +680,15 @@
     }
   ],
   "badges": [
+    {
+      "display_name": "唯爱白富美",
+      "badge_key": "wang-xinyu-mermaid",
+      "title": "王欣瑜美人鱼",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v5/optimized/mermaid-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/mermaid-badge-640.webp",
+      "rarity": "limited"
+    },
     {
       "display_name": "斯瓦泰克",
       "badge_key": "wimbledon-2026",
@@ -1362,15 +1371,6 @@
       "subtitle": "赛事限定",
       "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
       "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
-      "display_name": "唯爱白富美",
-      "badge_key": "luwang-friend",
-      "title": "炉网挚友",
-      "subtitle": "炉友纪念",
-      "image_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
       "rarity": "limited"
     },
     {
