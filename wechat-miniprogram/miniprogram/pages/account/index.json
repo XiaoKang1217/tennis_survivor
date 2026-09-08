@@ -1,7 +1,0 @@
-{
-  "usingComponents": {
-    "ui-icon": "/components/ui-icon/index",
-    "product-tabbar": "/components/product-tabbar/index",
-    "profile-gate": "/components/profile-gate/index"
-  }
-}

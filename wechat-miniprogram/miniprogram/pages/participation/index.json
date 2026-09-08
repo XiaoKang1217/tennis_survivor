@@ -1,6 +1,0 @@
-{
-  "usingComponents": {
-    "client-state": "/components/client-state/index",
-    "product-tabbar": "/components/product-tabbar/index"
-  }
-}
