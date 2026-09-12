@@ -14,6 +14,7 @@ Versioning guideline:
 - Added match statistics and H2H detail views plus independent player H2H and yearly match-history searches.
 - Added a server-side API Tennis proxy with shared JSON cache, SSE fan-out, ETags, CORS allow-listing, request throttling, and persisted daily request accounting.
 - Added production systemd and Nginx templates. The API key is read only from a protected server environment file and is never exposed to the static site.
+- Added an optional secondary live-score source (livetennisapi.com), off unless `LIVETENNISAPI_KEY` is set. It is applied before the `get_livescore` overlay, so API Tennis stays the default and wins on every match it reports, and it may only fill score, in-game points and server on a match the official schedule already contains. It emits no terminal state, so it cannot lock, cancel or hide a match.
 
 ### Changed
 - Live-score polling now runs only around scheduled match windows: 60-second observation probes and fixed 8-second refreshes after a live match is detected. Local request-count throttling at 6500, 7300, and 7800 has been removed.
@@ -22,6 +23,7 @@ Versioning guideline:
 
 ### Validation
 - Added Node.js tests for field normalization, tournament/court grouping, observation windows, no polling outside match windows, and adaptive request intervals.
+- Added Node.js tests covering the optional secondary source: unchanged behaviour when it is not configured, primary precedence when it is, name-based orientation, and its inability to create a match, write a terminal state, move identity fields, bridge id spaces, or synthesise a score from an empty games array.
 - Verified the service health and cached response endpoints, parsed all new JavaScript, and ran `git diff --check`.
 - Verified desktop browser navigation, zero horizontal overflow, and the independent H2H form without using simulated score data.
 
