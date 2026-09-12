@@ -1,24 +1,24 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-09-11T03:09:36.206Z",
-  "source_updated_at": "2026-09-11 11:09:33",
-  "settled_through": "2026-09-10",
+  "updated_at": "2026-09-12T03:09:09.486Z",
+  "source_updated_at": "2026-09-12 11:09:07",
+  "settled_through": "2026-09-11",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
     {
       "tour": "ATP",
       "display_name": "第七路单车",
-      "score": 2351,
-      "hit_count": 78,
-      "scored_days": 54
+      "score": 2354,
+      "hit_count": 79,
+      "scored_days": 55
     },
     {
       "tour": "ATP",
       "display_name": "阿vvvvv",
-      "score": 1994,
-      "hit_count": 82,
-      "scored_days": 58
+      "score": 1997,
+      "hit_count": 83,
+      "scored_days": 59
     },
     {
       "tour": "ATP",
@@ -30,37 +30,37 @@
     {
       "tour": "ATP",
       "display_name": "AKA90",
-      "score": 1769,
-      "hit_count": 70,
-      "scored_days": 53
+      "score": 1772,
+      "hit_count": 71,
+      "scored_days": 54
     },
     {
       "tour": "ATP",
       "display_name": "xxx又坑人了",
-      "score": 1601,
-      "hit_count": 63,
-      "scored_days": 48
+      "score": 1603,
+      "hit_count": 64,
+      "scored_days": 49
     },
     {
       "tour": "ATP",
       "display_name": "莫斯特",
-      "score": 1295,
-      "hit_count": 42,
-      "scored_days": 34
+      "score": 1298,
+      "hit_count": 43,
+      "scored_days": 35
     },
     {
       "tour": "ATP",
       "display_name": "就是玩",
-      "score": 1227,
-      "hit_count": 54,
-      "scored_days": 38
+      "score": 1230,
+      "hit_count": 55,
+      "scored_days": 39
     },
     {
       "tour": "ATP",
       "display_name": "网球人",
-      "score": 932,
-      "hit_count": 44,
-      "scored_days": 32
+      "score": 935,
+      "hit_count": 45,
+      "scored_days": 33
     },
     {
       "tour": "ATP",
@@ -79,9 +79,9 @@
     {
       "tour": "ATP",
       "display_name": "白云静水",
-      "score": 753,
-      "hit_count": 39,
-      "scored_days": 33
+      "score": 756,
+      "hit_count": 40,
+      "scored_days": 34
     },
     {
       "tour": "ATP",
@@ -93,9 +93,9 @@
     {
       "tour": "ATP",
       "display_name": "五陵@神光",
-      "score": 442,
-      "hit_count": 23,
-      "scored_days": 15
+      "score": 445,
+      "hit_count": 24,
+      "scored_days": 16
     },
     {
       "tour": "ATP",
@@ -1050,15 +1050,6 @@
       "rarity": "limited"
     },
     {
-      "display_name": "跟我一起摆烂",
-      "badge_key": "wimbledon-2026",
-      "title": "温网限定",
-      "subtitle": "赛事限定",
-      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "+835500913",
       "badge_key": "federer-eternal",
       "title": "费德勒优雅永恒",
@@ -1356,12 +1347,21 @@
       "rarity": "limited"
     },
     {
-      "display_name": "莫斯特",
+      "display_name": "跟我一起摆烂",
       "badge_key": "zheng-queen",
       "title": "郑钦文Queen",
       "subtitle": "球员纪念",
       "image_url": "assets/manager/badges/ui-v5/optimized/zheng-badge-640.webp",
       "thumb_url": "assets/manager/badges/ui-v5/optimized/zheng-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "莫斯特",
+      "badge_key": "gauff-energy",
+      "title": "高芙果切能量",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/gauff-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/gauff-badge-640.webp",
       "rarity": "limited"
     },
     {
