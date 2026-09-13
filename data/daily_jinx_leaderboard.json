@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-09-12T03:09:09.486Z",
-  "source_updated_at": "2026-09-12 11:09:07",
-  "settled_through": "2026-09-11",
+  "updated_at": "2026-09-13T03:09:09.803Z",
+  "source_updated_at": "2026-09-13 11:09:07",
+  "settled_through": "2026-09-12",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
@@ -310,9 +310,9 @@
     {
       "tour": "WTA",
       "display_name": "第七路单车",
-      "score": 2832,
-      "hit_count": 83,
-      "scored_days": 62
+      "score": 2833,
+      "hit_count": 84,
+      "scored_days": 63
     },
     {
       "tour": "WTA",
@@ -324,9 +324,9 @@
     {
       "tour": "WTA",
       "display_name": "Mith",
-      "score": 2234,
-      "hit_count": 72,
-      "scored_days": 54
+      "score": 2235,
+      "hit_count": 73,
+      "scored_days": 55
     },
     {
       "tour": "WTA",
@@ -1248,6 +1248,15 @@
       "rarity": "limited"
     },
     {
+      "display_name": "白云静水",
+      "badge_key": "alcaraz-duck",
+      "title": "阿卡鸭",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v5/optimized/alcaraz-badge-final-hq-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/alcaraz-badge-final-hq-640.webp",
+      "rarity": "limited"
+    },
+    {
       "display_name": "本东奇",
       "badge_key": "nadal-clay-soul",
       "title": "纳达尔赤土之魂",
@@ -1419,21 +1428,21 @@
       "rarity": "limited"
     },
     {
-      "display_name": "白云静水",
-      "badge_key": "luwang-friend",
-      "title": "炉网挚友",
-      "subtitle": "炉友纪念",
-      "image_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "wennuan78",
       "badge_key": "federer-eternal",
       "title": "费德勒优雅永恒",
       "subtitle": "球员纪念",
       "image_url": "assets/manager/badges/ui-v18/optimized/federer-badge-640.webp",
       "thumb_url": "assets/manager/badges/ui-v18/optimized/federer-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "跃进",
+      "badge_key": "luwang-friend",
+      "title": "炉网挚友",
+      "subtitle": "炉友纪念",
+      "image_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
       "rarity": "limited"
     }
   ]
