@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-09-14T03:09:18.835Z",
-  "source_updated_at": "2026-09-14 11:09:17",
-  "settled_through": "2026-09-13",
+  "updated_at": "2026-09-15T03:09:23.064Z",
+  "source_updated_at": "2026-09-15 11:09:20",
+  "settled_through": "2026-09-14",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
@@ -1176,15 +1176,6 @@
       "rarity": "limited"
     },
     {
-      "display_name": "霍小耳",
-      "badge_key": "zheng-queen",
-      "title": "郑钦文Queen",
-      "subtitle": "球员纪念",
-      "image_url": "assets/manager/badges/ui-v5/optimized/zheng-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/zheng-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "天邪幻世",
       "badge_key": "federer-eternal",
       "title": "费德勒优雅永恒",
@@ -1218,15 +1209,6 @@
       "subtitle": "赛事限定",
       "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
       "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
-      "display_name": "萨卡外",
-      "badge_key": "gauff-energy",
-      "title": "高芙果切能量",
-      "subtitle": "球员纪念",
-      "image_url": "assets/manager/badges/ui-v18/optimized/gauff-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v18/optimized/gauff-badge-640.webp",
       "rarity": "limited"
     },
     {
@@ -1347,15 +1329,6 @@
       "rarity": "limited"
     },
     {
-      "display_name": "莫斯特",
-      "badge_key": "gauff-energy",
-      "title": "高芙果切能量",
-      "subtitle": "球员纪念",
-      "image_url": "assets/manager/badges/ui-v18/optimized/gauff-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v18/optimized/gauff-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "第七路单车",
       "badge_key": "rotten-cabbage",
       "title": "烂白菜烂之泪伤",
@@ -1410,6 +1383,15 @@
       "rarity": "limited"
     },
     {
+      "display_name": "莫斯特",
+      "badge_key": "luwang-friend",
+      "title": "炉网挚友",
+      "subtitle": "炉友纪念",
+      "image_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
       "display_name": "是月牙呦",
       "badge_key": "luwang-friend",
       "title": "炉网挚友",
@@ -1452,6 +1434,24 @@
       "subtitle": "球员纪念",
       "image_url": "assets/manager/badges/ui-v5/optimized/mermaid-badge-640.webp",
       "thumb_url": "assets/manager/badges/ui-v5/optimized/mermaid-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "萨卡外",
+      "badge_key": "nadal-clay-soul",
+      "title": "纳达尔赤土之魂",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/nadal-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/nadal-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "霍小耳",
+      "badge_key": "nadal-clay-soul",
+      "title": "纳达尔赤土之魂",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/nadal-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/nadal-badge-640.webp",
       "rarity": "limited"
     }
   ]
