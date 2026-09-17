@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-09-16T03:09:56.646Z",
-  "source_updated_at": "2026-09-16 11:09:54",
-  "settled_through": "2026-09-15",
+  "updated_at": "2026-09-17T03:09:20.952Z",
+  "source_updated_at": "2026-09-17 11:09:19",
+  "settled_through": "2026-09-16",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
@@ -310,16 +310,16 @@
     {
       "tour": "WTA",
       "display_name": "第七路单车",
-      "score": 2833,
-      "hit_count": 84,
-      "scored_days": 63
+      "score": 2858,
+      "hit_count": 85,
+      "scored_days": 64
     },
     {
       "tour": "WTA",
       "display_name": "阿vvvvv",
-      "score": 2369,
-      "hit_count": 88,
-      "scored_days": 61
+      "score": 2394,
+      "hit_count": 89,
+      "scored_days": 62
     },
     {
       "tour": "WTA",
@@ -366,16 +366,16 @@
     {
       "tour": "WTA",
       "display_name": "网球人",
-      "score": 1155,
-      "hit_count": 43,
-      "scored_days": 31
+      "score": 1180,
+      "hit_count": 44,
+      "scored_days": 32
     },
     {
       "tour": "WTA",
       "display_name": "跟我一起摆烂",
-      "score": 1076,
-      "hit_count": 39,
-      "scored_days": 32
+      "score": 1101,
+      "hit_count": 40,
+      "scored_days": 33
     },
     {
       "tour": "WTA",
@@ -400,6 +400,13 @@
     },
     {
       "tour": "WTA",
+      "display_name": "五陵@神光",
+      "score": 479,
+      "hit_count": 21,
+      "scored_days": 16
+    },
+    {
+      "tour": "WTA",
       "display_name": "h",
       "score": 469,
       "hit_count": 22,
@@ -411,13 +418,6 @@
       "score": 464,
       "hit_count": 17,
       "scored_days": 12
-    },
-    {
-      "tour": "WTA",
-      "display_name": "五陵@神光",
-      "score": 454,
-      "hit_count": 20,
-      "scored_days": 15
     },
     {
       "tour": "WTA",
@@ -554,6 +554,13 @@
     },
     {
       "tour": "WTA",
+      "display_name": "Oreache",
+      "score": 29,
+      "hit_count": 2,
+      "scored_days": 2
+    },
+    {
+      "tour": "WTA",
       "display_name": "我叫LCW",
       "score": 28,
       "hit_count": 3,
@@ -631,13 +638,6 @@
     },
     {
       "tour": "WTA",
-      "display_name": "Oreache",
-      "score": 4,
-      "hit_count": 1,
-      "scored_days": 1
-    },
-    {
-      "tour": "WTA",
       "display_name": "本东奇",
       "score": 3,
       "hit_count": 1,
@@ -681,15 +681,6 @@
   ],
   "badges": [
     {
-      "display_name": "唯爱白富美",
-      "badge_key": "wang-xinyu-mermaid",
-      "title": "王欣瑜美人鱼",
-      "subtitle": "球员纪念",
-      "image_url": "assets/manager/badges/ui-v5/optimized/mermaid-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/mermaid-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "斯瓦泰克",
       "badge_key": "wimbledon-2026",
       "title": "温网限定",
@@ -723,6 +714,15 @@
       "subtitle": "赛事限定",
       "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
       "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "唯爱白富美",
+      "badge_key": "wang-xinyu-mermaid",
+      "title": "王欣瑜美人鱼",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v5/optimized/mermaid-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/mermaid-badge-640.webp",
       "rarity": "limited"
     },
     {
