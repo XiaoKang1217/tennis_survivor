@@ -18,7 +18,10 @@
   "timezone": "Asia/Singapore",
   "draw_status": "published",
   "market_status": "open",
-  "market_price_lock": { "publication_version": 1, "locked_at": "2026-09-19T12:22:42.000Z" },
+  "market_price_lock": {
+    "publication_version": 1,
+    "locked_at": "2026-09-19T12:22:42.000Z"
+  },
   "submission_status": "open",
   "submission_opens_at": "2026-09-19T20:22:42+08:00",
   "submission_cutoff_at": "2026-09-21T09:45:00+08:00",
@@ -124,7 +127,10 @@
         "preview_generated_at": "2026-09-19T12:26:36.291Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 2074.78
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Daria KASATKINA",
@@ -203,7 +209,10 @@
         "preview_generated_at": "2026-09-19T12:26:36.291Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1773.9
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Aliaksandra SASNOVICH",
@@ -282,7 +291,10 @@
         "preview_generated_at": "2026-09-19T12:26:36.291Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1688.63
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Alycia PARKS",
@@ -361,7 +373,10 @@
         "preview_generated_at": "2026-09-19T12:26:36.291Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1639.02
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Janice TJEN",
@@ -440,7 +455,10 @@
         "preview_generated_at": "2026-09-19T12:26:36.291Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1733.63
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Qualifier Q1",
@@ -519,7 +537,10 @@
         "preview_generated_at": "2026-09-19T12:26:36.291Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -35
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Leylah FERNANDEZ",
@@ -598,7 +619,10 @@
         "preview_generated_at": "2026-09-19T12:26:36.291Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1837.94
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Elise MERTENS",
@@ -677,7 +701,10 @@
         "preview_generated_at": "2026-09-19T12:26:36.291Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1907.05
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Barbora KREJCIKOVA",
@@ -756,7 +783,10 @@
         "preview_generated_at": "2026-09-19T12:26:36.291Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1867.53
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Qualifier Q2",
@@ -835,7 +865,10 @@
         "preview_generated_at": "2026-09-19T12:26:36.291Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -35
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Vivian WOLFF",
@@ -914,7 +947,10 @@
         "preview_generated_at": "2026-09-19T12:26:36.291Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1479.65
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Oleksandra OLIYNYKOVA",
@@ -993,7 +1029,10 @@
         "preview_generated_at": "2026-09-19T12:26:36.291Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1706.33
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Rebecca SRAMKOVA",
@@ -1072,7 +1111,10 @@
         "preview_generated_at": "2026-09-19T12:26:36.291Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1650.09
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Maja CHWALINSKA",
@@ -1151,7 +1193,10 @@
         "preview_generated_at": "2026-09-19T12:26:36.291Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1777.89
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Donna VEKIC",
@@ -1230,7 +1275,10 @@
         "preview_generated_at": "2026-09-19T12:26:36.291Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1746.61
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "WANG Xinyu",
@@ -1309,7 +1357,10 @@
         "preview_generated_at": "2026-09-19T12:26:36.291Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1807.31
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Storm HUNTER",
@@ -1388,7 +1439,10 @@
         "preview_generated_at": "2026-09-19T12:26:36.291Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1717.47
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Qualifier Q3",
@@ -1467,7 +1521,10 @@
         "preview_generated_at": "2026-09-19T12:26:36.291Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -35
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Tatiana PROZOROVA",
@@ -1546,7 +1603,10 @@
         "preview_generated_at": "2026-09-19T12:26:36.291Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1678.18
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Sofia COSTOULAS",
@@ -1625,7 +1685,10 @@
         "preview_generated_at": "2026-09-19T12:26:36.291Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1571.85
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Alexandra EALA",
@@ -1704,7 +1767,10 @@
         "preview_generated_at": "2026-09-19T12:26:36.291Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 2015.18
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Maria SAKKARI",
@@ -1783,7 +1849,10 @@
         "preview_generated_at": "2026-09-19T12:26:36.291Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1851.64
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Linda FRUHVIRTOVA",
@@ -1862,7 +1931,10 @@
         "preview_generated_at": "2026-09-19T12:26:36.291Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1564.93
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Kristina MLADENOVIC",
@@ -1941,7 +2013,10 @@
         "preview_generated_at": "2026-09-19T12:26:36.291Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1381.2
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Qualifier Q4",
@@ -2020,7 +2095,10 @@
         "preview_generated_at": "2026-09-19T12:26:36.291Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -35
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Talia GIBSON",
@@ -2099,7 +2177,10 @@
         "preview_generated_at": "2026-09-19T12:26:36.291Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1781.64
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Fiona FERRO",
@@ -2178,7 +2259,10 @@
         "preview_generated_at": "2026-09-19T12:26:36.291Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1650.86
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Amanda ANISIMOVA",
@@ -2257,7 +2341,10 @@
         "preview_generated_at": "2026-09-19T12:26:36.291Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1997.74
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     }
   ],
   "pricing_formula": {
