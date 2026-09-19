@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-09-18T03:08:39.726Z",
-  "source_updated_at": "2026-09-18 11:08:37",
-  "settled_through": "2026-09-17",
+  "updated_at": "2026-09-19T03:08:43.188Z",
+  "source_updated_at": "2026-09-19 11:08:40",
+  "settled_through": "2026-09-18",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
@@ -373,9 +373,9 @@
     {
       "tour": "WTA",
       "display_name": "跟我一起摆烂",
-      "score": 1157,
-      "hit_count": 41,
-      "scored_days": 34
+      "score": 1161,
+      "hit_count": 42,
+      "scored_days": 35
     },
     {
       "tour": "WTA",
