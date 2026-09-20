@@ -209,6 +209,7 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 .lw-mini-layout--live+.divider{margin-top:0}
 #p-fortune,#p-jinx{position:relative}
 .lw-mini-stage--preference{height:176px;min-height:176px;padding-right:430px}
+.lw-mini-stage--preference .lw-mini-card--preference{position:absolute;right:0;top:0}
 .bd-top-main .bd-stat-row{margin-bottom:8px}
 @media(min-width:1361px){
   #p-jinx .jinx-wrap{max-width:min(900px,calc(100% - 612px))}
@@ -218,8 +219,8 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 }
 @media(max-width:1180px){
   .lw-mini-stage{padding-right:0}
-  .lw-mini-stage--preference{height:auto;min-height:0}
-  .lw-mini-stage--preference>.lw-mini-card{height:auto}
+  .lw-mini-stage--preference{height:auto;min-height:0;padding-right:0}
+  .lw-mini-stage--preference .lw-mini-card--preference{position:static;height:auto;min-width:0;max-width:100%;margin:10px auto}
   .lw-mini-stage>.lw-mini-card,.lw-mini-card--floating{position:static;margin:10px 0 0 auto}
   #p-fortune .lw-mini-card--floating,#p-jinx .lw-mini-card--floating{margin:12px auto 0}
 }
@@ -7035,7 +7036,7 @@ function renderPref(g, pdata){
   const champCnt=Object.values(dict).filter(p=>p&&(p.ec||0)>0).length;
   const fObj=typeof FS[tab]==='object'?FS[tab]:{mode:FS[tab]||'all'};
   const fMode=fObj.mode||'all';
-  const prefTopHtml=`<div class="lw-mini-stage lw-mini-stage--preference"><div class="lw-mini-main"><div class="yearbar"><span class="dev-note">统计范围</span><select class="select-mini" id="year-${tab}" onchange="renderPrefYear('${g}',this.value)"><option selected>2026</option><option>2025</option><option>2024</option><option>全部</option></select></div><div class="kpi"><div class="kc"><div class="kn nt">${order.length}</div><div class="kl">参与用户</div></div><div class="kc"><div class="kn na">${champCnt}</div><div class="kl">有夺冠经历</div></div></div><p style="font-size:12px;color:#9a7a40;margin-bottom:8px">💡 点击任意行展开该用户详细数据，再点一次收起</p><div class="toolbar"><input id="q-${tab}" placeholder="🔍 搜索..." oninput="doFilter('${tab}')"><button class="fbtn ${fMode==='all'?'on':''}" onclick="setF('${tab}','all',this)">全部</button><button class="fbtn ${fMode==='following'?'on':''}" onclick="setF('${tab}','following',this)">关注用户</button></div><div class="follow-empty" id="follow-empty-${tab}"></div></div>${miniProgramPromoHtml('lw-mini-card--preference')}</div>`;
+  const prefTopHtml=`<div class="lw-mini-stage lw-mini-stage--preference"><div class="lw-mini-main"><div class="yearbar"><span class="dev-note">统计范围</span><select class="select-mini" id="year-${tab}" onchange="renderPrefYear('${g}',this.value)"><option selected>2026</option><option>2025</option><option>2024</option><option>全部</option></select></div><div class="kpi"><div class="kc"><div class="kn nt">${order.length}</div><div class="kl">参与用户</div></div><div class="kc"><div class="kn na">${champCnt}</div><div class="kl">有夺冠经历</div></div></div>${miniProgramPromoHtml('lw-mini-card--preference')}<p style="font-size:12px;color:#9a7a40;margin-bottom:8px">💡 点击任意行展开该用户详细数据，再点一次收起</p><div class="toolbar"><input id="q-${tab}" placeholder="🔍 搜索..." oninput="doFilter('${tab}')"><button class="fbtn ${fMode==='all'?'on':''}" onclick="setF('${tab}','all',this)">全部</button><button class="fbtn ${fMode==='following'?'on':''}" onclick="setF('${tab}','following',this)">关注用户</button></div><div class="follow-empty" id="follow-empty-${tab}"></div></div></div>`;
   cont.innerHTML=prefTopHtml+`<div class="tbl-wrap"><table id="tbl-${tab}">${hdrHtml}<tbody id="tb-${tab}">${rowsHtml}</tbody></table></div>`;
   cont.style.display='block';
   doFilter(tab);
