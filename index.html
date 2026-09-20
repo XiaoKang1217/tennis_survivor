@@ -969,6 +969,10 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 <link rel="stylesheet" href="assets/theme/full-site-badge-themes-v18.css?v=20260801-1">
 <link rel="stylesheet" href="assets/manager/badges/ui-v5/badge-ui.css?v=20260719-7">
 <link rel="stylesheet" href="assets/manager/badges/ui-v18/badge-ui-v18.css?v=20260802-1">
+<link rel="stylesheet" href="assets/manager/badges/ui-v20/site-themes.css?v=20260920-1">
+<link rel="stylesheet" href="assets/manager/badges/ui-v20/components.css?v=20260920-1">
+<link rel="stylesheet" href="assets/manager/badges/ui-v20/leaderboards.css?v=20260920-1">
+<link rel="stylesheet" href="assets/manager/badges/ui-v20/release.css?v=20260920-1">
 </head>
 <body class="manager-mode">
 <div id="hdr">
@@ -1251,21 +1255,21 @@ const MANAGER_LEVEL_CONFIG={
   'GS':{label:'大满贯',sideGrant:1250,grant:2500,min:2,max:4,transfers:1,transferDays:3,transferFee:.15}
 };
 const MANAGER_BADGE_FALLBACKS=[
-  {badge_key:'sinner-fox',title:'辛纳狐',formal_name:'辛纳·赤焰狐心',subtitle:'球员纪念',category:'player',category_label:'球员纪念',serial_number:'LW-2026-01',description:'他以赤狐般的敏锐穿过冰蓝浪涌，把炽热天赋藏进近乎冷静的每一次击球。',motifs:['赤狐','冰蓝浪涌','冷静炽热'],available_from:'2026-07-12',available_until:'',price:2999,sale_status:'for_sale',image_url:'assets/manager/badges/ui-v5/optimized/sinner-badge-640.webp',thumb_url:'assets/manager/badges/ui-v5/optimized/sinner-badge-640.webp',rarity:'limited',sort_order:10},
-  {badge_key:'alcaraz-duck',title:'阿卡鸭',formal_name:'阿卡·星辉少年冠',subtitle:'球员纪念',category:'player',category_label:'球员纪念',serial_number:'LW-2026-02',description:'他把晚霞般的热烈带进每一次奔跑，连身旁的小黄鸭也像在替少年喝彩。',motifs:['星辉','少年锋芒','小黄鸭'],available_from:'2026-07-12',available_until:'',price:2999,sale_status:'for_sale',image_url:'assets/manager/badges/ui-v5/optimized/alcaraz-badge-final-hq-640.webp',thumb_url:'assets/manager/badges/ui-v5/optimized/alcaraz-badge-final-hq-640.webp',rarity:'limited',sort_order:20},
-  {badge_key:'djoko-goat',title:'德约GOAT',formal_name:'德约·24冠回环',subtitle:'球员纪念',category:'player',category_label:'球员纪念',serial_number:'LW-2026-03',description:'二十四座大满贯沿时间成环，他站在四种场地中央，把漫长岁月变成秩序。',motifs:['24冠','四大满贯','时间回环'],available_from:'2026-07-12',available_until:'',price:2999,sale_status:'for_sale',image_url:'assets/manager/badges/ui-v5/optimized/djokovic-badge-640.webp',thumb_url:'assets/manager/badges/ui-v5/optimized/djokovic-badge-640.webp',rarity:'limited',sort_order:30},
-  {badge_key:'rublev-cat',title:'卢布喵',formal_name:'卢布·喵喵王子',subtitle:'球员纪念',category:'player',category_label:'球员纪念',serial_number:'LW-2026-04',description:'他把赛场上的锋利留给每一拍，把不设防的温柔留给猫与真心。',motifs:['蓝金宫廷','猫爪','率真'],available_from:'2026-07-12',available_until:'',price:1999,sale_status:'for_sale',image_url:'assets/manager/badges/ui-v5/optimized/lubu-badge-640.webp',thumb_url:'assets/manager/badges/ui-v5/optimized/lubu-badge-640.webp',rarity:'limited',sort_order:40},
-  {badge_key:'zheng-queen',title:'郑钦文Queen',formal_name:'郑钦文·女王风范',subtitle:'球员纪念',category:'player',category_label:'球员纪念',serial_number:'LW-2026-05',description:'她在紫金光芒中举起拳头，王冠不是装饰，而是一步步赢来的自我确信。',motifs:['紫金','王冠','中国力量'],available_from:'2026-07-12',available_until:'',price:1999,sale_status:'for_sale',image_url:'assets/manager/badges/ui-v5/optimized/zheng-badge-640.webp',thumb_url:'assets/manager/badges/ui-v5/optimized/zheng-badge-640.webp',rarity:'limited',sort_order:50},
-  {badge_key:'wang-xinyu-mermaid',title:'王欣瑜美人鱼',formal_name:'王欣瑜·美人鱼',subtitle:'球员纪念',category:'player',category_label:'球员纪念',serial_number:'LW-2026-06',description:'她从珍珠与海浪间回望，柔美不是退让，而是另一种流动的力量。',motifs:['珍珠','海浪','流动锋芒'],available_from:'2026-07-12',available_until:'',price:1999,sale_status:'for_sale',image_url:'assets/manager/badges/ui-v5/optimized/mermaid-badge-640.webp',thumb_url:'assets/manager/badges/ui-v5/optimized/mermaid-badge-640.webp',rarity:'limited',sort_order:60},
+  {badge_key:'sinner-fox',title:'辛纳狐',formal_name:'辛纳·赤焰狐心',subtitle:'球员纪念',category:'player',category_label:'球员纪念',serial_number:'LW-2026-01',description:'他以赤狐般的敏锐穿过冰蓝浪涌，把炽热天赋藏进近乎冷静的每一次击球。',motifs:['赤狐','冰蓝浪涌','冷静炽热'],available_from:'2026-07-12',available_until:'',price:3999,sale_status:'for_sale',image_url:'assets/manager/badges/ui-v5/optimized/sinner-badge-640.webp',thumb_url:'assets/manager/badges/ui-v5/optimized/sinner-badge-640.webp',rarity:'limited',sort_order:10},
+  {badge_key:'alcaraz-duck',title:'阿卡鸭',formal_name:'阿卡·星辉少年冠',subtitle:'球员纪念',category:'player',category_label:'球员纪念',serial_number:'LW-2026-02',description:'他把晚霞般的热烈带进每一次奔跑，连身旁的小黄鸭也像在替少年喝彩。',motifs:['星辉','少年锋芒','小黄鸭'],available_from:'2026-07-12',available_until:'',price:3999,sale_status:'for_sale',image_url:'assets/manager/badges/ui-v5/optimized/alcaraz-badge-final-hq-640.webp',thumb_url:'assets/manager/badges/ui-v5/optimized/alcaraz-badge-final-hq-640.webp',rarity:'limited',sort_order:20},
+  {badge_key:'djoko-goat',title:'德约GOAT',formal_name:'德约·24冠回环',subtitle:'球员纪念',category:'player',category_label:'球员纪念',serial_number:'LW-2026-03',description:'二十四座大满贯沿时间成环，他站在四种场地中央，把漫长岁月变成秩序。',motifs:['24冠','四大满贯','时间回环'],available_from:'2026-07-12',available_until:'',price:3999,sale_status:'for_sale',image_url:'assets/manager/badges/ui-v5/optimized/djokovic-badge-640.webp',thumb_url:'assets/manager/badges/ui-v5/optimized/djokovic-badge-640.webp',rarity:'limited',sort_order:30},
+  {badge_key:'rublev-cat',title:'卢布喵',formal_name:'卢布·喵喵王子',subtitle:'球员纪念',category:'player',category_label:'球员纪念',serial_number:'LW-2026-04',description:'他把赛场上的锋利留给每一拍，把不设防的温柔留给猫与真心。',motifs:['蓝金宫廷','猫爪','率真'],available_from:'2026-07-12',available_until:'',price:3599,sale_status:'for_sale',image_url:'assets/manager/badges/ui-v5/optimized/lubu-badge-640.webp',thumb_url:'assets/manager/badges/ui-v5/optimized/lubu-badge-640.webp',rarity:'limited',sort_order:40},
+  {badge_key:'zheng-queen',title:'郑钦文Queen',formal_name:'郑钦文·女王风范',subtitle:'球员纪念',category:'player',category_label:'球员纪念',serial_number:'LW-2026-05',description:'她在紫金光芒中举起拳头，王冠不是装饰，而是一步步赢来的自我确信。',motifs:['紫金','王冠','中国力量'],available_from:'2026-07-12',available_until:'',price:3999,sale_status:'for_sale',image_url:'assets/manager/badges/ui-v5/optimized/zheng-badge-640.webp',thumb_url:'assets/manager/badges/ui-v5/optimized/zheng-badge-640.webp',rarity:'limited',sort_order:50},
+  {badge_key:'wang-xinyu-mermaid',title:'王欣瑜美人鱼',formal_name:'王欣瑜·美人鱼',subtitle:'球员纪念',category:'player',category_label:'球员纪念',serial_number:'LW-2026-06',description:'她从珍珠与海浪间回望，柔美不是退让，而是另一种流动的力量。',motifs:['珍珠','海浪','流动锋芒'],available_from:'2026-07-12',available_until:'',price:3599,sale_status:'for_sale',image_url:'assets/manager/badges/ui-v5/optimized/mermaid-badge-640.webp',thumb_url:'assets/manager/badges/ui-v5/optimized/mermaid-badge-640.webp',rarity:'limited',sort_order:60},
   {badge_key:'luwang-friend',title:'炉网挚友',formal_name:'炉网挚友·时间共振章',subtitle:'炉友纪念',category:'community',category_label:'炉友纪念',serial_number:'LW-FOREVER-01',description:'四季围绕同一团炉火流转，陪伴让每一站比赛都在时间里留下回声。',motifs:['四季','炉火网球','长久陪伴'],available_from:'',available_until:'',price:0,sale_status:'coming_soon',image_url:'assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp',thumb_url:'assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp',rarity:'limited',sort_order:70},
-  {badge_key:'wimbledon-2026',title:'温网限定',formal_name:'2026温网限定·仲夏草地书',subtitle:'赛事限定',category:'event',category_label:'赛事限定',serial_number:'W26-LIMITED',description:'草地、白衣、草莓与伦敦天际被写进一册仲夏限定，只在这一年的夏天翻开。',motifs:['草地','草莓','仲夏典藏'],available_from:'2026-06-29',available_until:'',price:1999,sale_status:'for_sale',image_url:'assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp',thumb_url:'assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp',rarity:'limited',sort_order:80},
-  {badge_key:'gauff-energy',title:'高芙果切能量',formal_name:'高芙·果切能量',subtitle:'球员纪念',category:'player',category_label:'球员纪念',serial_number:'LW-2026-07',description:'一篮鲜果把笑意染得明亮，飞奔与挥拍则让这份快乐拥有了真正的力量。',motifs:['果切能量','灿烂笑意','年轻生命力'],available_from:'2026-07-18',available_until:'',price:2599,sale_status:'for_sale',image_url:'assets/manager/badges/ui-v18/optimized/gauff-badge-640.webp',thumb_url:'assets/manager/badges/ui-v18/optimized/gauff-badge-640.webp',rarity:'limited',sort_order:90},
-  {badge_key:'swiatek-whirlwind',title:'斯瓦泰克旋风少女',formal_name:'斯瓦泰克·旋风少女',subtitle:'球员纪念',category:'player',category_label:'球员纪念',serial_number:'LW-2026-08',description:'风线刚刚卷起，比赛已进入她熟悉的高速秩序；冷静，是旋风最锋利的中心。',motifs:['冰蓝旋风','红土脚步','冷静压迫'],available_from:'2026-07-18',available_until:'',price:2599,sale_status:'for_sale',image_url:'assets/manager/badges/ui-v18/optimized/swiatek-badge-640.webp',thumb_url:'assets/manager/badges/ui-v18/optimized/swiatek-badge-640.webp',rarity:'limited',sort_order:100},
-  {badge_key:'alcaraz-bee-duck',title:'阿卡蜜蜂鸭',formal_name:'阿卡·蜜蜂鸭',subtitle:'球员纪念',category:'player',category_label:'球员纪念',serial_number:'LW-2026-09',description:'蜂巢里藏着怎样的少年感？是全力追球的认真，也是蜜蜂、小鸭和绒毛共同托住的可爱。',motifs:['萌系','蜜蜂与小鸭','少年冲劲'],available_from:'2026-07-18',available_until:'',price:2999,sale_status:'for_sale',image_url:'assets/manager/badges/ui-v18/optimized/bee-duck-badge-640.webp',thumb_url:'assets/manager/badges/ui-v18/optimized/bee-duck-badge-640.webp',rarity:'limited',sort_order:110},
+  {badge_key:'wimbledon-2026',title:'温网限定',formal_name:'2026温网限定·仲夏草地书',subtitle:'赛事限定',category:'event',category_label:'赛事限定',serial_number:'W26-LIMITED',description:'草地、白衣、草莓与伦敦天际被写进一册仲夏限定，只在这一年的夏天翻开。',motifs:['草地','草莓','仲夏典藏'],available_from:'2026-06-29',available_until:'',price:2999,sale_status:'for_sale',image_url:'assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp',thumb_url:'assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp',rarity:'limited',sort_order:80},
+  {badge_key:'gauff-energy',title:'高芙果切能量',formal_name:'高芙·果切能量',subtitle:'球员纪念',category:'player',category_label:'球员纪念',serial_number:'LW-2026-07',description:'一篮鲜果把笑意染得明亮，飞奔与挥拍则让这份快乐拥有了真正的力量。',motifs:['果切能量','灿烂笑意','年轻生命力'],available_from:'2026-07-18',available_until:'',price:3599,sale_status:'for_sale',image_url:'assets/manager/badges/ui-v18/optimized/gauff-badge-640.webp',thumb_url:'assets/manager/badges/ui-v18/optimized/gauff-badge-640.webp',rarity:'limited',sort_order:90},
+  {badge_key:'swiatek-whirlwind',title:'斯瓦泰克旋风少女',formal_name:'斯瓦泰克·旋风少女',subtitle:'球员纪念',category:'player',category_label:'球员纪念',serial_number:'LW-2026-08',description:'风线刚刚卷起，比赛已进入她熟悉的高速秩序；冷静，是旋风最锋利的中心。',motifs:['冰蓝旋风','红土脚步','冷静压迫'],available_from:'2026-07-18',available_until:'',price:3599,sale_status:'for_sale',image_url:'assets/manager/badges/ui-v18/optimized/swiatek-badge-640.webp',thumb_url:'assets/manager/badges/ui-v18/optimized/swiatek-badge-640.webp',rarity:'limited',sort_order:100},
+  {badge_key:'alcaraz-bee-duck',title:'阿卡蜜蜂鸭',formal_name:'阿卡·蜜蜂鸭',subtitle:'球员纪念',category:'player',category_label:'球员纪念',serial_number:'LW-2026-09',description:'蜂巢里藏着怎样的少年感？是全力追球的认真，也是蜜蜂、小鸭和绒毛共同托住的可爱。',motifs:['萌系','蜜蜂与小鸭','少年冲劲'],available_from:'2026-07-18',available_until:'',price:3999,sale_status:'for_sale',image_url:'assets/manager/badges/ui-v18/optimized/bee-duck-badge-640.webp',thumb_url:'assets/manager/badges/ui-v18/optimized/bee-duck-badge-640.webp',rarity:'limited',sort_order:110},
   {badge_key:'who-is-leather',title:'谁是皮革',formal_name:'谁是皮革',subtitle:'炉友纪念',category:'community',category_label:'炉友纪念',serial_number:'LW-PIG-01',description:'一只简单的皮革，简单往往代表着快乐。',motifs:['粉色小猪','卷尾暗号','极简幽默'],available_from:'2026-07-18',available_until:'',price:599,sale_status:'for_sale',image_url:'assets/manager/badges/ui-v18/optimized/who-leather-badge-640.webp',thumb_url:'assets/manager/badges/ui-v18/optimized/who-leather-badge-640.webp',rarity:'limited',sort_order:120},
   {badge_key:'rotten-cabbage',title:'烂白菜烂之泪伤',formal_name:'烂白菜·烂之泪伤',subtitle:'球员纪念',category:'player',category_label:'球员纪念',serial_number:'LW-2026-10',description:'很烂，很白，很菜。',motifs:['躺平菜帮','一滴眼泪','温柔自嘲'],available_from:'2026-07-18',available_until:'',price:199,sale_status:'for_sale',image_url:'assets/manager/badges/ui-v18/optimized/rotten-cabbage-badge-640.webp',thumb_url:'assets/manager/badges/ui-v18/optimized/rotten-cabbage-badge-640.webp',rarity:'limited',sort_order:130},
-  {badge_key:'federer-eternal',title:'费德勒优雅永恒',formal_name:'费德勒·优雅永恒',subtitle:'球员纪念',category:'player',category_label:'球员纪念',serial_number:'LW-2026-11',description:'一道珍珠金的回环掠过球拍；胜利之外，那个让网球显得如此优雅的时代也随之回来。',motifs:['无限光带','RF王冠','从容挥拍'],available_from:'2026-07-18',available_until:'',price:2999,sale_status:'for_sale',image_url:'assets/manager/badges/ui-v18/optimized/federer-badge-640.webp',thumb_url:'assets/manager/badges/ui-v18/optimized/federer-badge-640.webp',rarity:'limited',sort_order:140},
-  {badge_key:'nadal-clay-soul',title:'纳达尔赤土之魂',formal_name:'纳达尔·赤土之魂',subtitle:'球员纪念',category:'player',category_label:'球员纪念',serial_number:'LW-2026-12',description:'裂开的红土与新生的嫩芽同框：真正深刻的从来不只是冠军数字，而是每一次再起身。',motifs:['赤土裂纹','铜金战意','新芽韧性'],available_from:'2026-07-18',available_until:'',price:2999,sale_status:'for_sale',image_url:'assets/manager/badges/ui-v18/optimized/nadal-badge-640.webp',thumb_url:'assets/manager/badges/ui-v18/optimized/nadal-badge-640.webp',rarity:'limited',sort_order:150}
+  {badge_key:'federer-eternal',title:'费德勒优雅永恒',formal_name:'费德勒·优雅永恒',subtitle:'球员纪念',category:'player',category_label:'球员纪念',serial_number:'LW-2026-11',description:'一道珍珠金的回环掠过球拍；胜利之外，那个让网球显得如此优雅的时代也随之回来。',motifs:['无限光带','RF王冠','从容挥拍'],available_from:'2026-07-18',available_until:'',price:3999,sale_status:'for_sale',image_url:'assets/manager/badges/ui-v18/optimized/federer-badge-640.webp',thumb_url:'assets/manager/badges/ui-v18/optimized/federer-badge-640.webp',rarity:'limited',sort_order:140},
+  {badge_key:'nadal-clay-soul',title:'纳达尔赤土之魂',formal_name:'纳达尔·赤土之魂',subtitle:'球员纪念',category:'player',category_label:'球员纪念',serial_number:'LW-2026-12',description:'裂开的红土与新生的嫩芽同框：真正深刻的从来不只是冠军数字，而是每一次再起身。',motifs:['赤土裂纹','铜金战意','新芽韧性'],available_from:'2026-07-18',available_until:'',price:3999,sale_status:'for_sale',image_url:'assets/manager/badges/ui-v18/optimized/nadal-badge-640.webp',thumb_url:'assets/manager/badges/ui-v18/optimized/nadal-badge-640.webp',rarity:'limited',sort_order:150}
 ];
 const MANAGER_BADGE_STORIES={
   'alcaraz-duck':'星辉落在粉紫色的球场上，他挥拍时仍带着少年最明亮的笑意。小黄鸭守在身旁，像把天真、勇气与旺盛生命力一同留进徽章里。他并不掩饰对胜利的渴望，也从不丢掉享受网球的本能；正是这种毫无保留的热烈，让他的冠军之路始终像破晓一样新鲜。',
@@ -4436,6 +4440,8 @@ function managerRenderMyLineup(){
 function managerBadgeCardHtml(badge,owned,equipped,source,isNew){
   badge=managerNormalizeBadge(badge);
   if(!badge)return '';
+  var releaseTheme=window.NewBadgeRelease&&NewBadgeRelease.get(badge.badge_key);
+  if(releaseTheme)return NewBadgeRelease.card(releaseTheme,owned,equipped,source,isNew);
   var theme=managerBadgeThemeKey(badge),visual=MANAGER_BADGE_VISUAL_META[theme]||{};
   var saleStatus=badge.sale_status||'for_sale';
   var motifs=(badge.motifs||[]).map(function(item){return '<span>'+esc(item)+'</span>';}).join('');
@@ -4446,7 +4452,7 @@ function managerBadgeCardHtml(badge,owned,equipped,source,isNew){
   if(source==='shop'){
     if(owned)action=equipped?'<span class="manager-badge-state">佩戴中</span>':'<button class="manager-clear" data-manager-action="equip-badge" data-badge-key="'+esc(badge.badge_key)+'">佩戴</button>';
     else if(saleStatus==='coming_soon')action='<span class="manager-badge-state">敬请期待</span>';
-    else action='<button class="manager-action" data-manager-action="buy-badge" data-badge-key="'+esc(badge.badge_key)+'">购买徽章</button>';
+    else action='<button class="manager-action" data-manager-action="buy-badge" data-badge-key="'+esc(badge.badge_key)+'">购买</button>';
   }else{
     action=equipped?'<button class="manager-clear" data-manager-action="unequip-badge">取消佩戴</button>':'<button class="manager-action" data-manager-action="equip-badge" data-badge-key="'+esc(badge.badge_key)+'">佩戴</button>';
   }
@@ -4491,6 +4497,8 @@ function managerBadgePreviewHtml(){
   if(!MANAGER_BADGE_PREVIEW_KEY)return '';
   var badge=managerFindBadge(MANAGER_BADGE_PREVIEW_KEY),theme=managerBadgeThemeKey(badge),name=currentDisplayName()||'尊贵的娃老师',visual=MANAGER_BADGE_VISUAL_META[theme]||{};
   if(!badge||!theme)return '';
+  var releaseTheme=window.NewBadgeRelease&&NewBadgeRelease.get(badge.badge_key);
+  if(releaseTheme)return NewBadgeRelease.detail(releaseTheme,name,MANAGER_BADGE_PREVIEW_SCENE);
   var identity=managerUserNameWithBadge(name,badge,{login:true});
   var boardRow='<tr'+managerBadgeClassAttr(badge,'is-badge-featured')+'><td class="rank-cell">'+managerRankMedalHtml(1)+'</td><td'+managerBadgeUserCellAttr(badge)+'>'+managerUserNameWithBadge(name,badge)+'</td><td class="g">+3340</td><td>+2720</td><td>+620</td></tr><tr><td class="rank-cell">'+managerRankMedalHtml(2)+'</td><td><span class="manager-user-name-plain">马斯克</span></td><td class="g">+3220</td><td>+2690</td><td>+530</td></tr><tr><td class="rank-cell">'+managerRankMedalHtml(3)+'</td><td><span class="manager-user-name-plain">Roudric</span></td><td class="g">+3110</td><td>+2790</td><td>+320</td></tr>';
   var config='<div'+managerBadgeClassAttr(badge,'manager-board manager-hall-card manager-badge-preview-config')+'><div class="manager-hall-card-top">'+managerBadgeHeroHtml(name,badge,{card:true})+'</div><div class="manager-hall-metrics"><div class="manager-hall-metric"><span>阵容风格</span><b>均衡基金流</b></div><div class="manager-hall-metric"><span>已用额度</span><b>430</b></div><div class="manager-hall-metric"><span>签约球员</span><b>4 人</b></div></div><div class="manager-hall-players"><span class="manager-pill">德米纳尔</span><span class="manager-pill">高芙</span><span class="manager-pill">保罗</span><span class="manager-pill">陶森</span></div></div>';
@@ -4752,7 +4760,7 @@ function managerRenderBadgeGallery(){
     var equipped=badges.find(function(badge){return badge.is_equipped;})||null;
     var items=pager.items.map(function(badge){
       var theme=managerBadgeThemeKey(badge),visual=MANAGER_BADGE_VISUAL_META[theme]||{};
-      var src=managerBadgeAssetUrl(visual.icon||badge.thumb_url||badge.image_url||'');
+      var src=managerBadgeAssetUrl(visual.thumb||visual.icon||badge.thumb_url||badge.image_url||'');
       var title=badge.formal_name||badge.title||'徽章';
       return '<div class="manager-badge-gallery-item" title="'+esc(title)+'">'+(src?'<img src="'+esc(src)+'" alt="'+esc(title)+'" loading="lazy" decoding="async" fetchpriority="low" onerror="managerBadgeImageRetry(this)">':'')+'<span>'+esc(title)+'</span></div>';
     }).join('');
@@ -4776,6 +4784,7 @@ var MANAGER_BADGE_HERO_NAME_FIT_THEMES=['federer_eternal','gauff_energy','swiate
 var MANAGER_BADGE_LOGIN_NAME_FIT_THEMES=['federer_eternal','gauff_energy','swiatek_whirlwind','nadal_clay_soul'];
 function managerFitBadgeNameplates(root){
   var scope=root||document;
+  if(window.NewBadgeRelease)NewBadgeRelease.afterRender(scope);
   requestAnimationFrame(function(){
     var heroSelectors=MANAGER_BADGE_HERO_NAME_FIT_THEMES.reduce(function(list,theme){
       list.push('.manager-hall-card[data-badge="'+theme+'"] .manager-badge-hero-name[data-badge="'+theme+'"] b');
@@ -5907,7 +5916,7 @@ function managerBadgeThumbHtml(badge,cls){
   badge=managerNormalizeBadge(badge);
   if(!badge)return '';
   var theme=managerBadgeThemeKey(badge),visual=MANAGER_BADGE_VISUAL_META[theme]||{};
-  var src=visual.icon||badge.thumb_url||'';
+  var src=visual.thumb||visual.icon||badge.thumb_url||'';
   if(!src)return '';
   return '<img class="badge-identity__icon manager-badge-thumb '+esc(cls||'')+'" src="'+esc(managerBadgeAssetUrl(src))+'" alt="'+esc(visual.label||badge.title)+'" loading="lazy" decoding="async" onerror="managerBadgeImageRetry(this)">';
 }
@@ -5915,6 +5924,8 @@ function managerBadgeThumbHtml(badge,cls){
 function managerBadgeThemeKey(badge){
   badge=managerNormalizeBadge(badge);
   if(!badge)return '';
+  var releaseTheme=window.NewBadgeRelease&&NewBadgeRelease.get(badge.badge_key);
+  if(releaseTheme)return releaseTheme.theme;
   var raw=String(badge.badge_key||'').toLowerCase();
   var map={
     'sinner-fox':'sinner_fox',
@@ -5937,6 +5948,7 @@ function managerBadgeThemeKey(badge){
 }
 
 function managerPreloadBadgeVisuals(badge){
+  if(window.NewBadgeRelease&&NewBadgeRelease.get(badge&&badge.badge_key))return;
   var visual=MANAGER_BADGE_VISUAL_META[managerBadgeThemeKey(badge)]||{};
   [
     {src:visual.icon,priority:'high'},
@@ -5975,6 +5987,7 @@ function managerBadgeClassAttr(badge,extra){
   if(badge&&isCard)context='badged-card badge-themed-card';
   else if(badge&&isSidebar)context='badged-lineup-panel';
   else if(badge)context='badged-rank-row badge-themed-row';
+  if(window.NewBadgeRelease&&NewBadgeRelease.get(badge&&badge.badge_key))extra+=' new-release';
   var cls=[extra||'',context,managerBadgeThemeClass(badge)].filter(Boolean).join(' ').trim();
   return cls?' class="'+esc(cls)+'"'+(theme?' data-badge="'+esc(theme)+'"':''):'';
 }
@@ -5995,11 +6008,13 @@ function managerUserNameWithBadge(name,badge,opts){
   badge=managerNormalizeBadge(badge);
   var display=esc(displayNickname(name,'炉友'));
   if(!badge)return '<span class="manager-user-name-plain">'+display+'</span>';
+  var releaseTheme=window.NewBadgeRelease&&NewBadgeRelease.get(badge.badge_key);
+  if(releaseTheme)return NewBadgeRelease.identity(releaseTheme,displayNickname(name,'炉友'),opts);
   var theme=managerBadgeThemeKey(badge);
   var visual=MANAGER_BADGE_VISUAL_META[theme]||{};
   var variant=opts.login?'login':(opts.sidebar?'sidebar':(opts.card||opts.prominent?'card':'row'));
   var label=visual.label||badge.title||'徽章';
-  var icon=managerBadgeAssetUrl(visual.icon||badge.thumb_url||badge.image_url||'');
+  var icon=managerBadgeAssetUrl(visual.thumb||visual.icon||badge.thumb_url||badge.image_url||'');
   var cls='badge-identity badge-identity--'+variant+' manager-user-badge-line'+managerBadgeCompactNameClass(name);
   var priority=opts.login?' loading="eager" fetchpriority="high"':' loading="lazy" fetchpriority="auto"';
   return '<span class="'+esc(cls)+'"'+(theme?' data-badge="'+esc(theme)+'"':'')+' title="'+esc(label+' · '+displayNickname(name,'炉友'))+'">'+(icon?'<img class="badge-identity__icon" src="'+esc(icon)+'" alt="'+esc(label)+'"'+priority+' decoding="async" onerror="managerBadgeImageRetry(this)">':'')+'<span class="badge-identity__plate"><span class="badge-identity__name">'+display+'</span></span></span>';
@@ -6010,6 +6025,8 @@ function managerBadgeHeroHtml(name,badge,opts){
   badge=managerNormalizeBadge(badge);
   var display=esc(displayNickname(name,opts.fallback||'炉友'));
   if(!badge)return '<span class="manager-badge-hero-name manager-badge-hero-name--plain"><small>炉网网友</small><b>'+display+'</b></span>';
+  var releaseTheme=window.NewBadgeRelease&&NewBadgeRelease.get(badge.badge_key);
+  if(releaseTheme)return NewBadgeRelease.hero(releaseTheme,displayNickname(name,opts.fallback||'炉友'),opts);
   var theme=managerBadgeThemeKey(badge),label=(MANAGER_BADGE_VISUAL_META[theme]||{}).label||badge.title||'徽章';
   var rawName=displayNickname(name,'炉友'),lengthClass=rawName.length>10?' is-very-long':(rawName.length>6?' is-long':'');
   lengthClass+=managerBadgeCompactNameClass(rawName);
@@ -8435,8 +8452,11 @@ function setBdF(g,f,btn){
   bdSearch(g);
 }
 
-bootstrapPage();
 </script>
 <script src="assets/theme/full-site-badge-theme.js?v=20260719-2"></script>
+<script src="assets/manager/badges/ui-v20/catalog.js?v=20260920-1"></script>
+<script src="assets/manager/badges/ui-v20/components.js?v=20260920-1"></script>
+<script src="assets/manager/badges/ui-v20/release.js?v=20260920-1"></script>
+<script>bootstrapPage();</script>
 </body>
 </html>

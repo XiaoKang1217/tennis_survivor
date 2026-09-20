@@ -7,6 +7,13 @@ Versioning guideline:
 - Minor versions add user-facing features or change data logic.
 - Major versions are reserved for large rewrites or incompatible data changes.
 
+## 2026-09-20 — Nine new badge skins
+
+- Added nine complete badge skins with the approved artwork, full-site palettes, ornate nameplates (including the top banner), distinct configuration/lineup backgrounds, leaderboard backgrounds and shop previews.
+- Updated principal prices, moved the existing NEW!! mark to the nine new products, and retained the current purchase/equip RPCs and ownership state.
+- Shipped 72 standalone WebP assets (about 7.0 MB for the entire collection), 128px row thumbnails and deferred shop backgrounds; no embedded preview HTML or large PNGs.
+- Added a catalogue-only publisher using the existing Supabase service credential. It adds nine products and changes twelve existing prices without writing wallets, ownership, lineups or ledgers.
+
 ## Unreleased - v0.4.0
 
 ### Added

@@ -1,0 +1,379 @@
+{
+  "release": "20260920-nine-skins",
+  "files": 72,
+  "bytes": 7008916,
+  "formats": [
+    "webp"
+  ],
+  "badgeWidth": 640,
+  "rowBadgeWidth": 128,
+  "bannerWidth": 1280,
+  "rowBackgroundWidth": 1200,
+  "shopWidth": 800,
+  "hallLineupWidth": 960,
+  "nameplateWidth": 720,
+  "originalPreviewEmbedded": false,
+  "shopBackgroundLoading": "IntersectionObserver, 350px margin",
+  "graphics": [
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/alcaraz/badge.webp",
+      "bytes": 100266,
+      "sha256": "a9ab36078e887d3b89b5106af3edad071c89b45e1199b8c8101ce0124b7e70f7"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/alcaraz/banner.webp",
+      "bytes": 120116,
+      "sha256": "0b078ebb70c16603784e1ac138b06d2fa2cded5e38e1dca3dfacbc7a846d4cda"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/alcaraz/cardNameplate.webp",
+      "bytes": 75782,
+      "sha256": "cdeb1909f184d95e30a74543c06fd609bc91590d0ff1163f0ffd623a0b44dd07"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/alcaraz/hall.webp",
+      "bytes": 89382,
+      "sha256": "75ced1ed4b2408b5223b333a494439a9715ee4a9c043123a8c4c650d863dccb7"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/alcaraz/leaderboard.webp",
+      "bytes": 62426,
+      "sha256": "cf3470148fd18d1bf512185fe3b99ded6426fd29455eaebd806bf3ccdccd1d38"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/alcaraz/lineup.webp",
+      "bytes": 94650,
+      "sha256": "628136689b0fa2aa178f3b38b711b09e4ec13623065a7d29cded5e9391adca9e"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/alcaraz/shop.webp",
+      "bytes": 94696,
+      "sha256": "c446deaa3b78a44363018df6ac95bc4ea85933322ca4683307ad312d577b85bd"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/alcaraz/thumb.webp",
+      "bytes": 6298,
+      "sha256": "30d4df9bc32e4efb6284fc17f77e9ae008d4617db185bf4749251c3b5491fac8"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/medvedev/badge.webp",
+      "bytes": 167844,
+      "sha256": "863cd6dc7077a7f15d1ce44b418066553ee2d502d78b284e72cc67c5331b30d2"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/medvedev/banner.webp",
+      "bytes": 261778,
+      "sha256": "9fc33ed9c1202531d629a92294448ef571f310c3fd007aa0afc0b156b667e840"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/medvedev/cardNameplate.webp",
+      "bytes": 60676,
+      "sha256": "b230ab64cffdd0bb02cd2df09b10bca58503f4acf68b09a3e2dbdbd41805b63f"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/medvedev/hall.webp",
+      "bytes": 96896,
+      "sha256": "eea6fc0156ddfbf87a37072a5caaf786af310422117f3ee11d2b098d5206d732"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/medvedev/leaderboard.webp",
+      "bytes": 59070,
+      "sha256": "caca9bf1979531aabfda951cd5fbae87da725ca79a60dc0a6e18609d6c1ee347"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/medvedev/lineup.webp",
+      "bytes": 101104,
+      "sha256": "71d92bd6f41cb1bbeb9054b20ad64b2d58b68176f63e6dcb4835a35307c313b5"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/medvedev/shop.webp",
+      "bytes": 123834,
+      "sha256": "44d4f9e97a6efb51ed35405270ae55542ba468b5b64be45a5de6420209a09073"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/medvedev/thumb.webp",
+      "bytes": 11918,
+      "sha256": "8c04ac02e3eb54eb628ce54322dfbddefb2e7a2cc7263cd0198fbc20932cd160"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/mensik/badge.webp",
+      "bytes": 146760,
+      "sha256": "1e759c27e93a7ca8472e2ca323b022bb86dbbcd67fb4055c1ef5c8aa1e4cf1c6"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/mensik/banner.webp",
+      "bytes": 212196,
+      "sha256": "558aaede54eb366beaeb1e3d1025f31952eac2ab6f0b446af2e29a6f8def8b1a"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/mensik/cardNameplate.webp",
+      "bytes": 72182,
+      "sha256": "ffae7b55f37539f9d63d0de87d1c803e471c5f0a2e4d326863e49a255580151d"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/mensik/hall.webp",
+      "bytes": 80088,
+      "sha256": "27f9d045f9c61b61ce9f886e5bab00f139048c2cbc61b27f1f318ab029db87e6"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/mensik/leaderboard.webp",
+      "bytes": 127118,
+      "sha256": "bd6dca0419d7f6dfca18f59c637be80c968e07690b3d787b68b74b2341dc895c"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/mensik/lineup.webp",
+      "bytes": 71846,
+      "sha256": "ed9720565484280046f8130f0bf5b3c7e1d405b91b31a3e79777d8cbe7bfcb7b"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/mensik/shop.webp",
+      "bytes": 116924,
+      "sha256": "b6ca6af81ebe320b6a4492c0c8cd98f1b33b46cfcf87199959f527aeb9b437e5"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/mensik/thumb.webp",
+      "bytes": 9552,
+      "sha256": "e0081e6820817e2be1f1ab11e4a76fc7c86114f83049be95859d929fac3fef9a"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/rublev/badge.webp",
+      "bytes": 77918,
+      "sha256": "610633d60d9e3a366e72da3b646aa25d142b5d3247b59b6f37c71d02961b70d9"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/rublev/banner.webp",
+      "bytes": 161122,
+      "sha256": "993d90d603c33f550ebbd63e8c05cb6f1fdc410e7eeb5e97edde5edb742ddc17"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/rublev/cardNameplate.webp",
+      "bytes": 71504,
+      "sha256": "48f17d6adde6140a016796adcc700c0004631c37a2f1870e4795b9428c895c62"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/rublev/hall.webp",
+      "bytes": 71970,
+      "sha256": "4a8a05ed7c3ea2fc646b0058dcfc98d93f36dd773776c84695212da734e3d4cf"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/rublev/leaderboard.webp",
+      "bytes": 143306,
+      "sha256": "d6c1cb3e492242d642206211cbb76f0d30c1791a7dbed988dcfc12c0c47eae1d"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/rublev/lineup.webp",
+      "bytes": 78012,
+      "sha256": "fd0dfa25adf841fd58a56db953b307f5a7291b12cbaad89cd559c2b8ea468439"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/rublev/shop.webp",
+      "bytes": 98888,
+      "sha256": "c56d66c9336785c5e8d6f6c57aac4d37da50c8a19c12f9fbaa9753f775a29f32"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/rublev/thumb.webp",
+      "bytes": 5212,
+      "sha256": "61f503ed0f3f6470ee7edeeb474682e01b580d0b9a68a2da3b08d7099e308814"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/rybakina/badge.webp",
+      "bytes": 125202,
+      "sha256": "02bb464d454042ae86a56c06ac8a555a51a5e6bff2c313e28f44a6bba97ba8ab"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/rybakina/banner.webp",
+      "bytes": 150776,
+      "sha256": "be65ece1c002bc8f663d8b5e2e1f7e33d00f3783932a09ea241ebc2ccba439f0"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/rybakina/cardNameplate.webp",
+      "bytes": 73520,
+      "sha256": "59af883e460e6708c8f39c7c8944a14be05b2cdffc7161dc511934b9e8419a6c"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/rybakina/hall.webp",
+      "bytes": 65220,
+      "sha256": "82fb4d6b86db943b624741315b1892e87affe969760ee9590dd11184a0ff4e4d"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/rybakina/leaderboard.webp",
+      "bytes": 80552,
+      "sha256": "60a36facacaf133f17b8bc5d1ddfcfdd67089d7d04895b443f57650d32138ae2"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/rybakina/lineup.webp",
+      "bytes": 73836,
+      "sha256": "34e715bbe3135c6391dc920f26e4c12665ba4147c1f899be438830e765efc260"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/rybakina/shop.webp",
+      "bytes": 98116,
+      "sha256": "5499cf45e6f8ba0a1c0670d4b32c8dafc04b509b4aeaa65ded33501c4215c3f3"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/rybakina/thumb.webp",
+      "bytes": 10322,
+      "sha256": "f54de7bcff153f5ec83dbeeb421682882260888b0deeddb4d581154f708a00fc"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/sinner/badge.webp",
+      "bytes": 178424,
+      "sha256": "31ffba3c17a0f5798182bfa166aee2269254c2d334257c5d7e4a6efa257b6306"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/sinner/banner.webp",
+      "bytes": 122330,
+      "sha256": "8b2a04bb2032185f4b21e47926f38645aec3b737eb95b9c3927fedcffb17a95c"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/sinner/cardNameplate.webp",
+      "bytes": 59552,
+      "sha256": "7ea44d092ea63a3dc36d15a013a0700a97d851a17edc9daf9cfc0e50c72843f0"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/sinner/hall.webp",
+      "bytes": 93254,
+      "sha256": "00c1f15c16d1f43f47db5418cf118555e1c061032183662feb92cc0a76b4b27f"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/sinner/leaderboard.webp",
+      "bytes": 89876,
+      "sha256": "fb151c0bb99c479dffacea8dcebed1772037041387fcad48983f416919536494"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/sinner/lineup.webp",
+      "bytes": 94546,
+      "sha256": "af50b7891c5e542a6df5ead8e5ca380e9f4717aef864859272e0dad26f5ad7e1"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/sinner/shop.webp",
+      "bytes": 124906,
+      "sha256": "9f86762a0e6cb89acf97ee807c5756a9755c1e7c8c73f010e6bc127357c27712"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/sinner/thumb.webp",
+      "bytes": 12678,
+      "sha256": "9a4c8a5e2b4b19f3e6c60d8e0578f5c7c89f6013f1f91fed14f9613960e7edfd"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/usopen/badge.webp",
+      "bytes": 168764,
+      "sha256": "bf91cc38397876a8ad0355130e8a3a1f38e251c44d74740a355fb9a97e8f74c5"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/usopen/banner.webp",
+      "bytes": 172328,
+      "sha256": "949c3c04fe9a1039f3575296dab8ae8c6fb404e23b3cd732c536fe9f474d4430"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/usopen/cardNameplate.webp",
+      "bytes": 55990,
+      "sha256": "061b688e186ae990239a8ec5a98fe5e3e6c2085ea13ab6a2381f7e85a6f48969"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/usopen/hall.webp",
+      "bytes": 78618,
+      "sha256": "fab959c1f813c2c109b883d06723e919442c85dd0f5c9ec534784df9817b5be8"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/usopen/leaderboard.webp",
+      "bytes": 100694,
+      "sha256": "2f8769621b4cd2c0588959c617afe6ca0a20cc7de8b448d7a86b885fa2874194"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/usopen/lineup.webp",
+      "bytes": 80456,
+      "sha256": "a12c838237329b133fac81a7ae508c886913842c1fe9d9d63857000f84095a63"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/usopen/shop.webp",
+      "bytes": 110024,
+      "sha256": "847695628f18f706c1c7dd2889d108723c92bff7c0208909fb7c9fdb58c8ca99"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/usopen/thumb.webp",
+      "bytes": 11298,
+      "sha256": "079a1934944d5eedd3e1493dc3408e84fe20a266cf570dc645edcb557205abb6"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/zheng/badge.webp",
+      "bytes": 130342,
+      "sha256": "81baa22be7079ab6241c62c3a48a4473f64f1bafa9348af8b0941d1d04c9d454"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/zheng/banner.webp",
+      "bytes": 244544,
+      "sha256": "27114b13d4e086b5490040f78dfd2fd03eff8621e529d36b08191087a8b8dcd9"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/zheng/cardNameplate.webp",
+      "bytes": 82252,
+      "sha256": "82ad4cf06fad252b8741b2096f7ebbf5b2d2472791d7ee779a15e318f6545ebe"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/zheng/hall.webp",
+      "bytes": 74740,
+      "sha256": "ed84ec82f69555921e8731369c690d7fb3bfe978b3fc47baba538d9b75db3394"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/zheng/leaderboard.webp",
+      "bytes": 181138,
+      "sha256": "7c20d8dc64b31275b225a844f8d59110253e44e6f08741085decccf16b62e2c0"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/zheng/lineup.webp",
+      "bytes": 89514,
+      "sha256": "7e24d84d32790b96a71bd8a692f5fa7b42f6e995db5bb054be281f1533484b12"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/zheng/shop.webp",
+      "bytes": 143476,
+      "sha256": "71a64177e7becd39af98edc785b0e3a6621fbcd8f7e65874a7aeb5e9657f77ca"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/zheng/thumb.webp",
+      "bytes": 5646,
+      "sha256": "94bf9d34a26f172c1f9072a4bf4dc89a2c7667f2bec7fcbc16197693d9a81442"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/zverev/badge.webp",
+      "bytes": 146014,
+      "sha256": "9e4b25eff147b81463d3edfc571fa7191ccb507a89c8ae92eb21c1f912a6d897"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/zverev/banner.webp",
+      "bytes": 201128,
+      "sha256": "6d96b5449616905c968330cba69d3df6345c0b3f471baff43dc9ccdbd60de235"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/zverev/cardNameplate.webp",
+      "bytes": 58460,
+      "sha256": "b964414d1ffff5073601c0295d4ee836eb19b9983099d39f3422fd13ae5c7f50"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/zverev/hall.webp",
+      "bytes": 63776,
+      "sha256": "0105ab367bebe54aed43f7446f037b33655d2fccc7cfccdb9fabf36a808df51e"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/zverev/leaderboard.webp",
+      "bytes": 127782,
+      "sha256": "492ba5aa1117f6cceef54617f8b351b5f95d1df7783152fff49eb34beaa92f0e"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/zverev/lineup.webp",
+      "bytes": 70660,
+      "sha256": "8fbf8949642c8327095bd318d390e60fb810f9a8b3bf9ac2ae625da7ef8f47b7"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/zverev/shop.webp",
+      "bytes": 79066,
+      "sha256": "f509d1f08694a4ba172e99a7b53c6a9701f05dcd458f9b7f11f0beadbc9e0261"
+    },
+    {
+      "path": "assets/manager/badges/ui-v20/optimized/zverev/thumb.webp",
+      "bytes": 7762,
+      "sha256": "a1b90a55b0d14cf1760a76ab78f306b5453eb5e9cc85227c3a06c467512765a8"
+    }
+  ]
+}

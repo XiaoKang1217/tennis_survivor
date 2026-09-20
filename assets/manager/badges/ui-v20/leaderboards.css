@@ -1,0 +1,59 @@
+/* Existing manager and daily-jinx tables: only the nine new badge rows. */
+.manager-ledger-table tr[data-badge="sinner_sunset_fox"],
+.manager-rank-table tr[data-badge="sinner_sunset_fox"],
+.jinx-leader-table tr[data-badge="sinner_sunset_fox"]{background:linear-gradient(90deg,color-mix(in srgb,var(--site-surface) 25%,transparent),color-mix(in srgb,var(--site-surface) 55%,transparent)),var(--skin-leaderboard) center/cover no-repeat!important;}
+.manager-ledger-table tr[data-badge="sinner_sunset_fox"] > td,
+.manager-rank-table tr[data-badge="sinner_sunset_fox"] > td,
+.jinx-leader-table tr[data-badge="sinner_sunset_fox"] > td{background:transparent!important;}
+.manager-ledger-table tr[data-badge="mensik_light"],
+.manager-rank-table tr[data-badge="mensik_light"],
+.jinx-leader-table tr[data-badge="mensik_light"]{background:linear-gradient(90deg,color-mix(in srgb,var(--site-surface) 25%,transparent),color-mix(in srgb,var(--site-surface) 55%,transparent)),var(--skin-leaderboard) center/cover no-repeat!important;}
+.manager-ledger-table tr[data-badge="mensik_light"] > td,
+.manager-rank-table tr[data-badge="mensik_light"] > td,
+.jinx-leader-table tr[data-badge="mensik_light"] > td{background:transparent!important;}
+.manager-ledger-table tr[data-badge="rublev_red_string"],
+.manager-rank-table tr[data-badge="rublev_red_string"],
+.jinx-leader-table tr[data-badge="rublev_red_string"]{background:linear-gradient(90deg,color-mix(in srgb,var(--site-surface) 25%,transparent),color-mix(in srgb,var(--site-surface) 55%,transparent)),var(--skin-leaderboard) center/cover no-repeat!important;}
+.manager-ledger-table tr[data-badge="rublev_red_string"] > td,
+.manager-rank-table tr[data-badge="rublev_red_string"] > td,
+.jinx-leader-table tr[data-badge="rublev_red_string"] > td{background:transparent!important;}
+.manager-ledger-table tr[data-badge="zheng_dawn_feather"],
+.manager-rank-table tr[data-badge="zheng_dawn_feather"],
+.jinx-leader-table tr[data-badge="zheng_dawn_feather"]{background:linear-gradient(90deg,color-mix(in srgb,var(--site-surface) 25%,transparent),color-mix(in srgb,var(--site-surface) 55%,transparent)),var(--skin-leaderboard) center/cover no-repeat!important;}
+.manager-ledger-table tr[data-badge="zheng_dawn_feather"] > td,
+.manager-rank-table tr[data-badge="zheng_dawn_feather"] > td,
+.jinx-leader-table tr[data-badge="zheng_dawn_feather"] > td{background:transparent!important;}
+.manager-ledger-table tr[data-badge="alcaraz_golden_lion"],
+.manager-rank-table tr[data-badge="alcaraz_golden_lion"],
+.jinx-leader-table tr[data-badge="alcaraz_golden_lion"]{background:linear-gradient(90deg,color-mix(in srgb,var(--site-surface) 25%,transparent),color-mix(in srgb,var(--site-surface) 55%,transparent)),var(--skin-leaderboard) center/cover no-repeat!important;}
+.manager-ledger-table tr[data-badge="alcaraz_golden_lion"] > td,
+.manager-rank-table tr[data-badge="alcaraz_golden_lion"] > td,
+.jinx-leader-table tr[data-badge="alcaraz_golden_lion"] > td{background:transparent!important;}
+.manager-ledger-table tr[data-badge="rybakina_snow_silence"],
+.manager-rank-table tr[data-badge="rybakina_snow_silence"],
+.jinx-leader-table tr[data-badge="rybakina_snow_silence"]{background:linear-gradient(90deg,color-mix(in srgb,var(--site-surface) 25%,transparent),color-mix(in srgb,var(--site-surface) 55%,transparent)),var(--skin-leaderboard) center/cover no-repeat!important;}
+.manager-ledger-table tr[data-badge="rybakina_snow_silence"] > td,
+.manager-rank-table tr[data-badge="rybakina_snow_silence"] > td,
+.jinx-leader-table tr[data-badge="rybakina_snow_silence"] > td{background:transparent!important;}
+.manager-ledger-table tr[data-badge="usopen_night_2026"],
+.manager-rank-table tr[data-badge="usopen_night_2026"],
+.jinx-leader-table tr[data-badge="usopen_night_2026"]{background:linear-gradient(90deg,color-mix(in srgb,var(--site-surface) 25%,transparent),color-mix(in srgb,var(--site-surface) 55%,transparent)),var(--skin-leaderboard) center/cover no-repeat!important;}
+.manager-ledger-table tr[data-badge="usopen_night_2026"] > td,
+.manager-rank-table tr[data-badge="usopen_night_2026"] > td,
+.jinx-leader-table tr[data-badge="usopen_night_2026"] > td{background:transparent!important;}
+.manager-ledger-table tr[data-badge="zverev_prime_years"],
+.manager-rank-table tr[data-badge="zverev_prime_years"],
+.jinx-leader-table tr[data-badge="zverev_prime_years"]{background:linear-gradient(90deg,color-mix(in srgb,var(--site-surface) 25%,transparent),color-mix(in srgb,var(--site-surface) 55%,transparent)),var(--skin-leaderboard) center/cover no-repeat!important;}
+.manager-ledger-table tr[data-badge="zverev_prime_years"] > td,
+.manager-rank-table tr[data-badge="zverev_prime_years"] > td,
+.jinx-leader-table tr[data-badge="zverev_prime_years"] > td{background:transparent!important;}
+.manager-ledger-table tr[data-badge="medvedev_campus_days"],
+.manager-rank-table tr[data-badge="medvedev_campus_days"],
+.jinx-leader-table tr[data-badge="medvedev_campus_days"]{background:linear-gradient(90deg,color-mix(in srgb,var(--site-surface) 25%,transparent),color-mix(in srgb,var(--site-surface) 55%,transparent)),var(--skin-leaderboard) center/cover no-repeat!important;}
+.manager-ledger-table tr[data-badge="medvedev_campus_days"] > td,
+.manager-rank-table tr[data-badge="medvedev_campus_days"] > td,
+.jinx-leader-table tr[data-badge="medvedev_campus_days"] > td{background:transparent!important;}
+.new-skin-rank-scroll{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.new-badge-leaderboard{table-layout:auto!important}
+.new-badge-leaderboard.jinx-leader-table{min-width:580px!important}
+.new-badge-leaderboard .new-identity--row{min-width:296px;max-width:none}

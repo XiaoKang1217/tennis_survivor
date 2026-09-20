@@ -1,0 +1,37 @@
+name: Publish Badge Skin Catalogue
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - assets/manager/badges/ui-v20/catalog.json
+      - assets/manager/badges/ui-v20/legacy-prices.json
+      - scripts/manager/publish-nine-badge-skins.mjs
+      - .github/workflows/publish-badge-skins.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-badge-skin-catalogue
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Test badge release configuration
+        run: node --test scripts/manager/tests/nine-badge-release.test.mjs
+      - name: Validate product changes
+        run: node scripts/manager/publish-nine-badge-skins.mjs
+      - name: Publish and verify badge catalogue
+        run: node scripts/manager/publish-nine-badge-skins.mjs --write

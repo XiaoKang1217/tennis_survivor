@@ -1,0 +1,63 @@
+/* Native site adapters: scoped to the nine new badge keys/classes only. */
+.new-release.manager-hall-card,.new-release.manager-panel.manager-side{padding:0!important;overflow:hidden;border:2px solid var(--site-border)!important;border-radius:16px!important;background:var(--site-surface-raised)!important;box-shadow:0 8px 24px var(--site-shadow-color),inset 0 0 0 2px var(--site-accent-soft)!important}
+.new-release.manager-hall-card .manager-hall-card-top,.new-release.manager-panel.manager-side .manager-panel-h{position:relative!important;display:block!important;isolation:isolate;width:100%!important;height:auto!important;min-height:0!important;aspect-ratio:2/1;margin:0!important;padding:0!important;border:0!important;border-bottom:2px solid var(--site-border)!important;border-radius:0!important;background:var(--skin-hall) center/100% 100% no-repeat!important;box-shadow:none!important}
+.new-release.manager-panel.manager-side .manager-panel-h{background-image:var(--skin-lineup)!important}
+.new-release.manager-hall-card .manager-hall-card-top:before,.new-release.manager-hall-card .manager-hall-card-top:after,.new-release.manager-panel.manager-side .manager-panel-h:before,.new-release.manager-panel.manager-side .manager-panel-h:after{display:none!important}
+.new-release-hero{display:block;position:absolute;inset:0;z-index:1}
+.new-release-hero .new-portrait{position:absolute;width:30%;left:6%;top:50%;transform:translateY(-50%);filter:drop-shadow(0 5px 5px #0004)}
+.new-release-hero .new-nameplate{position:absolute;width:58%;max-width:none;left:39%;top:55%;transform:translateY(-50%)}
+.new-release-hero--lineup .new-portrait{left:7%;top:15%;width:31%;transform:none}
+.new-release-hero--lineup .new-nameplate{left:37%;width:61%;top:56%}
+.new-release.manager-panel.manager-side .manager-sidebar-owner{position:static!important;width:100%;display:block}
+.new-release.manager-panel.manager-side .manager-sidebar-title{top:19%;left:47%;z-index:2;padding:4px 8px;border-radius:10px;font-size:11px;letter-spacing:2px;text-shadow:none;color:var(--site-accent-deep);background:color-mix(in srgb,var(--site-surface) 91%,transparent)}
+.new-release.manager-panel.manager-side .manager-panel-h>.manager-clear{top:7px;right:7px;background:var(--site-surface);border-color:var(--site-border);color:var(--site-accent-deep);font-size:10px;padding:3px 7px}
+.new-release.manager-hall-card .manager-hall-metrics{margin:16px 16px 12px;background:linear-gradient(110deg,var(--site-surface),var(--site-accent-soft));border:1px solid var(--site-border);border-radius:10px}
+.new-release.manager-hall-card .manager-hall-players{padding:0 16px 14px}
+.new-release.manager-hall-card>.manager-note{padding:0 16px 14px}
+.new-release.manager-hall-card .manager-pill,.new-release.manager-panel.manager-side .manager-roster-row,.new-release.manager-panel.manager-side .manager-sim{background:var(--site-surface);border-color:var(--site-border);color:var(--site-text)}
+.new-release.manager-panel.manager-side .manager-panel-b{background:linear-gradient(150deg,var(--site-surface-raised),color-mix(in srgb,var(--site-accent-soft) 32%,var(--site-surface-raised)))}
+.new-release-identity{display:inline-block;vertical-align:middle;max-width:100%}
+.new-release-identity .new-identity--row{min-width:296px;max-width:none}
+.manager-ledger-table tbody tr.new-release[data-badge],.manager-rank-table tbody tr.new-release[data-badge],.jinx-leader-table tbody tr.new-release[data-badge]{background:linear-gradient(90deg,color-mix(in srgb,var(--site-surface) 25%,transparent),color-mix(in srgb,var(--site-surface) 55%,transparent)),var(--skin-leaderboard) center/cover no-repeat!important}
+.manager-ledger-table tbody tr.new-release[data-badge]>td,.manager-rank-table tbody tr.new-release[data-badge]>td,.jinx-leader-table tbody tr.new-release[data-badge]>td{background:transparent!important;box-shadow:none!important}
+.manager-ledger-table tbody tr.new-release[data-badge]>td:before,.manager-rank-table tbody tr.new-release[data-badge]>td:before,.jinx-leader-table tbody tr.new-release[data-badge]>td:before{display:none!important}
+.new-release-login .new-nameplate{width:218px}
+.new-release-login .new-badge-frame{width:48px}
+.new-release-shop-item{min-width:0;display:flex}
+.new-release-shop-item>.manager-badge-card{width:100%;height:100%;margin:0;display:flex;flex-direction:column}
+.new-release-shop-item .manager-badge-card-copy{display:flex;flex-direction:column;flex:1}
+.new-release-shop-item .manager-badge-card-footer{margin-top:auto;padding-top:15px}
+.new-release-shop-item .manager-badge-card-art{flex:none;height:292px;padding-top:60px}
+.new-release-shop-item:not(.is-art-ready) .manager-badge-card-art{background-image:none!important}
+.new-release-shop-item .manager-badge-card.is-new .manager-badge-card-flags{padding-top:38px}
+.new-release-shop-item .manager-badge-new-mark{top:3px;left:16px;z-index:3;font-size:27px}
+.new-skin-scope .manager-badge-preview-hero>.new-badge-frame{padding:0;border:0;box-shadow:none;background:transparent}
+.new-skin-scope .manager-badge-preview-hero>.new-badge-frame img{width:100%;height:100%;max-height:none;margin:0;border:0;padding:0;box-shadow:none;background:transparent}
+.new-skin-scope .manager-badge-preview-hero:after{display:none}
+.new-skin-scope .manager-badge-preview-hero h2{text-shadow:none}
+.new-skin-scope .manager-badge-preview-tabs{justify-content:flex-start;flex-wrap:wrap}
+.new-skin-scope .manager-badge-preview-stage{display:block}
+.new-skin-scope .manager-badge-preview-stage>.new-top-banner{width:100%}
+.new-skin-scope .new-nameplate{background-image:var(--skin-card-nameplate)}
+.new-skin-scope .new-top-banner .new-nameplate{width:220px;aspect-ratio:3/1}
+.new-skin-scope .new-top-banner .new-identity{max-width:100%}
+.new-skin-scope .manager-badge-preview-stage .new-top-banner .new-nameplate{width:200px}
+@media(max-width:720px){
+ .new-release-shop-item .manager-badge-card-art{height:283px}
+ .new-release-login .new-nameplate{width:190px}
+ .new-release-hero .new-nameplate__text{font-size:clamp(9px,6.5cqw,29px)}
+}
+
+#hdr.badge-login-header:is([data-badge="sinner_sunset_fox"],[data-badge="mensik_light"],[data-badge="rublev_red_string"],[data-badge="zheng_dawn_feather"],[data-badge="alcaraz_golden_lion"],[data-badge="rybakina_snow_silence"],[data-badge="usopen_night_2026"],[data-badge="zverev_prime_years"],[data-badge="medvedev_campus_days"]) .hdt.login-bar{background:linear-gradient(90deg,color-mix(in srgb,var(--site-surface) 95%,transparent),color-mix(in srgb,var(--site-surface) 52%,transparent) 48%,color-mix(in srgb,var(--site-surface) 83%,transparent)),var(--skin-banner) center 56%/cover no-repeat!important;color:var(--site-text)!important;border-color:var(--site-border-soft);box-shadow:none;min-height:100px}
+#hdr.badge-login-header:is([data-badge="sinner_sunset_fox"],[data-badge="mensik_light"],[data-badge="rublev_red_string"],[data-badge="zheng_dawn_feather"],[data-badge="alcaraz_golden_lion"],[data-badge="rybakina_snow_silence"],[data-badge="usopen_night_2026"],[data-badge="zverev_prime_years"],[data-badge="medvedev_campus_days"]) .hdt.login-bar .site-brand h1{color:var(--site-text-strong)!important;text-shadow:none}
+#hdr.badge-login-header:is([data-badge="sinner_sunset_fox"],[data-badge="mensik_light"],[data-badge="rublev_red_string"],[data-badge="zheng_dawn_feather"],[data-badge="alcaraz_golden_lion"],[data-badge="rybakina_snow_silence"],[data-badge="usopen_night_2026"],[data-badge="zverev_prime_years"],[data-badge="medvedev_campus_days"]) .hdt.login-bar .site-brand .upd,#hdr.badge-login-header:is([data-badge="sinner_sunset_fox"],[data-badge="mensik_light"],[data-badge="rublev_red_string"],[data-badge="zheng_dawn_feather"],[data-badge="alcaraz_golden_lion"],[data-badge="rybakina_snow_silence"],[data-badge="usopen_night_2026"],[data-badge="zverev_prime_years"],[data-badge="medvedev_campus_days"]) .hdt.login-bar .dev{color:var(--site-muted)!important;text-shadow:none}
+#hdr.badge-login-header:is([data-badge="sinner_sunset_fox"],[data-badge="mensik_light"],[data-badge="rublev_red_string"],[data-badge="zheng_dawn_feather"],[data-badge="alcaraz_golden_lion"],[data-badge="rybakina_snow_silence"],[data-badge="usopen_night_2026"],[data-badge="zverev_prime_years"],[data-badge="medvedev_campus_days"]) .site-account{width:290px}
+#hdr.badge-login-header:is([data-badge="sinner_sunset_fox"],[data-badge="mensik_light"],[data-badge="rublev_red_string"],[data-badge="zheng_dawn_feather"],[data-badge="alcaraz_golden_lion"],[data-badge="rybakina_snow_silence"],[data-badge="usopen_night_2026"],[data-badge="zverev_prime_years"],[data-badge="medvedev_campus_days"]) .auth-chip.badged{width:290px}
+#hdr.badge-login-header:is([data-badge="sinner_sunset_fox"],[data-badge="mensik_light"],[data-badge="rublev_red_string"],[data-badge="zheng_dawn_feather"],[data-badge="alcaraz_golden_lion"],[data-badge="rybakina_snow_silence"],[data-badge="usopen_night_2026"],[data-badge="zverev_prime_years"],[data-badge="medvedev_campus_days"]) .header-badge-login{background:none!important;border:0!important;box-shadow:none!important;padding:0!important}
+#hdr.badge-login-header:is([data-badge="sinner_sunset_fox"],[data-badge="mensik_light"],[data-badge="rublev_red_string"],[data-badge="zheng_dawn_feather"],[data-badge="alcaraz_golden_lion"],[data-badge="rybakina_snow_silence"],[data-badge="usopen_night_2026"],[data-badge="zverev_prime_years"],[data-badge="medvedev_campus_days"]) .header-badge-login__caret{color:var(--site-accent-deep);right:-7px}
+@media(max-width:720px){#hdr.badge-login-header:is([data-badge="sinner_sunset_fox"],[data-badge="mensik_light"],[data-badge="rublev_red_string"],[data-badge="zheng_dawn_feather"],[data-badge="alcaraz_golden_lion"],[data-badge="rybakina_snow_silence"],[data-badge="usopen_night_2026"],[data-badge="zverev_prime_years"],[data-badge="medvedev_campus_days"]) .hdt.login-bar{grid-template-columns:1fr;gap:7px;padding:12px}#hdr.badge-login-header:is([data-badge="sinner_sunset_fox"],[data-badge="mensik_light"],[data-badge="rublev_red_string"],[data-badge="zheng_dawn_feather"],[data-badge="alcaraz_golden_lion"],[data-badge="rybakina_snow_silence"],[data-badge="usopen_night_2026"],[data-badge="zverev_prime_years"],[data-badge="medvedev_campus_days"]) .hdt.login-bar .site-account{width:100%;justify-self:start;justify-items:start}#hdr.badge-login-header:is([data-badge="sinner_sunset_fox"],[data-badge="mensik_light"],[data-badge="rublev_red_string"],[data-badge="zheng_dawn_feather"],[data-badge="alcaraz_golden_lion"],[data-badge="rybakina_snow_silence"],[data-badge="usopen_night_2026"],[data-badge="zverev_prime_years"],[data-badge="medvedev_campus_days"]) .hdt.login-bar .auth-chip.badged{width:auto;justify-self:start}#hdr.badge-login-header:is([data-badge="sinner_sunset_fox"],[data-badge="mensik_light"],[data-badge="rublev_red_string"],[data-badge="zheng_dawn_feather"],[data-badge="alcaraz_golden_lion"],[data-badge="rybakina_snow_silence"],[data-badge="usopen_night_2026"],[data-badge="zverev_prime_years"],[data-badge="medvedev_campus_days"]) .hdt.login-bar .site-brand h1{font-size:18px}}
+
+.new-release-compact{display:block;width:100%;min-width:0}
+.new-release-compact .new-identity{width:100%;min-width:0;max-width:100%}
+.new-release-compact .new-badge-frame{width:36px}
+.new-release-compact .new-nameplate{width:calc(100% - 43px);min-width:0;max-width:none}
