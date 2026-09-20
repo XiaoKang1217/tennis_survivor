@@ -24,8 +24,8 @@
   },
   "submission_status": "open",
   "submission_opens_at": "2026-09-19T20:22:42+08:00",
-  "submission_cutoff_at": "2026-09-21T09:45:00+08:00",
-  "submission_closes_at": "2026-09-21T09:45:00+08:00",
+  "submission_cutoff_at": "2026-09-21T10:45:00+08:00",
+  "submission_closes_at": "2026-09-21T10:45:00+08:00",
   "manual_schedule_windows": true,
   "schedule_status": "oop_pending",
   "main_draw_first_match_at": null,
@@ -48,7 +48,7 @@
     "qualifier_placeholders": 4,
     "checked_at": "2026-09-19T20:22:42+08:00"
   },
-  "market_message": "WTA 新加坡 500，签约截止北京时间 09/21 09:45。",
+  "market_message": "WTA 新加坡 500，签约截止北京时间 09/21 10:45。",
   "players": [
     {
       "name_en": "Mirra ANDREEVA",

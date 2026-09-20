@@ -6,7 +6,7 @@ import { parseArgs, writeJson } from './lib/manager-utils.mjs';
 const stationKey = '2026-w39-seoul-singapore';
 const sourceDir = parseArgs()['source-dir'] || '/private/tmp';
 const opensAt = '2026-09-19T20:22:42+08:00';
-const cutoff = '2026-09-21T09:45:00+08:00';
+const cutoff = '2026-09-21T10:45:00+08:00';
 const definitions = [
   { slug: 'seoul', name: 'Korea Open', zh: '首尔', level: '250', size: 32, id: '31024', official: '1024', surface: 'hard_out', timezone: 'Asia/Seoul', country: 'South Korea' },
   { slug: 'singapore', name: 'Singapore Tennis Open', zh: '新加坡', level: '500', size: 28, id: '31152', official: '1152', surface: 'hard_in', timezone: 'Asia/Singapore', country: 'Singapore' }
@@ -42,7 +42,7 @@ for (const def of definitions) {
     transfer_welfare_discount: false,
     source_urls: [drawUrl, ajaxUrl, `https://www.live-tennis.cn/zh/schedule/${def.id}/2026`, officialUrl],
     official_draw_verification: { source: officialUrl, draw_players_checked: players.length, qualifier_placeholders: 4, checked_at: opensAt },
-    market_message: `WTA ${def.zh} ${def.level}，签约截止北京时间 09/21 09:45。`,
+    market_message: `WTA ${def.zh} ${def.level}，签约截止北京时间 09/21 10:45。`,
     players
   };
   await writeJson(`data/manager/events/${eventKey}.json`, event);
@@ -51,7 +51,7 @@ for (const def of definitions) {
 await writeJson('data/manager/active_events.json', {
   season: 2026, station_key: stationKey, station_name: 'WTA 首尔 + WTA 新加坡',
   survivor_aligned: false, status: 'open', updated_at: opensAt,
-  announcement: 'WTA 首尔250 + WTA 新加坡500 已开售，09/21 09:45 截止！',
+  announcement: 'WTA 首尔250 + WTA 新加坡500 已开售，09/21 10:45 截止！',
   rules: {
     station_grant: 500, cross_tour_transfer: false, transfer_fee_rate: 0.15, transfer_welfare_discount: false,
     combo_version: 'seoul_singapore_2026_v1', combo_design_status: 'confirmed',
@@ -69,7 +69,7 @@ await writeJson('data/manager/active_events.json', {
     '首尔按 WTA 250 定价和结算，新加坡为 WTA 500。',
     '本站为双 WTA 特例；双线经营按首尔、新加坡各至少一人判断，后续常规站仍为 ATP + WTA。',
     '签约金 500；沿用华盛顿四项 Combo 档位，合计封顶 700；低保独立于封顶。',
-    '北京时间 2026-09-19 20:22:42 开售，2026-09-21 09:45 截止。',
+    '北京时间 2026-09-19 20:22:42 开售，2026-09-21 10:45 截止。',
     '首场 R1 正式开赛前，收益弹窗和默认榜单继续显示美网；具体开赛时间待正式赛程确认。',
     '低保办：提交时本金不超过500，至少3人，原价减免20%且不超过300；2026赛季最多3次。'
   ],

@@ -26,7 +26,7 @@ test('both official draws retain independent qualifier identities and price scal
     assert.equal(new Set(e.players.map(p=>p.draw_position)).size,e.players.length);
     assert.ok(e.players.every(p=>p.price>0));
     assert.ok(e.players.filter(p=>!p.is_qualifier_placeholder).every(p=>p.rank>0&&p.overall_elo>0&&p.surface_elo>0));
-    assert.equal(Date.parse(e.submission_cutoff_at),Date.parse('2026-09-21T09:45:00+08:00'));
+    assert.equal(Date.parse(e.submission_cutoff_at),Date.parse('2026-09-21T10:45:00+08:00'));
   }
 });
 test('frontend submits every Q slot with the same event-specific key as the backend',()=>{
