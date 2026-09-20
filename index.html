@@ -972,7 +972,7 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 <link rel="stylesheet" href="assets/manager/badges/ui-v20/site-themes.css?v=20260920-1">
 <link rel="stylesheet" href="assets/manager/badges/ui-v20/components.css?v=20260920-1">
 <link rel="stylesheet" href="assets/manager/badges/ui-v20/leaderboards.css?v=20260920-1">
-<link rel="stylesheet" href="assets/manager/badges/ui-v20/release.css?v=20260920-1">
+<link rel="stylesheet" href="assets/manager/badges/ui-v20/release.css?v=20260920-2">
 </head>
 <body class="manager-mode">
 <div id="hdr">
@@ -4132,12 +4132,12 @@ function managerRosterRow(p,submitted,isReplaced){
   var st=managerPlayerCurrentStats(p),status=isReplaced?'已换下':'已锁定';
   return '<div class="manager-roster-row">'+managerPlayerAvatar(p,'small')+'<div class="manager-roster-name">'+esc(managerPlayerDisplayName(p,true))+'<div class="manager-sub">回本 '+managerBreakEvenDisplay(p.breakEven)+' · 累计收益 '+st.earned+'</div></div><div class="manager-roster-price">'+managerMoneyAmount(p.price,'inline')+'</div>'+(submitted?'<span class="manager-pill">'+status+'</span>':'<button class="manager-clear" data-manager-action="remove" data-manager-id="'+esc(p.id)+'">移除</button>')+'</div>';
 }
-function managerSidebar(c,rules,extraClass){
+function managerSidebar(c,rules,extraClass,identity){
   var submitted=managerSubmittedRecord();
   var team=managerTeamCurrentStats(c.players,c);
   var replaced=managerReplacedLineupPlayers();
-  var ownerBadge=managerCurrentUserBadge();
-  var ownerName=currentDisplayName()||(managerPreviewBadge()?'预览用户':'我的阵容');
+  var ownerBadge=identity?identity.badge:managerCurrentUserBadge();
+  var ownerName=identity?identity.name:currentDisplayName()||(managerPreviewBadge()?'预览用户':'我的阵容');
   var activeRows=c.players.map(function(p){return managerRosterRow(p,submitted,false);}).join('');
   var replacedRows=replaced.map(function(p){return managerRosterRow(p,true,true);}).join('');
   var rows=activeRows?'<div class="manager-roster-title">当前阵容</div>'+activeRows:'<div class="manager-empty">还没签人。先在市场加入 '+rules.minPlayers+'-'+rules.maxPlayers+' 名球员。</div>';
@@ -4589,6 +4589,9 @@ function managerRenderRules(){
       managerRuleCard('破产保护',['钱包花光也不会退坑。','每站仍有本站签约金。'])+
     '</div></div></details></div>';
 }
+function managerHallCardHtml(x){
+  var badge=x.badge||managerBadgeForUserName(x.user),players=(x.players||[]);return '<div'+managerBadgeClassAttr(badge,'manager-board manager-hall-card badge-themed-config-card agent-config-card')+'><div class="manager-hall-card-top agent-card-badge-header badge-config-header'+(badge?' badged-card__identity':'')+'">'+managerBadgeHeroHtml(x.user,badge,{card:true})+'</div><div class="manager-hall-metrics"><div class="manager-hall-metric"><span>阵容风格</span><b>'+esc(x.style)+'</b></div><div class="manager-hall-metric"><span>已用额度</span><b>'+x.cost+'</b></div><div class="manager-hall-metric"><span>签约球员</span><b>'+players.length+' 人</b></div></div><div class="manager-hall-players">'+players.map(function(p){return '<span class="manager-pill">'+esc(p)+'</span>';}).join('')+'</div><div class="manager-note" style="margin-top:8px">'+esc(x.note||'')+'</div></div>';
+}
 function managerRenderHall(){
   var submitted=managerSubmittedRecord(),mine=submitted?{user:currentDisplayName()||'我的办公室',style:managerCalc().style,cost:submitted.cost,badge:managerCurrentUserBadge(),submitted_at:submitted.submitted_at||submitted.date||new Date().toISOString(),players:managerSanitizeLedgerPlayers(submitted.players||[]).map(managerLedgerPlayerName),note:'已提交，换人 '+MANAGER_TRANSFER_COUNT+'/1。'+submitted.note}:null;
   var useDemoConfigs=managerLocalPreviewEnabled()&&(!supabaseConfigured()||!!managerPreviewBadge());
@@ -4620,7 +4623,7 @@ function managerRenderHall(){
   var pager=managerPaginate(configs,MANAGER_HALL_PAGE,15);
   MANAGER_HALL_PAGE=pager.page;
   var emptyText=loadingPublic?'正在加载配置大厅...':(q?'没有搜到匹配的配置。':'暂无真实配置。等本站有人提交后，这里会从 Supabase 展示。');
-  return '<div class="manager-filter" style="margin-bottom:12px"><label for="manager-hall-q">搜索配置大厅</label><input id="manager-hall-q" placeholder="玩家 / 球员 / 风格" value="'+esc(MANAGER_HALL_SEARCH)+'" autocomplete="off"><label for="manager-hall-sort">排序方式</label><select id="manager-hall-sort"><option value="default" '+(MANAGER_HALL_SORT==='default'?'selected':'')+'>默认排序</option><option value="cost-asc" '+(MANAGER_HALL_SORT==='cost-asc'?'selected':'')+'>总花费金额升序</option><option value="cost-desc" '+(MANAGER_HALL_SORT==='cost-desc'?'selected':'')+'>总花费金额降序</option><option value="submitted-asc" '+(MANAGER_HALL_SORT==='submitted-asc'?'selected':'')+'>提交时间升序</option><option value="submitted-desc" '+(MANAGER_HALL_SORT==='submitted-desc'?'selected':'')+'>提交时间降序</option></select><div class="manager-note">配置大厅展示本站已经提交的阵容，提交后立即公开完整配置。</div></div><div class="manager-board-grid">'+(pager.items.length?pager.items.map(function(x){var badge=x.badge||managerBadgeForUserName(x.user),players=(x.players||[]);return '<div'+managerBadgeClassAttr(badge,'manager-board manager-hall-card badge-themed-config-card agent-config-card')+'><div class="manager-hall-card-top agent-card-badge-header badge-config-header'+(badge?' badged-card__identity':'')+'">'+managerBadgeHeroHtml(x.user,badge,{card:true})+'</div><div class="manager-hall-metrics"><div class="manager-hall-metric"><span>阵容风格</span><b>'+esc(x.style)+'</b></div><div class="manager-hall-metric"><span>已用额度</span><b>'+x.cost+'</b></div><div class="manager-hall-metric"><span>签约球员</span><b>'+players.length+' 人</b></div></div><div class="manager-hall-players">'+players.map(function(p){return '<span class="manager-pill">'+esc(p)+'</span>';}).join('')+'</div><div class="manager-note" style="margin-top:8px">'+esc(x.note||'')+'</div></div>';}).join(''):'<div class="manager-empty">'+emptyText+'</div>')+'</div>'+managerPagerHtml('hall',pager);
+  return '<div class="manager-filter" style="margin-bottom:12px"><label for="manager-hall-q">搜索配置大厅</label><input id="manager-hall-q" placeholder="玩家 / 球员 / 风格" value="'+esc(MANAGER_HALL_SEARCH)+'" autocomplete="off"><label for="manager-hall-sort">排序方式</label><select id="manager-hall-sort"><option value="default" '+(MANAGER_HALL_SORT==='default'?'selected':'')+'>默认排序</option><option value="cost-asc" '+(MANAGER_HALL_SORT==='cost-asc'?'selected':'')+'>总花费金额升序</option><option value="cost-desc" '+(MANAGER_HALL_SORT==='cost-desc'?'selected':'')+'>总花费金额降序</option><option value="submitted-asc" '+(MANAGER_HALL_SORT==='submitted-asc'?'selected':'')+'>提交时间升序</option><option value="submitted-desc" '+(MANAGER_HALL_SORT==='submitted-desc'?'selected':'')+'>提交时间降序</option></select><div class="manager-note">配置大厅展示本站已经提交的阵容，提交后立即公开完整配置。</div></div><div class="manager-board-grid">'+(pager.items.length?pager.items.map(managerHallCardHtml).join(''):'<div class="manager-empty">'+emptyText+'</div>')+'</div>'+managerPagerHtml('hall',pager);
 }
 function managerRenderBoards(){
   var boards=[['赛季经理榜','草地运营部 +186','冷门研究所 +142','冠军资产组 +118'],['本站收益榜','柏林操盘手 +64','女王草地组 +58','均衡基金 +41'],['王牌球员','德米纳尔 +230','萨巴莲卡 +210','巴尔通科娃 +112'],['慧眼识珠榜','伊埃拉 18→82','费里 16→58','巴尔通科娃 22→72'],['巨星依赖指数','冠军资产组 78%','重仓一号 71%','稳胆派 63%'],['场地收益榜','草地 +266','红土 +184','硬地 +121'],['大满贯收益王','澳网资产部 +420','罗兰经纪 +388','温网观察组 +0'],['被坑球员榜','热门一号 -96','草地高价股 -82','签表硬汉 -70'],['调仓大师榜','窗口救火 +48','手续费也值 +32','止损专家 +21'],['破产重建榜','30 起步到 112','低保翻身 +66','冷门回血 +44']];
@@ -4665,6 +4668,14 @@ function managerRankMedalHtml(rank){
   if(rank===3)return '<span class="manager-rank-medal rank-3">3</span>';
   return '<span class="manager-rank-number">'+(rank||'—')+'</span>';
 }
+function managerStationNetTableHtml(items,title,start){
+  var rows=items.map(function(x,i){
+    var rank=x.rank||start+i;
+    var badge=x.badge||managerBadgeForUserName(x.user);
+    return '<tr'+managerBadgeClassAttr(badge,rank===1?'is-badge-featured':'')+'><td class="rank-cell">'+managerRankMedalHtml(rank)+'</td><td'+managerBadgeUserCellAttr(badge)+'>'+managerUserNameWithBadge(x.user,badge)+'</td><td class="'+(x.net>=0?'g':'r')+'">'+managerSignedPoints(x.net)+'</td><td>'+managerSignedPoints(x.player)+'</td><td>'+managerSignedPoints(x.combo)+'</td></tr>';
+  }).join('');
+  return '<div class="manager-table-scroll"><table class="manager-ledger-table manager-rank-table manager-station-board-table"><thead><tr><th>排名</th><th>用户名</th><th>'+title+'</th><th>球员结算收益</th><th>combo奖励</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+}
 function managerRenderStationNetBoard(hideNote,mode){
   mode=mode==='previous'?'previous':'current';
   var meta=managerStationNetBoardMeta(mode);
@@ -4683,12 +4694,7 @@ function managerRenderStationNetBoard(hideNote,mode){
   var gateNote=mode==='current'&&!managerCurrentStationStarted()?'；弹窗和自动榜单上下文仍会等 '+esc(currentStationName)+' R1 正式开赛后再切站':'';
   var note='<div class="manager-note" style="margin-bottom:10px">当前展示：'+esc(meta.stationName)+' · '+title+'榜'+gateNote+'。</div>';
   if(!pager.items.length)return (hideNote?'':note)+'<div class="manager-empty">'+((MANAGER_REMOTE_PUBLIC_LOADING&&!MANAGER_REMOTE_PUBLIC_SYNC_KEY)?'正在加载'+title+'榜...':esc(meta.stationName)+' '+title+'榜等待真实结算数据。')+'</div>';
-  var rows=pager.items.map(function(x,i){
-    var rank=x.rank||pager.start+i;
-    var badge=x.badge||managerBadgeForUserName(x.user);
-    return '<tr'+managerBadgeClassAttr(badge,rank===1?'is-badge-featured':'')+'><td class="rank-cell">'+managerRankMedalHtml(rank)+'</td><td'+managerBadgeUserCellAttr(badge)+'>'+managerUserNameWithBadge(x.user,badge)+'</td><td class="'+(x.net>=0?'g':'r')+'">'+managerSignedPoints(x.net)+'</td><td>'+managerSignedPoints(x.player)+'</td><td>'+managerSignedPoints(x.combo)+'</td></tr>';
-  }).join('');
-  return (hideNote?'':note)+'<div class="manager-table-scroll"><table class="manager-ledger-table manager-rank-table manager-station-board-table"><thead><tr><th>排名</th><th>用户名</th><th>'+title+'</th><th>球员结算收益</th><th>combo奖励</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+managerPagerHtml('station-net',pager);
+  return (hideNote?'':note)+managerStationNetTableHtml(pager.items,title,pager.start)+managerPagerHtml('station-net',pager);
 }
 function managerRenderWalletBoard(hideNote){
   var list=Array.isArray(MANAGER_REMOTE_WALLET_BOARD)?MANAGER_REMOTE_WALLET_BOARD:[];
@@ -7573,13 +7579,13 @@ function renderJinxLeaderboard(){
   board.innerHTML=`<div class="jinx-hero"><div class="jinx-q">毒奶榜</div><div class="jinx-meta"><span class="jinx-pill">ATP / WTA</span><span class="jinx-pill">${meta}</span></div></div><div class="jinx-body">${body}</div>`;
 }
 
-function renderJinxLeaderCard(tour){
-  const rows=(JINX_LEADERBOARD||[]).filter(x=>x.tour===tour).sort((a,b)=>Number(b.score||0)-Number(a.score||0)||String(a.display_name||'').localeCompare(String(b.display_name||''),'zh-Hans-CN-u-co-pinyin'));
+function renderJinxLeaderCard(tour,previewRows){
+  const rows=(previewRows||JINX_LEADERBOARD||[]).filter(x=>x.tour===tour).sort((a,b)=>Number(b.score||0)-Number(a.score||0)||String(a.display_name||'').localeCompare(String(b.display_name||''),'zh-Hans-CN-u-co-pinyin'));
   const title=tour==='ATP'?'ATP 男单':'WTA 女单';
   if(!rows.length){
     return `<div class="jinx-leader-card"><div class="jinx-leader-head"><span>${title}</span><span class="jinx-leader-meta">暂无上榜</span></div><div class="jinx-status" style="padding:12px;margin:0">暂无毒奶得分，等昨日赛果结算后自动更新。</div></div>`;
   }
-  const trs=rows.map((x,i)=>{const badge=managerBadgeForUserName(x.display_name),rank=i+1;return `<tr${managerBadgeClassAttr(badge,rank===1?'is-badge-featured':'')}><td class="jinx-leader-rank rank-cell">${managerRankMedalHtml(rank)}</td><td class="jinx-leader-user${badge?' badge-user-cell':''}">${managerUserNameWithBadge(x.display_name,badge)}</td><td class="jinx-leader-score">${Number(x.score||0).toLocaleString()}分</td><td class="jinx-leader-hit">${Number(x.hit_count||0)}中</td></tr>`;}).join('');
+  const trs=rows.map((x,i)=>{const badge=(previewRows&&x.badge)||managerBadgeForUserName(x.display_name),rank=i+1;return `<tr${managerBadgeClassAttr(badge,rank===1?'is-badge-featured':'')}><td class="jinx-leader-rank rank-cell">${managerRankMedalHtml(rank)}</td><td class="jinx-leader-user${badge?' badge-user-cell':''}">${managerUserNameWithBadge(x.display_name,badge)}</td><td class="jinx-leader-score">${Number(x.score||0).toLocaleString()}分</td><td class="jinx-leader-hit">${Number(x.hit_count||0)}中</td></tr>`;}).join('');
   return `<div class="jinx-leader-card"><div class="jinx-leader-head"><span>${title}</span><span class="jinx-leader-meta">${rows.length} 人上榜</span></div><table class="jinx-leader-table"><colgroup><col class="jinx-col-rank"><col><col class="jinx-col-score"><col class="jinx-col-hit"></colgroup><thead><tr><th>排名</th><th>用户</th><th>毒奶分</th><th>命中</th></tr></thead><tbody>${trs}</tbody></table></div>`;
 }
 
@@ -8455,8 +8461,9 @@ function setBdF(g,f,btn){
 </script>
 <script src="assets/theme/full-site-badge-theme.js?v=20260719-2"></script>
 <script src="assets/manager/badges/ui-v20/catalog.js?v=20260920-1"></script>
-<script src="assets/manager/badges/ui-v20/components.js?v=20260920-1"></script>
-<script src="assets/manager/badges/ui-v20/release.js?v=20260920-1"></script>
+<script src="assets/manager/badges/ui-v20/components.js?v=20260920-2"></script>
+<script src="assets/manager/badges/ui-v20/release.js?v=20260920-2"></script>
+<script src="assets/manager/badges/ui-v20/native-preview.js?v=20260920-2"></script>
 <script>bootstrapPage();</script>
 </body>
 </html>

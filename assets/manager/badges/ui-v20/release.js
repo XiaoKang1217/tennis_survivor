@@ -23,6 +23,7 @@
    }
   });
   C.scheduleFit();
+  window.ManagerNativeBadgePreview?.hydrate(root);
  }
  window.NewBadgeRelease={get:C.get,identity,hero,afterRender,
   card:(t,owned,equipped,source,isNew)=>'<div class="new-skin-scope new-release-shop-item">'+C.card(t,owned,equipped,source,isNew)+'</div>',
