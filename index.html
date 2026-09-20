@@ -6120,6 +6120,15 @@ async function managerLoadActiveBadges(){
   return MANAGER_ACTIVE_BADGES_LOADING;
 }
 
+function managerBadgeGrantCopy(badge){
+  if(badge.badge_key==='usopen-night-2026')return {
+    heading:'2026 美网经纪人参赛纪念',title:'2026美网限定·不夜之境',
+    message:'由于您参与了经纪人2026美网赛事，恭喜您获得了「2026美网限定·不夜之境」！',
+    equip:'立马佩戴',later:'稍后佩戴'
+  };
+  return {heading:'2026 温网经纪人参赛纪念',title:badge.formal_name||'2026温网限定·仲夏草地书',
+    message:'恭喜您已获得「2026温网限定·仲夏草地书」徽章，请到「我的-我的徽章」查看。是否现在立即佩戴？',equip:'立即佩戴',later:'稍后查看'};
+}
 function managerRenderBadgeGrantNotice(){
   var old=document.getElementById('badge-grant-notice');
   if(old)old.remove();
@@ -6127,20 +6136,21 @@ function managerRenderBadgeGrantNotice(){
   var badge=managerNormalizeBadge(MANAGER_BADGE_GRANT_NOTICE)||managerNormalizeBadge(managerBadgeFallbackForKey('wimbledon-2026'));
   if(!badge)return;
   var visual=MANAGER_BADGE_VISUAL_META[managerBadgeThemeKey(badge)]||{};
+  var copy=managerBadgeGrantCopy(badge);
   var modal=document.createElement('div');
   modal.id='badge-grant-notice';
   modal.className='badge-grant-notice';
   modal.setAttribute('role','dialog');
   modal.setAttribute('aria-modal','true');
   modal.setAttribute('aria-labelledby','badge-grant-notice-title');
-  modal.innerHTML='<div class="badge-grant-notice__card"><div class="badge-grant-notice__hero"><img src="'+esc(visual.icon||badge.image_url||badge.thumb_url)+'" alt="'+esc(badge.title)+'"><div><small>2026 温网经纪人参赛纪念</small><h3 id="badge-grant-notice-title">'+esc(badge.formal_name||'2026温网限定·仲夏草地书')+'</h3></div></div><p class="badge-grant-notice__copy">恭喜您已获得「2026温网限定·仲夏草地书」徽章，请到「我的-我的徽章」查看。是否现在立即佩戴？</p><div class="badge-grant-notice__actions"><button class="manager-clear" data-manager-action="dismiss-badge-grant">稍后查看</button><button class="manager-action" data-manager-action="equip-granted-badge" data-badge-key="'+esc(badge.badge_key)+'">立即佩戴</button></div></div>';
+  modal.innerHTML='<div class="badge-grant-notice__card"><div class="badge-grant-notice__hero"><img src="'+esc(visual.icon||badge.image_url||badge.thumb_url)+'" alt="'+esc(badge.title)+'"><div><small>'+esc(copy.heading)+'</small><h3 id="badge-grant-notice-title">'+esc(copy.title)+'</h3></div></div><p class="badge-grant-notice__copy">'+esc(copy.message)+'</p><div class="badge-grant-notice__actions"><button class="manager-action" data-manager-action="equip-granted-badge" data-badge-key="'+esc(badge.badge_key)+'">'+esc(copy.equip)+'</button><button class="manager-clear" data-manager-action="dismiss-badge-grant">'+esc(copy.later)+'</button></div></div>';
   document.body.appendChild(modal);
 }
 
 async function managerLoadBadgeGrantNotice(){
   var previewGrant=managerLocalPreviewEnabled()&&new URLSearchParams(location.search).get('badge-grant-preview');
   if(previewGrant){
-    MANAGER_BADGE_GRANT_NOTICE=managerBadgeFallbackForKey('wimbledon-2026');
+    MANAGER_BADGE_GRANT_NOTICE=previewGrant==='usopen'?managerFindBadge('usopen-night-2026'):managerBadgeFallbackForKey('wimbledon-2026');
     managerRenderBadgeGrantNotice();
     return MANAGER_BADGE_GRANT_NOTICE;
   }
@@ -6153,7 +6163,8 @@ async function managerLoadBadgeGrantNotice(){
   MANAGER_BADGE_GRANT_NOTICE_CHECKED_USER=userId;
   MANAGER_BADGE_GRANT_NOTICE=null;
   try{
-    var notice=await supabaseRpc('tour_manager_take_badge_grant_notice',{}, {optional:true});
+    var notice=await supabaseRpc('tour_manager_take_us_open_badge_grant_notice',{}, {optional:true});
+    if(!notice)notice=await supabaseRpc('tour_manager_take_badge_grant_notice',{}, {optional:true});
     if(notice)MANAGER_BADGE_GRANT_NOTICE=managerNormalizeBadge(notice);
   }catch(_err){}
   managerRenderBadgeGrantNotice();
