@@ -36,28 +36,14 @@
   return managerHallCardHtml(Object.assign({},model,{user:name,badge}));
  }
 
- function componentWidth(scene){
-  if(scene==='banner')return document.getElementById('hdr').getBoundingClientRect().width;
-  if(scene==='lineup'){
-   const side=document.querySelector('.manager-grid>.manager-side');
-   if(side&&side.getBoundingClientRect().width)return side.getBoundingClientRect().width;
-   return innerWidth>900?340:Math.max(260,innerWidth-40);
-  }
-  if(scene==='hall'){
-   const card=document.querySelector('.manager-board-grid>.manager-hall-card');
-   if(card)return card.getBoundingClientRect().width;
-   // Measure the real grid rules rather than maintain a second breakpoint/column count.
-   const body=document.querySelector('.manager-grid>.manager-panel>.manager-panel-b');
-   if(body){
-    const grid=document.createElement('div');grid.className='manager-board-grid';
-    grid.style.cssText='height:0;overflow:hidden;visibility:hidden;pointer-events:none';
-    grid.innerHTML='<div></div><div></div><div></div>';body.append(grid);
-    const width=grid.firstElementChild.getBoundingClientRect().width;grid.remove();
-    if(width)return width;
-   }
-  }
-  const panel=document.querySelector('.manager-grid>.manager-panel>.manager-panel-b');
-  return Math.max(280,(panel?panel.clientWidth-28:innerWidth-40));
+ function componentWidth(scene,available){
+  // Present the real components at a readable size, like the original badge previews.
+  // Their HTML, artwork and internal styles still come from the live components.
+  if(scene==='hall')return Math.min(650,available);
+  if(scene==='lineup')return Math.min(460,available);
+  if(scene==='banner')return Math.max(available,innerWidth<=720?340:720);
+  if(scene==='board'&&innerWidth>720)return Math.max(available,720);
+  return available;
  }
 
  function mount(host){
@@ -67,7 +53,7 @@
   frame.title=labels[scene]+'实装预览';frame.className='native-badge-preview-frame';
   frame.setAttribute('sandbox','allow-same-origin');frame.setAttribute('scrolling','no');
   frame.style.visibility='hidden';host.setAttribute('aria-busy','true');delete host.dataset.nativeReady;
-  const viewport=innerWidth,width=Math.min(viewport,componentWidth(scene));
+  const viewport=innerWidth;
   frame.style.width=viewport+'px';
   host.append(frame);
   const doc=frame.contentDocument;
@@ -84,9 +70,10 @@
   doc.documentElement.style.colorScheme='light';
   const layout=doc.createElement('style');
   // Only the surrounding canvas and placement change. Component CSS is untouched.
-  layout.textContent='html,body{margin:0!important;padding:0!important;min-height:0!important;overflow:hidden!important;background:transparent!important}#native-preview-root{display:flow-root;width:'+width+'px}.manager-side{position:static!important}#hdr{position:static!important;margin:0!important}';
+  layout.textContent='html,body{margin:0!important;padding:0!important;min-height:0!important;overflow:hidden!important;background:transparent!important}#native-preview-root{display:flow-root}.manager-side{position:static!important}#hdr{position:static!important;margin:0!important}';
   doc.head.append(layout);
   const root=doc.createElement('div');root.id='native-preview-root';root.dataset.readOnly='true';
+  root.style.width=componentWidth(scene,host.clientWidth)+'px';
   root.innerHTML=sceneHtml(badge,name,scene);
   root.querySelectorAll('*').forEach(el=>[...el.attributes].forEach(attr=>{if(/^on/i.test(attr.name))el.removeAttribute(attr.name)}));
   doc.body.append(root);
@@ -99,10 +86,20 @@
    cancelAnimationFrame(pending);
    pending=requestAnimationFrame(()=>{
     if(!host.isConnected)return;
+    let width=componentWidth(scene,host.clientWidth);
+    const table=root.querySelector('.manager-station-board-table');
+    if(scene==='board'&&viewport>720&&table){
+     const scrollStyle=getComputedStyle(table.parentElement);
+     const tableWidth=parseFloat(getComputedStyle(table).minWidth)||0;
+     width=Math.max(width,tableWidth+(parseFloat(scrollStyle.paddingLeft)||0)+(parseFloat(scrollStyle.paddingRight)||0));
+    }
+    frame.style.width=Math.max(viewport,width)+'px';
+    root.style.width=width+'px';
     NewBadgeSkins.fit(root);
     const scale=Math.min(1,host.clientWidth/width);
     const height=Math.ceil(root.getBoundingClientRect().height);
     frame.style.height=height+'px';frame.style.transform='scale('+scale+')';
+    frame.style.left=Math.max(0,(host.clientWidth-width*scale)/2)+'px';
     host.style.height=Math.ceil(height*scale)+'px';
     if(ready){frame.style.visibility='visible';host.dataset.nativeReady='true';host.removeAttribute('aria-busy')}
    });

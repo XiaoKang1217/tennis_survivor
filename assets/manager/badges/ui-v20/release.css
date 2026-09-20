@@ -6,10 +6,10 @@
 .new-release-hero{display:block;position:absolute;inset:0;z-index:1}
 .new-release-hero .new-portrait{position:absolute;width:30%;left:6%;top:50%;transform:translateY(-50%);filter:drop-shadow(0 5px 5px #0004)}
 .new-release-hero .new-nameplate{position:absolute;width:58%;max-width:none;left:39%;top:55%;transform:translateY(-50%)}
-.new-release-hero--lineup .new-portrait{left:7%;top:15%;width:31%;transform:none}
+.new-release-hero--lineup .new-portrait{left:7%;top:max(36px,20%);width:31%;transform:none}
 .new-release-hero--lineup .new-nameplate{left:37%;width:61%;top:56%}
 .new-release.manager-panel.manager-side .manager-sidebar-owner{position:static!important;width:100%;display:block}
-.new-release.manager-panel.manager-side .manager-sidebar-title{top:19%;left:47%;z-index:2;padding:4px 8px;border-radius:10px;font-size:11px;letter-spacing:2px;text-shadow:none;color:var(--site-accent-deep);background:color-mix(in srgb,var(--site-surface) 91%,transparent)}
+.new-release.manager-panel.manager-side .manager-sidebar-title{position:absolute;top:8px;left:10px;z-index:2;padding:3px 7px;border-radius:7px;font-size:12px;line-height:1.4;letter-spacing:0;text-shadow:none;color:var(--site-accent-deep);background:color-mix(in srgb,var(--site-surface) 91%,transparent)}
 .new-release.manager-panel.manager-side .manager-panel-h>.manager-clear{top:7px;right:7px;background:var(--site-surface);border-color:var(--site-border);color:var(--site-accent-deep);font-size:10px;padding:3px 7px}
 .new-release.manager-hall-card .manager-hall-metrics{margin:16px 16px 12px;background:linear-gradient(110deg,var(--site-surface),var(--site-accent-soft));border:1px solid var(--site-border);border-radius:10px}
 .new-release.manager-hall-card .manager-hall-players{padding:0 16px 14px}
@@ -27,23 +27,26 @@
 .new-release-shop-item>.manager-badge-card{width:100%;height:100%;margin:0;display:flex;flex-direction:column}
 .new-release-shop-item .manager-badge-card-copy{display:flex;flex-direction:column;flex:1}
 .new-release-shop-item .manager-badge-card-footer{margin-top:auto;padding-top:15px}
-.new-release-shop-item .manager-badge-card-art{flex:none;height:292px;padding-top:60px}
+.new-release-shop-item .manager-badge-card-art{flex:none;display:flex!important;align-items:center;justify-content:center;height:304px!important;min-height:304px!important;padding:92px 18px 22px;box-sizing:border-box}
+.new-release-shop-item .manager-badge-card-art>.new-badge-frame{width:186px;max-width:100%;height:auto;aspect-ratio:1;flex:none;margin:0;transform:none}
+.new-release-shop-item .manager-badge-card-art>.new-badge-frame>.new-badge-icon{position:absolute;inset:0;width:100%;height:100%;margin:0}
 .new-release-shop-item:not(.is-art-ready) .manager-badge-card-art{background-image:none!important}
-.new-release-shop-item .manager-badge-card.is-new .manager-badge-card-flags{padding-top:38px}
-.new-release-shop-item .manager-badge-new-mark{top:3px;left:16px;z-index:3;font-size:27px}
+.new-release-shop-item .manager-badge-card .manager-badge-card-flags{padding-top:56px;z-index:4}
+.new-release-shop-item .manager-badge-card.is-new .manager-badge-card-flags{padding-top:56px}
+.new-release-shop-item .manager-badge-new-mark{top:24px;left:18px;z-index:5;font-size:27px;line-height:1;transform:rotate(-10deg);transform-origin:left center;white-space:nowrap}
 .new-skin-scope .manager-badge-preview-hero>.new-badge-frame{padding:0;border:0;box-shadow:none;background:transparent}
 .new-skin-scope .manager-badge-preview-hero>.new-badge-frame img{width:100%;height:100%;max-height:none;margin:0;border:0;padding:0;box-shadow:none;background:transparent}
 .new-skin-scope .manager-badge-preview-hero:after{display:none}
 .new-skin-scope .manager-badge-preview-hero h2{text-shadow:none}
 .new-skin-scope .manager-badge-preview-tabs{justify-content:flex-start;flex-wrap:wrap}
-.new-skin-scope .manager-badge-preview-stage{display:block}
+.new-skin-scope .manager-badge-preview-stage{display:grid;place-items:center;min-height:400px;padding:20px}
 .new-skin-scope .manager-badge-preview-stage>.new-top-banner{width:100%}
 .new-skin-scope .new-nameplate{background-image:var(--skin-card-nameplate)}
 .new-skin-scope .new-top-banner .new-nameplate{width:220px;aspect-ratio:3/1}
 .new-skin-scope .new-top-banner .new-identity{max-width:100%}
 .new-skin-scope .manager-badge-preview-stage .new-top-banner .new-nameplate{width:200px}
 @media(max-width:720px){
- .new-release-shop-item .manager-badge-card-art{height:283px}
+ .new-skin-scope .manager-badge-preview-stage{padding:10px;min-height:280px}
  .new-release-login .new-nameplate{width:190px}
  .new-release-hero .new-nameplate__text{font-size:clamp(9px,6.5cqw,29px)}
 }
