@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import test from 'node:test';
 import { mergeDrawPlayers } from '../lib/live-tennis-current-station.mjs';
+import { canonicalPlayerKey } from '../lib/manager-utils.mjs';
 
 const html = fs.readFileSync('index.html', 'utf8');
 const active = JSON.parse(fs.readFileSync('data/manager/active_events.json'));
@@ -26,6 +27,33 @@ test('both official draws retain independent qualifier identities and price scal
     assert.ok(e.players.every(p=>p.price>0));
     assert.ok(e.players.filter(p=>!p.is_qualifier_placeholder).every(p=>p.rank>0&&p.overall_elo>0&&p.surface_elo>0));
     assert.equal(Date.parse(e.submission_cutoff_at),Date.parse('2026-09-21T09:45:00+08:00'));
+  }
+});
+test('frontend submits every Q slot with the same event-specific key as the backend',()=>{
+  const c=vm.createContext({MANAGER_PREDICTIONS:{}});
+  vm.runInContext(source('managerSlug','managerContestPacks')+source('managerContractPayload','managerApplyRemoteState'),c);
+  const keys=[];
+  for(const event of events){
+    for(const q of event.players.filter(p=>p.is_qualifier_placeholder)){
+      const key=c.managerCanonicalPlayerKey(event.tour,q);
+      assert.equal(key,canonicalPlayerKey(event.tour,q));
+      assert.equal(key,q.player_key);
+      const payload=c.managerContractPayload({eventKey:event.event_key,playerKey:key,id:key,tour:event.tour,name:q.name_zh,price:q.price});
+      assert.equal(payload.player_key,q.player_key);
+      assert.equal(payload.event_key,event.event_key);
+      assert.equal(payload.price,q.price);
+      keys.push(key);
+    }
+  }
+  assert.equal(new Set(keys).size,keys.length);
+  assert.equal(c.managerCanonicalPlayerKey('WTA',{is_qualifier_placeholder:true,draw_position:4}),'WTA|qualifier-4');
+});
+test('opening market prices are locked for both events',()=>{
+  assert.equal(active.pricing.market_prices_locked,true);
+  for(const event of events){
+    assert.equal(event.market_price_lock.publication_version,active.pricing.publication_version);
+    const refreshed=mergeDrawPlayers(event,event.players.map(p=>({...p,price:p.price+500})),'test');
+    for(const p of event.players)assert.equal(refreshed.find(x=>x.draw_position===p.draw_position).price,p.price);
   }
 });
 test('dual Combo needs both events; two players from Seoul do not count as two lines',()=>{

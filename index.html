@@ -2104,7 +2104,11 @@ function managerLevelName(l){return l==='GS'?'大满贯':((l||'500')+'赛');}
 function managerHashScore(name,salt){var str=(name||'')+'|'+(salt||''),h=0;for(var i=0;i<str.length;i++)h=(h*31+str.charCodeAt(i))%1000003;return h/1000003;}
 function managerSlug(value){return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');}
 function managerCanonicalPlayerKey(tour,raw){
-  if(raw&&raw.is_qualifier_placeholder)return tour+'|qualifier-'+(raw.draw_position||managerSlug(raw.name_en||raw.name_zh||'q'));
+  if(raw&&(raw.is_qualifier_placeholder||/^Qualifier\b/i.test(raw.name_en||''))){
+    var explicitKey=String(raw.player_key||'');
+    if(/^\w+\|qualifier-/i.test(explicitKey))return explicitKey;
+    return tour+'|qualifier-'+(raw.draw_position||managerSlug(raw.name_en||raw.name_zh||'q'));
+  }
   var base=raw&&(raw.name_en||raw.name_zh||raw.name||raw.player_key)||'';
   return tour+'|'+(managerSlug(base)||managerSlug(raw&&raw.player_key||''));
 }
