@@ -18,6 +18,18 @@
 .new-release.manager-panel.manager-side .manager-panel-b{background:linear-gradient(150deg,var(--site-surface-raised),color-mix(in srgb,var(--site-accent-soft) 32%,var(--site-surface-raised)))}
 .new-release-identity{display:inline-block;vertical-align:middle;max-width:100%}
 .new-release-identity .new-identity--row{min-width:296px;max-width:none}
+/* Share the legacy leaderboard dimensions without resizing other identity surfaces. */
+.manager-boards-page .manager-rank-table .new-release-identity .new-identity--row{
+ min-width:0;max-width:none;
+ width:calc(var(--manager-board-icon-size) + var(--manager-board-lockup-gap) + var(--manager-board-plate-width));
+ height:var(--manager-board-lockup-height);gap:var(--manager-board-lockup-gap);
+}
+.manager-boards-page .manager-rank-table .new-identity--row .new-badge-frame{
+ width:var(--manager-board-icon-size);height:var(--manager-board-icon-size);flex:none;
+}
+.manager-boards-page .manager-rank-table .new-identity--row .new-nameplate{
+ width:var(--manager-board-plate-width);max-width:none;flex:none;aspect-ratio:3/1;
+}
 .manager-ledger-table tbody tr.new-release[data-badge],.manager-rank-table tbody tr.new-release[data-badge],.jinx-leader-table tbody tr.new-release[data-badge]{background:linear-gradient(90deg,color-mix(in srgb,var(--site-surface) 25%,transparent),color-mix(in srgb,var(--site-surface) 55%,transparent)),var(--skin-leaderboard) center/cover no-repeat!important}
 .manager-ledger-table tbody tr.new-release[data-badge]>td,.manager-rank-table tbody tr.new-release[data-badge]>td,.jinx-leader-table tbody tr.new-release[data-badge]>td{background:transparent!important;box-shadow:none!important}
 .manager-ledger-table tbody tr.new-release[data-badge]>td:before,.manager-rank-table tbody tr.new-release[data-badge]>td:before,.jinx-leader-table tbody tr.new-release[data-badge]>td:before{display:none!important}
