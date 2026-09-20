@@ -218,6 +218,8 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 }
 @media(max-width:1180px){
   .lw-mini-stage{padding-right:0}
+  .lw-mini-stage--preference{height:auto;min-height:0}
+  .lw-mini-stage--preference>.lw-mini-card{height:auto}
   .lw-mini-stage>.lw-mini-card,.lw-mini-card--floating{position:static;margin:10px 0 0 auto}
   #p-fortune .lw-mini-card--floating,#p-jinx .lw-mini-card--floating{margin:12px auto 0}
 }
@@ -520,11 +522,11 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 .manager-prediction-intro p{margin:0;color:#7d6a4d;font-size:13px;line-height:1.65}
 .manager-prediction-reward{display:inline-flex;align-items:center;padding:4px 8px;border:1px solid #d5b77e;border-radius:6px;background:#fff8e9;color:#8a5a18;font-size:12px;font-weight:900;line-height:1.35}
 .manager-prediction-summary{display:grid;grid-template-columns:minmax(0,2fr) repeat(2,minmax(130px,1fr));gap:9px;margin:0 0 14px}
-.manager-prediction-summary-item{min-width:0;padding:10px 12px;border:1px solid #dfc79d;border-radius:8px;background:linear-gradient(180deg,#fffaf0,#fffdf8);color:#6f6049}
-.manager-prediction-summary-item span{display:block;margin-bottom:4px;color:#8a7657;font-size:11px;font-weight:850}
-.manager-prediction-summary-item b{display:block;overflow-wrap:anywhere;color:#5c421f;font-size:14px;line-height:1.5}
-.manager-prediction-summary-item b.income{color:#9a5a17;font-size:17px;font-variant-numeric:tabular-nums}
-.manager-prediction-summary-note{grid-column:1/-1;color:#806c4d;font-size:12px}
+.manager-prediction-summary-item{min-width:0;padding:10px 12px;border:1px solid var(--site-border,#dfc79d);border-radius:8px;background:linear-gradient(180deg,var(--site-surface,#fffaf0),var(--site-surface-raised,#fffdf8));color:var(--site-text,#6f6049)}
+.manager-prediction-summary-item span{display:block;margin-bottom:4px;color:var(--site-muted,#8a7657);font-size:11px;font-weight:850}
+.manager-prediction-summary-item b{display:block;overflow-wrap:anywhere;color:var(--site-text-strong,#5c421f);font-size:14px;line-height:1.5}
+.manager-prediction-summary-item b.income{color:var(--site-accent-deep,#9a5a17);font-size:17px;font-variant-numeric:tabular-nums}
+.manager-prediction-summary-note{grid-column:1/-1;color:var(--site-muted,#806c4d);font-size:12px}
 .manager-prediction-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .manager-prediction-card{border:1px solid #dfc79d;border-radius:8px;background:#fffdf8;overflow:hidden}
 .manager-prediction-card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:#f7ead1;border-bottom:1px solid #e7d4b4}
