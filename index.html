@@ -2601,7 +2601,8 @@ function managerDailyPredictionSetHasOpenGame(data,now){
   }));
 }
 function managerPredictionDataKey(){return [managerDailyPredictionStationKeys().join(','),managerSeason(),managerChinaDateKey(),AUTH_USER&&AUTH_USER.id||'anon'].join('|');}
-function managerPredictionSummaryDataKey(){return [managerChinaDateKey(),AUTH_USER&&AUTH_USER.id||'anon'].join('|');}
+function managerPredictionSummaryReferenceDate(){return MANAGER_DAILY_PREDICTIONS&&MANAGER_DAILY_PREDICTIONS.contest_date||'';}
+function managerPredictionSummaryDataKey(){return [managerPredictionSummaryReferenceDate(),AUTH_USER&&AUTH_USER.id||'anon'].join('|');}
 function managerDailyPredictionSummaryIsFresh(){
   return !!(MANAGER_DAILY_PREDICTION_SUMMARY
     && MANAGER_DAILY_PREDICTION_SUMMARY_KEY===managerPredictionSummaryDataKey()
@@ -2616,8 +2617,12 @@ async function managerLoadDailyPredictionSummary(opts){
   MANAGER_DAILY_PREDICTION_SUMMARY_ERROR='';
   MANAGER_DAILY_PREDICTION_SUMMARY_LOADING=(async function(){
     try{
+      await managerLoadDailyPredictions();
+      const referenceDate=managerPredictionSummaryReferenceDate();
+      if(!referenceDate)return null;
+      key=managerPredictionSummaryDataKey();
       const client=await ensureSupabaseClient();
-      const res=await client.rpc('tour_manager_get_my_prediction_summary',{p_reference_date:managerChinaDateKey()});
+      const res=await client.rpc('tour_manager_get_my_prediction_summary',{p_reference_date:referenceDate});
       if(res.error)throw res.error;
       return res.data||null;
     }catch(err){
@@ -2626,7 +2631,7 @@ async function managerLoadDailyPredictionSummary(opts){
       return null;
     }
   })().then(function(data){
-    if(data){
+    if(data&&key===managerPredictionSummaryDataKey()){
       MANAGER_DAILY_PREDICTION_SUMMARY=data;
       MANAGER_DAILY_PREDICTION_SUMMARY_KEY=key;
       MANAGER_DAILY_PREDICTION_SUMMARY_SYNC_AT=Date.now();
@@ -4841,7 +4846,7 @@ function managerRenderDailyPredictions(){
   if(!MANAGER_DAILY_PREDICTIONS&&!MANAGER_DAILY_PREDICTIONS_LOADING&&!MANAGER_DAILY_PREDICTIONS_ERROR){
     managerLoadDailyPredictions().then(function(){if(MANAGER_VIEW==='prediction')renderManagerDemo();}).catch(function(){});
   }
-  if(AUTH_USER&&!managerDailyPredictionSummaryIsFresh()&&!MANAGER_DAILY_PREDICTION_SUMMARY_LOADING&&!MANAGER_DAILY_PREDICTION_SUMMARY_ERROR){
+  if(AUTH_USER&&managerPredictionSummaryReferenceDate()&&!managerDailyPredictionSummaryIsFresh()&&!MANAGER_DAILY_PREDICTION_SUMMARY_LOADING&&!MANAGER_DAILY_PREDICTION_SUMMARY_ERROR){
     managerLoadDailyPredictionSummary().then(function(){if(MANAGER_VIEW==='prediction')renderManagerDemo();}).catch(function(){});
   }
   if(MANAGER_DAILY_PREDICTIONS_LOADING&&!MANAGER_DAILY_PREDICTIONS)return '<div class="manager-empty">正在加载今日竞猜...</div>';
@@ -4850,7 +4855,7 @@ function managerRenderDailyPredictions(){
   var contestDate=MANAGER_DAILY_PREDICTIONS&&MANAGER_DAILY_PREDICTIONS.contest_date||managerChinaDateKey();
   var introTitle='官方赛程日竞猜';
   var intro='<div class="manager-prediction-intro"><h3>'+esc(contestDate)+' '+introTitle+' <span class="manager-prediction-reward">猜对一场 +10 本金</span></h3><p>比赛开始前可提交或修改。</p></div>';
-  var summary=MANAGER_DAILY_PREDICTION_SUMMARY,summaryHtml='';
+  var summary=MANAGER_DAILY_PREDICTION_SUMMARY_KEY===managerPredictionSummaryDataKey()?MANAGER_DAILY_PREDICTION_SUMMARY:null,summaryHtml='';
   if(!AUTH_USER){
     summaryHtml='<div class="manager-prediction-summary"><div class="manager-prediction-summary-item manager-prediction-summary-note">登录后可查看昨日竞猜选人、昨日竞猜收益和竞猜累计收益。</div></div>';
   }else if(summary){
