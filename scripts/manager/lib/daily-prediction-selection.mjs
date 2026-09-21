@@ -104,6 +104,8 @@ export async function refreshDailyPredictionGamesByMedian({
   sourceStationKey = stationKey,
   season = 2026,
   contestDate,
+  eventGroups = [],
+  dateOverrides = {},
   now = new Date(),
   minLeadMinutes = MIN_SELECTION_LEAD_MINUTES
 }) {
@@ -145,12 +147,15 @@ export async function refreshDailyPredictionGamesByMedian({
   let existing = 0;
   const missingTours = [];
 
-  for (const tour of ['ATP', 'WTA']) {
+  const groups = eventGroups.length ? eventGroups : ['ATP', 'WTA'].map(tour => ({ tour }));
+  for (const group of groups) {
+    const { tour, event_key: groupEventKey } = group;
     const games = await client.select('tour_manager_daily_prediction_games', {
       station_key: `eq.${stationKey}`,
       season: `eq.${season}`,
       contest_date: `eq.${contestDate}`,
       tour: `eq.${tour}`,
+      ...(groupEventKey ? { event_key: `eq.${groupEventKey}` } : {}),
       select: 'id'
     });
     if (games.length) {
@@ -162,6 +167,7 @@ export async function refreshDailyPredictionGamesByMedian({
       station_key: `eq.${sourceStationKey || stationKey}`,
       season: `eq.${season}`,
       tour: `eq.${tour}`,
+      ...(groupEventKey ? { event_key: `eq.${groupEventKey}` } : {}),
       select: 'event_key,metadata'
     });
     const eventByKey = new Map(events.map((event) => [event.event_key, event]));
@@ -183,10 +189,24 @@ export async function refreshDailyPredictionGamesByMedian({
     const firstMatch = upcoming[0];
     const firstEvent = eventByKey.get(firstMatch.event_key);
     const eventDate = matchEventDate(firstMatch, firstEvent?.metadata?.timezone || 'UTC');
-    const sameEventDay = upcoming.filter((match) => {
+    let sameEventDay = upcoming.filter((match) => {
       const event = eventByKey.get(match.event_key);
       return matchEventDate(match, event?.metadata?.timezone || 'UTC') === eventDate;
     });
+    const override = dateOverrides[contestDate]?.[groupEventKey];
+    if (override?.last_matches) {
+      // Restrict the official day before ranking eligibility can change the shortlist.
+      const dayMatches = (await client.select('tour_manager_matches', {
+        event_key: `eq.${groupEventKey}`,
+        select: 'match_key,match_order,scheduled_at,raw'
+      })).filter(match => matchEventDate(match, firstEvent?.metadata?.timezone || 'UTC') === contestDate);
+      const lastKeys = new Set(dayMatches.sort((a,b) =>
+        new Date(b.scheduled_at) - new Date(a.scheduled_at)
+        || numberOrMax(b.match_order) - numberOrMax(a.match_order)
+        || String(a.match_key).localeCompare(String(b.match_key))
+      ).slice(0, override.last_matches).map(match => match.match_key));
+      sameEventDay = sameEventDay.filter(match => lastKeys.has(match.match_key));
+    }
     const relevantEventKeys = [...new Set(sameEventDay.map((match) => match.event_key))];
     const [playerGroups, usedGroups] = await Promise.all([
       Promise.all(relevantEventKeys.map((eventKey) => client.select('tour_manager_event_players', {

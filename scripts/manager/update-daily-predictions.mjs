@@ -51,7 +51,9 @@ const refresh = today >= MEDIAN_SELECTION_START_DATE
     stationKey: predictionStationKey,
     sourceStationKey: predictionSourceStationKey,
     season: Number(active.season) || 2026,
-    contestDate: today
+    contestDate: today,
+    eventGroups: predictionConfig.event_groups || [],
+    dateOverrides: predictionConfig.date_overrides || {}
   })
   : await client.rpc('tour_manager_refresh_daily_prediction_games', {
     p_station_key: predictionStationKey,

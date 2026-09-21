@@ -4589,7 +4589,7 @@ function managerRenderRules(){
     '</div>'+managerRewardTable()+'</div></details>'+
     '<details open><summary>三、每日结算、Combo 与策略边界</summary><div class="rule-body"><div class="manager-rule-grid">'+
       managerRuleCard('每日结算',['每天抓取昨天完赛结果。','同一合同按新到达轮次补差额，不重复发放。','结算同步到我的阵容、配置大厅和公共榜单。','本站净收益榜只统计球员收益 + Combo，不含竞猜收益。'])+
-      managerRuleCard('每日竞猜',['每天从本站赛程中各选 1 场 ATP、WTA 排名接近的比赛。','比赛开始前可以提交或修改。','猜对一场 +10，经次日结算进入本金。'])+
+      managerRuleCard('每日竞猜',['每天按本站竞猜分组各选 1 场比赛；首尔、新加坡本站各 1 场。','比赛开始前可以提交或修改。','猜对一场 +10，经次日结算进入本金。'])+
       managerCurrentComboRuleCard()+
       managerPreviousComboRuleCard()+
       managerRuleCard('退赛替补',['球员 R1 开打后退赛，按实际赛果结算。','球员 R1 上场前退赛且签位被替补顶替，购买该球员的合同统一替换为顶替签位的新球员。','替补记录写入后台替补表和我的收益备注。'])+
@@ -4866,6 +4866,8 @@ function managerRenderDailyPredictions(){
   }
   if(!games.length)return intro+summaryHtml+'<div class="manager-empty">今天暂时没有满足条件的未开赛对阵。赛程更新后会自动生成。</div>';
   var cards=games.map(function(game){
+    var eventPack=managerContestPacks().find(function(pack){return pack.meta.eventKey===game.event_key;});
+    var predictionLabel=eventPack?managerEventShortName(eventPack):game.tour;
     var draft=MANAGER_DAILY_PREDICTION_DRAFT[game.id]||(game.my_pick&&game.my_pick.picked_player_key)||'';
     var cutoff=Date.parse(game.closes_at||game.scheduled_at),open=game.status==='open'&&Number.isFinite(cutoff)&&Date.now()<cutoff;
     var settled=game.status==='settled',cancelled=game.status==='cancelled';
@@ -4879,7 +4881,7 @@ function managerRenderDailyPredictions(){
     }else if(cancelled)result='<div class="manager-prediction-result">本场取消，不结算奖励。</div>';
     else if(game.my_pick)result='<div class="manager-prediction-result ok">已提交：'+esc(game.my_pick.picked_player_name)+(open?'，开赛前可以修改。':'，等待赛果结算。')+'</div>';
     else if(!open)result='<div class="manager-prediction-result">本场已经截止提交。</div>';
-    return '<article class="manager-prediction-card"><div class="manager-prediction-card-head"><span class="manager-prediction-tour">'+esc(game.tour)+' 竞猜</span><span class="manager-prediction-time">'+esc(managerPredictionTime(game.closes_at||game.scheduled_at))+'</span></div><div class="manager-prediction-options">'+option(game.player1_key,game.player1_name,game.player1_ranking)+option(game.player2_key,game.player2_name,game.player2_ranking)+'</div>'+result+'</article>';
+    return '<article class="manager-prediction-card"><div class="manager-prediction-card-head"><span class="manager-prediction-tour">'+esc(predictionLabel)+' 竞猜</span><span class="manager-prediction-time">'+esc(managerPredictionTime(game.closes_at||game.scheduled_at))+'</span></div><div class="manager-prediction-options">'+option(game.player1_key,game.player1_name,game.player1_ranking)+option(game.player2_key,game.player2_name,game.player2_ranking)+'</div>'+result+'</article>';
   }).join('');
   var openGames=games.filter(function(game){var cutoff=Date.parse(game.closes_at||game.scheduled_at);return game.status==='open'&&Number.isFinite(cutoff)&&Date.now()<cutoff;});
   var loginNote=AUTH_USER||managerLocalQaMode()?'':'<div class="manager-note">登录后才能提交竞猜。</div>';

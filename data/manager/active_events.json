@@ -6,6 +6,15 @@
   "status": "open",
   "updated_at": "2026-09-19T20:22:42+08:00",
   "announcement": "WTA 首尔250 + WTA 新加坡500 已开售，09/21 10:45 截止！",
+  "daily_prediction": {
+    "event_groups": [
+      { "tour": "WTA", "event_key": "wta-2026-w39-seoul" },
+      { "tour": "WTA", "event_key": "wta-2026-w39-singapore" }
+    ],
+    "date_overrides": {
+      "2026-09-21": { "wta-2026-w39-seoul": { "last_matches": 2 } }
+    }
+  },
   "rules": {
     "station_grant": 500,
     "cross_tour_transfer": false,
