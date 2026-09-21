@@ -106,6 +106,7 @@ export async function refreshDailyPredictionGamesByMedian({
   contestDate,
   eventGroups = [],
   dateOverrides = {},
+  exactEventDate = false,
   now = new Date(),
   minLeadMinutes = MIN_SELECTION_LEAD_MINUTES
 }) {
@@ -186,10 +187,12 @@ export async function refreshDailyPredictionGamesByMedian({
       continue;
     }
 
-    const firstMatch = upcoming[0];
+    const eligibleUpcoming=exactEventDate?upcoming.filter(match=>String(match.raw?.date||'')===contestDate):upcoming;
+    if(!eligibleUpcoming.length){missingTours.push(tour);continue;}
+    const firstMatch = eligibleUpcoming[0];
     const firstEvent = eventByKey.get(firstMatch.event_key);
     const eventDate = matchEventDate(firstMatch, firstEvent?.metadata?.timezone || 'UTC');
-    let sameEventDay = upcoming.filter((match) => {
+    let sameEventDay = eligibleUpcoming.filter((match) => {
       const event = eventByKey.get(match.event_key);
       return matchEventDate(match, event?.metadata?.timezone || 'UTC') === eventDate;
     });

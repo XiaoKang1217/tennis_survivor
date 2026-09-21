@@ -2,6 +2,11 @@ name: Update Tour Manager Data
 
 on:
   workflow_dispatch:
+    inputs:
+      official_date:
+        description: "本次结算的官方赛程日 D，YYYY-MM-DD（留空自动判断；生成 D+1 竞猜）"
+        required: false
+        type: string
   push:
     branches:
       - main
@@ -50,7 +55,15 @@ jobs:
 
       - run: node scripts/manager/replace-cincinnati-wta-daily-prediction-20260825.mjs
 
-      - run: node scripts/manager/update-daily-predictions.mjs
+      - name: Settle and publish official-day predictions
+        env:
+          OFFICIAL_DATE: ${{ inputs.official_date }}
+        run: |
+          args=()
+          if [ -n "$OFFICIAL_DATE" ]; then
+            args+=(--official-date "$OFFICIAL_DATE")
+          fi
+          node scripts/manager/update-daily-predictions.mjs "${args[@]}"
 
       - run: node scripts/manager/validate-station.mjs
 

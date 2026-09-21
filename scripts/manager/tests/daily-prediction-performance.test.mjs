@@ -17,12 +17,20 @@ function setup(rows=[],user=null){
   const c=vm.createContext({Date,AUTH_USER:user,MANAGER_DAILY_PREDICTIONS:null,MANAGER_DAILY_PREDICTIONS_KEY:'',MANAGER_DAILY_PREDICTIONS_LOADING:null,
     MANAGER_DAILY_PREDICTION_DRAFT:{},managerPredictionDataKey:()=> 'key',ensureSupabaseClient:async()=>client,
     managerDailyPredictionStationKeys:()=>['old','new'],managerDailyPredictionDateKeys:()=>['2026-09-18','2026-09-19'],managerSeason:()=>2026,
-    managerStationKey:()=> 'new',authErrorText:e=>e.message,trackSupabaseError:()=>{},
+    managerChinaDateKey:()=> '2026-09-19',managerStationKey:()=> 'new',authErrorText:e=>e.message,trackSupabaseError:()=>{},
     managerDailyPredictionSetHasOpenGame:d=>d.games.some(g=>g.status==='open'&&Date.parse(g.closes_at)>Date.now())});
   vm.runInContext(fn('managerLoadDailyPredictions'),c);
   return {c,calls,client};
 }
 const game=(extra={})=>({id:'1',station_key:'old',contest_date:'2026-09-18',tour:'WTA',status:'open',closes_at:'2099-01-01T00:00:00Z',...extra});
+test('published next official day is readable before Beijing midnight',async()=>{
+  const {c,calls}=setup([game({station_key:'new',contest_date:'2026-09-20'})]);
+  c.managerDailyPredictionDateKeys=()=>['2026-09-18','2026-09-19','2026-09-20'];
+  const data=await c.managerLoadDailyPredictions();
+  assert.equal(data.contest_date,'2026-09-20');
+  assert.equal(data.carried_over,undefined);
+  assert.equal(calls.find(x=>x[0]==='lte')[2],'2026-09-20');
+});
 test('one range request retains cross-day games and caches the result',async()=>{
   const {c,calls}=setup([game()]);
   const data=await c.managerLoadDailyPredictions();

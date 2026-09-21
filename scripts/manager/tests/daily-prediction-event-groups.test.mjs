@@ -52,6 +52,31 @@ test('tomorrow Seoul uses the normal full-day median', async () => {
   assert.deepEqual(games.map(g => g.match_key), ['seoul:1', 'singapore:1']);
 });
 
+test('exact official date waits rather than falling back to another schedule day',async()=>{
+ const {client,games}=fixture('2026-09-23');
+ const result=await refreshDailyPredictionGamesByMedian({client,stationKey:'station',contestDate:'2026-09-22',
+   now:'2026-09-21T15:00:00Z',eventGroups,exactEventDate:true});
+ assert.equal(result.created,0);assert.equal(games.length,0);
+});
+
+test('previous prediction before its start blocks publication without replacing picks',async()=>{
+ const {client,games}=fixture('2026-09-22');
+ const select=client.select.bind(client);
+ client.select=async(table,query)=>query.status==='eq.open'&&table==='tour_manager_daily_prediction_games'
+  ?[{id:'old',contest_date:'2026-09-21',closes_at:'2026-09-21T17:00:00Z'}]:select(table,query);
+ const result=await refreshDailyPredictionGamesByMedian({client,stationKey:'station',contestDate:'2026-09-22',
+  now:'2026-09-21T15:00:00Z',eventGroups,exactEventDate:true});
+ assert.equal(result.skipped_active,true);assert.equal(games.length,0);
+});
+
+test('next official day publishes both events once previous games passed their start',async()=>{
+ const {client,games}=fixture('2026-09-22');
+ const args={client,stationKey:'station',contestDate:'2026-09-22',now:'2026-09-21T15:00:00Z',eventGroups,exactEventDate:true};
+ assert.equal((await refreshDailyPredictionGamesByMedian(args)).created,2);
+ assert.ok(games.every(g=>g.event_date==='2026-09-22'&&g.contest_date==='2026-09-22'));
+ assert.equal((await refreshDailyPredictionGamesByMedian(args)).created,0);
+});
+
 test('preserves existing Singapore game and reruns without duplicating either game', async () => {
   const existing = { id: 'existing', event_key: 'singapore', match_key: 'singapore:0' };
   const { games, result } = await run('2026-09-21', [existing]);

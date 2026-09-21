@@ -2590,7 +2590,7 @@ function managerDailyPredictionStationKeys(){
 }
 function managerDailyPredictionDateKeys(){
   var days=7,dates=[];
-  for(var i=days;i>=0;i--)dates.push(managerChinaDateKey(new Date(),-i));
+  for(var i=days;i>=-1;i--)dates.push(managerChinaDateKey(new Date(),-i));
   return dates.filter(function(date,index,list){return date&&list.indexOf(date)===index;});
 }
 function managerDailyPredictionSetHasOpenGame(data,now){
@@ -2646,12 +2646,13 @@ async function managerLoadDailyPredictions(opts){
       const client=await ensureSupabaseClient();
       const stationKeys=managerDailyPredictionStationKeys();
       const contestDates=managerDailyPredictionDateKeys();
-      const todayDate=contestDates[contestDates.length-1];
+      const todayDate=managerChinaDateKey();
+      const latestDate=contestDates[contestDates.length-1];
       // One range request; RLS restricts the embedded picks to the signed-in user.
       const fields=AUTH_USER?'*,my_pick:tour_manager_daily_prediction_picks(*)':'*';
       const res=await client.from('tour_manager_daily_prediction_games').select(fields)
         .in('station_key',stationKeys).eq('season',managerSeason())
-        .gte('contest_date',contestDates[0]).lte('contest_date',todayDate);
+        .gte('contest_date',contestDates[0]).lte('contest_date',latestDate);
       if(res.error)throw res.error;
       const rows=(res.data||[]).map(function(game){
         return Object.assign({},game,{
@@ -2670,7 +2671,7 @@ async function managerLoadDailyPredictions(opts){
           if(data.games&&data.games.length){
             latestWithGames=data;
             if(managerDailyPredictionSetHasOpenGame(data)){
-              if(dateKey!==todayDate)data.carried_over=true;
+              if(dateKey<todayDate)data.carried_over=true;
               return data;
             }
           }
@@ -4847,7 +4848,7 @@ function managerRenderDailyPredictions(){
   if(MANAGER_DAILY_PREDICTIONS_ERROR&&!MANAGER_DAILY_PREDICTIONS)return '<div class="manager-empty">今日竞猜暂时加载失败，请稍后刷新。<br><span class="manager-note">'+esc(MANAGER_DAILY_PREDICTIONS_ERROR)+'</span></div>';
   var games=MANAGER_DAILY_PREDICTIONS&&Array.isArray(MANAGER_DAILY_PREDICTIONS.games)?MANAGER_DAILY_PREDICTIONS.games:[];
   var contestDate=MANAGER_DAILY_PREDICTIONS&&MANAGER_DAILY_PREDICTIONS.contest_date||managerChinaDateKey();
-  var introTitle=MANAGER_DAILY_PREDICTIONS&&MANAGER_DAILY_PREDICTIONS.carried_over?'继续竞猜':'今日竞猜';
+  var introTitle='官方赛程日竞猜';
   var intro='<div class="manager-prediction-intro"><h3>'+esc(contestDate)+' '+introTitle+' <span class="manager-prediction-reward">猜对一场 +10 本金</span></h3><p>比赛开始前可提交或修改。</p></div>';
   var summary=MANAGER_DAILY_PREDICTION_SUMMARY,summaryHtml='';
   if(!AUTH_USER){
