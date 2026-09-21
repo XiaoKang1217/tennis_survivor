@@ -59,10 +59,9 @@
   const doc=frame.contentDocument;
   doc.open();doc.write('<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"></head><body></body></html>');doc.close();
   const base=doc.createElement('base');base.href=document.baseURI;doc.head.append(base);
-  const styleLoads=[];
   document.head.querySelectorAll('style,link[rel="stylesheet"]').forEach(node=>{
    const copy=node.cloneNode(true);
-   if(copy.tagName==='LINK')styleLoads.push(new Promise(resolve=>{copy.onload=resolve;copy.onerror=resolve}));
+   if(copy.tagName==='LINK')copy.href=node.href;
    doc.head.append(copy);
   });
   doc.body.className=document.body.className;
@@ -70,7 +69,7 @@
   doc.documentElement.style.colorScheme='light';
   const layout=doc.createElement('style');
   // Only the surrounding canvas and placement change. Component CSS is untouched.
-  layout.textContent='html,body{margin:0!important;padding:0!important;min-height:0!important;overflow:hidden!important;background:transparent!important}#native-preview-root{display:flow-root}.manager-side{position:static!important}#hdr{position:static!important;margin:0!important}';
+  layout.textContent='html,body{margin:0!important;padding:0!important;min-height:0!important;overflow:hidden!important;background:transparent!important}#native-preview-root{display:flow-root}.manager-side{position:static!important}#hdr{position:static!important;margin:0!important}.manager-table-scroll,.tbl-wrap{max-height:none!important}';
   doc.head.append(layout);
   const root=doc.createElement('div');root.id='native-preview-root';root.dataset.readOnly='true';
   root.style.width=componentWidth(scene,host.clientWidth)+'px';
@@ -81,11 +80,11 @@
   for(const type of ['click','submit'])doc.addEventListener(type,event=>{event.preventDefault();event.stopImmediatePropagation()},true);
   // Use the same table wrapper, name fitting and image rendering as the live page.
   NewBadgeRelease.afterRender(root);
-  let pending=0,ready=false;
+  let pending=0,ready=false,disposed=false;
   function resize(){
    cancelAnimationFrame(pending);
    pending=requestAnimationFrame(()=>{
-    if(!host.isConnected)return;
+    if(disposed||!host.isConnected)return;
     let width=componentWidth(scene,host.clientWidth);
     const table=root.querySelector('.manager-station-board-table');
     if(scene==='board'&&viewport>720&&table){
@@ -104,20 +103,24 @@
     if(ready){frame.style.visibility='visible';host.dataset.nativeReady='true';host.removeAttribute('aria-busy')}
    });
   }
-  const observer=new ResizeObserver(resize);observer.observe(root);observer.observe(host);
+  const observer=window.ResizeObserver?new ResizeObserver(resize):null;
+  if(observer){observer.observe(root);observer.observe(host)}
   doc.querySelectorAll('link').forEach(link=>link.addEventListener('load',resize));
   doc.querySelectorAll('img').forEach(img=>{img.loading='eager';img.addEventListener('load',resize)});
-  Promise.all(styleLoads).then(async()=>{
-   if(!host.isConnected)return;
-   root.getBoundingClientRect();
-   const artKeys=[scene==='banner'?'banner':scene==='lineup'?'lineup':scene==='hall'?'hall':'leaderboard','cardNameplate'];
-   await Promise.all([doc.fonts.ready,...[...doc.images].map(img=>img.decode().catch(()=>{})),...artKeys.map(key=>{
-    const img=new Image();img.src=theme.assets[key];return img.decode().catch(()=>{});
-   })]);
-   ready=true;resize();
-  });
+  // Some mobile engines suppress load events inside script-disabled frames.
+  // Poll stylesheet readiness from the parent, and never gate display on fonts/images.
+  const started=Date.now();
+  const stylePoll=setInterval(()=>{
+   if(disposed||!host.isConnected){clearInterval(stylePoll);return}
+   const loaded=[...doc.querySelectorAll('link[rel="stylesheet"]')].every(link=>!!link.sheet);
+   if(loaded||Date.now()-started>=3000){clearInterval(stylePoll);ready=true;resize()}
+  },100);
+  // Late artwork/font changes still get a size refresh if frame events are suppressed.
+  const lateResize=setInterval(resize,500);
+  const stopLateResize=setTimeout(()=>clearInterval(lateResize),15000);
+  if(doc.fonts&&doc.fonts.ready)doc.fonts.ready.then(resize,()=>{});
   resize();
-  mounted.set(host,{frame,observer,viewport,dispose(){observer.disconnect();cancelAnimationFrame(pending)}});
+  mounted.set(host,{frame,observer,viewport,dispose(){disposed=true;if(observer)observer.disconnect();clearInterval(stylePoll);clearInterval(lateResize);clearTimeout(stopLateResize);cancelAnimationFrame(pending)}});
  }
 
  function hydrate(root=document){

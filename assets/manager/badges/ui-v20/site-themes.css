@@ -127,8 +127,11 @@ body.luwang-site-skin[data-skin-pack="new-nine"] .manager-panel-chip.surface.gra
 
 body.luwang-site-skin[data-skin-pack="new-nine"] :where(.manager-tab,.manager-tour-tab,.manager-subtab,.manager-clear) { color: var(--site-text); border-color: var(--site-border); background: var(--site-surface-raised); }
 body.luwang-site-skin[data-skin-pack="new-nine"] :where(.manager-tab,.manager-tour-tab,.manager-subtab).on { color:var(--site-on-accent); border-color:var(--site-chrome-start); background:linear-gradient(135deg,color-mix(in srgb,var(--site-chrome-mid) 72%,var(--site-chrome-start)),var(--site-chrome-start)); box-shadow:inset 0 -2px 0 color-mix(in srgb,var(--site-story) 74%,transparent); }
-body.luwang-site-skin[data-skin-pack="new-nine"] .manager-action { color:var(--site-on-accent); background:linear-gradient(135deg,color-mix(in srgb,var(--site-chrome-mid) 72%,var(--site-chrome-start)),var(--site-chrome-start)); }
-body.luwang-site-skin[data-skin-pack="new-nine"] .manager-action.secondary { background:linear-gradient(135deg,color-mix(in srgb,var(--site-story) 62%,var(--site-chrome-start)),var(--site-chrome-start)); }
+body.luwang-site-skin[data-skin-pack="new-nine"] .manager-action { color:var(--site-on-accent,#fff); background:var(--site-chrome-start,#35557d); }
+@supports (background:color-mix(in srgb,black,white)) {
+ body.luwang-site-skin[data-skin-pack="new-nine"] .manager-action { background:linear-gradient(135deg,color-mix(in srgb,var(--site-chrome-mid) 72%,var(--site-chrome-start)),var(--site-chrome-start)); }
+ body.luwang-site-skin[data-skin-pack="new-nine"] .manager-action.secondary { background:linear-gradient(135deg,color-mix(in srgb,var(--site-story) 62%,var(--site-chrome-start)),var(--site-chrome-start)); }
+}
 body.luwang-site-skin[data-skin-pack="new-nine"] .manager-action.warn { background: var(--site-warning); }
 
 body.luwang-site-skin[data-skin-pack="new-nine"] .manager-filter,
