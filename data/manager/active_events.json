@@ -5,7 +5,7 @@
   "survivor_aligned": false,
   "status": "open",
   "updated_at": "2026-09-19T20:22:42+08:00",
-  "announcement": "WTA 首尔250 + WTA 新加坡500 已开售，09/21 10:45 截止！",
+  "announcement": "本站换人窗口：北京时间 09/23 01:00～09/23 13:00；首尔、新加坡可以互换。",
   "daily_prediction": {
     "event_groups": [
       { "tour": "WTA", "event_key": "wta-2026-w39-seoul" },
@@ -17,7 +17,8 @@
   },
   "rules": {
     "station_grant": 500,
-    "cross_tour_transfer": false,
+    "cross_tour_transfer": true,
+    "transfer_notice": "首尔、新加坡同一窗口开放，两站球员可以互换。",
     "transfer_fee_rate": 0.15,
     "transfer_welfare_discount": false,
     "combo_version": "seoul_singapore_2026_v1",

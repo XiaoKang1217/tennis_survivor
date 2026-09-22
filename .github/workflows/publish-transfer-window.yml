@@ -1,0 +1,22 @@
+name: Publish Seoul Singapore Transfer Window
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: publish-seoul-singapore-transfer-window
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: node --test scripts/manager/tests/seoul-singapore-transfer-window.test.mjs
+      - run: node scripts/manager/publish-seoul-singapore-transfer-window.mjs
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
