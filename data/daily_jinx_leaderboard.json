@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-09-21T03:08:59.503Z",
-  "source_updated_at": "2026-09-21 11:08:57",
-  "settled_through": "2026-09-20",
+  "updated_at": "2026-09-22T03:08:44.267Z",
+  "source_updated_at": "2026-09-22 11:08:41",
+  "settled_through": "2026-09-21",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
@@ -708,15 +708,6 @@
       "rarity": "limited"
     },
     {
-      "display_name": "锦暔",
-      "badge_key": "wimbledon-2026",
-      "title": "温网限定",
-      "subtitle": "赛事限定",
-      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "张的臻",
       "badge_key": "wimbledon-2026",
       "title": "温网限定",
@@ -745,15 +736,6 @@
     },
     {
       "display_name": "披头散发13",
-      "badge_key": "wimbledon-2026",
-      "title": "温网限定",
-      "subtitle": "赛事限定",
-      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
-      "display_name": "okok",
       "badge_key": "wimbledon-2026",
       "title": "温网限定",
       "subtitle": "赛事限定",
@@ -816,12 +798,12 @@
       "rarity": "limited"
     },
     {
-      "display_name": "袁天罡",
-      "badge_key": "wimbledon-2026",
-      "title": "温网限定",
-      "subtitle": "赛事限定",
-      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "display_name": "是月牙呦",
+      "badge_key": "medvedev-campus-days",
+      "title": "梅德韦杰夫·青葱校园",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v20/optimized/medvedev/badge.webp",
+      "thumb_url": "assets/manager/badges/ui-v20/optimized/medvedev/thumb.webp",
       "rarity": "limited"
     },
     {
@@ -871,15 +853,6 @@
     },
     {
       "display_name": "无名之辈",
-      "badge_key": "wimbledon-2026",
-      "title": "温网限定",
-      "subtitle": "赛事限定",
-      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
-      "display_name": "猫崽孑",
       "badge_key": "wimbledon-2026",
       "title": "温网限定",
       "subtitle": "赛事限定",
@@ -987,30 +960,12 @@
       "rarity": "limited"
     },
     {
-      "display_name": "我在江边喝奶茶",
-      "badge_key": "alcaraz-bee-duck",
-      "title": "阿卡蜜蜂鸭",
-      "subtitle": "球员纪念",
-      "image_url": "assets/manager/badges/ui-v18/optimized/bee-duck-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v18/optimized/bee-duck-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "单依纯唯一滴老婆",
       "badge_key": "zheng-queen",
       "title": "郑钦文Queen",
       "subtitle": "球员纪念",
       "image_url": "assets/manager/badges/ui-v5/optimized/zheng-badge-640.webp",
       "thumb_url": "assets/manager/badges/ui-v5/optimized/zheng-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
-      "display_name": "+835500913",
-      "badge_key": "federer-eternal",
-      "title": "费德勒优雅永恒",
-      "subtitle": "球员纪念",
-      "image_url": "assets/manager/badges/ui-v18/optimized/federer-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v18/optimized/federer-badge-640.webp",
       "rarity": "limited"
     },
     {
@@ -1230,6 +1185,15 @@
       "rarity": "limited"
     },
     {
+      "display_name": "第七路单车",
+      "badge_key": "rotten-cabbage",
+      "title": "烂白菜烂之泪伤",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/rotten-cabbage-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/rotten-cabbage-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
       "display_name": "Sirius",
       "badge_key": "wimbledon-2026",
       "title": "温网限定",
@@ -1266,30 +1230,12 @@
       "rarity": "limited"
     },
     {
-      "display_name": "是月牙呦",
-      "badge_key": "luwang-friend",
-      "title": "炉网挚友",
-      "subtitle": "炉友纪念",
-      "image_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "wennuan78",
       "badge_key": "federer-eternal",
       "title": "费德勒优雅永恒",
       "subtitle": "球员纪念",
       "image_url": "assets/manager/badges/ui-v18/optimized/federer-badge-640.webp",
       "thumb_url": "assets/manager/badges/ui-v18/optimized/federer-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
-      "display_name": "跃进",
-      "badge_key": "luwang-friend",
-      "title": "炉网挚友",
-      "subtitle": "炉友纪念",
-      "image_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
       "rarity": "limited"
     },
     {
@@ -1302,12 +1248,30 @@
       "rarity": "limited"
     },
     {
+      "display_name": "跃进",
+      "badge_key": "luwang-friend",
+      "title": "炉网挚友",
+      "subtitle": "炉友纪念",
+      "image_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
       "display_name": "萨卡外",
       "badge_key": "nadal-clay-soul",
       "title": "纳达尔赤土之魂",
       "subtitle": "球员纪念",
       "image_url": "assets/manager/badges/ui-v18/optimized/nadal-badge-640.webp",
       "thumb_url": "assets/manager/badges/ui-v18/optimized/nadal-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "一位神秘的来Ke",
+      "badge_key": "usopen-night-2026",
+      "title": "2026美网·不夜之境",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v20/optimized/usopen/badge.webp",
+      "thumb_url": "assets/manager/badges/ui-v20/optimized/usopen/thumb.webp",
       "rarity": "limited"
     },
     {
@@ -1356,6 +1320,15 @@
       "rarity": "limited"
     },
     {
+      "display_name": "猫崽孑",
+      "badge_key": "usopen-night-2026",
+      "title": "2026美网·不夜之境",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v20/optimized/usopen/badge.webp",
+      "thumb_url": "assets/manager/badges/ui-v20/optimized/usopen/thumb.webp",
+      "rarity": "limited"
+    },
+    {
       "display_name": "风泽_2022",
       "badge_key": "usopen-night-2026",
       "title": "2026美网·不夜之境",
@@ -1366,6 +1339,51 @@
     },
     {
       "display_name": "15804031803",
+      "badge_key": "usopen-night-2026",
+      "title": "2026美网·不夜之境",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v20/optimized/usopen/badge.webp",
+      "thumb_url": "assets/manager/badges/ui-v20/optimized/usopen/thumb.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "okok",
+      "badge_key": "usopen-night-2026",
+      "title": "2026美网·不夜之境",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v20/optimized/usopen/badge.webp",
+      "thumb_url": "assets/manager/badges/ui-v20/optimized/usopen/thumb.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "锦暔",
+      "badge_key": "usopen-night-2026",
+      "title": "2026美网·不夜之境",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v20/optimized/usopen/badge.webp",
+      "thumb_url": "assets/manager/badges/ui-v20/optimized/usopen/thumb.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "东尼冠科娃",
+      "badge_key": "usopen-night-2026",
+      "title": "2026美网·不夜之境",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v20/optimized/usopen/badge.webp",
+      "thumb_url": "assets/manager/badges/ui-v20/optimized/usopen/thumb.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "180mike",
+      "badge_key": "usopen-night-2026",
+      "title": "2026美网·不夜之境",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v20/optimized/usopen/badge.webp",
+      "thumb_url": "assets/manager/badges/ui-v20/optimized/usopen/thumb.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "羊哈奇",
       "badge_key": "usopen-night-2026",
       "title": "2026美网·不夜之境",
       "subtitle": "赛事限定",
@@ -1392,6 +1410,42 @@
       "rarity": "limited"
     },
     {
+      "display_name": "袁天罡",
+      "badge_key": "usopen-night-2026",
+      "title": "2026美网·不夜之境",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v20/optimized/usopen/badge.webp",
+      "thumb_url": "assets/manager/badges/ui-v20/optimized/usopen/thumb.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "我在江边喝奶茶",
+      "badge_key": "usopen-night-2026",
+      "title": "2026美网·不夜之境",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v20/optimized/usopen/badge.webp",
+      "thumb_url": "assets/manager/badges/ui-v20/optimized/usopen/thumb.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "尊贵的娃老师",
+      "badge_key": "rybakina-snow-silence",
+      "title": "莱巴金娜·雪落无声",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v20/optimized/rybakina/badge.webp",
+      "thumb_url": "assets/manager/badges/ui-v20/optimized/rybakina/thumb.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "樱沫雪99",
+      "badge_key": "usopen-night-2026",
+      "title": "2026美网·不夜之境",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v20/optimized/usopen/badge.webp",
+      "thumb_url": "assets/manager/badges/ui-v20/optimized/usopen/thumb.webp",
+      "rarity": "limited"
+    },
+    {
       "display_name": "x1234",
       "badge_key": "usopen-night-2026",
       "title": "2026美网·不夜之境",
@@ -1410,15 +1464,6 @@
       "rarity": "limited"
     },
     {
-      "display_name": "第七路单车",
-      "badge_key": "usopen-night-2026",
-      "title": "2026美网·不夜之境",
-      "subtitle": "赛事限定",
-      "image_url": "assets/manager/badges/ui-v20/optimized/usopen/badge.webp",
-      "thumb_url": "assets/manager/badges/ui-v20/optimized/usopen/thumb.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "加多宝",
       "badge_key": "usopen-night-2026",
       "title": "2026美网·不夜之境",
@@ -1428,12 +1473,12 @@
       "rarity": "limited"
     },
     {
-      "display_name": "尊贵的娃老师",
-      "badge_key": "rybakina-snow-silence",
-      "title": "莱巴金娜·雪落无声",
-      "subtitle": "球员纪念",
-      "image_url": "assets/manager/badges/ui-v20/optimized/rybakina/badge.webp",
-      "thumb_url": "assets/manager/badges/ui-v20/optimized/rybakina/thumb.webp",
+      "display_name": "+835500913",
+      "badge_key": "usopen-night-2026",
+      "title": "2026美网·不夜之境",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v20/optimized/usopen/badge.webp",
+      "thumb_url": "assets/manager/badges/ui-v20/optimized/usopen/thumb.webp",
       "rarity": "limited"
     },
     {
@@ -1482,15 +1527,6 @@
       "rarity": "limited"
     },
     {
-      "display_name": "沈女士",
-      "badge_key": "usopen-night-2026",
-      "title": "2026美网·不夜之境",
-      "subtitle": "赛事限定",
-      "image_url": "assets/manager/badges/ui-v20/optimized/usopen/badge.webp",
-      "thumb_url": "assets/manager/badges/ui-v20/optimized/usopen/thumb.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "yjkcarl",
       "badge_key": "usopen-night-2026",
       "title": "2026美网·不夜之境",
@@ -1515,6 +1551,15 @@
       "subtitle": "赛事限定",
       "image_url": "assets/manager/badges/ui-v20/optimized/usopen/badge.webp",
       "thumb_url": "assets/manager/badges/ui-v20/optimized/usopen/thumb.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "沈女士",
+      "badge_key": "rublev-red-string",
+      "title": "卢布列夫·赤弦不息",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v20/optimized/rublev/badge.webp",
+      "thumb_url": "assets/manager/badges/ui-v20/optimized/rublev/thumb.webp",
       "rarity": "limited"
     }
   ]
