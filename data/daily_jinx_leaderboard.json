@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-09-22T03:08:44.267Z",
-  "source_updated_at": "2026-09-22 11:08:41",
-  "settled_through": "2026-09-21",
+  "updated_at": "2026-09-23T03:08:59.628Z",
+  "source_updated_at": "2026-09-23 11:08:57",
+  "settled_through": "2026-09-22",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
@@ -807,15 +807,6 @@
       "rarity": "limited"
     },
     {
-      "display_name": "抬头望望天",
-      "badge_key": "wimbledon-2026",
-      "title": "温网限定",
-      "subtitle": "赛事限定",
-      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "薄荷薄荷",
       "badge_key": "wimbledon-2026",
       "title": "温网限定",
@@ -924,15 +915,6 @@
       "rarity": "limited"
     },
     {
-      "display_name": "滑板儿",
-      "badge_key": "wimbledon-2026",
-      "title": "温网限定",
-      "subtitle": "赛事限定",
-      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "F-orestcold",
       "badge_key": "wimbledon-2026",
       "title": "温网限定",
@@ -970,15 +952,6 @@
     },
     {
       "display_name": "日海岸",
-      "badge_key": "wimbledon-2026",
-      "title": "温网限定",
-      "subtitle": "赛事限定",
-      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
-      "display_name": "九墨",
       "badge_key": "wimbledon-2026",
       "title": "温网限定",
       "subtitle": "赛事限定",
@@ -1047,15 +1020,6 @@
       "subtitle": "炉友纪念",
       "image_url": "assets/manager/badges/ui-v18/optimized/who-leather-badge-640.webp",
       "thumb_url": "assets/manager/badges/ui-v18/optimized/who-leather-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
-      "display_name": "Rocky",
-      "badge_key": "gauff-energy",
-      "title": "高芙果切能量",
-      "subtitle": "球员纪念",
-      "image_url": "assets/manager/badges/ui-v18/optimized/gauff-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v18/optimized/gauff-badge-640.webp",
       "rarity": "limited"
     },
     {
@@ -1356,6 +1320,15 @@
       "rarity": "limited"
     },
     {
+      "display_name": "Rocky",
+      "badge_key": "usopen-night-2026",
+      "title": "2026美网·不夜之境",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v20/optimized/usopen/badge.webp",
+      "thumb_url": "assets/manager/badges/ui-v20/optimized/usopen/thumb.webp",
+      "rarity": "limited"
+    },
+    {
       "display_name": "锦暔",
       "badge_key": "usopen-night-2026",
       "title": "2026美网·不夜之境",
@@ -1384,6 +1357,33 @@
     },
     {
       "display_name": "羊哈奇",
+      "badge_key": "usopen-night-2026",
+      "title": "2026美网·不夜之境",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v20/optimized/usopen/badge.webp",
+      "thumb_url": "assets/manager/badges/ui-v20/optimized/usopen/thumb.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "滑板儿",
+      "badge_key": "usopen-night-2026",
+      "title": "2026美网·不夜之境",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v20/optimized/usopen/badge.webp",
+      "thumb_url": "assets/manager/badges/ui-v20/optimized/usopen/thumb.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "抬头望望天",
+      "badge_key": "usopen-night-2026",
+      "title": "2026美网·不夜之境",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v20/optimized/usopen/badge.webp",
+      "thumb_url": "assets/manager/badges/ui-v20/optimized/usopen/thumb.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "哈哈",
       "badge_key": "usopen-night-2026",
       "title": "2026美网·不夜之境",
       "subtitle": "赛事限定",
@@ -1488,6 +1488,15 @@
       "subtitle": "球员纪念",
       "image_url": "assets/manager/badges/ui-v20/optimized/sinner/badge.webp",
       "thumb_url": "assets/manager/badges/ui-v20/optimized/sinner/thumb.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "九墨",
+      "badge_key": "usopen-night-2026",
+      "title": "2026美网·不夜之境",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v20/optimized/usopen/badge.webp",
+      "thumb_url": "assets/manager/badges/ui-v20/optimized/usopen/thumb.webp",
       "rarity": "limited"
     },
     {
