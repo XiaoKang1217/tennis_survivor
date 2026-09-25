@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-09-24T03:08:53.853Z",
-  "source_updated_at": "2026-09-24 11:08:51",
-  "settled_through": "2026-09-23",
+  "updated_at": "2026-09-25T03:08:50.879Z",
+  "source_updated_at": "2026-09-25 11:08:49",
+  "settled_through": "2026-09-24",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
@@ -699,15 +699,6 @@
       "rarity": "limited"
     },
     {
-      "display_name": "唯爱白富美",
-      "badge_key": "wang-xinyu-mermaid",
-      "title": "王欣瑜美人鱼",
-      "subtitle": "球员纪念",
-      "image_url": "assets/manager/badges/ui-v5/optimized/mermaid-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/mermaid-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "张的臻",
       "badge_key": "wimbledon-2026",
       "title": "温网限定",
@@ -1041,15 +1032,6 @@
       "rarity": "limited"
     },
     {
-      "display_name": "本东奇",
-      "badge_key": "nadal-clay-soul",
-      "title": "纳达尔赤土之魂",
-      "subtitle": "球员纪念",
-      "image_url": "assets/manager/badges/ui-v18/optimized/nadal-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v18/optimized/nadal-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "阿vvvvv",
       "badge_key": "federer-eternal",
       "title": "费德勒优雅永恒",
@@ -1275,15 +1257,6 @@
       "rarity": "limited"
     },
     {
-      "display_name": "风尘才虚",
-      "badge_key": "zheng-dawn-feather",
-      "title": "郑钦文·破晓之羽",
-      "subtitle": "球员纪念",
-      "image_url": "assets/manager/badges/ui-v20/optimized/zheng/badge.webp",
-      "thumb_url": "assets/manager/badges/ui-v20/optimized/zheng/thumb.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "猫崽孑",
       "badge_key": "usopen-night-2026",
       "title": "2026美网·不夜之境",
@@ -1348,6 +1321,24 @@
     },
     {
       "display_name": "荞麦皮",
+      "badge_key": "usopen-night-2026",
+      "title": "2026美网·不夜之境",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v20/optimized/usopen/badge.webp",
+      "thumb_url": "assets/manager/badges/ui-v20/optimized/usopen/thumb.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "15790258",
+      "badge_key": "usopen-night-2026",
+      "title": "2026美网·不夜之境",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v20/optimized/usopen/badge.webp",
+      "thumb_url": "assets/manager/badges/ui-v20/optimized/usopen/thumb.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "haoza",
       "badge_key": "usopen-night-2026",
       "title": "2026美网·不夜之境",
       "subtitle": "赛事限定",
@@ -1455,6 +1446,15 @@
       "rarity": "limited"
     },
     {
+      "display_name": "唯爱白富美",
+      "badge_key": "mensik-light",
+      "title": "门希克·沐光时刻",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v20/optimized/mensik/badge.webp",
+      "thumb_url": "assets/manager/badges/ui-v20/optimized/mensik/thumb.webp",
+      "rarity": "limited"
+    },
+    {
       "display_name": "x1234",
       "badge_key": "usopen-night-2026",
       "title": "2026美网·不夜之境",
@@ -1533,6 +1533,24 @@
       "subtitle": "球员纪念",
       "image_url": "assets/manager/badges/ui-v20/optimized/sinner/badge.webp",
       "thumb_url": "assets/manager/badges/ui-v20/optimized/sinner/thumb.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "本东奇",
+      "badge_key": "alcaraz-golden-lion",
+      "title": "阿尔卡拉斯·金狮逐光",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v20/optimized/alcaraz/badge.webp",
+      "thumb_url": "assets/manager/badges/ui-v20/optimized/alcaraz/thumb.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "风尘才虚",
+      "badge_key": "mensik-light",
+      "title": "门希克·沐光时刻",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v20/optimized/mensik/badge.webp",
+      "thumb_url": "assets/manager/badges/ui-v20/optimized/mensik/thumb.webp",
       "rarity": "limited"
     },
     {
