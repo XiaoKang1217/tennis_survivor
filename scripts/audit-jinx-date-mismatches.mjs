@@ -31,4 +31,18 @@ for (const vote of votes) {
     if (vote.created_at > group.latest) group.latest = vote.created_at;
   }
 }
-console.log(JSON.stringify({vote_rows: votes.length, ledger_rows: ledger.length, candidates: [...groups.values()]}, null, 2));
+const recent = new Map();
+for (const vote of votes.filter(v => v.vote_date >= '2026-09-20')) {
+  for (const player of vote.selected_players) {
+    const key = [vote.vote_date, vote.tour, vote.event_id, player].join('|');
+    if (!recent.has(key)) recent.set(key, {key, votes: 0, credited: 0, score: 0, earliest: vote.created_at, latest: vote.created_at});
+    const r = recent.get(key);
+    r.votes++;
+    const hits = ledger.filter(l => l.vote_id === vote.id && l.player_name === player);
+    r.credited += hits.length;
+    r.score += hits.reduce((n, l) => n + l.score, 0);
+    if (vote.created_at < r.earliest) r.earliest = vote.created_at;
+    if (vote.created_at > r.latest) r.latest = vote.created_at;
+  }
+}
+console.log(JSON.stringify({vote_rows: votes.length, ledger_rows: ledger.length, recent: [...recent.values()], candidates: [...groups.values()]}, null, 2));
