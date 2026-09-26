@@ -17,6 +17,7 @@ import requests
 BASE_URL = "https://www.live-tennis.cn"
 OUT_PATH = os.path.join("data", "daily_jinx_settlements.json")
 PICK_COUNTS_PATH = os.path.join("data", "daily_jinx_pick_counts.json")
+COUNT_CORRECTIONS_PATH = os.path.join("data", "daily_jinx_count_corrections.json")
 START_DATE = datetime(2026, 5, 24).date()
 REFRESH_DAYS = 10
 
@@ -151,13 +152,21 @@ def load_pick_count_snapshots():
     return snapshots
 
 
-def attach_pick_counts(records, snapshots):
+def attach_pick_counts(records, snapshots, corrections=()):
+    corrected = {
+        (r["date"], r["tour"], r["event_id"], r["match_id"], r["player_name"]): r
+        for r in corrections
+    }
     out = []
     for item in records:
         row = dict(item)
         key = (row.get("date"), row.get("tour"), row.get("event_id") or "")
         player_counts = snapshots.get(key) or {}
         row["pick_count"] = int(player_counts.get(row.get("player_name"), row.get("pick_count") or 0) or 0)
+        correction = corrected.get(tuple(row.get(k) for k in ("date", "tour", "event_id", "match_id", "player_name")))
+        if correction:
+            row["pick_count"] = correction["pick_count"]
+            row["pick_count_official_day"] = correction["official_day"]
         out.append(row)
     return out
 
@@ -168,6 +177,10 @@ def main():
     yesterday = today - timedelta(days=1)
     existing = load_existing()
     pick_count_snapshots = load_pick_count_snapshots()
+    corrections = []
+    if os.path.exists(COUNT_CORRECTIONS_PATH):
+        with open(COUNT_CORRECTIONS_PATH, encoding="utf-8") as f:
+            corrections = json.load(f)["corrections"]
 
     if yesterday < START_DATE:
         settlements = []
@@ -195,7 +208,7 @@ def main():
 
         refresh_keys = successful_refresh_dates
         kept = [x for x in existing if x.get("date") not in refresh_keys]
-        settlements = attach_pick_counts(kept + refreshed, pick_count_snapshots)
+        settlements = attach_pick_counts(kept + refreshed, pick_count_snapshots, corrections)
         settlements.sort(key=lambda x: (x.get("date", ""), x.get("tour", ""), x.get("event_id", ""), x.get("player_name", "")))
         settled_dates = {x.get("date") for x in settlements if x.get("date")}
         settled_dates.update(successful_refresh_dates)

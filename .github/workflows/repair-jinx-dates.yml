@@ -1,17 +1,33 @@
-name: Audit Jinx Date Mismatches
+name: Repair Jinx Date Mismatches
 on:
   workflow_dispatch:
+    inputs:
+      apply:
+        description: Apply audited count corrections and publish leaderboard
+        type: boolean
+        default: false
 jobs:
   audit:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - run: node scripts/audit-jinx-date-mismatches.mjs
+      - run: node scripts/repair-jinx-counts.mjs ${{ inputs.apply && '--apply' || '' }}
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      - uses: actions/setup-python@v5
+        if: inputs.apply
+        with:
+          python-version: '3.11'
+      - run: python scripts/build_data_manifest.py
+        if: inputs.apply
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        if: inputs.apply
+        with:
+          commit_message: Repair missed jinx scores using official survivor dates
+          file_pattern: data/daily_jinx_settlements.json data/daily_jinx_leaderboard.json data/manifest.json
