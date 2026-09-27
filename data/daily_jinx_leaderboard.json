@@ -1,24 +1,24 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-09-26T05:01:15.096Z",
-  "source_updated_at": "2026-09-26 11:09:23",
-  "settled_through": "2026-09-25",
+  "updated_at": "2026-09-27T03:09:20.277Z",
+  "source_updated_at": "2026-09-27 11:09:18",
+  "settled_through": "2026-09-26",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
     {
       "tour": "ATP",
       "display_name": "第七路单车",
-      "score": 2419,
-      "hit_count": 84,
-      "scored_days": 58
+      "score": 2431,
+      "hit_count": 85,
+      "scored_days": 59
     },
     {
       "tour": "ATP",
       "display_name": "阿vvvvv",
-      "score": 2057,
-      "hit_count": 86,
-      "scored_days": 61
+      "score": 2069,
+      "hit_count": 87,
+      "scored_days": 62
     },
     {
       "tour": "ATP",
@@ -30,37 +30,37 @@
     {
       "tour": "ATP",
       "display_name": "AKA90",
-      "score": 1832,
-      "hit_count": 74,
-      "scored_days": 56
+      "score": 1844,
+      "hit_count": 75,
+      "scored_days": 57
     },
     {
       "tour": "ATP",
       "display_name": "xxx又坑人了",
-      "score": 1620,
-      "hit_count": 66,
-      "scored_days": 51
+      "score": 1632,
+      "hit_count": 67,
+      "scored_days": 52
     },
     {
       "tour": "ATP",
       "display_name": "莫斯特",
-      "score": 1353,
-      "hit_count": 45,
-      "scored_days": 36
+      "score": 1365,
+      "hit_count": 46,
+      "scored_days": 37
     },
     {
       "tour": "ATP",
       "display_name": "就是玩",
-      "score": 1276,
-      "hit_count": 57,
-      "scored_days": 41
+      "score": 1288,
+      "hit_count": 58,
+      "scored_days": 42
     },
     {
       "tour": "ATP",
       "display_name": "网球人",
-      "score": 995,
-      "hit_count": 48,
-      "scored_days": 35
+      "score": 1007,
+      "hit_count": 49,
+      "scored_days": 36
     },
     {
       "tour": "ATP",
@@ -93,9 +93,9 @@
     {
       "tour": "ATP",
       "display_name": "五陵@神光",
-      "score": 464,
-      "hit_count": 26,
-      "scored_days": 18
+      "score": 476,
+      "hit_count": 27,
+      "scored_days": 19
     },
     {
       "tour": "ATP",
@@ -1131,15 +1131,6 @@
       "rarity": "limited"
     },
     {
-      "display_name": "第七路单车",
-      "badge_key": "rotten-cabbage",
-      "title": "烂白菜烂之泪伤",
-      "subtitle": "球员纪念",
-      "image_url": "assets/manager/badges/ui-v18/optimized/rotten-cabbage-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v18/optimized/rotten-cabbage-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "Sirius",
       "badge_key": "wimbledon-2026",
       "title": "温网限定",
@@ -1452,6 +1443,15 @@
       "subtitle": "球员纪念",
       "image_url": "assets/manager/badges/ui-v20/optimized/mensik/badge.webp",
       "thumb_url": "assets/manager/badges/ui-v20/optimized/mensik/thumb.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "第七路单车",
+      "badge_key": "usopen-night-2026",
+      "title": "2026美网·不夜之境",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v20/optimized/usopen/badge.webp",
+      "thumb_url": "assets/manager/badges/ui-v20/optimized/usopen/thumb.webp",
       "rarity": "limited"
     },
     {
