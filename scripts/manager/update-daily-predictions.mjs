@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { parseArgs, readJson } from './lib/manager-utils.mjs';
 import { SupabaseRestClient } from './lib/supabase-rest.mjs';
-import { predictionCycle, shiftOfficialDate } from './lib/prediction-cycle.mjs';
+import { predictionCycle, shiftOfficialDate, predictionDateEnabled } from './lib/prediction-cycle.mjs';
 import {
   MEDIAN_SELECTION_START_DATE,
   refreshDailyPredictionGamesByMedian
@@ -72,6 +72,12 @@ const settlement = await client.rpc('tour_manager_settle_daily_predictions', {
   p_through_date: throughDate
 });
 console.log(`Daily prediction settlement: ${JSON.stringify(settlement)}`);
+
+// Settle older games normally; the new station's opening date only gates publication.
+if (!predictionDateEnabled(predictionConfig, today)) {
+  console.log(`Prediction publication waits until official schedule day ${predictionConfig.starts_on}.`);
+  process.exit(0);
+}
 
 const refresh = today >= MEDIAN_SELECTION_START_DATE
   ? await refreshDailyPredictionGamesByMedian({

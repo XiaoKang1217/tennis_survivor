@@ -3000,10 +3000,10 @@ function managerCanadaComboScenario(gross,rounds){
   var raw=stable+dual+jewel+hopeBonus,cap=Number(combo.total_cap)||700,bonus=Math.min(raw,cap);
   var hopeMode=managerVillageHopeUserSelected()?'自定义选择':'自动认定';
   return {gross:gross,stable:stable,finalBonus:dual,champBonus:0,jewelBonus:jewel,smallBusinessBonus:0,dualBonus:dual,villageHopeBonus:hopeBonus,villageHopePlayer:hope&&hope.player||null,bonus:bonus,comboVersion:rules.combo_version||'canada_2026_v1',comboCap:cap,comboRaw:raw,comboItems:[
-    {label:'稳健经营',amount:stable,desc:'至少3人，50%阵容进QF，毛收益10%，封顶300'},
-    {label:'双线经营',amount:dual,desc:'ATP/WTA各有人进R4/QF/SF/F/W，最高档+50/+100/+250/+450/+700'},
-    {label:'慧眼识珠',amount:jewel,desc:'原价不高于150的球员进R4/QF/SF/F/W，最高档+150/+250/+350/+550/+700'},
-    {label:'全村的希望',amount:hopeBonus,desc:(hope?hopeMode+' '+managerPlayerDisplayName(hope.player,true)+'（原价 '+hope.player.price+'）':(managerVillageHopeUserSelected()?'提交时从阵容中自定义选择':'提交时自动认定阵容原价最高球员'))+'，进R4/QF/SF/F/W最高档+50/+100/+250/+400/+700'}
+    {label:'稳健经营',amount:stable,desc:'至少'+minPlayers+'人，'+Math.round(qfRatio*100)+'%阵容进QF，毛收益'+Math.round(grossRate*100)+'%，封顶'+steadyCap},
+    {label:'双线经营',amount:dual,desc:'ATP/WTA各有人进R4/QF/SF/F/W，最高档'+managerComboRewardText(dualRules)},
+    {label:'慧眼识珠',amount:jewel,desc:'原价不高于'+maxPrice+'的球员进R4/QF/SF/F/W，最高档'+managerComboRewardText(valueRules)},
+    {label:'全村的希望',amount:hopeBonus,desc:(hope?hopeMode+' '+managerPlayerDisplayName(hope.player,true)+'（原价 '+hope.player.price+'）':(managerVillageHopeUserSelected()?'提交时从阵容中自定义选择':'提交时自动认定阵容原价最高球员'))+'，进R4/QF/SF/F/W最高档'+managerComboRewardText(hopeRules)}
   ]};
 }
 function managerWimbledonJewelBonus(round){
@@ -3231,7 +3231,7 @@ function managerWelfareUsesThisSeason(){
     if(!(/low_income_discount|welfare_discount|低保折扣/i.test(type)||amount>0))return;
     var year=Number(row&&row.season||meta.season||String(row&&row.created_at||row&&row.date||'').slice(0,4));
     if(year&&year!==managerSeason())return;
-    var key=row&&row.lineup_id||meta.lineup_id||row&&row.station_key||meta.station_key||row&&row.station||row&&row.stationLabel||row&&row.id;
+    var key=row&&row.lineup_id||meta.lineup_id||row&&row.id;
     if(key)stations[String(key)]=true;
   });
   return Object.keys(stations).length;
@@ -4349,17 +4349,23 @@ function managerComboSelectionFromRules(rules){
   var combo=rules&&rules.combo||MANAGER_ACTIVE_EVENTS&&MANAGER_ACTIVE_EVENTS.rules&&MANAGER_ACTIVE_EVENTS.rules.combo||{};
   return String(combo.village_hope&&combo.village_hope.selection||'highest_original_price_at_submission');
 }
+function managerComboRewardText(table){
+  return ['R16','QF','SF','F','W'].map(function(round){return '+'+(Number(table&&table[round])||0);}).join('/');
+}
 function managerCanadaComboRulesHtml(rules){
+  rules=rules||MANAGER_ACTIVE_EVENTS&&MANAGER_ACTIVE_EVENTS.rules||{};
+  var combo=rules.combo||{},steady=combo.steady||{},welfare=combo.welfare||{},cap=Number(combo.total_cap)||700;
   var userSelected=managerComboSelectionFromRules(rules)==='user_selected_at_submission';
   var villageLines=userSelected
-    ? ['提交阵容时，弹窗里从阵容球员中自定义选择“全村的希望”。','TA 达到 R4/QF/SF/F/W：+50/+100/+250/+400/+700。','认定后固定，不随预测轮次或价格变化。']
-    : ['提交阵容时，系统自动把签约原价最高的球员认定为“全村的希望”。','TA 达到 R4/QF/SF/F/W：+50/+100/+250/+400/+700。','认定后固定，不随预测轮次或价格变化。'];
-  return managerComboRuleSection('稳健经营',['阵容至少 3 人。','至少 50% 阵容进入 QF，奖励球员毛收益的 10%，封顶 300。'])+
-    managerComboRuleSection('双线经营',['阵容里 ATP/WTA 都有人。','两边各至少 1 人达到 R4/QF/SF/F/W：+50/+100/+250/+450/+700。','只取最高档。'])+
-    managerComboRuleSection('慧眼识珠',['签约原价不高于 150 的球员达到 R4/QF/SF/F/W：+150/+250/+350/+550/+700。','每个阵容最多触发 1 次，只取最高档。'])+
+    ? ['提交阵容时，弹窗里从阵容球员中自定义选择“全村的希望”。']
+    : ['提交阵容时，系统自动把签约原价最高的球员认定为“全村的希望”。'];
+  villageLines.push('TA 达到 R4/QF/SF/F/W：'+managerComboRewardText(combo.village_hope)+'。','认定后固定，不随预测轮次或价格变化。');
+  return managerComboRuleSection('稳健经营',['阵容至少 '+(Number(steady.min_players)||3)+' 人。','至少 '+Math.round((Number(steady.qf_ratio)||.5)*100)+'% 阵容进入 QF，奖励球员毛收益的 '+Math.round((Number(steady.gross_rate)||.1)*100)+'%，封顶 '+(Number(steady.cap)||300)+'。'])+
+    managerComboRuleSection('双线经营',['阵容里 ATP/WTA 都有人。','两边各至少 1 人达到 R4/QF/SF/F/W：'+managerComboRewardText(combo.dual_tour)+'。','只取最高档。'])+
+    managerComboRuleSection('慧眼识珠',['签约原价不高于 '+(Number(combo.value_pick&&combo.value_pick.max_price)||150)+' 的球员达到 R4/QF/SF/F/W：'+managerComboRewardText(combo.value_pick)+'。','每个阵容最多触发 1 次，只取最高档。'])+
     managerComboRuleSection('全村的希望',villageLines)+
-    managerComboRuleSection('四项赛果 Combo 合计封顶 700',['稳健经营、双线经营、慧眼识珠、全村的希望共同参与 700 封顶。'])+
-    managerComboRuleSection('低保办（独立于 700 封顶）',['以提交阵容时的经纪人本金为准，本金 ≤500 且阵容至少 3 人可触发。','签约总原价即时减免 20%，最高减免 300。','每位用户整个赛季最多触发 3 次。','低保减免不占用四项赛果 Combo 的 700 上限。']);
+    managerComboRuleSection('四项赛果 Combo 合计封顶 '+cap,['稳健经营、双线经营、慧眼识珠、全村的希望共同参与 '+cap+' 封顶。'])+
+    managerComboRuleSection('低保办（独立于 '+cap+' 封顶）',['以提交阵容时的经纪人本金为准，本金 ≤'+(Number(welfare.principal_max)||500)+' 且阵容至少 '+(Number(welfare.min_players)||3)+' 人可触发。','签约总原价即时减免 '+Math.round((Number(welfare.discount_rate)||.2)*100)+'%，最高减免 '+(Number(welfare.cap)||300)+'。','每位用户整个赛季最多触发 '+(Number(welfare.max_uses_per_season)||3)+' 次。','低保减免不占用四项赛果 Combo 的 '+cap+' 上限。']);
 }
 function managerCanadaComboRuleCard(source,title){
   source=source||MANAGER_ACTIVE_EVENTS&&MANAGER_ACTIVE_EVENTS.rules||{};
@@ -4599,7 +4605,7 @@ function managerRenderRules(){
     '</div>'+managerRewardTable()+'</div></details>'+
     '<details open><summary>三、每日结算、Combo 与策略边界</summary><div class="rule-body"><div class="manager-rule-grid">'+
       managerRuleCard('每日结算',['每天抓取昨天完赛结果。','同一合同按新到达轮次补差额，不重复发放。','结算同步到我的阵容、配置大厅和公共榜单。','本站净收益榜只统计球员收益 + Combo，不含竞猜收益。'])+
-      managerRuleCard('每日竞猜',['每天按本站竞猜分组各选 1 场比赛；首尔、新加坡本站各 1 场。','比赛开始前可以提交或修改。','猜对一场 +10，经次日结算进入本金。'])+
+      managerRuleCard('每日竞猜',['每天按本站配置的竞猜分组各选 1 场比赛。','比赛开始前可以提交或修改。','猜对一场 +10，经次日结算进入本金。'])+
       managerCurrentComboRuleCard()+
       managerPreviousComboRuleCard()+
       managerRuleCard('退赛替补',['球员 R1 开打后退赛，按实际赛果结算。','球员 R1 上场前退赛且签位被替补顶替，购买该球员的合同统一替换为顶替签位的新球员。','替补记录写入后台替补表和我的收益备注。'])+

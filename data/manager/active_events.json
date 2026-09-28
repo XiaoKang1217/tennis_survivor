@@ -1,73 +1,62 @@
 {
   "season": 2026,
-  "station_key": "2026-w39-seoul-singapore",
-  "station_name": "WTA 首尔 + WTA 新加坡",
+  "station_key": "2026-w40-beijing",
+  "station_name": "ATP 北京 + WTA 北京",
   "survivor_aligned": false,
   "status": "open",
-  "updated_at": "2026-09-19T20:22:42+08:00",
-  "announcement": "本站换人窗口：北京时间 09/23 01:00～09/23 13:00；首尔、新加坡可以互换。",
+  "updated_at": "2026-09-28T13:03:06.657Z",
+  "announcement": "ATP 北京500 + WTA 北京1000 已开售，北京时间09/30 10:30截止！",
   "daily_prediction": {
+    "starts_on": "2026-09-30",
     "event_groups": [
-      { "tour": "WTA", "event_key": "wta-2026-w39-seoul" },
-      { "tour": "WTA", "event_key": "wta-2026-w39-singapore" }
-    ],
-    "date_overrides": {
-      "2026-09-21": { "wta-2026-w39-seoul": { "last_matches": 2 } }
-    }
+      {
+        "tour": "ATP",
+        "event_key": "atp-2026-w40-beijing"
+      },
+      {
+        "tour": "WTA",
+        "event_key": "wta-2026-w40-beijing"
+      }
+    ]
   },
   "rules": {
-    "station_grant": 500,
+    "station_grant": 1000,
     "cross_tour_transfer": true,
-    "transfer_notice": "首尔、新加坡同一窗口开放，两站球员可以互换。",
     "transfer_fee_rate": 0.15,
     "transfer_welfare_discount": false,
-    "combo_version": "seoul_singapore_2026_v1",
+    "combo_version": "canada_2026_v1",
     "combo_design_status": "confirmed",
     "combo": {
-      "total_cap": 700,
+      "total_cap": 1500,
       "steady": {
-        "min_players": 2,
+        "min_players": 3,
         "qf_ratio": 0.5,
-        "gross_rate": 0.08,
-        "cap": 150
+        "gross_rate": 0.15,
+        "cap": 400
       },
       "dual_tour": {
-        "grouping": "event",
-        "event_keys": [
-          "wta-2026-w39-seoul",
-          "wta-2026-w39-singapore"
-        ],
-        "labels": [
-          "首尔",
-          "新加坡"
-        ],
-        "QF": 60,
-        "SF": 120,
-        "F": 200,
-        "W": 300
+        "R16": 150,
+        "QF": 250,
+        "SF": 350,
+        "F": 550,
+        "W": 700
       },
       "value_pick": {
-        "max_price": 100,
+        "max_price": 150,
         "max_triggers": 1,
-        "QF": 60,
-        "SF": 120,
-        "F": 200,
-        "W": 300
+        "R16": 150,
+        "QF": 250,
+        "SF": 350,
+        "F": 550,
+        "W": 700
       },
-      "small_budget": {
-        "max_cost": 500,
-        "gross_multipliers": [
-          0.75,
-          1,
-          1.25,
-          1.5
-        ],
-        "bonuses": [
-          50,
-          100,
-          150,
-          200
-        ]
+      "village_hope": {
+        "selection": "user_selected_at_submission",
+        "R16": 150,
+        "QF": 250,
+        "SF": 350,
+        "F": 550,
+        "W": 800
       },
       "welfare": {
         "principal_max": 500,
@@ -83,50 +72,50 @@
   },
   "pricing": {
     "market_prices_locked": true,
-    "locked_at": "2026-09-19T12:22:42.000Z",
-    "reason": "Opening prices locked for Seoul 250 + Singapore 500; qualifier replacements inherit their event-specific Q slot price.",
     "publication_version": 1,
-    "price_version": 26091901
+    "price_version": 26092801,
+    "locked_at": "2026-09-28T13:09:38.942Z",
+    "reason": "Opening Beijing prices frozen; qualifiers retain slot price."
   },
-  "notes": [
-    "首尔按 WTA 250 定价和结算，新加坡为 WTA 500。",
-    "本站为双 WTA 特例；双线经营按首尔、新加坡各至少一人判断，后续常规站仍为 ATP + WTA。",
-    "签约金 500；沿用华盛顿四项 Combo 档位，合计封顶 700；低保独立于封顶。",
-    "北京时间 2026-09-19 20:22:42 开售，2026-09-21 10:45 截止。",
-    "首场 R1 正式开赛前，收益弹窗和默认榜单继续显示美网；具体开赛时间待正式赛程确认。",
-    "低保办：提交时本金不超过500，至少3人，原价减免20%且不超过300；2026赛季最多3次。"
-  ],
   "previous_station": {
-    "station_key": "2026-w35-us-open",
-    "station_name": "ATP 美网 + WTA 美网",
-    "publication_version": 4,
-    "publication_file": "publications/2026-w35-us-open-v4.json",
+    "station_key": "2026-w39-seoul-singapore",
+    "station_name": "WTA 首尔 + WTA 新加坡",
+    "publication_version": 1,
+    "publication_file": "publications/2026-w39-seoul-singapore-v1.json",
     "events": [
       {
-        "tour": "ATP",
-        "event_key": "atp-2026-w35-us-open",
-        "data_file": "events/atp-2026-w35-us-open.json",
+        "tour": "WTA",
+        "event_key": "wta-2026-w39-seoul",
+        "data_file": "events/wta-2026-w39-seoul.json",
         "active": false
       },
       {
         "tour": "WTA",
-        "event_key": "wta-2026-w35-us-open",
-        "data_file": "events/wta-2026-w35-us-open.json",
+        "event_key": "wta-2026-w39-singapore",
+        "data_file": "events/wta-2026-w39-singapore.json",
         "active": false
       }
     ]
   },
+  "notes": [
+    "开售价格在完成定价后锁定，资格赛球员落位继承签位价格。",
+    "R1正式开赛前，收益弹窗和默认榜单继续显示首尔＋新加坡。",
+    "四项Combo采用本站北京档位，合计封顶1500，每日按累计应得减已发结差。",
+    "全村的希望由用户提交阵容时指定。",
+    "低保办按2026自然年累计，已用三次不再享受；折扣不计入Combo封顶。",
+    "09/30起，每个官方赛程日ATP北京、WTA北京各选一场竞猜；未公布则等待，不挪用其他日期。"
+  ],
   "events": [
     {
-      "tour": "WTA",
-      "event_key": "wta-2026-w39-seoul",
-      "data_file": "events/wta-2026-w39-seoul.json",
+      "tour": "ATP",
+      "event_key": "atp-2026-w40-beijing",
+      "data_file": "events/atp-2026-w40-beijing.json",
       "active": true
     },
     {
       "tour": "WTA",
-      "event_key": "wta-2026-w39-singapore",
-      "data_file": "events/wta-2026-w39-singapore.json",
+      "event_key": "wta-2026-w40-beijing",
+      "data_file": "events/wta-2026-w40-beijing.json",
       "active": true
     }
   ]

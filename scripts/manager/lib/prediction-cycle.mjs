@@ -4,6 +4,13 @@ export function shiftOfficialDate(date, days) {
   return new Date(Date.parse(date+'T12:00:00Z')+days*86400000).toISOString().slice(0,10);
 }
 
+export function predictionDateEnabled(config, contestDate) {
+  if (!config?.starts_on) return true;
+  shiftOfficialDate(config.starts_on, 0);
+  shiftOfficialDate(contestDate, 0);
+  return contestDate >= config.starts_on;
+}
+
 // raw.date is the source result page's official schedule day, not a converted
 // timestamp. The latest day with live/results evidence is D even if other
 // matches are unfinished. Only unstarted prediction games block publication.
