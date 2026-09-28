@@ -7644,5 +7644,7 @@
   "market_price_lock": {
     "publication_version": 1,
     "locked_at": "2026-09-28T13:09:38.942Z"
-  }
+  },
+  "round1_completed_at": null,
+  "transfer_window_note": "换人窗口为 R1 全部结束后、R2 第一场开始前，由当前站赛程自动更新。"
 }
