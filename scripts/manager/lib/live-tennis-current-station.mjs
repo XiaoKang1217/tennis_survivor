@@ -86,7 +86,7 @@ export async function fetchText(url) {
 }
 
 export function extractLiveTennisDrawId(url = '') {
-  return String(url || '').match(/live-tennis\.cn\/zh\/draw\/([^/]+)\/(\d{4})/)?.[1] || '';
+  return String(url || '').match(/live-tennis\.cn\/zh\/draw\/(?:ajax\/)?(\d+)\/\d{4}(?=\/|[?#]|$)/)?.[1] || '';
 }
 
 export function liveTennisDrawUrl(drawId, season) {
