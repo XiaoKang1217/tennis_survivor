@@ -3001,9 +3001,9 @@ function managerCanadaComboScenario(gross,rounds){
   var hopeMode=managerVillageHopeUserSelected()?'自定义选择':'自动认定';
   return {gross:gross,stable:stable,finalBonus:dual,champBonus:0,jewelBonus:jewel,smallBusinessBonus:0,dualBonus:dual,villageHopeBonus:hopeBonus,villageHopePlayer:hope&&hope.player||null,bonus:bonus,comboVersion:rules.combo_version||'canada_2026_v1',comboCap:cap,comboRaw:raw,comboItems:[
     {label:'稳健经营',amount:stable,desc:'至少'+minPlayers+'人，'+Math.round(qfRatio*100)+'%阵容进QF，毛收益'+Math.round(grossRate*100)+'%，封顶'+steadyCap},
-    {label:'双线经营',amount:dual,desc:'ATP/WTA各有人进R4/QF/SF/F/W，最高档'+managerComboRewardText(dualRules)},
-    {label:'慧眼识珠',amount:jewel,desc:'原价不高于'+maxPrice+'的球员进R4/QF/SF/F/W，最高档'+managerComboRewardText(valueRules)},
-    {label:'全村的希望',amount:hopeBonus,desc:(hope?hopeMode+' '+managerPlayerDisplayName(hope.player,true)+'（原价 '+hope.player.price+'）':(managerVillageHopeUserSelected()?'提交时从阵容中自定义选择':'提交时自动认定阵容原价最高球员'))+'，进R4/QF/SF/F/W最高档'+managerComboRewardText(hopeRules)}
+    {label:'双线经营',amount:dual,desc:'ATP/WTA各有人进16强/QF/SF/F/W，最高档'+managerComboRewardText(dualRules)},
+    {label:'慧眼识珠',amount:jewel,desc:'原价不高于'+maxPrice+'的球员进16强/QF/SF/F/W，最高档'+managerComboRewardText(valueRules)},
+    {label:'全村的希望',amount:hopeBonus,desc:(hope?hopeMode+' '+managerPlayerDisplayName(hope.player,true)+'（原价 '+hope.player.price+'）':(managerVillageHopeUserSelected()?'提交时从阵容中自定义选择':'提交时自动认定阵容原价最高球员'))+'，进16强/QF/SF/F/W最高档'+managerComboRewardText(hopeRules)}
   ]};
 }
 function managerWimbledonJewelBonus(round){
@@ -4359,10 +4359,10 @@ function managerCanadaComboRulesHtml(rules){
   var villageLines=userSelected
     ? ['提交阵容时，弹窗里从阵容球员中自定义选择“全村的希望”。']
     : ['提交阵容时，系统自动把签约原价最高的球员认定为“全村的希望”。'];
-  villageLines.push('TA 达到 R4/QF/SF/F/W：'+managerComboRewardText(combo.village_hope)+'。','认定后固定，不随预测轮次或价格变化。');
+  villageLines.push('TA 达到 16强/QF/SF/F/W：'+managerComboRewardText(combo.village_hope)+'。','认定后固定，不随预测轮次或价格变化。');
   return managerComboRuleSection('稳健经营',['阵容至少 '+(Number(steady.min_players)||3)+' 人。','至少 '+Math.round((Number(steady.qf_ratio)||.5)*100)+'% 阵容进入 QF，奖励球员毛收益的 '+Math.round((Number(steady.gross_rate)||.1)*100)+'%，封顶 '+(Number(steady.cap)||300)+'。'])+
-    managerComboRuleSection('双线经营',['阵容里 ATP/WTA 都有人。','两边各至少 1 人达到 R4/QF/SF/F/W：'+managerComboRewardText(combo.dual_tour)+'。','只取最高档。'])+
-    managerComboRuleSection('慧眼识珠',['签约原价不高于 '+(Number(combo.value_pick&&combo.value_pick.max_price)||150)+' 的球员达到 R4/QF/SF/F/W：'+managerComboRewardText(combo.value_pick)+'。','每个阵容最多触发 1 次，只取最高档。'])+
+    managerComboRuleSection('双线经营',['阵容里 ATP/WTA 都有人。','两边各至少 1 人达到 16强/QF/SF/F/W：'+managerComboRewardText(combo.dual_tour)+'。','只取最高档。'])+
+    managerComboRuleSection('慧眼识珠',['签约原价不高于 '+(Number(combo.value_pick&&combo.value_pick.max_price)||150)+' 的球员达到 16强/QF/SF/F/W：'+managerComboRewardText(combo.value_pick)+'。','每个阵容最多触发 1 次，只取最高档。'])+
     managerComboRuleSection('全村的希望',villageLines)+
     managerComboRuleSection('四项赛果 Combo 合计封顶 '+cap,['稳健经营、双线经营、慧眼识珠、全村的希望共同参与 '+cap+' 封顶。'])+
     managerComboRuleSection('低保办（独立于 '+cap+' 封顶）',['以提交阵容时的经纪人本金为准，本金 ≤'+(Number(welfare.principal_max)||500)+' 且阵容至少 '+(Number(welfare.min_players)||3)+' 人可触发。','签约总原价即时减免 '+Math.round((Number(welfare.discount_rate)||.2)*100)+'%，最高减免 '+(Number(welfare.cap)||300)+'。','每位用户整个赛季最多触发 '+(Number(welfare.max_uses_per_season)||3)+' 次。','低保减免不占用四项赛果 Combo 的 '+cap+' 上限。']);
