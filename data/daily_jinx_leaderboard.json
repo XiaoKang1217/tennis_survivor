@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-09-28T03:09:24.851Z",
-  "source_updated_at": "2026-09-28 11:09:22",
-  "settled_through": "2026-09-27",
+  "updated_at": "2026-09-29T03:09:22.397Z",
+  "source_updated_at": "2026-09-29 11:09:20",
+  "settled_through": "2026-09-28",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
@@ -1059,15 +1059,6 @@
       "rarity": "limited"
     },
     {
-      "display_name": "martin",
-      "badge_key": "luwang-friend",
-      "title": "炉网挚友",
-      "subtitle": "炉友纪念",
-      "image_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "小兮",
       "badge_key": "wimbledon-2026",
       "title": "温网限定",
@@ -1128,6 +1119,15 @@
       "subtitle": "赛事限定",
       "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
       "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "第七路单车",
+      "badge_key": "who-is-leather",
+      "title": "谁是皮革",
+      "subtitle": "炉友纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/who-leather-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/who-leather-badge-640.webp",
       "rarity": "limited"
     },
     {
@@ -1410,6 +1410,15 @@
       "rarity": "limited"
     },
     {
+      "display_name": "martin",
+      "badge_key": "usopen-night-2026",
+      "title": "2026美网·不夜之境",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v20/optimized/usopen/badge.webp",
+      "thumb_url": "assets/manager/badges/ui-v20/optimized/usopen/thumb.webp",
+      "rarity": "limited"
+    },
+    {
       "display_name": "尊贵的娃老师",
       "badge_key": "rybakina-snow-silence",
       "title": "莱巴金娜·雪落无声",
@@ -1434,15 +1443,6 @@
       "subtitle": "球员纪念",
       "image_url": "assets/manager/badges/ui-v20/optimized/mensik/badge.webp",
       "thumb_url": "assets/manager/badges/ui-v20/optimized/mensik/thumb.webp",
-      "rarity": "limited"
-    },
-    {
-      "display_name": "第七路单车",
-      "badge_key": "usopen-night-2026",
-      "title": "2026美网·不夜之境",
-      "subtitle": "赛事限定",
-      "image_url": "assets/manager/badges/ui-v20/optimized/usopen/badge.webp",
-      "thumb_url": "assets/manager/badges/ui-v20/optimized/usopen/thumb.webp",
       "rarity": "limited"
     },
     {
