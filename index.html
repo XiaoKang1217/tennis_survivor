@@ -1810,6 +1810,7 @@ function managerLoadState(){
   }catch(e){MANAGER_LINEUP=[];MANAGER_PREDICTIONS={};MANAGER_VILLAGE_HOPE_ID='';MANAGER_SUNK_COST=0;MANAGER_TRANSFER_COUNT=0;MANAGER_LEDGER=[];}
 }
 function managerResetVolatileAccountState(){
+  managerResetPrincipalRewardNotice();
   MANAGER_LINEUP=[];
   MANAGER_PREDICTIONS={};
   MANAGER_VILLAGE_HOPE_ID='';
@@ -3721,6 +3722,7 @@ function managerAllLedger(){
 }
 function managerLedgerStatusText(type){
   var t=String(type||'');
+  if(t==='beijing_rublev_r1_reward_2026')return '庆祝卢布列夫北京第一轮赢球';
   if(t==='已提交')return '阵容已提交';
   if(/season_opening|开户/i.test(t))return '新赛季开户';
   if(/station_grant/i.test(t))return '本站签约金发放';
@@ -6391,7 +6393,8 @@ async function afterAuthChanged(user){
     });
     var badgePromise=managerLoadActiveBadges();
     var grantPromise=badgePromise.then(function(){return managerLoadBadgeGrantNotice();});
-    await Promise.allSettled([profilePromise,followingPromise,badgePromise,grantPromise]);
+    var rewardPromise=managerLoadPrincipalRewardNotice();
+    await Promise.allSettled([profilePromise,followingPromise,badgePromise,grantPromise,rewardPromise]);
   }
   else{
     MANAGER_MY_BADGES=[];
@@ -8503,6 +8506,7 @@ function setBdF(g,f,btn){
 <script src="assets/manager/badges/ui-v20/components.js?v=20260920-3"></script>
 <script src="assets/manager/badges/ui-v20/release.js?v=20260920-2"></script>
 <script src="assets/manager/badges/ui-v20/native-preview.js?v=20260921-mobile-1"></script>
+<script src="assets/manager/principal-reward.js?v=20261001-1"></script>
 <script>bootstrapPage();</script>
 </body>
 </html>
