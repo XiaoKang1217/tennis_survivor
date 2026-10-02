@@ -29,7 +29,7 @@
   "allow_submission_after_first_match": false,
   "cross_tour_transfer": true,
   "transfer_fee_rate": 0.15,
-  "transfer_window_opens_at": null,
+  "transfer_window_opens_at": "2026-10-02T04:59:00.000Z",
   "transfer_window_closes_at": "2026-10-02T05:00:00.000Z",
   "transfer_welfare_discount": false,
   "source_urls": [
@@ -2744,6 +2744,6 @@
     "publication_version": 1,
     "locked_at": "2026-09-28T13:09:38.942Z"
   },
-  "round1_completed_at": null,
+  "round1_completed_at": "2026-10-02T04:59:00.000Z",
   "transfer_window_note": "换人窗口为 R1 全部结束后、R2 第一场开始前，由当前站赛程自动更新。"
 }
