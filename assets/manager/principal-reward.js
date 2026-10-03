@@ -14,7 +14,7 @@ async function managerLoadPrincipalRewardNotice() {
   MANAGER_PRINCIPAL_REWARD_USER = userId;
   var epoch = MANAGER_PRINCIPAL_REWARD_EPOCH;
   try {
-    var notice = await supabaseRpc('tour_manager_get_beijing_reward_notice', {});
+    var notice = await supabaseRpc('tour_manager_get_principal_reward_notice', {});
     if (epoch !== MANAGER_PRINCIPAL_REWARD_EPOCH || !AUTH_USER || AUTH_USER.id !== userId) return;
     if (!notice || !notice.message) return;
     managerShowPrincipalRewardNotice(notice, userId, epoch);
@@ -43,6 +43,7 @@ function managerShowPrincipalRewardNotice(notice, userId, epoch) {
   modal.setAttribute('aria-labelledby', 'manager-principal-reward-title');
   modal.setAttribute('aria-describedby', 'manager-principal-reward-copy');
   modal.innerHTML = '<h3 id="manager-principal-reward-title">还愿本金已到账</h3><p id="manager-principal-reward-copy"></p><p class="reward-error" role="alert" hidden></p><footer><button type="button" autofocus>确认并关闭</button></footer>';
+  modal.querySelector('#manager-principal-reward-title').textContent = notice.title || '还愿本金已到账';
   modal.querySelector('#manager-principal-reward-copy').textContent = notice.message;
   modal.addEventListener('cancel', function(event) { event.preventDefault(); });
   var button = modal.querySelector('button');
@@ -55,10 +56,14 @@ function managerShowPrincipalRewardNotice(notice, userId, epoch) {
     button.disabled = true;
     modal.querySelector('.reward-error').hidden = true;
     try {
-      var acknowledged = await supabaseRpc('tour_manager_ack_beijing_reward_notice', {});
+      var acknowledged = await supabaseRpc('tour_manager_ack_principal_reward_notice', {p_notice_id: notice.id});
       if (acknowledged !== true) throw new Error('acknowledgment_failed');
       modal.close();
       modal.remove();
+      if (epoch === MANAGER_PRINCIPAL_REWARD_EPOCH && AUTH_USER && AUTH_USER.id === userId) {
+        MANAGER_PRINCIPAL_REWARD_USER = '';
+        await managerLoadPrincipalRewardNotice();
+      }
     } catch (_err) {
       button.disabled = false;
       var error = modal.querySelector('.reward-error');
