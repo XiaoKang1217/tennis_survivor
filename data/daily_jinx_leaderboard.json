@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-10-03T03:09:05.426Z",
-  "source_updated_at": "2026-10-03 11:09:03",
-  "settled_through": "2026-10-02",
+  "updated_at": "2026-10-04T03:10:43.200Z",
+  "source_updated_at": "2026-10-04 11:10:41",
+  "settled_through": "2026-10-03",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
@@ -1023,6 +1023,15 @@
       "rarity": "limited"
     },
     {
+      "display_name": "xiaohe",
+      "badge_key": "gauff-energy",
+      "title": "高芙果切能量",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/gauff-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/gauff-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
       "display_name": "天邪幻世",
       "badge_key": "federer-eternal",
       "title": "费德勒优雅永恒",
@@ -1501,15 +1510,6 @@
     },
     {
       "display_name": "九墨",
-      "badge_key": "usopen-night-2026",
-      "title": "2026美网·不夜之境",
-      "subtitle": "赛事限定",
-      "image_url": "assets/manager/badges/ui-v20/optimized/usopen/badge.webp",
-      "thumb_url": "assets/manager/badges/ui-v20/optimized/usopen/thumb.webp",
-      "rarity": "limited"
-    },
-    {
-      "display_name": "xiaohe",
       "badge_key": "usopen-night-2026",
       "title": "2026美网·不夜之境",
       "subtitle": "赛事限定",
