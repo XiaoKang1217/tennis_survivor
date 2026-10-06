@@ -70,6 +70,15 @@ await client.upsert(
 
 console.log(`Synced station ${active.station_key}`);
 console.log(`events=${payload.eventRows.length} players=${payload.playerRows.length} draw_entries=${payload.drawRows.length} market_players=${payload.eventPlayerRows.length} price_rows=${payload.priceRows.length}`);
+const serverRules = await client.rpc('tour_manager_station_rules', {
+  p_station_key: active.station_key, p_season: Number(active.season)
+});
+for (const field of ['station_grant', 'min_players', 'max_players']) {
+  if (Number.isFinite(active.rules?.[field]) && Number(serverRules?.[field]) !== active.rules[field]) {
+    throw new Error(`Backend ${field} mismatch: expected ${active.rules[field]}, received ${serverRules?.[field]}`);
+  }
+}
+console.log(`Verified backend station rules: ${JSON.stringify(serverRules)}`);
 
 function isMarketLocked(active, events) {
   if (active.pricing?.market_prices_locked === true) return true;

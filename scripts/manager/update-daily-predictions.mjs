@@ -42,10 +42,14 @@ if (dryRun) {
 }
 
 if (!args.date&&!officialDate) {
-  let events=await client.select('tour_manager_events',{
-    station_key:`eq.${predictionSourceStationKey}`,season:`eq.${Number(active.season)||2026}`,
-    select:'event_key,metadata'
-  });
+  let events=[];
+  const sourceKeys=[...new Set([predictionSourceStationKey,...(predictionConfig.event_groups||[]).map(g=>g.source_station_key).filter(Boolean)])];
+  for(const sourceKey of sourceKeys){
+    events.push(...await client.select('tour_manager_events',{
+      station_key:`eq.${sourceKey}`,season:`eq.${Number(active.season)||2026}`,
+      select:'event_key,metadata'
+    }));
+  }
   const groupKeys=(predictionConfig.event_groups||[]).map(g=>g.event_key).filter(Boolean);
   if(groupKeys.length)events=events.filter(e=>groupKeys.includes(e.event_key));
   const matches=[];

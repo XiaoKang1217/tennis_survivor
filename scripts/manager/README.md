@@ -141,3 +141,26 @@ Historical backfill is intentionally not part of the daily manager workflow. Aft
 6. Review `data/manager/player_photos.json`. Only keep reviewed real official photos or stable fallbacks.
 7. Add the complete station grant and Combo rule object to `active_events.json`, then run `publish-station-snapshot.mjs --write-file --strict-ready` when the station formally opens.
 8. Re-run `refresh-current-station-data.mjs --write --sync`, `maybe-build-prices.mjs`, `apply-qualifier-placements.mjs`, `apply-pre-r1-substitutions.mjs`, and then `refresh-current-station-data.mjs --skip-draw --skip-schedule --sync --settle` with `SUPABASE_SERVICE_ROLE_KEY=...` to write matches, qualifier placements, pre-R1 substitutions, settlements, ranking, Elo, draw, market, and price-version rows.
+# Shanghai 2026 Local Preview
+
+- Station: `2026-w41-shanghai`; only ATP Shanghai is purchasable. Grant 700,
+  station-only roster 1-4, cutoff 2026-10-07 11:45 Asia/Shanghai.
+- Beijing WTA remains owned by `2026-w40-beijing`, with its original contracts,
+  prices and frozen Beijing Combo rules. `settlement.overlap_previous` allows
+  both stations to settle; default sequential settlement is unchanged elsewhere.
+- Three Shanghai result Combos share cap 1000. Value-pick threshold 105 is the
+  40th-percentile price among 84 named opening players (excluding 12 Q slots).
+- Ranking source: 1200 rows, fetched 2026-10-06. Latest available TA Elo:
+  2026-09-28, 557 rows. Rune is absent from that Elo table and uses the existing
+  ranking proxy; it is not represented as a measured current Elo.
+- Opening prices, including Q-slot inheritance, are frozen in the v1 publication.
+- Oct 7 predictions use Shanghai ATP and Beijing WTA from their original source
+  stations. Published games remain immutable; absent official-day schedules wait.
+- Before a future authorized production release, apply
+  `202610060001_manager_station_roster_override.sql`, then sync the station and
+  publication with existing tools. The migration only adds configured station
+  roster overrides; it does not change shared Masters rules or historical funds.
+- Annual welfare enforcement already exists in migrations `202608280001` and
+  `202609280001`: three discounted submissions across the full calendar year,
+  including withdrawn discounted submissions. Shanghai does not reset the count.
+- This worktree has not applied migrations, synchronized production, or pushed Git.

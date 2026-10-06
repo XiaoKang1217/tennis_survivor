@@ -115,15 +115,19 @@ export async function refreshDailyPredictionGamesByMedian({
   if (!Number.isFinite(nowDate.getTime())) throw new Error(`Invalid refresh time: ${now}`);
   const minLeadMs = Math.max(0, Number(minLeadMinutes) || 0) * 60000;
   const candidateStartsAfter = new Date(nowDate.getTime() + minLeadMs);
-  const activeGames = await client.select('tour_manager_daily_prediction_games', {
-    station_key: `eq.${stationKey}`,
-    season: `eq.${season}`,
-    status: 'eq.open',
-    closes_at: `gt.${nowDate.toISOString()}`,
-    select: 'id,contest_date,closes_at',
-    order: 'closes_at.asc',
-    limit: 1
-  });
+  const activeGames = [];
+  const carryoverStations = [...new Set([stationKey, ...eventGroups.map(group => group.source_station_key).filter(Boolean)])];
+  for (const key of carryoverStations) {
+    activeGames.push(...await client.select('tour_manager_daily_prediction_games', {
+      station_key: `eq.${key}`,
+      season: `eq.${season}`,
+      status: 'eq.open',
+      closes_at: `gt.${nowDate.toISOString()}`,
+      select: 'id,contest_date,closes_at',
+      order: 'closes_at.asc',
+      limit: 1
+    }));
+  }
   const activeCarryover = activeGames.find((game) => String(game.contest_date) !== String(contestDate));
   if (activeCarryover) {
     return {
@@ -165,7 +169,7 @@ export async function refreshDailyPredictionGamesByMedian({
     }
 
     const events = await client.select('tour_manager_events', {
-      station_key: `eq.${sourceStationKey || stationKey}`,
+      station_key: `eq.${group.source_station_key || sourceStationKey || stationKey}`,
       season: `eq.${season}`,
       tour: `eq.${tour}`,
       ...(groupEventKey ? { event_key: `eq.${groupEventKey}` } : {}),

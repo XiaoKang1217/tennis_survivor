@@ -23,9 +23,9 @@ test('postponed previous-station finals are refreshed through the current Beijin
   assert.match(source, /syncExtra\.push\('--to', resultThroughDate\)/);
 });
 
-test('current station remains gated until every previous-station final is complete', () => {
+test('current station remains gated unless overlapping settlement is explicitly enabled', () => {
   const source = fs.readFileSync('scripts/manager/settle-current-or-previous-station.mjs', 'utf8');
-  const gateIndex = source.indexOf('if (!finalsComplete(previousResult))');
+  const gateIndex = source.indexOf('if (!finalsComplete(previousResult) && active.settlement?.overlap_previous !== true)');
   const exitIndex = source.indexOf('process.exit(0)', gateIndex);
   const currentIndex = source.indexOf('const currentResult = await refreshAndSettle');
 

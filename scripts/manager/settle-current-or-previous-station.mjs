@@ -154,7 +154,7 @@ if (previous && previous.station_key && Array.isArray(previous.events) && previo
     );
     console.log(`Previous station settlement: ${resultLabel(previousResult)}`);
 
-    if (!finalsComplete(previousResult)) {
+    if (!finalsComplete(previousResult) && active.settlement?.overlap_previous !== true) {
       console.log(`Previous station ${previous.station_key} is not fully complete; skip current station settlement for now.`);
       process.exit(0);
     }
