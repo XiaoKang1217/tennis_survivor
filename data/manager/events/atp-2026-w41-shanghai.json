@@ -18,7 +18,10 @@
   "timezone": "Asia/Shanghai",
   "draw_status": "published",
   "market_status": "open",
-  "market_price_lock": {"publication_version": 1, "locked_at": "2026-10-06T01:37:35.944Z"},
+  "market_price_lock": {
+    "publication_version": 1,
+    "locked_at": "2026-10-06T01:37:35.944Z"
+  },
   "submission_status": "open",
   "submission_opens_at": "2026-10-06T01:35:14.023Z",
   "submission_cutoff_at": "2026-10-07T11:45:00+08:00",
@@ -117,7 +120,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 2117.75
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "WU Yibing",
@@ -196,7 +202,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1710.17
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Qualifier Q1",
@@ -275,7 +284,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.92
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Quentin HALYS",
@@ -354,7 +366,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1753.23
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Qualifier Q2",
@@ -433,7 +448,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.92
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Alexander BLOCKX",
@@ -512,7 +530,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1908.29
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Alexander BUBLIK",
@@ -591,7 +612,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1915.82
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "ZHANG Zhizhen",
@@ -670,7 +694,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1591.75
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Tomas MACHAC",
@@ -749,7 +776,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1833.44
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Aleksandar KOVACEVIC",
@@ -828,7 +858,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1645.42
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Matteo BERRETTINI",
@@ -907,7 +940,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1812.54
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Brandon NAKASHIMA",
@@ -986,7 +1022,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1982.88
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Alex DE MINAUR",
@@ -1065,7 +1104,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1999.57
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Alex MOLCAN",
@@ -1144,7 +1186,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1671.75
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Qualifier Q3",
@@ -1223,7 +1268,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.92
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Marco TRUNGELLITI",
@@ -1302,7 +1350,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1573.08
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Qualifier Q4",
@@ -1381,7 +1432,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.92
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Andrey RUBLEV",
@@ -1460,7 +1514,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1880.15
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Karen KHACHANOV",
@@ -1539,7 +1596,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1833.36
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Arthur FERY",
@@ -1618,7 +1678,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1834.83
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Marin CILIC",
@@ -1697,7 +1760,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1766.82
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Adrian MANNARINO",
@@ -1776,7 +1842,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1653.62
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Qualifier Q5",
@@ -1855,7 +1924,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.92
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Flavio COBOLLI",
@@ -1934,7 +2006,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1930.55
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Ben SHELTON",
@@ -2013,7 +2088,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 2058.99
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Holger RUNE",
@@ -2092,7 +2170,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1585.14
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Daniel ALTMAIER",
@@ -2171,7 +2252,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1665.83
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Arthur GEA",
@@ -2250,7 +2334,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1837.99
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Jaime FARIA",
@@ -2329,7 +2416,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1809.14
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Ugo HUMBERT",
@@ -2408,7 +2498,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1849.96
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Francisco CERUNDOLO",
@@ -2487,7 +2580,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1903.15
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Rinky HIJIKATA",
@@ -2566,7 +2662,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1761.32
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Qualifier Q6",
@@ -2645,7 +2744,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.92
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "SHIMABUKURO Sho",
@@ -2724,7 +2826,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1582.75
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Miomir KECMANOVIC",
@@ -2803,7 +2908,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1705.15
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Jakub MENSIK",
@@ -2882,7 +2990,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1945.87
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Novak DJOKOVIC",
@@ -2961,7 +3072,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 2046.33
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Hubert HURKACZ",
@@ -3040,7 +3154,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1864.75
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "James DUCKWORTH",
@@ -3119,7 +3236,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1644.86
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Qualifier Q7",
@@ -3198,7 +3318,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.92
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "ZHOU Yi",
@@ -3277,7 +3400,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1441.15
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Lorenzo MUSETTI",
@@ -3356,7 +3482,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1881.31
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Alejandro DAVIDOVICH FOKINA",
@@ -3435,7 +3564,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1955.18
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Jaume MUNAR",
@@ -3514,7 +3646,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1803.77
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Jenson BROOKSBY",
@@ -3593,7 +3728,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1695.19
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Yannick HANFMANN",
@@ -3672,7 +3810,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1777.68
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Kamil MAJCHRZAK",
@@ -3751,7 +3892,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1782.69
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Frances TIAFOE",
@@ -3830,7 +3974,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1979.93
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Arthur FILS",
@@ -3909,7 +4056,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 2080.83
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Qualifier Q8",
@@ -3988,7 +4138,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.92
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Tallon GRIEKSPOOR",
@@ -4067,7 +4220,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1815.46
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Botic VAN DE ZANDSCHULP",
@@ -4146,7 +4302,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1801.71
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Daniel MERIDA",
@@ -4225,7 +4384,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1923.56
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Alex MICHELSEN",
@@ -4304,7 +4466,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.610Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1925.7
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Jiri LEHECKA",
@@ -4383,7 +4548,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1991.83
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Nuno BORGES",
@@ -4462,7 +4630,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1839.06
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Facundo DIAZ ACOSTA",
@@ -4541,7 +4712,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1625.99
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Thiago Agustin TIRANTE",
@@ -4620,7 +4794,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1823.01
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Hamad MEDJEDOVIC",
@@ -4699,7 +4876,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1737.72
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Rafael JODAR",
@@ -4778,7 +4958,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 2030.12
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Learner TIEN",
@@ -4857,7 +5040,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1995.76
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Fabian MAROZSAN",
@@ -4936,7 +5122,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1758.08
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Zachary SVAJDA",
@@ -5015,7 +5204,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1720.43
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Luca VAN ASSCHE",
@@ -5094,7 +5286,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1771.37
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "BU Yunchaokete",
@@ -5173,7 +5368,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1704.04
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Casper RUUD",
@@ -5252,7 +5450,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1929.02
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Alejandro TABILO",
@@ -5331,7 +5532,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1809.79
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Mariano NAVONE",
@@ -5410,7 +5614,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1806.9
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Pablo CARRENO BUSTA",
@@ -5489,7 +5696,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1732.58
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Camilo UGO CARABELLI",
@@ -5568,7 +5778,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1627.74
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Qualifier Q9",
@@ -5647,7 +5860,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.92
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Felix AUGER-ALIASSIME",
@@ -5726,7 +5942,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1993.5
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Daniil MEDVEDEV",
@@ -5805,7 +6024,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1981.57
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Martin LANDALUCE",
@@ -5884,7 +6106,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1678.03
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Jan-Lennard STRUFF",
@@ -5963,7 +6188,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1702.2
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Cameron NORRIE",
@@ -6042,7 +6270,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1833.07
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Denis SHAPOVALOV",
@@ -6121,7 +6352,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1820.93
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Tomas Martin ETCHEVERRY",
@@ -6200,7 +6434,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1765.67
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Luciano DARDERI",
@@ -6279,7 +6516,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1831.03
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Qualifier Q10",
@@ -6358,7 +6598,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.92
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Stefanos TSITSIPAS",
@@ -6437,7 +6680,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1873.4
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Qualifier Q11",
@@ -6516,7 +6762,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.92
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Matteo ARNALDI",
@@ -6595,7 +6844,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1730.79
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Taylor FRITZ",
@@ -6674,7 +6926,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1969.07
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Tommy PAUL",
@@ -6753,7 +7008,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1974.31
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Adolfo Daniel VALLEJO",
@@ -6832,7 +7090,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1652.21
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Valentin ROYER",
@@ -6911,7 +7172,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1684.41
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Marcos GIRON",
@@ -6990,7 +7254,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1694.49
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Sebastian BAEZ",
@@ -7069,7 +7336,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1726.74
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Valentin VACHEROT",
@@ -7148,7 +7418,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1872.54
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Ignacio BUSE",
@@ -7227,7 +7500,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1824.54
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Vit KOPRIVA",
@@ -7306,7 +7582,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1683.54
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Zizou BERGS",
@@ -7385,7 +7664,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1789.28
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Juan Manuel CERUNDOLO",
@@ -7464,7 +7746,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1789.01
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Qualifier Q12",
@@ -7543,7 +7828,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -34.92
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Carlos ALCARAZ",
@@ -7625,7 +7913,10 @@
         "preview_generated_at": "2026-10-06T01:35:27.611Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 2124.89
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     }
   ],
   "pricing_formula": {
@@ -7638,5 +7929,7 @@
     "generated_at": "2026-10-06T01:35:27.611Z",
     "preview_formula_version": "preview-expected-round-v2",
     "preview_generated_at": "2026-10-06T01:35:27.611Z"
-  }
+  },
+  "round1_completed_at": null,
+  "transfer_window_note": "换人窗口为 R1 全部结束后、R2 第一场开始前，由当前站赛程自动更新。"
 }
