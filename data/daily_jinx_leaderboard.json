@@ -1,17 +1,17 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-10-06T03:09:18.141Z",
-  "source_updated_at": "2026-10-06 11:09:15",
-  "settled_through": "2026-10-05",
+  "updated_at": "2026-10-07T03:09:19.569Z",
+  "source_updated_at": "2026-10-07 11:09:17",
+  "settled_through": "2026-10-06",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
     {
       "tour": "ATP",
       "display_name": "第七路单车",
-      "score": 2436,
-      "hit_count": 86,
-      "scored_days": 60
+      "score": 2438,
+      "hit_count": 87,
+      "scored_days": 61
     },
     {
       "tour": "ATP",
@@ -44,9 +44,9 @@
     {
       "tour": "ATP",
       "display_name": "莫斯特",
-      "score": 1365,
-      "hit_count": 46,
-      "scored_days": 37
+      "score": 1367,
+      "hit_count": 47,
+      "scored_days": 38
     },
     {
       "tour": "ATP",
@@ -240,9 +240,9 @@
     {
       "tour": "ATP",
       "display_name": "martin",
-      "score": 14,
-      "hit_count": 6,
-      "scored_days": 5
+      "score": 16,
+      "hit_count": 7,
+      "scored_days": 6
     },
     {
       "tour": "ATP",
@@ -762,15 +762,6 @@
       "rarity": "limited"
     },
     {
-      "display_name": "马戏团冠军",
-      "badge_key": "alcaraz-bee-duck",
-      "title": "阿卡蜜蜂鸭",
-      "subtitle": "球员纪念",
-      "image_url": "assets/manager/badges/ui-v18/optimized/bee-duck-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v18/optimized/bee-duck-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "xiaozaocha",
       "badge_key": "wimbledon-2026",
       "title": "温网限定",
@@ -1128,6 +1119,15 @@
       "subtitle": "炉友纪念",
       "image_url": "assets/manager/badges/ui-v18/optimized/who-leather-badge-640.webp",
       "thumb_url": "assets/manager/badges/ui-v18/optimized/who-leather-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "马戏团冠军",
+      "badge_key": "rybakina-snow-silence",
+      "title": "莱巴金娜·雪落无声",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v20/optimized/rybakina/badge.webp",
+      "thumb_url": "assets/manager/badges/ui-v20/optimized/rybakina/thumb.webp",
       "rarity": "limited"
     },
     {
