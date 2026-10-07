@@ -23,10 +23,18 @@ test('repeated loads claim once, local previews never claim, account switches re
     Date:class extends Date{static now(){return Date.parse('2026-10-06T10:00:00Z');}},
     document:{hidden:false,querySelector:()=>null,getElementById:()=>null},
     clearTimeout(){},setTimeout(){},supabaseRpc:async()=>{requests++;return {message:'notice'};}});
-  vm.runInContext(js,c);c.managerShowOpeningNotice=()=>shown++;
+  vm.runInContext(js,c);c.MANAGER_OPENING_NOTICE_ENABLED=true;c.managerShowOpeningNotice=()=>shown++;
   await c.managerLoadOpeningNotice();await c.managerLoadOpeningNotice();
   assert.equal(requests,1);assert.equal(shown,1);
   c.managerResetOpeningNotice();c.AUTH_USER={id:'b'};
   await c.managerLoadOpeningNotice();assert.equal(requests,2);
   preview=true;c.managerResetOpeningNotice();await c.managerLoadOpeningNotice();assert.equal(requests,2);
+});
+
+test('closed Shanghai sale never requests or renders a notice even with a stale device clock',async()=>{
+  const c=vm.createContext({});
+  vm.runInContext(js,c);
+  assert.equal(c.MANAGER_OPENING_NOTICE_ENABLED,false);
+  await c.managerLoadOpeningNotice();
+  c.managerShowOpeningNotice({message:'notice'});
 });

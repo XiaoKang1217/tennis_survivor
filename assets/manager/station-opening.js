@@ -1,3 +1,4 @@
+var MANAGER_OPENING_NOTICE_ENABLED = false;
 var MANAGER_OPENING_NOTICE_USER = '';
 var MANAGER_OPENING_NOTICE_EPOCH = 0;
 var MANAGER_OPENING_NOTICE_TIMER = null;
@@ -11,6 +12,7 @@ function managerResetOpeningNotice() {
 }
 
 async function managerLoadOpeningNotice() {
+  if (!MANAGER_OPENING_NOTICE_ENABLED) return;
   var userId = AUTH_USER && AUTH_USER.id;
   if (!userId || managerLocalSimulationMode() || MANAGER_OPENING_NOTICE_USER === userId) return;
   if (!MANAGER_ACTIVE_EVENTS || MANAGER_ACTIVE_EVENTS.station_key !== '2026-w41-shanghai') return;
@@ -32,6 +34,7 @@ async function managerLoadOpeningNotice() {
 }
 
 function managerShowOpeningNotice(notice) {
+  if (!MANAGER_OPENING_NOTICE_ENABLED) return;
   if (document.getElementById('manager-opening-notice')) return;
   if (!document.getElementById('manager-opening-notice-style')) {
     var style = document.createElement('style');
