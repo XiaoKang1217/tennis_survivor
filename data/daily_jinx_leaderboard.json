@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-10-07T03:09:19.569Z",
-  "source_updated_at": "2026-10-07 11:09:17",
-  "settled_through": "2026-10-06",
+  "updated_at": "2026-10-08T03:09:41.082Z",
+  "source_updated_at": "2026-10-08 11:09:39",
+  "settled_through": "2026-10-07",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
@@ -1086,15 +1086,6 @@
       "rarity": "limited"
     },
     {
-      "display_name": "hhhhhh",
-      "badge_key": "alcaraz-bee-duck",
-      "title": "阿卡蜜蜂鸭",
-      "subtitle": "球员纪念",
-      "image_url": "assets/manager/badges/ui-v18/optimized/bee-duck-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v18/optimized/bee-duck-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "青花比目",
       "badge_key": "federer-eternal",
       "title": "费德勒优雅永恒",
@@ -1137,6 +1128,15 @@
       "subtitle": "炉友纪念",
       "image_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
       "thumb_url": "assets/manager/badges/ui-v5/optimized/luwang-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "hhhhhh",
+      "badge_key": "alcaraz-bee-duck",
+      "title": "阿卡蜜蜂鸭",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v18/optimized/bee-duck-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v18/optimized/bee-duck-badge-640.webp",
       "rarity": "limited"
     },
     {
