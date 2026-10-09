@@ -29,12 +29,12 @@
   "manual_schedule_windows": true,
   "schedule_status": "partial",
   "main_draw_first_match_at": "2026-10-07T04:00:00.000Z",
-  "round2_first_match_at": null,
+  "round2_first_match_at": "2026-10-09T04:00:00.000Z",
   "allow_submission_after_first_match": false,
   "cross_tour_transfer": false,
   "transfer_fee_rate": 0.15,
-  "transfer_window_opens_at": null,
-  "transfer_window_closes_at": null,
+  "transfer_window_opens_at": "2026-10-09T00:44:02.375Z",
+  "transfer_window_closes_at": "2026-10-09T04:00:00.000Z",
   "transfer_welfare_discount": false,
   "source_urls": [
     "https://www.live-tennis.cn/zh/draw/25014/2026",
@@ -8077,6 +8077,6 @@
     "preview_formula_version": "preview-expected-round-v2",
     "preview_generated_at": "2026-10-06T01:35:27.611Z"
   },
-  "round1_completed_at": null,
+  "round1_completed_at": "2026-10-09T00:44:02.375Z",
   "transfer_window_note": "换人窗口为 R1 全部结束后、R2 第一场开始前，由当前站赛程自动更新。"
 }
