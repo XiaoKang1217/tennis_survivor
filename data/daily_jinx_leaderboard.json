@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-10-08T03:09:41.082Z",
-  "source_updated_at": "2026-10-08 11:09:39",
-  "settled_through": "2026-10-07",
+  "updated_at": "2026-10-09T03:09:09.071Z",
+  "source_updated_at": "2026-10-09 11:09:07",
+  "settled_through": "2026-10-08",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
