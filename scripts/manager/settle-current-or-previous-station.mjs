@@ -144,13 +144,13 @@ if (previous && previous.station_key && Array.isArray(previous.events) && previo
   } else {
     const previousFile = await generatedPreviousActiveFile(previous);
     // A postponed final can finish after the event's original end_date. Keep the
-    // normal previous-station gate, but read result pages through today so that
-    // a delayed final can actually unlock the current station.
+    // normal previous-station gate, but also load tomorrow's official schedule
+    // so ongoing previous-station events remain available for next-day predictions.
     const previousResult = await refreshAndSettle(
       previousFile,
       previous.station_key,
       `previous station ${previous.station_key}`,
-      { resultThroughDate: beijingDateKey() }
+      { resultThroughDate: beijingDateKey(new Date(Date.now() + 86400000)) }
     );
     console.log(`Previous station settlement: ${resultLabel(previousResult)}`);
 

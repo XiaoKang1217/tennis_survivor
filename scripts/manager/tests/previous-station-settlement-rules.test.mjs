@@ -15,11 +15,11 @@ test('previous station settlement restores frozen publication rules', () => {
   assert.match(source, /combo:/);
 });
 
-test('postponed previous-station finals are refreshed through the current Beijing date', () => {
+test('previous-station results include tomorrow schedule for next-day final predictions', () => {
   const source = fs.readFileSync('scripts/manager/settle-current-or-previous-station.mjs', 'utf8');
 
   assert.match(source, /function beijingDateKey/);
-  assert.match(source, /resultThroughDate:\s*beijingDateKey\(\)/);
+  assert.match(source, /resultThroughDate:\s*beijingDateKey\(new Date\(Date.now\(\) \+ 86400000\)\)/);
   assert.match(source, /syncExtra\.push\('--to', resultThroughDate\)/);
 });
 
