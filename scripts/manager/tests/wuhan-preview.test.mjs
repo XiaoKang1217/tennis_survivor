@@ -65,3 +65,17 @@ test('new prediction sources and continuing settlement are explicit',()=>{
   const sql=fs.readFileSync('supabase/migrations/202610110001_manager_wuhan_notice_and_grouped_board.sql','utf8');
   assert.match(sql,/group by user_id/);assert.match(sql,/2026-10-12 11:00:00\+08/);assert.match(sql,/on conflict do nothing/);
 });
+
+test('Shanghai forecast uses its own frozen rules and hope without changing Wuhan',()=>{
+  const order=['OUT','R128','R64','R32','R16','QF','SF','F','W'];
+  const c=vm.createContext({MANAGER_ACTIVE_EVENTS:active,
+    managerVillageHopePlayer:()=>{throw new Error('must not use Wuhan hope');},
+    managerVillageHopeUserSelected:()=>true,managerPlayerDisplayName:p=>p.id,
+    managerRoundAtLeast:(a,b)=>order.indexOf(a)>=order.indexOf(b)});
+  vm.runInContext(source('managerComboRewardText','managerCanadaComboRuleCard')+source('managerCanadaRoundReward','managerVillageHopePlayer')+source('managerCanadaComboScenario','managerWimbledonJewelBonus'),c);
+  const rules=read('data/manager/publications/2026-w41-shanghai-v1.json').snapshot.station_config.rules;
+  const rounds=[{player:{id:'a',tour:'ATP',price:120},round:'W'},{player:{id:'b',tour:'ATP',price:500},round:'OUT'}];
+  const result=c.managerCanadaComboScenario(1000,rounds,{rules,hopeId:'b'});
+  assert.equal(result.jewelBonus,0);assert.equal(result.villageHopeBonus,0);
+  assert.equal(result.villageHopePlayer.id,'b');assert.equal(active.rules.combo.value_pick.max_price,135);
+});

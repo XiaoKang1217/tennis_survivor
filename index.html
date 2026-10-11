@@ -455,6 +455,8 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 .manager-subtab.on{background:#8a612c;color:#fff}
 .manager-status-line{border:1px solid #dfcaa2;background:#fff8e8;border-radius:10px;padding:12px 14px;margin-bottom:10px;color:#5c421f;font-weight:950}
 .manager-my-summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.manager-station-lineup+ .manager-station-lineup{margin-top:28px;padding-top:20px;border-top:1px solid var(--site-border,#ddd)}
+.manager-station-lineup>h3{font-size:18px;line-height:1.5;margin:0 0 14px}
 .manager-my-highlight{border:1px solid #ead8b7;background:#fffdf8;border-radius:10px;padding:14px;box-shadow:0 8px 18px rgba(122,79,36,.05)}
 .manager-my-highlight h4{margin:0 0 10px;color:#5c421f;font-size:16px}
 .manager-my-highlight .manager-kv{display:grid;gap:7px}
@@ -2558,8 +2560,7 @@ function managerPlayerCurrentStats(p){
 function managerTeamCurrentStats(players,c){
   var stats=players.map(managerPlayerCurrentStats),allContracts=managerRemoteContracts();
   var earned=allContracts.length?allContracts.reduce(function(s,x){return s+(Number(x.earned_points)||0);},0):stats.reduce(function(s,x){return s+x.earned;},0);
-  var stationIncome=managerDailyIncomeSummary&&managerDailyIncomeSummary();
-  var yesterday=stationIncome?stationIncome.yesterdayIncome:stats.reduce(function(s,x){return s+x.yesterday;},0);
+  var yesterday=allContracts.length?allContracts.reduce(function(sum,contract){var player=managerPlayerFromContract(contract);return sum+(player?managerPlayerYesterdayIncome(player,contract,MANAGER_REMOTE_STATE,managerStationKey()):0);},0):stats.reduce(function(s,x){return s+x.yesterday;},0);
   var alive=stats.filter(function(x){return x.status==='存活'||x.round==='未开赛';}).length;
   return {earned:earned,yesterday:yesterday,alive:alive,max:c.max};
 }
@@ -2576,7 +2577,7 @@ function managerViewNeedsRemoteState(view){return ['market','calculator','mine',
 function managerRefreshRemoteState(force){
   if(managerLocalSimulationMode())return;
   if(!AUTH_USER||!supabaseConfigured())return;
-  managerLoadRemoteState({force:!!force}).then(function(){
+  managerLoadRemoteState({force:!!force}).then(function(){return managerLoadContinuingStates();}).then(function(){
     if(ACTIVE_TAB==='manager')renderManagerDemo();
   }).catch(function(){});
 }
@@ -2993,8 +2994,8 @@ function managerVillageHopePlayer(rounds){
   var fallback=managerDefaultVillageHopePlayer(rounds.map(function(x){return x.player;}));
   return fallback?rounds.find(function(x){return x.player===fallback||x.player.id===fallback.id||x.player.playerKey===fallback.playerKey;}):null;
 }
-function managerCanadaComboScenario(gross,rounds){
-  var rules=MANAGER_ACTIVE_EVENTS&&MANAGER_ACTIVE_EVENTS.rules||{},combo=rules.combo||{},steadyRules=combo.steady||{},dualRules=combo.dual_tour||{},valueRules=combo.value_pick||{},hopeRules=combo.village_hope||{};
+function managerCanadaComboScenario(gross,rounds,context){
+  var rules=context?context.rules:(MANAGER_ACTIVE_EVENTS&&MANAGER_ACTIVE_EVENTS.rules||{}),combo=rules.combo||{},steadyRules=combo.steady||{},dualRules=combo.dual_tour||{},valueRules=combo.value_pick||{},hopeRules=combo.village_hope||{};
   var players=rounds.map(function(x){return x.player;}),count=players.length,qf=rounds.filter(function(x){return managerRoundAtLeast(x.round,'QF');}).length;
   var minPlayers=Number(steadyRules.min_players)||3,qfRatio=Number(steadyRules.qf_ratio),grossRate=Number(steadyRules.gross_rate),steadyCap=Number(steadyRules.cap)||300;
   if(!Number.isFinite(qfRatio))qfRatio=.5;
@@ -3007,9 +3008,9 @@ function managerCanadaComboScenario(gross,rounds){
   var dual=eachTour('W')?(Number(dualRules.W)||0):(eachTour('F')?(Number(dualRules.F)||0):(eachTour('SF')?(Number(dualRules.SF)||0):(eachTour('QF')?(Number(dualRules.QF)||0):(eachTour('R16')?(Number(dualRules.R16)||0):0))));
   var maxPrice=Number(valueRules.max_price)||150,jewel=0;
   rounds.forEach(function(x){if((Number(x.player.price)||0)<=maxPrice)jewel=Math.max(jewel,managerCanadaRoundReward(x.round,valueRules));});
-  var hope=managerVillageHopePlayer(rounds),hopeBonus=hope?managerCanadaRoundReward(hope.round,hopeRules):0;
+  var hope=context?rounds.find(function(x){return x.player.id===context.hopeId||x.player.playerKey===context.hopeId;}):managerVillageHopePlayer(rounds),hopeBonus=hope?managerCanadaRoundReward(hope.round,hopeRules):0;
   var raw=stable+dual+jewel+hopeBonus,cap=Number(combo.total_cap)||700,bonus=Math.min(raw,cap);
-  var hopeMode=managerVillageHopeUserSelected()?'自定义选择':'自动认定';
+  var hopeMode=(context||managerVillageHopeUserSelected())?'自定义选择':'自动认定';
   return {gross:gross,stable:stable,finalBonus:dual,champBonus:0,jewelBonus:jewel,smallBusinessBonus:0,dualBonus:dual,villageHopeBonus:hopeBonus,villageHopePlayer:hope&&hope.player||null,bonus:bonus,comboVersion:rules.combo_version||'canada_2026_v1',comboCap:cap,comboRaw:raw,comboItems:[
     {label:'稳健经营',amount:stable,desc:'至少'+minPlayers+'人，'+Math.round(qfRatio*100)+'%阵容进QF，毛收益'+Math.round(grossRate*100)+'%，封顶'+steadyCap},
     ...(combo.dual_tour?[{label:'双线经营',amount:dual,desc:'ATP/WTA各有人进16强/QF/SF/F/W，最高档'+managerComboRewardText(dualRules)}]:[]),
@@ -4461,11 +4462,11 @@ function managerRenderLedger(){
   var loading=MANAGER_REMOTE_ALL_LEDGER_LOADING?'<div class="manager-note" style="margin-bottom:8px">正在读取参赛以来所有钱包流水...</div>':'';
   return loading+'<div class="manager-ledger-filters"><select id="manager-ledger-station" onchange="managerLedgerFilterChanged()"><option value="all">全部赛站</option>'+stations.map(function(s){return '<option value="'+esc(s)+'" '+(station===s?'selected':'')+'>'+esc(s)+'</option>';}).join('')+'</select><input type="date" id="manager-ledger-start" value="'+esc(start)+'" onchange="managerLedgerFilterChanged()"><input type="date" id="manager-ledger-end" value="'+esc(end)+'" onchange="managerLedgerFilterChanged()"><button class="manager-clear" onclick="document.getElementById(\'manager-ledger-start\').value=\'\';document.getElementById(\'manager-ledger-end\').value=\'\';managerLedgerFilterChanged()">清除日期区间</button><input id="manager-ledger-q" placeholder="搜索日期 / 赛站 / 状态 / 球员 / 换人" value="'+esc(MANAGER_LEDGER_SEARCH)+'" autocomplete="off"></div><div class="manager-table-scroll"><table class="manager-ledger-table"><thead><tr>'+managerLedgerHeader('日期','date')+managerLedgerHeader('赛站','stationLabel')+managerLedgerHeader('状态','status')+managerLedgerHeader('成本','cost')+managerLedgerHeader('毛收益','gross')+managerLedgerHeader('奖励','bonus')+managerLedgerHeader('净收益','net')+managerLedgerHeader('球员','players')+managerLedgerHeader('换人','transfers')+'</tr></thead><tbody>'+(rows||'<tr><td colspan="9"><div class="manager-empty">没有匹配的收益记录。</div></td></tr>')+'</tbody></table></div>'+managerPagerHtml('ledger',pager);
 }
-function managerMyPlayerCard(p,isReplaced){
-  var r=MANAGER_PREDICTIONS[p.id]||p.reachedRound||'OUT',v=managerRoundValue(r,p.level,p.tour,p.drawSize),st=managerPlayerCurrentStats(p);
+function managerMyPlayerCard(p,isReplaced,context){
+  var r=context?context.round:(MANAGER_PREDICTIONS[p.id]||p.reachedRound||'OUT'),v=managerRoundValue(r,p.level,p.tour,p.drawSize),st=context?context.stats:managerPlayerCurrentStats(p);
   return '<div class="manager-my-card"><div class="manager-my-head"><div class="manager-my-portrait">'+managerPlayerAvatar(p,'fullbody')+'<h4>'+esc(managerPlayerDisplayName(p,true))+'</h4></div><div><div class="manager-sub">'+p.tour+' · '+p.tier+'档 · '+p.drawSize+'签 · 身价 '+managerMoneyAmount(p.price,'inline')+(isReplaced?' · 已换下':'')+'</div><div class="manager-player-metrics"><div class="manager-metric-box"><div class="manager-metric-row"><span>累计收益</span><b>'+st.earned+'</b></div><div class="manager-metric-row"><span>昨天收益</span><b>'+st.yesterday+'</b></div><div class="manager-metric-row"><span>目前轮次</span><b>'+esc(st.round)+'</b></div><div class="manager-metric-row"><span>目前状态</span><b>'+esc(st.status)+'</b></div></div><div class="manager-metric-box"><div class="manager-metric-row"><span>预测轮次</span><b>'+managerRoundDisplay(r,p)+'</b></div><div class="manager-metric-row"><span>轮次收益</span><b>'+v+'</b></div><div class="manager-metric-row"><span>单人净值</span><b>'+(v-p.price)+'</b></div><div class="manager-metric-row"><span>回本线</span><b>'+managerBreakEvenDisplay(p.breakEven)+'</b></div></div></div></div></div></div>';
 }
-function managerRenderMyLineup(){
+function managerRenderCurrentLineup(){
   var c=managerCalc(),rules=managerRules(),submitted=managerSubmittedRecord();
   if(!c.players.length)return '<div class="manager-empty">还没签人。去球员市场加入 '+rules.minPlayers+'-'+rules.maxPlayers+' 名球员后，这里会显示你的私人阵容、预算占用和预测收益。</div>';
   var team=managerTeamCurrentStats(c.players,c);
@@ -8548,7 +8549,7 @@ function setBdF(g,f,btn){
 <script src="assets/manager/badges/ui-v20/release.js?v=20260920-2"></script>
 <script src="assets/manager/badges/ui-v20/native-preview.js?v=20260921-mobile-1"></script>
 <script src="assets/manager/principal-reward.js?v=20261003-1"></script>
-<script src="assets/manager/station-groups.js?v=20261011-1"></script>
+<script src="assets/manager/station-groups.js?v=20261011-2"></script>
 <script src="assets/manager/station-opening.js?v=20261011-1"></script>
 <script>bootstrapPage();</script>
 </body>
