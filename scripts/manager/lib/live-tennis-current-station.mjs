@@ -351,6 +351,31 @@ export function mergeDrawPlayers(event, parsedPlayers, sourceUrl = '') {
   let lockedLuckyLoserIndex = 0;
   return parsedPlayers.map((parsedPlayer) => {
     const oldByPosition = parsedPlayer.draw_position ? byDrawPosition.get(Number(parsedPlayer.draw_position)) : null;
+    // A provider TBD is not a real replacement; retain the slot price until identity resolves.
+    if (String(parsedPlayer.profile_id || '').toUpperCase() === 'TBD'
+        || /^(未知|TBD|unknown)$/i.test(parsedPlayer.name_en || '')) {
+      const position = Number(parsedPlayer.draw_position);
+      const pendingKey = `${event.tour}|qualifier-${position}`;
+      return {
+        ...oldByPosition,
+        ...parsedPlayer,
+        player_key: pendingKey,
+        name_en: `Qualifier pending ${position}`,
+        name_zh: `待落位选手 ${position}`,
+        profile_id: null,
+        photo_url: null,
+        is_qualifier_placeholder: true,
+        price: oldByPosition?.price ?? 0,
+        pre_r1_substitution: oldByPosition?.pre_r1_substitution || (oldByPosition && !oldByPosition.is_qualifier_placeholder ? {
+          out_player_key: oldByPosition.player_key || canonicalPlayerKey(event.tour, oldByPosition),
+          out_name_en: oldByPosition.name_en,
+          out_name_zh: oldByPosition.name_zh,
+          replacement_player_key: pendingKey,
+          draw_position: position,
+          source_url: sourceUrl
+        } : null)
+      };
+    }
     const isLockedExtraPlaceholder = Boolean(
       marketLocked
       && parsedPlayer.is_qualifier_placeholder

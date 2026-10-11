@@ -49,9 +49,9 @@ export function collectPreR1Substitutions(entries) {
     const tour = event.tour || item?.tour;
     for (const player of event.players || []) {
       const replacement = player.pre_r1_substitution;
-      if (!replacement) continue;
+      if (!replacement || player.is_qualifier_placeholder) continue;
       const outPlayerKey = replacement.out_player_key;
-      const inPlayerKey = replacement.replacement_player_key || canonicalPlayerKey(tour, player);
+      const inPlayerKey = canonicalPlayerKey(tour, player);
       if (!outPlayerKey || !inPlayerKey || outPlayerKey === inPlayerKey) continue;
 
       const dedupeKey = `${event.event_key}|${outPlayerKey}|${inPlayerKey}`;
@@ -68,9 +68,9 @@ export function collectPreR1Substitutions(entries) {
         out_name_zh: replacement.out_name_zh || null,
         out_profile_id: replacement.out_profile_id || null,
         replacement_player_key: inPlayerKey,
-        replacement_name_en: replacement.replacement_name_en || player.name_en || null,
-        replacement_name_zh: replacement.replacement_name_zh || player.name_zh || null,
-        replacement_profile_id: replacement.replacement_profile_id || player.profile_id || null,
+        replacement_name_en: player.name_en || null,
+        replacement_name_zh: player.name_zh || null,
+        replacement_profile_id: player.profile_id || null,
         reason: replacement.reason || 'pre_r1_withdrawal',
         source_url: replacement.source_url || player.source || null,
         contract_price_policy: 'keep_original_contract_price',
