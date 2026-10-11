@@ -1,11 +1,11 @@
 {
   "season": 2026,
-  "station_key": "2026-w41-shanghai",
-  "station_name": "ATP 上海",
+  "station_key": "2026-w42-wuhan",
+  "station_name": "WTA 武汉",
   "survivor_aligned": false,
   "status": "open",
-  "updated_at": "2026-10-06T01:35:14.023Z",
-  "announcement": "ATP 上海1000 已开售，签约金700，本站可选1–4人，10/07 11:45截止！北京WTA原阵容继续结算。",
+  "updated_at": "2026-10-11T03:30:05.177Z",
+  "announcement": "WTA 武汉1000 已开售，签约金700，本次可选1–4人，10/12 11:00截止！ATP上海原阵容继续结算。",
   "settlement": {
     "overlap_previous": true,
     "income_by_date": true
@@ -28,7 +28,7 @@
         "cap": 300
       },
       "value_pick": {
-        "max_price": 105,
+        "max_price": 135,
         "max_triggers": 1,
         "R16": 150,
         "QF": 250,
@@ -37,8 +37,8 @@
         "W": 700,
         "threshold_basis": {
           "method": "opening_non_qualifier_price_40th_percentile",
-          "players": 84,
-          "threshold": 105
+          "players": 48,
+          "threshold": 135
         }
       },
       "village_hope": {
@@ -64,12 +64,12 @@
   "pricing": {
     "market_prices_locked": true,
     "publication_version": 1,
-    "price_version": 26100601,
-    "locked_at": "2026-10-06T01:37:35.944Z",
-    "reason": "Opening Shanghai prices frozen, including qualifier slots"
+    "price_version": 26101101,
+    "locked_at": "2026-10-11T03:33:15.626Z",
+    "reason": "Wuhan opening prices frozen including qualifier slots"
   },
   "daily_prediction": {
-    "starts_on": "2026-10-07",
+    "starts_on": "2026-10-12",
     "event_groups": [
       {
         "tour": "ATP",
@@ -78,10 +78,31 @@
       },
       {
         "tour": "WTA",
-        "event_key": "wta-2026-w40-beijing",
-        "source_station_key": "2026-w40-beijing"
+        "event_key": "wta-2026-w42-wuhan",
+        "source_station_key": "2026-w42-wuhan"
       }
     ]
+  },
+  "display_groups": {
+    "current": {
+      "label": "ATP 上海 + WTA 武汉",
+      "station_keys": [
+        "2026-w41-shanghai",
+        "2026-w42-wuhan"
+      ]
+    },
+    "previous": {
+      "label": "ATP 北京 + WTA 北京",
+      "station_keys": [
+        "2026-w40-beijing"
+      ]
+    }
+  },
+  "opening_notice": {
+    "key": "wuhan_2026_opening",
+    "rpc": "tour_manager_take_wuhan_opening_notice",
+    "closes_at": "2026-10-12T11:00:00+08:00",
+    "message": "经纪人新站WTA 武汉1000赛开售！快来选购吧。"
   },
   "previous_station": {
     "station_key": "2026-w40-beijing",
@@ -103,18 +124,43 @@
       }
     ]
   },
-  "events": [
+  "continuing_stations": [
+    {
+      "station_key": "2026-w41-shanghai",
+      "station_name": "ATP 上海",
+      "publication_file": "publications/2026-w41-shanghai-v1.json",
+      "publication_version": 1,
+      "events": [
+        {
+          "tour": "ATP",
+          "event_key": "atp-2026-w41-shanghai",
+          "data_file": "events/atp-2026-w41-shanghai.json",
+          "active": false
+        }
+      ]
+    }
+  ],
+  "display_events": [
     {
       "tour": "ATP",
       "event_key": "atp-2026-w41-shanghai",
       "data_file": "events/atp-2026-w41-shanghai.json",
+      "active": true,
+      "read_only": true
+    }
+  ],
+  "events": [
+    {
+      "tour": "WTA",
+      "event_key": "wta-2026-w42-wuhan",
+      "data_file": "events/wta-2026-w42-wuhan.json",
       "active": true
     }
   ],
   "notes": [
-    "上海单独购买1-4人，签约金700；北京WTA保留北京站原合同、原价格和原Combo。",
-    "慧眼识珠阈值105：按开售时84名非资格赛占位球员价格的40%分位确定。",
-    "排名读取于2026-10-06；Tennis Abstract当前最新Elo为2026-09-28。Rune不在该Elo榜内，沿用既有排名代理算法并明确标注。",
-    "仅本地预览，尚未执行上海人数特例migration或同步线上。"
+    "慧眼识珠阈值135，按开售48名非资格赛占位球员价格40%分位确定。",
+    "2026-10-11读取1200名WTA排名及522名Elo。TA最新公布日期2026-09-28。",
+    "上海与武汉各按原站合同、锁价和Combo独立结算，仅展示合并；本金本站起始值按武汉。",
+    "武汉开售截止2026-10-12 11:00 Asia/Shanghai；开售提示到期停止。"
   ]
 }

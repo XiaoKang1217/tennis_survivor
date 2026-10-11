@@ -137,7 +137,7 @@ if (!serviceReady) {
   console.log('WARN SUPABASE_SERVICE_ROLE_KEY is missing; child refresh scripts will write local reports only.');
 }
 
-const previous = active.previous_station;
+for (const previous of [...(active.continuing_stations || []), active.previous_station].filter(Boolean)) {
 if (previous && previous.station_key && Array.isArray(previous.events) && previous.events.length) {
   if (await previousAlreadySettled(previous)) {
     console.log(`Previous station ${previous.station_key} is already settled; continue with current station.`);
@@ -161,5 +161,6 @@ if (previous && previous.station_key && Array.isArray(previous.events) && previo
   }
 }
 
+}
 const currentResult = await refreshAndSettle(activeFile, active.station_key, `current station ${active.station_key}`);
 console.log(`Current station settlement: ${resultLabel(currentResult)}`);

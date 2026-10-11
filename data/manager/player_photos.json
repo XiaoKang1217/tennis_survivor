@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-06T01:38:21.376Z",
+  "updated_at": "2026-10-11T03:34:05.806Z",
   "fallbacks": {
     "ATP": "assets/manager/players/fallback-atp.svg",
     "WTA": "assets/manager/players/fallback-wta.svg"
@@ -2029,6 +2029,160 @@
       "status": "missing",
       "storage_path": null,
       "updated_at": "2026-10-06T01:38:21.376Z"
+    },
+    "WTA|belinda-bencic": {
+      "photo_url": "assets/manager/players/wta/wta-belinda-bencic.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/319001",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-belinda-bencic.jpg",
+      "updated_at": "2026-10-11T03:33:32.977Z"
+    },
+    "WTA|zhang-shuai": {
+      "photo_url": "assets/manager/players/wta/wta-zhang-shuai.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/311779",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-zhang-shuai.jpg",
+      "updated_at": "2026-10-11T03:33:35.097Z"
+    },
+    "WTA|dayana-yastremska": {
+      "photo_url": "assets/manager/players/wta/wta-dayana-yastremska.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/324261",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-dayana-yastremska.jpg",
+      "updated_at": "2026-10-11T03:33:36.974Z"
+    },
+    "WTA|cristina-bucsa": {
+      "photo_url": "assets/manager/players/wta/wta-cristina-bucsa.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/321158",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-cristina-bucsa.jpg",
+      "updated_at": "2026-10-11T03:33:39.394Z"
+    },
+    "WTA|mayar-sherif": {
+      "photo_url": "assets/manager/players/wta/wta-mayar-sherif.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/318711",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-mayar-sherif.jpg",
+      "updated_at": "2026-10-11T03:33:41.704Z"
+    },
+    "WTA|mia-pohankova": {
+      "photo_url": "assets/manager/players/wta/wta-mia-pohankova.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/334183",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-mia-pohankova.jpg",
+      "updated_at": "2026-10-11T03:33:44.622Z"
+    },
+    "WTA|wang-xiyu": {
+      "photo_url": "assets/manager/players/wta/wta-wang-xiyu.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/326160",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-wang-xiyu.jpg",
+      "updated_at": "2026-10-11T03:33:47.326Z"
+    },
+    "WTA|marta-kostyuk": {
+      "photo_url": "assets/manager/players/wta/wta-marta-kostyuk.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/326482",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-marta-kostyuk.jpg",
+      "updated_at": "2026-10-11T03:33:49.869Z"
+    },
+    "WTA|qualifier-38": {
+      "photo_url": "assets/manager/players/fallback-wta.svg",
+      "photo_source": "qualifier placeholder",
+      "status": "missing",
+      "storage_path": null,
+      "updated_at": "2026-10-11T03:33:49.869Z"
+    },
+    "WTA|guo-hanyu": {
+      "photo_url": "assets/manager/players/wta/wta-guo-hanyu.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/323087",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-guo-hanyu.jpg",
+      "updated_at": "2026-10-11T03:33:53.538Z"
+    },
+    "WTA|sorana-cirstea": {
+      "photo_url": "assets/manager/players/wta/wta-sorana-cirstea.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/312469",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-sorana-cirstea.jpg",
+      "updated_at": "2026-10-11T03:33:55.489Z"
+    },
+    "WTA|jasmine-paolini": {
+      "photo_url": "assets/manager/players/wta/wta-jasmine-paolini.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/319280",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-jasmine-paolini.jpg",
+      "updated_at": "2026-10-11T03:33:57.731Z"
+    },
+    "WTA|anhelina-kalinina": {
+      "photo_url": "assets/manager/players/wta/wta-anhelina-kalinina.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/320567",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-anhelina-kalinina.jpg",
+      "updated_at": "2026-10-11T03:33:59.855Z"
+    },
+    "WTA|sonay-kartal": {
+      "photo_url": "assets/manager/players/wta/wta-sonay-kartal.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/329918",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-sonay-kartal.jpg",
+      "updated_at": "2026-10-11T03:34:02.695Z"
+    },
+    "WTA|qualifier-51": {
+      "photo_url": "assets/manager/players/fallback-wta.svg",
+      "photo_source": "qualifier placeholder",
+      "status": "missing",
+      "storage_path": null,
+      "updated_at": "2026-10-11T03:34:02.695Z"
+    },
+    "WTA|yuliia-starodubtseva": {
+      "photo_url": "assets/manager/players/wta/wta-yuliia-starodubtseva.jpg",
+      "photo_source": "https://static.live-tennis.cn/pic/ts/325338",
+      "source": "event player photo",
+      "status": "ready",
+      "storage_path": "assets/manager/players/wta/wta-yuliia-starodubtseva.jpg",
+      "updated_at": "2026-10-11T03:34:05.806Z"
+    },
+    "WTA|qualifier-53": {
+      "photo_url": "assets/manager/players/fallback-wta.svg",
+      "photo_source": "qualifier placeholder",
+      "status": "missing",
+      "storage_path": null,
+      "updated_at": "2026-10-11T03:34:05.806Z"
+    },
+    "WTA|qualifier-54": {
+      "photo_url": "assets/manager/players/fallback-wta.svg",
+      "photo_source": "qualifier placeholder",
+      "status": "missing",
+      "storage_path": null,
+      "updated_at": "2026-10-11T03:34:05.806Z"
+    },
+    "WTA|qualifier-58": {
+      "photo_url": "assets/manager/players/fallback-wta.svg",
+      "photo_source": "qualifier placeholder",
+      "status": "missing",
+      "storage_path": null,
+      "updated_at": "2026-10-11T03:34:05.806Z"
+    },
+    "WTA|qualifier-61": {
+      "photo_url": "assets/manager/players/fallback-wta.svg",
+      "photo_source": "qualifier placeholder",
+      "status": "missing",
+      "storage_path": null,
+      "updated_at": "2026-10-11T03:34:05.806Z"
     }
   }
 }
