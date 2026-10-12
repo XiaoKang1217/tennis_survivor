@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-10-11T03:09:06.866Z",
-  "source_updated_at": "2026-10-11 11:09:05",
-  "settled_through": "2026-10-10",
+  "updated_at": "2026-10-12T03:09:09.875Z",
+  "source_updated_at": "2026-10-12 11:09:07",
+  "settled_through": "2026-10-11",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
@@ -37,9 +37,9 @@
     {
       "tour": "ATP",
       "display_name": "xxx又坑人了",
-      "score": 1632,
-      "hit_count": 67,
-      "scored_days": 52
+      "score": 1642,
+      "hit_count": 69,
+      "scored_days": 53
     },
     {
       "tour": "ATP",
@@ -1086,15 +1086,6 @@
       "rarity": "limited"
     },
     {
-      "display_name": "青花比目",
-      "badge_key": "federer-eternal",
-      "title": "费德勒优雅永恒",
-      "subtitle": "球员纪念",
-      "image_url": "assets/manager/badges/ui-v18/optimized/federer-badge-640.webp",
-      "thumb_url": "assets/manager/badges/ui-v18/optimized/federer-badge-640.webp",
-      "rarity": "limited"
-    },
-    {
       "display_name": "Sirius",
       "badge_key": "wimbledon-2026",
       "title": "温网限定",
@@ -1434,6 +1425,15 @@
       "subtitle": "赛事限定",
       "image_url": "assets/manager/badges/ui-v20/optimized/usopen/badge.webp",
       "thumb_url": "assets/manager/badges/ui-v20/optimized/usopen/thumb.webp",
+      "rarity": "limited"
+    },
+    {
+      "display_name": "青花比目",
+      "badge_key": "rybakina-snow-silence",
+      "title": "莱巴金娜·雪落无声",
+      "subtitle": "球员纪念",
+      "image_url": "assets/manager/badges/ui-v20/optimized/rybakina/badge.webp",
+      "thumb_url": "assets/manager/badges/ui-v20/optimized/rybakina/thumb.webp",
       "rarity": "limited"
     },
     {
