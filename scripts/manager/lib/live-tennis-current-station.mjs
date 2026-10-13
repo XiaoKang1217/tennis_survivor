@@ -368,6 +368,7 @@ export function mergeDrawPlayers(event, parsedPlayers, sourceUrl = '') {
         price: oldByPosition?.price ?? 0,
         pre_r1_substitution: oldByPosition?.pre_r1_substitution || (oldByPosition && !oldByPosition.is_qualifier_placeholder ? {
           out_player_key: oldByPosition.player_key || canonicalPlayerKey(event.tour, oldByPosition),
+          locked_publication_player_key: oldByPosition.player_key || canonicalPlayerKey(event.tour, oldByPosition),
           out_name_en: oldByPosition.name_en,
           out_name_zh: oldByPosition.name_zh,
           replacement_player_key: pendingKey,
@@ -502,7 +503,12 @@ export function mergeDrawPlayers(event, parsedPlayers, sourceUrl = '') {
         ? (player.photo_source || old.photo_source || null)
         : (old.photo_source || player.photo_source || null),
       qualifier_replacement: qualifierReplacement,
-      pre_r1_substitution: preR1Substitution,
+      // A temporary Q key was never in the publication; trace it back to the original slot.
+      pre_r1_substitution: preR1Substitution ? {
+        ...preR1Substitution,
+        locked_publication_player_key: preR1Substitution.locked_publication_player_key
+          || preR1Substitution.out_player_key
+      } : null,
       source: sourceUrl || player.source || old.source || 'live-tennis.cn draw ajax'
     };
   });
