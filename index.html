@@ -1973,6 +1973,18 @@ function managerPlayerTitleHtml(p){
 function managerCurrentReplacementInfo(pack,key,name,meta){
   var list=pack&&pack.event&&Array.isArray(pack.event.players)?pack.event.players:[];
   key=String(key||'');name=String(name||'');meta=meta&&typeof meta==='object'?meta:{};
+  var purchaseKey=meta.original_purchase_player_key||meta.player_key||'';
+  var purchaseName=managerOriginalNameFromMeta(meta);
+  var purchasePosition=Number(meta.draw_position)||0;
+  if(purchaseKey||purchaseName){
+    list=list.filter(function(raw){
+      var sub=raw.pre_r1_substitution||{},q=raw.qualifier_replacement||{};
+      if(purchasePosition&&Number(raw.draw_position)!==purchasePosition)return false;
+      return [sub.locked_publication_player_key,sub.out_player_key,q.placeholder_player_key].indexOf(purchaseKey)>=0&&!!purchaseKey
+        || !!purchaseName&&[sub.out_name_zh,sub.out_name_en,q.placeholder_name_zh,q.placeholder_name_en].indexOf(purchaseName)>=0;
+    });
+    if(list.length===1){key=list[0].player_key;name=list[0].name_zh||list[0].name_en||name;}
+  }
   for(var i=0;i<list.length;i++){
     var raw=list[i]||{},sub=raw.pre_r1_substitution&&typeof raw.pre_r1_substitution==='object'?raw.pre_r1_substitution:null;
     if(sub){
@@ -2008,7 +2020,16 @@ function managerPublicConfigPlayerName(item){
     nameZh=item.name_zh||rawName;
     nameEn=item.name_en||'';
     original=item.original_name_zh||item.original_name_en||'';
-    if(original)return managerDisplayNameWithOriginal(nameZh||rawName,original);
+    if(original){
+      var originPacks=managerContestPacks();
+      for(var j=0;j<originPacks.length;j++){
+        var originHit=managerCurrentReplacementInfo(originPacks[j],'',nameZh||rawName,{original_name_zh:original});
+        if(originHit)return managerDisplayNameWithOriginal(originHit.replacementName,original);
+      }
+      return managerDisplayNameWithOriginal(nameZh||rawName,original);
+    }
+    // Public RPC names without an original marker are already authoritative current names.
+    return rawName;
   }else rawName=String(item||'');
   if(!rawName)return '';
   if(rawName.indexOf('（原')>=0)return rawName;
