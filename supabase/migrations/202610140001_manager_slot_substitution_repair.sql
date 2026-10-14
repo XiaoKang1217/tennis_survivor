@@ -77,6 +77,15 @@ end $$;
 revoke all on function public.tour_manager_apply_pre_r1_substitution_v2(text,text,text,text) from public, anon, authenticated;
 grant execute on function public.tour_manager_apply_pre_r1_substitution_v2(text,text,text,text) to service_role;
 
+-- The old sequential RPC also copied the mutable Jovic price into Bondar's market row.
+-- Restore the two audited publication slot prices; contract prices are not touched.
+update public.tour_manager_event_players
+set price = case player_key when 'WTA|iva-jovic' then 345 else 275 end
+where event_key = 'wta-2026-w42-wuhan' and player_key in ('WTA|iva-jovic','WTA|anna-bondar');
+update public.tour_manager_price_version_players
+set price = case player_key when 'WTA|iva-jovic' then 345 else 275 end
+where event_key = 'wta-2026-w42-wuhan' and player_key in ('WTA|iva-jovic','WTA|anna-bondar');
+
 do $$
 declare
   c record;

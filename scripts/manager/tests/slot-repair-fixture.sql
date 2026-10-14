@@ -11,6 +11,7 @@ create table tour_manager_lineups(id uuid primary key,user_id uuid,season int,st
 create table tour_manager_lineup_players(id uuid primary key,lineup_id uuid,event_key text,player_key text,
  name_zh text,name_en text,price int,earned_points int,reached_round text,metadata jsonb);
 create table tour_manager_wallets(user_id uuid,season int,balance int check(balance>=0),updated_at timestamptz);
+create table tour_manager_price_version_players(event_key text,player_key text,price int);
 create table tour_manager_settlements(id uuid primary key,contract_id uuid,player_key text,points_delta int,is_final boolean,source jsonb);
 create table tour_manager_wallet_ledger(id uuid default gen_random_uuid(),user_id uuid,season int,station_key text,
  lineup_id uuid,type text,amount int,balance_after int,description text,metadata jsonb);
