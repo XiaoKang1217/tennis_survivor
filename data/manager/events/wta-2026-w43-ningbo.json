@@ -20,8 +20,8 @@
   "market_status": "open",
   "submission_status": "open",
   "submission_opens_at": "2026-10-17T14:56:33.539Z",
-  "submission_cutoff_at": "2026-10-18T11:00:00+08:00",
-  "submission_closes_at": "2026-10-18T11:00:00+08:00",
+  "submission_cutoff_at": "2026-10-19T11:00:00+08:00",
+  "submission_closes_at": "2026-10-19T11:00:00+08:00",
   "manual_schedule_windows": true,
   "schedule_status": "oop_pending",
   "main_draw_first_match_at": null,
@@ -36,7 +36,7 @@
     "https://www.live-tennis.cn/zh/draw/32092/2026",
     "https://www.live-tennis.cn/zh/draw/ajax/32092/2026/device/0/horizontal/true"
   ],
-  "market_message": "WTA 宁波500，10/18 11:00截止。",
+  "market_message": "WTA 宁波500，10/19 11:00截止。",
   "players": [
     {
       "name_en": "Elena RYBAKINA",

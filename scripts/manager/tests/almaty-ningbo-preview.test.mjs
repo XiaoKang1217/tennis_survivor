@@ -16,7 +16,7 @@ test('new station configuration, group boundaries and prices',()=>{
   assert.deepEqual(events.map(x=>[x.event.tour,x.event.level,x.event.players.length]),[['ATP','250',28],['WTA','500',28]]);
   for(const {event} of events){
     assert.equal(new Set(event.players.map(p=>p.draw_position)).size,28);
-    assert.equal(Date.parse(event.submission_cutoff_at),Date.parse('2026-10-18T11:00:00+08:00'));
+    assert.equal(Date.parse(event.submission_cutoff_at),Date.parse('2026-10-19T11:00:00+08:00'));
     const incoming=event.players.map(p=>({...p,price:999,...(p.is_qualifier_placeholder?{name_en:'Winner '+p.draw_position,player_key:event.tour+'|winner-'+p.draw_position,is_qualifier_placeholder:false,profile_id:'new'+p.draw_position}:{})}));
     const merged=mergeDrawPlayers(event,incoming,'test');
     event.players.forEach(p=>assert.equal(merged.find(x=>x.draw_position===p.draw_position).price,p.price));
@@ -56,8 +56,9 @@ test('current and previous income remain separate with lifetime totals',()=>{
   assert.equal(c.managerRenderMyLineup(),'NEW ROSTER ONLY');
 });
 test('opening notice is account-scoped, expires and uses compressed shared QR',()=>{
-  const sql=fs.readFileSync('supabase/migrations/202610170001_manager_almaty_ningbo_notice.sql','utf8');
-  assert.match(sql,/auth.uid\(\)/);assert.match(sql,/on conflict do nothing/);assert.match(sql,/2026-10-18 11:00:00\+08/);
+  const sql=fs.readFileSync('supabase/migrations/202610180001_manager_almaty_ningbo_cutoff.sql','utf8');
+  assert.match(sql,/auth.uid\(\)/);assert.match(sql,/on conflict do nothing/);assert.match(sql,/2026-10-19 11:00:00\+08/);
+  assert.equal(active.opening_notice.closes_at,'2026-10-19T11:00:00+08:00');
   assert.match(html,/wechat-group-20261017.webp/);
   assert.ok(fs.statSync('assets/manager/wechat-group-20261017.webp').size<80000);
   assert.match(fs.readFileSync('assets/manager/station-opening.js','utf8'),/Date.now\(\) >= Date.parse\(config.closes_at\)/);

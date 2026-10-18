@@ -5,7 +5,7 @@
   "survivor_aligned": false,
   "status": "open",
   "updated_at": "2026-10-17T14:56:33.539Z",
-  "announcement": "ATP 阿拉木图250 + WTA 宁波500 已开售，签约金600，可选1–4人，10/18 11:00截止！",
+  "announcement": "ATP 阿拉木图250 + WTA 宁波500 已开售，签约金600，可选1–4人，10/19 11:00截止！",
   "settlement": {
     "overlap_previous": true,
     "income_by_date": true
@@ -122,7 +122,7 @@
   "opening_notice": {
     "key": "almaty_ningbo_2026_opening",
     "rpc": "tour_manager_take_almaty_ningbo_opening_notice",
-    "closes_at": "2026-10-18T11:00:00+08:00",
+    "closes_at": "2026-10-19T11:00:00+08:00",
     "message": "经纪人新站ATP阿拉木图+WTA宁波开售！快来选购吧。"
   },
   "previous_station": {

@@ -5,7 +5,7 @@ import { readJson, writeJson } from './lib/manager-utils.mjs';
 const previous = await readJson('data/manager/active_events.json');
 if (previous.station_key !== '2026-w42-wuhan') throw new Error('Expected Wuhan baseline');
 const stationKey = '2026-w43-almaty-ningbo';
-const opensAt = new Date().toISOString(), cutoff = '2026-10-18T11:00:00+08:00';
+const opensAt = new Date().toISOString(), cutoff = '2026-10-19T11:00:00+08:00';
 const items = [];
 for (const def of [
   { slug:'almaty', tour:'ATP', id:'29410', name:'Almaty Open', zh:'阿拉木图', level:'250', surface:'hard_in', timezone:'Asia/Almaty', country:'Kazakhstan', qualifiers:4 },
@@ -25,13 +25,13 @@ for (const def of [
     schedule_status:'oop_pending', main_draw_first_match_at:null, round2_first_match_at:null,
     allow_submission_after_first_match:false, cross_tour_transfer:true, transfer_fee_rate:0.1,
     transfer_window_opens_at:null, transfer_window_closes_at:null, transfer_welfare_discount:false,
-    source_urls:[drawUrl,ajaxUrl], market_message:`${def.tour} ${def.zh}${def.level}，10/18 11:00截止。`, players
+    source_urls:[drawUrl,ajaxUrl], market_message:`${def.tour} ${def.zh}${def.level}，10/19 11:00截止。`, players
   });
   items.push({tour:def.tour,event_key:eventKey,data_file:`events/${eventKey}.json`,active:true});
 }
 await writeJson('data/manager/active_events.json', {
   season:2026,station_key:stationKey,station_name:'ATP 阿拉木图 + WTA 宁波',survivor_aligned:false,status:'open',updated_at:opensAt,
-  announcement:'ATP 阿拉木图250 + WTA 宁波500 已开售，签约金600，可选1–4人，10/18 11:00截止！',
+  announcement:'ATP 阿拉木图250 + WTA 宁波500 已开售，签约金600，可选1–4人，10/19 11:00截止！',
   settlement:{overlap_previous:true,income_by_date:true},
   rules:{station_grant:600,min_players:1,max_players:4,cross_tour_transfer:true,transfer_fee_rate:0.1,transfer_welfare_discount:false,
     combo_version:'seoul_singapore_2026_v1',combo_design_status:'confirmed',
