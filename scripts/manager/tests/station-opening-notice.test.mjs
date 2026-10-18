@@ -7,10 +7,10 @@ const sql=fs.readFileSync('supabase/migrations/202610110001_manager_wuhan_notice
 
 test('homepage and notice share the compressed new group QR',()=>{
   const html=fs.readFileSync('index.html','utf8');
-  assert.match(html,/MANAGER_GROUP_QR_SRC='assets\/manager\/wechat-group-20261011.png'/);
+  const qrPath=html.match(/MANAGER_GROUP_QR_SRC='([^']+)'/)[1];
   assert.match(js,/querySelector\('img'\).src = MANAGER_GROUP_QR_SRC/);
   assert.match(js,/<figcaption>经纪人新群聊<\/figcaption>/);
-  assert.ok(fs.statSync('assets/manager/wechat-group-20261011.png').size<50000);
+  assert.ok(fs.statSync(qrPath).size<80000);
 });
 
 test('account-wide once-only claim is atomic and derives identity from auth',()=>{

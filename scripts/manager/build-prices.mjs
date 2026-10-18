@@ -435,11 +435,11 @@ function cookieHeaderFromHeaders(headers) {
     .join('; ');
 }
 
-function liveTennisRankingBody() {
+function liveTennisRankingBody(limit = 1200) {
   const params = new URLSearchParams({
     draw: '1',
     start: '0',
-    length: '1200',
+    length: String(Math.min(3000, Math.max(1200, Number(limit) || 1200))),
     device: '0'
   });
   LIVE_TENNIS_RANK_COLUMNS.forEach((column, index) => {
@@ -485,7 +485,7 @@ function parseLiveTennisRankingRows(payload, tour, sourceUrl, rankingDate, snaps
   }).filter((row) => row.name_en && row.rank);
 }
 
-async function loadLiveTennisRankingRows({ tour, sourceUrl, warnings, rankingDate, snapshotDate }) {
+async function loadLiveTennisRankingRows({ tour, sourceUrl, warnings, rankingDate, snapshotDate, limit }) {
   let html = '';
   let cookieHeader = '';
   let csrf = '';
@@ -518,7 +518,7 @@ async function loadLiveTennisRankingRows({ tour, sourceUrl, warnings, rankingDat
         'x-csrf-token': csrf,
         'x-requested-with': 'XMLHttpRequest'
       },
-      body: liveTennisRankingBody()
+      body: liveTennisRankingBody(limit)
     });
     if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
     const payload = await res.json();
@@ -599,7 +599,7 @@ async function loadRankingRows({ tour, args, warnings, rankingDate, snapshotDate
   }
   const sourceUrl = args[`${tour.toLowerCase()}-ranking-url`] || RANKING_URLS[tour];
   if (isLiveTennisRankingUrl(sourceUrl)) {
-    return loadLiveTennisRankingRows({ tour, sourceUrl, warnings, rankingDate, snapshotDate });
+    return loadLiveTennisRankingRows({ tour, sourceUrl, warnings, rankingDate, snapshotDate, limit: args['ranking-limit'] });
   }
   if (tour === 'WTA' && /wtatennis\.com\/rankings/i.test(sourceUrl)) {
     return loadWtaRankingRowsFromApi({ args, warnings, rankingDate, snapshotDate });

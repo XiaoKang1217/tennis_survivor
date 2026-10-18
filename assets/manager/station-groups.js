@@ -73,6 +73,8 @@ function managerRenderContinuingLineup(context){
 }
 function managerRenderMyLineup(){
   var stations=MANAGER_ACTIVE_EVENTS&&MANAGER_ACTIVE_EVENTS.continuing_stations||[];
+  var group=managerDisplayGroup('current');
+  if(group)stations=stations.filter(function(station){return group.station_keys.includes(station.station_key);});
   if(!stations.length)return managerRenderCurrentLineup();
   function section(name,content){return '<section class="manager-station-lineup"><h3>'+esc(name)+'</h3>'+content+'</section>';}
   return section(managerStationName(),managerRenderCurrentLineup())+stations.map(function(station){

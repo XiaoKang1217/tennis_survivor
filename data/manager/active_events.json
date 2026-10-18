@@ -1,53 +1,74 @@
 {
   "season": 2026,
-  "station_key": "2026-w42-wuhan",
-  "station_name": "WTA 武汉",
+  "station_key": "2026-w43-almaty-ningbo",
+  "station_name": "ATP 阿拉木图 + WTA 宁波",
   "survivor_aligned": false,
   "status": "open",
-  "updated_at": "2026-10-11T03:30:05.177Z",
-  "announcement": "WTA 武汉1000 已开售，签约金700，本次可选1–4人，10/12 11:00截止！ATP上海原阵容继续结算。",
+  "updated_at": "2026-10-17T14:56:33.539Z",
+  "announcement": "ATP 阿拉木图250 + WTA 宁波500 已开售，签约金600，可选1–4人，10/18 11:00截止！",
   "settlement": {
     "overlap_previous": true,
     "income_by_date": true
   },
   "rules": {
-    "station_grant": 700,
+    "station_grant": 600,
     "min_players": 1,
     "max_players": 4,
-    "cross_tour_transfer": false,
-    "transfer_fee_rate": 0.15,
+    "cross_tour_transfer": true,
+    "transfer_fee_rate": 0.1,
     "transfer_welfare_discount": false,
-    "combo_version": "canada_2026_v1",
+    "combo_version": "seoul_singapore_2026_v1",
     "combo_design_status": "confirmed",
     "combo": {
-      "total_cap": 1000,
+      "total_cap": 600,
       "steady": {
-        "min_players": 3,
+        "min_players": 2,
         "qf_ratio": 0.5,
-        "gross_rate": 0.15,
-        "cap": 300
+        "gross_rate": 0.08,
+        "cap": 120
+      },
+      "dual_tour": {
+        "grouping": "event",
+        "event_keys": [
+          "atp-2026-w43-almaty",
+          "wta-2026-w43-ningbo"
+        ],
+        "labels": [
+          "ATP 阿拉木图",
+          "WTA 宁波"
+        ],
+        "QF": 50,
+        "SF": 100,
+        "F": 170,
+        "W": 250
       },
       "value_pick": {
-        "max_price": 135,
+        "max_price": 60,
         "max_triggers": 1,
-        "R16": 150,
-        "QF": 250,
-        "SF": 350,
-        "F": 550,
-        "W": 700,
+        "QF": 50,
+        "SF": 100,
+        "F": 170,
+        "W": 250,
         "threshold_basis": {
           "method": "opening_non_qualifier_price_40th_percentile",
-          "players": 48,
-          "threshold": 135
+          "players": 45,
+          "threshold": 60
         }
       },
-      "village_hope": {
-        "selection": "user_selected_at_submission",
-        "R16": 150,
-        "QF": 250,
-        "SF": 350,
-        "F": 550,
-        "W": 800
+      "small_budget": {
+        "max_cost": 600,
+        "gross_multipliers": [
+          0.75,
+          1,
+          1.25,
+          1.5
+        ],
+        "bonuses": [
+          50,
+          100,
+          150,
+          200
+        ]
       },
       "welfare": {
         "principal_max": 500,
@@ -64,62 +85,56 @@
   "pricing": {
     "market_prices_locked": true,
     "publication_version": 1,
-    "price_version": 26101101,
-    "locked_at": "2026-10-11T03:33:15.626Z",
-    "reason": "Wuhan opening prices frozen including qualifier slots"
+    "price_version": 26101701,
+    "locked_at": "2026-10-17T15:10:13.879Z",
+    "reason": "Opening prices frozen by original draw slot, including qualifiers"
   },
   "daily_prediction": {
-    "starts_on": "2026-10-12",
+    "starts_on": "2026-10-18",
     "event_groups": [
       {
         "tour": "ATP",
-        "event_key": "atp-2026-w41-shanghai",
-        "source_station_key": "2026-w41-shanghai"
+        "event_key": "atp-2026-w43-almaty",
+        "source_station_key": "2026-w43-almaty-ningbo"
       },
       {
         "tour": "WTA",
-        "event_key": "wta-2026-w42-wuhan",
-        "source_station_key": "2026-w42-wuhan"
+        "event_key": "wta-2026-w43-ningbo",
+        "source_station_key": "2026-w43-almaty-ningbo"
       }
     ]
   },
   "display_groups": {
     "current": {
+      "label": "ATP 阿拉木图 + WTA 宁波",
+      "station_keys": [
+        "2026-w43-almaty-ningbo"
+      ]
+    },
+    "previous": {
       "label": "ATP 上海 + WTA 武汉",
       "station_keys": [
         "2026-w41-shanghai",
         "2026-w42-wuhan"
       ]
-    },
-    "previous": {
-      "label": "ATP 北京 + WTA 北京",
-      "station_keys": [
-        "2026-w40-beijing"
-      ]
     }
   },
   "opening_notice": {
-    "key": "wuhan_2026_opening",
-    "rpc": "tour_manager_take_wuhan_opening_notice",
-    "closes_at": "2026-10-12T11:00:00+08:00",
-    "message": "经纪人新站WTA 武汉1000赛开售！快来选购吧。"
+    "key": "almaty_ningbo_2026_opening",
+    "rpc": "tour_manager_take_almaty_ningbo_opening_notice",
+    "closes_at": "2026-10-18T11:00:00+08:00",
+    "message": "经纪人新站ATP阿拉木图+WTA宁波开售！快来选购吧。"
   },
   "previous_station": {
-    "station_key": "2026-w40-beijing",
-    "station_name": "ATP 北京 + WTA 北京",
+    "station_key": "2026-w42-wuhan",
+    "station_name": "WTA 武汉",
+    "publication_file": "publications/2026-w42-wuhan-v1.json",
     "publication_version": 1,
-    "publication_file": "publications/2026-w40-beijing-v1.json",
     "events": [
       {
-        "tour": "ATP",
-        "event_key": "atp-2026-w40-beijing",
-        "data_file": "events/atp-2026-w40-beijing.json",
-        "active": false
-      },
-      {
         "tour": "WTA",
-        "event_key": "wta-2026-w40-beijing",
-        "data_file": "events/wta-2026-w40-beijing.json",
+        "event_key": "wta-2026-w42-wuhan",
+        "data_file": "events/wta-2026-w42-wuhan.json",
         "active": false
       }
     ]
@@ -140,27 +155,26 @@
       ]
     }
   ],
-  "display_events": [
-    {
-      "tour": "ATP",
-      "event_key": "atp-2026-w41-shanghai",
-      "data_file": "events/atp-2026-w41-shanghai.json",
-      "active": true,
-      "read_only": true
-    }
-  ],
+  "display_events": [],
   "events": [
     {
+      "tour": "ATP",
+      "event_key": "atp-2026-w43-almaty",
+      "data_file": "events/atp-2026-w43-almaty.json",
+      "active": true
+    },
+    {
       "tour": "WTA",
-      "event_key": "wta-2026-w42-wuhan",
-      "data_file": "events/wta-2026-w42-wuhan.json",
+      "event_key": "wta-2026-w43-ningbo",
+      "data_file": "events/wta-2026-w43-ningbo.json",
       "active": true
     }
   ],
   "notes": [
-    "慧眼识珠阈值135，按开售48名非资格赛占位球员价格40%分位确定。",
-    "2026-10-11读取1200名WTA排名及522名Elo。TA最新公布日期2026-09-28。",
-    "上海与武汉各按原站合同、锁价和Combo独立结算，仅展示合并；本金本站起始值按武汉。",
-    "武汉开售截止2026-10-12 11:00 Asia/Shanghai；开售提示到期停止。"
+    "慧眼识珠阈值60，开售非资格赛占位球员价格40%分位。",
+    "沿用250+500级别四项Combo结构，合计封顶600；低保独立且2026自然年最多3次。",
+    "2026-10-17读取ATP1989名、WTA1545名排名，ATP550名、WTA519名Elo；努尔拉努利无TA Elo，使用已有排名估算方法并标记。",
+    "签表来源赛期2026-10-19至2026-10-25；竞猜自10月18日起按官方赛程日选赛，无当日赛程则等待，不跨日补选。",
+    "上海与武汉继续按各自原规则结算，上站展示合并。"
   ]
 }

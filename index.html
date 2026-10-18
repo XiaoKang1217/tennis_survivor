@@ -1136,7 +1136,7 @@ const SUPABASE_JS_FALLBACK_URLS=[
 ];
 const CHART_JS_URL='https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js';
 const MINI_PROGRAM_QR_SRC='assets/miniprogram/lu-de-wangqiu-qrcode.jpg';
-const MANAGER_GROUP_QR_SRC='assets/manager/wechat-group-20261011.png';
+const MANAGER_GROUP_QR_SRC='assets/manager/wechat-group-20261017.webp';
 const MINI_PROGRAM_PROMO_COPY='「炉的网球」小程序现已上线！极速、稳定，专为中国网球迷打造的观赛社区。每十秒的实时比分、球员最新参赛动态以及官方赛程签表。登录即可获得10朵花，欢迎体验！';
 const MODULE_VIEWED={};
 const SEARCH_TRACK_TIMERS={};
@@ -2986,9 +2986,9 @@ function managerWashingtonComboScenario(gross,rounds){
   var raw=stable+dual+jewel+small,cap=Number(combo.total_cap)||400,bonus=Math.min(raw,cap);
   return {gross:gross,stable:stable,finalBonus:dual,champBonus:0,jewelBonus:jewel,smallBusinessBonus:small,dualBonus:dual,bonus:bonus,comboVersion:rules.combo_version||'washington_2026_v2',comboCap:cap,comboRaw:raw,comboItems:[
     {label:'稳健经营',amount:stable,desc:'至少'+minPlayers+'人，'+Math.round(qfRatio*100)+'%阵容进QF，毛收益'+Math.round(grossRate*100)+'%，封顶'+steadyCap},
-    {label:'双线经营',amount:dual,desc:(dualRules.grouping==='event'?(dualRules.labels||['首尔','新加坡']).join('/'):'ATP/WTA')+'各有人进QF/SF/F/W，最高档+60/+120/+200/+300'},
+    {label:'双线经营',amount:dual,desc:(dualRules.grouping==='event'?(dualRules.labels||['首尔','新加坡']).join('/'):'ATP/WTA')+'各有人进QF/SF/F/W，最高档+'+[Number(dualRules.QF)||60,Number(dualRules.SF)||120,Number(dualRules.F)||200,Number(dualRules.W)||300].join('/+')},
     {label:'慧眼识珠',amount:jewel,desc:'签约价不高于'+maxPrice+'的球员进QF/SF/F/W，最高档+'+[Number(valueRules.QF)||50,Number(valueRules.SF)||100,Number(valueRules.F)||150,Number(valueRules.W)||200].join('/+')},
-    {label:'小本经营',amount:small,desc:'成本不超过500，毛收益达到成本0.75/1/1.25/1.5倍，最高档+50/+100/+150/+200'}
+    {label:'小本经营',amount:small,desc:'签约原价不超过'+maxCost+'，毛收益达到原价'+multipliers.join('/')+'倍，最高档+'+bonuses.join('/+')}
   ]};
 }
 function managerCanadaRoundReward(round,table){
@@ -8570,7 +8570,7 @@ function setBdF(g,f,btn){
 <script src="assets/manager/badges/ui-v20/release.js?v=20260920-2"></script>
 <script src="assets/manager/badges/ui-v20/native-preview.js?v=20260921-mobile-1"></script>
 <script src="assets/manager/principal-reward.js?v=20261003-1"></script>
-<script src="assets/manager/station-groups.js?v=20261011-2"></script>
+<script src="assets/manager/station-groups.js?v=20261018-1"></script>
 <script src="assets/manager/station-opening.js?v=20261011-1"></script>
 <script>bootstrapPage();</script>
 </body>
