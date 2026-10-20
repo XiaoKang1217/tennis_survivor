@@ -29,14 +29,14 @@
   "allow_submission_after_first_match": false,
   "cross_tour_transfer": true,
   "transfer_fee_rate": 0.1,
-  "transfer_window_opens_at": "2026-10-20T11:15:00.000Z",
-  "transfer_window_closes_at": "2026-10-21T05:00:00.000Z",
+  "transfer_window_opens_at": "2026-10-20T23:00:00+08:00",
+  "transfer_window_closes_at": "2026-10-21T13:00:00+08:00",
   "transfer_welfare_discount": false,
   "source_urls": [
     "https://www.live-tennis.cn/zh/draw/32092/2026",
     "https://www.live-tennis.cn/zh/draw/ajax/32092/2026/device/0/horizontal/true"
   ],
-  "market_message": "WTA 宁波500，10/19 11:00截止。",
+  "market_message": "本站换人窗口：10/20 23:00～10/21 13:00（北京时间）；ATP 阿拉木图与 WTA 宁波男女可互换，手续费沿用本站10%。",
   "players": [
     {
       "name_en": "Elena RYBAKINA",
@@ -2473,5 +2473,5 @@
     "locked_at": "2026-10-17T15:10:13.879Z"
   },
   "round1_completed_at": "2026-10-20T11:15:00.000Z",
-  "transfer_window_note": "换人窗口为 R1 全部结束后、R2 第一场开始前，由当前站赛程自动更新。"
+  "transfer_window_note": "本站换人窗口：10/20 23:00～10/21 13:00（北京时间）；ATP 阿拉木图与 WTA 宁波男女可互换，手续费沿用本站10%。"
 }

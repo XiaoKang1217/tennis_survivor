@@ -5,7 +5,7 @@
   "survivor_aligned": false,
   "status": "open",
   "updated_at": "2026-10-17T14:56:33.539Z",
-  "announcement": "ATP 阿拉木图250 + WTA 宁波500 已开售，签约金600，可选1–4人，10/19 11:00截止！",
+  "announcement": "本站换人窗口：10/20 23:00～10/21 13:00（北京时间）；ATP 阿拉木图与 WTA 宁波男女可互换，手续费沿用本站10%。",
   "settlement": {
     "overlap_previous": true,
     "income_by_date": true
@@ -80,7 +80,8 @@
         "season_end": "2026-12-31",
         "excluded_from_combo_cap": true
       }
-    }
+    },
+    "transfer_notice": "本站换人窗口：10/20 23:00～10/21 13:00（北京时间）；ATP 阿拉木图与 WTA 宁波男女可互换，手续费沿用本站10%。"
   },
   "pricing": {
     "market_prices_locked": true,
