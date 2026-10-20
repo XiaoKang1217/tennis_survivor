@@ -25,12 +25,12 @@
   "manual_schedule_windows": true,
   "schedule_status": "partial",
   "main_draw_first_match_at": "2026-10-19T04:00:00.000Z",
-  "round2_first_match_at": null,
+  "round2_first_match_at": "2026-10-21T05:00:00.000Z",
   "allow_submission_after_first_match": false,
   "cross_tour_transfer": true,
   "transfer_fee_rate": 0.1,
-  "transfer_window_opens_at": null,
-  "transfer_window_closes_at": null,
+  "transfer_window_opens_at": "2026-10-20T11:15:00.000Z",
+  "transfer_window_closes_at": "2026-10-21T05:00:00.000Z",
   "transfer_welfare_discount": false,
   "source_urls": [
     "https://www.live-tennis.cn/zh/draw/32092/2026",
@@ -2360,19 +2360,19 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Iga SWIATEK",
-      "name_zh": "希维昂泰克",
-      "profile_id": "326408",
-      "country_code": "POL",
-      "seed": 2,
-      "entry_type": "direct_acceptance",
+      "name_en": "Anastasia ZAKHAROVA",
+      "name_zh": "扎哈罗娃",
+      "profile_id": "327367",
+      "country_code": "RUS",
+      "seed": null,
+      "entry_type": "lucky_loser",
       "draw_position": 32,
       "first_round": "BYE",
       "path_note": "首轮轮空，直接进入下一轮。",
-      "photo_url": "https://static.live-tennis.cn/pic/ts/326408",
+      "photo_url": "https://static.live-tennis.cn/pic/ts/327367",
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/32092/2026/device/0/horizontal/true",
-      "player_key": "WTA|iga-swiatek",
+      "player_key": "WTA|anastasia-zakharova",
       "rank": 9,
       "points": 4389,
       "overall_elo": 2098.5,
@@ -2439,7 +2439,22 @@
       },
       "photo_source": null,
       "qualifier_replacement": null,
-      "pre_r1_substitution": null
+      "pre_r1_substitution": {
+        "out_player_key": "WTA|iga-swiatek",
+        "locked_publication_player_key": "WTA|iga-swiatek",
+        "out_name_en": "Iga SWIATEK",
+        "out_name_zh": "希维昂泰克",
+        "out_profile_id": "326408",
+        "replacement_player_key": "WTA|anastasia-zakharova",
+        "replacement_name_en": "Anastasia ZAKHAROVA",
+        "replacement_name_zh": "扎哈罗娃",
+        "replacement_profile_id": "327367",
+        "draw_position": 32,
+        "reason": "pre_r1_withdrawal",
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/32092/2026/device/0/horizontal/true",
+        "contract_price_policy": "keep_original_contract_price",
+        "original_contract_price": 240
+      }
     }
   ],
   "pricing_formula": {
@@ -2457,6 +2472,6 @@
     "publication_version": 1,
     "locked_at": "2026-10-17T15:10:13.879Z"
   },
-  "round1_completed_at": null,
+  "round1_completed_at": "2026-10-20T11:15:00.000Z",
   "transfer_window_note": "换人窗口为 R1 全部结束后、R2 第一场开始前，由当前站赛程自动更新。"
 }
