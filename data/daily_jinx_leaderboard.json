@@ -1,17 +1,17 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-10-23T03:09:02.846Z",
-  "source_updated_at": "2026-10-23 11:09:00",
-  "settled_through": "2026-10-22",
+  "updated_at": "2026-10-24T03:09:22.583Z",
+  "source_updated_at": "2026-10-24 11:09:19",
+  "settled_through": "2026-10-23",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
     {
       "tour": "ATP",
       "display_name": "第七路单车",
-      "score": 2717,
-      "hit_count": 93,
-      "scored_days": 65
+      "score": 2721,
+      "hit_count": 94,
+      "scored_days": 66
     },
     {
       "tour": "ATP",
@@ -37,9 +37,9 @@
     {
       "tour": "ATP",
       "display_name": "xxx又坑人了",
-      "score": 1751,
-      "hit_count": 74,
-      "scored_days": 57
+      "score": 1755,
+      "hit_count": 75,
+      "scored_days": 58
     },
     {
       "tour": "ATP",
