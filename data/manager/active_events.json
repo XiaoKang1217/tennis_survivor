@@ -1,62 +1,54 @@
 {
   "season": 2026,
-  "station_key": "2026-w43-almaty-ningbo",
-  "station_name": "ATP 阿拉木图 + WTA 宁波",
+  "station_key": "2026-w44-basel-vienna-tokyo",
+  "station_name": "ATP 巴塞尔 + ATP 维也纳 + WTA 东京",
   "survivor_aligned": false,
   "status": "open",
-  "updated_at": "2026-10-17T14:56:33.539Z",
-  "announcement": "本站换人窗口：10/20 23:00～10/21 13:00（北京时间）；ATP 阿拉木图与 WTA 宁波男女可互换，手续费沿用本站10%。",
+  "updated_at": "2026-10-25T00:42:10.525Z",
+  "announcement": "ATP 巴塞尔500 + ATP 维也纳500 + WTA 东京500 已开售，签约金700，本站可选1–6人，10/26 11:00截止！",
   "settlement": {
     "overlap_previous": true,
     "income_by_date": true
   },
   "rules": {
-    "station_grant": 600,
+    "station_grant": 700,
     "min_players": 1,
-    "max_players": 4,
+    "max_players": 6,
     "cross_tour_transfer": true,
     "transfer_fee_rate": 0.1,
     "transfer_welfare_discount": false,
     "combo_version": "seoul_singapore_2026_v1",
     "combo_design_status": "confirmed",
     "combo": {
-      "total_cap": 600,
+      "total_cap": 1000,
       "steady": {
-        "min_players": 2,
+        "min_players": 3,
         "qf_ratio": 0.5,
-        "gross_rate": 0.08,
-        "cap": 120
+        "gross_rate": 0.1,
+        "cap": 300
       },
       "dual_tour": {
-        "grouping": "event",
-        "event_keys": [
-          "atp-2026-w43-almaty",
-          "wta-2026-w43-ningbo"
-        ],
-        "labels": [
-          "ATP 阿拉木图",
-          "WTA 宁波"
-        ],
-        "QF": 50,
-        "SF": 100,
-        "F": 170,
-        "W": 250
+        "grouping": "tour",
+        "QF": 150,
+        "SF": 250,
+        "F": 350,
+        "W": 450
       },
       "value_pick": {
-        "max_price": 60,
+        "max_price": 80,
         "max_triggers": 1,
-        "QF": 50,
-        "SF": 100,
-        "F": 170,
-        "W": 250,
+        "QF": 150,
+        "SF": 250,
+        "F": 350,
+        "W": 450,
         "threshold_basis": {
           "method": "opening_non_qualifier_price_40th_percentile",
-          "players": 45,
-          "threshold": 60
+          "players": 76,
+          "threshold": 80
         }
       },
       "small_budget": {
-        "max_cost": 600,
+        "max_cost": 700,
         "gross_multipliers": [
           0.75,
           1,
@@ -64,10 +56,10 @@
           1.5
         ],
         "bonuses": [
-          50,
-          100,
           150,
-          200
+          200,
+          250,
+          300
         ]
       },
       "welfare": {
@@ -80,102 +72,97 @@
         "season_end": "2026-12-31",
         "excluded_from_combo_cap": true
       }
-    },
-    "transfer_notice": "本站换人窗口：10/20 23:00～10/21 13:00（北京时间）；ATP 阿拉木图与 WTA 宁波男女可互换，手续费沿用本站10%。"
+    }
   },
   "pricing": {
     "market_prices_locked": true,
     "publication_version": 1,
-    "price_version": 26101701,
-    "locked_at": "2026-10-17T15:10:13.879Z",
+    "price_version": 26102501,
+    "locked_at": "2026-10-25T00:43:34.014Z",
     "reason": "Opening prices frozen by original draw slot, including qualifiers"
   },
   "daily_prediction": {
-    "starts_on": "2026-10-18",
+    "starts_on": "2026-10-26",
     "event_groups": [
       {
         "tour": "ATP",
-        "event_key": "atp-2026-w43-almaty",
-        "source_station_key": "2026-w43-almaty-ningbo"
+        "event_key": "atp-2026-w44-vienna",
+        "source_station_key": "2026-w44-basel-vienna-tokyo"
       },
       {
         "tour": "WTA",
-        "event_key": "wta-2026-w43-ningbo",
-        "source_station_key": "2026-w43-almaty-ningbo"
+        "event_key": "wta-2026-w44-tokyo",
+        "source_station_key": "2026-w44-basel-vienna-tokyo"
       }
     ]
   },
   "display_groups": {
     "current": {
+      "label": "ATP 巴塞尔 + ATP 维也纳 + WTA 东京",
+      "station_keys": [
+        "2026-w44-basel-vienna-tokyo"
+      ]
+    },
+    "previous": {
       "label": "ATP 阿拉木图 + WTA 宁波",
       "station_keys": [
         "2026-w43-almaty-ningbo"
       ]
-    },
-    "previous": {
-      "label": "ATP 上海 + WTA 武汉",
-      "station_keys": [
-        "2026-w41-shanghai",
-        "2026-w42-wuhan"
-      ]
     }
   },
   "opening_notice": {
-    "key": "almaty_ningbo_2026_opening",
-    "rpc": "tour_manager_take_almaty_ningbo_opening_notice",
-    "closes_at": "2026-10-19T11:00:00+08:00",
-    "message": "经纪人新站ATP阿拉木图+WTA宁波开售！快来选购吧。"
+    "key": "basel_vienna_tokyo_2026_opening",
+    "rpc": "tour_manager_take_basel_vienna_tokyo_opening_notice",
+    "closes_at": "2026-10-26T11:00:00+08:00",
+    "message": "经纪人新站ATP巴塞尔+ATP维也纳+WTA东京开售！快来选购吧。"
   },
   "previous_station": {
-    "station_key": "2026-w42-wuhan",
-    "station_name": "WTA 武汉",
-    "publication_file": "publications/2026-w42-wuhan-v1.json",
+    "station_key": "2026-w43-almaty-ningbo",
+    "station_name": "ATP 阿拉木图 + WTA 宁波",
+    "publication_file": "publications/2026-w43-almaty-ningbo-v1.json",
     "publication_version": 1,
     "events": [
       {
+        "tour": "ATP",
+        "event_key": "atp-2026-w43-almaty",
+        "data_file": "events/atp-2026-w43-almaty.json",
+        "active": false
+      },
+      {
         "tour": "WTA",
-        "event_key": "wta-2026-w42-wuhan",
-        "data_file": "events/wta-2026-w42-wuhan.json",
+        "event_key": "wta-2026-w43-ningbo",
+        "data_file": "events/wta-2026-w43-ningbo.json",
         "active": false
       }
     ]
   },
-  "continuing_stations": [
-    {
-      "station_key": "2026-w41-shanghai",
-      "station_name": "ATP 上海",
-      "publication_file": "publications/2026-w41-shanghai-v1.json",
-      "publication_version": 1,
-      "events": [
-        {
-          "tour": "ATP",
-          "event_key": "atp-2026-w41-shanghai",
-          "data_file": "events/atp-2026-w41-shanghai.json",
-          "active": false
-        }
-      ]
-    }
-  ],
+  "continuing_stations": [],
   "display_events": [],
   "events": [
     {
       "tour": "ATP",
-      "event_key": "atp-2026-w43-almaty",
-      "data_file": "events/atp-2026-w43-almaty.json",
+      "event_key": "atp-2026-w44-basel",
+      "data_file": "events/atp-2026-w44-basel.json",
+      "active": true
+    },
+    {
+      "tour": "ATP",
+      "event_key": "atp-2026-w44-vienna",
+      "data_file": "events/atp-2026-w44-vienna.json",
       "active": true
     },
     {
       "tour": "WTA",
-      "event_key": "wta-2026-w43-ningbo",
-      "data_file": "events/wta-2026-w43-ningbo.json",
+      "event_key": "wta-2026-w44-tokyo",
+      "data_file": "events/wta-2026-w44-tokyo.json",
       "active": true
     }
   ],
   "notes": [
-    "慧眼识珠阈值60，开售非资格赛占位球员价格40%分位。",
-    "沿用250+500级别四项Combo结构，合计封顶600；低保独立且2026自然年最多3次。",
-    "2026-10-17读取ATP1989名、WTA1545名排名，ATP550名、WTA519名Elo；努尔拉努利无TA Elo，使用已有排名估算方法并标记。",
-    "签表来源赛期2026-10-19至2026-10-25；竞猜自10月18日起按官方赛程日选赛，无当日赛程则等待，不跨日补选。",
-    "上海与武汉继续按各自原规则结算，上站展示合并。"
+    "慧眼识珠阈值80，开售非资格赛占位球员价格40%分位。",
+    "三项500赛事合并本站，1–6人、签约金700；四项Combo合计封顶1000。双线按ATP/WTA统计，低保独立且2026自然年最多3次。",
+    "排名与Elo于2026-10-25读取；完整来源及估算项见build-prices报告。",
+    "自10月26日起按官方赛程日选ATP维也纳和WTA东京，无当日赛程则等待，不跨日期选赛。",
+    "阿拉木图与宁波保留原价、原规则和累计收益，仅本地预览，尚未发布。"
   ]
 }

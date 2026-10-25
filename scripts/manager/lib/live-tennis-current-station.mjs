@@ -298,6 +298,15 @@ export function parseDrawPlayersFromAjax(html, event, sourceUrl = '') {
     });
   }
 
+  // Apply documented slot corrections only while the provider still has the stale identity.
+  for (const correction of event.draw_source_corrections || []) {
+    const slot = slots.find((item) => item.draw_position === correction.draw_position);
+    const confirmedPositionMatches = !correction.confirmed_position || slots.some((item) =>
+      item.draw_position === correction.confirmed_position && item.profile_id === correction.expected_profile_id);
+    if (slot && slot.profile_id === correction.expected_profile_id && correction.source_url && confirmedPositionMatches) {
+      Object.assign(slot, correction.replacement);
+    }
+  }
   const byPosition = new Map(slots.map((slot) => [slot.draw_position, slot]));
   let qualifierIndex = 0;
   const players = [];
