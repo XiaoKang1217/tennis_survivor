@@ -33,7 +33,7 @@ for (const d of [
     start_date:'2026-10-26',end_date:'2026-11-01',draw_status:'published',market_status:'open',submission_status:'open',
     submission_opens_at:now,submission_cutoff_at:cutoff,submission_closes_at:cutoff,manual_schedule_windows:true,
     schedule_status:'oop_pending',main_draw_first_match_at:null,round2_first_match_at:null,
-    allow_submission_after_first_match:false,cross_tour_transfer:true,transfer_fee_rate:0.1,
+    allow_submission_after_first_match:d.tour==='WTA',cross_tour_transfer:true,transfer_fee_rate:0.1,
     transfer_window_opens_at:null,transfer_window_closes_at:null,transfer_welfare_discount:false,
     source_urls:[`https://www.live-tennis.cn/zh/draw/${d.id}/2026`,source],
     draw_source_corrections:corrections,market_message:`${d.tour} ${d.zh}500，10/26 11:00截止。`,players

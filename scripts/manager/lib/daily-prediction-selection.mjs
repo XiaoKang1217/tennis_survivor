@@ -98,6 +98,34 @@ function playerWithRankingFallback({ eventKey, playerKey, playerByKey, rankingBy
   };
 }
 
+export async function syncOpenPredictionTimes(client, stationKey, season, now = new Date()) {
+  const games = await client.select('tour_manager_daily_prediction_games', {
+    station_key: `eq.${stationKey}`, season: `eq.${season}`, status: 'eq.open',
+    select: 'id,event_key,match_key,event_date,contest_date,player1_key,player2_key,scheduled_at,closes_at'
+  });
+  let updated = 0;
+  for (const game of games) {
+    if (!game.match_key || !game.player1_key || !game.player2_key) continue;
+    const [match] = await client.select('tour_manager_matches', {
+      event_key: `eq.${game.event_key}`, match_key: `eq.${game.match_key}`,
+      select: 'scheduled_at,status,raw,player1_key,player2_key', limit: 1
+    });
+    // A schedule correction must never replace the selected match or its picks.
+    if (!match || match.status !== 'scheduled'
+        || match.raw?.date !== (game.event_date || game.contest_date)
+        || match.player1_key !== game.player1_key || match.player2_key !== game.player2_key
+        || !Number.isFinite(Date.parse(match.scheduled_at))) continue;
+    if (Date.parse(game.scheduled_at) === Date.parse(match.scheduled_at)
+        && Date.parse(game.closes_at) === Date.parse(match.scheduled_at)) continue;
+    const rows = await client.update('tour_manager_daily_prediction_games', {
+      scheduled_at: match.scheduled_at, closes_at: match.scheduled_at,
+      updated_at: new Date(now).toISOString()
+    }, { id: `eq.${game.id}`, status: 'eq.open', match_key: `eq.${game.match_key}` });
+    updated += rows.length;
+  }
+  return updated;
+}
+
 export async function refreshDailyPredictionGamesByMedian({
   client,
   stationKey,
@@ -118,6 +146,7 @@ export async function refreshDailyPredictionGamesByMedian({
   const activeGames = [];
   const carryoverStations = [...new Set([stationKey, ...eventGroups.map(group => group.source_station_key).filter(Boolean)])];
   for (const key of carryoverStations) {
+    await syncOpenPredictionTimes(client, key, season, nowDate);
     activeGames.push(...await client.select('tour_manager_daily_prediction_games', {
       station_key: `eq.${key}`,
       season: `eq.${season}`,
