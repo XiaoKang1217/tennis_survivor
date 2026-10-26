@@ -2320,19 +2320,19 @@
       "pre_r1_substitution": null
     },
     {
-      "name_en": "Maja CHWALINSKA",
-      "name_zh": "赫瓦林斯卡",
-      "profile_id": "325639",
-      "country_code": "POL",
-      "seed": 2,
-      "entry_type": "direct_acceptance",
+      "name_en": "Kimberly BIRRELL",
+      "name_zh": "比勒尔",
+      "profile_id": "320728",
+      "country_code": "AUS",
+      "seed": null,
+      "entry_type": "lucky_loser",
       "draw_position": 32,
       "first_round": "BYE",
       "path_note": "首轮轮空，直接进入下一轮。",
-      "photo_url": "https://static.live-tennis.cn/pic/ts/325639",
+      "photo_url": "https://static.live-tennis.cn/pic/ts/320728",
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/31056/2026/device/0/horizontal/true",
-      "player_key": "WTA|maja-chwalinska",
+      "player_key": "WTA|kimberly-birrell",
       "rank": 11,
       "points": 3016,
       "overall_elo": 1886.1,
@@ -2399,7 +2399,22 @@
       },
       "photo_source": null,
       "qualifier_replacement": null,
-      "pre_r1_substitution": null
+      "pre_r1_substitution": {
+        "out_player_key": "WTA|maja-chwalinska",
+        "locked_publication_player_key": "WTA|maja-chwalinska",
+        "out_name_en": "Maja CHWALINSKA",
+        "out_name_zh": "赫瓦林斯卡",
+        "out_profile_id": "325639",
+        "replacement_player_key": "WTA|kimberly-birrell",
+        "replacement_name_en": "Kimberly BIRRELL",
+        "replacement_name_zh": "比勒尔",
+        "replacement_profile_id": "320728",
+        "draw_position": 32,
+        "reason": "pre_r1_withdrawal",
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/31056/2026/device/0/horizontal/true",
+        "contract_price_policy": "keep_original_contract_price",
+        "original_contract_price": 175
+      }
     }
   ],
   "pricing_formula": {
