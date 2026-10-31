@@ -1,66 +1,55 @@
 {
   "season": 2026,
-  "station_key": "2026-w44-basel-vienna-tokyo",
-  "station_name": "ATP 巴塞尔 + ATP 维也纳 + WTA 东京",
+  "station_key": "2026-w45-paris-hongkong",
+  "station_name": "ATP 巴黎1000 + WTA 香港250",
   "survivor_aligned": false,
   "status": "open",
-  "updated_at": "2026-10-25T00:42:10.525Z",
-  "announcement": "ATP 巴塞尔500 + ATP 维也纳500 + WTA 东京500 已开售，签约金700，本站可选1–6人，10/26 11:00截止！",
+  "updated_at": "2026-10-31T11:17:20.359Z",
+  "announcement": "ATP 巴黎1000 + WTA 香港250 已开售，签约金700，本站可选1–5人，11/02 11:00截止！",
   "settlement": {
     "overlap_previous": true,
     "income_by_date": true
   },
   "rules": {
     "station_grant": 700,
-    "min_players": 1,
-    "max_players": 6,
     "cross_tour_transfer": true,
-    "transfer_fee_rate": 0.1,
+    "transfer_fee_rate": 0.15,
     "transfer_welfare_discount": false,
-    "combo_version": "seoul_singapore_2026_v1",
+    "combo_version": "canada_2026_v1",
     "combo_design_status": "confirmed",
     "combo": {
       "total_cap": 1000,
       "steady": {
         "min_players": 3,
+        "qualifying_round": "R16",
         "qf_ratio": 0.5,
         "gross_rate": 0.1,
         "cap": 300
       },
       "dual_tour": {
         "grouping": "tour",
+        "R16": 50,
         "QF": 150,
         "SF": 250,
-        "F": 350,
-        "W": 450
+        "F": 400,
+        "W": 550
       },
       "value_pick": {
-        "max_price": 80,
+        "max_price": 120,
         "max_triggers": 1,
+        "R16": 50,
         "QF": 150,
         "SF": 250,
-        "F": 350,
-        "W": 450,
-        "threshold_basis": {
-          "method": "opening_non_qualifier_price_40th_percentile",
-          "players": 76,
-          "threshold": 80
-        }
+        "F": 400,
+        "W": 550
       },
-      "small_budget": {
-        "max_cost": 700,
-        "gross_multipliers": [
-          0.75,
-          1,
-          1.25,
-          1.5
-        ],
-        "bonuses": [
-          150,
-          200,
-          250,
-          300
-        ]
+      "village_hope": {
+        "selection": "user_selected_at_submission",
+        "R16": 50,
+        "QF": 150,
+        "SF": 250,
+        "F": 400,
+        "W": 550
       },
       "welfare": {
         "principal_max": 500,
@@ -77,61 +66,67 @@
   "pricing": {
     "market_prices_locked": true,
     "publication_version": 1,
-    "price_version": 26102501,
-    "locked_at": "2026-10-25T00:43:34.014Z",
+    "price_version": 26103101,
+    "locked_at": "2026-10-31T11:19:48.297Z",
     "reason": "Opening prices frozen by original draw slot, including qualifiers"
   },
   "daily_prediction": {
-    "starts_on": "2026-10-26",
+    "starts_on": "2026-11-02",
     "event_groups": [
       {
         "tour": "ATP",
-        "event_key": "atp-2026-w44-vienna",
-        "source_station_key": "2026-w44-basel-vienna-tokyo"
+        "event_key": "atp-2026-w45-paris",
+        "source_station_key": "2026-w45-paris-hongkong"
       },
       {
         "tour": "WTA",
-        "event_key": "wta-2026-w44-tokyo",
-        "source_station_key": "2026-w44-basel-vienna-tokyo"
+        "event_key": "wta-2026-w45-hongkong",
+        "source_station_key": "2026-w45-paris-hongkong"
       }
     ]
   },
   "display_groups": {
     "current": {
+      "label": "ATP 巴黎1000 + WTA 香港250",
+      "station_keys": [
+        "2026-w45-paris-hongkong"
+      ]
+    },
+    "previous": {
       "label": "ATP 巴塞尔 + ATP 维也纳 + WTA 东京",
       "station_keys": [
         "2026-w44-basel-vienna-tokyo"
       ]
-    },
-    "previous": {
-      "label": "ATP 阿拉木图 + WTA 宁波",
-      "station_keys": [
-        "2026-w43-almaty-ningbo"
-      ]
     }
   },
   "opening_notice": {
-    "key": "basel_vienna_tokyo_2026_opening",
-    "rpc": "tour_manager_take_basel_vienna_tokyo_opening_notice",
-    "closes_at": "2026-10-26T11:00:00+08:00",
-    "message": "经纪人新站ATP巴塞尔+ATP维也纳+WTA东京开售！快来选购吧。"
+    "key": "paris_hongkong_2026_opening",
+    "rpc": "tour_manager_take_paris_hongkong_opening_notice",
+    "closes_at": "2026-11-02T11:00:00+08:00",
+    "message": "经纪人新站ATP巴黎+WTA香港开售！快来选购吧。"
   },
   "previous_station": {
-    "station_key": "2026-w43-almaty-ningbo",
-    "station_name": "ATP 阿拉木图 + WTA 宁波",
-    "publication_file": "publications/2026-w43-almaty-ningbo-v1.json",
+    "station_key": "2026-w44-basel-vienna-tokyo",
+    "station_name": "ATP 巴塞尔 + ATP 维也纳 + WTA 东京",
+    "publication_file": "publications/2026-w44-basel-vienna-tokyo-v1.json",
     "publication_version": 1,
     "events": [
       {
         "tour": "ATP",
-        "event_key": "atp-2026-w43-almaty",
-        "data_file": "events/atp-2026-w43-almaty.json",
+        "event_key": "atp-2026-w44-basel",
+        "data_file": "events/atp-2026-w44-basel.json",
+        "active": false
+      },
+      {
+        "tour": "ATP",
+        "event_key": "atp-2026-w44-vienna",
+        "data_file": "events/atp-2026-w44-vienna.json",
         "active": false
       },
       {
         "tour": "WTA",
-        "event_key": "wta-2026-w43-ningbo",
-        "data_file": "events/wta-2026-w43-ningbo.json",
+        "event_key": "wta-2026-w44-tokyo",
+        "data_file": "events/wta-2026-w44-tokyo.json",
         "active": false
       }
     ]
@@ -141,28 +136,22 @@
   "events": [
     {
       "tour": "ATP",
-      "event_key": "atp-2026-w44-basel",
-      "data_file": "events/atp-2026-w44-basel.json",
-      "active": true
-    },
-    {
-      "tour": "ATP",
-      "event_key": "atp-2026-w44-vienna",
-      "data_file": "events/atp-2026-w44-vienna.json",
+      "event_key": "atp-2026-w45-paris",
+      "data_file": "events/atp-2026-w45-paris.json",
       "active": true
     },
     {
       "tour": "WTA",
-      "event_key": "wta-2026-w44-tokyo",
-      "data_file": "events/wta-2026-w44-tokyo.json",
+      "event_key": "wta-2026-w45-hongkong",
+      "data_file": "events/wta-2026-w45-hongkong.json",
       "active": true
     }
   ],
   "notes": [
-    "慧眼识珠阈值80，开售非资格赛占位球员价格40%分位。",
-    "三项500赛事合并本站，1–6人、签约金700；四项Combo合计封顶1000。双线按ATP/WTA统计，低保独立且2026自然年最多3次。",
-    "排名与Elo于2026-10-25读取；完整来源及估算项见build-prices报告。",
-    "自10月26日起按官方赛程日选ATP维也纳和WTA东京，无当日赛程则等待，不跨日期选赛。",
-    "阿拉木图与宁波保留原价、原规则和累计收益，仅本地预览，尚未发布。"
+    "慧眼识珠固定门槛120。稳健经营至少3人且50%进入16强，毛收益10%封顶300。",
+    "混合级别沿用现有购买人数规则：最低1人，最高5人。签约金700，四项Combo封顶1000。",
+    "2026-10-31读取排名与Elo。缺失当前Elo者使用现有排名估算并在来源报告标记。",
+    "11月2日起严格选同一官方赛程日的巴黎和香港，无赛程则等待补生成。",
+    "仅本地预览，未修改线上钱包、合同、阵容或竞猜。"
   ]
 }

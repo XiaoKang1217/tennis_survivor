@@ -1,0 +1,24 @@
+name: Publish Paris Hong Kong Station
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: tour-manager-update
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: node --test scripts/manager/tests/paris-hongkong-preview.test.mjs scripts/manager/tests/combo-ledger-details.test.mjs scripts/manager/tests/station-publication-snapshot.test.mjs
+      - run: node scripts/manager/validate-station.mjs
+      - run: node scripts/manager/sync-station.mjs --only-if-market-locked
+      - run: node scripts/manager/publish-station-snapshot.mjs --strict-open

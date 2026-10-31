@@ -627,7 +627,7 @@ function normalizeRankingRows(rows, tour, sourceUrl, rankingDate, snapshotDate) 
     return {
       tour,
       ranking_type: 'singles',
-      ranking_date,
+      ranking_date: rankingDate,
       snapshot_date: snapshotDate,
       rank: toInt(row.rank || row.ranking || row.official_rank),
       player_key: row.player_key || canonicalPlayerKey(tour, { name_en: name }),
@@ -650,6 +650,8 @@ function normalizeEloRows(rows, tour, sourceUrl, snapshotDate) {
       name_en: name,
       overall_rank: toInt(row.overall_rank),
       overall_elo: toNum(row.overall_elo),
+      peak_elo: toNum(row.peak_elo),
+      peak_month: row.peak_month || null,
       hard_rank: toInt(row.hard_rank),
       hard_elo: toNum(row.hard_elo),
       clay_rank: toInt(row.clay_rank),

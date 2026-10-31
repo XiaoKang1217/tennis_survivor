@@ -1136,7 +1136,7 @@ const SUPABASE_JS_FALLBACK_URLS=[
 ];
 const CHART_JS_URL='https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js';
 const MINI_PROGRAM_QR_SRC='assets/miniprogram/lu-de-wangqiu-qrcode.jpg';
-const MANAGER_GROUP_QR_SRC='assets/manager/wechat-group-20261025.webp';
+const MANAGER_GROUP_QR_SRC='assets/manager/wechat-group-20261031.webp';
 const MINI_PROGRAM_PROMO_COPY='「炉的网球」小程序现已上线！极速、稳定，专为中国网球迷打造的观赛社区。每十秒的实时比分、球员最新参赛动态以及官方赛程签表。登录即可获得10朵花，欢迎体验！';
 const MODULE_VIEWED={};
 const SEARCH_TRACK_TIMERS={};
@@ -3017,7 +3017,8 @@ function managerVillageHopePlayer(rounds){
 }
 function managerCanadaComboScenario(gross,rounds,context){
   var rules=context?context.rules:(MANAGER_ACTIVE_EVENTS&&MANAGER_ACTIVE_EVENTS.rules||{}),combo=rules.combo||{},steadyRules=combo.steady||{},dualRules=combo.dual_tour||{},valueRules=combo.value_pick||{},hopeRules=combo.village_hope||{};
-  var players=rounds.map(function(x){return x.player;}),count=players.length,qf=rounds.filter(function(x){return managerRoundAtLeast(x.round,'QF');}).length;
+  var steadyRound=steadyRules.qualifying_round==='R16'?'R16':'QF';
+  var players=rounds.map(function(x){return x.player;}),count=players.length,qf=rounds.filter(function(x){return managerRoundAtLeast(x.round,steadyRound);}).length;
   var minPlayers=Number(steadyRules.min_players)||3,qfRatio=Number(steadyRules.qf_ratio),grossRate=Number(steadyRules.gross_rate),steadyCap=Number(steadyRules.cap)||300;
   if(!Number.isFinite(qfRatio))qfRatio=.5;
   if(!Number.isFinite(grossRate))grossRate=.1;
@@ -3033,7 +3034,7 @@ function managerCanadaComboScenario(gross,rounds,context){
   var raw=stable+dual+jewel+hopeBonus,cap=Number(combo.total_cap)||700,bonus=Math.min(raw,cap);
   var hopeMode=(context||managerVillageHopeUserSelected())?'自定义选择':'自动认定';
   return {gross:gross,stable:stable,finalBonus:dual,champBonus:0,jewelBonus:jewel,smallBusinessBonus:0,dualBonus:dual,villageHopeBonus:hopeBonus,villageHopePlayer:hope&&hope.player||null,bonus:bonus,comboVersion:rules.combo_version||'canada_2026_v1',comboCap:cap,comboRaw:raw,comboItems:[
-    {label:'稳健经营',amount:stable,desc:'至少'+minPlayers+'人，'+Math.round(qfRatio*100)+'%阵容进QF，毛收益'+Math.round(grossRate*100)+'%，封顶'+steadyCap},
+    {label:'稳健经营',amount:stable,desc:'至少'+minPlayers+'人，'+Math.round(qfRatio*100)+'%阵容进'+(steadyRound==='R16'?'16强':'QF')+'，毛收益'+Math.round(grossRate*100)+'%，封顶'+steadyCap},
     ...(combo.dual_tour?[{label:'双线经营',amount:dual,desc:'ATP/WTA各有人进16强/QF/SF/F/W，最高档'+managerComboRewardText(dualRules)}]:[]),
     {label:'慧眼识珠',amount:jewel,desc:'原价不高于'+maxPrice+'的球员进16强/QF/SF/F/W，最高档'+managerComboRewardText(valueRules)},
     {label:'全村的希望',amount:hopeBonus,desc:(hope?hopeMode+' '+managerPlayerDisplayName(hope.player,true)+'（原价 '+hope.player.price+'）':(managerVillageHopeUserSelected()?'提交时从阵容中自定义选择':'提交时自动认定阵容原价最高球员'))+'，进16强/QF/SF/F/W最高档'+managerComboRewardText(hopeRules)}
@@ -4398,7 +4399,7 @@ function managerCanadaComboRulesHtml(rules){
     ? ['提交阵容时，弹窗里从阵容球员中自定义选择“全村的希望”。']
     : ['提交阵容时，系统自动把签约原价最高的球员认定为“全村的希望”。'];
   villageLines.push('TA 达到 16强/QF/SF/F/W：'+managerComboRewardText(combo.village_hope)+'。','认定后固定，不随预测轮次或价格变化。');
-  return managerComboRuleSection('稳健经营',['阵容至少 '+(Number(steady.min_players)||3)+' 人。','至少 '+Math.round((Number(steady.qf_ratio)||.5)*100)+'% 阵容进入 QF，奖励球员毛收益的 '+Math.round((Number(steady.gross_rate)||.1)*100)+'%，封顶 '+(Number(steady.cap)||300)+'。'])+
+  return managerComboRuleSection('稳健经营',['阵容至少 '+(Number(steady.min_players)||3)+' 人。','至少 '+Math.round((Number(steady.qf_ratio)||.5)*100)+'% 阵容进入 '+(steady.qualifying_round==='R16'?'16强':'QF')+'，奖励球员毛收益的 '+Math.round((Number(steady.gross_rate)||.1)*100)+'%，封顶 '+(Number(steady.cap)||300)+'。'])+
     (combo.dual_tour?managerComboRuleSection('双线经营',['阵容里 ATP/WTA 都有人。','两边各至少 1 人达到 16强/QF/SF/F/W：'+managerComboRewardText(combo.dual_tour)+'。','只取最高档。']):'')+
     managerComboRuleSection('慧眼识珠',['签约原价不高于 '+(Number(combo.value_pick&&combo.value_pick.max_price)||150)+' 的球员达到 16强/QF/SF/F/W：'+managerComboRewardText(combo.value_pick)+'。','每个阵容最多触发 1 次，只取最高档。'])+
     managerComboRuleSection('全村的希望',villageLines)+
