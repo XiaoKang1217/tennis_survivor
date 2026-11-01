@@ -23,8 +23,8 @@
   "submission_cutoff_at": "2026-11-02T11:00:00+08:00",
   "submission_closes_at": "2026-11-02T11:00:00+08:00",
   "manual_schedule_windows": true,
-  "schedule_status": "oop_pending",
-  "main_draw_first_match_at": null,
+  "schedule_status": "partial",
+  "main_draw_first_match_at": "2026-11-02T06:00:00.000Z",
   "round2_first_match_at": null,
   "allow_submission_after_first_match": false,
   "cross_tour_transfer": true,
@@ -115,7 +115,10 @@
         "preview_generated_at": "2026-10-31T11:17:37.483Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1995.71
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Maria TIMOFEEVA",
@@ -194,7 +197,10 @@
         "preview_generated_at": "2026-10-31T11:17:37.483Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1824.29
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Venus WILLIAMS",
@@ -273,7 +279,10 @@
         "preview_generated_at": "2026-10-31T11:17:37.483Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1384.99
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Mary STOIANA",
@@ -352,22 +361,25 @@
         "preview_generated_at": "2026-10-31T11:17:37.483Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1750.34
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
-      "name_en": "Kaitlin QUEVEDO",
-      "name_zh": "克韦多",
-      "profile_id": "331742",
-      "country_code": "ESP",
+      "name_en": "Elena PRIDANKINA",
+      "name_zh": "普里丹金娜",
+      "profile_id": "330905",
+      "country_code": "RUS",
       "seed": null,
-      "entry_type": "direct_acceptance",
+      "entry_type": "lucky_loser",
       "draw_position": 5,
       "first_round": "巴多萨",
       "path_note": "首轮对阵 巴多萨。",
-      "photo_url": "https://static.live-tennis.cn/pic/ts/331742",
+      "photo_url": "https://static.live-tennis.cn/pic/ts/330905",
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/31074/2026/device/0/horizontal/true",
-      "player_key": "WTA|kaitlin-quevedo",
+      "player_key": "WTA|elena-pridankina",
       "rank": 71,
       "points": 937,
       "overall_elo": 1734.9,
@@ -431,6 +443,24 @@
         "preview_generated_at": "2026-10-31T11:17:37.483Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1750.76
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": {
+        "out_player_key": "WTA|kaitlin-quevedo",
+        "locked_publication_player_key": "WTA|kaitlin-quevedo",
+        "out_name_en": "Kaitlin QUEVEDO",
+        "out_name_zh": "克韦多",
+        "out_profile_id": "331742",
+        "replacement_player_key": "WTA|elena-pridankina",
+        "replacement_name_en": "Elena PRIDANKINA",
+        "replacement_name_zh": "普里丹金娜",
+        "replacement_profile_id": "330905",
+        "draw_position": 5,
+        "reason": "pre_r1_withdrawal",
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/31074/2026/device/0/horizontal/true",
+        "contract_price_policy": "keep_original_contract_price",
+        "original_contract_price": 40
       }
     },
     {
@@ -441,8 +471,8 @@
       "seed": null,
       "entry_type": "direct_acceptance",
       "draw_position": 6,
-      "first_round": "克韦多",
-      "path_note": "首轮对阵 克韦多。",
+      "first_round": "普里丹金娜",
+      "path_note": "首轮对阵 普里丹金娜。",
       "photo_url": "https://static.live-tennis.cn/pic/ts/320124",
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/31074/2026/device/0/horizontal/true",
@@ -510,22 +540,25 @@
         "preview_generated_at": "2026-10-31T11:17:37.483Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1800.22
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q1",
-      "name_zh": "资格赛选手 Q1",
-      "profile_id": "QUAL-1",
-      "country_code": null,
+      "name_en": "Alexandra SHUBLADZE",
+      "name_zh": "舒布拉泽",
+      "profile_id": "332168",
+      "country_code": "RUS",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 7,
       "first_round": "萨姆索诺娃",
       "path_note": "首轮对阵 萨姆索诺娃。",
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/332168",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/31074/2026/device/0/horizontal/true",
-      "player_key": "WTA|qualifier-hongkong-7",
+      "player_key": "WTA|alexandra-shubladze",
       "rank": null,
       "points": null,
       "overall_elo": null,
@@ -589,7 +622,21 @@
         "preview_generated_at": "2026-10-31T11:17:37.483Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -35.26
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "WTA|qualifier-hongkong-7",
+        "placeholder_name_en": "Qualifier Q1",
+        "placeholder_name_zh": "资格赛选手 Q1",
+        "placeholder_profile_id": "QUAL-1",
+        "replacement_player_key": "WTA|alexandra-shubladze",
+        "replacement_name_en": "Alexandra SHUBLADZE",
+        "replacement_name_zh": "舒布拉泽",
+        "replacement_profile_id": "332168",
+        "draw_position": 7,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/31074/2026/device/0/horizontal/true"
+      },
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Liudmila SAMSONOVA",
@@ -599,8 +646,8 @@
       "seed": 7,
       "entry_type": "direct_acceptance",
       "draw_position": 8,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "舒布拉泽",
+      "path_note": "首轮对阵 舒布拉泽。",
       "photo_url": "https://static.live-tennis.cn/pic/ts/322222",
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/31074/2026/device/0/horizontal/true",
@@ -668,7 +715,10 @@
         "preview_generated_at": "2026-10-31T11:17:37.483Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1841.18
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Leylah FERNANDEZ",
@@ -747,7 +797,10 @@
         "preview_generated_at": "2026-10-31T11:17:37.483Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1925.2
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Sofia KENIN",
@@ -826,7 +879,10 @@
         "preview_generated_at": "2026-10-31T11:17:37.483Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1625.12
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Dayana YASTREMSKA",
@@ -905,7 +961,10 @@
         "preview_generated_at": "2026-10-31T11:17:37.483Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1723.69
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Zeynep SONMEZ",
@@ -984,7 +1043,10 @@
         "preview_generated_at": "2026-10-31T11:17:37.483Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1798.69
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Claire LIU",
@@ -994,8 +1056,8 @@
       "seed": null,
       "entry_type": "direct_acceptance",
       "draw_position": 13,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "普罗佐罗娃",
+      "path_note": "首轮对阵 普罗佐罗娃。",
       "photo_url": "https://static.live-tennis.cn/pic/ts/323966",
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/31074/2026/device/0/horizontal/true",
@@ -1063,22 +1125,25 @@
         "preview_generated_at": "2026-10-31T11:17:37.483Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1679.56
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q2",
-      "name_zh": "资格赛选手 Q2",
-      "profile_id": "QUAL-2",
-      "country_code": null,
+      "name_en": "Tatiana PROZOROVA",
+      "name_zh": "普罗佐罗娃",
+      "profile_id": "330723",
+      "country_code": "RUS",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 14,
       "first_round": "刘婧文",
       "path_note": "首轮对阵 刘婧文。",
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/330723",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/31074/2026/device/0/horizontal/true",
-      "player_key": "WTA|qualifier-hongkong-14",
+      "player_key": "WTA|tatiana-prozorova",
       "rank": null,
       "points": null,
       "overall_elo": null,
@@ -1142,7 +1207,21 @@
         "preview_generated_at": "2026-10-31T11:17:37.483Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -35.26
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "WTA|qualifier-hongkong-14",
+        "placeholder_name_en": "Qualifier Q2",
+        "placeholder_name_zh": "资格赛选手 Q2",
+        "placeholder_profile_id": "QUAL-2",
+        "replacement_player_key": "WTA|tatiana-prozorova",
+        "replacement_name_en": "Tatiana PROZOROVA",
+        "replacement_name_zh": "普罗佐罗娃",
+        "replacement_profile_id": "330723",
+        "draw_position": 14,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/31074/2026/device/0/horizontal/true"
+      },
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Viktorija GOLUBIC",
@@ -1221,7 +1300,10 @@
         "preview_generated_at": "2026-10-31T11:17:37.483Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1750.98
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Katie BOULTER",
@@ -1300,7 +1382,10 @@
         "preview_generated_at": "2026-10-31T11:17:37.483Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1820.33
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Talia GIBSON",
@@ -1379,7 +1464,10 @@
         "preview_generated_at": "2026-10-31T11:17:37.483Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1782.94
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Oleksandra OLIYNYKOVA",
@@ -1458,7 +1546,10 @@
         "preview_generated_at": "2026-10-31T11:17:37.483Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1636.32
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Katie VOLYNETS",
@@ -1468,8 +1559,8 @@
       "seed": null,
       "entry_type": "direct_acceptance",
       "draw_position": 19,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "萨斯诺维奇",
+      "path_note": "首轮对阵 萨斯诺维奇。",
       "photo_url": "https://static.live-tennis.cn/pic/ts/327391",
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/31074/2026/device/0/horizontal/true",
@@ -1537,22 +1628,25 @@
         "preview_generated_at": "2026-10-31T11:17:37.483Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1845.49
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q3",
-      "name_zh": "资格赛选手 Q3",
-      "profile_id": "QUAL-3",
-      "country_code": null,
+      "name_en": "Aliaksandra SASNOVICH",
+      "name_zh": "萨斯诺维奇",
+      "profile_id": "317790",
+      "country_code": "BLR",
       "seed": null,
       "entry_type": "qualifier",
       "draw_position": 20,
       "first_round": "沃雷涅茨",
       "path_note": "首轮对阵 沃雷涅茨。",
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/317790",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/31074/2026/device/0/horizontal/true",
-      "player_key": "WTA|qualifier-hongkong-20",
+      "player_key": "WTA|aliaksandra-sasnovich",
       "rank": null,
       "points": null,
       "overall_elo": null,
@@ -1616,7 +1710,21 @@
         "preview_generated_at": "2026-10-31T11:17:37.483Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -35.26
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "WTA|qualifier-hongkong-20",
+        "placeholder_name_en": "Qualifier Q3",
+        "placeholder_name_zh": "资格赛选手 Q3",
+        "placeholder_profile_id": "QUAL-3",
+        "replacement_player_key": "WTA|aliaksandra-sasnovich",
+        "replacement_name_en": "Aliaksandra SASNOVICH",
+        "replacement_name_zh": "萨斯诺维奇",
+        "replacement_profile_id": "317790",
+        "draw_position": 20,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/31074/2026/device/0/horizontal/true"
+      },
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Maddison INGLIS",
@@ -1695,7 +1803,10 @@
         "preview_generated_at": "2026-10-31T11:17:37.483Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1673.27
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Maya JOINT",
@@ -1774,22 +1885,25 @@
         "preview_generated_at": "2026-10-31T11:17:37.483Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1734.18
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
-      "name_en": "Qualifier Q4",
-      "name_zh": "资格赛选手 Q4",
-      "profile_id": "QUAL-4",
-      "country_code": null,
+      "name_en": "Carol Young Suh LEE",
+      "name_zh": "李英洙",
+      "profile_id": "329383",
+      "country_code": "USA",
       "seed": null,
-      "entry_type": "qualifier",
+      "entry_type": "lucky_loser",
       "draw_position": 23,
       "first_round": "萨卡里",
       "path_note": "首轮对阵 萨卡里。",
-      "photo_url": null,
-      "is_qualifier_placeholder": true,
+      "photo_url": "https://static.live-tennis.cn/pic/ts/329383",
+      "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/31074/2026/device/0/horizontal/true",
-      "player_key": "WTA|qualifier-hongkong-23",
+      "player_key": "WTA|carol-young-suh-lee",
       "rank": null,
       "points": null,
       "overall_elo": null,
@@ -1853,7 +1967,21 @@
         "preview_generated_at": "2026-10-31T11:17:37.483Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": -35.26
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": {
+        "placeholder_player_key": "WTA|qualifier-hongkong-23",
+        "placeholder_name_en": "Qualifier Q4",
+        "placeholder_name_zh": "资格赛选手 Q4",
+        "placeholder_profile_id": "QUAL-4",
+        "replacement_player_key": "WTA|carol-young-suh-lee",
+        "replacement_name_en": "Carol Young Suh LEE",
+        "replacement_name_zh": "李英洙",
+        "replacement_profile_id": "329383",
+        "draw_position": 23,
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/31074/2026/device/0/horizontal/true"
+      },
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Maria SAKKARI",
@@ -1863,8 +1991,8 @@
       "seed": 4,
       "entry_type": "direct_acceptance",
       "draw_position": 24,
-      "first_round": "资格赛选手",
-      "path_note": "首轮对阵 资格赛选手。",
+      "first_round": "李英洙",
+      "path_note": "首轮对阵 李英洙。",
       "photo_url": "https://static.live-tennis.cn/pic/ts/318312",
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/31074/2026/device/0/horizontal/true",
@@ -1932,7 +2060,10 @@
         "preview_generated_at": "2026-10-31T11:17:37.483Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1869.87
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "WANG Xinyu",
@@ -2011,7 +2142,10 @@
         "preview_generated_at": "2026-10-31T11:17:37.483Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1788.87
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "KARUNARATNE Adithya",
@@ -2090,7 +2224,10 @@
         "preview_generated_at": "2026-10-31T11:17:37.483Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1381.98
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Antonia RUZIC",
@@ -2169,7 +2306,10 @@
         "preview_generated_at": "2026-10-31T11:17:37.483Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1727.54
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Alina CHARAEVA",
@@ -2248,22 +2388,25 @@
         "preview_generated_at": "2026-10-31T11:17:37.483Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1749.85
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
-      "name_en": "SUN Xinran",
-      "name_zh": "孙心然",
-      "profile_id": "335958",
-      "country_code": "CHN",
+      "name_en": "SAKATSUME Himeno",
+      "name_zh": "坂诘姬野",
+      "profile_id": "326568",
+      "country_code": "JPN",
       "seed": null,
-      "entry_type": "wildcard",
+      "entry_type": "qualifier",
       "draw_position": 29,
       "first_round": "瓦伦托娃",
       "path_note": "首轮对阵 瓦伦托娃。",
-      "photo_url": "https://static.live-tennis.cn/pic/ts/335958",
+      "photo_url": "https://static.live-tennis.cn/pic/ts/326568",
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/31074/2026/device/0/horizontal/true",
-      "player_key": "WTA|sun-xinran",
+      "player_key": "WTA|sakatsume-himeno",
       "rank": 302,
       "points": 228,
       "overall_elo": 1466.87,
@@ -2327,6 +2470,24 @@
         "preview_generated_at": "2026-10-31T11:17:37.483Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1507.88
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": {
+        "out_player_key": "WTA|sun-xinran",
+        "locked_publication_player_key": "WTA|sun-xinran",
+        "out_name_en": "SUN Xinran",
+        "out_name_zh": "孙心然",
+        "out_profile_id": "335958",
+        "replacement_player_key": "WTA|sakatsume-himeno",
+        "replacement_name_en": "SAKATSUME Himeno",
+        "replacement_name_zh": "坂诘姬野",
+        "replacement_profile_id": "326568",
+        "draw_position": 29,
+        "reason": "pre_r1_withdrawal",
+        "source_url": "https://www.live-tennis.cn/zh/draw/ajax/31074/2026/device/0/horizontal/true",
+        "contract_price_policy": "keep_original_contract_price",
+        "original_contract_price": 20
       }
     },
     {
@@ -2337,8 +2498,8 @@
       "seed": null,
       "entry_type": "direct_acceptance",
       "draw_position": 30,
-      "first_round": "孙心然",
-      "path_note": "首轮对阵 孙心然。",
+      "first_round": "坂诘姬野",
+      "path_note": "首轮对阵 坂诘姬野。",
       "photo_url": "https://static.live-tennis.cn/pic/ts/330808",
       "is_qualifier_placeholder": false,
       "source": "https://www.live-tennis.cn/zh/draw/ajax/31074/2026/device/0/horizontal/true",
@@ -2406,7 +2567,10 @@
         "preview_generated_at": "2026-10-31T11:17:37.483Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1849.35
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Alycia PARKS",
@@ -2485,7 +2649,10 @@
         "preview_generated_at": "2026-10-31T11:17:37.483Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1610.49
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     },
     {
       "name_en": "Alexandra EALA",
@@ -2564,7 +2731,10 @@
         "preview_generated_at": "2026-10-31T11:17:37.483Z",
         "preview_notes": "Effective Elo bracket simulation; price is primarily mapped from expected points as a share of champion points, with a small strength/form modifier.",
         "expected_pricing_effective_elo": 1962.24
-      }
+      },
+      "photo_source": null,
+      "qualifier_replacement": null,
+      "pre_r1_substitution": null
     }
   ],
   "pricing_formula": {
@@ -2581,5 +2751,7 @@
   "market_price_lock": {
     "publication_version": 1,
     "locked_at": "2026-10-31T11:19:48.297Z"
-  }
+  },
+  "round1_completed_at": null,
+  "transfer_window_note": "换人窗口为 R1 全部结束后、R2 第一场开始前，由当前站赛程自动更新。"
 }
