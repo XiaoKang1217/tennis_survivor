@@ -20,8 +20,8 @@
   "market_status": "open",
   "submission_status": "open",
   "submission_opens_at": "2026-10-31T11:17:20.359Z",
-  "submission_cutoff_at": "2026-11-02T11:00:00+08:00",
-  "submission_closes_at": "2026-11-02T11:00:00+08:00",
+  "submission_cutoff_at": "2026-11-02T14:00:00+08:00",
+  "submission_closes_at": "2026-11-02T14:00:00+08:00",
   "manual_schedule_windows": true,
   "schedule_status": "partial",
   "main_draw_first_match_at": "2026-11-02T06:00:00.000Z",
@@ -36,7 +36,7 @@
     "https://www.live-tennis.cn/zh/draw/31074/2026",
     "https://www.live-tennis.cn/zh/draw/ajax/31074/2026/device/0/horizontal/true"
   ],
-  "market_message": "WTA 香港250，11/02 11:00截止。",
+  "market_message": "WTA 香港250，11/02 14:00截止。",
   "players": [
     {
       "name_en": "Sorana CIRSTEA",

@@ -5,7 +5,7 @@
   "survivor_aligned": false,
   "status": "open",
   "updated_at": "2026-10-31T11:17:20.359Z",
-  "announcement": "ATP 巴黎1000 + WTA 香港250 已开售，签约金700，本站可选1–5人，11/02 11:00截止！",
+  "announcement": "ATP 巴黎1000 + WTA 香港250 已开售，签约金700，本站可选1–5人，11/02 14:00截止！",
   "settlement": {
     "overlap_previous": true,
     "income_by_date": true
@@ -102,7 +102,7 @@
   "opening_notice": {
     "key": "paris_hongkong_2026_opening",
     "rpc": "tour_manager_take_paris_hongkong_opening_notice",
-    "closes_at": "2026-11-02T11:00:00+08:00",
+    "closes_at": "2026-11-02T14:00:00+08:00",
     "message": "经纪人新站ATP巴黎+WTA香港开售！快来选购吧。"
   },
   "previous_station": {

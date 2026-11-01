@@ -1,0 +1,19 @@
+name: Amend Paris Hong Kong Deadline
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: node scripts/manager/publish-paris-deadline.mjs
+      - run: node scripts/manager/publish-station-snapshot.mjs --version 2 --kind window_amendment --strict-open

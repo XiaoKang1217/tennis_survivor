@@ -7,7 +7,7 @@ if (previous.station_key !== '2026-w44-basel-vienna-tokyo') throw new Error('Exp
 const stationKey = '2026-w45-paris-hongkong';
 const name = 'ATP 巴黎1000 + WTA 香港250';
 const now = new Date().toISOString();
-const cutoff = '2026-11-02T11:00:00+08:00';
+const cutoff = '2026-11-02T14:00:00+08:00';
 const items = [];
 for (const d of [
   {slug:'paris',id:'20352',tour:'ATP',name:'Rolex Paris Masters',zh:'巴黎',level:'1000',size:56,surface:'hard_in',timezone:'Europe/Paris',country:'France'},
@@ -28,14 +28,14 @@ for (const d of [
     allow_submission_after_first_match:false,cross_tour_transfer:true,transfer_fee_rate:0.15,
     transfer_window_opens_at:null,transfer_window_closes_at:null,transfer_welfare_discount:false,
     source_urls:[`https://www.live-tennis.cn/zh/draw/${d.id}/2026`,source],
-    market_message:`${d.tour} ${d.zh}${d.level}，11/02 11:00截止。`,players
+    market_message:`${d.tour} ${d.zh}${d.level}，11/02 14:00截止。`,players
   });
   items.push({tour:d.tour,event_key:key,data_file:`events/${key}.json`,active:true});
 }
 const rewards={R16:50,QF:150,SF:250,F:400,W:550};
 await writeJson('data/manager/active_events.json',{
   season:2026,station_key:stationKey,station_name:name,survivor_aligned:false,status:'open',updated_at:now,
-  announcement:'ATP 巴黎1000 + WTA 香港250 已开售，签约金700，本站可选1–5人，11/02 11:00截止！',
+  announcement:'ATP 巴黎1000 + WTA 香港250 已开售，签约金700，本站可选1–5人，11/02 14:00截止！',
   settlement:{overlap_previous:true,income_by_date:true},
   rules:{station_grant:700,cross_tour_transfer:true,transfer_fee_rate:0.15,transfer_welfare_discount:false,
     combo_version:'canada_2026_v1',combo_design_status:'confirmed',combo:{

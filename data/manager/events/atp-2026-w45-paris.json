@@ -20,8 +20,8 @@
   "market_status": "open",
   "submission_status": "open",
   "submission_opens_at": "2026-10-31T11:17:20.359Z",
-  "submission_cutoff_at": "2026-11-02T11:00:00+08:00",
-  "submission_closes_at": "2026-11-02T11:00:00+08:00",
+  "submission_cutoff_at": "2026-11-02T14:00:00+08:00",
+  "submission_closes_at": "2026-11-02T14:00:00+08:00",
   "manual_schedule_windows": true,
   "schedule_status": "oop_pending",
   "main_draw_first_match_at": null,
@@ -36,7 +36,7 @@
     "https://www.live-tennis.cn/zh/draw/20352/2026",
     "https://www.live-tennis.cn/zh/draw/ajax/20352/2026/device/0/horizontal/true"
   ],
-  "market_message": "ATP 巴黎1000，11/02 11:00截止。",
+  "market_message": "ATP 巴黎1000，11/02 14:00截止。",
   "players": [
     {
       "name_en": "Alexander ZVEREV",

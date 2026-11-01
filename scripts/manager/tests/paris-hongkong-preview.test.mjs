@@ -25,7 +25,7 @@ test('Paris/Hong Kong complete draws, mixed-level roster, deadline and price loc
   const archive=read('data/manager/publications/2026-w45-paris-hongkong-v1.json');
   assert.equal(new Set(events.flatMap(x=>x.event.players.map(p=>p.player_key))).size,88);
   for(const {event} of events){
-    assert.equal(event.submission_cutoff_at,'2026-11-02T11:00:00+08:00');
+    assert.equal(event.submission_cutoff_at,'2026-11-02T14:00:00+08:00');
     const incoming=event.players.map(p=>({...p,price:999,...(p.is_qualifier_placeholder?{name_en:'Winner '+p.draw_position,player_key:event.tour+'|winner-'+p.draw_position,is_qualifier_placeholder:false,profile_id:'new'+p.draw_position}:{})}));
     const merged=mergeDrawPlayers(event,incoming,'test');
     event.players.forEach(p=>assert.equal(merged.find(x=>x.draw_position===p.draw_position).price,p.price));
@@ -70,7 +70,7 @@ test('welfare stops at three uses, independent of combo cap',()=>{
 test('notice is account scoped, expires with submission and uses compressed shared QR',()=>{
   const sql=fs.readFileSync('supabase/migrations/202610310001_manager_paris_hongkong.sql','utf8');
   assert.match(sql,/auth.uid\(\)/);assert.match(sql,/on conflict do nothing/);assert.match(sql,/2026-11-02 11:00:00\+08/);
-  assert.equal(active.opening_notice.closes_at,'2026-11-02T11:00:00+08:00');
+  assert.equal(active.opening_notice.closes_at,'2026-11-02T14:00:00+08:00');
   assert.match(html,/wechat-group-20261031.webp/);
   assert.ok(fs.statSync('assets/manager/wechat-group-20261031.webp').size<80000);
 });
