@@ -1,157 +1,109 @@
 {
   "season": 2026,
-  "station_key": "2026-w45-paris-hongkong",
-  "station_name": "ATP 巴黎1000 + WTA 香港250",
-  "survivor_aligned": false,
+  "station_key": "2026-w46-wta-finals",
+  "station_name": "WTA 印第安维尔斯",
   "status": "open",
-  "updated_at": "2026-10-31T11:17:20.359Z",
-  "announcement": "ATP 巴黎1000 + WTA 香港250 已开售，签约金700，本站可选1–5人，11/02 14:00截止！",
-  "settlement": {
-    "overlap_previous": true,
-    "income_by_date": true
-  },
+  "survivor_aligned": false,
+  "announcement": "WTA年终开售！可选1–2人，普通用户每名选手花费1000本金，累计收益前八用户免费；11/09 04:00截止。",
   "rules": {
-    "station_grant": 700,
-    "cross_tour_transfer": true,
-    "transfer_fee_rate": 0.15,
-    "transfer_welfare_discount": false,
-    "combo_version": "canada_2026_v1",
-    "combo_design_status": "confirmed",
+    "station_grant": 0,
+    "min_players": 1,
+    "max_players": 2,
+    "combo_version": "finals_2026",
     "combo": {
-      "total_cap": 1000,
-      "steady": {
-        "min_players": 3,
-        "qualifying_round": "R16",
-        "qf_ratio": 0.5,
-        "gross_rate": 0.1,
-        "cap": 300
+      "total_cap": 0
+    },
+    "finals": {
+      "top8_user_ids": [
+        "bad496ad-cc92-4b37-9551-9b0e46ae9d6a",
+        "57722850-cc58-4170-a35f-cf49b06973f0",
+        "779ad00f-bf61-428f-8432-9ec77eac5e32",
+        "ac710eeb-7d3c-49db-a812-f335b2961748",
+        "fb7a0362-a328-4608-8ed8-c3b08d280ebf",
+        "64a68075-a621-493f-a20e-753dfbb2f6f1",
+        "14c1f112-365e-4b35-b1ac-a510b08fb006",
+        "c7900a26-4501-43b4-98d8-b63e5ec43076"
+      ],
+      "ordinary": {
+        "price": 1000,
+        "RR": 200,
+        "SF": 1000,
+        "F": 2000,
+        "W": 4000
       },
-      "dual_tour": {
-        "grouping": "tour",
-        "R16": 50,
-        "QF": 150,
-        "SF": 250,
-        "F": 400,
-        "W": 550
-      },
-      "value_pick": {
-        "max_price": 120,
-        "max_triggers": 1,
-        "R16": 50,
-        "QF": 150,
-        "SF": 250,
-        "F": 400,
-        "W": 550
-      },
-      "village_hope": {
-        "selection": "user_selected_at_submission",
-        "R16": 50,
-        "QF": 150,
-        "SF": 250,
-        "F": 400,
-        "W": 550
-      },
-      "welfare": {
-        "principal_max": 500,
-        "min_players": 3,
-        "discount_rate": 0.2,
-        "cap": 300,
-        "max_uses_per_season": 3,
-        "season_start": "2026-01-01",
-        "season_end": "2026-12-31",
-        "excluded_from_combo_cap": true
+      "top8": {
+        "price": 0,
+        "RR": 250,
+        "SF": 1500,
+        "F": 3000,
+        "W": 6000
       }
     }
   },
   "pricing": {
     "market_prices_locked": true,
-    "publication_version": 1,
-    "price_version": 26103101,
-    "locked_at": "2026-10-31T11:19:48.297Z",
-    "reason": "Opening prices frozen by original draw slot, including qualifiers"
+    "price_version": 26110701,
+    "publication_version": 1
   },
-  "daily_prediction": {
-    "starts_on": "2026-11-02",
-    "event_groups": [
+  "events": [
+    {
+      "tour": "WTA",
+      "event_key": "wta-2026-w46-finals",
+      "data_file": "events/wta-2026-w46-finals.json",
+      "active": true
+    }
+  ],
+  "previous_station": {
+    "station_key": "2026-w45-paris-hongkong",
+    "station_name": "ATP 巴黎1000 + WTA 香港250",
+    "publication_file": "publications/2026-w45-paris-hongkong-v2.json",
+    "publication_version": 2,
+    "events": [
       {
         "tour": "ATP",
         "event_key": "atp-2026-w45-paris",
-        "source_station_key": "2026-w45-paris-hongkong"
+        "data_file": "events/atp-2026-w45-paris.json",
+        "active": false
       },
       {
         "tour": "WTA",
         "event_key": "wta-2026-w45-hongkong",
-        "source_station_key": "2026-w45-paris-hongkong"
+        "data_file": "events/wta-2026-w45-hongkong.json",
+        "active": false
       }
     ]
   },
   "display_groups": {
     "current": {
+      "label": "WTA 印第安维尔斯",
+      "station_keys": [
+        "2026-w46-wta-finals"
+      ]
+    },
+    "previous": {
       "label": "ATP 巴黎1000 + WTA 香港250",
       "station_keys": [
         "2026-w45-paris-hongkong"
       ]
-    },
-    "previous": {
-      "label": "ATP 巴塞尔 + ATP 维也纳 + WTA 东京",
-      "station_keys": [
-        "2026-w44-basel-vienna-tokyo"
-      ]
     }
   },
-  "opening_notice": {
-    "key": "paris_hongkong_2026_opening",
-    "rpc": "tour_manager_take_paris_hongkong_opening_notice",
-    "closes_at": "2026-11-02T14:00:00+08:00",
-    "message": "经纪人新站ATP巴黎+WTA香港开售！快来选购吧。"
-  },
-  "previous_station": {
-    "station_key": "2026-w44-basel-vienna-tokyo",
-    "station_name": "ATP 巴塞尔 + ATP 维也纳 + WTA 东京",
-    "publication_file": "publications/2026-w44-basel-vienna-tokyo-v1.json",
-    "publication_version": 1,
-    "events": [
-      {
-        "tour": "ATP",
-        "event_key": "atp-2026-w44-basel",
-        "data_file": "events/atp-2026-w44-basel.json",
-        "active": false
-      },
-      {
-        "tour": "ATP",
-        "event_key": "atp-2026-w44-vienna",
-        "data_file": "events/atp-2026-w44-vienna.json",
-        "active": false
-      },
+  "daily_prediction": {
+    "starts_on": "2026-11-09",
+    "event_groups": [
       {
         "tour": "WTA",
-        "event_key": "wta-2026-w44-tokyo",
-        "data_file": "events/wta-2026-w44-tokyo.json",
-        "active": false
+        "event_key": "wta-2026-w46-finals",
+        "source_station_key": "2026-w46-wta-finals",
+        "match_count": 2
       }
     ]
   },
+  "opening_notice": {
+    "key": "wta_finals_2026_opening",
+    "rpc": "tour_manager_take_finals_opening_notice",
+    "closes_at": "2026-11-09T04:00:00+08:00",
+    "message": "经纪人WTA年终开售！快来选购吧。"
+  },
   "continuing_stations": [],
-  "display_events": [],
-  "events": [
-    {
-      "tour": "ATP",
-      "event_key": "atp-2026-w45-paris",
-      "data_file": "events/atp-2026-w45-paris.json",
-      "active": true
-    },
-    {
-      "tour": "WTA",
-      "event_key": "wta-2026-w45-hongkong",
-      "data_file": "events/wta-2026-w45-hongkong.json",
-      "active": true
-    }
-  ],
-  "notes": [
-    "慧眼识珠固定门槛120。稳健经营至少3人且50%进入16强，毛收益10%封顶300。",
-    "混合级别沿用现有购买人数规则：最低1人，最高5人。签约金700，四项Combo封顶1000。",
-    "2026-10-31读取排名与Elo。缺失当前Elo者使用现有排名估算并在来源报告标记。",
-    "11月2日起严格选同一官方赛程日的巴黎和香港，无赛程则等待补生成。",
-    "仅本地预览，未修改线上钱包、合同、阵容或竞猜。"
-  ]
+  "display_events": []
 }

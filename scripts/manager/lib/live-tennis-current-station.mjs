@@ -122,6 +122,7 @@ export function bracketSizeFor(drawSize = 32) {
 }
 
 export function roundKeysForEvent(event) {
+  if (event.format === 'round_robin') return ['RR', 'SF', 'F', 'W'];
   const size = bracketSizeFor(event.draw_size);
   if (size >= 128) return ['R128', 'R64', 'R32', 'R16', 'QF', 'SF', 'F', 'W'];
   if (size >= 64) return ['R64', 'R32', 'R16', 'QF', 'SF', 'F', 'W'];
@@ -136,6 +137,7 @@ export function roundOrder(event, roundKey) {
 
 export function normalizeRoundKey(rawRound = '', event = {}) {
   const raw = cleanText(rawRound).toUpperCase();
+  if (event.format === 'round_robin' && /RR|ROUND.ROBIN|小组|循环/.test(raw)) return 'RR';
   const keys = roundKeysForEvent(event);
   if (/\bR128\b|1\/64|ROUND\s*OF\s*128/.test(raw)) return 'R128';
   if (/\bR64\b|1\/32|ROUND\s*OF\s*64/.test(raw)) return 'R64';

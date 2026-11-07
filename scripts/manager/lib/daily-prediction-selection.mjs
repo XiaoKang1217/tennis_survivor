@@ -190,10 +190,11 @@ export async function refreshDailyPredictionGamesByMedian({
       contest_date: `eq.${contestDate}`,
       tour: `eq.${tour}`,
       ...(groupEventKey ? { event_key: `eq.${groupEventKey}` } : {}),
-      select: 'id'
+      select: 'id,match_key'
     });
-    if (games.length) {
-      existing += 1;
+    const quota = Math.min(2, Math.max(1, Number(group.match_count) || 1));
+    existing += games.length;
+    if (games.length >= quota) {
       continue;
     }
 
@@ -299,15 +300,17 @@ export async function refreshDailyPredictionGamesByMedian({
         ranking_gap: Math.abs(player1Ranking - player2Ranking)
       }];
     });
+    for (let slot = games.length + 1; slot <= quota; slot += 1) {
     const selected = selectMedianRankingGapMatch(candidates);
     if (!selected) {
       missingTours.push(tour);
-      continue;
+      break;
     }
 
     const inserted = await client.insert('tour_manager_daily_prediction_games', [{
       season,
       station_key: stationKey,
+      ...(quota > 1 ? { game_slot: slot } : {}),
       contest_date: contestDate,
       event_date: selected.event_date,
       tour,
@@ -330,6 +333,8 @@ export async function refreshDailyPredictionGamesByMedian({
       throw new Error(`Median daily prediction insert failed for ${tour}`);
     }
     created += 1;
+    candidates.splice(candidates.indexOf(selected), 1);
+    }
   }
 
   return {

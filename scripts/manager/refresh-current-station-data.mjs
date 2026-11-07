@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { loadActiveStation, buildStationPayload } from './lib/station-payload.mjs';
 import { SupabaseRestClient } from './lib/supabase-rest.mjs';
+import { fetchFinalsProgress } from './lib/finals-source.mjs';
 import { collectPreR1Substitutions, collectQualifierPlacements } from './lib/qualifier-placements.mjs';
 import {
   parseArgs,
@@ -55,6 +56,7 @@ const drawUrls = await discoverDrawUrls(refreshTargets, active.season);
 const refreshedEvents = [];
 const allMatchRows = [];
 const reports = [];
+const finalsProgress = [];
 
 for (const entry of refreshTargets) {
   const { item, event } = entry;
@@ -73,7 +75,16 @@ for (const entry of refreshTargets) {
     warnings: []
   };
 
-  if (!skipDraw && report.draw_url) {
+  if (event.format === 'round_robin') {
+    const progress = await fetchFinalsProgress(event);
+    finalsProgress.push(...progress);
+    if(progress.some(row=>row.stage==='W'))nextEvent.market_status='settled';
+    nextEvent.players = nextEvent.players.map(player => {
+      const result = progress.find(row => row.player_key === player.player_key);
+      return { ...player, round_robin_wins: result.rr_wins, reached_round: result.stage, is_eliminated: result.eliminated };
+    });
+    report.finals_progress = progress;
+  } else if (!skipDraw && report.draw_url) {
     try {
       const parsed = await fetchDrawPlayers(nextEvent, report.draw_url);
       report.draw_players = parsed.players.length;
@@ -141,7 +152,7 @@ for (let i = 0; i < refreshedEvents.length; i += 1) {
   const rawRows = scheduleRows.concat(entry.drawWalkoverRows || []);
   const rows = dedupeMatchRows(rawRows);
   const duplicateMatchesDropped = rawRows.length - rows.length;
-  const windows = mergeDerivedWindows(entry.event, deriveEventWindows(entry.event, rows, fetchedAt));
+  const windows = entry.event.format === 'round_robin' ? {} : mergeDerivedWindows(entry.event, deriveEventWindows(entry.event, rows, fetchedAt));
   entry.event = {
     ...entry.event,
     ...windows,
@@ -246,6 +257,9 @@ if (sync) {
   }
   if (syncMatchRows.length) {
     await client.upsert('tour_manager_matches', syncMatchRows, 'event_key,match_key');
+  }
+  if (finalsProgress.length) {
+    await client.upsert('tour_manager_finals_progress', finalsProgress, 'season,station_key,event_key,player_key');
   }
   if (settle) {
     const settledFor = args['settled-for-date'] || localDateKey(new Date(Date.now() - 86400000), 8);

@@ -16,6 +16,11 @@ async function managerLoadOpeningNotice() {
   var config=MANAGER_ACTIVE_EVENTS && MANAGER_ACTIVE_EVENTS.opening_notice;
   if (!config || Date.now() >= Date.parse(config.closes_at)) return;
   var userId = AUTH_USER && AUTH_USER.id;
+  if(managerLocalSimulationMode()&&config.key==='wta_finals_2026_opening'){
+    var localKey='finals-notice-preview|'+(userId||'anonymous');
+    if(!localStorage.getItem(localKey)){localStorage.setItem(localKey,'1');managerShowOpeningNotice({message:config.message});}
+    return;
+  }
   if (!userId || managerLocalSimulationMode() || MANAGER_OPENING_NOTICE_USER === userId) return;
   if (document.hidden || document.querySelector('dialog[open]') || MANAGER_DIALOG || MANAGER_BADGE_GRANT_NOTICE) {
     clearTimeout(MANAGER_OPENING_NOTICE_TIMER);
@@ -56,6 +61,7 @@ function managerShowOpeningNotice(notice) {
   modal.setAttribute('aria-label', '新站开售');
   modal.innerHTML = '<p></p><figure><a target="_blank" rel="noopener" aria-label="放大经纪人新群聊二维码"><img alt="经纪人新群聊二维码" width="640" height="640" loading="eager" decoding="async" fetchpriority="high"></a><figcaption>经纪人新群聊</figcaption></figure><footer><button type="button" autofocus>好的</button><button type="button">不了，谢谢</button></footer>';
   modal.querySelector('p').textContent = notice.message;
+  if(config.key==='wta_finals_2026_opening')modal.querySelector('p').innerHTML='经纪人<strong style="color:#c62828">WTA年终</strong>开售！累计收益前八免费，最高毛收益可达<strong style="color:#c62828">16500</strong>；普通用户最高毛收益可达<strong style="color:#c62828">11200</strong>，快来选购吧。';
   modal.querySelector('img').src = MANAGER_GROUP_QR_SRC;
   modal.querySelector('a').href = MANAGER_GROUP_QR_SRC;
   modal.querySelectorAll('button').forEach(function(button) {

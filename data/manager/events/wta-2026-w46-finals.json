@@ -1,0 +1,364 @@
+{
+  "season": 2026,
+  "station_key": "2026-w46-wta-finals",
+  "event_key": "wta-2026-w46-finals",
+  "tour": "WTA",
+  "event_id": "30808",
+  "name": "WTA Finals",
+  "name_zh": "印第安维尔斯",
+  "short_name": "印第安维尔斯",
+  "display_name": "WTA 年终（印第安维尔斯）",
+  "level": "FINALS",
+  "format": "round_robin",
+  "surface": "hard_in",
+  "draw_size": 8,
+  "timezone": "America/Los_Angeles",
+  "start_date": "2026-11-08",
+  "end_date": "2026-11-15",
+  "draw_status": "published",
+  "market_status": "open",
+  "submission_status": "open",
+  "submission_opens_at": "2026-11-07T06:51:52.974Z",
+  "submission_cutoff_at": "2026-11-09T04:00:00+08:00",
+  "submission_closes_at": "2026-11-09T04:00:00+08:00",
+  "manual_schedule_windows": true,
+  "main_draw_first_match_at": "2026-11-09T04:00:00+08:00",
+  "allow_submission_after_first_match": false,
+  "market_price_lock": {
+    "publication_version": 1,
+    "locked_at": "2026-11-07T06:51:52.975Z"
+  },
+  "source_urls": [
+    "https://www.live-tennis.cn/zh/draw/30808/2026"
+  ],
+  "players": [
+    {
+      "name_en": "Elena RYBAKINA",
+      "name_zh": "雷巴金娜",
+      "profile_id": "324166",
+      "player_key": "WTA|elena-rybakina",
+      "group": "第1组",
+      "draw_position": 1,
+      "price": 1000,
+      "first_round": "RR",
+      "photo_url": "https://static.live-tennis.cn/pic/ts/324166",
+      "round_robin_wins": 0,
+      "reached_round": "RR",
+      "is_eliminated": false,
+      "path_note": "第1组 · 小组赛胜负不直接判定晋级/淘汰",
+      "pricing_detail": {
+        "formula_version": "finals_fixed_2026",
+        "price_locked": true,
+        "source": "https://tennisabstract.com/reports/wta_elo_ratings.html",
+        "source_date": "2026-11-07",
+        "score_explanation": {
+          "base": "65%总体Elo百分位+35%排名反向百分位（TA覆盖球员）",
+          "surface": "硬地Elo百分位（TA覆盖球员）",
+          "form": "70%当前Elo/巅峰Elo+30%巅峰月份新近度，48个月衰减",
+          "draw": "组内其他三人平均硬地Elo的反向百分位，越高表示组内对手较弱"
+        },
+        "group_opponent_average_elo": 2040.47,
+        "price_independent_of_scores": true
+      },
+      "overall_elo": 2159.2,
+      "surface_elo": 2143.1,
+      "peak_elo": 2199.5,
+      "peak_month": "2026-04",
+      "rank": 1,
+      "scores": {
+        "base": 100,
+        "surface": 100,
+        "form": 94.34,
+        "draw": 42.86,
+        "manual": 0
+      }
+    },
+    {
+      "name_en": "Coco GAUFF",
+      "name_zh": "高芙",
+      "profile_id": "328560",
+      "player_key": "WTA|coco-gauff",
+      "group": "第1组",
+      "draw_position": 2,
+      "price": 1000,
+      "first_round": "RR",
+      "photo_url": "https://static.live-tennis.cn/pic/ts/328560",
+      "round_robin_wins": 0,
+      "reached_round": "RR",
+      "is_eliminated": false,
+      "path_note": "第1组 · 小组赛胜负不直接判定晋级/淘汰",
+      "pricing_detail": {
+        "formula_version": "finals_fixed_2026",
+        "price_locked": true,
+        "source": "https://tennisabstract.com/reports/wta_elo_ratings.html",
+        "source_date": "2026-11-07",
+        "score_explanation": {
+          "base": "65%总体Elo百分位+35%排名反向百分位（TA覆盖球员）",
+          "surface": "硬地Elo百分位（TA覆盖球员）",
+          "form": "70%当前Elo/巅峰Elo+30%巅峰月份新近度，48个月衰减",
+          "draw": "组内其他三人平均硬地Elo的反向百分位，越高表示组内对手较弱"
+        },
+        "group_opponent_average_elo": 2060.9,
+        "price_independent_of_scores": true
+      },
+      "overall_elo": 2123.5,
+      "surface_elo": 2081.8,
+      "peak_elo": 2155.7,
+      "peak_month": "2024-01",
+      "rank": 4,
+      "scores": {
+        "base": 99.53,
+        "surface": 99.6,
+        "form": 77.7,
+        "draw": 28.57,
+        "manual": 0
+      }
+    },
+    {
+      "name_en": "Jessica PEGULA",
+      "name_zh": "佩古拉",
+      "profile_id": "316956",
+      "player_key": "WTA|jessica-pegula",
+      "group": "第1组",
+      "draw_position": 3,
+      "price": 1000,
+      "first_round": "RR",
+      "photo_url": "https://static.live-tennis.cn/pic/ts/316956",
+      "round_robin_wins": 0,
+      "reached_round": "RR",
+      "is_eliminated": false,
+      "path_note": "第1组 · 小组赛胜负不直接判定晋级/淘汰",
+      "pricing_detail": {
+        "formula_version": "finals_fixed_2026",
+        "price_locked": true,
+        "source": "https://tennisabstract.com/reports/wta_elo_ratings.html",
+        "source_date": "2026-11-07",
+        "score_explanation": {
+          "base": "65%总体Elo百分位+35%排名反向百分位（TA覆盖球员）",
+          "surface": "硬地Elo百分位（TA覆盖球员）",
+          "form": "70%当前Elo/巅峰Elo+30%巅峰月份新近度，48个月衰减",
+          "draw": "组内其他三人平均硬地Elo的反向百分位，越高表示组内对手较弱"
+        },
+        "group_opponent_average_elo": 2068.97,
+        "price_independent_of_scores": true
+      },
+      "overall_elo": 2098.8,
+      "surface_elo": 2057.6,
+      "peak_elo": 2121.2,
+      "peak_month": "2026-08",
+      "rank": 5,
+      "scores": {
+        "base": 99.34,
+        "surface": 99.4,
+        "form": 97.39,
+        "draw": 14.29,
+        "manual": 0
+      }
+    },
+    {
+      "name_en": "Linda NOSKOVA",
+      "name_zh": "诺斯科娃",
+      "profile_id": "329668",
+      "player_key": "WTA|linda-noskova",
+      "group": "第1组",
+      "draw_position": 4,
+      "price": 1000,
+      "first_round": "RR",
+      "photo_url": "https://static.live-tennis.cn/pic/ts/329668",
+      "round_robin_wins": 0,
+      "reached_round": "RR",
+      "is_eliminated": false,
+      "path_note": "第1组 · 小组赛胜负不直接判定晋级/淘汰",
+      "pricing_detail": {
+        "formula_version": "finals_fixed_2026",
+        "price_locked": true,
+        "source": "https://tennisabstract.com/reports/wta_elo_ratings.html",
+        "source_date": "2026-11-07",
+        "score_explanation": {
+          "base": "65%总体Elo百分位+35%排名反向百分位（TA覆盖球员）",
+          "surface": "硬地Elo百分位（TA覆盖球员）",
+          "form": "70%当前Elo/巅峰Elo+30%巅峰月份新近度，48个月衰减",
+          "draw": "组内其他三人平均硬地Elo的反向百分位，越高表示组内对手较弱"
+        },
+        "group_opponent_average_elo": 2094.17,
+        "price_independent_of_scores": true
+      },
+      "overall_elo": 2059.2,
+      "surface_elo": 1982,
+      "peak_elo": 2079.2,
+      "peak_month": "2026-09",
+      "rank": 8,
+      "scores": {
+        "base": 98.87,
+        "surface": 98.91,
+        "form": 98.08,
+        "draw": 0,
+        "manual": 0
+      }
+    },
+    {
+      "name_en": "Aryna SABALENKA",
+      "name_zh": "萨巴莲卡",
+      "profile_id": "320760",
+      "player_key": "WTA|aryna-sabalenka",
+      "group": "第2组",
+      "draw_position": 5,
+      "price": 1000,
+      "first_round": "RR",
+      "photo_url": "https://static.live-tennis.cn/pic/ts/320760",
+      "round_robin_wins": 0,
+      "reached_round": "RR",
+      "is_eliminated": false,
+      "path_note": "第2组 · 小组赛胜负不直接判定晋级/淘汰",
+      "pricing_detail": {
+        "formula_version": "finals_fixed_2026",
+        "price_locked": true,
+        "source": "https://tennisabstract.com/reports/wta_elo_ratings.html",
+        "source_date": "2026-11-07",
+        "score_explanation": {
+          "base": "65%总体Elo百分位+35%排名反向百分位（TA覆盖球员）",
+          "surface": "硬地Elo百分位（TA覆盖球员）",
+          "form": "70%当前Elo/巅峰Elo+30%巅峰月份新近度，48个月衰减",
+          "draw": "组内其他三人平均硬地Elo的反向百分位，越高表示组内对手较弱"
+        },
+        "group_opponent_average_elo": 1961.3,
+        "price_independent_of_scores": true
+      },
+      "overall_elo": 2158.5,
+      "surface_elo": 2136.8,
+      "peak_elo": 2271.7,
+      "peak_month": "2026-04",
+      "rank": 2,
+      "scores": {
+        "base": 99.8,
+        "surface": 99.8,
+        "form": 92.14,
+        "draw": 100,
+        "manual": 0
+      }
+    },
+    {
+      "name_en": "Mirra ANDREEVA",
+      "name_zh": "米-安德烈耶娃",
+      "profile_id": "331809",
+      "player_key": "WTA|mirra-andreeva",
+      "group": "第2组",
+      "draw_position": 6,
+      "price": 1000,
+      "first_round": "RR",
+      "photo_url": "https://static.live-tennis.cn/pic/ts/331809",
+      "round_robin_wins": 0,
+      "reached_round": "RR",
+      "is_eliminated": false,
+      "path_note": "第2组 · 小组赛胜负不直接判定晋级/淘汰",
+      "pricing_detail": {
+        "formula_version": "finals_fixed_2026",
+        "price_locked": true,
+        "source": "https://tennisabstract.com/reports/wta_elo_ratings.html",
+        "source_date": "2026-11-07",
+        "score_explanation": {
+          "base": "65%总体Elo百分位+35%排名反向百分位（TA覆盖球员）",
+          "surface": "硬地Elo百分位（TA覆盖球员）",
+          "form": "70%当前Elo/巅峰Elo+30%巅峰月份新近度，48个月衰减",
+          "draw": "组内其他三人平均硬地Elo的反向百分位，越高表示组内对手较弱"
+        },
+        "group_opponent_average_elo": 2012.9,
+        "price_independent_of_scores": true
+      },
+      "overall_elo": 2041,
+      "surface_elo": 1982,
+      "peak_elo": 2159.2,
+      "peak_month": "2025-03",
+      "rank": 3,
+      "scores": {
+        "base": 99.09,
+        "surface": 98.91,
+        "form": 83.67,
+        "draw": 85.71,
+        "manual": 0
+      }
+    },
+    {
+      "name_en": "Elina SVITOLINA",
+      "name_zh": "斯维托丽娜",
+      "profile_id": "316738",
+      "player_key": "WTA|elina-svitolina",
+      "group": "第2组",
+      "draw_position": 7,
+      "price": 1000,
+      "first_round": "RR",
+      "photo_url": "https://static.live-tennis.cn/pic/ts/316738",
+      "round_robin_wins": 0,
+      "reached_round": "RR",
+      "is_eliminated": false,
+      "path_note": "第2组 · 小组赛胜负不直接判定晋级/淘汰",
+      "pricing_detail": {
+        "formula_version": "finals_fixed_2026",
+        "price_locked": true,
+        "source": "https://tennisabstract.com/reports/wta_elo_ratings.html",
+        "source_date": "2026-11-07",
+        "score_explanation": {
+          "base": "65%总体Elo百分位+35%排名反向百分位（TA覆盖球员）",
+          "surface": "硬地Elo百分位（TA覆盖球员）",
+          "form": "70%当前Elo/巅峰Elo+30%巅峰月份新近度，48个月衰减",
+          "draw": "组内其他三人平均硬地Elo的反向百分位，越高表示组内对手较弱"
+        },
+        "group_opponent_average_elo": 2018.17,
+        "price_independent_of_scores": true
+      },
+      "overall_elo": 2026.9,
+      "surface_elo": 1966.2,
+      "peak_elo": 2120.6,
+      "peak_month": "2018-05",
+      "rank": 6,
+      "scores": {
+        "base": 98.75,
+        "surface": 98.41,
+        "form": 66.91,
+        "draw": 71.43,
+        "manual": 0
+      }
+    },
+    {
+      "name_en": "Karolina MUCHOVA",
+      "name_zh": "穆霍娃",
+      "profile_id": "322191",
+      "player_key": "WTA|karolina-muchova",
+      "group": "第2组",
+      "draw_position": 8,
+      "price": 1000,
+      "first_round": "RR",
+      "photo_url": "https://static.live-tennis.cn/pic/ts/322191",
+      "round_robin_wins": 0,
+      "reached_round": "RR",
+      "is_eliminated": false,
+      "path_note": "第2组 · 小组赛胜负不直接判定晋级/淘汰",
+      "pricing_detail": {
+        "formula_version": "finals_fixed_2026",
+        "price_locked": true,
+        "source": "https://tennisabstract.com/reports/wta_elo_ratings.html",
+        "source_date": "2026-11-07",
+        "score_explanation": {
+          "base": "65%总体Elo百分位+35%排名反向百分位（TA覆盖球员）",
+          "surface": "硬地Elo百分位（TA覆盖球员）",
+          "form": "70%当前Elo/巅峰Elo+30%巅峰月份新近度，48个月衰减",
+          "draw": "组内其他三人平均硬地Elo的反向百分位，越高表示组内对手较弱"
+        },
+        "group_opponent_average_elo": 2028.33,
+        "price_independent_of_scores": true
+      },
+      "overall_elo": 1984.2,
+      "surface_elo": 1935.7,
+      "peak_elo": 2103.5,
+      "peak_month": "2026-06",
+      "rank": 7,
+      "scores": {
+        "base": 98.16,
+        "surface": 97.82,
+        "form": 92.9,
+        "draw": 57.14,
+        "manual": 0
+      }
+    }
+  ]
+}

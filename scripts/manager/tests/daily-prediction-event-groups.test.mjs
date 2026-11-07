@@ -86,3 +86,25 @@ test('preserves existing Singapore game and reruns without duplicating either ga
   assert.equal(again.result.created, 0);
   assert.equal(again.result.existing, 2);
 });
+
+test('Finals publishes two distinct WTA matches and never replaces them', async()=>{
+ const {client,games}=fixture('2026-11-09');
+ const args={client,stationKey:'finals',contestDate:'2026-11-09',now:'2026-11-08T00:00:00Z',exactEventDate:true,eventGroups:[{tour:'WTA',event_key:'seoul',match_count:2}]};
+ assert.equal((await refreshDailyPredictionGamesByMedian(args)).created,2);
+ assert.equal(new Set(games.map(g=>g.match_key)).size,2);
+ assert.deepEqual(games.map(g=>g.game_slot),[1,2]);
+ const snapshot=JSON.stringify(games);
+ assert.equal((await refreshDailyPredictionGamesByMedian(args)).created,0);
+ assert.equal(JSON.stringify(games),snapshot);
+});
+
+test('Finals missing second match is left empty and backfilled without changing first',async()=>{
+ const {client,games}=fixture('2026-11-09');
+ const original=client.select.bind(client);let published=1;
+ client.select=async(t,q)=>{const rows=await original(t,q);return t==='tour_manager_matches'?rows.slice(0,published):rows;};
+ const args={client,stationKey:'finals',contestDate:'2026-11-09',now:'2026-11-08T00:00:00Z',exactEventDate:true,eventGroups:[{tour:'WTA',event_key:'seoul',match_count:2}]};
+ assert.equal((await refreshDailyPredictionGamesByMedian(args)).created,1);
+ const first=JSON.stringify(games[0]);published=2;
+ assert.equal((await refreshDailyPredictionGamesByMedian(args)).created,1);
+ assert.equal(JSON.stringify(games[0]),first);assert.equal(games[1].game_slot,2);
+});

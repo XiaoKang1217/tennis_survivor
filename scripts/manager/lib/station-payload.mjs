@@ -64,6 +64,7 @@ export function buildStationPayload({ active, events, photoMap = {}, priceVersio
         city: event.city,
         country: event.country,
         timezone: event.timezone || null,
+        format: event.format || 'single_elimination',
         cross_tour_transfer: event.cross_tour_transfer === true,
         market_message: event.market_message || '',
         source_file: item.data_file
@@ -224,6 +225,7 @@ export function buildStationPayload({ active, events, photoMap = {}, priceVersio
     combo_version: active.rules?.combo_version || 'classic',
     metadata: {
       combo: active.rules?.combo || {},
+      ...(active.rules?.finals ? { finals: active.rules.finals } : {}),
       ...(Number.isInteger(active.rules?.min_players) && Number.isInteger(active.rules?.max_players)
         ? { roster: { min_players: active.rules.min_players, max_players: active.rules.max_players } } : {}),
       source: 'data/manager/active_events.json'
