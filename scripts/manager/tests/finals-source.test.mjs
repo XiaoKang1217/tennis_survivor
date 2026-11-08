@@ -19,6 +19,11 @@ test('Explicit knockout participant qualifies even before semifinal starts',()=>
 test('Source failure and incomplete groups fail closed, never pay guessed points',()=>{
  assert.throws(()=>parseFinalsSource('<html>Unavailable</html>'),/Expected two/);
 });
+test('Empty source spacer rows are ignored, nonempty unidentified rows still fail',()=>{
+ const html=fixture().replace('<tr><td>group</td></tr>','<tr><td>group</td></tr><tr><td><div></div></td><td>&nbsp;</td></tr>');
+ assert.equal(parseFinalsSource(html).length,8);
+ assert.throws(()=>parseFinalsSource(html.replace('<div></div>','<div>unknown player</div>')),/Ambiguous/);
+});
 test('RR round mapping does not affect ordinary draws',()=>{
  assert.equal(normalizeRoundKey('小组赛',{format:'round_robin',draw_size:8}),'RR');
  assert.equal(normalizeRoundKey('半决赛',{draw_size:32}),'SF');

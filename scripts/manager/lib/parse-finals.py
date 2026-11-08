@@ -59,6 +59,9 @@ def parse(html):
                 if not cells:
                     continue
                 names = cells[0].find(lambda n: n.tag == 'pname')
+                # The source may insert an empty spacer row after the group header.
+                if not names and not row.text().strip() and not row.find(lambda n: n.tag == 'pname'):
+                    continue
                 if len(names) != 1:
                     raise ValueError('Ambiguous singles player row')
                 name = names[0]

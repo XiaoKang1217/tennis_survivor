@@ -62,12 +62,30 @@ if (syncRows) {
 
 for (const item of pending) {
   try {
+    const auditFinals = item.event_key === 'wta-2026-w46-finals';
+    const readContracts = () => client.select('tour_manager_lineup_players', {
+      select: 'id,player_key,price,earned_points,metadata,tour_manager_lineups!inner(status)',
+      event_key: `eq.${item.event_key}`, 'tour_manager_lineups.status': 'in.(submitted,locked,settling,settled)'
+    });
+    const before = auditFinals ? await readContracts() : [];
+    const affected = before.filter(c => c.player_key === item.out_player_key);
+    if (affected.some(c => Number(c.earned_points) !== 0)) throw new Error('Finals replacement has settled earnings; review required before substitution');
     const count = await client.rpc('tour_manager_apply_pre_r1_substitution_v2', {
       p_event_key: item.event_key,
       p_out_player_key: item.out_player_key,
       p_in_player_key: item.replacement_player_key,
       p_source_url: item.source_url
     });
+    if (auditFinals) {
+      const after = await readContracts();
+      for (const old of affected) {
+        const current = after.find(c => c.id === old.id);
+        if (!current || current.player_key !== item.replacement_player_key || current.price !== old.price
+          || current.earned_points !== old.earned_points || current.metadata.finals_elite !== old.metadata.finals_elite)
+          throw new Error('Finals replacement verification failed: identity, locked price, earnings or eligibility');
+      }
+      console.log(`Finals substitution verified: contracts=${affected.length}; locked prices and elite eligibility unchanged; prior earned points=0`);
+    }
     report.applied.push({
       ...item,
       updated_contracts: Number(count || 0)

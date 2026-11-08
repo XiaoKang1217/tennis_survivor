@@ -18,7 +18,10 @@ export async function fetchFinalsProgress(event) {
     if (!row) throw new Error(`Finals contracted player missing from source: ${player.player_key}`);
     return {
       season: event.season, station_key: event.station_key, event_key: event.event_key,
-      player_key: player.player_key, rr_wins: row.rr_wins, stage: row.stage, eliminated: row.eliminated,
+      player_key: player.player_key, rr_wins: row.rr_wins, stage: row.stage,
+      // A confirmed pre-opening replacement can temporarily inherit the outgoing row's strikeout.
+      eliminated: player.confirmed_active_until && Date.now() < Date.parse(player.confirmed_active_until)
+        && row.rr_wins + row.rr_losses === 0 && row.stage === 'RR' ? false : row.eliminated,
       source: { url, source_id: row.source_id, rr_losses: row.rr_losses }, updated_at: new Date().toISOString()
     };
   });

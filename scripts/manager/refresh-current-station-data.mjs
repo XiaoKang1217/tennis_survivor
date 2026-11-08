@@ -156,7 +156,7 @@ for (let i = 0; i < refreshedEvents.length; i += 1) {
   entry.event = {
     ...entry.event,
     ...windows,
-    transfer_window_note: entry.event.transfer_window_note || '换人窗口为 R1 全部结束后、R2 第一场开始前，由当前站赛程自动更新。',
+    transfer_window_note: entry.event.format === 'round_robin' ? '年终不允许换人。' : entry.event.transfer_window_note || '换人窗口为 R1 全部结束后、R2 第一场开始前，由当前站赛程自动更新。',
     source_urls: mergeSourceUrls(entry.event.source_urls, report.draw_url)
   };
   report.matches = rows.length;

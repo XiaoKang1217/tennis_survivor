@@ -33,15 +33,15 @@
   ],
   "players": [
     {
-      "name_en": "Elena RYBAKINA",
-      "name_zh": "雷巴金娜",
-      "profile_id": "324166",
-      "player_key": "WTA|elena-rybakina",
+      "name_en": "Marta KOSTYUK",
+      "name_zh": "科斯秋克",
+      "profile_id": "326482",
+      "player_key": "WTA|marta-kostyuk",
       "group": "第1组",
       "draw_position": 1,
       "price": 1000,
       "first_round": "RR",
-      "photo_url": "https://static.live-tennis.cn/pic/ts/324166",
+      "photo_url": "https://static.live-tennis.cn/pic/ts/326482",
       "round_robin_wins": 0,
       "reached_round": "RR",
       "is_eliminated": false,
@@ -50,7 +50,7 @@
         "formula_version": "finals_fixed_2026",
         "price_locked": true,
         "source": "https://tennisabstract.com/reports/wta_elo_ratings.html",
-        "source_date": "2026-11-07",
+        "source_date": "2026-11-08",
         "score_explanation": {
           "base": "65%总体Elo百分位+35%排名反向百分位（TA覆盖球员）",
           "surface": "硬地Elo百分位（TA覆盖球员）",
@@ -60,18 +60,31 @@
         "group_opponent_average_elo": 2040.47,
         "price_independent_of_scores": true
       },
-      "overall_elo": 2159.2,
-      "surface_elo": 2143.1,
-      "peak_elo": 2199.5,
-      "peak_month": "2026-04",
-      "rank": 1,
+      "overall_elo": 2014.9,
+      "surface_elo": 1931,
+      "peak_elo": 2079.2,
+      "peak_month": "2026-08",
+      "rank": 10,
       "scores": {
-        "base": 100,
-        "surface": 100,
-        "form": 94.34,
-        "draw": 42.86,
+        "base": 98.34,
+        "surface": 97.62,
+        "form": 95.96,
+        "draw": 0,
         "manual": 0
-      }
+      },
+      "pre_r1_substitution": {
+        "out_player_key": "WTA|elena-rybakina",
+        "out_name_en": "Elena RYBAKINA",
+        "out_name_zh": "雷巴金娜",
+        "out_profile_id": "324166",
+        "locked_publication_player_key": "WTA|elena-rybakina",
+        "draw_position": 1,
+        "reason": "pre_r1_withdrawal",
+        "source_url": "https://www.live-tennis.cn/zh/draw/30808/2026",
+        "contract_price_policy": "keep_original_contract_price",
+        "original_contract_price": 1000
+      },
+      "confirmed_active_until": "2026-11-09T04:00:00+08:00"
     },
     {
       "name_en": "Coco GAUFF",
@@ -91,14 +104,14 @@
         "formula_version": "finals_fixed_2026",
         "price_locked": true,
         "source": "https://tennisabstract.com/reports/wta_elo_ratings.html",
-        "source_date": "2026-11-07",
+        "source_date": "2026-11-08",
         "score_explanation": {
           "base": "65%总体Elo百分位+35%排名反向百分位（TA覆盖球员）",
           "surface": "硬地Elo百分位（TA覆盖球员）",
           "form": "70%当前Elo/巅峰Elo+30%巅峰月份新近度，48个月衰减",
           "draw": "组内其他三人平均硬地Elo的反向百分位，越高表示组内对手较弱"
         },
-        "group_opponent_average_elo": 2060.9,
+        "group_opponent_average_elo": 1990.2,
         "price_independent_of_scores": true
       },
       "overall_elo": 2123.5,
@@ -110,7 +123,7 @@
         "base": 99.53,
         "surface": 99.6,
         "form": 77.7,
-        "draw": 28.57,
+        "draw": 85.71,
         "manual": 0
       }
     },
@@ -132,14 +145,14 @@
         "formula_version": "finals_fixed_2026",
         "price_locked": true,
         "source": "https://tennisabstract.com/reports/wta_elo_ratings.html",
-        "source_date": "2026-11-07",
+        "source_date": "2026-11-08",
         "score_explanation": {
           "base": "65%总体Elo百分位+35%排名反向百分位（TA覆盖球员）",
           "surface": "硬地Elo百分位（TA覆盖球员）",
           "form": "70%当前Elo/巅峰Elo+30%巅峰月份新近度，48个月衰减",
           "draw": "组内其他三人平均硬地Elo的反向百分位，越高表示组内对手较弱"
         },
-        "group_opponent_average_elo": 2068.97,
+        "group_opponent_average_elo": 1998.27,
         "price_independent_of_scores": true
       },
       "overall_elo": 2098.8,
@@ -151,7 +164,7 @@
         "base": 99.34,
         "surface": 99.4,
         "form": 97.39,
-        "draw": 14.29,
+        "draw": 71.43,
         "manual": 0
       }
     },
@@ -173,14 +186,14 @@
         "formula_version": "finals_fixed_2026",
         "price_locked": true,
         "source": "https://tennisabstract.com/reports/wta_elo_ratings.html",
-        "source_date": "2026-11-07",
+        "source_date": "2026-11-08",
         "score_explanation": {
           "base": "65%总体Elo百分位+35%排名反向百分位（TA覆盖球员）",
           "surface": "硬地Elo百分位（TA覆盖球员）",
           "form": "70%当前Elo/巅峰Elo+30%巅峰月份新近度，48个月衰减",
           "draw": "组内其他三人平均硬地Elo的反向百分位，越高表示组内对手较弱"
         },
-        "group_opponent_average_elo": 2094.17,
+        "group_opponent_average_elo": 2023.47,
         "price_independent_of_scores": true
       },
       "overall_elo": 2059.2,
@@ -192,7 +205,7 @@
         "base": 98.87,
         "surface": 98.91,
         "form": 98.08,
-        "draw": 0,
+        "draw": 28.57,
         "manual": 0
       }
     },
@@ -214,7 +227,7 @@
         "formula_version": "finals_fixed_2026",
         "price_locked": true,
         "source": "https://tennisabstract.com/reports/wta_elo_ratings.html",
-        "source_date": "2026-11-07",
+        "source_date": "2026-11-08",
         "score_explanation": {
           "base": "65%总体Elo百分位+35%排名反向百分位（TA覆盖球员）",
           "surface": "硬地Elo百分位（TA覆盖球员）",
@@ -255,7 +268,7 @@
         "formula_version": "finals_fixed_2026",
         "price_locked": true,
         "source": "https://tennisabstract.com/reports/wta_elo_ratings.html",
-        "source_date": "2026-11-07",
+        "source_date": "2026-11-08",
         "score_explanation": {
           "base": "65%总体Elo百分位+35%排名反向百分位（TA覆盖球员）",
           "surface": "硬地Elo百分位（TA覆盖球员）",
@@ -274,7 +287,7 @@
         "base": 99.09,
         "surface": 98.91,
         "form": 83.67,
-        "draw": 85.71,
+        "draw": 57.14,
         "manual": 0
       }
     },
@@ -296,7 +309,7 @@
         "formula_version": "finals_fixed_2026",
         "price_locked": true,
         "source": "https://tennisabstract.com/reports/wta_elo_ratings.html",
-        "source_date": "2026-11-07",
+        "source_date": "2026-11-08",
         "score_explanation": {
           "base": "65%总体Elo百分位+35%排名反向百分位（TA覆盖球员）",
           "surface": "硬地Elo百分位（TA覆盖球员）",
@@ -315,7 +328,7 @@
         "base": 98.75,
         "surface": 98.41,
         "form": 66.91,
-        "draw": 71.43,
+        "draw": 42.86,
         "manual": 0
       }
     },
@@ -337,7 +350,7 @@
         "formula_version": "finals_fixed_2026",
         "price_locked": true,
         "source": "https://tennisabstract.com/reports/wta_elo_ratings.html",
-        "source_date": "2026-11-07",
+        "source_date": "2026-11-08",
         "score_explanation": {
           "base": "65%总体Elo百分位+35%排名反向百分位（TA覆盖球员）",
           "surface": "硬地Elo百分位（TA覆盖球员）",
@@ -356,9 +369,10 @@
         "base": 98.16,
         "surface": 97.82,
         "form": 92.9,
-        "draw": 57.14,
+        "draw": 14.29,
         "manual": 0
       }
     }
-  ]
+  ],
+  "transfer_window_note": "年终不允许换人。"
 }
