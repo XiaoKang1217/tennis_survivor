@@ -1,17 +1,17 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-11-08T03:08:57.180Z",
-  "source_updated_at": "2026-11-08 11:08:55",
-  "settled_through": "2026-11-07",
+  "updated_at": "2026-11-09T03:08:53.225Z",
+  "source_updated_at": "2026-11-09 11:08:50",
+  "settled_through": "2026-11-08",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
     {
       "tour": "ATP",
       "display_name": "第七路单车",
-      "score": 3066,
-      "hit_count": 105,
-      "scored_days": 74
+      "score": 3099,
+      "hit_count": 107,
+      "scored_days": 75
     },
     {
       "tour": "ATP",
