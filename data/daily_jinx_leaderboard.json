@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-11-10T03:08:49.398Z",
-  "source_updated_at": "2026-11-10 11:08:46",
-  "settled_through": "2026-11-09",
+  "updated_at": "2026-11-11T03:08:45.862Z",
+  "source_updated_at": "2026-11-11 11:08:43",
+  "settled_through": "2026-11-10",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
@@ -22,17 +22,17 @@
     },
     {
       "tour": "ATP",
+      "display_name": "xxx又坑人了",
+      "score": 1980,
+      "hit_count": 89,
+      "scored_days": 69
+    },
+    {
+      "tour": "ATP",
       "display_name": "Mith",
       "score": 1955,
       "hit_count": 65,
       "scored_days": 49
-    },
-    {
-      "tour": "ATP",
-      "display_name": "xxx又坑人了",
-      "score": 1944,
-      "hit_count": 86,
-      "scored_days": 68
     },
     {
       "tour": "ATP",
