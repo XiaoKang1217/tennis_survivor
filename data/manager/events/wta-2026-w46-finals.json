@@ -44,7 +44,7 @@
       "photo_url": "https://static.live-tennis.cn/pic/ts/326482",
       "round_robin_wins": 0,
       "reached_round": "RR",
-      "is_eliminated": false,
+      "is_eliminated": true,
       "path_note": "第1组 · 小组赛胜负不直接判定晋级/淘汰",
       "pricing_detail": {
         "formula_version": "finals_fixed_2026",
@@ -98,7 +98,7 @@
       "photo_url": "https://static.live-tennis.cn/pic/ts/328560",
       "round_robin_wins": 2,
       "reached_round": "RR",
-      "is_eliminated": false,
+      "is_eliminated": true,
       "path_note": "第1组 · 小组赛胜负不直接判定晋级/淘汰",
       "pricing_detail": {
         "formula_version": "finals_fixed_2026",
@@ -138,7 +138,7 @@
       "first_round": "RR",
       "photo_url": "https://static.live-tennis.cn/pic/ts/316956",
       "round_robin_wins": 2,
-      "reached_round": "RR",
+      "reached_round": "SF",
       "is_eliminated": false,
       "path_note": "第1组 · 小组赛胜负不直接判定晋级/淘汰",
       "pricing_detail": {
@@ -179,7 +179,7 @@
       "first_round": "RR",
       "photo_url": "https://static.live-tennis.cn/pic/ts/329668",
       "round_robin_wins": 2,
-      "reached_round": "RR",
+      "reached_round": "SF",
       "is_eliminated": false,
       "path_note": "第1组 · 小组赛胜负不直接判定晋级/淘汰",
       "pricing_detail": {
