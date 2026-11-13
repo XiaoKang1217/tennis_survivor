@@ -26,14 +26,32 @@ for (const file of files.filter(f => wanted.some(p => f.startsWith(p)))) {
 const active=JSON.parse(await readFile('data/manager/active_events.json','utf8'));
 const elite=active.rules.finals.top8_user_ids;
 const ordinary='00000000-0000-0000-0000-000000000001';
-for(const id of [...elite,ordinary])await db.query('insert into auth.users(id) values($1)',[id]);
-for(const file of files.filter(f=>f.startsWith('20261107'))){
+for(const id of new Set([...elite,...(active.previous_finals_top8_ids||[]),ordinary]))await db.query('insert into auth.users(id) values($1)',[id]);
+for(const file of files.filter(f=>f.startsWith('20261107')||f.startsWith('20261112'))){
  try{await db.exec(await readFile(`supabase/migrations/${file}`,'utf8'));}
  catch(error){console.error('FINALS MIGRATION',file,error.message);process.exit(1);}
 }
 console.log('All Finals migrations compiled against historical schema.');
+if(active.station_key==='2026-w47-atp-finals' && Date.now()<Date.parse(active.opening_notice.closes_at)){
+ await db.query("select set_config('request.jwt.claim.sub',$1,false)",[ordinary]);
+ const first=(await db.query('select tour_manager_take_atp_finals_opening_notice() notice')).rows[0].notice;
+ const second=(await db.query('select tour_manager_take_atp_finals_opening_notice() notice')).rows[0].notice;
+ assert.match(first.message,/ATP年终/);assert.equal(second,null);
+ console.log('Opening notice is delivered once per account: passed');
+}
 const station=active.station_key;
-const event=JSON.parse(await readFile('data/manager/events/wta-2026-w46-finals.json','utf8'));
+const event=JSON.parse(await readFile('data/manager/'+active.events[0].data_file,'utf8'));
+// Make fixture windows independent of the date the regression suite is run.
+await db.exec(`update tour_manager_events set submission_opens_at=now()-interval '1 day',submission_cutoff_at=now()+interval '1 day',submission_closes_at=now()+interval '1 day',main_draw_first_match_at=now()+interval '1 day' where station_key='${station}';`);
+if(active.previous_finals_top8_ids){
+ const eligibility=(await db.query('select station_key,user_id from tour_manager_finals_eligibility')).rows;
+ const eligible=(station,id)=>eligibility.some(r=>r.station_key===station&&r.user_id===id);
+ assert.ok(eligible(station,'4137f767-01c4-4821-a350-533329c03762'));
+ assert.ok(!eligible(station,'57722850-cc58-4170-a35f-cf49b06973f0'));
+ assert.ok(!eligible('2026-w46-wta-finals','4137f767-01c4-4821-a350-533329c03762'));
+ assert.ok(eligible('2026-w46-wta-finals','57722850-cc58-4170-a35f-cf49b06973f0'));
+ console.log('ATP and WTA frozen eligibility remain isolated: passed');
+}
 const keys=event.players.slice(0,2).map(p=>p.player_key);
 const contracts=keys.map(player_key=>({event_key:event.event_key,player_key,price:0,finals_elite:true}));
 async function asUser(id,role='authenticated'){
@@ -91,10 +109,10 @@ console.log('9000/13250 payout example and repeat-run idempotency: passed');
 await asUser(ordinary);
 await assert.rejects(()=>db.query('select tour_manager_settle_completed_matches($1,2026,$2::date)',[station,'2026-11-15']),/admin_required/);
 console.log('Unauthorised settlement denied: passed');
-await db.exec(await readFile('docs/20261107-wta-finals-release.sql','utf8'));
+await db.exec(await readFile(active.previous_finals_top8_ids?'docs/20261112-atp-finals-release.sql':'docs/20261107-wta-finals-release.sql','utf8'));
 console.log('Standalone SQL replay is idempotent: passed');
 for(const slot of [1,2])await db.query(`insert into tour_manager_daily_prediction_games(season,station_key,contest_date,event_key,tour,game_slot,match_key,scheduled_at,closes_at,player1_key,player1_name,player1_ranking,player2_key,player2_name,player2_ranking,ranking_gap)
-values(2026,$1,'2026-11-09',$2,'WTA',$3,$4,'2026-11-09 20:00Z','2026-11-09 20:00Z',$5,'P1',1,$6,'P2',2,1)`,[station,event.event_key,slot,'finals-game-'+slot,...keys]);
+values(2026,$1,'2026-11-16',$2,'${event.tour}',$3,$4,'2026-11-16 20:00Z','2026-11-16 20:00Z',$5,'P1',1,$6,'P2',2,1)`,[station,event.event_key,slot,'finals-game-'+slot,...keys]);
 assert.equal((await db.query('select count(*)::int n from tour_manager_daily_prediction_games')).rows[0].n,2);
-console.log('Two games of the same WTA event accepted by database uniqueness rules: passed');
+console.log(`Two games of the same ${event.tour} event accepted by database uniqueness rules: passed`);
 await db.close();

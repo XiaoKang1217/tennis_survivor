@@ -5,7 +5,8 @@ function managerDisplayGroup(mode) {
 }
 function managerMarketPacks() {
   var carried = MANAGER_ACTIVE_EVENTS && MANAGER_ACTIVE_EVENTS.display_events || [];
-  return carried.map(function(item){return managerEventPack(item.event_key);}).concat(managerContestPacks());
+  var previous=carried.map(function(item){return managerEventPack(item.event_key);});
+  return managerFinalsMode()?managerContestPacks().concat(previous):previous.concat(managerContestPacks());
 }
 function managerPlayerPurchasable(player) {
   var readOnly = MANAGER_ACTIVE_EVENTS && MANAGER_ACTIVE_EVENTS.display_events || [];

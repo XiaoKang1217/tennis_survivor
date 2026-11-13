@@ -2328,7 +2328,7 @@ function managerPlayerFromEvent(pack,raw,index){
   var inheritedPrice=Number(sub.original_contract_price);
   var rawPrice=Number(raw.price);
   var price=Number.isFinite(rawPrice)&&rawPrice>0?rawPrice:(Number.isFinite(inheritedPrice)&&inheritedPrice>0?inheritedPrice:managerPrice({base:base,surface:surface,draw:draw,form:form},pack.meta.level,tour,drawSize));
-  if(pack.meta.level==='FINALS')price=managerFinalsElite()?0:1000;
+  if(pack.meta.level==='FINALS')price=(pack.event&&pack.event.station_key===managerStationKey()?managerFinalsElite():!!(AUTH_USER&&MANAGER_ACTIVE_EVENTS.previous_finals_top8_ids&&MANAGER_ACTIVE_EVENTS.previous_finals_top8_ids.includes(AUTH_USER.id)))?0:1000;
   return {id:playerKey,playerKey:playerKey,sourcePlayerKey:sourcePlayerKey,originalName:originalName,tour:tour,name:name,nameEn:raw.name_en||'',event:pack.data.event_name||pack.meta.display||'当前站',eventKey:pack.meta.eventKey,level:pack.meta.level,drawSize:drawSize,surface:pack.meta.surface,rank:officialRank,seed:raw.seed||null,drawPosition:raw.draw_position||null,firstRound:raw.first_round||'',profileId:raw.profile_id||'',photoUrl:raw.photo_url||raw.profile_image_url||'',fullBodyUrl:raw.full_body_url||raw.body_url||raw.photo_full_url||'',isQualifierPlaceholder:!!raw.is_qualifier_placeholder,pathNote:raw.path_note||'',pickCount:Math.max(1,60-index),base:base,surfaceScore:surface,draw:draw,form:form,manual:manual,total:score,price:price,tier:managerTier(price,pack.meta.level,tour,drawSize),breakEven:managerRoundBreakEven(price,pack.meta.level,tour,drawSize),overallElo:raw.overall_elo??null,surfaceElo:raw.surface_elo??null,peakElo:raw.peak_elo??null,peakMonth:raw.peak_month||'',expectedPoints:raw.expected_points??null,expectedRound:raw.expected_round||'',pricingDetail:raw.pricing_detail||null,risk:score>=84?'冠军核心':(draw<45?'签表偏硬':(price<=managerWinnerPoints(pack.meta.level,tour,drawSize)*.16?'冷门彩票':'均衡资产'))};
 }
 function managerBuildPool(){
@@ -3888,7 +3888,7 @@ async function managerSubmitLineup(confirmed){
       confirmLabel:'确认提交',
       cancelLabel:'再想想'
     };
-    if(managerFinalsMode())MANAGER_DIALOG.html='<p>本次签约 '+c.players.length+' 名球员，合计花费 <b>'+c.spent+' 本金</b>。'+(managerFinalsElite()?'固定前八免费资格已应用。':'每名球员1000本金。')+'</p><p>本站无签约金、Combo及低保办。11/09 04:00前可撤回修改，截止后锁定。确认提交吗？</p>';
+    if(managerFinalsMode())MANAGER_DIALOG.html='<p>本次签约 '+c.players.length+' 名球员，合计花费 <b>'+c.spent+' 本金</b>。'+(managerFinalsElite()?'固定前八免费资格已应用。':'每名球员1000本金。')+'</p><p>本站无签约金、Combo及低保办。'+esc(managerSubmissionWindowInfo().label)+'前可撤回修改，截止后锁定。确认提交吗？</p>';
     renderManagerDemo();
     return;
   }
@@ -4496,7 +4496,7 @@ function managerRenderCalculator(){
   return '<div class="manager-table-scroll manager-calc-scroll"><table class="manager-calc-table"><thead><tr><th>球员</th><th>我预计他到哪轮</th><th>轮次收益</th><th>单人净值</th><th>回本线</th></tr></thead><tbody>'+rows+'</tbody></table></div><div class="manager-note" style="margin-top:10px">这里按你手动选择的预计轮次测算收益；市场选人和右侧阵容会同步到这张表。'+(c.warning?'<br><b class="r">'+esc(c.warning)+'</b>':'')+'</div>'+hopePicker+'<div class="manager-sim" style="margin-top:10px"><div class="manager-sim-row"><span>球员支出</span><b>'+managerSpendBreakdownText(c)+'</b></div><div class="manager-sim-row"><span>低保办</span><b>'+welfareText+'</b></div>'+(MANAGER_ACTIVE_EVENTS&&MANAGER_ACTIVE_EVENTS.rules&&MANAGER_ACTIVE_EVENTS.rules.combo&&MANAGER_ACTIVE_EVENTS.rules.combo.village_hope?'<div class="manager-sim-row"><span>全村的希望</span><b>'+esc(hopeText)+'</b></div>':'')+'<div class="manager-sim-row"><span>毛收益</span><b>'+c.gross+'</b></div><div class="manager-sim-row"><span>Combo</span><b>'+managerComboBrief(c)+'</b></div><div class="manager-sim-row"><span>计算结果</span><b>毛收益 '+c.gross+' + 奖励 '+c.bonus+' - 折后成本 '+c.spent+' = '+c.net+'</b></div><div class="manager-sim-row"><span>阵容风格</span><b>'+c.style+'</b></div><div class="manager-sim-row"><span>可行最高收益</span><b>毛收益 '+c.maxGross+' + 奖励 '+c.maxBonus+' - 折后成本 '+c.spent+' = '+c.max+'</b></div></div>'+managerCalculatorComboRulesHtml(c);
 }
 function managerRenderTransfer(){
-  if(managerFinalsMode())return '<div class="manager-note"><b>WTA 印第安维尔斯：不允许换人。</b><br>ATP/WTA 年终均不允许换人。提交截止前可撤回重新选择，截止后阵容锁定。</div>';
+  if(managerFinalsMode())return '<div class="manager-note"><b>'+esc(managerStationName())+'：不允许换人。</b><br>ATP/WTA 年终均不允许换人。提交截止前可撤回重新选择，截止后阵容锁定。</div>';
   var c=managerCalc(),rules=managerRules(),players=c.players,pool=managerBuildPool().filter(function(p){return !managerSelected(p.id);}),submitted=managerSubmittedRecord();
   var tour=players[0]?players[0].tour:(MANAGER_TOUR||'ATP'),windowLine=managerTransferWindowLines().join('；');
   var windowItems=managerTransferWindowLines().map(function(line){return '<li>'+esc(line)+'。</li>';}).join('');
@@ -5004,7 +5004,7 @@ function managerEventShortName(pack){
   return text.indexOf(pack.tour)===0?text:(pack.tour+' '+text.replace(/^ATP\s+|^WTA\s+/,''));
 }
 function managerEventMetaHtml(rules){
-  if(managerFinalsMode())return '<div class="manager-panel-meta"><span class="manager-panel-chip">WTA年终</span><span class="manager-panel-chip">两组循环赛 · 半决赛 · 决赛</span><span class="manager-panel-chip">1–2 人阵容</span><span class="manager-panel-chip">不允许换人</span></div>';
+  if(managerFinalsMode())return '<div class="manager-panel-meta"><span class="manager-panel-chip">'+esc(managerEventPack(MANAGER_TOUR).tour)+'年终</span><span class="manager-panel-chip">两组循环赛 · 半决赛 · 决赛</span><span class="manager-panel-chip">1–2 人阵容</span><span class="manager-panel-chip">不允许换人</span></div>';
   var pack=managerEventPack(MANAGER_TOUR),cfg=MANAGER_LEVEL_CONFIG[pack.meta.level]||MANAGER_LEVEL_CONFIG['500'];
   if(MANAGER_ACTIVE_EVENTS&&Number.isInteger(MANAGER_ACTIVE_EVENTS.rules&&MANAGER_ACTIVE_EVENTS.rules.min_players))cfg=Object.assign({},cfg,{min:rules.minPlayers,max:rules.maxPlayers});
   return '<div class="manager-panel-meta"><span class="manager-panel-chip">'+esc(managerEventShortName(pack))+'</span><span class="manager-panel-chip surface '+managerSurfaceClass(pack.meta.surface)+'">'+managerSurfaceName(pack.meta.surface)+'</span><span class="manager-panel-chip">'+managerLevelName(pack.meta.level)+'</span><span class="manager-panel-chip">'+(pack.meta.drawSize||32)+'签</span><span class="manager-panel-chip">'+cfg.min+'-'+cfg.max+' 人阵容</span><span class="manager-panel-chip">换人 1 次 · 手续费 '+Math.round(cfg.transferFee*100)+'%</span></div>';
@@ -8620,8 +8620,8 @@ function setBdF(g,f,btn){
 <script src="assets/manager/badges/ui-v20/release.js?v=20260920-2"></script>
 <script src="assets/manager/badges/ui-v20/native-preview.js?v=20260921-mobile-1"></script>
 <script src="assets/manager/principal-reward.js?v=20261003-1"></script>
-<script src="assets/manager/station-groups.js?v=20261018-1"></script>
-<script src="assets/manager/station-opening.js?v=20261107-finals"></script>
+<script src="assets/manager/station-groups.js?v=20261112-finals"></script>
+<script src="assets/manager/station-opening.js?v=20261112-finals"></script>
 <script>bootstrapPage();</script>
 </body>
 </html>

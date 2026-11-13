@@ -43,9 +43,9 @@ class Tree(HTMLParser):
         self.stack[-1].children.append(data)
 
 
-def parse(html):
+def parse(html, tour='WTA'):
     root = Tree(html).root
-    parts = root.find(lambda n: n.has('cDrawPart') and n.attrs.get('data-id') == 'WS')
+    parts = root.find(lambda n: n.has('cDrawPart') and n.attrs.get('data-id') == ('MS' if tour == 'ATP' else 'WS'))
     players = {}
     groups = []
     for part in parts:
@@ -114,4 +114,4 @@ def parse(html):
 
 
 if __name__ == '__main__':
-    print(json.dumps(parse(sys.stdin.read()), ensure_ascii=False))
+    print(json.dumps(parse(sys.stdin.read(), sys.argv[1] if len(sys.argv)>1 else 'WTA'), ensure_ascii=False))

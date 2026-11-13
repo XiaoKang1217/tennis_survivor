@@ -97,6 +97,16 @@ test('Finals publishes two distinct WTA matches and never replaces them', async(
  assert.equal((await refreshDailyPredictionGamesByMedian(args)).created,0);
  assert.equal(JSON.stringify(games),snapshot);
 });
+test('Turin publishes two ATP slots and keeps the published games unchanged', async()=>{
+ const {client,games}=fixture('2026-11-16');
+ const args={client,stationKey:'2026-w47-atp-finals',contestDate:'2026-11-16',now:'2026-11-15T00:00:00Z',exactEventDate:true,eventGroups:[{tour:'ATP',event_key:'seoul',match_count:2}]};
+ assert.equal((await refreshDailyPredictionGamesByMedian(args)).created,2);
+ assert.ok(games.every(g=>g.tour==='ATP'&&g.contest_date==='2026-11-16'));
+ assert.deepEqual(games.map(g=>g.game_slot),[1,2]);
+ const original=JSON.stringify(games);
+ assert.equal((await refreshDailyPredictionGamesByMedian(args)).created,0);
+ assert.equal(JSON.stringify(games),original);
+});
 
 test('Finals missing second match is left empty and backfilled without changing first',async()=>{
  const {client,games}=fixture('2026-11-09');

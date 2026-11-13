@@ -1,10 +1,10 @@
 {
   "season": 2026,
-  "station_key": "2026-w46-wta-finals",
-  "station_name": "WTA 印第安维尔斯",
+  "station_key": "2026-w47-atp-finals",
+  "station_name": "ATP 都灵",
   "status": "open",
   "survivor_aligned": false,
-  "announcement": "WTA年终开售！可选1–2人，普通用户每名选手花费1000本金，累计收益前八用户免费；11/09 04:00截止。",
+  "announcement": "ATP年终开售！可选1–2人，普通用户每名选手花费1000本金，累计收益前八用户免费；11/15 21:00截止。",
   "rules": {
     "station_grant": 0,
     "min_players": 1,
@@ -16,7 +16,7 @@
     "finals": {
       "top8_user_ids": [
         "bad496ad-cc92-4b37-9551-9b0e46ae9d6a",
-        "57722850-cc58-4170-a35f-cf49b06973f0",
+        "4137f767-01c4-4821-a350-533329c03762",
         "779ad00f-bf61-428f-8432-9ec77eac5e32",
         "ac710eeb-7d3c-49db-a812-f335b2961748",
         "fb7a0362-a328-4608-8ed8-c3b08d280ebf",
@@ -37,73 +37,86 @@
         "SF": 1500,
         "F": 3000,
         "W": 6000
-      }
+      },
+      "tour": "ATP"
     }
   },
   "pricing": {
     "market_prices_locked": true,
-    "price_version": 26110701,
+    "price_version": 26111201,
     "publication_version": 1
   },
   "events": [
     {
-      "tour": "WTA",
-      "event_key": "wta-2026-w46-finals",
-      "data_file": "events/wta-2026-w46-finals.json",
+      "tour": "ATP",
+      "event_key": "atp-2026-w47-finals",
+      "data_file": "events/atp-2026-w47-finals.json",
       "active": true
     }
   ],
   "previous_station": {
-    "station_key": "2026-w45-paris-hongkong",
-    "station_name": "ATP 巴黎1000 + WTA 香港250",
-    "publication_file": "publications/2026-w45-paris-hongkong-v2.json",
-    "publication_version": 2,
+    "station_key": "2026-w46-wta-finals",
+    "station_name": "WTA 印第安维尔斯",
+    "publication_file": "publications/2026-w46-wta-finals-v1.json",
+    "publication_version": 1,
     "events": [
       {
-        "tour": "ATP",
-        "event_key": "atp-2026-w45-paris",
-        "data_file": "events/atp-2026-w45-paris.json",
-        "active": false
-      },
-      {
         "tour": "WTA",
-        "event_key": "wta-2026-w45-hongkong",
-        "data_file": "events/wta-2026-w45-hongkong.json",
+        "event_key": "wta-2026-w46-finals",
+        "data_file": "events/wta-2026-w46-finals.json",
         "active": false
       }
     ]
   },
   "display_groups": {
     "current": {
+      "label": "ATP 都灵",
+      "station_keys": [
+        "2026-w47-atp-finals"
+      ]
+    },
+    "previous": {
       "label": "WTA 印第安维尔斯",
       "station_keys": [
         "2026-w46-wta-finals"
       ]
-    },
-    "previous": {
-      "label": "ATP 巴黎1000 + WTA 香港250",
-      "station_keys": [
-        "2026-w45-paris-hongkong"
-      ]
     }
   },
   "daily_prediction": {
-    "starts_on": "2026-11-09",
+    "starts_on": "2026-11-16",
     "event_groups": [
       {
-        "tour": "WTA",
-        "event_key": "wta-2026-w46-finals",
-        "source_station_key": "2026-w46-wta-finals",
+        "tour": "ATP",
+        "event_key": "atp-2026-w47-finals",
+        "source_station_key": "2026-w47-atp-finals",
         "match_count": 2
       }
     ]
   },
   "opening_notice": {
-    "key": "wta_finals_2026_opening",
-    "rpc": "tour_manager_take_finals_opening_notice",
-    "closes_at": "2026-11-09T04:00:00+08:00",
-    "message": "经纪人WTA年终开售！快来选购吧。"
+    "key": "atp_finals_2026_opening",
+    "rpc": "tour_manager_take_atp_finals_opening_notice",
+    "closes_at": "2026-11-15T21:00:00+08:00",
+    "message": "经纪人ATP年终开售！累计收益前八免费，最大收益可达16500；普通用户最大收益可达11200，快来选购吧。"
   },
   "continuing_stations": [],
-  "display_events": []
+  "settlement": {"overlap_previous": true},
+  "display_events": [
+    {
+      "tour": "WTA",
+      "event_key": "wta-2026-w46-finals",
+      "data_file": "events/wta-2026-w46-finals.json",
+      "active": false
+    }
+  ],
+  "previous_finals_top8_ids": [
+    "bad496ad-cc92-4b37-9551-9b0e46ae9d6a",
+    "57722850-cc58-4170-a35f-cf49b06973f0",
+    "779ad00f-bf61-428f-8432-9ec77eac5e32",
+    "ac710eeb-7d3c-49db-a812-f335b2961748",
+    "fb7a0362-a328-4608-8ed8-c3b08d280ebf",
+    "64a68075-a621-493f-a20e-753dfbb2f6f1",
+    "14c1f112-365e-4b35-b1ac-a510b08fb006",
+    "c7900a26-4501-43b4-98d8-b63e5ec43076"
+  ]
 }

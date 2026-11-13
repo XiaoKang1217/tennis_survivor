@@ -1,0 +1,1060 @@
+{
+  "station_key": "2026-w47-atp-finals",
+  "season": 2026,
+  "publication_version": 1,
+  "publication_kind": "initial_open",
+  "snapshot_schema_version": 1,
+  "published_at": "2026-11-12T15:28:32.434Z",
+  "event_keys": [
+    "atp-2026-w47-finals"
+  ],
+  "station_grant": 0,
+  "combo_version": "finals_2026",
+  "price_version_id": null,
+  "price_version": null,
+  "hash_algorithm": "sha256",
+  "data_hash": "9ee00990254ab43e3cba5c396e4ebad7ed63b7f791c3ff73afec5b5dde5d56f1",
+  "snapshot": {
+    "schema_version": 1,
+    "publication": {
+      "station_key": "2026-w47-atp-finals",
+      "station_name": "ATP 都灵",
+      "season": 2026,
+      "version": 1,
+      "kind": "initial_open",
+      "published_at": "2026-11-12T15:28:32.434Z",
+      "source_ref": "working-tree"
+    },
+    "station_config": {
+      "survivor_aligned": false,
+      "status": "open",
+      "station_grant": 0,
+      "combo_version": "finals_2026",
+      "combo": {
+        "total_cap": 0
+      },
+      "rules": {
+        "station_grant": 0,
+        "min_players": 1,
+        "max_players": 2,
+        "combo_version": "finals_2026",
+        "combo": {
+          "total_cap": 0
+        },
+        "finals": {
+          "top8_user_ids": [
+            "bad496ad-cc92-4b37-9551-9b0e46ae9d6a",
+            "4137f767-01c4-4821-a350-533329c03762",
+            "779ad00f-bf61-428f-8432-9ec77eac5e32",
+            "ac710eeb-7d3c-49db-a812-f335b2961748",
+            "fb7a0362-a328-4608-8ed8-c3b08d280ebf",
+            "64a68075-a621-493f-a20e-753dfbb2f6f1",
+            "14c1f112-365e-4b35-b1ac-a510b08fb006",
+            "c7900a26-4501-43b4-98d8-b63e5ec43076"
+          ],
+          "ordinary": {
+            "price": 1000,
+            "RR": 200,
+            "SF": 1000,
+            "F": 2000,
+            "W": 4000
+          },
+          "top8": {
+            "price": 0,
+            "RR": 250,
+            "SF": 1500,
+            "F": 3000,
+            "W": 6000
+          },
+          "tour": "ATP"
+        }
+      },
+      "effective_rules": {
+        "min_players": 1,
+        "max_players": 2,
+        "transfers": 1,
+        "transfer_days": 2,
+        "transfer_fee_rate": 0,
+        "station_grant": 0,
+        "combo_version": "finals_2026"
+      },
+      "notes": []
+    },
+    "events": [
+      {
+        "source_file": "data/manager/events/atp-2026-w47-finals.json",
+        "season": 2026,
+        "station_key": "2026-w47-atp-finals",
+        "event_key": "atp-2026-w47-finals",
+        "tour": "ATP",
+        "event_id": "20605",
+        "name": "ATP Finals",
+        "name_zh": "都灵",
+        "short_name": "都灵",
+        "display_name": "ATP 年终（都灵）",
+        "level": "FINALS",
+        "format": "round_robin",
+        "surface": "hard_in",
+        "draw_size": 8,
+        "timezone": "Europe/Rome",
+        "start_date": "2026-11-15",
+        "end_date": "2026-11-22",
+        "draw_status": "published",
+        "market_status": "open",
+        "submission_status": "open",
+        "submission_opens_at": "2026-11-12T15:28:32.434Z",
+        "submission_cutoff_at": "2026-11-15T21:00:00+08:00",
+        "submission_closes_at": "2026-11-15T21:00:00+08:00",
+        "manual_schedule_windows": true,
+        "main_draw_first_match_at": "2026-11-15T21:00:00+08:00",
+        "allow_submission_after_first_match": false,
+        "market_price_lock": {
+          "publication_version": 1,
+          "locked_at": "2026-11-12T15:28:32.434Z"
+        },
+        "source_urls": [
+          "https://www.live-tennis.cn/zh/draw/20605/2026",
+          "https://www.protennislive.com/posting/2026/605/mds.pdf"
+        ],
+        "transfer_window_note": "年终不允许换人。",
+        "schedule_status": "pending",
+        "transfer_fee_rate": 0,
+        "max_transfers": 0,
+        "draw_source_verified_at": "2026-11-12"
+      }
+    ],
+    "market": [
+      {
+        "event_key": "atp-2026-w47-finals",
+        "tour": "ATP",
+        "player_count": 8,
+        "players": [
+          {
+            "name_en": "Alexander ZVEREV",
+            "name_zh": "亚-兹韦列夫",
+            "profile_id": "Z355",
+            "player_key": "ATP|alexander-zverev",
+            "group": "John McEnroe Group",
+            "draw_position": 1,
+            "price": 1000,
+            "first_round": "RR",
+            "photo_url": "https://static.live-tennis.cn/pic/ts/Z355",
+            "round_robin_wins": 0,
+            "reached_round": "RR",
+            "is_eliminated": false,
+            "path_note": "John McEnroe Group · 小组赛胜场与确认晋级阶段累计收益",
+            "pricing_detail": {
+              "formula_version": "finals_fixed_2026",
+              "price_locked": true,
+              "source": "https://tennisabstract.com/reports/atp_elo_ratings.html",
+              "source_date": "2026-11-12",
+              "score_explanation": {
+                "base": "65%总体Elo百分位+35%排名反向百分位（TA覆盖球员）",
+                "surface": "硬地Elo百分位（TA覆盖球员）",
+                "form": "70%当前Elo/巅峰Elo+30%巅峰月份新近度，48个月衰减",
+                "draw": "组内其他三人平均硬地Elo的反向百分位，越高表示组内对手较弱"
+              },
+              "group_opponent_average_elo": 1934.93,
+              "price_independent_of_scores": true
+            },
+            "scores": {
+              "base": 99.76,
+              "surface": 99.64,
+              "form": 67.21,
+              "draw": 85.71,
+              "manual": 0
+            },
+            "seed": 1,
+            "overall_elo": 2089.6,
+            "surface_elo": 2030.1,
+            "peak_elo": 2176.5,
+            "peak_month": "2022-01",
+            "rank": 1,
+            "publication_photo": {
+              "registry_key": "ATP|alexander-zverev",
+              "photo_url": "assets/manager/players/atp/atp-alexander-zverev.jpg",
+              "full_body_url": "assets/manager/players/atp/atp-alexander-zverev.jpg",
+              "status": "ready"
+            }
+          },
+          {
+            "name_en": "Carlos ALCARAZ",
+            "name_zh": "阿尔卡拉斯",
+            "profile_id": "A0E2",
+            "player_key": "ATP|carlos-alcaraz",
+            "group": "Ivan Lendl Group",
+            "draw_position": 2,
+            "price": 1000,
+            "first_round": "RR",
+            "photo_url": "https://static.live-tennis.cn/pic/ts/A0E2",
+            "round_robin_wins": 0,
+            "reached_round": "RR",
+            "is_eliminated": false,
+            "path_note": "Ivan Lendl Group · 小组赛胜场与确认晋级阶段累计收益",
+            "pricing_detail": {
+              "formula_version": "finals_fixed_2026",
+              "price_locked": true,
+              "source": "https://tennisabstract.com/reports/atp_elo_ratings.html",
+              "source_date": "2026-11-12",
+              "score_explanation": {
+                "base": "65%总体Elo百分位+35%排名反向百分位（TA覆盖球员）",
+                "surface": "硬地Elo百分位（TA覆盖球员）",
+                "form": "70%当前Elo/巅峰Elo+30%巅峰月份新近度，48个月衰减",
+                "draw": "组内其他三人平均硬地Elo的反向百分位，越高表示组内对手较弱"
+              },
+              "group_opponent_average_elo": 1877.8,
+              "price_independent_of_scores": true
+            },
+            "scores": {
+              "base": 99.75,
+              "surface": 99.82,
+              "form": 91.56,
+              "draw": 100,
+              "manual": 0
+            },
+            "seed": 2,
+            "overall_elo": 2194.9,
+            "surface_elo": 2142.2,
+            "peak_elo": 2308.5,
+            "peak_month": "2026-03",
+            "rank": 3,
+            "publication_photo": {
+              "registry_key": "ATP|carlos-alcaraz",
+              "photo_url": "assets/manager/players/atp/atp-carlos-alcaraz.webp",
+              "full_body_url": "assets/manager/players/atp/atp-carlos-alcaraz.webp",
+              "status": "ready"
+            }
+          },
+          {
+            "name_en": "Ben SHELTON",
+            "name_zh": "谢尔顿",
+            "profile_id": "S0S1",
+            "player_key": "ATP|ben-shelton",
+            "group": "John McEnroe Group",
+            "draw_position": 3,
+            "price": 1000,
+            "first_round": "RR",
+            "photo_url": "https://static.live-tennis.cn/pic/ts/S0S1",
+            "round_robin_wins": 0,
+            "reached_round": "RR",
+            "is_eliminated": false,
+            "path_note": "John McEnroe Group · 小组赛胜场与确认晋级阶段累计收益",
+            "pricing_detail": {
+              "formula_version": "finals_fixed_2026",
+              "price_locked": true,
+              "source": "https://tennisabstract.com/reports/atp_elo_ratings.html",
+              "source_date": "2026-11-12",
+              "score_explanation": {
+                "base": "65%总体Elo百分位+35%排名反向百分位（TA覆盖球员）",
+                "surface": "硬地Elo百分位（TA覆盖球员）",
+                "form": "70%当前Elo/巅峰Elo+30%巅峰月份新近度，48个月衰减",
+                "draw": "组内其他三人平均硬地Elo的反向百分位，越高表示组内对手较弱"
+              },
+              "group_opponent_average_elo": 1960.83,
+              "price_independent_of_scores": true
+            },
+            "scores": {
+              "base": 98.86,
+              "surface": 98.91,
+              "form": 96.45,
+              "draw": 57.14,
+              "manual": 0
+            },
+            "seed": 3,
+            "overall_elo": 1987.5,
+            "surface_elo": 1952.4,
+            "peak_elo": 2036.2,
+            "peak_month": "2026-08",
+            "rank": 4,
+            "publication_photo": {
+              "registry_key": "ATP|ben-shelton",
+              "photo_url": "assets/manager/players/atp/atp-ben-shelton.jpg",
+              "full_body_url": "assets/manager/players/atp/atp-ben-shelton.jpg",
+              "status": "ready"
+            }
+          },
+          {
+            "name_en": "Daniil MEDVEDEV",
+            "name_zh": "梅德韦杰夫",
+            "profile_id": "MM58",
+            "player_key": "ATP|daniil-medvedev",
+            "group": "Ivan Lendl Group",
+            "draw_position": 4,
+            "price": 1000,
+            "first_round": "RR",
+            "photo_url": "https://static.live-tennis.cn/pic/ts/MM58",
+            "round_robin_wins": 0,
+            "reached_round": "RR",
+            "is_eliminated": false,
+            "path_note": "Ivan Lendl Group · 小组赛胜场与确认晋级阶段累计收益",
+            "pricing_detail": {
+              "formula_version": "finals_fixed_2026",
+              "price_locked": true,
+              "source": "https://tennisabstract.com/reports/atp_elo_ratings.html",
+              "source_date": "2026-11-12",
+              "score_explanation": {
+                "base": "65%总体Elo百分位+35%排名反向百分位（TA覆盖球员）",
+                "surface": "硬地Elo百分位（TA覆盖球员）",
+                "form": "70%当前Elo/巅峰Elo+30%巅峰月份新近度，48个月衰减",
+                "draw": "组内其他三人平均硬地Elo的反向百分位，越高表示组内对手较弱"
+              },
+              "group_opponent_average_elo": 1938.33,
+              "price_independent_of_scores": true
+            },
+            "scores": {
+              "base": 99.03,
+              "surface": 99.27,
+              "form": 63.26,
+              "draw": 71.43,
+              "manual": 0
+            },
+            "seed": 4,
+            "overall_elo": 1989.4,
+            "surface_elo": 1960.6,
+            "peak_elo": 2201.2,
+            "peak_month": "2022-01",
+            "rank": 5,
+            "publication_photo": {
+              "registry_key": "ATP|daniil-medvedev",
+              "photo_url": "assets/manager/players/atp/atp-daniil-medvedev.jpg",
+              "full_body_url": "assets/manager/players/atp/atp-daniil-medvedev.jpg",
+              "status": "ready"
+            }
+          },
+          {
+            "name_en": "Flavio COBOLLI",
+            "name_zh": "科博利",
+            "profile_id": "C0E9",
+            "player_key": "ATP|flavio-cobolli",
+            "group": "Ivan Lendl Group",
+            "draw_position": 5,
+            "price": 1000,
+            "first_round": "RR",
+            "photo_url": "https://static.live-tennis.cn/pic/ts/C0E9",
+            "round_robin_wins": 0,
+            "reached_round": "RR",
+            "is_eliminated": false,
+            "path_note": "Ivan Lendl Group · 小组赛胜场与确认晋级阶段累计收益",
+            "pricing_detail": {
+              "formula_version": "finals_fixed_2026",
+              "price_locked": true,
+              "source": "https://tennisabstract.com/reports/atp_elo_ratings.html",
+              "source_date": "2026-11-12",
+              "score_explanation": {
+                "base": "65%总体Elo百分位+35%排名反向百分位（TA覆盖球员）",
+                "surface": "硬地Elo百分位（TA覆盖球员）",
+                "form": "70%当前Elo/巅峰Elo+30%巅峰月份新近度，48个月衰减",
+                "draw": "组内其他三人平均硬地Elo的反向百分位，越高表示组内对手较弱"
+              },
+              "group_opponent_average_elo": 1992.8,
+              "price_independent_of_scores": true
+            },
+            "scores": {
+              "base": 96.72,
+              "surface": 94.55,
+              "form": 94.73,
+              "draw": 0,
+              "manual": 0
+            },
+            "seed": 5,
+            "overall_elo": 1872.5,
+            "surface_elo": 1797.2,
+            "peak_elo": 1931.6,
+            "peak_month": "2026-06",
+            "rank": 6,
+            "publication_photo": {
+              "registry_key": "ATP|flavio-cobolli",
+              "photo_url": "assets/manager/players/atp/atp-flavio-cobolli.jpg",
+              "full_body_url": "assets/manager/players/atp/atp-flavio-cobolli.jpg",
+              "status": "ready"
+            }
+          },
+          {
+            "name_en": "Arthur FILS",
+            "name_zh": "菲斯",
+            "profile_id": "F0F1",
+            "player_key": "ATP|arthur-fils",
+            "group": "John McEnroe Group",
+            "draw_position": 6,
+            "price": 1000,
+            "first_round": "RR",
+            "photo_url": "https://static.live-tennis.cn/pic/ts/F0F1",
+            "round_robin_wins": 0,
+            "reached_round": "RR",
+            "is_eliminated": false,
+            "path_note": "John McEnroe Group · 小组赛胜场与确认晋级阶段累计收益",
+            "pricing_detail": {
+              "formula_version": "finals_fixed_2026",
+              "price_locked": true,
+              "source": "https://tennisabstract.com/reports/atp_elo_ratings.html",
+              "source_date": "2026-11-12",
+              "score_explanation": {
+                "base": "65%总体Elo百分位+35%排名反向百分位（TA覆盖球员）",
+                "surface": "硬地Elo百分位（TA覆盖球员）",
+                "form": "70%当前Elo/巅峰Elo+30%巅峰月份新近度，48个月衰减",
+                "draw": "组内其他三人平均硬地Elo的反向百分位，越高表示组内对手较弱"
+              },
+              "group_opponent_average_elo": 1966.97,
+              "price_independent_of_scores": true
+            },
+            "scores": {
+              "base": 99.14,
+              "surface": 98.73,
+              "form": 96.54,
+              "draw": 28.57,
+              "manual": 0
+            },
+            "seed": 6,
+            "overall_elo": 1992.9,
+            "surface_elo": 1934,
+            "peak_elo": 2057.9,
+            "peak_month": "2026-09",
+            "rank": 7,
+            "publication_photo": {
+              "registry_key": "ATP|arthur-fils",
+              "photo_url": "assets/manager/players/atp/atp-arthur-fils.jpg",
+              "full_body_url": "assets/manager/players/atp/atp-arthur-fils.jpg",
+              "status": "ready"
+            }
+          },
+          {
+            "name_en": "Frances TIAFOE",
+            "name_zh": "蒂亚福",
+            "profile_id": "TD51",
+            "player_key": "ATP|frances-tiafoe",
+            "group": "Ivan Lendl Group",
+            "draw_position": 7,
+            "price": 1000,
+            "first_round": "RR",
+            "photo_url": "https://static.live-tennis.cn/pic/ts/TD51",
+            "round_robin_wins": 0,
+            "reached_round": "RR",
+            "is_eliminated": false,
+            "path_note": "Ivan Lendl Group · 小组赛胜场与确认晋级阶段累计收益",
+            "pricing_detail": {
+              "formula_version": "finals_fixed_2026",
+              "price_locked": true,
+              "source": "https://tennisabstract.com/reports/atp_elo_ratings.html",
+              "source_date": "2026-11-12",
+              "score_explanation": {
+                "base": "65%总体Elo百分位+35%排名反向百分位（TA覆盖球员）",
+                "surface": "硬地Elo百分位（TA覆盖球员）",
+                "form": "70%当前Elo/巅峰Elo+30%巅峰月份新近度，48个月衰减",
+                "draw": "组内其他三人平均硬地Elo的反向百分位，越高表示组内对手较弱"
+              },
+              "group_opponent_average_elo": 1966.67,
+              "price_independent_of_scores": true
+            },
+            "scores": {
+              "base": 97.78,
+              "surface": 97.09,
+              "form": 72.64,
+              "draw": 42.86,
+              "manual": 0
+            },
+            "seed": 7,
+            "overall_elo": 1925.2,
+            "surface_elo": 1875.6,
+            "peak_elo": 1974,
+            "peak_month": "2023-06",
+            "rank": 8,
+            "publication_photo": {
+              "registry_key": "ATP|frances-tiafoe",
+              "photo_url": "assets/manager/players/atp/atp-frances-tiafoe.jpg",
+              "full_body_url": "assets/manager/players/atp/atp-frances-tiafoe.jpg",
+              "status": "ready"
+            }
+          },
+          {
+            "name_en": "Rafael JODAR",
+            "name_zh": "霍达尔",
+            "profile_id": "J0DZ",
+            "player_key": "ATP|rafael-jodar",
+            "group": "John McEnroe Group",
+            "draw_position": 8,
+            "price": 1000,
+            "first_round": "RR",
+            "photo_url": "https://static.live-tennis.cn/pic/ts/J0DZ",
+            "round_robin_wins": 0,
+            "reached_round": "RR",
+            "is_eliminated": false,
+            "path_note": "John McEnroe Group · 小组赛胜场与确认晋级阶段累计收益",
+            "pricing_detail": {
+              "formula_version": "finals_fixed_2026",
+              "price_locked": true,
+              "source": "https://tennisabstract.com/reports/atp_elo_ratings.html",
+              "source_date": "2026-11-12",
+              "score_explanation": {
+                "base": "65%总体Elo百分位+35%排名反向百分位（TA覆盖球员）",
+                "surface": "硬地Elo百分位（TA覆盖球员）",
+                "form": "70%当前Elo/巅峰Elo+30%巅峰月份新近度，48个月衰减",
+                "draw": "组内其他三人平均硬地Elo的反向百分位，越高表示组内对手较弱"
+              },
+              "group_opponent_average_elo": 1972.17,
+              "price_independent_of_scores": true
+            },
+            "scores": {
+              "base": 98.53,
+              "surface": 98.36,
+              "form": 95.98,
+              "draw": 14.29,
+              "manual": 0
+            },
+            "seed": 8,
+            "overall_elo": 1988.3,
+            "surface_elo": 1918.4,
+            "peak_elo": 2051.1,
+            "peak_month": "2026-08",
+            "rank": 11,
+            "publication_photo": {
+              "registry_key": "ATP|rafael-jodar",
+              "photo_url": "assets/manager/players/atp/atp-rafael-jodar.jpg",
+              "full_body_url": "assets/manager/players/atp/atp-rafael-jodar.jpg",
+              "status": "ready"
+            }
+          }
+        ]
+      }
+    ],
+    "pricing": {
+      "selected_version": {
+        "id": null,
+        "version": null,
+        "status": "published",
+        "formula_version": "event_snapshot",
+        "generated_from": {
+          "event_formulas": [
+            {
+              "event_key": "atp-2026-w47-finals",
+              "formula": {},
+              "generated_at": null
+            }
+          ]
+        },
+        "content_hash": "b26ee24982fdbda3e7dbb9dec91b6e45570e7d52ab0899fdf275fa136c3dca39"
+      },
+      "player_count": 8,
+      "players": [
+        {
+          "event_key": "atp-2026-w47-finals",
+          "player_key": "ATP|alexander-zverev",
+          "tour": "ATP",
+          "name_en": "Alexander ZVEREV",
+          "name_zh": "亚-兹韦列夫",
+          "official_rank": 1,
+          "official_points": null,
+          "overall_elo": 2089.6,
+          "surface_elo": 2030.1,
+          "base_score": 99.76,
+          "surface_score": 99.64,
+          "draw_score": 85.71,
+          "form_score": 67.21,
+          "manual_score": 0,
+          "total_score": 87.05,
+          "expected_points": null,
+          "expected_round": null,
+          "breakeven_round": null,
+          "price": 1000,
+          "tier": "S",
+          "source_facts": {
+            "rank": 1,
+            "seed": 1,
+            "overall_elo": 2089.6,
+            "surface_elo": 2030.1,
+            "peak_elo": 2176.5,
+            "peak_month": "2022-01",
+            "draw_position": 1,
+            "path_note": "John McEnroe Group · 小组赛胜场与确认晋级阶段累计收益",
+            "pricing_formula": null,
+            "pricing_detail": {
+              "formula_version": "finals_fixed_2026",
+              "price_locked": true,
+              "source": "https://tennisabstract.com/reports/atp_elo_ratings.html",
+              "source_date": "2026-11-12",
+              "score_explanation": {
+                "base": "65%总体Elo百分位+35%排名反向百分位（TA覆盖球员）",
+                "surface": "硬地Elo百分位（TA覆盖球员）",
+                "form": "70%当前Elo/巅峰Elo+30%巅峰月份新近度，48个月衰减",
+                "draw": "组内其他三人平均硬地Elo的反向百分位，越高表示组内对手较弱"
+              },
+              "group_opponent_average_elo": 1934.93,
+              "price_independent_of_scores": true
+            },
+            "pre_r1_substitution": null,
+            "contract_price_policy": null,
+            "original_contract_price": null
+          }
+        },
+        {
+          "event_key": "atp-2026-w47-finals",
+          "player_key": "ATP|arthur-fils",
+          "tour": "ATP",
+          "name_en": "Arthur FILS",
+          "name_zh": "菲斯",
+          "official_rank": 7,
+          "official_points": null,
+          "overall_elo": 1992.9,
+          "surface_elo": 1934,
+          "base_score": 99.14,
+          "surface_score": 98.73,
+          "draw_score": 28.57,
+          "form_score": 96.54,
+          "manual_score": 0,
+          "total_score": 79.58,
+          "expected_points": null,
+          "expected_round": null,
+          "breakeven_round": null,
+          "price": 1000,
+          "tier": "S",
+          "source_facts": {
+            "rank": 7,
+            "seed": 6,
+            "overall_elo": 1992.9,
+            "surface_elo": 1934,
+            "peak_elo": 2057.9,
+            "peak_month": "2026-09",
+            "draw_position": 6,
+            "path_note": "John McEnroe Group · 小组赛胜场与确认晋级阶段累计收益",
+            "pricing_formula": null,
+            "pricing_detail": {
+              "formula_version": "finals_fixed_2026",
+              "price_locked": true,
+              "source": "https://tennisabstract.com/reports/atp_elo_ratings.html",
+              "source_date": "2026-11-12",
+              "score_explanation": {
+                "base": "65%总体Elo百分位+35%排名反向百分位（TA覆盖球员）",
+                "surface": "硬地Elo百分位（TA覆盖球员）",
+                "form": "70%当前Elo/巅峰Elo+30%巅峰月份新近度，48个月衰减",
+                "draw": "组内其他三人平均硬地Elo的反向百分位，越高表示组内对手较弱"
+              },
+              "group_opponent_average_elo": 1966.97,
+              "price_independent_of_scores": true
+            },
+            "pre_r1_substitution": null,
+            "contract_price_policy": null,
+            "original_contract_price": null
+          }
+        },
+        {
+          "event_key": "atp-2026-w47-finals",
+          "player_key": "ATP|ben-shelton",
+          "tour": "ATP",
+          "name_en": "Ben SHELTON",
+          "name_zh": "谢尔顿",
+          "official_rank": 4,
+          "official_points": null,
+          "overall_elo": 1987.5,
+          "surface_elo": 1952.4,
+          "base_score": 98.86,
+          "surface_score": 98.91,
+          "draw_score": 57.14,
+          "form_score": 96.45,
+          "manual_score": 0,
+          "total_score": 85.22,
+          "expected_points": null,
+          "expected_round": null,
+          "breakeven_round": null,
+          "price": 1000,
+          "tier": "S",
+          "source_facts": {
+            "rank": 4,
+            "seed": 3,
+            "overall_elo": 1987.5,
+            "surface_elo": 1952.4,
+            "peak_elo": 2036.2,
+            "peak_month": "2026-08",
+            "draw_position": 3,
+            "path_note": "John McEnroe Group · 小组赛胜场与确认晋级阶段累计收益",
+            "pricing_formula": null,
+            "pricing_detail": {
+              "formula_version": "finals_fixed_2026",
+              "price_locked": true,
+              "source": "https://tennisabstract.com/reports/atp_elo_ratings.html",
+              "source_date": "2026-11-12",
+              "score_explanation": {
+                "base": "65%总体Elo百分位+35%排名反向百分位（TA覆盖球员）",
+                "surface": "硬地Elo百分位（TA覆盖球员）",
+                "form": "70%当前Elo/巅峰Elo+30%巅峰月份新近度，48个月衰减",
+                "draw": "组内其他三人平均硬地Elo的反向百分位，越高表示组内对手较弱"
+              },
+              "group_opponent_average_elo": 1960.83,
+              "price_independent_of_scores": true
+            },
+            "pre_r1_substitution": null,
+            "contract_price_policy": null,
+            "original_contract_price": null
+          }
+        },
+        {
+          "event_key": "atp-2026-w47-finals",
+          "player_key": "ATP|carlos-alcaraz",
+          "tour": "ATP",
+          "name_en": "Carlos ALCARAZ",
+          "name_zh": "阿尔卡拉斯",
+          "official_rank": 3,
+          "official_points": null,
+          "overall_elo": 2194.9,
+          "surface_elo": 2142.2,
+          "base_score": 99.75,
+          "surface_score": 99.82,
+          "draw_score": 100,
+          "form_score": 91.56,
+          "manual_score": 0,
+          "total_score": 93.6,
+          "expected_points": null,
+          "expected_round": null,
+          "breakeven_round": null,
+          "price": 1000,
+          "tier": "S",
+          "source_facts": {
+            "rank": 3,
+            "seed": 2,
+            "overall_elo": 2194.9,
+            "surface_elo": 2142.2,
+            "peak_elo": 2308.5,
+            "peak_month": "2026-03",
+            "draw_position": 2,
+            "path_note": "Ivan Lendl Group · 小组赛胜场与确认晋级阶段累计收益",
+            "pricing_formula": null,
+            "pricing_detail": {
+              "formula_version": "finals_fixed_2026",
+              "price_locked": true,
+              "source": "https://tennisabstract.com/reports/atp_elo_ratings.html",
+              "source_date": "2026-11-12",
+              "score_explanation": {
+                "base": "65%总体Elo百分位+35%排名反向百分位（TA覆盖球员）",
+                "surface": "硬地Elo百分位（TA覆盖球员）",
+                "form": "70%当前Elo/巅峰Elo+30%巅峰月份新近度，48个月衰减",
+                "draw": "组内其他三人平均硬地Elo的反向百分位，越高表示组内对手较弱"
+              },
+              "group_opponent_average_elo": 1877.8,
+              "price_independent_of_scores": true
+            },
+            "pre_r1_substitution": null,
+            "contract_price_policy": null,
+            "original_contract_price": null
+          }
+        },
+        {
+          "event_key": "atp-2026-w47-finals",
+          "player_key": "ATP|daniil-medvedev",
+          "tour": "ATP",
+          "name_en": "Daniil MEDVEDEV",
+          "name_zh": "梅德韦杰夫",
+          "official_rank": 5,
+          "official_points": null,
+          "overall_elo": 1989.4,
+          "surface_elo": 1960.6,
+          "base_score": 99.03,
+          "surface_score": 99.27,
+          "draw_score": 71.43,
+          "form_score": 63.26,
+          "manual_score": 0,
+          "total_score": 83.25,
+          "expected_points": null,
+          "expected_round": null,
+          "breakeven_round": null,
+          "price": 1000,
+          "tier": "S",
+          "source_facts": {
+            "rank": 5,
+            "seed": 4,
+            "overall_elo": 1989.4,
+            "surface_elo": 1960.6,
+            "peak_elo": 2201.2,
+            "peak_month": "2022-01",
+            "draw_position": 4,
+            "path_note": "Ivan Lendl Group · 小组赛胜场与确认晋级阶段累计收益",
+            "pricing_formula": null,
+            "pricing_detail": {
+              "formula_version": "finals_fixed_2026",
+              "price_locked": true,
+              "source": "https://tennisabstract.com/reports/atp_elo_ratings.html",
+              "source_date": "2026-11-12",
+              "score_explanation": {
+                "base": "65%总体Elo百分位+35%排名反向百分位（TA覆盖球员）",
+                "surface": "硬地Elo百分位（TA覆盖球员）",
+                "form": "70%当前Elo/巅峰Elo+30%巅峰月份新近度，48个月衰减",
+                "draw": "组内其他三人平均硬地Elo的反向百分位，越高表示组内对手较弱"
+              },
+              "group_opponent_average_elo": 1938.33,
+              "price_independent_of_scores": true
+            },
+            "pre_r1_substitution": null,
+            "contract_price_policy": null,
+            "original_contract_price": null
+          }
+        },
+        {
+          "event_key": "atp-2026-w47-finals",
+          "player_key": "ATP|flavio-cobolli",
+          "tour": "ATP",
+          "name_en": "Flavio COBOLLI",
+          "name_zh": "科博利",
+          "official_rank": 6,
+          "official_points": null,
+          "overall_elo": 1872.5,
+          "surface_elo": 1797.2,
+          "base_score": 96.72,
+          "surface_score": 94.55,
+          "draw_score": 0,
+          "form_score": 94.73,
+          "manual_score": 0,
+          "total_score": 71.7,
+          "expected_points": null,
+          "expected_round": null,
+          "breakeven_round": null,
+          "price": 1000,
+          "tier": "S",
+          "source_facts": {
+            "rank": 6,
+            "seed": 5,
+            "overall_elo": 1872.5,
+            "surface_elo": 1797.2,
+            "peak_elo": 1931.6,
+            "peak_month": "2026-06",
+            "draw_position": 5,
+            "path_note": "Ivan Lendl Group · 小组赛胜场与确认晋级阶段累计收益",
+            "pricing_formula": null,
+            "pricing_detail": {
+              "formula_version": "finals_fixed_2026",
+              "price_locked": true,
+              "source": "https://tennisabstract.com/reports/atp_elo_ratings.html",
+              "source_date": "2026-11-12",
+              "score_explanation": {
+                "base": "65%总体Elo百分位+35%排名反向百分位（TA覆盖球员）",
+                "surface": "硬地Elo百分位（TA覆盖球员）",
+                "form": "70%当前Elo/巅峰Elo+30%巅峰月份新近度，48个月衰减",
+                "draw": "组内其他三人平均硬地Elo的反向百分位，越高表示组内对手较弱"
+              },
+              "group_opponent_average_elo": 1992.8,
+              "price_independent_of_scores": true
+            },
+            "pre_r1_substitution": null,
+            "contract_price_policy": null,
+            "original_contract_price": null
+          }
+        },
+        {
+          "event_key": "atp-2026-w47-finals",
+          "player_key": "ATP|frances-tiafoe",
+          "tour": "ATP",
+          "name_en": "Frances TIAFOE",
+          "name_zh": "蒂亚福",
+          "official_rank": 8,
+          "official_points": null,
+          "overall_elo": 1925.2,
+          "surface_elo": 1875.6,
+          "base_score": 97.78,
+          "surface_score": 97.09,
+          "draw_score": 42.86,
+          "form_score": 72.64,
+          "manual_score": 0,
+          "total_score": 77.96,
+          "expected_points": null,
+          "expected_round": null,
+          "breakeven_round": null,
+          "price": 1000,
+          "tier": "S",
+          "source_facts": {
+            "rank": 8,
+            "seed": 7,
+            "overall_elo": 1925.2,
+            "surface_elo": 1875.6,
+            "peak_elo": 1974,
+            "peak_month": "2023-06",
+            "draw_position": 7,
+            "path_note": "Ivan Lendl Group · 小组赛胜场与确认晋级阶段累计收益",
+            "pricing_formula": null,
+            "pricing_detail": {
+              "formula_version": "finals_fixed_2026",
+              "price_locked": true,
+              "source": "https://tennisabstract.com/reports/atp_elo_ratings.html",
+              "source_date": "2026-11-12",
+              "score_explanation": {
+                "base": "65%总体Elo百分位+35%排名反向百分位（TA覆盖球员）",
+                "surface": "硬地Elo百分位（TA覆盖球员）",
+                "form": "70%当前Elo/巅峰Elo+30%巅峰月份新近度，48个月衰减",
+                "draw": "组内其他三人平均硬地Elo的反向百分位，越高表示组内对手较弱"
+              },
+              "group_opponent_average_elo": 1966.67,
+              "price_independent_of_scores": true
+            },
+            "pre_r1_substitution": null,
+            "contract_price_policy": null,
+            "original_contract_price": null
+          }
+        },
+        {
+          "event_key": "atp-2026-w47-finals",
+          "player_key": "ATP|rafael-jodar",
+          "tour": "ATP",
+          "name_en": "Rafael JODAR",
+          "name_zh": "霍达尔",
+          "official_rank": 11,
+          "official_points": null,
+          "overall_elo": 1988.3,
+          "surface_elo": 1918.4,
+          "base_score": 98.53,
+          "surface_score": 98.36,
+          "draw_score": 14.29,
+          "form_score": 95.98,
+          "manual_score": 0,
+          "total_score": 76.33,
+          "expected_points": null,
+          "expected_round": null,
+          "breakeven_round": null,
+          "price": 1000,
+          "tier": "S",
+          "source_facts": {
+            "rank": 11,
+            "seed": 8,
+            "overall_elo": 1988.3,
+            "surface_elo": 1918.4,
+            "peak_elo": 2051.1,
+            "peak_month": "2026-08",
+            "draw_position": 8,
+            "path_note": "John McEnroe Group · 小组赛胜场与确认晋级阶段累计收益",
+            "pricing_formula": null,
+            "pricing_detail": {
+              "formula_version": "finals_fixed_2026",
+              "price_locked": true,
+              "source": "https://tennisabstract.com/reports/atp_elo_ratings.html",
+              "source_date": "2026-11-12",
+              "score_explanation": {
+                "base": "65%总体Elo百分位+35%排名反向百分位（TA覆盖球员）",
+                "surface": "硬地Elo百分位（TA覆盖球员）",
+                "form": "70%当前Elo/巅峰Elo+30%巅峰月份新近度，48个月衰减",
+                "draw": "组内其他三人平均硬地Elo的反向百分位，越高表示组内对手较弱"
+              },
+              "group_opponent_average_elo": 1972.17,
+              "price_independent_of_scores": true
+            },
+            "pre_r1_substitution": null,
+            "contract_price_policy": null,
+            "original_contract_price": null
+          }
+        }
+      ]
+    },
+    "photos": {
+      "source_file": "data/manager/player_photos.json",
+      "updated_at": "2026-10-11T03:34:05.806Z",
+      "policy": "只在球员市场小头像和我的阵容大图使用。能确认官方图片时填 photo_url；不能确认时使用稳定 fallback，避免错图。",
+      "fallbacks": {
+        "ATP": "assets/manager/players/fallback-atp.svg",
+        "WTA": "assets/manager/players/fallback-wta.svg"
+      },
+      "selected_players": {
+        "ATP|alexander-zverev": {
+          "photo_url": "assets/manager/players/atp/atp-alexander-zverev.jpg",
+          "photo_source": "https://static.live-tennis.cn/pic/ts/Z355",
+          "source": "event player photo",
+          "status": "ready",
+          "storage_path": "assets/manager/players/atp/atp-alexander-zverev.jpg",
+          "updated_at": "2026-10-06T01:37:36.156Z"
+        },
+        "ATP|arthur-fils": {
+          "photo_url": "assets/manager/players/atp/atp-arthur-fils.jpg",
+          "photo_source": "https://static.live-tennis.cn/pic/ts/F0F1",
+          "source": "event player photo",
+          "status": "ready",
+          "storage_path": "assets/manager/players/atp/atp-arthur-fils.jpg",
+          "updated_at": "2026-10-06T01:38:00.799Z"
+        },
+        "ATP|ben-shelton": {
+          "photo_url": "assets/manager/players/atp/atp-ben-shelton.jpg",
+          "photo_source": "https://static.live-tennis.cn/pic/ts/S0S1",
+          "source": "event player photo",
+          "status": "ready",
+          "storage_path": "assets/manager/players/atp/atp-ben-shelton.jpg",
+          "updated_at": "2026-10-06T01:37:48.245Z"
+        },
+        "ATP|carlos-alcaraz": {
+          "photo_url": "assets/manager/players/atp/atp-carlos-alcaraz.webp",
+          "photo_source": "https://static.live-tennis.cn/pic/ts/A0E2",
+          "source": "Live Tennis ATP profile photo cached locally for reliable GitHub Pages delivery",
+          "status": "ready",
+          "storage_path": "assets/manager/players/atp/atp-carlos-alcaraz.webp",
+          "updated_at": "2026-08-28T02:21:21.883Z"
+        },
+        "ATP|daniil-medvedev": {
+          "photo_url": "assets/manager/players/atp/atp-daniil-medvedev.jpg",
+          "photo_source": "https://static.live-tennis.cn/pic/ts/MM58",
+          "source": "event player photo",
+          "status": "ready",
+          "storage_path": "assets/manager/players/atp/atp-daniil-medvedev.jpg",
+          "updated_at": "2026-10-06T01:38:10.756Z"
+        },
+        "ATP|flavio-cobolli": {
+          "photo_url": "assets/manager/players/atp/atp-flavio-cobolli.jpg",
+          "photo_source": "https://static.live-tennis.cn/pic/ts/C0E9",
+          "source": "event player photo",
+          "status": "ready",
+          "storage_path": "assets/manager/players/atp/atp-flavio-cobolli.jpg",
+          "updated_at": "2026-10-06T01:37:47.487Z"
+        },
+        "ATP|frances-tiafoe": {
+          "photo_url": "assets/manager/players/atp/atp-frances-tiafoe.jpg",
+          "photo_source": "https://static.live-tennis.cn/pic/ts/TD51",
+          "source": "event player photo",
+          "status": "ready",
+          "storage_path": "assets/manager/players/atp/atp-frances-tiafoe.jpg",
+          "updated_at": "2026-10-06T01:38:00.003Z"
+        },
+        "ATP|rafael-jodar": {
+          "photo_url": "assets/manager/players/atp/atp-rafael-jodar.jpg",
+          "photo_source": "https://static.live-tennis.cn/pic/ts/J0DZ",
+          "source": "event player photo",
+          "status": "ready",
+          "storage_path": "assets/manager/players/atp/atp-rafael-jodar.jpg",
+          "updated_at": "2026-10-06T01:38:04.996Z"
+        }
+      }
+    },
+    "windows": [
+      {
+        "event_key": "atp-2026-w47-finals",
+        "tour": "ATP",
+        "submission_opens_at": "2026-11-12T15:28:32.434Z",
+        "main_draw_first_match_at": "2026-11-15T21:00:00+08:00",
+        "submission_cutoff_at": "2026-11-15T21:00:00+08:00",
+        "submission_closes_at": "2026-11-15T21:00:00+08:00",
+        "round1_completed_at": null,
+        "round2_first_match_at": null,
+        "transfer_window_opens_at": null,
+        "transfer_window_closes_at": null,
+        "transfer_window_note": "年终不允许换人。",
+        "transfer_window_days": null,
+        "transfer_fee_rate": 0
+      }
+    ],
+    "provenance": {
+      "active_file": "data/manager/active_events.json",
+      "source_ref": "working-tree",
+      "files": [
+        {
+          "path": "data/manager/active_events.json",
+          "sha256": "b9d46719d7506308763f18123f1e38327ab8d9e73309349f57bc05bbc1795997"
+        },
+        {
+          "path": "data/manager/events/atp-2026-w47-finals.json",
+          "sha256": "3542020f6bed11fb6cc5c9b41ea66e1174af68ad3e4cf7be4dad5496310c73e1"
+        },
+        {
+          "path": "data/manager/player_photos.json",
+          "sha256": "9aed4c4af1252e53fa7d26d2205a162481fcf351b64304cab1ccae63a606d110"
+        }
+      ]
+    }
+  },
+  "source": {
+    "source_ref": "working-tree",
+    "source_files": [
+      "data/manager/active_events.json",
+      "data/manager/player_photos.json",
+      "data/manager/events/atp-2026-w47-finals.json"
+    ],
+    "generator": "scripts/manager/publish-station-snapshot.mjs"
+  }
+}

@@ -77,10 +77,12 @@ for (const entry of refreshTargets) {
 
   if (event.format === 'round_robin') {
     const progress = await fetchFinalsProgress(event);
+    if (!progress.length) report.warnings.push('Finals groups/results not published yet; preserved the official entry list and existing progress.');
     finalsProgress.push(...progress);
     if(progress.some(row=>row.stage==='W'))nextEvent.market_status='settled';
     nextEvent.players = nextEvent.players.map(player => {
       const result = progress.find(row => row.player_key === player.player_key);
+      if (!result) return player;
       return { ...player, round_robin_wins: result.rr_wins, reached_round: result.stage, is_eliminated: result.eliminated };
     });
     report.finals_progress = progress;
