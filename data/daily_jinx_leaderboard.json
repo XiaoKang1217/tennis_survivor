@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-11-13T03:08:45.517Z",
-  "source_updated_at": "2026-11-13 11:08:43",
-  "settled_through": "2026-11-12",
+  "updated_at": "2026-11-14T03:09:03.917Z",
+  "source_updated_at": "2026-11-14 11:09:01",
+  "settled_through": "2026-11-13",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
@@ -23,9 +23,9 @@
     {
       "tour": "ATP",
       "display_name": "xxx又坑人了",
-      "score": 1992,
-      "hit_count": 91,
-      "scored_days": 71
+      "score": 2016,
+      "hit_count": 92,
+      "scored_days": 72
     },
     {
       "tour": "ATP",
