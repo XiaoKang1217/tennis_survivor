@@ -9,6 +9,7 @@ import {
   overlayLiveScores
 } from './normalizer.mjs';
 import { assignOfficialScheduleDate } from './schedule-date.mjs';
+import { toOverlayUpdates } from './livetennisapi-overlay.mjs';
 
 const OBSERVATION_PROBE_MS = 60_000;
 const LIVE_POLL_MS = 8_000;
@@ -66,6 +67,7 @@ export class LivePoller extends EventEmitter {
     config,
     localizer = null,
     officialValidator = null,
+    secondaryLive = null,
     now = () => Date.now()
   }) {
     super();
@@ -74,6 +76,7 @@ export class LivePoller extends EventEmitter {
     this.config = config;
     this.localizer = localizer;
     this.officialValidator = officialValidator;
+    this.secondaryLive = secondaryLive;
     this.now = now;
     this.timer = null;
     this.running = false;
@@ -84,6 +87,7 @@ export class LivePoller extends EventEmitter {
     this.cache.data.scheduleFixtures ||= {};
     this.cache.data.atpOopSnapshots ||= {};
     this.cache.data.live ||= [];
+    this.cache.data.liveSecondary ||= [];
     if (this.cache.data.pipelineVersion !== DATA_PIPELINE_VERSION) {
       // Old snapshots were allowed to take factual schedule fields from a
       // third-party page. They cannot be migrated safely; rebuild them from
@@ -96,6 +100,7 @@ export class LivePoller extends EventEmitter {
       this.cache.data.officialReferences = {};
       this.cache.data.fixtures = null;
       this.cache.data.live = [];
+      this.cache.data.liveSecondary = [];
     }
     if (!this.cache.data.activeScheduleDate
       || this.cache.data.activeScheduleDate < HISTORY_START_DATE) {
@@ -260,11 +265,23 @@ export class LivePoller extends EventEmitter {
     return [];
   }
 
+  secondaryUpdates(matches) {
+    if (!this.secondaryLive) return [];
+    const rows = this.cache.data.liveSecondary || [];
+    if (!rows.length) return [];
+    return toOverlayUpdates(rows, matches, this.now());
+  }
+
   activeMatches() {
     const base = this.scheduleBase();
     // Lock layer 1/2: persistent terminal cache is applied before the volatile
     // livescore response, so a stale live row cannot resurrect a finished row.
     let matches = overlayLiveScores(base, this.terminalMatches());
+    // Optional secondary live source, applied before the primary overlay so
+    // API Tennis always wins on any match it reported. This layer can only
+    // fill score state on matches the primary response did not carry, and it
+    // emits no terminal state, so it cannot lock, cancel or hide a match.
+    matches = overlayLiveScores(matches, this.secondaryUpdates(matches));
     matches = overlayLiveScores(matches, this.cache.data.live || []);
     // Lock layer 3: if a provider changes event_key, the logical pairing keeps
     // the finished copy.
@@ -284,7 +301,9 @@ export class LivePoller extends EventEmitter {
       },
       sourcePolicy: {
         schedule: 'API Tennis get_fixtures reconciled with ATP/WTA official schedules',
-        live: 'API Tennis get_livescore score/status overlay only',
+        live: this.secondaryLive
+          ? 'API Tennis get_livescore score/status overlay, with livetennisapi.com live scores filling matches it did not return'
+          : 'API Tennis get_livescore score/status overlay only',
         localization: 'checked-in Chinese player-name catalogue only'
       },
       hasLive: matches.some(match => match.status === 'live'),
@@ -315,6 +334,21 @@ export class LivePoller extends EventEmitter {
     this.cache.data.prematchOdds = null;
     this.cache.scheduleWrite();
     return true;
+  }
+
+  /**
+   * Never throws and never returns stale rows: if the optional source cannot
+   * be read this tick it contributes nothing, which is exactly the behaviour
+   * of the service with the feature switched off.
+   */
+  async fetchSecondaryLive() {
+    if (!this.secondaryLive) return [];
+    try {
+      return await this.secondaryLive.liveMatches();
+    } catch (cause) {
+      console.warn('[live-secondary]', cause.message);
+      return [];
+    }
   }
 
   async refreshOfficial(date, force = false, candidates = []) {
@@ -491,12 +525,20 @@ export class LivePoller extends EventEmitter {
       await this.refreshPendingOfficialDates();
       const observe = this.shouldObserve();
       if (observe) {
-        const live = await this.client.livescore();
-        this.rememberTerminalMatches(live, false);
-        this.cache.data.live = live;
-        this.cache.scheduleWrite();
+        // Started first so the optional source runs alongside the primary
+        // request rather than adding latency to the eight-second live loop.
+        const secondary = this.fetchSecondaryLive();
+        try {
+          const live = await this.client.livescore();
+          this.rememberTerminalMatches(live, false);
+          this.cache.data.live = live;
+        } finally {
+          this.cache.data.liveSecondary = await secondary;
+          this.cache.scheduleWrite();
+        }
       } else {
         this.cache.data.live = [];
+        this.cache.data.liveSecondary = [];
       }
     } catch (cause) {
       error = cause.publicCode || cause.message || 'refresh_failed';
