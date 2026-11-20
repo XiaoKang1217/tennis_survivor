@@ -1006,6 +1006,7 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
   </div>
   <div class="tabs">
     <button class="tab on" onclick="switchTab('manager',this)" id="tab-manager">💼 巡回赛经纪人</button>
+    <button class="tab" onclick="switchTab('livescores',this)" id="tab-livescores">🎾 实时比分</button>
     <button class="tab" onclick="switchTab('ms-s',this)" id="tab-ms-s">🎾 ATP 男单</button>
     <button class="tab" onclick="switchTab('ws-s',this)" id="tab-ws-s">🎾 WTA 女单</button>
     <button class="tab" onclick="switchTab('ms-bd',this)" id="tab-breakdown">💹 积分构成</button>
@@ -1019,6 +1020,7 @@ tr[data-status]:hover td{background:rgba(245,158,11,.07)!important}
 </div>
 <div class="main">
 
+<div id="p-livescores" class="panel"><p>正在读取赛程…</p></div>
 <div id="p-ms-s" class="panel">
   <div class="loading" id="loading-ms">⏳ 加载ATP数据中...</div>
   <div id="content-ms-s" style="display:none"></div>
@@ -1147,6 +1149,7 @@ const MINI_PROGRAM_PROMO_COPY='「炉的网球」小程序现已上线！极速�
 const MODULE_VIEWED={};
 const SEARCH_TRACK_TIMERS={};
 const TOP_TAB_BY_PANEL={
+  livescores:'tab-livescores',
   'ms-s':'tab-ms-s','ws-s':'tab-ws-s',
   'ms-bd':'tab-breakdown','ws-bd':'tab-breakdown',
   'ms-p':'tab-preference','ws-p':'tab-preference',
@@ -7235,6 +7238,7 @@ function switchTab(t,btn){
   panel.classList.add('on');
   if(topBtn)topBtn.classList.add('on');
   ACTIVE_TAB=t;
+  if(t==='livescores'){if(!document.getElementById('lw-board-style')){const l=document.createElement('link');l.id='lw-board-style';l.rel='stylesheet';l.href='assets/lw-live/board.css';document.head.append(l)}import('./assets/lw-live/board.js').catch(()=>{panel.textContent='比分页面暂未加载，请刷新重试。'})}
   document.body.classList.toggle('manager-mode',t==='manager');
   var oldMeta=tabMeta(prev),newMeta=tabMeta(t);
   trackModuleView(t);
