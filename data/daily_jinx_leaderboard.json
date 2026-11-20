@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-11-19T03:08:48.558Z",
-  "source_updated_at": "2026-11-19 11:08:45",
-  "settled_through": "2026-11-18",
+  "updated_at": "2026-11-20T03:08:47.036Z",
+  "source_updated_at": "2026-11-20 11:08:44",
+  "settled_through": "2026-11-19",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
@@ -23,9 +23,9 @@
     {
       "tour": "ATP",
       "display_name": "xxx又坑人了",
-      "score": 2019,
-      "hit_count": 93,
-      "scored_days": 73
+      "score": 2022,
+      "hit_count": 94,
+      "scored_days": 74
     },
     {
       "tour": "ATP",
@@ -261,9 +261,9 @@
     {
       "tour": "ATP",
       "display_name": "lenaaaa",
-      "score": 5,
-      "hit_count": 1,
-      "scored_days": 1
+      "score": 8,
+      "hit_count": 2,
+      "scored_days": 2
     },
     {
       "tour": "ATP",
