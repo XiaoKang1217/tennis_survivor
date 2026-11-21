@@ -16,6 +16,9 @@ export function loadConfig(env = process.env) {
     observationAfterMs: Number(env.OBSERVATION_AFTER_MS || 6 * 60 * 60_000),
     officialWtaBase: env.OFFICIAL_WTA_BASE || 'https://api.wtatennis.com/tennis',
     officialTtlMs: Number(env.OFFICIAL_TTL_MS || 5 * 60_000),
+    // Optional secondary live-score source. No key configured = feature off.
+    liveTennisApiKey: env.LIVETENNISAPI_KEY || '',
+    liveTennisApiBase: env.LIVETENNISAPI_BASE || 'https://api.livetennisapi.com/api/public/v1',
     translationCatalogFile: path.resolve(env.TRANSLATION_CATALOG_FILE || './data/translations.json')
   };
 }
