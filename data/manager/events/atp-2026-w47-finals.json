@@ -44,7 +44,7 @@
       "first_round": "RR",
       "photo_url": "https://static.live-tennis.cn/pic/ts/Z355",
       "round_robin_wins": 3,
-      "reached_round": "SF",
+      "reached_round": "F",
       "is_eliminated": false,
       "path_note": "John McEnroe Group · 小组赛胜场与确认晋级阶段累计收益",
       "pricing_detail": {
@@ -86,7 +86,7 @@
       "first_round": "RR",
       "photo_url": "https://static.live-tennis.cn/pic/ts/A0E2",
       "round_robin_wins": 3,
-      "reached_round": "SF",
+      "reached_round": "F",
       "is_eliminated": false,
       "path_note": "Ivan Lendl Group · 小组赛胜场与确认晋级阶段累计收益",
       "pricing_detail": {
@@ -129,7 +129,7 @@
       "photo_url": "https://static.live-tennis.cn/pic/ts/S0S1",
       "round_robin_wins": 2,
       "reached_round": "SF",
-      "is_eliminated": false,
+      "is_eliminated": true,
       "path_note": "John McEnroe Group · 小组赛胜场与确认晋级阶段累计收益",
       "pricing_detail": {
         "formula_version": "finals_fixed_2026",
@@ -171,7 +171,7 @@
       "photo_url": "https://static.live-tennis.cn/pic/ts/MM58",
       "round_robin_wins": 2,
       "reached_round": "SF",
-      "is_eliminated": false,
+      "is_eliminated": true,
       "path_note": "Ivan Lendl Group · 小组赛胜场与确认晋级阶段累计收益",
       "pricing_detail": {
         "formula_version": "finals_fixed_2026",
