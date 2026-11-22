@@ -25,6 +25,9 @@ Recommended files to attach to the Codex project:
 - `data-sources.md`
   - Data files, generating scripts, external source, and key data rules.
 
+- `live-data-boundary.md`
+  - Public frontend/private backend ownership boundary for realtime tennis data.
+
 - `page-tables.md`
   - Frontend table modules, fields, interactions, and current meaning of "sheet".
 
