@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
-  "updated_at": "2026-11-23T03:09:22.202Z",
-  "source_updated_at": "2026-11-23 11:09:19",
-  "settled_through": "2026-11-22",
+  "updated_at": "2026-11-24T03:09:22.787Z",
+  "source_updated_at": "2026-11-24 11:09:19",
+  "settled_through": "2026-11-23",
   "ledger_sync": true,
   "refresh_mode": "incremental",
   "leaderboard": [
@@ -931,6 +931,15 @@
       "rarity": "limited"
     },
     {
+      "display_name": "加多宝",
+      "badge_key": "wimbledon-2026",
+      "title": "温网限定",
+      "subtitle": "赛事限定",
+      "image_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "thumb_url": "assets/manager/badges/ui-v5/optimized/wimbledon-badge-640.webp",
+      "rarity": "limited"
+    },
+    {
       "display_name": "单依纯唯一滴老婆",
       "badge_key": "zheng-queen",
       "title": "郑钦文Queen",
@@ -1495,15 +1504,6 @@
       "subtitle": "球员纪念",
       "image_url": "assets/manager/badges/ui-v20/optimized/rybakina/badge.webp",
       "thumb_url": "assets/manager/badges/ui-v20/optimized/rybakina/thumb.webp",
-      "rarity": "limited"
-    },
-    {
-      "display_name": "加多宝",
-      "badge_key": "usopen-night-2026",
-      "title": "2026美网·不夜之境",
-      "subtitle": "赛事限定",
-      "image_url": "assets/manager/badges/ui-v20/optimized/usopen/badge.webp",
-      "thumb_url": "assets/manager/badges/ui-v20/optimized/usopen/thumb.webp",
       "rarity": "limited"
     },
     {
